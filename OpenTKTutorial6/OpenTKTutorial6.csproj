@@ -34,9 +34,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FarseerPhysics">
+      <HintPath>..\..\..\..\Farseer Physics Engine 3.3.1 Class\Farseer Physics Engine 3.3.1 Class\bin\Debug\FarseerPhysics.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Documents\OpenTK\1.1\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="Poly2Tri">
+      <HintPath>..\..\..\..\cs.poly2tri-1388712a475b\cs.poly2tri-1388712a475b\bin\Debug\Poly2Tri.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,15 +55,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actor.cs" />
+    <Compile Include="ActorTank.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="Controller.cs" />
+    <Compile Include="GameWorld.cs" />
+    <Compile Include="InputExt.cs" />
+    <Compile Include="LineSegments.cs" />
+    <Compile Include="MathExt.cs" />
+    <Compile Include="Orientation.cs" />
+    <Compile Include="Perspective.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Cube.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="Polygon.cs" />
+    <Compile Include="PolygonCoordinate.cs" />
+    <Compile Include="Portal.cs" />
+    <Compile Include="PortalPair.cs" />
+    <Compile Include="PortalSegments.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShaderProgram.cs" />
     <Compile Include="TexturedCube.cs" />
     <Compile Include="Model.cs" />
+    <Compile Include="Wall.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fs.glsl">
@@ -83,6 +104,9 @@
     <Content Include="opentksquare2.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
