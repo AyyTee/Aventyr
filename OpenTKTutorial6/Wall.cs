@@ -23,35 +23,5 @@ namespace Game
             Body = BodyFactory.CreateBody(GameWorld.PhysWorld, this);
             Body.BodyType = BodyType.Static;
         }
-        public new void BufferVertices(BufferUsageHint Hint)
-        {
-            base.BufferVertices(Hint);
-            for (int i = 0; i < GeometryTriangles.Count(); i++)
-            {
-                Vertices Poly;
-                float X;
-                float Y;
-                for (int j = 0; j < GeometryTriangles[i].Triangles.Count(); j++ )
-                {
-                    Poly = new Vertices(3);
-                    X = (float)GeometryTriangles[i].Triangles[j].Points[0].X;
-                    Y = (float)GeometryTriangles[i].Triangles[j].Points[0].Y;
-                    Poly.Add(new Xna.Vector2(X, Y));
-                    X = (float)GeometryTriangles[i].Triangles[j].Points[1].X;
-                    Y = (float)GeometryTriangles[i].Triangles[j].Points[1].Y;
-                    Poly.Add(new Xna.Vector2(X, Y));
-                    X = (float)GeometryTriangles[i].Triangles[j].Points[2].X;
-                    Y = (float)GeometryTriangles[i].Triangles[j].Points[2].Y;
-                    Poly.Add(new Xna.Vector2(X, Y));
-                    if (Poly.IsCounterClockWise() == false)
-                    {
-                        Poly.Reverse();
-                    }
-                    PolygonShape Shape = new PolygonShape(Poly, 1);
-                    new Fixture(Body, Shape);
-                }
-                GameWorld.PhysWorld.ProcessChanges();
-            }
-        }
     }
 }

@@ -53,29 +53,28 @@ namespace Game
             #region AddPolygon
             Shape = new Wall(GameWorld);
             //GameWorld.WallList.Add(Shape);
-            Shape.AddSegment(0, new Vector2d(-100, 100), 0);
-            Shape.AddSegment(0, new Vector2d(-110, 90), -.1);
-            Shape.AddSegment(0, new Vector2d(150, -70), 0);
-            Shape.AddSegment(0, new Vector2d(150, 100), .1);
+            Shape.AddSegment(0, new Vector2d(-100, 100));
+            Shape.AddSegment(0, new Vector2d(-110, 90));
+            Shape.AddSegment(0, new Vector2d(150, -70));
+            Shape.AddSegment(0, new Vector2d(150, 100));
             
             Shape.AddGeometry(0);
-            Shape.AddSegment(1, new Vector2d(10, 50), .1);
-            Shape.AddSegment(1, new Vector2d(20, 10), 0);
-            Shape.AddSegment(1, new Vector2d(100, 10), 0);
-            Shape.AddSegment(1, new Vector2d(100, 50), -.1);
+            Shape.AddSegment(1, new Vector2d(10, 50));
+            Shape.AddSegment(1, new Vector2d(20, 10));
+            Shape.AddSegment(1, new Vector2d(100, 10));
+            Shape.AddSegment(1, new Vector2d(100, 50));
 
             Shape.AddGeometry(1);
-            Shape.AddSegment(2, new Vector2d(20, 40), 0);
-            Shape.AddSegment(2, new Vector2d(30, 30), 0);
-            Shape.AddSegment(2, new Vector2d(90, 20), 0);
-            Shape.AddSegment(2, new Vector2d(90, 40), 0);
+            Shape.AddSegment(2, new Vector2d(20, 40));
+            Shape.AddSegment(2, new Vector2d(30, 30));
+            Shape.AddSegment(2, new Vector2d(90, 20));
+            Shape.AddSegment(2, new Vector2d(90, 40));
 
             Shape.AddGeometry(Polygon.GEOMETRY_NO_PARENT);
-            Shape.AddSegment(3, new Vector2d(-100, -100), .2);
-            Shape.AddSegment(3, new Vector2d(-100, -50), -1);
-            Shape.AddSegment(3, new Vector2d(-150, -50), 0);
-            Shape.AddSegment(3, new Vector2d(-150, -100), 0);
-            Shape.BufferVertices(BufferUsageHint.StaticDraw);
+            Shape.AddSegment(3, new Vector2d(-100, -100));
+            Shape.AddSegment(3, new Vector2d(-100, -50));
+            Shape.AddSegment(3, new Vector2d(-150, -50));
+            Shape.AddSegment(3, new Vector2d(-150, -100));
             #endregion
             SC = new PolygonCoordinate(Shape, 3, 1.4, false);
             Portal P0 = new Portal(SC, false);
@@ -102,44 +101,12 @@ namespace Game
             SC.SetSegmentT((double)-StepCounter/5, true);
             if (Input.MousePress(MouseButton.Left) && Ctx.Focused)
             {
-                Shape.AddSegment(0, ViewToWorld(Input.MousePosition()), Rand.NextDouble() - .5);
-                Shape.BufferVertices(BufferUsageHint.DynamicDraw);
+                Shape.AddSegment(0, ViewToWorld(Input.MousePosition()));
             }
             StepCounter++;
         }
         public void Draw()
         {
-            //shaders[activeShader].EnableVertexAttribArrays();
-
-
-            /*SetView(GameWorld.View);
-            if (Input.KeyDown(Key.F))
-            {
-                FBO.Set();
-            }
-            
-            SC.DrawDebug();
-            GameWorld.Draw();
-            PortalSegments PS = GameWorld.PortalPairList.LineProject(Player.GetPosition(), ViewToWorld(Input.MousePosition()),20);
-            GL.Color3(Color.GreenYellow);
-            PS.GetLines().DrawDebug();
-            if (Input.KeyDown(Key.F))
-            {
-                FBO.Unset();
-                GL.PushMatrix();
-                GL.LoadIdentity();
-                FBO.Draw();
-                GL.PopMatrix();
-            }
-            
-            QFont.Begin();
-            avg = avg * .995f + (float)Ctx.RenderFrequency * .005f;
-            FontDefault.Print(avg.ToString());
-            QFont.End();*/
-            GL.Disable(EnableCap.Blend);
-
-
-            //shaders[activeShader].DisableVertexAttribArrays();
         }
         public void SetView(Perspective P)
         {
