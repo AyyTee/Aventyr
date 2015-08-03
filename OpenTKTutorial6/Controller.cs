@@ -137,7 +137,8 @@ namespace OpenTKTutorial6
                 GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
                 GL.UniformMatrix4(shaders[activeShader].GetUniform("modelMatrix"), false, ref v.ModelMatrix);
                 GL.UniformMatrix4(shaders[activeShader].GetUniform("viewMatrix"), false, ref viewMatrix);
-                GL.Uniform1(shaders[activeShader].GetUniform("timeDelta"), timeDraw - time);
+
+                GL.Uniform1(shaders[activeShader].GetUniform("timeDelta"), (float)Math.Min(timeDraw - time, 1/UpdateFrequency));
                 GL.Uniform3(shaders[activeShader].GetUniform("speed"), ref v.Speed);
                 if (shaders[activeShader].GetAttribute("maintexture") != -1)
                 {
@@ -207,15 +208,17 @@ namespace OpenTKTutorial6
             time += (float)e.Time;
             timeDraw = time;
             //objects[0].Position = new Vector3(0.3f, (float)Math.Sin(time)/2, 3.0f);
-            //objects[0].Speed = new Vector3(0f, (float)Math.Cos(time)/2, 0f);
-            objects[0].Speed = new Vector3(0f, 0f, 0f);
             objects[0].Position += objects[0].Speed * (float)e.Time;
+            objects[0].Speed = new Vector3(0f, (float)Math.Cos(time)/2, 0f);
+            //objects[0].Speed = new Vector3(0f, 0f, 0f);
+            
             //objects[0].Rotation = new Vector3(0.55f * time, 0.25f * time, 0);
             objects[0].Scale = new Vector3(0.5f, 0.5f, 0.5f);
 
-            objects[1].Speed = new Vector3(0f, -1f, 0f);
+            
             //objects[1].Position = new Vector3(-1f, 0.5f + (float)Math.Cos(time), 2.0f);
             objects[1].Position += objects[1].Speed * (float)e.Time;
+            objects[1].Speed = new Vector3(0f, -1f, 0f);
             objects[1].Rotation = new Vector3(-0.25f * time, -0.35f * time, 0);
             objects[1].Scale = new Vector3(0.7f, 0.7f, 0.7f);
 

@@ -7,7 +7,7 @@ namespace OpenTKTutorial6
         {
             using (Controller Controller = new Controller())
             {
-                Controller.Run(60, 60);
+                Controller.Run(30, 60);
             }
         }
     }
