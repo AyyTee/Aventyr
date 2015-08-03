@@ -5,9 +5,9 @@ namespace OpenTKTutorial6
     {
         static void Main(string[] args)
         {
-            using (Game game = new Game())
+            using (Controller Controller = new Controller())
             {
-                game.Run(60, 60);
+                Controller.Run(60, 60);
             }
         }
     }

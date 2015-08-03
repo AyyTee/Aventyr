@@ -19,10 +19,11 @@ namespace OpenTKTutorial6
 
         public override Vector3[] GetVerts()
         {
-            return new Vector3[] {new Vector3(-0.5f, -0.5f,  0f),
-                new Vector3(0.5f, -0.5f,  0f),
-                new Vector3(0.5f, 0.5f,  0f),
+            return new Vector3[] {
                 new Vector3(-0.5f, 0.5f,  0f),
+                new Vector3(0.5f, 0.5f,  0f),
+                new Vector3(0.5f, -0.5f,  0f),
+                new Vector3(-0.5f, -0.5f,  0f)
             };
         }
 
@@ -62,10 +63,10 @@ namespace OpenTKTutorial6
         public override Vector2[] GetTextureCoords()
         {
             return new Vector2[] {
-                new Vector2(-1.0f, 0.0f) * TextureScale,
-                new Vector2(0.0f, 0.0f) * TextureScale,
-                new Vector2(0.0f, 1.0f) * TextureScale,
                 new Vector2(-1.0f, 1.0f) * TextureScale,
+                new Vector2(0.0f, 1.0f) * TextureScale,
+                new Vector2(0.0f, 0.0f) * TextureScale,
+                new Vector2(-1.0f, 0.0f) * TextureScale
             };
         }
     }

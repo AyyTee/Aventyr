@@ -13,7 +13,6 @@ namespace Game
     {
         private Orientation Orient;
         private Vector2d Speed;
-        private int DrawRadius;
         public Actor(Vector2d Position)
         {
             Orient = new Orientation(Position);

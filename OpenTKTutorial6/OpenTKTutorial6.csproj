@@ -57,7 +57,6 @@
   <ItemGroup>
     <Compile Include="Actor.cs" />
     <Compile Include="Camera.cs" />
-    <Compile Include="Controller.cs" />
     <Compile Include="GameWorld.cs" />
     <Compile Include="InputExt.cs" />
     <Compile Include="LineSegments.cs" />
@@ -66,7 +65,7 @@
     <Compile Include="Perspective.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Cube.cs" />
-    <Compile Include="Game.cs" />
+    <Compile Include="Controller.cs" />
     <Compile Include="Polygon.cs" />
     <Compile Include="PolygonCoordinate.cs" />
     <Compile Include="Portal.cs" />

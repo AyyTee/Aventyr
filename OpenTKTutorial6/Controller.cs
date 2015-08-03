@@ -1,184 +1,316 @@
-﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Poly2Tri;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Collision.Shapes;
-using Xna = Microsoft.Xna.Framework;
-using FarseerPhysics.Factories;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 
-namespace Game
+namespace OpenTKTutorial6
 {
-    class Controller
+    class Controller : GameWindow
     {
-        private Vector2d ViewSize;
-        private GameWindow Ctx;
-        Matrix4d Projection;
-        InputExt Input;
-        Wall Shape;
-        float avg;
-        int StepCounter;
-        Random Rand = new Random();
-        public PolygonCoordinate SC;
-        PortalPair PPair;
-        //QFont FontDefault;
-        GameWorld GameWorld = new GameWorld();
-        Actor Player;
-        //FBO FBO;
+        public Controller() : base(1024, 768, new GraphicsMode(32, 24, 0, 4), "Game", GameWindowFlags.FixedWindow)
+        {
+            
+        }
+        //InputExt InputExt;
+        int[] indicedata;
+        int ibo_elements;
+        Camera cam;
+        Vector2 lastMousePos = new Vector2();
 
-        int ibo_elements = 0;
-       // Dictionary<string, Shader> shaders = new Dictionary<string, Shader>();
+        List<Model> objects = new List<Model>();
+        Dictionary<string, int> textures = new Dictionary<string, int>();
+        Dictionary<string, ShaderProgram> shaders = new Dictionary<string, ShaderProgram>();
         string activeShader = "default";
 
-        public Controller(GameWindow Ctx)
+        Matrix4 viewMatrix;
+        
+        float time = 0.0f;
+        float timeDraw = 0.0f;
+
+        void initProgram()
         {
+            //GraphicsContext.CurrentContext.SwapInterval = 1;
+            lastMousePos = new Vector2(Mouse.X, Mouse.Y);
+
             GL.GenBuffers(1, out ibo_elements);
-            //shaders.Add("default", new Shader("vs.glsl", "fs.glsl", true));
+
+            // Load shaders from file
+            shaders.Add("default", new ShaderProgram("vs.glsl", "fs.glsl", true));
+            shaders.Add("textured", new ShaderProgram("vs_tex.glsl", "fs_tex.glsl", true));
+
+            activeShader = "textured";
+
+            // Load textures from file
+            textures.Add("opentksquare.png", loadImage("opentksquare.png"));
+            textures.Add("opentksquare2.png", loadImage("opentksquare2.png"));
+            textures.Add("grid.png", loadImage("grid.png"));
+            // Create our objects
+            TexturedCube tc = new TexturedCube();
+            tc.TextureID = textures["opentksquare.png"];
+            objects.Add(tc);
+
+            TexturedCube tc2 = new TexturedCube();
+            tc2.Position += new Vector3(1f, 1f, 1f);
+            tc2.TextureID = textures["opentksquare2.png"];
+            objects.Add(tc2);
+            Plane background = new Plane();
+            background.TextureID = textures["grid.png"];
+            background.Scale = new Vector3(10f, 10f, 10f);
+            background.TextureScale = 10;
+            objects.Add(background);
+
+            cam = Camera.CameraOrtho(new Vector3(0f, 0f, 10f), 10, Width / (float)Height);
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            initProgram();
+
+            GL.ClearColor(Color.CornflowerBlue);
+            GL.ClearStencil(0);
+            GL.PointSize(5f);
+            //step once to initialize variables before drawing
+            OnUpdateFrame(new FrameEventArgs());
+        }
+
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            base.OnRenderFrame(e);
+            GL.Viewport(0, 0, Width, Height);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+
+            {
+                //GL.UniformMatrix4(shaders[activeShader].GetUniform("modelview"), false, ref Matrix4.Identity());
+                /*Matrix4 Mat = cam.GetViewMatrix();
+                GL.UniformMatrix4(shaders[activeShader].GetUniform("modelview"), false, ref Mat);
+                GL.ColorMask(false, false, false, false); //Start using the stencil 
+                GL.Enable(EnableCap.StencilTest);
+
+                //Place a 1 where rendered 
+                GL.StencilFunc(StencilFunction.Always, 1, 1);
+                //Replace where rendered 
+                GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
+                activeShader = "default";
+                //Render stencil triangle 
+                GL.Begin(PrimitiveType.Triangles);
+                GL.Vertex2(new Vector2(0.0f, 0.0f));
+                GL.Vertex2(new Vector2(1.0f, 0.0f));
+                GL.Vertex2(new Vector2(0.0f, 1.0f));
+                GL.End();
+                activeShader = "textured";
+                //Reenable color 
+                GL.ColorMask(true, true, true, true);
+                //Where a 1 was not rendered 
+                GL.StencilFunc(StencilFunction.Notequal, 1, 1);
+                //Keep the pixel 
+                GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);*/
 
 
-            //GameWorld.ActorList.Add(new Actor(new Vector2d(0, 0)));
-            //Player = GameWorld.ActorList.GetIndex(0);
-            //FBO = new FBO(Ctx.ClientSize);
-            //FontDefault = new QFont(new Font("Courier New", 12));
-            this.Ctx = Ctx;
-            double AspectRatio = (double) this.Ctx.Width / (double) this.Ctx.Height;
-            ViewSize = new Vector2d(AspectRatio,1);
-            Input = new InputExt(this.Ctx);
-            #region AddPolygon
-            Shape = new Wall(GameWorld);
-            //GameWorld.WallList.Add(Shape);
-            Shape.AddSegment(0, new Vector2d(-100, 100));
-            Shape.AddSegment(0, new Vector2d(-110, 90));
-            Shape.AddSegment(0, new Vector2d(150, -70));
-            Shape.AddSegment(0, new Vector2d(150, 100));
-            
-            Shape.AddGeometry(0);
-            Shape.AddSegment(1, new Vector2d(10, 50));
-            Shape.AddSegment(1, new Vector2d(20, 10));
-            Shape.AddSegment(1, new Vector2d(100, 10));
-            Shape.AddSegment(1, new Vector2d(100, 50));
+                GL.Enable(EnableCap.DepthTest);
+                GL.Enable(EnableCap.CullFace);
+                GL.CullFace(CullFaceMode.Back);
+                DrawScene((float) e.Time);
+            }
+            timeDraw += (float)e.Time;
+            GL.Flush();
+            SwapBuffers();
+        }
 
-            Shape.AddGeometry(1);
-            Shape.AddSegment(2, new Vector2d(20, 40));
-            Shape.AddSegment(2, new Vector2d(30, 30));
-            Shape.AddSegment(2, new Vector2d(90, 20));
-            Shape.AddSegment(2, new Vector2d(90, 40));
+        private void DrawScene(float timeDelta)
+        {
+            shaders[activeShader].EnableVertexAttribArrays();
 
-            Shape.AddGeometry(Polygon.GEOMETRY_NO_PARENT);
-            Shape.AddSegment(3, new Vector2d(-100, -100));
-            Shape.AddSegment(3, new Vector2d(-100, -50));
-            Shape.AddSegment(3, new Vector2d(-150, -50));
-            Shape.AddSegment(3, new Vector2d(-150, -100));
-            #endregion
-            SC = new PolygonCoordinate(Shape, 3, 1.4, false);
-            Portal P0 = new Portal(SC, false);
-            P0.SetSize(100);
-            Portal P1 = new Portal(new PolygonCoordinate(Shape, 0, 0.2, false), true);
-            PPair = new PortalPair(P0, P1);
-            //GameWorld.PortalPairList.Add(PPair);
-            Portal P2 = new Portal(new PolygonCoordinate(Shape, 2, 2.2, false), false);
-            Portal P3 = new Portal(new PolygonCoordinate(Shape, 0, 2.2, false), false);
-            PPair = new PortalPair(P2, P3);
-            //GameWorld.PortalPairList.Add(PPair);
-            avg = 60;
-            StepCounter = 0;
+            int indiceat = 0;
+
+            // Draw all our objects
+            foreach (Model v in objects)
+            {
+                GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
+                GL.UniformMatrix4(shaders[activeShader].GetUniform("modelMatrix"), false, ref v.ModelMatrix);
+                GL.UniformMatrix4(shaders[activeShader].GetUniform("viewMatrix"), false, ref viewMatrix);
+                GL.Uniform1(shaders[activeShader].GetUniform("timeDelta"), timeDraw - time);
+                GL.Uniform3(shaders[activeShader].GetUniform("speed"), ref v.Speed);
+                if (shaders[activeShader].GetAttribute("maintexture") != -1)
+                {
+                    GL.Uniform1(shaders[activeShader].GetAttribute("maintexture"), v.TextureID);
+                }
+
+                GL.DrawElements(BeginMode.Triangles, v.IndiceCount, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
+                indiceat += v.IndiceCount;
+            }
+
+            shaders[activeShader].DisableVertexAttribArrays();
         }
-        public void step() 
+
+        protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            Input.Step();
-            PlayerInput();
-            GameWorld.Step(1 / 60f);
-            //ViewControlsDebug(GameWorld.View);
+            base.OnUpdateFrame(e);
+
+            List<Vector3> verts = new List<Vector3>();
+            List<int> inds = new List<int>();
+            List<Vector3> colors = new List<Vector3>();
+            List<Vector2> texcoords = new List<Vector2>();
+
+            // Assemble vertex and indice data for all volumes
+            int vertcount = 0;
+            foreach (Model v in objects)
+            {
+                verts.AddRange(v.GetVerts().ToList());
+                inds.AddRange(v.GetIndices(vertcount).ToList());
+                colors.AddRange(v.GetColorData().ToList());
+                texcoords.AddRange(v.GetTextureCoords());
+                vertcount += v.VertCount;
+            }
+
+            Vector3[] vertdata;
+            Vector3[] coldata;
+            Vector2[] texcoorddata;
+
+            vertdata = verts.ToArray();
+            indicedata = inds.ToArray();
+            coldata = colors.ToArray();
+            texcoorddata = texcoords.ToArray();
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, shaders[activeShader].GetBuffer("vPosition"));
+
+            GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(shaders[activeShader].GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
+
+            // Buffer vertex color if shader supports it
+            if (shaders[activeShader].GetAttribute("vColor") != -1)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, shaders[activeShader].GetBuffer("vColor"));
+                GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StaticDraw);
+                GL.VertexAttribPointer(shaders[activeShader].GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
+            }
+
+
+            // Buffer texture coordinates if shader supports it
+            if (shaders[activeShader].GetAttribute("texcoord") != -1)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, shaders[activeShader].GetBuffer("texcoord"));
+                GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StaticDraw);
+                GL.VertexAttribPointer(shaders[activeShader].GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
+            }
+
+            // Update object positions
             
-            //GameWorld.View.POV = Player.GetPosition();
-            //PPair.UpdateFOV(GameWorld.View, 200);
-            SC.SetSegmentT((double)-StepCounter/5, true);
-            if (Input.MousePress(MouseButton.Left) && Ctx.Focused)
+            time += (float)e.Time;
+            timeDraw = time;
+            //objects[0].Position = new Vector3(0.3f, (float)Math.Sin(time)/2, 3.0f);
+            //objects[0].Speed = new Vector3(0f, (float)Math.Cos(time)/2, 0f);
+            objects[0].Speed = new Vector3(0f, 0f, 0f);
+            objects[0].Position += objects[0].Speed * (float)e.Time;
+            //objects[0].Rotation = new Vector3(0.55f * time, 0.25f * time, 0);
+            objects[0].Scale = new Vector3(0.5f, 0.5f, 0.5f);
+
+            objects[1].Speed = new Vector3(0f, -1f, 0f);
+            //objects[1].Position = new Vector3(-1f, 0.5f + (float)Math.Cos(time), 2.0f);
+            objects[1].Position += objects[1].Speed * (float)e.Time;
+            objects[1].Rotation = new Vector3(-0.25f * time, -0.35f * time, 0);
+            objects[1].Scale = new Vector3(0.7f, 0.7f, 0.7f);
+
+            //objects[2].Rotation = new Vector3(-0.25f * time, -0.35f * time, 0);
+
+            // Update model view matrices
+            viewMatrix = cam.GetViewMatrix();
+            foreach (Model v in objects)
             {
-                Shape.AddSegment(0, ViewToWorld(Input.MousePosition()));
+                v.CalculateModelMatrix();
+                //v.ModelViewProjectionMatrix = v.ModelMatrix * cam.GetViewMatrix();
             }
-            StepCounter++;
+
+            GL.UseProgram(shaders[activeShader].ProgramID);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            // Buffer index data
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo_elements);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StaticDraw);
         }
-        public void Draw()
+
+        protected override void OnKeyPress(KeyPressEventArgs e)
         {
-        }
-        public void SetView(Perspective P)
-        {
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadIdentity();
-            Projection = Matrix4d.Identity;
-            Projection *= P.GetTransform();
-            Projection *= Matrix4d.CreateOrthographic(ViewSize.X, ViewSize.Y, -2000, 2000.0);
-            
-            //Projection = Matrix4d.Mult(Matrix4d.CreateRotationZ((double)0), Projection);
-            //Projection = Matrix4d.Mult(Matrix4d.CreateTranslation(new Vector3d(0, 10, 0)),Projection);
-            GL.MultMatrix(ref Projection);
-            
-        }
-        public Vector2d ViewToWorld(Vector2d V0)
-        {
-            var w = Ctx.ClientSize.Width;
-            var h = Ctx.ClientSize.Height;
-            V0.X = (2 * V0.X / ((double)w)) - 1;
-            V0.Y = (2 * -V0.Y / ((double)h)) + 1;
-            Vector3d V1 = new Vector3d(V0);
-            V1 = Vector3d.Transform(V1, Matrix4d.Invert(Projection));
-            return new Vector2d(V1.X, V1.Y);
-        }
-        public void ViewControlsDebug(Perspective P)
-        {
-            if (Input.MouseDown(MouseButton.Right) && Ctx.Focused)
+            base.OnKeyPress(e);
+
+            if (e.KeyChar == 27)
             {
-                var XDelta = (2f / Ctx.Width) * -(Input.MousePrevious.X - Input.MouseCurrent.X) / P.Orient.Scale;
-                if (P.Orient.Mirrored == true)
-                {
-                    XDelta *= -1;
-                }
-                var YDelta = (2f / Ctx.Width) * (Input.MousePrevious.Y - Input.MouseCurrent.Y) / P.Orient.Scale;
-                P.Orient.Position += new Vector2d(XDelta, YDelta);
+                Exit();
             }
-            if (Input.MouseWheelDelta() != 0)
+
+            switch (e.KeyChar)
             {
-                P.Orient.Scale *= Input.MouseWheelDelta() / 5 + 1;
+                case 'w':
+                    cam.Position.Y += 0.1f;
+                    break;
+                case 'a':
+                    cam.Position.X -= 0.1f;
+                    break;
+                case 's':
+                    cam.Position.Y -= 0.1f;
+                    break;
+                case 'd':
+                    cam.Position.X += 0.1f;
+                    break;
+                case 'q':
+                    cam.Scale *= 1.1f;
+                    cam.SetFOV(cam.GetFOV() * 1.1f);
+                    break;
+                case 'e':
+                    cam.Scale /= 1.1f;
+                    cam.SetFOV(cam.GetFOV() / 1.1f);
+                    break;
             }
         }
-        public void PlayerInput()
+
+        protected override void OnFocusedChanged(EventArgs e)
         {
-            double w = 0;
-            double h = 0;
-            if (Input.KeyDown(Key.D) != Input.KeyDown(Key.A))
+            base.OnFocusedChanged(e);
+
+            /*if (Focused)
             {
-                if (Input.KeyDown(Key.D))
-                {
-                    w = 2;
-                }
-                else
-                {
-                    w = -2;
-                }
-            }
-            if (Input.KeyDown(Key.W) != Input.KeyDown(Key.S))
+                ResetCursor();
+            }*/
+        }
+
+        int loadImage(Bitmap image)
+        {
+            int texID = GL.GenTexture();
+
+            GL.BindTexture(TextureTarget.Texture2D, texID);
+            BitmapData data = image.LockBits(new System.Drawing.Rectangle(0, 0, image.Width, image.Height),
+                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0,
+                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+
+            image.UnlockBits(data);
+
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+            return texID;
+        }
+
+        int loadImage(string filename)
+        {
+            try
             {
-                if (Input.KeyDown(Key.W))
-                {
-                    h = 2;
-                }
-                else
-                {
-                    h = -2;
-                }
+                Bitmap file = new Bitmap(filename);
+                return loadImage(file);
             }
-            if (w != 0 || h != 0)
+            catch (FileNotFoundException e)
             {
-                Player.SetSpeed(new Vector2d(w, h));
+                return -1;
             }
-            
         }
     }
 }

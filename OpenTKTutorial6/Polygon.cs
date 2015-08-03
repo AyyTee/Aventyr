@@ -11,10 +11,7 @@ namespace Game
     class Polygon
     {
         private Orientation Orient;
-        private Exception CIRCLE_DOES_NOT_EXIST = new Exception("CIRCLE_DOES_NOT_EXIST");
         public const int GEOMETRY_NO_PARENT = -1;
-        private const double TWO_PI = 2 * Math.PI;
-        private double DetailThreshold = .5;
         private List <List<Segment>> Geometry = new List <List<Segment>>();
         public List<Poly2Tri.Polygon> GeometryTriangles = new List<Poly2Tri.Polygon>();
         private List <bool> IsExterior = new List<bool>();
@@ -22,7 +19,6 @@ namespace Game
         public List <List<Vector2d>> GeometryVertices = new List <List<Vector2d>>();
         public class Segment {
             public Vector2d Position;
-            public double Offset;
             public Segment(Vector2d Position)
             {
                 this.Position = Position;
@@ -36,7 +32,6 @@ namespace Game
         public Polygon(double Detail)
         {
             AddGeometry(GEOMETRY_NO_PARENT);
-            DetailThreshold = Detail;
             Orient = new Orientation(new Vector2d(0, 0));
         }
         /// <summary>

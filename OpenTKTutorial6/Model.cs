@@ -10,12 +10,13 @@ namespace OpenTKTutorial6
         public Vector3 Position = Vector3.Zero;
         public Vector3 Rotation = Vector3.Zero;
         public Vector3 Scale = Vector3.One;
+        public Vector3 Speed = Vector3.Zero;
 
         public int VertCount;
         public int IndiceCount;
         public int ColorDataCount;
+        public Matrix4 VelocityMatrix = Matrix4.Identity;
         public Matrix4 ModelMatrix = Matrix4.Identity;
-        public Matrix4 ViewProjectionMatrix = Matrix4.Identity;
         public Matrix4 ModelViewProjectionMatrix = Matrix4.Identity;
 
         public abstract Vector3[] GetVerts();
