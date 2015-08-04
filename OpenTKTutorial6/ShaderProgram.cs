@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Game
 {
-    class ShaderProgram
+    public class ShaderProgram
     {
         public int ProgramID = -1;
         public int VShaderID = -1;

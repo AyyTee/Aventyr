@@ -23,18 +23,18 @@ namespace Game
         Camera cam;
         Vector2 lastMousePos = new Vector2();
 
-        List<Model> objects = new List<Model>();
+        List<Entity> objects = new List<Entity>();
         Dictionary<string, int> textures = new Dictionary<string, int>();
         Dictionary<string, ShaderProgram> shaders = new Dictionary<string, ShaderProgram>();
         string activeShader = "default";
 
         Matrix4 viewMatrix;
         
-        float time = 0.0f;
+        float Time = 0.0f;
         /// <summary>
-        /// This is the difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
+        /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
-        float timeRenderDelta = 0.0f;
+        float TimeRenderDelta = 0.0f;
 
         void initProgram()
         {
@@ -55,19 +55,20 @@ namespace Game
             textures.Add("opentksquare2.png", loadImage("opentksquare2.png"));
             textures.Add("grid.png", loadImage("grid.png"));
             // Create our objects
-            TexturedCube tc = new TexturedCube();
-            tc.TextureID = textures["opentksquare.png"];
-            objects.Add(tc);
+            
 
-            TexturedCube tc2 = new TexturedCube();
-            tc2.Transform.Position += new Vector3(1f, 1f, 1f);
-            tc2.TextureID = textures["opentksquare2.png"];
-            objects.Add(tc2);
-            Plane background = new Plane();
+            /*Plane background = new Plane();
             background.TextureID = textures["grid.png"];
             background.Transform.Scale = new Vector3(10f, 10f, 10f);
             background.TextureScale = 10;
-            objects.Add(background);
+            objects.Add(background);*/
+
+            TexturedCube tc = new TexturedCube(shaders["textured"]);
+            tc.Transform.Position = new Vector3(1f, 3f, 0);
+            tc.TextureID = textures["opentksquare.png"];
+            Entity box = new Entity(new Vector3(0,0,0));
+            box.Models.Add(tc);
+            objects.Add(box);
 
             cam = Camera.CameraOrtho(new Vector3(0f, 0f, 10f), 10, Width / (float)Height);
         }
@@ -89,7 +90,7 @@ namespace Game
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            timeRenderDelta += (float)e.Time;
+            TimeRenderDelta += (float)e.Time;
             GL.Viewport(0, 0, Width, Height);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
@@ -138,21 +139,22 @@ namespace Game
             int indiceat = 0;
 
             // Draw all our objects
-            foreach (Model v in objects)
+            foreach (Entity v in objects)
             {
-                GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
+                v.Render(viewMatrix, (float)Math.Min(TimeRenderDelta, 1 / UpdateFrequency), ref indiceat);
+                /*GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
                 GL.UniformMatrix4(shaders[activeShader].GetUniform("modelMatrix"), false, ref v.Transform.TransformMatrix);
                 GL.UniformMatrix4(shaders[activeShader].GetUniform("viewMatrix"), false, ref viewMatrix);
 
-                GL.Uniform1(shaders[activeShader].GetUniform("timeDelta"), (float)Math.Min(timeRenderDelta, 1 / UpdateFrequency));
-                GL.Uniform3(shaders[activeShader].GetUniform("speed"), ref v.Speed);
+                GL.Uniform1(shaders[activeShader].GetUniform("timeDelta"), (float)Math.Min(TimeRenderDelta, 1 / UpdateFrequency));
+                //GL.Uniform3(shaders[activeShader].GetUniform("speed"), ref v.Speed);
                 if (shaders[activeShader].GetAttribute("maintexture") != -1)
                 {
                     GL.Uniform1(shaders[activeShader].GetAttribute("maintexture"), v.TextureID);
                 }
 
                 GL.DrawElements(BeginMode.Triangles, v.IndiceCount, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
-                indiceat += v.IndiceCount;
+                indiceat += v.IndiceCount;*/
             }
 
             shaders[activeShader].DisableVertexAttribArrays();
@@ -161,6 +163,9 @@ namespace Game
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
+            Time += (float)e.Time;
+            TimeRenderDelta = 0;
+
             InputExt.Update();
             if (InputExt.KeyDown(Key.W))
             {
@@ -183,14 +188,11 @@ namespace Game
                 cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
             }
             
-            time += (float)e.Time;
-            timeRenderDelta = 0;
-
             // Update model view matrices
             viewMatrix = cam.GetViewMatrix();
-            foreach (Model v in objects)
+            foreach (Entity v in objects)
             {
-                v.Transform.GetMatrix();
+                v.StepUpdate();
             }
 
             GL.UseProgram(shaders[activeShader].ProgramID);
@@ -211,13 +213,16 @@ namespace Game
 
             // Assemble vertex and indice data for all volumes
             int vertcount = 0;
-            foreach (Model v in objects)
+            foreach (Entity v in objects)
             {
-                verts.AddRange(v.GetVerts().ToList());
-                inds.AddRange(v.GetIndices(vertcount).ToList());
-                colors.AddRange(v.GetColorData().ToList());
-                texcoords.AddRange(v.GetTextureCoords());
-                vertcount += v.VertCount;
+                foreach (Model w in v.Models)
+                {
+                    verts.AddRange(w.GetVerts().ToList());
+                    inds.AddRange(w.GetIndices(vertcount).ToList());
+                    colors.AddRange(w.GetColorData().ToList());
+                    texcoords.AddRange(w.GetTextureCoords());
+                    vertcount += w.VertCount;
+                }
             }
 
             Vector3[] vertdata;
@@ -250,16 +255,6 @@ namespace Game
                 GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StaticDraw);
                 GL.VertexAttribPointer(shaders[activeShader].GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
             }
-        }
-
-        protected override void OnFocusedChanged(EventArgs e)
-        {
-            base.OnFocusedChanged(e);
-
-            /*if (Focused)
-            {
-                ResetCursor();
-            }*/
         }
 
         int loadImage(Bitmap image)

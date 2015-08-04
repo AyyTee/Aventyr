@@ -55,7 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Actor.cs" />
+    <Compile Include="Entity.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="GameWorld.cs" />
     <Compile Include="InputExt.cs" />

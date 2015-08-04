@@ -7,8 +7,8 @@ namespace Game
     /// </summary>
     class TexturedCube : Cube
     {
-        public TexturedCube()
-            : base()
+        public TexturedCube(ShaderProgram shader)
+            : base(shader)
         {
             VertCount = 24;
             IndiceCount = 36;

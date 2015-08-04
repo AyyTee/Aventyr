@@ -7,11 +7,12 @@ namespace Game
     /// </summary>
     class Cube : Model
     {
-        public Cube()
+        public Cube(ShaderProgram shader)
         {
             VertCount = 8;
             IndiceCount = 36;
             ColorDataCount = 8;
+            Shader = shader;
         }
         
         public override Vector3[] GetVerts()
