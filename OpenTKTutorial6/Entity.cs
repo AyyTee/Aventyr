@@ -22,8 +22,6 @@ namespace Game
         }
         public void StepUpdate()
         {
-            //Transform.Position += new Vector3(0.1f, 0, 0);
-            Transform.Rotation += new Quaternion(0.1f, 0, 0, 5f);
             foreach (Model v in Models)
             {
                 v.Transform.GetMatrix();

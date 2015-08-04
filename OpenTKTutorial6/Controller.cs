@@ -55,13 +55,15 @@ namespace Game
             textures.Add("opentksquare2.png", loadImage("opentksquare2.png"));
             textures.Add("grid.png", loadImage("grid.png"));
             // Create our objects
-            
 
-            /*Plane background = new Plane();
+
+            Plane background = new Plane(shaders["textured"]);
             background.TextureID = textures["grid.png"];
             background.Transform.Scale = new Vector3(10f, 10f, 10f);
             background.TextureScale = 10;
-            objects.Add(background);*/
+            Entity back = new Entity(new Vector3(0, 0, 0));
+            back.Models.Add(background);
+            objects.Add(back);
 
             TexturedCube tc = new TexturedCube(shaders["textured"]);
             tc.Transform.Position = new Vector3(1f, 3f, 0);
@@ -187,7 +189,8 @@ namespace Game
             {
                 cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
             }
-            
+
+            objects[1].Transform.Rotation += new Quaternion(0.1f, 0, 0, 5f);
             // Update model view matrices
             viewMatrix = cam.GetViewMatrix();
             foreach (Entity v in objects)

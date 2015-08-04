@@ -9,12 +9,13 @@ namespace Game
     {
         public float TextureScale = 1;
         
-        public Plane()
+        public Plane(ShaderProgram shader)
         {
             VertCount = 4;
             IndiceCount = 6;
             ColorDataCount = 4;
             TextureCoordsCount = 4;
+            Shader = shader;
         }
 
         public override Vector3[] GetVerts()
