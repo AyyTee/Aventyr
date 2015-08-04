@@ -21,7 +21,7 @@ namespace Game
             MouseCurrent = Mouse.GetState();
             MousePrevious = MouseCurrent;
         }
-        public void Step() 
+        public void Update() 
         {
             KeyPrevious = KeyCurrent;
             KeyCurrent = Keyboard.GetState();

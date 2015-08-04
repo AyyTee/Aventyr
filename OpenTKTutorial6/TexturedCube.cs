@@ -1,6 +1,6 @@
 ﻿using OpenTK;
 
-namespace OpenTKTutorial6
+namespace Game
 {
     /// <summary>
     /// A cube with texture coordinates giving each side the entire texture

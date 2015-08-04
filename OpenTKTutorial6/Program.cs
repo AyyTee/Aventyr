@@ -1,5 +1,5 @@
 ﻿
-namespace OpenTKTutorial6
+namespace Game
 {
     class Program
     {

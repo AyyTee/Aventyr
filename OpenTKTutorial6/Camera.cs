@@ -1,29 +1,31 @@
 ﻿using OpenTK;
 using System;
 
-namespace OpenTKTutorial6
+namespace Game
 {
     class Camera
     {
-        public Vector3 Position = Vector3.Zero;
-        public Vector3 Orientation = new Vector3((float)Math.PI, 0f, 0f);
-        public float MoveSpeed = 0.2f;
-        public float MouseSensitivity = 0.01f;
-        public float Scale = 1f;
-        private float FOV = 1f;
-        public float Aspect = 1f;
-        public float ZNear = 0.01f;
-        public float ZFar = 10000f;
-        public bool Orthographic = false;
+        public Vector3 Orientation { get; set; }
+        public float Scale { get; set; }
+        private float FOV { get; set; }
+        public float Aspect { get; set; }
+        public float ZNear { get; set; }
+        public float ZFar { get; set; }
+        public bool Orthographic { get; set; }
+        public Vector3 Position { get; set; }
         public static Camera CameraOrtho(Vector3 position, float scale, float aspect)
         {
             Camera cam = new Camera();
+            cam.Orientation = new Vector3((float)Math.PI, 0f, 0f);
             cam.Position = position;
             cam.Scale = scale;
             cam.Aspect = aspect;
             cam.Orthographic = true;
+            cam.ZNear = 0.01f;
+            cam.ZFar = 10000f;
             return cam;
         }
+        
         public float GetFOV()
         {
             return FOV;
@@ -53,42 +55,6 @@ namespace OpenTKTutorial6
                 perspective = Matrix4.CreatePerspectiveFieldOfView(FOV, Aspect, ZNear, ZFar);
             }
             return Matrix4.LookAt(Position, Position + lookat, Vector3.UnitY) * perspective;
-        }
-
-        /// <summary>
-        /// Offset the position of the camera in coordinates relative to its current orientation
-        /// </summary>
-        /// <param name="x">Movement along the camera ground (left/right)</param>
-        /// <param name="y">Movement along the camera axis (forward)</param>
-        /// <param name="z">Height to move</param>
-        public void Move(float x, float y, float z)
-        {
-            Vector3 offset = new Vector3();
-            Vector3 forward = new Vector3((float)Math.Sin((float)Orientation.X), 0, (float)Math.Cos((float)Orientation.X));
-            Vector3 right = new Vector3(-forward.Z, 0, forward.X);
-
-            offset += x * right;
-            offset += y * forward;
-            offset.Y += z;
-
-            offset.NormalizeFast();
-            offset = Vector3.Multiply(offset, MoveSpeed);
-
-            Position += offset;
-        }
-
-        /// <summary>
-        /// Adds rotation from mouse movement to camera orientation
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        public void AddRotation(float x, float y)
-        {
-            x = x * MouseSensitivity;
-            y = y * MouseSensitivity;
-
-            Orientation.X = (Orientation.X + x) % ((float)Math.PI * 2.0f);
-            Orientation.Y = Math.Max(Math.Min(Orientation.Y + y, (float)Math.PI / 2.0f - 0.1f), (float)-Math.PI / 2.0f + 0.1f);
         }
     }
 }

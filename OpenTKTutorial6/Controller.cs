@@ -9,7 +9,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 
-namespace OpenTKTutorial6
+namespace Game
 {
     class Controller : GameWindow
     {
@@ -17,7 +17,7 @@ namespace OpenTKTutorial6
         {
             
         }
-        //InputExt InputExt;
+        InputExt InputExt;
         int[] indicedata;
         int ibo_elements;
         Camera cam;
@@ -31,11 +31,15 @@ namespace OpenTKTutorial6
         Matrix4 viewMatrix;
         
         float time = 0.0f;
-        float timeDraw = 0.0f;
+        /// <summary>
+        /// This is the difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
+        /// </summary>
+        float timeRenderDelta = 0.0f;
 
         void initProgram()
         {
             //GraphicsContext.CurrentContext.SwapInterval = 1;
+            InputExt = new InputExt(this);
             lastMousePos = new Vector2(Mouse.X, Mouse.Y);
 
             GL.GenBuffers(1, out ibo_elements);
@@ -56,12 +60,12 @@ namespace OpenTKTutorial6
             objects.Add(tc);
 
             TexturedCube tc2 = new TexturedCube();
-            tc2.Position += new Vector3(1f, 1f, 1f);
+            tc2.Transform.Position += new Vector3(1f, 1f, 1f);
             tc2.TextureID = textures["opentksquare2.png"];
             objects.Add(tc2);
             Plane background = new Plane();
             background.TextureID = textures["grid.png"];
-            background.Scale = new Vector3(10f, 10f, 10f);
+            background.Transform.Scale = new Vector3(10f, 10f, 10f);
             background.TextureScale = 10;
             objects.Add(background);
 
@@ -78,12 +82,14 @@ namespace OpenTKTutorial6
             GL.ClearStencil(0);
             GL.PointSize(5f);
             //step once to initialize variables before drawing
+            bufferModels();
             OnUpdateFrame(new FrameEventArgs());
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+            timeRenderDelta += (float)e.Time;
             GL.Viewport(0, 0, Width, Height);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
@@ -120,7 +126,7 @@ namespace OpenTKTutorial6
                 GL.CullFace(CullFaceMode.Back);
                 DrawScene((float) e.Time);
             }
-            timeDraw += (float)e.Time;
+            
             GL.Flush();
             SwapBuffers();
         }
@@ -135,10 +141,10 @@ namespace OpenTKTutorial6
             foreach (Model v in objects)
             {
                 GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
-                GL.UniformMatrix4(shaders[activeShader].GetUniform("modelMatrix"), false, ref v.ModelMatrix);
+                GL.UniformMatrix4(shaders[activeShader].GetUniform("modelMatrix"), false, ref v.Transform.TransformMatrix);
                 GL.UniformMatrix4(shaders[activeShader].GetUniform("viewMatrix"), false, ref viewMatrix);
 
-                GL.Uniform1(shaders[activeShader].GetUniform("timeDelta"), (float)Math.Min(timeDraw - time, 1/UpdateFrequency));
+                GL.Uniform1(shaders[activeShader].GetUniform("timeDelta"), (float)Math.Min(timeRenderDelta, 1 / UpdateFrequency));
                 GL.Uniform3(shaders[activeShader].GetUniform("speed"), ref v.Speed);
                 if (shaders[activeShader].GetAttribute("maintexture") != -1)
                 {
@@ -155,7 +161,49 @@ namespace OpenTKTutorial6
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
+            InputExt.Update();
+            if (InputExt.KeyDown(Key.W))
+            {
+                cam.Position += new Vector3(0, 0.02f, 0) * cam.Scale;
+            }
+            else if (InputExt.KeyDown(Key.S))
+            {
+                cam.Position -= new Vector3(0, 0.02f, 0) * cam.Scale;
+            }
+            if (InputExt.KeyDown(Key.A))
+            {
+                cam.Position -= new Vector3(0.02f, 0, 0) * cam.Scale;
+            }
+            else if (InputExt.KeyDown(Key.D))
+            {
+                cam.Position += new Vector3(0.02f, 0, 0) * cam.Scale;
+            }
+            if (InputExt.MouseWheelDelta() != 0)
+            {
+                cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
+            }
+            
+            time += (float)e.Time;
+            timeRenderDelta = 0;
 
+            // Update model view matrices
+            viewMatrix = cam.GetViewMatrix();
+            foreach (Model v in objects)
+            {
+                v.Transform.GetMatrix();
+            }
+
+            GL.UseProgram(shaders[activeShader].ProgramID);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            // Buffer index data
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo_elements);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StaticDraw);
+        }
+
+        public void bufferModels()
+        {
             List<Vector3> verts = new List<Vector3>();
             List<int> inds = new List<int>();
             List<Vector3> colors = new List<Vector3>();
@@ -201,77 +249,6 @@ namespace OpenTKTutorial6
                 GL.BindBuffer(BufferTarget.ArrayBuffer, shaders[activeShader].GetBuffer("texcoord"));
                 GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StaticDraw);
                 GL.VertexAttribPointer(shaders[activeShader].GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
-            }
-
-            // Update object positions
-            
-            time += (float)e.Time;
-            timeDraw = time;
-            //objects[0].Position = new Vector3(0.3f, (float)Math.Sin(time)/2, 3.0f);
-            objects[0].Position += objects[0].Speed * (float)e.Time;
-            objects[0].Speed = new Vector3(0f, (float)Math.Cos(time)/2, 0f);
-            //objects[0].Speed = new Vector3(0f, 0f, 0f);
-            
-            //objects[0].Rotation = new Vector3(0.55f * time, 0.25f * time, 0);
-            objects[0].Scale = new Vector3(0.5f, 0.5f, 0.5f);
-
-            
-            //objects[1].Position = new Vector3(-1f, 0.5f + (float)Math.Cos(time), 2.0f);
-            objects[1].Position += objects[1].Speed * (float)e.Time;
-            objects[1].Speed = new Vector3(0f, -1f, 0f);
-            objects[1].Rotation = new Vector3(-0.25f * time, -0.35f * time, 0);
-            objects[1].Scale = new Vector3(0.7f, 0.7f, 0.7f);
-
-            //objects[2].Rotation = new Vector3(-0.25f * time, -0.35f * time, 0);
-
-            // Update model view matrices
-            viewMatrix = cam.GetViewMatrix();
-            foreach (Model v in objects)
-            {
-                v.CalculateModelMatrix();
-                //v.ModelViewProjectionMatrix = v.ModelMatrix * cam.GetViewMatrix();
-            }
-
-            GL.UseProgram(shaders[activeShader].ProgramID);
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-            // Buffer index data
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo_elements);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StaticDraw);
-        }
-
-        protected override void OnKeyPress(KeyPressEventArgs e)
-        {
-            base.OnKeyPress(e);
-
-            if (e.KeyChar == 27)
-            {
-                Exit();
-            }
-
-            switch (e.KeyChar)
-            {
-                case 'w':
-                    cam.Position.Y += 0.1f;
-                    break;
-                case 'a':
-                    cam.Position.X -= 0.1f;
-                    break;
-                case 's':
-                    cam.Position.Y -= 0.1f;
-                    break;
-                case 'd':
-                    cam.Position.X += 0.1f;
-                    break;
-                case 'q':
-                    cam.Scale *= 1.1f;
-                    cam.SetFOV(cam.GetFOV() * 1.1f);
-                    break;
-                case 'e':
-                    cam.Scale /= 1.1f;
-                    cam.SetFOV(cam.GetFOV() / 1.1f);
-                    break;
             }
         }
 

@@ -5,7 +5,7 @@ using System.Text;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
 
-namespace OpenTKTutorial6
+namespace Game
 {
     class ShaderProgram
     {

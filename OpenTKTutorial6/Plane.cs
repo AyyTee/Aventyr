@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
 
-namespace OpenTKTutorial6
+namespace Game
 {
     class Plane : Model
     {
@@ -53,11 +53,6 @@ namespace OpenTKTutorial6
                 new Vector3( 0f, 1f, 0f),
                 new Vector3( 1f, 0f, 0f),
             };
-        }
-
-        public override void CalculateModelMatrix()
-        {
-            ModelMatrix = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
         }
 
         public override Vector2[] GetTextureCoords()

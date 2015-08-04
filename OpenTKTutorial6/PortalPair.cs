@@ -134,9 +134,9 @@ namespace Game
             }
             return Matrix.Inverted();
         }
-        public void UpdateFOV(Perspective P, double Distance, bool Portal0)
+        public void UpdateFOV(Vector2 position, double Distance, bool Portal0)
         {
-            Portal Portal;
+            /*Portal Portal;
             if (Portal0)
             {
                 Portal = GetPortal0();
@@ -152,17 +152,17 @@ namespace Game
             double Width = Portal.GetSize()/2;
             V[0] = Pos - Vector2d.Multiply(Facing, Width);
             V[1] = Pos + Vector2d.Multiply(Facing, Width);
-            double L0 = Distance - (V[0] - P.POV).Length;
-            double L1 = Distance - (V[1] - P.POV).Length;
+            double L0 = Distance - (V[0] - position).Length;
+            double L1 = Distance - (V[1] - position).Length;
             if (L0 > 0 && L1 > 0) 
             {
                 double L;
                 Vector2d N;
                 L = Distance - (V[1] - P.POV).Length;
                 N = (V[1] - P.POV).Normalized();
-                Vector2d C = V[1] + N * L - P.POV;
-                double Dir0 = MathExt.AngleLine(V[0], P.POV);
-                double Dir1 = MathExt.AngleLine(V[1], P.POV);
+                Vector2d C = V[1] + N * L - position;
+                double Dir0 = MathExt.AngleLine(V[0], position);
+                double Dir1 = MathExt.AngleLine(V[1], position);
                 double Diff = Dir1 - Dir0;
                 if (Math.Abs(Diff) > Math.PI)
                 {
@@ -180,34 +180,10 @@ namespace Game
                 Matrix2d Rot = Matrix2d.CreateRotation(Diff / (double)(Detail-1));
                 for (int i = 0; i < Detail; i++)
                 {
-                    V[2 + i] = P.POV + C;
+                    V[2 + i] = position + C;
                     C = MathExt.Matrix2dMult(C, Rot);
                 }
-
-                if (Portal0 == true)
-                {
-                    //FOVBuffer.AddVertexArray(0, V, 0, BufferUsageHint.StreamDraw);
-                }
-                else
-                {
-                    //FOVBuffer.AddVertexArray(1, V, 0, BufferUsageHint.StreamDraw);
-                }
-            }
-        }
-        public void UpdateFOV(Perspective P, double Distance)
-        {
-            UpdateFOV(P, Distance, true);
-            UpdateFOV(P, Distance, false);
-        }
-        public void Draw()
-        {
-            //DrawFOW();  
-            Portals[0].DrawDebug();
-            Portals[1].DrawDebug();
-        }
-        public void DrawFOW()
-        {
-            //FOVBuffer.Draw();
+            }*/
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using OpenTK;
 
-namespace OpenTKTutorial6
+namespace Game
 {
     /// <summary>
     /// A rectangular prism with square sides (seriously, you know what a cube is)
@@ -75,10 +75,10 @@ namespace OpenTKTutorial6
             };
         }
 
-        public override void CalculateModelMatrix()
+        /*public override void CalculateModelMatrix()
         {
             ModelMatrix = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
-        }
+        }*/
 
         public override Vector2[] GetTextureCoords()
         {

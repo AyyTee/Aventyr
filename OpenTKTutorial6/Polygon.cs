@@ -10,7 +10,7 @@ namespace Game
 {
     class Polygon
     {
-        private Orientation Orient;
+        private Transform Transform;
         public const int GEOMETRY_NO_PARENT = -1;
         private List <List<Segment>> Geometry = new List <List<Segment>>();
         public List<Poly2Tri.Polygon> GeometryTriangles = new List<Poly2Tri.Polygon>();
@@ -27,12 +27,12 @@ namespace Game
         public Polygon()
         {
             AddGeometry(GEOMETRY_NO_PARENT);
-            Orient = new Orientation(new Vector2d(0, 0));
+            Transform = new Transform();
         }
         public Polygon(double Detail)
         {
             AddGeometry(GEOMETRY_NO_PARENT);
-            Orient = new Orientation(new Vector2d(0, 0));
+            Transform = new Transform();
         }
         /// <summary>
         /// Adds a vertex. Vertices must be ordered C.Clockwise.
