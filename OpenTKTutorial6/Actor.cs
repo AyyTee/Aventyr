@@ -30,7 +30,7 @@ namespace Game
         }
         public Transform GetRenderTransform(float deltaTime)
         {
-            return Transform + Velocity * deltaTime;
+            return Transform.Lerp(Transform, Velocity, deltaTime);
         }
     }
 }

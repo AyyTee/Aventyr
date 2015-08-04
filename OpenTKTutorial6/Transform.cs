@@ -9,7 +9,7 @@ namespace Game
 {
     public class Transform
     {
-        public Vector3 Rotation { get; set; }
+        public Quaternion Rotation { get; set; }
         public Vector3 Scale { get; set; }
         public Vector3 Position { get; set; }
         public Matrix4 TransformMatrix;
@@ -17,14 +17,14 @@ namespace Game
         public Transform()
         {
             Position = new Vector3();
-            Rotation = new Vector3();
+            Rotation = new Quaternion();
             Scale = new Vector3(1, 1, 1);
         }
 
         public Transform(Vector3 position)
         {
             Position = position;
-            Rotation = new Vector3();
+            Rotation = new Quaternion();
             Scale = new Vector3(1, 1, 1);
         }
 
@@ -32,10 +32,10 @@ namespace Game
         {
             Position = position;
             Scale = scale;
-            Rotation = new Vector3();
+            Rotation = new Quaternion();
         }
 
-        public Transform(Vector3 position, Vector3 scale, Vector3 rotation)
+        public Transform(Vector3 position, Vector3 scale, Quaternion rotation)
         {
             Position = position;
             Scale = scale;
@@ -48,21 +48,12 @@ namespace Game
             return TransformMatrix;
         }
 
-        public static Transform operator +(Transform a, Transform b)
+        public static Transform Lerp(Transform a, Transform b, float t)
         {
             Transform c = new Transform();
-            c.Position = a.Position + b.Position;
-            c.Scale = a.Scale * b.Scale;
-            c.Rotation = a.Rotation + b.Rotation;
-            return c;
-        }
-
-        public static Transform operator *(Transform a, float b)
-        {
-            Transform c = new Transform();
-            c.Position = a.Position * b;
-            c.Scale = a.Scale * b;
-            c.Rotation = a.Rotation * b;
+            c.Position = Vector3.Lerp(a.Position, b.Position, t);
+            c.Scale = Vector3.Lerp(a.Scale, b.Scale, t);
+            c.Rotation = Quaternion.Slerp(a.Rotation, b.Rotation, t);
             return c;
         }
     }
