@@ -1,10 +1,3 @@
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\fs.glsl
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\vs.glsl
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\grid.png
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\opentksquare.png
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\opentksquare2.png
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\fs_tex.glsl
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\vs_tex.glsl
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\OpenTKTutorial4.exe
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\OpenTKTutorial4.pdb
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\FarseerPhysics.dll
@@ -20,3 +13,10 @@ C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\obj\
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\obj\x86\Debug\GameProject.csprojResolveAssemblyReference.cache
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\QuickFont.dll
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\QuickFont.pdb
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\grid.png
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\opentksquare.png
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\opentksquare2.png
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\shaders\fs_tex.glsl
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\shaders\vs.glsl
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\shaders\vs_tex.glsl
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\shaders\fs.glsl

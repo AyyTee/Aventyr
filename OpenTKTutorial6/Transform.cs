@@ -56,5 +56,17 @@ namespace Game
             c.Rotation = Quaternion.Slerp(a.Rotation, b.Rotation, t);
             return c;
         }
+        /// <summary>
+        /// Projects this Transform onto the xy plane
+        /// </summary>
+        /// <returns></returns>
+        public Transform GetTransform2D()
+        {
+            Transform a = new Transform();
+            a.Position = new Vector3(Position.X, Position.Y, 0);
+            a.Scale = new Vector3(Scale.X, Scale.Y, 1);
+            a.Rotation = new Quaternion(0, 0, 1, 0);
+            return a;
+        }
     }
 }

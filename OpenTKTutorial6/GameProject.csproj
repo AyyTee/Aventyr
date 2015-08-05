@@ -60,9 +60,7 @@
   <ItemGroup>
     <Compile Include="Entity.cs" />
     <Compile Include="Camera.cs" />
-    <Compile Include="GameWorld.cs" />
     <Compile Include="InputExt.cs" />
-    <Compile Include="LineSegments.cs" />
     <Compile Include="MathExt.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Plane.cs" />
@@ -72,38 +70,36 @@
     <Compile Include="PolygonCoordinate.cs" />
     <Compile Include="Portal.cs" />
     <Compile Include="PortalPair.cs" />
-    <Compile Include="PortalSegments.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShaderProgram.cs" />
     <Compile Include="TexturedCube.cs" />
     <Compile Include="Model.cs" />
-    <Compile Include="Wall.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="fs.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="fs_tex.glsl">
+    <Content Include="assets\grid.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="vs.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="vs_tex.glsl">
+    </Content>
+    <Content Include="assets\opentksquare.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    </Content>
+    <Content Include="assets\opentksquare2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="grid.png">
+    <None Include="assets\shaders\fs.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="opentksquare.png">
+    </None>
+    <None Include="assets\shaders\fs_tex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="opentksquare2.png">
+    </None>
+    <None Include="assets\shaders\vs.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
+    <None Include="assets\shaders\vs_tex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

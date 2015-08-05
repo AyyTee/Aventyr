@@ -45,20 +45,22 @@ namespace Game
             GL.GenBuffers(1, out ibo_elements);
 
             // Load shaders from file
-            shaders.Add("default", new ShaderProgram("vs.glsl", "fs.glsl", true));
-            shaders.Add("textured", new ShaderProgram("vs_tex.glsl", "fs_tex.glsl", true));
+            shaders.Add("default", new ShaderProgram(@"assets\shaders\vs.glsl", @"assets\shaders\fs.glsl", true));
+            shaders.Add("textured", new ShaderProgram(@"assets\shaders\vs_tex.glsl", @"assets\shaders\fs_tex.glsl", true));
 
-            activeShader = "textured";
+            activeShader = "default";
 
             // Load textures from file
-            textures.Add("opentksquare.png", loadImage("opentksquare.png"));
-            textures.Add("opentksquare2.png", loadImage("opentksquare2.png"));
-            textures.Add("grid.png", loadImage("grid.png"));
+            textures.Add("opentksquare.png", loadImage(@"assets\opentksquare.png"));
+            textures.Add("opentksquare2.png", loadImage(@"assets\opentksquare2.png"));
+            textures.Add("grid.png", loadImage(@"assets\grid.png"));
             // Create our objects
-
+            Portal portal = new Portal(true);
+            objects.Add(portal);
 
             Cube cube = new Cube(shaders["default"]);
             Entity e = new Entity(new Vector3(-1f, 0, 0));
+            e.Transform.Rotation = new Quaternion(0, 0, 0, 1f);
             e.Models.Add(cube);
             objects.Add(e);
 
@@ -75,7 +77,7 @@ namespace Game
             background.TextureID = textures["grid.png"];
             background.Transform.Scale = new Vector3(10f, 10f, 10f);
             background.TextureScale = 10;
-            Entity back = new Entity(new Vector3(0f, 0, 0f));
+            Entity back = new Entity(new Vector3(0f, 0f, 0f));
             back.Models.Add(background);
             objects.Add(back);
 
@@ -105,54 +107,46 @@ namespace Game
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            {
-                //GL.UniformMatrix4(shaders[activeShader].GetUniform("modelview"), false, ref Matrix4.Identity());
-                /*Matrix4 Mat = cam.GetViewMatrix();
-                GL.UniformMatrix4(shaders[activeShader].GetUniform("modelview"), false, ref Mat);
-                GL.ColorMask(false, false, false, false); //Start using the stencil 
-                GL.Enable(EnableCap.StencilTest);
+            shaders["textured"].EnableVertexAttribArrays();
+            shaders["default"].EnableVertexAttribArrays();
 
-                //Place a 1 where rendered 
-                GL.StencilFunc(StencilFunction.Always, 1, 1);
-                //Replace where rendered 
-                GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
-                activeShader = "default";
-                //Render stencil triangle 
-                GL.Begin(PrimitiveType.Triangles);
-                GL.Vertex2(new Vector2(0.0f, 0.0f));
-                GL.Vertex2(new Vector2(1.0f, 0.0f));
-                GL.Vertex2(new Vector2(0.0f, 1.0f));
-                GL.End();
-                activeShader = "textured";
-                //Reenable color 
-                GL.ColorMask(true, true, true, true);
-                //Where a 1 was not rendered 
-                GL.StencilFunc(StencilFunction.Notequal, 1, 1);
-                //Keep the pixel 
-                GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);*/
+            /*Matrix4 Mat = Matrix4.Identity * viewMatrix;
+            GL.UniformMatrix4(shaders[activeShader].GetUniform("modelview"), false, ref Mat);*/
+            GL.ColorMask(false, false, false, false); //Start using the stencil 
+            GL.Enable(EnableCap.StencilTest);
+
+            //Place a 1 where rendered 
+            GL.StencilFunc(StencilFunction.Always, 1, 1);
+            //Replace where rendered 
+            GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
+            //Render stencil triangle 
+            //objects[1].Render(viewMatrix, TimeRenderDelta);
+            //Reenable color 
+            GL.ColorMask(true, true, true, true);
+            //Where a 1 was not rendered 
+            GL.StencilFunc(StencilFunction.Notequal, 1, 1);
+            //Keep the pixel 
+            GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
+
+            GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
+            DrawScene(viewMatrix, (float)e.Time);
 
 
-                GL.Enable(EnableCap.DepthTest);
-                GL.Enable(EnableCap.CullFace);
-                GL.CullFace(CullFaceMode.Back);
-                DrawScene((float) e.Time);
-            }
-            
+            shaders["textured"].DisableVertexAttribArrays();
+            shaders["default"].DisableVertexAttribArrays();
             GL.Flush();
             SwapBuffers();
         }
 
-        private void DrawScene(float timeDelta)
+        private void DrawScene(Matrix4 viewMatrix, float timeDelta)
         {
-            shaders[activeShader].EnableVertexAttribArrays();
-
             // Draw all our objects
             foreach (Entity v in objects)
             {
                 v.Render(viewMatrix, (float)Math.Min(TimeRenderDelta, 1 / UpdateFrequency));
             }
-
-            shaders[activeShader].DisableVertexAttribArrays();
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -185,7 +179,7 @@ namespace Game
                     cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
                 }
             }
-            objects[1].Transform.Rotation += new Quaternion(0.02f, 0, 0, 5f);
+            objects[1].Transform.Rotation += new Quaternion(0.02f, 0, 0, 0f);
             // Update model view matrices
             viewMatrix = cam.GetViewMatrix();
             foreach (Entity v in objects)

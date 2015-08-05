@@ -66,7 +66,7 @@ namespace Game
             }
             return GetPortal0().GetSize() / GetPortal1().GetSize();
         }
-        public Vector2d GetTranslation(bool Portal0)
+        /*public Vector2d GetTranslation(bool Portal0)
         {
             if (Portal0)
             {
@@ -96,12 +96,12 @@ namespace Game
             }
             return -Dir;
             
-        }
+        }*/
         public bool GetMirrored()
         {
             return GetPortal0().IsFacingUp() == GetPortal1().IsFacingUp();
         }
-        public Matrix4d GetTransform(bool Portal0)
+        /*public Matrix4d GetTransform(bool Portal0)
         {
             return GetTransform(Portal0, false);
         }
@@ -133,7 +133,7 @@ namespace Game
                 return Matrix;
             }
             return Matrix.Inverted();
-        }
+        }*/
         public void UpdateFOV(Vector2 position, double Distance, bool Portal0)
         {
             /*Portal Portal;

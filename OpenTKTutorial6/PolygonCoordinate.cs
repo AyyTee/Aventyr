@@ -60,22 +60,5 @@ namespace Game
                 return SegmentT;
             }
         }
-        public void DrawDebug()
-        {
-            GL.Begin(PrimitiveType.Lines);
-            Vector2d V0 = GetPosition();
-            GL.Color3(Color.Lime);
-            Vector2d V1 = new Vector2d(4, 4);
-            Vector2d V2 = new Vector2d(4, -4);
-            GL.Vertex2(V0 - V1);
-            GL.Vertex2(V0 + V1);
-            GL.Vertex2(V0 - V2);
-            GL.Vertex2(V0 + V2);
-            GL.Color3(Color.White);
-            Vector2d V3 = GetNormal() * 10;
-            GL.Vertex2(V0);
-            GL.Vertex2(V0 + V3);
-            GL.End();
-        }
     }
 }
