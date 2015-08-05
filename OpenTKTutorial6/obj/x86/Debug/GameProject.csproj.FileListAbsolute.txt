@@ -18,3 +18,5 @@ C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\obj\x86\Debug\OpenTKTutorial4.exe
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\obj\x86\Debug\OpenTKTutorial4.pdb
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\obj\x86\Debug\GameProject.csprojResolveAssemblyReference.cache
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\QuickFont.dll
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\QuickFont.pdb

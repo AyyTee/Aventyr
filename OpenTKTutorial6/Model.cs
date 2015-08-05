@@ -9,6 +9,7 @@ namespace Game
     {
         public Transform Transform = new Transform();
 
+        public int ibo_elements;
         public int VertCount;
         public int IndiceCount;
         public int ColorDataCount;

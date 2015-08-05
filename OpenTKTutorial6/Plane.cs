@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace Game
 {
@@ -16,6 +17,7 @@ namespace Game
             ColorDataCount = 4;
             TextureCoordsCount = 4;
             Shader = shader;
+            GL.GenBuffers(1, out ibo_elements);
         }
 
         public override Vector3[] GetVerts()

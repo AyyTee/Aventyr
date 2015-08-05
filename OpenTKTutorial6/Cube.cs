@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Graphics.OpenGL;
 
 namespace Game
 {
@@ -13,6 +14,7 @@ namespace Game
             IndiceCount = 36;
             ColorDataCount = 8;
             Shader = shader;
+            GL.GenBuffers(1, out ibo_elements);
         }
         
         public override Vector3[] GetVerts()

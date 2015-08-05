@@ -18,7 +18,7 @@ namespace Game
             
         }
         InputExt InputExt;
-        int[] indicedata;
+        //int[] indicedata;
         int ibo_elements;
         Camera cam;
         Vector2 lastMousePos = new Vector2();
@@ -57,13 +57,10 @@ namespace Game
             // Create our objects
 
 
-            Plane background = new Plane(shaders["textured"]);
-            background.TextureID = textures["grid.png"];
-            background.Transform.Scale = new Vector3(10f, 10f, 10f);
-            background.TextureScale = 10;
-            Entity back = new Entity(new Vector3(0, 0, 0));
-            back.Models.Add(background);
-            objects.Add(back);
+            Cube cube = new Cube(shaders["default"]);
+            Entity e = new Entity(new Vector3(-1f, 0, 0));
+            e.Models.Add(cube);
+            objects.Add(e);
 
             TexturedCube tc = new TexturedCube(shaders["textured"]);
             tc.Transform.Position = new Vector3(1f, 3f, 0);
@@ -71,6 +68,18 @@ namespace Game
             Entity box = new Entity(new Vector3(0,0,0));
             box.Models.Add(tc);
             objects.Add(box);
+
+            
+
+            Plane background = new Plane(shaders["textured"]);
+            background.TextureID = textures["grid.png"];
+            background.Transform.Scale = new Vector3(10f, 10f, 10f);
+            background.TextureScale = 10;
+            Entity back = new Entity(new Vector3(0f, 0, 0f));
+            back.Models.Add(background);
+            objects.Add(back);
+
+            /**/
 
             cam = Camera.CameraOrtho(new Vector3(0f, 0f, 10f), 10, Width / (float)Height);
         }
@@ -84,8 +93,7 @@ namespace Game
             GL.ClearColor(Color.CornflowerBlue);
             GL.ClearStencil(0);
             GL.PointSize(5f);
-            //step once to initialize variables before drawing
-            bufferModels();
+
             OnUpdateFrame(new FrameEventArgs());
         }
 
@@ -138,25 +146,10 @@ namespace Game
         {
             shaders[activeShader].EnableVertexAttribArrays();
 
-            int indiceat = 0;
-
             // Draw all our objects
             foreach (Entity v in objects)
             {
-                v.Render(viewMatrix, (float)Math.Min(TimeRenderDelta, 1 / UpdateFrequency), ref indiceat);
-                /*GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
-                GL.UniformMatrix4(shaders[activeShader].GetUniform("modelMatrix"), false, ref v.Transform.TransformMatrix);
-                GL.UniformMatrix4(shaders[activeShader].GetUniform("viewMatrix"), false, ref viewMatrix);
-
-                GL.Uniform1(shaders[activeShader].GetUniform("timeDelta"), (float)Math.Min(TimeRenderDelta, 1 / UpdateFrequency));
-                //GL.Uniform3(shaders[activeShader].GetUniform("speed"), ref v.Speed);
-                if (shaders[activeShader].GetAttribute("maintexture") != -1)
-                {
-                    GL.Uniform1(shaders[activeShader].GetAttribute("maintexture"), v.TextureID);
-                }
-
-                GL.DrawElements(BeginMode.Triangles, v.IndiceCount, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
-                indiceat += v.IndiceCount;*/
+                v.Render(viewMatrix, (float)Math.Min(TimeRenderDelta, 1 / UpdateFrequency));
             }
 
             shaders[activeShader].DisableVertexAttribArrays();
@@ -169,94 +162,35 @@ namespace Game
             TimeRenderDelta = 0;
 
             InputExt.Update();
-            if (InputExt.KeyDown(Key.W))
+            if (Focused)
             {
-                cam.Position += new Vector3(0, 0.02f, 0) * cam.Scale;
+                if (InputExt.KeyDown(Key.W))
+                {
+                    cam.Position += new Vector3(0, 0.02f, 0) * cam.Scale;
+                }
+                else if (InputExt.KeyDown(Key.S))
+                {
+                    cam.Position -= new Vector3(0, 0.02f, 0) * cam.Scale;
+                }
+                if (InputExt.KeyDown(Key.A))
+                {
+                    cam.Position -= new Vector3(0.02f, 0, 0) * cam.Scale;
+                }
+                else if (InputExt.KeyDown(Key.D))
+                {
+                    cam.Position += new Vector3(0.02f, 0, 0) * cam.Scale;
+                }
+                if (InputExt.MouseWheelDelta() != 0)
+                {
+                    cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
+                }
             }
-            else if (InputExt.KeyDown(Key.S))
-            {
-                cam.Position -= new Vector3(0, 0.02f, 0) * cam.Scale;
-            }
-            if (InputExt.KeyDown(Key.A))
-            {
-                cam.Position -= new Vector3(0.02f, 0, 0) * cam.Scale;
-            }
-            else if (InputExt.KeyDown(Key.D))
-            {
-                cam.Position += new Vector3(0.02f, 0, 0) * cam.Scale;
-            }
-            if (InputExt.MouseWheelDelta() != 0)
-            {
-                cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
-            }
-
-            objects[1].Transform.Rotation += new Quaternion(0.1f, 0, 0, 5f);
+            objects[1].Transform.Rotation += new Quaternion(0.02f, 0, 0, 5f);
             // Update model view matrices
             viewMatrix = cam.GetViewMatrix();
             foreach (Entity v in objects)
             {
                 v.StepUpdate();
-            }
-
-            GL.UseProgram(shaders[activeShader].ProgramID);
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-            // Buffer index data
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo_elements);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StaticDraw);
-        }
-
-        public void bufferModels()
-        {
-            List<Vector3> verts = new List<Vector3>();
-            List<int> inds = new List<int>();
-            List<Vector3> colors = new List<Vector3>();
-            List<Vector2> texcoords = new List<Vector2>();
-
-            // Assemble vertex and indice data for all volumes
-            int vertcount = 0;
-            foreach (Entity v in objects)
-            {
-                foreach (Model w in v.Models)
-                {
-                    verts.AddRange(w.GetVerts().ToList());
-                    inds.AddRange(w.GetIndices(vertcount).ToList());
-                    colors.AddRange(w.GetColorData().ToList());
-                    texcoords.AddRange(w.GetTextureCoords());
-                    vertcount += w.VertCount;
-                }
-            }
-
-            Vector3[] vertdata;
-            Vector3[] coldata;
-            Vector2[] texcoorddata;
-
-            vertdata = verts.ToArray();
-            indicedata = inds.ToArray();
-            coldata = colors.ToArray();
-            texcoorddata = texcoords.ToArray();
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, shaders[activeShader].GetBuffer("vPosition"));
-
-            GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StaticDraw);
-            GL.VertexAttribPointer(shaders[activeShader].GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
-
-            // Buffer vertex color if shader supports it
-            if (shaders[activeShader].GetAttribute("vColor") != -1)
-            {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, shaders[activeShader].GetBuffer("vColor"));
-                GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StaticDraw);
-                GL.VertexAttribPointer(shaders[activeShader].GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
-            }
-
-
-            // Buffer texture coordinates if shader supports it
-            if (shaders[activeShader].GetAttribute("texcoord") != -1)
-            {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, shaders[activeShader].GetBuffer("texcoord"));
-                GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StaticDraw);
-                GL.VertexAttribPointer(shaders[activeShader].GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
             }
         }
 

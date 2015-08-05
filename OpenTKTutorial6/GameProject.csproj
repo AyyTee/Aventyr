@@ -44,6 +44,9 @@
     <Reference Include="Poly2Tri">
       <HintPath>..\..\..\..\cs.poly2tri-1388712a475b\cs.poly2tri-1388712a475b\bin\Debug\Poly2Tri.dll</HintPath>
     </Reference>
+    <Reference Include="QuickFont">
+      <HintPath>..\..\..\..\QuickFont_1.0.2_0-1new\QuickFont\QuickFont\bin\Debug\QuickFont.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
