@@ -62,11 +62,12 @@
     <Compile Include="Camera.cs" />
     <Compile Include="InputExt.cs" />
     <Compile Include="MathExt.cs" />
+    <Compile Include="Polygon.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Cube.cs" />
     <Compile Include="Controller.cs" />
-    <Compile Include="Polygon.cs" />
+    <Compile Include="PolygonOld.cs" />
     <Compile Include="PolygonCoordinate.cs" />
     <Compile Include="Portal.cs" />
     <Compile Include="PortalPair.cs" />
@@ -75,6 +76,7 @@
     <Compile Include="ShaderProgram.cs" />
     <Compile Include="TexturedCube.cs" />
     <Compile Include="Model.cs" />
+    <Compile Include="Transform2D.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\grid.png">

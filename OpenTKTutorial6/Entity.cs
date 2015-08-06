@@ -12,26 +12,36 @@ namespace Game
     /// </summary>
     class Entity
     {
-        public Transform Transform { get; set; }
-        public Transform Velocity { get; set; }
-        public List<Model> Models { get; set; }
+        private Transform _velocity = new Transform();
+        private Transform _transform = new Transform();
+        private List<Model> _models = new List<Model>();
+        public Transform Velocity { get { return _velocity; } set { _velocity = value; } }
+        public Transform Transform { get { return _transform; } set { _transform = value; } }
+        public List<Model> Models { get { return _models; } set { _models = value; } }
+        public Entity()
+        {
+        }
+
         public Entity(Vector3 Position)
         {
             Transform = new Transform(Position);
-            Velocity = new Transform();
-            Models = new List<Model>();
         }
-        public void StepUpdate()
+
+        public Entity(Transform transform)
         {
-            foreach (Model v in Models)
-            {
-                v.Transform.GetMatrix();
-            }
+            Transform = transform;
         }
+
         public void BufferModels()
         {
 
         }
+
+        public void StepUpdate()
+        {
+
+        }
+
         public void Render(Matrix4 viewMatrix, float timeDelta)
         {
             Transform.GetMatrix();
@@ -94,7 +104,7 @@ namespace Game
 
 
                 GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
-                Matrix4 modelMatrix = v.Transform.TransformMatrix * Transform.TransformMatrix * viewMatrix;
+                Matrix4 modelMatrix = v.Transform.GetMatrix() * Transform.GetMatrix() * viewMatrix;
                 GL.UniformMatrix4(v.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);
 
                 if (v.Shader.GetAttribute("maintexture") != -1)
@@ -106,6 +116,7 @@ namespace Game
                 //indiceat += v.IndiceCount;
             }
         }
+
         public Transform GetRenderTransform(float deltaTime)
         {
             return Transform.Lerp(Transform, Velocity, deltaTime);

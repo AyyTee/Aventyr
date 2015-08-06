@@ -18,18 +18,15 @@ namespace Game
             
         }
         InputExt InputExt;
-        //int[] indicedata;
-        int ibo_elements;
         Camera cam;
         Vector2 lastMousePos = new Vector2();
 
         List<Entity> objects = new List<Entity>();
-        Dictionary<string, int> textures = new Dictionary<string, int>();
-        Dictionary<string, ShaderProgram> shaders = new Dictionary<string, ShaderProgram>();
-        string activeShader = "default";
+        public static Dictionary<string, int> textures = new Dictionary<string, int>();
+        public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
 
         Matrix4 viewMatrix;
-        
+
         float Time = 0.0f;
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
@@ -42,46 +39,40 @@ namespace Game
             InputExt = new InputExt(this);
             lastMousePos = new Vector2(Mouse.X, Mouse.Y);
 
-            GL.GenBuffers(1, out ibo_elements);
-
             // Load shaders from file
-            shaders.Add("default", new ShaderProgram(@"assets\shaders\vs.glsl", @"assets\shaders\fs.glsl", true));
-            shaders.Add("textured", new ShaderProgram(@"assets\shaders\vs_tex.glsl", @"assets\shaders\fs_tex.glsl", true));
-
-            activeShader = "default";
+            Shaders.Add("default", new ShaderProgram(@"assets\shaders\vs.glsl", @"assets\shaders\fs.glsl", true));
+            Shaders.Add("textured", new ShaderProgram(@"assets\shaders\vs_tex.glsl", @"assets\shaders\fs_tex.glsl", true));
 
             // Load textures from file
             textures.Add("opentksquare.png", loadImage(@"assets\opentksquare.png"));
             textures.Add("opentksquare2.png", loadImage(@"assets\opentksquare2.png"));
             textures.Add("grid.png", loadImage(@"assets\grid.png"));
             // Create our objects
+
             Portal portal = new Portal(true);
+            portal.Transform.Rotation = new Quaternion(0, 1.5f, 1, 0);
             objects.Add(portal);
 
-            Cube cube = new Cube(shaders["default"]);
+            /*Cube cube = new Cube(Shaders["default"]);
             Entity e = new Entity(new Vector3(-1f, 0, 0));
             e.Transform.Rotation = new Quaternion(0, 0, 0, 1f);
             e.Models.Add(cube);
-            objects.Add(e);
+            objects.Add(e);*/
 
-            TexturedCube tc = new TexturedCube(shaders["textured"]);
+            TexturedCube tc = new TexturedCube(Shaders["textured"]);
             tc.Transform.Position = new Vector3(1f, 3f, 0);
             tc.TextureID = textures["opentksquare.png"];
             Entity box = new Entity(new Vector3(0,0,0));
             box.Models.Add(tc);
             objects.Add(box);
 
-            
-
-            Plane background = new Plane(shaders["textured"]);
+            Plane background = new Plane(Shaders["textured"]);
             background.TextureID = textures["grid.png"];
             background.Transform.Scale = new Vector3(10f, 10f, 10f);
             background.TextureScale = 10;
             Entity back = new Entity(new Vector3(0f, 0f, 0f));
             back.Models.Add(background);
             objects.Add(back);
-
-            /**/
 
             cam = Camera.CameraOrtho(new Vector3(0f, 0f, 10f), 10, Width / (float)Height);
         }
@@ -107,8 +98,8 @@ namespace Game
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            shaders["textured"].EnableVertexAttribArrays();
-            shaders["default"].EnableVertexAttribArrays();
+            Shaders["textured"].EnableVertexAttribArrays();
+            Shaders["default"].EnableVertexAttribArrays();
 
             /*Matrix4 Mat = Matrix4.Identity * viewMatrix;
             GL.UniformMatrix4(shaders[activeShader].GetUniform("modelview"), false, ref Mat);*/
@@ -134,8 +125,8 @@ namespace Game
             DrawScene(viewMatrix, (float)e.Time);
 
 
-            shaders["textured"].DisableVertexAttribArrays();
-            shaders["default"].DisableVertexAttribArrays();
+            Shaders["textured"].DisableVertexAttribArrays();
+            Shaders["default"].DisableVertexAttribArrays();
             GL.Flush();
             SwapBuffers();
         }
@@ -179,7 +170,7 @@ namespace Game
                     cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
                 }
             }
-            objects[1].Transform.Rotation += new Quaternion(0.02f, 0, 0, 0f);
+            objects[1].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
             // Update model view matrices
             viewMatrix = cam.GetViewMatrix();
             foreach (Entity v in objects)

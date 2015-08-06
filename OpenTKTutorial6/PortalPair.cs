@@ -10,7 +10,6 @@ namespace Game
 {
     class PortalPair
     {
-        //private VBO FOVBuffer = new VBO(2, PrimitiveType.TriangleFan);
         private Portal[] Portals = new Portal[2];
         public PortalPair()
         {
@@ -96,12 +95,12 @@ namespace Game
             }
             return -Dir;
             
-        }*/
+        }
         public bool GetMirrored()
         {
             return GetPortal0().IsFacingUp() == GetPortal1().IsFacingUp();
         }
-        /*public Matrix4d GetTransform(bool Portal0)
+        public Matrix4d GetTransform(bool Portal0)
         {
             return GetTransform(Portal0, false);
         }

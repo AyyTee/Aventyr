@@ -10,10 +10,10 @@ namespace Game
 {
     class PolygonCoordinate
     {
-        private Polygon Polygon;
+        private PolygonOld Polygon;
         public ushort Index;
         public double SegmentT;
-        public PolygonCoordinate(Polygon Polygon, ushort Index, double SegmentT, bool Absolute)
+        public PolygonCoordinate(PolygonOld Polygon, ushort Index, double SegmentT, bool Absolute)
         {
             this.Polygon = Polygon;
             this.Index = Index;

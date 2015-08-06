@@ -11,42 +11,26 @@ namespace Game
 {
     class Portal : Entity
     {
-        private PortalPair PortalPair;
-        private bool IsPortal0;
-        bool FacingUp;
-        double Size = 40;
+        bool FacingUp { get; set; }
+        double _size = 1;
+        public double Size { get { return _size; } set { _size = value; } }
+
         public Portal(bool FacingUp) : base (new Vector3())
         {
             this.FacingUp = FacingUp;
+
+            Plane p = new Plane(Controller.Shaders["default"]);
+            p.Transform.Scale = new Vector3(0.05f, 1, 1);
+            Models.Add(p);
         }
-        public bool GetIsPortal0()
+
+        /// <summary>
+        /// Returns a polygon representing the 2D FOV through the portal
+        /// </summary>
+        public PolygonOld GetVertices(Vector2 origin, float distance)
         {
-            return IsPortal0;
+
         }
-        public void SetIsPortal0(bool IsPortal0)
-        {
-            this.IsPortal0 = IsPortal0;
-        }
-        //public Vector2d GetPosition2D
-        public double GetSize()
-        {
-            return Size;
-        }
-        public void SetSize(double Scale)
-        {
-            this.Size = Scale;
-        }
-        public void SetPortalPair(PortalPair PortalPair) 
-        {
-            this.PortalPair = PortalPair;
-        }
-        public PortalPair GetPortalPair()
-        {
-            return PortalPair;
-        }
-        public bool IsFacingUp()
-        {
-            return FacingUp;
-        }
+
     }
 }

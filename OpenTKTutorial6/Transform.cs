@@ -9,30 +9,27 @@ namespace Game
 {
     public class Transform
     {
-        public Quaternion Rotation { get; set; }
-        public Vector3 Scale { get; set; }
-        public Vector3 Position { get; set; }
-        public Matrix4 TransformMatrix;
-        public bool IsChanged = true;
+        private Vector3 _position = new Vector3();
+        private Quaternion _rotation = new Quaternion(0, 0, 1, 0);
+        private Vector3 _scale = new Vector3(1, 1, 1);
+
+        public Quaternion Rotation { get { return _rotation; } set { _rotation = value; } }
+        public Vector3 Scale { get { return _scale; } set { _scale = value; } }
+        public Vector3 Position { get { return _position; } set { _position = value; } }
+
         public Transform()
         {
-            Position = new Vector3();
-            Rotation = new Quaternion();
-            Scale = new Vector3(1, 1, 1);
         }
 
         public Transform(Vector3 position)
         {
             Position = position;
-            Rotation = new Quaternion();
-            Scale = new Vector3(1, 1, 1);
         }
 
         public Transform(Vector3 position, Vector3 scale)
         {
             Position = position;
             Scale = scale;
-            Rotation = new Quaternion();
         }
 
         public Transform(Vector3 position, Vector3 scale, Quaternion rotation)
@@ -44,8 +41,7 @@ namespace Game
 
         public Matrix4 GetMatrix()
         {
-            TransformMatrix = Matrix4.CreateScale(Scale) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
-            return TransformMatrix;
+            return Matrix4.CreateScale(Scale) * Matrix4.CreateFromAxisAngle(new Vector3(Rotation.X, Rotation.Y, Rotation.Z), Rotation.W) * Matrix4.CreateTranslation(Position);
         }
 
         public static Transform Lerp(Transform a, Transform b, float t)
@@ -56,17 +52,14 @@ namespace Game
             c.Rotation = Quaternion.Slerp(a.Rotation, b.Rotation, t);
             return c;
         }
+
         /// <summary>
-        /// Projects this Transform onto the xy plane
+        /// Projects a copy of Transform projected onto the XY-plane, the rotation simply uses the Quaternion's W (theta) value
         /// </summary>
         /// <returns></returns>
-        public Transform GetTransform2D()
+        public Transform2D GetTransform2D()
         {
-            Transform a = new Transform();
-            a.Position = new Vector3(Position.X, Position.Y, 0);
-            a.Scale = new Vector3(Scale.X, Scale.Y, 1);
-            a.Rotation = new Quaternion(0, 0, 1, 0);
-            return a;
+            return new Transform2D(new Vector2(Position.X, Position.Y), new Vector2(Scale.X, Scale.Y), Rotation.W);
         }
     }
 }
