@@ -22,6 +22,7 @@ namespace Game
         Vector2 lastMousePos = new Vector2();
 
         Portal portal;
+        Model background;
 
         List<Entity> objects = new List<Entity>();
         public static Dictionary<string, int> textures = new Dictionary<string, int>();
@@ -46,34 +47,28 @@ namespace Game
             Shaders.Add("textured", new ShaderProgram(@"assets\shaders\vs_tex.glsl", @"assets\shaders\fs_tex.glsl", true));
 
             // Load textures from file
-            textures.Add("opentksquare.png", loadImage(@"assets\opentksquare.png"));
-            textures.Add("opentksquare2.png", loadImage(@"assets\opentksquare2.png"));
+            textures.Add("default.png", loadImage(@"assets\default.png"));
             textures.Add("grid.png", loadImage(@"assets\grid.png"));
             // Create our objects
 
             portal = new Portal(true);
             portal.Transform.Rotation = 0f;
+            portal.Transform.Position = new Vector2(0f, 0);
             objects.Add(portal);
-            portal.GetFOV(new Vector2(), 100);
-            portal.Transform.Rotation = (float)Math.PI/2;
-            portal.GetFOV(new Vector2(), 100);
+            Vector2[] a = portal.GetFOV(new Vector2(1f, -1f), 5);
+            portal.Models.Add(Model.CreatePolygon(a));
 
-            Cube cube = new Cube(Shaders["default"]);
-            Entity e = new Entity();
-            e.Models.Add(cube);
-            objects.Add(e);
-
-            TexturedCube tc = new TexturedCube(Shaders["textured"]);
+            Model tc = Model.CreateCube();
             tc.Transform.Position = new Vector3(1f, 3f, 0);
-            tc.TextureID = textures["opentksquare.png"];
             Entity box = new Entity(new Vector2(0,0));
             box.Models.Add(tc);
             objects.Add(box);
 
-            Plane background = new Plane(Shaders["textured"]);
+            background = Model.CreatePlane();
             background.TextureID = textures["grid.png"];
+            background.Transform.Position = new Vector3(0, 0, -1f);
             background.Transform.Scale = new Vector3(10f, 10f, 10f);
-            background.TextureScale = 10;
+            background.TransformUV.Scale = new Vector2(10f, 10f);
             Entity back = new Entity(new Vector2(0f, 0f));
             back.Models.Add(background);
             objects.Add(back);
@@ -174,8 +169,9 @@ namespace Game
                     cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
                 }
             }
-            objects[1].Transform.Rotation += 0.1f;//new Quaternion(0, 0, 0, .01f);
-            portal.GetFOV;
+            //objects[1].Transform.Rotation += 0.1f;
+            //background.TransformUV.Rotation += 0.01f;
+            //portal.GetFOV;
             // Update model view matrices
             viewMatrix = cam.GetViewMatrix();
             foreach (Entity v in objects)

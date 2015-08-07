@@ -14,9 +14,8 @@ C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\obj\
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\QuickFont.dll
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\QuickFont.pdb
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\grid.png
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\opentksquare.png
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\opentksquare2.png
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\shaders\fs_tex.glsl
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\shaders\vs.glsl
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\shaders\vs_tex.glsl
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\shaders\fs.glsl
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\default.png

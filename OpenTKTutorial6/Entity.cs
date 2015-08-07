@@ -37,12 +37,12 @@ namespace Game
 
         }
 
-        public void StepUpdate()
+        public virtual void StepUpdate()
         {
 
         }
 
-        public void Render(Matrix4 viewMatrix, float timeDelta)
+        public virtual void Render(Matrix4 viewMatrix, float timeDelta)
         {
             Transform.GetMatrix();
             foreach (Model v in Models)
@@ -56,10 +56,10 @@ namespace Game
                 int vertcount = 0;
                 
                 verts.AddRange(v.GetVerts().ToList());
-                inds.AddRange(v.GetIndices(vertcount).ToList());
+                inds.AddRange(v.GetIndices().ToList());
                 colors.AddRange(v.GetColorData().ToList());
                 texcoords.AddRange(v.GetTextureCoords());
-                vertcount += v.VertCount;
+                vertcount += v.Vertices.Count;
 
                 Vector3[] vertdata;
                 Vector3[] coldata;
@@ -106,18 +106,28 @@ namespace Game
                 GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
                 Matrix4 modelMatrix = v.Transform.GetMatrix() * Transform.GetMatrix() * viewMatrix;
                 GL.UniformMatrix4(v.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);
+                Matrix4 UVMatrix = v.TransformUV.GetMatrix();
+                GL.UniformMatrix4(v.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
 
                 if (v.Shader.GetAttribute("maintexture") != -1)
                 {
                     GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.TextureID);
                 }
 
-                GL.DrawElements(BeginMode.Triangles, v.IndiceCount, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
+                if (v.Wireframe)
+                {
+                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+                }
+                GL.DrawElements(BeginMode.Triangles, v.Indices.Count, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
+                if (v.Wireframe)
+                {
+                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+                }
                 //indiceat += v.IndiceCount;
             }
         }
 
-        /*public Transform GetRenderTransform(float deltaTime)
+        /*public virtual Transform GetRenderTransform(float deltaTime)
         {
             return Transform.Lerp(Transform, Velocity, deltaTime);
         }*/

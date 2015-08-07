@@ -13,9 +13,11 @@ namespace Game
     {
         public Portal()
         {
+            Models.Add(Model.CreatePlane());
+            Models[0].Transform.Scale = new Vector3(0.05f, 1, 1);
         }
 
-        public Portal(bool leftHanded)
+        public Portal(bool leftHanded) : this()
         {
             SetFacing(leftHanded);
         }
@@ -51,7 +53,7 @@ namespace Game
         public Vector2[] GetFOV(Vector2 origin, float distance)
         {
             Matrix4 a = Transform.GetMatrix();
-            int detail = 10;
+            int detail = 40;
             Vector2[] verts = new Vector2[detail + 2];
             Vector2[] portal = GetVerts();
             for (int i = 0; i < portal.Length; i++)
@@ -63,19 +65,19 @@ namespace Game
             float distanceMin = Math.Max((verts[0] - origin).Length, (verts[1] - origin).Length) + 0.01f;
             distance = Math.Max(distance, distanceMin);
 
-            
             verts[verts.Length - 1] = (verts[0] - origin).Normalized() * distance + origin;
             verts[2] = (verts[1] - origin).Normalized() * distance + origin;
             //find the angle between the edges of the FOV
             double angle0 = MathExt.AngleLine(verts[verts.Length - 1], origin);
             double angle1 = MathExt.AngleLine(verts[2], origin);
-            float diff = (float)MathExt.AngleDiff(angle0, angle1);
+            float diff = (float)MathExt.AngleDiff(angle0, angle1)/2;
             Matrix2 Rot = Matrix2.CreateRotation(diff / (detail - 1));
             for (int i = 3; i < verts.Length - 1; i++)
             {
                 verts[i] = MathExt.Matrix2Mult(verts[i - 1] - origin, Rot) + origin;
             }
-            return verts.ToArray();
+            
+            return verts;
         }
     }
 }
