@@ -18,7 +18,15 @@ namespace Game
         {
             return new Vector2d(V.X * M.M11 + V.Y * M.M21, V.X * M.M12 + V.Y * M.M22);//new Vector2d(M.Column0 * V, M.Column1 * V);
         }
+        static public Vector2 Matrix2Mult(Vector2 V, Matrix2 M)
+        {
+            return new Vector2(V.X * M.M11 + V.Y * M.M21, V.X * M.M12 + V.Y * M.M22);
+        }
         static public double AngleLine(Vector2d V0, Vector2d V1)
+        {
+            return (Math.Atan2(V0.X - V1.X, V0.Y - V1.Y) + 2 * Math.PI) % (2 * Math.PI);
+        }
+        static public double AngleLine(Vector2 V0, Vector2 V1)
         {
             return (Math.Atan2(V0.X - V1.X, V0.Y - V1.Y) + 2 * Math.PI) % (2 * Math.PI);
         }

@@ -21,6 +21,8 @@ namespace Game
         Camera cam;
         Vector2 lastMousePos = new Vector2();
 
+        Portal portal;
+
         List<Entity> objects = new List<Entity>();
         public static Dictionary<string, int> textures = new Dictionary<string, int>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
@@ -49,9 +51,12 @@ namespace Game
             textures.Add("grid.png", loadImage(@"assets\grid.png"));
             // Create our objects
 
-            /*Portal portal = new Portal(true);
-            portal.Transform.Rotation = new Quaternion(0, 0, 1, 1);
-            objects.Add(portal);*/
+            portal = new Portal(true);
+            portal.Transform.Rotation = 0f;
+            objects.Add(portal);
+            portal.GetFOV(new Vector2(), 100);
+            portal.Transform.Rotation = (float)Math.PI/2;
+            portal.GetFOV(new Vector2(), 100);
 
             Cube cube = new Cube(Shaders["default"]);
             Entity e = new Entity();
@@ -170,6 +175,7 @@ namespace Game
                 }
             }
             objects[1].Transform.Rotation += 0.1f;//new Quaternion(0, 0, 0, .01f);
+            portal.GetFOV;
             // Update model view matrices
             viewMatrix = cam.GetViewMatrix();
             foreach (Entity v in objects)
