@@ -10,24 +10,24 @@ namespace Game
     /// <summary>
     /// An object that exists within the world space and can be drawn
     /// </summary>
-    class Entity
+    public class Entity
     {
-        private Transform _velocity = new Transform();
-        private Transform _transform = new Transform();
+        private Transform2D _velocity = new Transform2D();
+        private Transform2D _transform = new Transform2D();
         private List<Model> _models = new List<Model>();
-        public Transform Velocity { get { return _velocity; } set { _velocity = value; } }
-        public Transform Transform { get { return _transform; } set { _transform = value; } }
-        public List<Model> Models { get { return _models; } set { _models = value; } }
+        public virtual Transform2D Velocity { get { return _velocity; } set { _velocity = value; } }
+        public virtual Transform2D Transform { get { return _transform; } set { _transform = value; } }
+        public virtual List<Model> Models { get { return _models; } set { _models = value; } }
         public Entity()
         {
         }
 
-        public Entity(Vector3 Position)
+        public Entity(Vector2 Position)
         {
-            Transform = new Transform(Position);
+            Transform = new Transform2D(Position);
         }
 
-        public Entity(Transform transform)
+        public Entity(Transform2D transform)
         {
             Transform = transform;
         }
@@ -117,9 +117,9 @@ namespace Game
             }
         }
 
-        public Transform GetRenderTransform(float deltaTime)
+        /*public Transform GetRenderTransform(float deltaTime)
         {
             return Transform.Lerp(Transform, Velocity, deltaTime);
-        }
+        }*/
     }
 }

@@ -62,7 +62,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="InputExt.cs" />
     <Compile Include="MathExt.cs" />
-    <Compile Include="Polygon.cs" />
+    <Compile Include="PolygonSimple.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Cube.cs" />

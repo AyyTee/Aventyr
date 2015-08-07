@@ -9,28 +9,55 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    class Portal : Entity
+    public class Portal : Entity
     {
-        bool FacingUp { get; set; }
-        double _size = 1;
-        public double Size { get { return _size; } set { _size = value; } }
-
-        public Portal(bool FacingUp) : base (new Vector3())
+        public Portal()
         {
-            this.FacingUp = FacingUp;
+        }
 
-            Plane p = new Plane(Controller.Shaders["default"]);
-            p.Transform.Scale = new Vector3(0.05f, 1, 1);
-            Models.Add(p);
+        public Portal(bool leftHanded)
+        {
+            SetFacing(leftHanded);
+        }
+
+        public void SetSize(float size)
+        {
+            Transform.Scale = new Vector2(Transform.Scale.X, size);
+        }
+
+        public void SetFacing(bool leftHanded)
+        {
+            if (leftHanded)
+            {
+                Transform.Scale = new Vector2(1, Transform.Scale.Y);
+            }
+            else
+            {
+                Transform.Scale = new Vector2(-1, Transform.Scale.Y);
+            }
+        }
+
+        /// <summary>
+        /// Returns an array of two Vectors defining the Portals local location
+        /// </summary>
+        public Vector2[] GetVerts()
+        {
+            return new Vector2[] { new Vector2(0, 0.5f), new Vector2(0, -0.5f)};
         }
 
         /// <summary>
         /// Returns a polygon representing the 2D FOV through the portal
         /// </summary>
-        public PolygonOld GetVertices(Vector2 origin, float distance)
+        public Vector2[] GetFOV(Vector2 origin, float distance)
         {
-
+            Matrix4 a = Transform.GetMatrix();
+            List<Vector2> verts = new List<Vector2>();
+            foreach (Vector2 v in GetVerts())
+            {
+                Vector4 b = Vector4.Transform(new Vector4(v.X, v.Y, 0, 1), a);
+                verts.Add(new Vector2(b.X, b.Y));
+            }
+            return verts.ToArray();
         }
-
     }
 }

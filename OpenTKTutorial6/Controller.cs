@@ -49,20 +49,19 @@ namespace Game
             textures.Add("grid.png", loadImage(@"assets\grid.png"));
             // Create our objects
 
-            Portal portal = new Portal(true);
-            portal.Transform.Rotation = new Quaternion(0, 1.5f, 1, 0);
-            objects.Add(portal);
+            /*Portal portal = new Portal(true);
+            portal.Transform.Rotation = new Quaternion(0, 0, 1, 1);
+            objects.Add(portal);*/
 
-            /*Cube cube = new Cube(Shaders["default"]);
-            Entity e = new Entity(new Vector3(-1f, 0, 0));
-            e.Transform.Rotation = new Quaternion(0, 0, 0, 1f);
+            Cube cube = new Cube(Shaders["default"]);
+            Entity e = new Entity();
             e.Models.Add(cube);
-            objects.Add(e);*/
+            objects.Add(e);
 
             TexturedCube tc = new TexturedCube(Shaders["textured"]);
             tc.Transform.Position = new Vector3(1f, 3f, 0);
             tc.TextureID = textures["opentksquare.png"];
-            Entity box = new Entity(new Vector3(0,0,0));
+            Entity box = new Entity(new Vector2(0,0));
             box.Models.Add(tc);
             objects.Add(box);
 
@@ -70,7 +69,7 @@ namespace Game
             background.TextureID = textures["grid.png"];
             background.Transform.Scale = new Vector3(10f, 10f, 10f);
             background.TextureScale = 10;
-            Entity back = new Entity(new Vector3(0f, 0f, 0f));
+            Entity back = new Entity(new Vector2(0f, 0f));
             back.Models.Add(background);
             objects.Add(back);
 
@@ -170,7 +169,7 @@ namespace Game
                     cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
                 }
             }
-            objects[1].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
+            objects[1].Transform.Rotation += 0.1f;//new Quaternion(0, 0, 0, .01f);
             // Update model view matrices
             viewMatrix = cam.GetViewMatrix();
             foreach (Entity v in objects)

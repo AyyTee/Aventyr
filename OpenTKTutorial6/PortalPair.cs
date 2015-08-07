@@ -14,7 +14,7 @@ namespace Game
         public PortalPair()
         {
         }
-        public PortalPair(Portal Portal0)
+        /*public PortalPair(Portal Portal0)
         {
             SetPortal0(Portal0);
         }
@@ -44,7 +44,7 @@ namespace Game
             Portals[1] = Portal1;
             Portal1.SetPortalPair(this);
             Portal1.SetIsPortal0(false);
-        }
+        }*/
         public Portal[] GetPortals()
         {
             return Portals;
@@ -57,14 +57,14 @@ namespace Game
         {
             return Portals[1];
         }
-        public double GetScale(bool Portal0)
+        /*public double GetScale(bool Portal0)
         {
             if (Portal0)
             {
-                return GetPortal1().GetSize() / GetPortal0().GetSize();
+                return GetPortal1().Size / GetPortal0().Size;
             }
-            return GetPortal0().GetSize() / GetPortal1().GetSize();
-        }
+            return GetPortal0().Size / GetPortal1().Size;
+        }*/
         /*public Vector2d GetTranslation(bool Portal0)
         {
             if (Portal0)
