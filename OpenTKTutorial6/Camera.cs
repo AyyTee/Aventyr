@@ -5,19 +5,33 @@ namespace Game
 {
     class Camera
     {
-        public Vector3 Orientation { get; set; }
+        private Transform _transform = new Transform();
+        public Transform Transform
+        {
+            get { return _transform; }
+            set { _transform = value; }
+        }
         public float Scale { get; set; }
-        private float FOV { get; set; }
+        private float FOV 
+        {
+            get
+            {
+                return FOV;
+            }
+            set
+            {
+                this.FOV = (float)MathHelper.Clamp(value, float.Epsilon, Math.PI - 0.1);
+            }
+        }
         public float Aspect { get; set; }
         public float ZNear { get; set; }
         public float ZFar { get; set; }
         public bool Orthographic { get; set; }
-        public Vector3 Position { get; set; }
         public static Camera CameraOrtho(Vector3 position, float scale, float aspect)
         {
             Camera cam = new Camera();
-            cam.Orientation = new Vector3((float)Math.PI, 0f, 0f);
-            cam.Position = position;
+            cam.Transform.Rotation = new Quaternion(0, 0, 1, 0);
+            cam.Transform.Position = position;
             cam.Scale = scale;
             cam.Aspect = aspect;
             cam.Orthographic = true;
@@ -26,25 +40,14 @@ namespace Game
             return cam;
         }
         
-        public float GetFOV()
-        {
-            return FOV;
-        }
-        public void SetFOV(float FOV)
-        {
-            this.FOV = (float)MathHelper.Clamp(FOV, float.Epsilon, Math.PI - 0.1);
-        }
         /// <summary>
         /// Create a view matrix for this Camera
         /// </summary>
         /// <returns>A view matrix to look in the camera's direction</returns>
         public Matrix4 GetViewMatrix()
         {
-            Vector3 lookat = new Vector3();
-
-            lookat.X = (float)(Math.Sin((float)Orientation.X) * Math.Cos((float)Orientation.Y));
-            lookat.Y = (float)Math.Sin((float)Orientation.Y);
-            lookat.Z = (float)(Math.Cos((float)Orientation.X) * Math.Cos((float)Orientation.Y));
+            Matrix4 m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
+            Vector3 lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
             Matrix4 perspective;
             if (Orthographic)
             {
@@ -54,7 +57,19 @@ namespace Game
             {
                 perspective = Matrix4.CreatePerspectiveFieldOfView(FOV, Aspect, ZNear, ZFar);
             }
-            return Matrix4.LookAt(Position, Position + lookat, Vector3.UnitY) * perspective;
+            return Matrix4.LookAt(Transform.Position, Transform.Position + lookat, GetUp()) * perspective;
+        }
+
+        public Vector3 GetUp()
+        {
+            Matrix4 m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
+            return Vector3.Transform(new Vector3(0, 1, 0), m);
+        }
+
+        public Vector3 GetRight()
+        {
+            Matrix4 m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
+            return Vector3.Transform(new Vector3(1, 0, 0), m);
         }
     }
 }

@@ -15,10 +15,10 @@ namespace Game
         public Portal()
         {
             Models.Add(Model.CreatePlane());
-            Models[0].Transform.Scale = new Vector3(0.05f, 1, 1);
+            Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
+            Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             Models.Add(Model.CreatePlane());
-            Models[1].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
-            Models[1].Transform.Position = new Vector3(0.05f, 0.4f, 1);
+            Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
         }
 
         public Portal(bool leftHanded) : this()
