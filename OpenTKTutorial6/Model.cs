@@ -208,7 +208,6 @@ namespace Game
             }
 
             Model model = new Model(vertices, indices.ToArray());
-            model.Wireframe = true;
             return model;
         }
 

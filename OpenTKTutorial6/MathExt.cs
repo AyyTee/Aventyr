@@ -36,7 +36,7 @@ namespace Game
         }
         static public double AngleDiff(double Angle0, double Angle1)
         {
-            return ((((Angle0 - Angle1) % Math.PI*2) + Math.PI*3) % Math.PI*2) - Math.PI;
+            return (Angle1 - Angle0 + Math.PI) % (Math.PI * 2) - Math.PI;
         }
         static public double Lerp(double Value0, double Value1, double T)
         {

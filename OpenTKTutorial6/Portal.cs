@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -47,13 +48,17 @@ namespace Game
             return new Vector2[] { new Vector2(0, 0.5f), new Vector2(0, -0.5f)};
         }
 
+        public Vector2[] GetFOV(Vector2 origin, float distance)
+        {
+            return GetFOV(origin, distance, 10);
+        }
+
         /// <summary>
         /// Returns a polygon representing the 2D FOV through the portal
         /// </summary>
-        public Vector2[] GetFOV(Vector2 origin, float distance)
+        public Vector2[] GetFOV(Vector2 origin, float distance, int detail)
         {
             Matrix4 a = Transform.GetMatrix();
-            int detail = 40;
             Vector2[] verts = new Vector2[detail + 2];
             Vector2[] portal = GetVerts();
             for (int i = 0; i < portal.Length; i++)
@@ -70,13 +75,22 @@ namespace Game
             //find the angle between the edges of the FOV
             double angle0 = MathExt.AngleLine(verts[verts.Length - 1], origin);
             double angle1 = MathExt.AngleLine(verts[2], origin);
-            float diff = (float)MathExt.AngleDiff(angle0, angle1)/2;
-            Matrix2 Rot = Matrix2.CreateRotation(diff / (detail - 1));
+            float diff = (float)MathExt.AngleDiff(angle0, angle1);
+            Debug.Assert(diff <= 180);
+            Matrix2 Rot;
+            /*if (diff < 0)
+            {
+                Rot = Matrix2.CreateRotation(-diff / (detail - 1));
+            }
+            else*/
+            {
+                Rot = Matrix2.CreateRotation(diff / (detail - 1));
+            }
+
             for (int i = 3; i < verts.Length - 1; i++)
             {
                 verts[i] = MathExt.Matrix2Mult(verts[i - 1] - origin, Rot) + origin;
             }
-            
             return verts;
         }
     }

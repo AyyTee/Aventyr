@@ -20,9 +20,14 @@ namespace Game
         InputExt InputExt;
         Camera cam;
         Vector2 lastMousePos = new Vector2();
+        /// <summary>
+        /// Intended to keep pointless messages from the Poly2Tri library out of the console window
+        /// </summary>
+        StreamWriter Log = new StreamWriter("outputLog.txt");
 
         Portal portal;
         Model background;
+        Entity fov;
 
         List<Entity> objects = new List<Entity>();
         public static Dictionary<string, int> textures = new Dictionary<string, int>();
@@ -53,16 +58,17 @@ namespace Game
 
             portal = new Portal(true);
             portal.Transform.Rotation = 0f;
-            portal.Transform.Position = new Vector2(0f, 0);
+            portal.Transform.Position = new Vector2(1f, 0);
             objects.Add(portal);
-            Vector2[] a = portal.GetFOV(new Vector2(1f, -1f), 5);
-            portal.Models.Add(Model.CreatePolygon(a));
 
             Model tc = Model.CreateCube();
             tc.Transform.Position = new Vector3(1f, 3f, 0);
             Entity box = new Entity(new Vector2(0,0));
             box.Models.Add(tc);
             objects.Add(box);
+
+            fov = new Entity();
+            objects.Add(fov);
 
             background = Model.CreatePlane();
             background.TextureID = textures["grid.png"];
@@ -169,6 +175,15 @@ namespace Game
                     cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
                 }
             }
+            Console.SetOut(Log);
+            Vector2[] a = portal.GetFOV(new Vector2(cam.Position.X, cam.Position.Y), 5);
+            if (fov.Models.Count > 0)
+            {
+                fov.Models.RemoveAt(0);
+            }
+            fov.Models.Add(Model.CreatePolygon(a));
+            Console.SetOut(Console.Out);
+            //Console.Clear();
             //objects[1].Transform.Rotation += 0.1f;
             //background.TransformUV.Rotation += 0.01f;
             //portal.GetFOV;
