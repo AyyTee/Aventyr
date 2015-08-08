@@ -24,19 +24,26 @@ namespace Game
         }
         static public double AngleLine(Vector2d V0, Vector2d V1)
         {
-            return (Math.Atan2(V0.X - V1.X, V0.Y - V1.Y) + 2 * Math.PI) % (2 * Math.PI);
+            double val = (Math.Atan2(V0.X - V1.X, V0.Y - V1.Y) + 2 * Math.PI) % (2 * Math.PI);
+            if (val == double.NaN)
+            {
+                return 0;
+            }
+            return val;
         }
         static public double AngleLine(Vector2 V0, Vector2 V1)
         {
-            return (Math.Atan2(V0.X - V1.X, V0.Y - V1.Y) + 2 * Math.PI) % (2 * Math.PI);
+            return AngleLine(new Vector2d(V0.X, V0.Y), new Vector2d(V1.X, V1.Y));
         }
         static public double AngleVector(Vector2d V0)
         {
             return (Math.Atan2(V0.X, V0.Y) + 2 * Math.PI) % (2 * Math.PI);
         }
-        static public double AngleDiff(double Angle0, double Angle1)
+        static public double AngleDiff(double angle0, double angle1)
         {
-            return (Angle1 - Angle0 + Math.PI) % (Math.PI * 2) - Math.PI;
+
+            //return Math.PI - Math.Abs(Math.Abs(angle0 - angle1) - Math.PI);
+            return ((angle1 - angle0) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
         }
         static public double Lerp(double Value0, double Value1, double T)
         {

@@ -46,7 +46,6 @@ namespace Game
         public Matrix4 GetMatrix()
         {
             return Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
-
         }
     }
 }

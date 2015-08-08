@@ -25,9 +25,9 @@ namespace Game
         /// </summary>
         StreamWriter Log = new StreamWriter("outputLog.txt");
 
-        Portal portal;
         Model background;
         Entity fov;
+        PortalPair portalPair;
 
         List<Entity> objects = new List<Entity>();
         public static Dictionary<string, int> textures = new Dictionary<string, int>();
@@ -56,19 +56,26 @@ namespace Game
             textures.Add("grid.png", loadImage(@"assets\grid.png"));
             // Create our objects
 
-            portal = new Portal(true);
-            portal.Transform.Rotation = 0f;
-            portal.Transform.Position = new Vector2(1f, 0);
-            objects.Add(portal);
+            Portal portal0 = new Portal(true);
+            portal0.Transform.Rotation = 1f;
+            portal0.Transform.Position = new Vector2(-1f, -3f);
+            portal0.Transform.Scale = new Vector2(-3f, 3f);
+            portal0.Models[0].TransformUV.Scale = new Vector2(5f, 5f);
+            objects.Add(portal0);
+
+            Portal portal1 = new Portal(true);
+            portal1.Transform.Rotation = -1f;
+            portal1.Transform.Position = new Vector2(1f, 1f);
+            portal1.Transform.Scale = new Vector2(-2f, -2f);
+            objects.Add(portal1);
+
+            portalPair = new PortalPair(portal0, portal1);
 
             Model tc = Model.CreateCube();
             tc.Transform.Position = new Vector3(1f, 3f, 0);
             Entity box = new Entity(new Vector2(0,0));
             box.Models.Add(tc);
             objects.Add(box);
-
-            fov = new Entity();
-            objects.Add(fov);
 
             background = Model.CreatePlane();
             background.TextureID = textures["grid.png"];
@@ -79,6 +86,8 @@ namespace Game
             back.Models.Add(background);
             objects.Add(back);
 
+            fov = new Entity();
+            //objects.Add(fov);
             cam = Camera.CameraOrtho(new Vector3(0f, 0f, 10f), 10, Width / (float)Height);
         }
 
@@ -116,7 +125,7 @@ namespace Game
             //Replace where rendered 
             GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
             //Render stencil triangle 
-            //objects[1].Render(viewMatrix, TimeRenderDelta);
+            fov.Render(viewMatrix, TimeRenderDelta);
             //Reenable color 
             GL.ColorMask(true, true, true, true);
             //Where a 1 was not rendered 
@@ -125,8 +134,8 @@ namespace Game
             GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
 
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Back);
+            /*GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);*/
             DrawScene(viewMatrix, (float)e.Time);
 
 
@@ -138,11 +147,31 @@ namespace Game
 
         private void DrawScene(Matrix4 viewMatrix, float timeDelta)
         {
+            
             // Draw all our objects
             foreach (Entity v in objects)
             {
                 v.Render(viewMatrix, (float)Math.Min(TimeRenderDelta, 1 / UpdateFrequency));
             }
+
+            Vector3[] vector = new Vector3[4];
+            vector[0] = new Vector3((float)cam.Position.X - 0.2f, (float)cam.Position.Y, 0);
+            vector[1] = new Vector3((float)cam.Position.X + 0.2f, (float)cam.Position.Y, 0);
+            vector[2] = new Vector3((float)cam.Position.X, (float)cam.Position.Y, 0);
+            vector[3] = new Vector3((float)cam.Position.X, (float)cam.Position.Y + 0.2f, 0);
+            GL.LineWidth(2f);
+            GL.Begin(PrimitiveType.Lines);
+            foreach (Vector3 v in vector)
+            {
+                GL.Vertex3(v);
+            }
+            Matrix4 m = Portal.GetMatrix(portalPair.Portals[0], portalPair.Portals[1]);
+            foreach (Vector3 v in vector)
+            {
+                GL.Vertex3(Vector3.Transform(v, m));
+            }
+            GL.End();
+            GL.LineWidth(1f);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -154,6 +183,10 @@ namespace Game
             InputExt.Update();
             if (Focused)
             {
+                if (InputExt.KeyPress(Key.Escape))
+                {
+                    Exit();
+                }
                 if (InputExt.KeyDown(Key.W))
                 {
                     cam.Position += new Vector3(0, 0.02f, 0) * cam.Scale;
@@ -176,14 +209,19 @@ namespace Game
                 }
             }
             Console.SetOut(Log);
-            Vector2[] a = portal.GetFOV(new Vector2(cam.Position.X, cam.Position.Y), 5);
-            if (fov.Models.Count > 0)
+            fov.Models.Clear();
+            foreach (Portal portal in portalPair.Portals)
             {
-                fov.Models.RemoveAt(0);
+                Vector2[] a = portal.GetFOV(new Vector2(cam.Position.X, cam.Position.Y), 5);
+                if (a.Length >= 3)
+                {
+                    fov.Models.Add(Model.CreatePolygon(a));
+                }
             }
-            fov.Models.Add(Model.CreatePolygon(a));
             Console.SetOut(Console.Out);
-            //Console.Clear();
+
+            
+
             //objects[1].Transform.Rotation += 0.1f;
             //background.TransformUV.Rotation += 0.01f;
             //portal.GetFOV;

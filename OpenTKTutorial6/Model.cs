@@ -185,7 +185,6 @@ namespace Game
 
         public static Model CreatePolygon(Poly2Tri.Polygon polygon)
         {
-            Debug.Assert(polygon.Points.Count >= 3, "polygon must have at least 3 points");
             P2T.Triangulate(polygon);
             Vertex[] vertices = new Vertex[polygon.Points.Count];
             List<int> indices = new List<int>();
