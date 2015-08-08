@@ -66,8 +66,8 @@ namespace Game
             objects.Add(back);
 
             Portal portal0 = new Portal(true);
-            portal0.Transform.Rotation = 1f;
-            portal0.Transform.Position = new Vector2(-1f, -3f);
+            portal0.Transform.Rotation = 1.2f;
+            portal0.Transform.Position = new Vector2(-4f, 0f);
             portal0.Transform.Scale = new Vector2(-3f, 3f);
             portal0.Models[0].TransformUV.Scale = new Vector2(5f, 5f);
             objects.Add(portal0);
@@ -75,7 +75,7 @@ namespace Game
             Portal portal1 = new Portal(true);
             portal1.Transform.Rotation = -1f;
             portal1.Transform.Position = new Vector2(1f, 1f);
-            portal1.Transform.Scale = new Vector2(-2f, -2f);
+            portal1.Transform.Scale = new Vector2(1f, 2f);
             objects.Add(portal1);
 
             portalPair = new PortalPair(portal0, portal1);
@@ -132,7 +132,7 @@ namespace Game
             //Replace where rendered 
             GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
             //Render stencil triangle 
-            fov.Render(viewMatrix, TimeRenderDelta);
+            //fov.Render(viewMatrix, TimeRenderDelta);
             //Reenable color 
             GL.ColorMask(true, true, true, true);
             //Where a 1 was not rendered 
@@ -160,18 +160,20 @@ namespace Game
                 v.Render(viewMatrix, (float)Math.Min(TimeRenderDelta, 1 / UpdateFrequency));
             }
 
-            Vector3[] vector = new Vector3[4];
+            Vector3[] vector = new Vector3[6];
             vector[0] = new Vector3((float)cam.Transform.Position.X - 0.2f, (float)cam.Transform.Position.Y, 0);
             vector[1] = new Vector3((float)cam.Transform.Position.X + 0.2f, (float)cam.Transform.Position.Y, 0);
             vector[2] = new Vector3((float)cam.Transform.Position.X, (float)cam.Transform.Position.Y, 0);
             vector[3] = new Vector3((float)cam.Transform.Position.X, (float)cam.Transform.Position.Y + 0.2f, 0);
+            vector[4] = new Vector3((float)cam.Transform.Position.X, (float)cam.Transform.Position.Y, 0);
+            vector[5] = new Vector3((float)cam.Transform.Position.X + 0.2f, (float)cam.Transform.Position.Y + 0.2f, 0);
             GL.LineWidth(2f);
             GL.Begin(PrimitiveType.Lines);
             foreach (Vector3 v in vector)
             {
                 GL.Vertex3(v);
             }
-            Matrix4 m = Portal.GetMatrix(portalPair.Portals[0], portalPair.Portals[1]);
+            Matrix4 m = Portal.GetTransform(portalPair.Portals[0], portalPair.Portals[1]).GetMatrix();//Portal.GetMatrix(portalPair.Portals[0], portalPair.Portals[1]);
             foreach (Vector3 v in vector)
             {
                 GL.Vertex3(Vector3.Transform(v, m));
@@ -195,27 +197,28 @@ namespace Game
                 }
                 if (InputExt.KeyDown(Key.W))
                 {
-                    cam.Transform.Position += cam.GetUp() * 0.02f * cam.Scale;
+                    cam.Transform.Position += cam.GetUp() * 0.02f * cam.Transform.Scale.Y;
                 }
                 else if (InputExt.KeyDown(Key.S))
                 {
-                    cam.Transform.Position -= cam.GetUp() * 0.02f * cam.Scale;
+                    cam.Transform.Position -= cam.GetUp() * 0.02f * cam.Transform.Scale.Y;
                 }
                 if (InputExt.KeyDown(Key.A))
                 {
-                    cam.Transform.Position -= cam.GetRight() * 0.02f * cam.Scale;
+                    cam.Transform.Position -= cam.GetRight() * 0.02f * cam.Transform.Scale.X;
                 }
                 else if (InputExt.KeyDown(Key.D))
                 {
-                    cam.Transform.Position += cam.GetRight() * 0.02f * cam.Scale;
+                    cam.Transform.Position += cam.GetRight() * 0.02f * cam.Transform.Scale.X;
                 }
                 if (InputExt.MouseWheelDelta() != 0)
                 {
-                    cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
+                    cam.Transform.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
                 }
             }
             Console.SetOut(Log);
             fov.Models.Clear();
+            portalPair.Portals[1].Transform.Rotation += 0.005f;
             foreach (Portal portal in portalPair.Portals)
             {
                 Vector2[] a = portal.GetFOV(new Vector2(cam.Transform.Position.X, cam.Transform.Position.Y), 5);

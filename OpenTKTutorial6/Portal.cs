@@ -14,6 +14,7 @@ namespace Game
     {
         public Portal()
         {
+            Transform.FixedScale = true;
             Models.Add(Model.CreatePlane());
             Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
@@ -56,17 +57,26 @@ namespace Game
             return GetFOV(origin, distance, 10);
         }
 
-        /*public static Transform2D GetTransform(Portal portalEnter, Portal portalExit)
+        public static Transform2D GetTransform(Portal portalEnter, Portal portalExit)
         {
             Transform2D t = new Transform2D();
             Transform2D tEnter = portalEnter.Transform;
             Transform2D tExit = portalExit.Transform;
-            t.Rotation = tExit.Rotation - tEnter.Rotation;
+            
+            
             t.Scale = Vector2.Divide(tExit.Scale, tEnter.Scale);
-            Matrix2 m = Matrix2.CreateRotation(t.Rotation) * Matrix2.CreateScale(t.Scale);
-            t.Position = tExit.Position - MathExt.Matrix2Mult(tEnter.Position, m);
+            if (tExit.IsMirrored() != tEnter.IsMirrored())
+            {
+                t.Rotation = tExit.Rotation + tEnter.Rotation;
+            }
+            else
+            {
+                t.Rotation = tExit.Rotation - tEnter.Rotation;
+            }
+            Vector3 v = GetMatrix(portalEnter, portalExit).ExtractTranslation();
+            t.Position = new Vector2(v.X, v.Y);
             return t;
-        }*/
+        }
 
         /// <summary>
         /// Returns matrix to transform between one portals coordinate space to another

@@ -11,7 +11,6 @@ namespace Game
             get { return _transform; }
             set { _transform = value; }
         }
-        public float Scale { get; set; }
         private float FOV 
         {
             get
@@ -27,12 +26,18 @@ namespace Game
         public float ZNear { get; set; }
         public float ZFar { get; set; }
         public bool Orthographic { get; set; }
+
+        public Camera()
+        {
+            Transform.FixedScale = true;
+        }
+
         public static Camera CameraOrtho(Vector3 position, float scale, float aspect)
         {
             Camera cam = new Camera();
             cam.Transform.Rotation = new Quaternion(0, 0, 1, 0);
             cam.Transform.Position = position;
-            cam.Scale = scale;
+            cam.Transform.Scale = new Vector3(scale);
             cam.Aspect = aspect;
             cam.Orthographic = true;
             cam.ZNear = 0.01f;
@@ -51,7 +56,7 @@ namespace Game
             Matrix4 perspective;
             if (Orthographic)
             {
-                perspective = Matrix4.CreateOrthographic(Aspect * Scale, Scale, ZNear, ZFar);
+                perspective = Matrix4.CreateOrthographic(Aspect * Transform.Scale.X, Transform.Scale.Y, ZNear, ZFar);
             }
             else
             {

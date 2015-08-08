@@ -11,9 +11,26 @@ namespace Game
         private Vector2 _position = new Vector2();
         private float _rotation = 0;
         private Vector2 _scale = new Vector2(1, 1);
+        private bool _fixedScale = false;
+
+        public bool FixedScale { get { return _fixedScale; } set { _fixedScale = value; } }
 
         public float Rotation { get { return _rotation; } set { _rotation = value; } }
-        public Vector2 Scale { get { return _scale; } set { _scale = value; } }
+        public Vector2 Scale 
+        { 
+            get { return _scale; } 
+            set 
+            { 
+                if (FixedScale)
+                {
+                    _scale = new Vector2(value.X, value.X);
+                }
+                else
+                {
+                    _scale = value; 
+                }
+            } 
+        }
         public Vector2 Position { get { return _position; } set { _position = value; } }
 
         public Transform2D()
@@ -46,6 +63,11 @@ namespace Game
         public Matrix4 GetMatrix()
         {
             return Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
+        }
+
+        public bool IsMirrored()
+        {
+            return Scale.X * Scale.Y < 0;
         }
     }
 }

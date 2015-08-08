@@ -12,9 +12,26 @@ namespace Game
         private Vector3 _position = new Vector3();
         private Quaternion _rotation = new Quaternion(0, 0, 1, 0);
         private Vector3 _scale = new Vector3(1, 1, 1);
+        private bool _fixedScale = false;
+
+        public bool FixedScale { get { return _fixedScale; } set { _fixedScale = value; } }
 
         public Quaternion Rotation { get { return _rotation; } set { _rotation = value; } }
-        public Vector3 Scale { get { return _scale; } set { _scale = value; } }
+        public Vector3 Scale
+        {
+            get { return _scale; }
+            set
+            {
+                if (FixedScale)
+                {
+                    _scale = new Vector3(value.X, value.X, value.X);
+                }
+                else
+                {
+                    _scale = value;
+                }
+            }
+        }
         public Vector3 Position { get { return _position; } set { _position = value; } }
 
         public Transform()
