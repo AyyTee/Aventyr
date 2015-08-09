@@ -74,6 +74,7 @@
     <Compile Include="ShaderProgram.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Transform2D.cs" />
+    <Compile Include="VectorExt2.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\default.png">

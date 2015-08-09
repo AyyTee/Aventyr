@@ -35,10 +35,17 @@ namespace Game
         {
             return AngleLine(new Vector2d(V0.X, V0.Y), new Vector2d(V1.X, V1.Y));
         }
+
         static public double AngleVector(Vector2d V0)
         {
             return (Math.Atan2(V0.X, V0.Y) + 2 * Math.PI) % (2 * Math.PI);
         }
+
+        static public double AngleVector(Vector2 V0)
+        {
+            return AngleVector(new Vector2d(V0.X, V0.Y));
+        }
+
         static public double AngleDiff(double angle0, double angle1)
         {
 
@@ -157,9 +164,14 @@ namespace Game
         {
             return -V0 + 2 * (V0 - VectorProject(V0, V1));
         }
+
+        /// <summary>
+        /// Tests if two lines intersect
+        /// </summary>
+        /// <returns>Returns an instance of IntersectPoint</returns>
         static public IntersectPoint LineIntersection(Vector2d ps0, Vector2d pe0, Vector2d ps1, Vector2d pe1, bool SegmentOnly)
         {
-            IntersectPoint V = new IntersectPoint();
+            IntersectPoint v = new IntersectPoint();
             double ua;
             double ud = (pe1.Y - ps1.Y) * (pe0.X - ps0.X) - (pe1.X - ps1.X) * (pe0.Y - ps0.Y);
             if (ud != 0)
@@ -170,19 +182,19 @@ namespace Game
                     double ub = ((pe0.X - ps0.X) * (ps0.Y - ps1.Y) - (pe0.Y - ps0.Y) * (ps0.X - ps1.X)) / ud;
                     if (ua < 0 || ua > 1 || ub < 0 || ub > 1)
                     {
-                        V.Exists = false;
-                        return V;
+                        v.Exists = false;
+                        return v;
                     }
                 }
             }
             else
             {
-                V.Exists = false;
-                return V;
+                v.Exists = false;
+                return v;
             }
-            V.Exists = true;
-            V.Vector = Lerp(ps0, pe0, ua);
-            return V;
+            v.Exists = true;
+            v.Vector = Lerp(ps0, pe0, ua);
+            return v;
         }
 
         static public IntersectPoint LineIntersection(Vector2 ps0, Vector2 pe0, Vector2 ps1, Vector2 pe1, bool segmentOnly)

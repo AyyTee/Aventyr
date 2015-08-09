@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,12 +25,9 @@ namespace Game
             {
                 if (FixedScale)
                 {
-                    _scale = new Vector3(value.X, value.X, value.X);
+                    Debug.Assert(Math.Abs(value.X) == Math.Abs(value.Y) && Math.Abs(value.Y) == Math.Abs(value.Z), "Transforms with fixed scale cannot have non-uniform scale.");
                 }
-                else
-                {
-                    _scale = value;
-                }
+                _scale = value;
             }
         }
         public Vector3 Position { get { return _position; } set { _position = value; } }
@@ -56,6 +54,25 @@ namespace Game
             Rotation = rotation;
         }
 
+        public Transform(Vector3 position, Vector3 scale, Quaternion rotation, bool fixedScale)
+        {
+            Position = position;
+            Scale = scale;
+            Rotation = rotation;
+            FixedScale = fixedScale;
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        public Transform(Transform transform)
+        {
+            Rotation = new Quaternion(transform.Rotation.X, transform.Rotation.Y, transform.Rotation.Z, transform.Rotation.W);
+            Position = new Vector3(transform.Position);
+            Scale = new Vector3(transform.Scale);
+            FixedScale = transform.FixedScale;
+        }
+
         public Matrix4 GetMatrix()
         {
             return Matrix4.CreateScale(Scale) * Matrix4.CreateFromAxisAngle(new Vector3(Rotation.X, Rotation.Y, Rotation.Z), Rotation.W) * Matrix4.CreateTranslation(Position);
@@ -78,5 +95,6 @@ namespace Game
         {
             return new Transform2D(new Vector2(Position.X, Position.Y), new Vector2(Scale.X, Scale.Y), Rotation.W);
         }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -23,12 +24,9 @@ namespace Game
             { 
                 if (FixedScale)
                 {
-                    _scale = new Vector2(value.X, value.X);
+                    Debug.Assert(Math.Abs(value.X) == Math.Abs(value.Y), "Transforms with fixed scale cannot have non-uniform scale.");
                 }
-                else
-                {
-                    _scale = value; 
-                }
+                _scale = value; 
             } 
         }
         public Vector2 Position { get { return _position; } set { _position = value; } }

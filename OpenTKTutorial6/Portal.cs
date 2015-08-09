@@ -57,12 +57,12 @@ namespace Game
             return GetFOV(origin, distance, 10);
         }
 
-        public static Transform2D GetTransform(Portal portalEnter, Portal portalExit)
+        /*public static Transform2D GetTransform(Portal portalEnter, Portal portalExit)
         {
             Transform2D t = new Transform2D();
             Transform2D tEnter = portalEnter.Transform;
             Transform2D tExit = portalExit.Transform;
-            
+            tExit.Scale = new Vector2(-tExit.Scale.X, tExit.Scale.Y);
             
             t.Scale = Vector2.Divide(tExit.Scale, tEnter.Scale);
             if (tExit.IsMirrored() != tEnter.IsMirrored())
@@ -76,14 +76,18 @@ namespace Game
             Vector3 v = GetMatrix(portalEnter, portalExit).ExtractTranslation();
             t.Position = new Vector2(v.X, v.Y);
             return t;
-        }
+        }*/
 
         /// <summary>
         /// Returns matrix to transform between one portals coordinate space to another
         /// </summary>
         public static Matrix4 GetMatrix(Portal portalEnter, Portal portalExit)
         {
-            return portalEnter.Transform.GetMatrix().Inverted() * portalExit.Transform.GetMatrix();
+            Vector2 v = portalExit.Transform.Scale;
+            portalExit.Transform.Scale = new Vector2(-v.X, v.Y);
+            Matrix4 m = portalEnter.Transform.GetMatrix().Inverted() * portalExit.Transform.GetMatrix();
+            portalExit.Transform.Scale = v;
+            return m;
         }
 
         /// <summary>
