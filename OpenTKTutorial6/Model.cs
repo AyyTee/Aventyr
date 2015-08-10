@@ -3,13 +3,14 @@ using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
 using Poly2Tri;
 using System.Diagnostics;
+using System;
 
 namespace Game
 {
     /// <summary>
     /// An object made up of vertices
     /// </summary>
-    public class Model
+    public class Model : IDisposable
     {
         public Transform Transform = new Transform();
 
@@ -53,6 +54,16 @@ namespace Game
         {
             Shader = Controller.Shaders["textured"];
             GL.GenBuffers(1, out ibo_elements);
+        }
+
+        ~Model()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            GL.DeleteBuffer(ibo_elements);
         }
 
         public Model(Vertex[] vertices, int[] indices)

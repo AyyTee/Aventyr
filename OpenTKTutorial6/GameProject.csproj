@@ -62,10 +62,8 @@
     <Compile Include="Camera.cs" />
     <Compile Include="InputExt.cs" />
     <Compile Include="MathExt.cs" />
-    <Compile Include="PolygonSimple.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Controller.cs" />
-    <Compile Include="PolygonOld.cs" />
     <Compile Include="PolygonCoordinate.cs" />
     <Compile Include="Portal.cs" />
     <Compile Include="Program.cs" />

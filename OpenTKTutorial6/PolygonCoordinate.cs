@@ -10,7 +10,7 @@ namespace Game
 {
     class PolygonCoordinate
     {
-        private PolygonOld Polygon;
+        /*private PolygonOld Polygon;
         public ushort Index;
         public double SegmentT;
         public PolygonCoordinate(PolygonOld Polygon, ushort Index, double SegmentT, bool Absolute)
@@ -59,6 +59,6 @@ namespace Game
             {
                 return SegmentT;
             }
-        }
+        }*/
     }
 }

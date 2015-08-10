@@ -52,14 +52,17 @@ namespace Game
             //return Math.PI - Math.Abs(Math.Abs(angle0 - angle1) - Math.PI);
             return ((angle1 - angle0) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
         }
+
         static public double Lerp(double Value0, double Value1, double T)
         {
             return Value0 * (1 - T) + Value1 * T;
         }
+
         static public Vector2d Lerp(Vector2d Vector0, Vector2d Vector1, double T)
         {
             return Vector0 * (1 - T) + Vector1 * T;
         }
+
         static public double ValueWrap(double Value, double mod)
         {
             Value = Value % mod;
@@ -69,6 +72,7 @@ namespace Game
             }
             return Value;
         }
+
         static public double LerpAngle(double Angle0, double Angle1, double T, bool IsClockwise)
         {
             if (IsClockwise == true)
@@ -89,6 +93,7 @@ namespace Game
                 return Lerp(Angle0, Angle1, T) % (2 * Math.PI);
             }
         }
+
         /*static public Vector2d[] LineCircleIntersection(Vector2d ps0, Vector2d pe0, Vector2d Origin, double Radius)
         {
             //private int FindLineCircleIntersections(float cx, float cy, float radius, PointF point1, PointF point2, out PointF intersection1, out PointF intersection2)
@@ -127,6 +132,7 @@ namespace Game
                 return 2;
             }
         }*/
+
         static public double PointLineDistance(Vector2d ps0, Vector2d pe0, Vector2d Point, bool IsSegment)
         {
             {
@@ -145,6 +151,7 @@ namespace Game
                 return (Point - V).Length;
             }
         }
+
         /// <summary>
         /// Returns a projection of V0 onto V1
         /// </summary>
@@ -154,6 +161,7 @@ namespace Game
         {
             return V1.Normalized() * V0;
         }
+
         /// <summary>
         /// Mirrors V0 across an axis defined by V1
         /// </summary>

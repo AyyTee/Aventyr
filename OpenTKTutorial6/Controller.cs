@@ -412,6 +412,9 @@ namespace Game
             {
                 v.StepUpdate();
             }
+
+            Model a = new Model();
+            GL.DeleteBuffer(a.ibo_elements);
         }
 
         int loadImage(Bitmap image)
