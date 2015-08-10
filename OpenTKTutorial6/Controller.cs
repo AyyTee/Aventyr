@@ -24,7 +24,7 @@ namespace Game
         /// <summary>
         /// Intended to keep pointless messages from the Poly2Tri library out of the console window
         /// </summary>
-        public static StreamWriter Log = new StreamWriter("outputLog.txt");
+        public static StreamWriter Log = new StreamWriter("Triangulating.txt");
 
         Model background;
         QFont Default;
@@ -80,7 +80,7 @@ namespace Game
             Portal portal1 = new Portal(true);
             portal1.Transform.Rotation = 0.1f;
             portal1.Transform.Position = new Vector2(1f, -0.1f);
-            portal1.Transform.Scale = new Vector2(-1f, 1f);
+            portal1.Transform.Scale = new Vector2(-1.5f, 1.5f);
             objects.Add(portal1);
             portals.Add(portal1);
             Portal.Link(portal0, portal1);
@@ -139,7 +139,7 @@ namespace Game
             DrawDebug();
             
             Vector2 viewPos = new Vector2(cam.Transform.Position.X, cam.Transform.Position.Y);
-            DrawPortalAll(portals.ToArray(), viewMatrix, viewPos, 3, TimeRenderDelta);
+            DrawPortalAll(portals.ToArray(), viewMatrix, viewPos, 4, TimeRenderDelta);
             Shaders["textured"].DisableVertexAttribArrays();
             Shaders["default"].DisableVertexAttribArrays();
 
@@ -151,25 +151,34 @@ namespace Game
 
         private void DrawPortalAll(Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta)
         {
-            GL.Clear(ClearBufferMask.StencilBufferBit);
-            _DrawPortalAll(portals, viewMatrix, viewPos, depth, timeDelta, 0);
+            
+            //_DrawPortalAll(portals, null, viewMatrix, viewPos, depth, timeDelta, 0);
+
+            //stopgap solution. portals will only recursively draw themselves, not any other portals
+            IOrderedEnumerable<Portal> portalSort = portals.OrderByDescending(item => (item.Transform.Position - viewPos).Length);
+            foreach (Portal p in portalSort)
+            {
+                GL.Clear(ClearBufferMask.StencilBufferBit);
+                _DrawPortalAll(null, p, viewMatrix, viewPos, depth, timeDelta, 0);
+            }
         }
 
-        private void _DrawPortalAll(Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count)
+        private void _DrawPortalAll(Portal[] portals, Portal previous, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count)
         {
-            IOrderedEnumerable<Portal> portalSort = portals.OrderByDescending(item => (item.Transform.Position - viewPos).Length);
-            DrawPortal(portals[0], portals, viewMatrix, viewPos, depth, timeDelta, count);
-            DrawPortal(portals[1], portals, viewMatrix, viewPos, depth, timeDelta, count);
-            /*foreach (Portal p in portalSort)
+            /*IOrderedEnumerable<Portal> portalSort = portals.OrderByDescending(item => (item.Transform.Position - viewPos).Length);
+            foreach (Portal p in portalSort)
             {
-                if (p.Linked != null)
+                if (p.Linked != null && p.Linked != previous)
                 {
-                    DrawPortal(p, portals, viewMatrix, viewPos, depth, timeDelta);
+                    DrawPortal(p, portals, viewMatrix, viewPos, depth, timeDelta, count);
                 }
             }*/
+
+            //stopgap solution. portals will only recursively draw themselves, not any other portals
+            DrawPortal(null, previous, viewMatrix, viewPos, depth, timeDelta, count);
         }
 
-        public void DrawPortal(Portal portalEnter, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count)
+        public void DrawPortal(Portal[] portals, Portal portalEnter, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count)
         {
             if (depth <= 0)
             {
@@ -224,7 +233,7 @@ namespace Game
             fovOutline.Render(viewMatrix, timeDelta);
             GL.LineWidth(1f);
 
-            _DrawPortalAll(portals, portalMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
+            _DrawPortalAll(portals, portalEnter, portalMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
 
             
         }
