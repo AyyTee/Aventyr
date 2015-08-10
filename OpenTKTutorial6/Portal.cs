@@ -12,6 +12,13 @@ namespace Game
 {
     public class Portal : Entity
     {
+        private Portal _linked;
+
+        public Portal Linked
+        {
+            get { return _linked; }
+        }
+
         public Portal()
         {
             Transform.FixedScale = true;
@@ -42,6 +49,33 @@ namespace Game
             {
                 Transform.Scale = new Vector2(-1, Transform.Scale.Y);
             }
+        }
+
+        public static void Link(Portal portal0, Portal portal1)
+        {
+            portal0._linked = portal1;
+            portal1._linked = portal0;
+        }
+
+        private void SetLink(Portal portal)
+        {
+            if (_linked != portal)
+            {
+                if (_linked != null)
+                {
+                    _linked.SetLink(null);
+                }
+                _linked = portal;
+                if (_linked != null)
+                {
+                    _linked.SetLink(this);
+                }
+            }
+        }
+
+        public void Unlink(Portal portal)
+        {
+            SetLink(null);
         }
 
         /// <summary>
@@ -88,6 +122,12 @@ namespace Game
             Matrix4 m = portalEnter.Transform.GetMatrix().Inverted() * portalExit.Transform.GetMatrix();
             portalExit.Transform.Scale = v;
             return m;
+        }
+
+        public Matrix4 GetMatrix()
+        {
+            Debug.Assert(Linked != null, "Portal must be linked to another portal.");
+            return GetMatrix(this, Linked);
         }
 
         /// <summary>

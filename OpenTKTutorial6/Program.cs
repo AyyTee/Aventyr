@@ -7,7 +7,7 @@ namespace Game
         {
             using (Controller Controller = new Controller())
             {
-                Controller.Run(30, 60);
+                Controller.Run(60, 60);
             }
         }
     }

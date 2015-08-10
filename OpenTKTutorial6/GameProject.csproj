@@ -68,7 +68,6 @@
     <Compile Include="PolygonOld.cs" />
     <Compile Include="PolygonCoordinate.cs" />
     <Compile Include="Portal.cs" />
-    <Compile Include="PortalPair.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShaderProgram.cs" />

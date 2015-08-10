@@ -53,6 +53,16 @@ namespace Game
             Rotation = rotation;
         }
 
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        public Transform2D(Transform2D transform)
+        {
+            Position = new Vector2(transform.Position.X, transform.Scale.Y);
+            Scale = new Vector2(transform.Scale.X, transform.Scale.Y);
+            Rotation = transform.Rotation;
+        }
+
         public Transform Get3D()
         {
             return new Transform(new Vector3(Position.X, Position.Y, 0), new Vector3(Scale.X, Scale.Y, 1), new Quaternion(0, 0, 1, Rotation));

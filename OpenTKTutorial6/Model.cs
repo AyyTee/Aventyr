@@ -111,13 +111,13 @@ namespace Game
             return val;
         }
 
-        public static Model CreatePlane()
+        public static Model CreatePlane(Vector2 Scale)
         {
             Vertex[] vertices = new Vertex[] {
-                new Vertex(new Vector3(-0.5f, 0.5f,  0f), new Vector2(0, 1)),
-                new Vertex(new Vector3(0.5f, 0.5f,  0f), new Vector2(1, 1)),
-                new Vertex(new Vector3(0.5f, -0.5f,  0f), new Vector2(1, 0)),
-                new Vertex(new Vector3(-0.5f, -0.5f,  0f), new Vector2(0, 0))
+                new Vertex(new Vector3(-0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(0, 1)),
+                new Vertex(new Vector3(0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(1, 1)),
+                new Vertex(new Vector3(0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(1, 0)),
+                new Vertex(new Vector3(-0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(0, 0))
             };
 
             int[] indices = new int[] {
@@ -127,6 +127,11 @@ namespace Game
             Model model = new Model(vertices, indices);
             model.SetTexture(Controller.textures["default.png"]);
             return model;
+        }
+
+        public static Model CreatePlane()
+        {
+            return CreatePlane(new Vector2(1, 1));
         }
 
         public static Model CreateCube()
@@ -219,6 +224,22 @@ namespace Game
             }
             Poly2Tri.Polygon polygon = new Polygon(polygonPoints);
             return CreatePolygon(polygon);
+        }
+
+        public static Model CreateLine(Vector2[] vertices)
+        {
+            Model model = new Model();
+            model.Wireframe = true;
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                Vector3 v = new Vector3(vertices[i].X, vertices[i].Y, 0);
+                model.Vertices.Add(new Vertex(v));
+                if (i > 0)
+                {
+                    model.Indices.AddRange(new int[] { i, i - 1, i });
+                }
+            }
+            return model;
         }
     }
 }

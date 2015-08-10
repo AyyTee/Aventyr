@@ -24,12 +24,7 @@ namespace Game
         }
         static public double AngleLine(Vector2d V0, Vector2d V1)
         {
-            double val = (Math.Atan2(V0.X - V1.X, V0.Y - V1.Y) + 2 * Math.PI) % (2 * Math.PI);
-            if (val == double.NaN)
-            {
-                return 0;
-            }
-            return val;
+            return AngleVector(V0 - V1);
         }
         static public double AngleLine(Vector2 V0, Vector2 V1)
         {
@@ -38,7 +33,12 @@ namespace Game
 
         static public double AngleVector(Vector2d V0)
         {
-            return (Math.Atan2(V0.X, V0.Y) + 2 * Math.PI) % (2 * Math.PI);
+            double val = (Math.Atan2(V0.X, V0.Y) + 2 * Math.PI) % (2 * Math.PI);
+            if (val == double.NaN)
+            {
+                return 0;
+            }
+            return val - Math.PI / 2;
         }
 
         static public double AngleVector(Vector2 V0)
