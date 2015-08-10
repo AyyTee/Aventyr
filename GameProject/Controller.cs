@@ -30,6 +30,7 @@ namespace Game
         QFont Default;
         Entity box2;
         List<Portal> portals = new List<Portal>();
+        public static List<int> iboGarbage = new List<int>();
 
         List<Entity> objects = new List<Entity>();
         public static Dictionary<string, int> textures = new Dictionary<string, int>();
@@ -412,9 +413,14 @@ namespace Game
             {
                 v.StepUpdate();
             }
-
-            Model a = new Model();
-            GL.DeleteBuffer(a.ibo_elements);
+            
+            //get rid of all ibo elements no longer used
+            foreach (int iboElement in iboGarbage)
+            {
+                int a = iboElement;
+                GL.DeleteBuffers(1, ref a);
+            }
+            iboGarbage.Clear();
         }
 
         int loadImage(Bitmap image)

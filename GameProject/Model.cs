@@ -15,6 +15,7 @@ namespace Game
         public Transform Transform = new Transform();
 
         public int ibo_elements;
+        public bool iboExists = true;
         public ShaderProgram Shader;
 
         public bool IsTextured = false;
@@ -63,7 +64,12 @@ namespace Game
 
         public void Dispose()
         {
-            GL.DeleteBuffer(ibo_elements);
+            if (iboExists)
+            {
+                Controller.iboGarbage.Add(ibo_elements);
+                //GL.DeleteBuffers(1, ref ibo_elements);
+                iboExists = false;
+            }
         }
 
         public Model(Vertex[] vertices, int[] indices)
