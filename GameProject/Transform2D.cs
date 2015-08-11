@@ -9,6 +9,8 @@ namespace Game
 {
     public class Transform2D
     {
+        private Matrix4 Matrix;
+        private bool MatrixUpdate = true;
         private Vector2 _position = new Vector2();
         private float _rotation = 0;
         private Vector2 _scale = new Vector2(1, 1);
@@ -16,7 +18,7 @@ namespace Game
 
         public bool FixedScale { get { return _fixedScale; } set { _fixedScale = value; } }
 
-        public float Rotation { get { return _rotation; } set { _rotation = value; } }
+        public float Rotation { get { return _rotation; } set { _rotation = value; MatrixUpdate = true; } }
         public Vector2 Scale 
         { 
             get { return _scale; } 
@@ -26,10 +28,11 @@ namespace Game
                 {
                     Debug.Assert(Math.Abs(value.X) == Math.Abs(value.Y), "Transforms with fixed scale cannot have non-uniform scale.");
                 }
+                MatrixUpdate = true;
                 _scale = value; 
             } 
         }
-        public Vector2 Position { get { return _position; } set { _position = value; } }
+        public Vector2 Position { get { return _position; } set { _position = value; MatrixUpdate = true; } }
 
         public Transform2D()
         {
@@ -58,7 +61,7 @@ namespace Game
         /// </summary>
         public Transform2D(Transform2D transform)
         {
-            Position = new Vector2(transform.Position.X, transform.Scale.Y);
+            Position = new Vector2(transform.Position.X, transform.Position.Y);
             Scale = new Vector2(transform.Scale.X, transform.Scale.Y);
             Rotation = transform.Rotation;
         }
@@ -70,7 +73,12 @@ namespace Game
 
         public Matrix4 GetMatrix()
         {
-            return Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
+            if (MatrixUpdate)
+            {
+                Matrix = Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
+                MatrixUpdate = false;
+            }
+            return Matrix; 
         }
 
         public bool IsMirrored()

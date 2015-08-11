@@ -43,6 +43,8 @@ namespace Game
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
         float TimeRenderDelta = 0.0f;
+        private int portalCount;
+        private Entity player;
 
         void initProgram()
         {
@@ -71,8 +73,8 @@ namespace Game
             objects.Add(back);
 
             Portal portal0 = new Portal(true);
-            //portal0.Transform.Rotation = (float)Math.PI/2f;
-            portal0.Transform.Position = new Vector2(-1f, 0f);
+            portal0.Transform.Rotation = (float)Math.PI/2f;
+            portal0.Transform.Position = new Vector2(-2f, 0f);
             //portal0.Transform.Scale = new Vector2(-3f, -3f);
             portal0.Models[0].TransformUV.Scale = new Vector2(5f, 5f);
             objects.Add(portal0);
@@ -81,7 +83,7 @@ namespace Game
             Portal portal1 = new Portal(true);
             portal1.Transform.Rotation = 0.1f;
             portal1.Transform.Position = new Vector2(1f, -0.1f);
-            portal1.Transform.Scale = new Vector2(-1.5f, 1.5f);
+            portal1.Transform.Scale = new Vector2(-1f, 1f);
             objects.Add(portal1);
             portals.Add(portal1);
             Portal.Link(portal0, portal1);
@@ -99,6 +101,20 @@ namespace Game
             box2.Models.Add(tc2);
             objects.Add(box2);
 
+            player = new Entity();
+            Model playerModel = Model.CreatePolygon(new Vector2[] {
+                new Vector2(0.5f, 0), 
+                new Vector2(0.35f, 0.15f), 
+                new Vector2(0.15f, 0.15f), 
+                new Vector2(0.15f, 0.35f), 
+                new Vector2(0, 0.5f), 
+                new Vector2(-0.5f, 0), 
+                new Vector2(0, -0.5f)
+            });
+            player.Transform.Scale = new Vector2(.5f, .5f);
+            player.Models.Add(playerModel);
+            objects.Add(player);
+
             Entity last = new Entity();
             last.Models.Add(new Model());
             objects.Add(last);
@@ -114,7 +130,6 @@ namespace Game
 
             GL.ClearColor(Color.CornflowerBlue);
             GL.ClearStencil(0);
-            //GL.ClearDepth(1);
             GL.PointSize(5f);
 
             OnUpdateFrame(new FrameEventArgs());
@@ -139,7 +154,7 @@ namespace Game
             DrawScene(viewMatrix, (float)e.Time);
             DrawDebug();
             
-            Vector2 viewPos = new Vector2(cam.Transform.Position.X, cam.Transform.Position.Y);
+            Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
             DrawPortalAll(portals.ToArray(), viewMatrix, viewPos, 4, TimeRenderDelta);
             Shaders["textured"].DisableVertexAttribArrays();
             Shaders["default"].DisableVertexAttribArrays();
@@ -152,55 +167,52 @@ namespace Game
 
         private void DrawPortalAll(Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta)
         {
-            
-            //_DrawPortalAll(portals, null, viewMatrix, viewPos, depth, timeDelta, 0);
+            portalCount = 0;
 
             //stopgap solution. portals will only recursively draw themselves, not any other portals
             IOrderedEnumerable<Portal> portalSort = portals.OrderByDescending(item => (item.Transform.Position - viewPos).Length);
             foreach (Portal p in portalSort)
             {
                 GL.Clear(ClearBufferMask.StencilBufferBit);
-                _DrawPortalAll(null, p, viewMatrix, viewPos, depth, timeDelta, 0);
+                DrawPortal(p, viewMatrix, viewPos, depth, timeDelta, 0);
             }
+            Console.Write(portalCount);
+            Console.WriteLine();
         }
 
-        private void _DrawPortalAll(Portal[] portals, Portal previous, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count)
+        /*public bool PortalIsVisible()
         {
-            /*IOrderedEnumerable<Portal> portalSort = portals.OrderByDescending(item => (item.Transform.Position - viewPos).Length);
-            foreach (Portal p in portalSort)
-            {
-                if (p.Linked != null && p.Linked != previous)
-                {
-                    DrawPortal(p, portals, viewMatrix, viewPos, depth, timeDelta, count);
-                }
-            }*/
 
-            //stopgap solution. portals will only recursively draw themselves, not any other portals
-            DrawPortal(null, previous, viewMatrix, viewPos, depth, timeDelta, count);
-        }
+        }*/
 
-        public void DrawPortal(Portal[] portals, Portal portalEnter, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count)
+        public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count)
         {
             if (depth <= 0)
             {
                 return;
             }
+            /*Vector2[] pv = portalEnter.GetVerts();
+            pv = VectorExt2.Transform(pv, viewMatrix);
+            Vector2[] cv = VectorExt2.Transform(cam.GetVerts(), viewMatrix);
+            if (MathExt.LineInRectangle(cv[0], cv[2], pv[0], pv[1]) == false)
+            {
+                return;
+            }*/
+            
+            portalCount++;
             GL.Clear(ClearBufferMask.DepthBufferBit);
 
             //Start using the stencil 
             GL.ColorMask(false, false, false, false);
-            //GL.DepthMask(false);
+            GL.DepthMask(false);
             GL.Enable(EnableCap.StencilTest);
             GL.Disable(EnableCap.DepthTest);
-            //Place a 1 where rendered 
             GL.StencilFunc(StencilFunction.Always, 1, 0xFF);
-            //Replace where rendered 
             GL.StencilOp(StencilOp.Incr, StencilOp.Incr, StencilOp.Incr);
 
             TextWriter console = Console.Out;
             Console.SetOut(Controller.Log);
             Entity fov = new Entity();
-            //fov.Models.Clear();
             Vector2[] a = portalEnter.GetFOV(viewPos, 50);
             if (a.Length >= 3)
             {
@@ -208,12 +220,10 @@ namespace Game
                 fov.Render(viewMatrix, timeDelta);
             }
             Console.SetOut(console);
-            //Reenable color 
+
             GL.ColorMask(true, true, true, true);
-            //GL.DepthMask(true);
-            //Where a 1 was not rendered 
+            GL.DepthMask(true);
             GL.StencilFunc(StencilFunction.Less, count, 0xFF);
-            //Keep the pixel 
             GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
 
 
@@ -234,34 +244,21 @@ namespace Game
             fovOutline.Render(viewMatrix, timeDelta);
             GL.LineWidth(1f);
 
-            _DrawPortalAll(portals, portalEnter, portalMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
-
-            
+            DrawPortal(portalEnter, portalMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
         }
 
         private void DrawDebug()
         {
-            Vector3[] vector = new Vector3[6];
-            float size = 1 / (float)80;
-            vector[0] = cam.Transform.Position - cam.GetRight() * cam.Transform.Scale.Y * size + new Vector3(0, 0, -2);
-            vector[1] = cam.Transform.Position + cam.GetRight() * cam.Transform.Scale.Y * size + new Vector3(0, 0, -2);
-            vector[2] = cam.Transform.Position + new Vector3(0, 0, -2);
-            vector[3] = cam.Transform.Position + cam.GetUp() * cam.Transform.Scale.Y * size + new Vector3(0, 0, -2);
-            vector[4] = cam.Transform.Position + new Vector3(0, 0, -2);
-            vector[5] = cam.Transform.Position + (cam.GetUp() + cam.GetRight()) * cam.Transform.Scale.Y * size + new Vector3(0, 0, -2);
-            GL.LineWidth(2f);
-            GL.Begin(PrimitiveType.Lines);
-            foreach (Vector3 v in vector)
+            /*GL.LineWidth(2f);
+            Matrix4 view = cam.Transform.GetMatrix();
+            Vector2[] verts = VectorExt2.Transform(cam.GetVerts(), view);
+            GL.Begin(PrimitiveType.LineLoop);
+            foreach (Vector2 v in verts)
             {
-                GL.Vertex3(v);
+                GL.Vertex3(v.X, v.Y, 1);
             }
-            /*Matrix4 m = Portal.GetMatrix(portals[0], portals[1]);
-            foreach (Vector3 v in vector)
-            {
-                GL.Vertex3(Vector3.Transform(v, m));
-            }*/
             GL.End();
-            GL.LineWidth(1f);
+            GL.LineWidth(1f);*/
         }
 
         private void DrawScene(Matrix4 viewMatrix, float timeDelta)
@@ -318,94 +315,24 @@ namespace Game
                 {
                     vArray = VectorExt2.Transform(p.GetVerts(), p.Transform.GetMatrix());
                     portalEnter = p;
-                    Vector2 camPos = new Vector2(cam.Transform.Position.X, cam.Transform.Position.Y);
-                    i = MathExt.LineIntersection(vArray[0], vArray[1], camPos, camPos + new Vector2(v.X, v.Y), true);
+                    Vector2 v1 = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
+                    i = MathExt.LineIntersection(vArray[0], vArray[1], v1, v1 + new Vector2(v.X, v.Y), true);
                     if (i.Exists)
                     {
                         break;
                     }
                 }
-                cam.Transform.Position += v;
+                player.Transform.Position += new Vector2(v.X, v.Y);
+                cam.Transform.Position += new Vector3(v.X, v.Y, 1);
                 if (i.Exists)
                 {
-                    Portal portalExit = portalEnter.Linked;
-                    //Transform2D t = Portal.GetTransform(portalLast, portalExit);
-                    Matrix4 m = Portal.GetMatrix(portalEnter, portalExit);
-                    Transform2D t = cam.Transform.GetTransform2D();
-                    Vector2 v0 = new Vector2(t.Position.X, t.Position.Y);
-                    Vector2 v1 = v0 + new Vector2(1, 0);
-                    Vector2 v2 = v0 + new Vector2(0, 1);
-                    Vector2 v3 = VectorExt2.Transform(v0, m);
-                    Vector2 v4 = VectorExt2.Transform(v1, m);
-                    Vector2 v5 = VectorExt2.Transform(v2, m);
-
-                    Vector2 v6 = v0 + new Vector2((float)Math.Cos(cam.Transform.Rotation.W), (float)Math.Sin(cam.Transform.Rotation.W));
-                    Vector2 v7 = VectorExt2.Transform(v6, m) - v3;
-                    Transform2D t0 = portalEnter.Transform;
-                    Transform2D t1 = portalExit.Transform;
-
-                    cam.Transform.Position = new Vector3(v3.X, v3.Y, cam.Transform.Position.Z);
-                    /*cam.Transform.Rotation += new Quaternion(0, 0, 0, (float)(MathExt.AngleLine(v3, v5) + Math.PI));
-                    float angle0 = (float)MathExt.AngleLine(v3, v4);
-                    float angle1 = (float)MathExt.AngleLine(v3, v5);*/
-                    Transform2D tEnter = portalEnter.Transform;
-                    Transform2D tExit = portalExit.Transform;
-                    float flipX = 1;
-                    float flipY = 1;
-                    if (Math.Sign(tEnter.Scale.X) == Math.Sign(tExit.Scale.X))
-                    {
-                        flipX = -1;
-                    }
-                    if (Math.Sign(tEnter.Scale.Y) != Math.Sign(tExit.Scale.Y))
-                    {
-                        flipY = -1;
-                    }
-                    cam.Transform.Scale *= new Vector3(flipX * (v4 - v3).Length, flipY * (v5 - v3).Length, 1);
-
-                    float angle;
-                    if (flipX != flipY)
-                    {
-                        angle = (float)MathExt.AngleVector(v7);
-                        cam.Transform.Rotation = new Quaternion(cam.Transform.Rotation.X, cam.Transform.Rotation.Y, cam.Transform.Rotation.Z, angle);
-                        //angle = m.ExtractRotation(false).W;
-                        /*Matrix4 m2 = m * Matrix4.CreateTranslation(new Vector3(v3.X - v0.X, v3.Y - v0.Y, 0)).Inverted();
-                        m2 = Matrix4.CreateScale(new Vector3(flipX * (v4 - v3).Length, flipY * (v5 - v3).Length, 1)).Inverted() * m2;
-                        Vector3 v7 = Vector3.Transform(new Vector3(1, 0, 0), m);
-
-                        angle = -(float)(MathExt.AngleVector(new Vector2(v7.X, v7.Y)));
-                        m2 = m2 * Matrix4.CreateRotationZ(angle).Inverted();*/
-
-                        /*{
-                            if (portalExit.Transform.Rotation == 0 || portalEnter.Transform.Rotation == 0)
-                            {
-                                if (portalExit.Transform.Rotation < 0 || portalEnter.Transform.Rotation < 0)
-                                {
-                                    angle = -Math.Abs(portalExit.Transform.Rotation - portalEnter.Transform.Rotation);
-                                }
-                                else
-                                {
-                                    angle = Math.Abs(portalExit.Transform.Rotation - portalEnter.Transform.Rotation);
-                                }
-                                cam.Transform.Rotation += new Quaternion(0, 0, 0, -2f * cam.Transform.Rotation.W);
-                            }
-                            else
-                            {
-                                angle = portalExit.Transform.Rotation - portalEnter.Transform.Rotation + (float)Math.PI;
-                                //cam.Transform.Rotation += new Quaternion(0, 0, 0, -2f * cam.Transform.Rotation.W);
-                            }
-                            //cam.Transform.Rotation += new Quaternion(0, 0, 0, -2f * cam.Transform.Rotation.W);
-                        }*/
-                    }
-                    else
-                    {
-                        angle = portalExit.Transform.Rotation - portalEnter.Transform.Rotation;
-                        cam.Transform.Rotation += new Quaternion(0, 0, 0, angle);
-                    }
+                    portalEnter.Enter(cam.Transform);
+                    portalEnter.Enter(player.Transform);
                 }
             }
             #endregion
-            Console.Write(e.Time);
-            Console.WriteLine();
+            /*Console.Write(e.Time);
+            Console.WriteLine();*/
 
             box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
             
@@ -415,7 +342,7 @@ namespace Game
             }
             
             //get rid of all ibo elements no longer used
-            foreach (int iboElement in iboGarbage)
+            foreach (int iboElement in iboGarbage.ToArray())
             {
                 int a = iboElement;
                 GL.DeleteBuffers(1, ref a);

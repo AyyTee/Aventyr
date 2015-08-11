@@ -210,7 +210,7 @@ namespace Game
             return LineIntersection(new Vector2d(ps0.X, ps0.Y), new Vector2d(pe0.X, pe0.Y), new Vector2d(ps1.X, ps1.Y), new Vector2d(pe1.X, pe1.Y), segmentOnly);
         }
 
-        static public bool PointInBox(Vector2d V0, Vector2d V1, Vector2d Point)
+        static public bool PointInRectangle(Vector2d V0, Vector2d V1, Vector2d Point)
         {
             if (((Point.X >= V0.X && Point.X <= V1.X) || (Point.X <= V0.X && Point.X >= V1.X)) && ((Point.Y >= V0.Y && Point.Y <= V1.Y) || (Point.Y <= V0.Y && Point.Y >= V1.Y)))
             {
@@ -229,6 +229,49 @@ namespace Game
             b = LineStart.Y - m * LineStart.X;
             ix = (Point.Y - b) / m;
             return ix < Point.X;
+        }
+
+        /// <summary>
+        /// Check if a line segment is inside a rectangle
+        /// </summary>
+        /// <param name="topLeft">Top left corner of rectangle</param>
+        /// <param name="bottomRight">Bottom right corner of rectangle</param>
+        /// <param name="lineBegin">Beginning of line segment</param>
+        /// <param name="lineEnd">Ending of line segment</param>
+        /// <returns>True if the line is contained within or intersects the rectangle</returns>
+        static public bool LineInRectangle(Vector2d topLeft, Vector2d bottomRight, Vector2d lineBegin, Vector2d lineEnd)
+        {
+            if (PointInRectangle(topLeft, bottomRight, lineBegin) || PointInRectangle(topLeft, bottomRight, lineEnd))
+            {
+                return true;
+            }
+            if ((lineBegin.X < topLeft.X && lineEnd.X < topLeft.X) || (lineBegin.X > bottomRight.X && lineEnd.X > bottomRight.X))
+            {
+                return false;
+            }
+            if ((lineBegin.Y < topLeft.Y && lineEnd.Y < topLeft.Y) || (lineBegin.Y > bottomRight.Y && lineEnd.Y > bottomRight.Y))
+            {
+                return false;
+            }
+            /*Vector2d[] v = new Vector2d[4] {
+                topLeft,
+                new Vector2d(bottomRight.X, topLeft.Y),
+                bottomRight,
+                new Vector2d(topLeft.X, bottomRight.Y),
+            };
+            for (int i = 0; i < v.Length; i++)
+            {
+                if (LineIntersection(v[i], v[(i+1) % v.Length], lineBegin, lineEnd, true).Exists)
+                {
+                    return true;
+                }
+            }*/
+            return false;
+        }
+
+        static public bool LineInRectangle(Vector2 topLeft, Vector2 bottomRight, Vector2 lineBegin, Vector2 lineEnd)
+        {
+            return LineInRectangle(new Vector2d(topLeft.X, topLeft.Y), new Vector2d(bottomRight.X, bottomRight.Y), new Vector2d(lineBegin.X, lineBegin.Y), new Vector2d(lineEnd.X, lineEnd.Y));
         }
     }
 }

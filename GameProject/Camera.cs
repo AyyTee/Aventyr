@@ -41,6 +41,16 @@ namespace Game
             cam.ZFar = 10000f;
             return cam;
         }
+
+        public Vector2[] GetVerts()
+        {
+            return new Vector2[4] {
+                new Vector2(-0.5f, -0.5f),
+                new Vector2(0.5f, -0.5f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(-0.5f, 0.5f),
+            };
+        }
         
         /// <summary>
         /// Create a view matrix for this Camera

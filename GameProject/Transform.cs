@@ -10,6 +10,8 @@ namespace Game
 {
     public class Transform
     {
+        private Matrix4 Matrix;
+        private bool MatrixUpdate = true;
         private Vector3 _position = new Vector3();
         private Quaternion _rotation = new Quaternion(0, 0, 1, 0);
         private Vector3 _scale = new Vector3(1, 1, 1);
@@ -17,7 +19,7 @@ namespace Game
 
         public bool FixedScale { get { return _fixedScale; } set { _fixedScale = value; } }
 
-        public Quaternion Rotation { get { return _rotation; } set { _rotation = value; } }
+        public Quaternion Rotation { get { return _rotation; } set { _rotation = value; MatrixUpdate = true;  } }
         public Vector3 Scale
         {
             get { return _scale; }
@@ -27,10 +29,11 @@ namespace Game
                 {
                     Debug.Assert(Math.Abs(value.X) == Math.Abs(value.Y) && Math.Abs(value.Y) == Math.Abs(value.Z), "Transforms with fixed scale cannot have non-uniform scale.");
                 }
+                MatrixUpdate = true;
                 _scale = value;
             }
         }
-        public Vector3 Position { get { return _position; } set { _position = value; } }
+        public Vector3 Position { get { return _position; } set { _position = value; MatrixUpdate = true; } }
 
         public Transform()
         {
@@ -75,7 +78,12 @@ namespace Game
 
         public Matrix4 GetMatrix()
         {
-            return Matrix4.CreateScale(Scale) * Matrix4.CreateFromAxisAngle(new Vector3(Rotation.X, Rotation.Y, Rotation.Z), Rotation.W) * Matrix4.CreateTranslation(Position);
+            if (MatrixUpdate)
+            {
+                Matrix = Matrix4.CreateScale(Scale) * Matrix4.CreateFromAxisAngle(new Vector3(Rotation.X, Rotation.Y, Rotation.Z), Rotation.W) * Matrix4.CreateTranslation(Position);
+                MatrixUpdate = false;
+            }
+            return Matrix;
         }
 
         public static Transform Lerp(Transform a, Transform b, float t)
