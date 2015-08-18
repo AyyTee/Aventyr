@@ -73,16 +73,16 @@ namespace Game
             objects.Add(back);
 
             Portal portal0 = new Portal(true);
-            portal0.Transform.Rotation = (float)Math.PI/2f;
-            portal0.Transform.Position = new Vector2(-2f, 0f);
+            //portal0.Transform.Rotation = (float)Math.PI/2f;
+            //portal0.Transform.Position = new Vector2(-2f, 0f);
             //portal0.Transform.Scale = new Vector2(-3f, -3f);
             portal0.Models[0].TransformUV.Scale = new Vector2(5f, 5f);
             objects.Add(portal0);
             portals.Add(portal0);
 
             Portal portal1 = new Portal(true);
-            portal1.Transform.Rotation = 0.1f;
-            portal1.Transform.Position = new Vector2(1f, -0.1f);
+            //portal1.Transform.Rotation = 0.1f;
+            portal1.Transform.Position = new Vector2(1f, 0f);
             portal1.Transform.Scale = new Vector2(-1f, 1f);
             objects.Add(portal1);
             portals.Add(portal1);
