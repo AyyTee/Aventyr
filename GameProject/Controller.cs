@@ -4,11 +4,13 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using QuickFont;
+using System.ComponentModel;
 
 namespace Game
 {
@@ -373,6 +375,14 @@ namespace Game
                 }
                 iboGarbage.Clear();
             }
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            base.OnClosing(e);
+            Log.Close();
+            
+            File.Delete("Triangulating.txt");
         }
 
         int loadImage(Bitmap image)
