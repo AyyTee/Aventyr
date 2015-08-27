@@ -45,10 +45,10 @@ namespace Game
         public Vector2[] GetVerts()
         {
             return new Vector2[4] {
-                new Vector2(-0.5f, -0.5f),
-                new Vector2(0.5f, -0.5f),
-                new Vector2(0.5f, 0.5f),
-                new Vector2(-0.5f, 0.5f),
+                new Vector2(-1f, -1f),
+                new Vector2(1f, -1f),
+                new Vector2(1f, 1f),
+                new Vector2(-1f, 1f),
             };
         }
         

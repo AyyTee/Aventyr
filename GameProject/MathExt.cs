@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    struct IntersectPoint
+    public struct IntersectPoint
     {
         public bool Exists;
         public Vector2d Vector;
     }
-    static class MathExt
+    public static class MathExt
     {
         static public Vector2d Matrix2dMult(Vector2d V, Matrix2d M)
         {
@@ -176,7 +176,7 @@ namespace Game
         /// <summary>
         /// Tests if two lines intersect
         /// </summary>
-        /// <returns>Returns an instance of IntersectPoint</returns>
+        /// <returns>Location where the two lines intersect</returns>
         static public IntersectPoint LineIntersection(Vector2d ps0, Vector2d pe0, Vector2d ps1, Vector2d pe1, bool SegmentOnly)
         {
             IntersectPoint v = new IntersectPoint();
@@ -218,17 +218,31 @@ namespace Game
             }
             return false;
         }
-        static public bool PointAboveLine(Vector2d LineStart, Vector2d LineEnd, Vector2d Point)
+
+        /// <summary>
+        /// Returns whether a point is above a line defined by two vectors.  If the line vectors are coincident then false is returned.  If the line is vertical then true is returned only if the point is to the right of it.
+        /// </summary>
+        static public bool PointLeftOfLine(Vector2d LineStart, Vector2d LineEnd, Vector2d Point)
         {
-            double m, b, ix;
+            return (LineEnd.X - LineStart.X) * (Point.Y - LineStart.Y) - (LineEnd.Y - LineStart.Y) * (Point.X - LineStart.X) > 0;
+            /*double m, b, ix;
+            if (LineStart == LineEnd)
+            {
+                return false;
+            }
             if (LineStart.X == LineEnd.X)
             {
-                return LineStart.X < Point.X;
+                return Point.X > LineStart.X;
             }
             m = (LineStart.Y - LineEnd.Y) / (LineStart.X - LineEnd.X);
             b = LineStart.Y - m * LineStart.X;
             ix = (Point.Y - b) / m;
-            return ix < Point.X;
+            return ix < Point.X;*/
+        }
+
+        static public bool PointLeftOfLine(Vector2 LineStart, Vector2 LineEnd, Vector2 Point)
+        {
+            return PointLeftOfLine(new Vector2d(LineStart.X, LineStart.Y), new Vector2d(LineEnd.X, LineEnd.Y), new Vector2d(Point.X, Point.Y));
         }
 
         /// <summary>
@@ -245,15 +259,7 @@ namespace Game
             {
                 return true;
             }
-            if ((lineBegin.X < topLeft.X && lineEnd.X < topLeft.X) || (lineBegin.X > bottomRight.X && lineEnd.X > bottomRight.X))
-            {
-                return false;
-            }
-            if ((lineBegin.Y < topLeft.Y && lineEnd.Y < topLeft.Y) || (lineBegin.Y > bottomRight.Y && lineEnd.Y > bottomRight.Y))
-            {
-                return false;
-            }
-            /*Vector2d[] v = new Vector2d[4] {
+            Vector2d[] v = new Vector2d[4] {
                 topLeft,
                 new Vector2d(bottomRight.X, topLeft.Y),
                 bottomRight,
@@ -265,7 +271,7 @@ namespace Game
                 {
                     return true;
                 }
-            }*/
+            }
             return false;
         }
 
