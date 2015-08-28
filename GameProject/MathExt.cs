@@ -220,32 +220,6 @@ namespace Game
         }
 
         /// <summary>
-        /// Returns whether a point is above a line defined by two vectors.  If the line vectors are coincident then false is returned.  If the line is vertical then true is returned only if the point is to the right of it.
-        /// </summary>
-        static public bool PointLeftOfLine(Vector2d LineStart, Vector2d LineEnd, Vector2d Point)
-        {
-            return (LineEnd.X - LineStart.X) * (Point.Y - LineStart.Y) - (LineEnd.Y - LineStart.Y) * (Point.X - LineStart.X) > 0;
-            /*double m, b, ix;
-            if (LineStart == LineEnd)
-            {
-                return false;
-            }
-            if (LineStart.X == LineEnd.X)
-            {
-                return Point.X > LineStart.X;
-            }
-            m = (LineStart.Y - LineEnd.Y) / (LineStart.X - LineEnd.X);
-            b = LineStart.Y - m * LineStart.X;
-            ix = (Point.Y - b) / m;
-            return ix < Point.X;*/
-        }
-
-        static public bool PointLeftOfLine(Vector2 LineStart, Vector2 LineEnd, Vector2 Point)
-        {
-            return PointLeftOfLine(new Vector2d(LineStart.X, LineStart.Y), new Vector2d(LineEnd.X, LineEnd.Y), new Vector2d(Point.X, Point.Y));
-        }
-
-        /// <summary>
         /// Check if a line segment is inside a rectangle
         /// </summary>
         /// <param name="topLeft">Top left corner of rectangle</param>

@@ -51,8 +51,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="MathExtTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PortalTests.cs" />
+    <Compile Include="LineTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameProject\GameProject.csproj">

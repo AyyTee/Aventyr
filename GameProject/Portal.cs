@@ -29,9 +29,22 @@ namespace Game
             Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
         }
 
-        public Portal(bool leftHanded) : this()
+        public Portal(bool leftHanded)
+            : this()
         {
             SetFacing(leftHanded);
+        }
+
+        public Portal(Vector2 position)
+            : this()
+        {
+            Transform.Position = position;
+        }
+
+        public Portal(Transform2D transform)
+            : this()
+        {
+            Transform = transform;
         }
 
         public void SetSize(float size)
@@ -219,7 +232,7 @@ namespace Game
         /// <summary>
         /// Returns a polygon representing the 2D FOV through the portal.  If the polygon is degenerate then an array of length 0 will be returned.
         /// </summary>
-        public Vector2[] GetFOV(Vector2 origin, float distance, int detail)
+        public Vector2[] GetFOV(Vector2 viewPoint, float distance, int detail)
         {
             Matrix4 a = Transform.GetMatrix();
             Vector2[] verts = new Vector2[detail + 2];
@@ -231,14 +244,14 @@ namespace Game
             }
             //minumum distance in order to prevent self intersections
             const float errorMargin = 0.01f;
-            float distanceMin = Math.Max((verts[0] - origin).Length, (verts[1] - origin).Length) + errorMargin;
+            float distanceMin = Math.Max((verts[0] - viewPoint).Length, (verts[1] - viewPoint).Length) + errorMargin;
             distance = Math.Max(distance, distanceMin);
             //get the leftmost and rightmost edges of the FOV
-            verts[verts.Length - 1] = (verts[0] - origin).Normalized() * distance + origin;
-            verts[2] = (verts[1] - origin).Normalized() * distance + origin;
+            verts[verts.Length - 1] = (verts[0] - viewPoint).Normalized() * distance + viewPoint;
+            verts[2] = (verts[1] - viewPoint).Normalized() * distance + viewPoint;
             //find the angle between the edges of the FOV
-            double angle0 = MathExt.AngleLine(verts[verts.Length - 1], origin);
-            double angle1 = MathExt.AngleLine(verts[2], origin);
+            double angle0 = MathExt.AngleLine(verts[verts.Length - 1], viewPoint);
+            double angle1 = MathExt.AngleLine(verts[2], viewPoint);
             double diff = MathExt.AngleDiff(angle0, angle1);
             Debug.Assert(diff <= Math.PI + double.Epsilon && diff >= -Math.PI);
             //handle case where lines overlap eachother
@@ -251,9 +264,59 @@ namespace Game
             Matrix2 Rot = Matrix2.CreateRotation((float)diff / (detail - 1));
             for (int i = 3; i < verts.Length - 1; i++)
             {
-                verts[i] = MathExt.Matrix2Mult(verts[i - 1] - origin, Rot) + origin;
+                verts[i] = MathExt.Matrix2Mult(verts[i - 1] - viewPoint, Rot) + viewPoint;
             }
             return verts;
         }
+
+        /// <summary>
+        /// Returns whether a point is within this portal's FOV
+        /// </summary>
+        public bool IsInsideFOV(Vector2 viewPoint, Vector2 lookPoint)
+        {
+            //get portal vertices within the world space
+            Vector2[] pv = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
+            Line line = new Line(pv);
+            //check if the lookPoint is on the opposite side of the portal from the viewPoint
+            if (line.PointIsLeft(viewPoint) == line.PointIsLeft(lookPoint))
+            {
+                return false;
+            }
+            //check if the lookPoint is within the FOV angles
+            double Angle0 = MathExt.AngleVector(pv[0] - viewPoint);
+            double Angle1 = MathExt.AngleVector(pv[1] - viewPoint);
+            double AngleDiff = MathExt.AngleDiff(Angle0, Angle1);
+            double AngleLook = MathExt.AngleVector(lookPoint - viewPoint);
+            double AngleLookDiff = MathExt.AngleDiff(Angle0, AngleLook);
+            if (Math.Abs(AngleDiff - AngleLookDiff) >= 0)
+            {
+                return true;
+            }
+            return false;
+        }
+        
+        /// <summary>
+        /// Returns whether a line strip intersects the portal's FOV
+        /// </summary>
+        /*public bool IsInsideFOV(Vector2 viewPoint, Vector2[] lineStrip)
+        {
+            Vector2[] pv = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
+            bool ViewIsLeft = MathExt.PointLeftOfLine(pv[0], pv[1], viewPoint);
+            List<Vector2> LinesValid = new List<Vector2>();
+            bool PreviousIsValid = false;
+            for (int i = 0; i < lineStrip.Length; i++)
+            {
+                if (MathExt.PointLeftOfLine(pv[0], pv[1], lineStrip[i]) != ViewIsLeft)
+                {
+                    PreviousIsValid = true;
+                }
+                else
+                {
+                    PreviousIsValid = false;
+                }
+            }
+
+
+        }*/
     }
 }

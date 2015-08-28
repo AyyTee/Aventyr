@@ -53,8 +53,18 @@ namespace Game
 
         public Model()
         {
-            Shader = Controller.Shaders["textured"];
-            GL.GenBuffers(1, out ibo_elements);
+            if (Controller.ContextExists)
+            {
+                Shader = Controller.Shaders["textured"];
+                GL.GenBuffers(1, out ibo_elements);
+            }
+        }
+
+        public Model(Vertex[] vertices, int[] indices)
+            : this()
+        {
+            Vertices.AddRange(vertices);
+            Indices.AddRange(indices);
         }
 
         ~Model()
@@ -70,14 +80,6 @@ namespace Game
                 //GL.DeleteBuffers(1, ref ibo_elements);
                 iboExists = false;
             }
-        }
-
-        public Model(Vertex[] vertices, int[] indices)
-        {
-            Vertices.AddRange(vertices);
-            Indices.AddRange(indices);
-            Shader = Controller.Shaders["textured"];
-            GL.GenBuffers(1, out ibo_elements);
         }
 
         public Model(ShaderProgram shader)
@@ -142,7 +144,10 @@ namespace Game
                 0, 3, 2,
             };
             Model model = new Model(vertices, indices);
-            model.SetTexture(Controller.textures["default.png"]);
+            if (Controller.ContextExists)
+            {
+                model.SetTexture(Controller.textures["default.png"]);
+            }
             return model;
         }
 
@@ -201,7 +206,10 @@ namespace Game
                 20,21,22,20,22,23
             };
             Model model = new Model(vertices, indices);
-            model.SetTexture(Controller.textures["default.png"]);
+            if (Controller.ContextExists)
+            {
+                model.SetTexture(Controller.textures["default.png"]);
+            }
             return model;
         }
 

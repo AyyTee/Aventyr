@@ -18,7 +18,7 @@ namespace Game
     {
         public Controller() : base(1024, 768, new GraphicsMode(32, 24, 0, 4), "Game", GameWindowFlags.FixedWindow)
         {
-            
+            ContextExists = true;
         }
         InputExt InputExt;
         Camera cam;
@@ -27,7 +27,7 @@ namespace Game
         /// Intended to keep pointless messages from the Poly2Tri library out of the console window
         /// </summary>
         public static StreamWriter Log = new StreamWriter("Triangulating.txt");
-
+        public static bool ContextExists = false;
         Model background;
         QFont Default;
         Entity box2;
@@ -84,7 +84,7 @@ namespace Game
 
             Portal portal1 = new Portal(true);
             //portal1.Transform.Rotation = 0.1f;
-            portal1.Transform.Position = new Vector2(1f, 0f);
+            portal1.Transform.Position = new Vector2(-2f, 0f);
             portal1.Transform.Scale = new Vector2(-1f, 1f);
             objects.Add(portal1);
             portals.Add(portal1);
@@ -193,14 +193,15 @@ namespace Game
 
         public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Matrix4 viewMatrixPrev, Vector2 viewPos, int depth, float timeDelta, int count)
         {
-            Vector2[] pv = portalEnter.GetVerts();
+            /*Vector2[] pv = portalEnter.GetVerts();
             pv = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrix);
             Vector2[] pvPrev = portalEnter.GetVerts();
             pvPrev = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrixPrev);
             if (MathExt.PointLeftOfLine(pvPrev[0], pvPrev[1], pv[0]) == MathExt.PointLeftOfLine(pvPrev[0], pvPrev[1], viewPos))
             {
                 return;
-            }
+            }*/
+            
             DrawPortal(portalEnter, viewMatrix, viewPos, depth, timeDelta, count);
         }
 
@@ -366,15 +367,12 @@ namespace Game
             }*/
             
             //get rid of all ibo elements no longer used
-            lock (iboGarbage)
+            foreach (int iboElement in iboGarbage.ToArray())
             {
-                foreach (int iboElement in iboGarbage.ToArray())
-                {
-                    int a = iboElement;
-                    GL.DeleteBuffers(1, ref a);
-                }
-                iboGarbage.Clear();
+                int a = iboElement;
+                GL.DeleteBuffers(1, ref a);
             }
+            iboGarbage.Clear();
         }
 
         protected override void OnClosing(CancelEventArgs e)
