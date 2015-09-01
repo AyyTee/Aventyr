@@ -277,22 +277,8 @@ namespace Game
             //get portal vertices within the world space
             Vector2[] pv = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
             Line line = new Line(pv);
-            //check if the lookPoint is on the opposite side of the portal from the viewPoint
-            if (line.PointIsLeft(viewPoint) == line.PointIsLeft(lookPoint))
-            {
-                return false;
-            }
-            //check if the lookPoint is within the FOV angles
-            double Angle0 = MathExt.AngleVector(pv[0] - viewPoint);
-            double Angle1 = MathExt.AngleVector(pv[1] - viewPoint);
-            double AngleDiff = MathExt.AngleDiff(Angle0, Angle1);
-            double AngleLook = MathExt.AngleVector(lookPoint - viewPoint);
-            double AngleLookDiff = MathExt.AngleDiff(Angle0, AngleLook);
-            if (Math.Abs(AngleDiff - AngleLookDiff) >= 0)
-            {
-                return true;
-            }
-            return false;
+            
+            return line.IsInsideFOV(viewPoint, lookPoint);
         }
         
         /// <summary>

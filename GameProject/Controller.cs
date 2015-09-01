@@ -16,7 +16,7 @@ namespace Game
 {
     class Controller : GameWindow
     {
-        public Controller() : base(1024, 768, new GraphicsMode(32, 24, 0, 4), "Game", GameWindowFlags.FixedWindow)
+        public Controller() : base(800, 600, new GraphicsMode(32, 24, 0, 4), "Game", GameWindowFlags.FixedWindow)
         {
             ContextExists = true;
         }
@@ -76,14 +76,14 @@ namespace Game
 
             Portal portal0 = new Portal(true);
             //portal0.Transform.Rotation = (float)Math.PI/4f;
-            //portal0.Transform.Position = new Vector2(-0.5f, 0f);
+            portal0.Transform.Position = new Vector2(0.5f, 0f);
             portal0.Transform.Scale = new Vector2(1f, 1f);
             portal0.Models[0].TransformUV.Scale = new Vector2(5f, 5f);
             objects.Add(portal0);
             portals.Add(portal0);
 
             Portal portal1 = new Portal(true);
-            //portal1.Transform.Rotation = 0.1f;
+            portal1.Transform.Rotation = 0.1f;
             portal1.Transform.Position = new Vector2(-2f, 0f);
             portal1.Transform.Scale = new Vector2(-1f, 1f);
             objects.Add(portal1);
@@ -174,35 +174,31 @@ namespace Game
             portalCount = 0;
 
             //stopgap solution. portals will only recursively draw themselves, not any other portals
-            IOrderedEnumerable<Portal> portalSort = portals.OrderBy(item => (item.Transform.Position - viewPos).Length);
+            IOrderedEnumerable<Portal> portalSort = portals.OrderByDescending(item => (item.Transform.Position - viewPos).Length);
             foreach (Portal p in portalSort)
             {
                 GL.Clear(ClearBufferMask.StencilBufferBit);
                 DrawPortal(p, viewMatrix, viewPos, depth, timeDelta, 0);
-                break;
+                //break;
             }
             GL.Disable(EnableCap.StencilTest);
             Console.Write(portalCount);
             Console.WriteLine();
         }
 
-        /*public bool PortalIsVisible()
-        {
-
-        }*/
-
         public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Matrix4 viewMatrixPrev, Vector2 viewPos, int depth, float timeDelta, int count)
         {
-            /*Vector2[] pv = portalEnter.GetVerts();
+            Vector2[] pv = portalEnter.Linked.GetVerts();
             pv = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrix);
-            Vector2[] pvPrev = portalEnter.GetVerts();
-            pvPrev = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrixPrev);
-            if (MathExt.PointLeftOfLine(pvPrev[0], pvPrev[1], pv[0]) == MathExt.PointLeftOfLine(pvPrev[0], pvPrev[1], viewPos))
+
+            Vector2[] pv2 = portalEnter.GetVerts();
+            pv2 = VectorExt2.Transform(pv2, portalEnter.Transform.GetMatrix() * viewMatrixPrev);
+            Line portalLine = new Line(pv2);
+            Vector2 v = VectorExt2.Transform(viewPos, viewMatrix);
+            if (portalLine.IsInsideFOV(v, new Line(pv)))
             {
-                return;
-            }*/
-            
-            DrawPortal(portalEnter, viewMatrix, viewPos, depth, timeDelta, count);
+                DrawPortal(portalEnter, viewMatrix, viewPos, depth, timeDelta, count);
+            }
         }
 
         public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count)
@@ -213,6 +209,7 @@ namespace Game
             }
             Vector2[] pv = portalEnter.GetVerts();
             pv = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrix);
+            //this potentially will not correctly cull portals if the viewPos begins outside of the viewspace
             if (MathExt.LineInRectangle(new Vector2(-1, -1), new Vector2(1, 1), pv[0], pv[1]) == false)
             {
                 return;
@@ -331,6 +328,14 @@ namespace Game
                 if (InputExt.MouseWheelDelta() != 0)
                 {
                     cam.Transform.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
+                }
+                else if (InputExt.KeyDown(Key.Q))
+                {
+                    cam.Transform.Scale /= (float)Math.Pow(1.04, 1);
+                }
+                else if (InputExt.KeyDown(Key.E))
+                {
+                    cam.Transform.Scale /= (float)Math.Pow(1.04, -1);
                 }
                 Vector2[] vArray = new Vector2[2];
                 IntersectPoint i = new IntersectPoint();
