@@ -34,10 +34,10 @@ namespace Game
         {
             Camera cam = new Camera();
             cam.Transform.Rotation = new Quaternion(0, 0, 1, 0);
-            cam.Transform.Position = position;
+            cam.Transform.Position = new Vector3(position.X, position.Y, 1000);
             cam.Transform.Scale = new Vector3(scale * aspect, scale, 1);
             cam.Orthographic = true;
-            cam.ZNear = 0.01f;
+            cam.ZNear = -10000f;
             cam.ZFar = 10000f;
             return cam;
         }

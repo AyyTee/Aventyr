@@ -160,7 +160,7 @@ namespace Game
             DrawDebug();
             
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
-            DrawPortalAll(portals.ToArray(), viewMatrix, viewPos, 4, TimeRenderDelta);
+            DrawPortalAll(portals.ToArray(), viewMatrix, viewPos, 4, TimeRenderDelta, 10);
             Shaders["textured"].DisableVertexAttribArrays();
             Shaders["default"].DisableVertexAttribArrays();
 
@@ -169,7 +169,16 @@ namespace Game
             SwapBuffers();
         }
 
-        private void DrawPortalAll(Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="portals"></param>
+        /// <param name="viewMatrix"></param>
+        /// <param name="viewPos"></param>
+        /// <param name="depth"></param>
+        /// <param name="timeDelta"></param>
+        /// <param name="sceneMaxDepth">The difference between the nearest and farthest object in the scene</param>
+        private void DrawPortalAll(Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, float sceneDepth)
         {
             portalCount = 0;
 
@@ -177,8 +186,8 @@ namespace Game
             IOrderedEnumerable<Portal> portalSort = portals.OrderByDescending(item => (item.Transform.Position - viewPos).Length);
             foreach (Portal p in portalSort)
             {
-                GL.Clear(ClearBufferMask.StencilBufferBit);
-                DrawPortal(p, viewMatrix, viewPos, depth, timeDelta, 0);
+                GL.Clear(ClearBufferMask.StencilBufferBit | ClearBufferMask.DepthBufferBit);
+                DrawPortal(p, viewMatrix, viewPos, depth, timeDelta, 0, sceneDepth);
                 //break;
             }
             GL.Disable(EnableCap.StencilTest);
@@ -186,7 +195,7 @@ namespace Game
             Console.WriteLine();
         }
 
-        public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Matrix4 viewMatrixPrev, Vector2 viewPos, int depth, float timeDelta, int count)
+        public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Matrix4 viewMatrixPrev, Vector2 viewPos, int depth, float timeDelta, int count, float sceneDepth)
         {
             Vector2[] pv = portalEnter.Linked.GetVerts();
             pv = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrix);
@@ -197,11 +206,11 @@ namespace Game
             Vector2 v = VectorExt2.Transform(viewPos, viewMatrix);
             if (portalLine.IsInsideFOV(v, new Line(pv)))
             {
-                DrawPortal(portalEnter, viewMatrix, viewPos, depth, timeDelta, count);
+                DrawPortal(portalEnter, viewMatrix, viewPos, depth, timeDelta, count, sceneDepth);
             }
         }
 
-        public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count)
+        public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count, float sceneDepth)
         {
             if (depth <= 0)
             {
@@ -209,14 +218,13 @@ namespace Game
             }
             Vector2[] pv = portalEnter.GetVerts();
             pv = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrix);
-            //this potentially will not correctly cull portals if the viewPos begins outside of the viewspace
+            //this will not correctly cull portals if the viewPos begins outside of the viewspace
             if (MathExt.LineInRectangle(new Vector2(-1, -1), new Vector2(1, 1), pv[0], pv[1]) == false)
             {
                 return;
             }
-            
+            viewMatrix = Matrix4.CreateTranslation(new Vector3(0, 0, sceneDepth)) * viewMatrix;
             portalCount++;
-            GL.Clear(ClearBufferMask.DepthBufferBit);
 
             //Start using the stencil 
             GL.ColorMask(false, false, false, false);
@@ -255,12 +263,19 @@ namespace Game
             {
                 fovOutline.Models.Add(Model.CreateLine(new Vector2[] { verts[1], verts[2] }));
                 fovOutline.Models.Add(Model.CreateLine(new Vector2[] { verts[0], verts[3] }));
+                foreach (Model model in fovOutline.Models)
+                {
+                    Vector3 v = model.Transform.Position;
+                    v.Z = sceneDepth * (depth + count);
+                    model.Transform.Position = v;
+                }
             }
+            
             GL.LineWidth(2f);
             fovOutline.Render(viewMatrix, timeDelta);
             GL.LineWidth(1f);
 
-            DrawPortal(portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
+            DrawPortal(portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1, sceneDepth);
         }
 
         private void DrawDebug()

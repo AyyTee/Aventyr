@@ -39,4 +39,3 @@ C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debu
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\OpenTK.xml
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\Poly2Tri.pdb
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\QuickFont.pdb
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\obj\x86\Debug\GameProject.csprojResolveAssemblyReference.cache
