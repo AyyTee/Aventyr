@@ -15,6 +15,16 @@ namespace Game
         private Transform2D _velocity = new Transform2D();
         private Transform2D _transform = new Transform2D();
         private List<Model> _models = new List<Model>();
+        private bool _isPortalable = false;
+
+        /// <summary>
+        /// Whether or not this entity will interact with portals when intersecting them
+        /// </summary>
+        public bool IsPortalable
+        {
+            get { return _isPortalable; }
+            set { _isPortalable = value; }
+        }
         public virtual Transform2D Velocity { get { return _velocity; } set { _velocity = value; } }
         public virtual Transform2D Transform { get { return _transform; } set { _transform = value; } }
         public virtual List<Model> Models { get { return _models; } set { _models = value; } }
@@ -42,7 +52,7 @@ namespace Game
 
         }
 
-        public virtual void Render(Matrix4 viewMatrix, float timeDelta)
+        public virtual void Render(Scene scene, Matrix4 viewMatrix, float timeDelta)
         {
             Transform.GetMatrix();
             foreach (Model v in Models)
@@ -101,13 +111,30 @@ namespace Game
                 GL.BindBuffer(BufferTarget.ElementArrayBuffer, v.ibo_elements);
                 GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StaticDraw);
 
-
-
                 GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
                 Matrix4 modelMatrix = v.Transform.GetMatrix() * Transform.GetMatrix() * viewMatrix;
                 GL.UniformMatrix4(v.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);
                 Matrix4 UVMatrix = v.TransformUV.GetMatrix();
                 GL.UniformMatrix4(v.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
+
+                Portal portal = Controller.portals[0];
+                Line portalLine = new Line(portal.GetWorldVerts());
+                IntersectPoint intersect = portalLine.Intersects(VectorExt2.Transform(v.GetWorldConvexHull(), this.Transform.GetMatrix()));
+                if (IsPortalable && intersect.Exists)
+                {
+                    GL.Enable(EnableCap.Blend);
+                    Vector2[] pv = VectorExt2.Transform(portalLine.Vertices, viewMatrix);
+                    Matrix4 ScaleMatrix =  Matrix4.CreateScale(new Vector3(Controller.CanvasSize.X/2, Controller.CanvasSize.Y/2, 0));
+                    pv = VectorExt2.Transform(pv, Matrix4.CreateTranslation(new Vector3(1,1,0)) * ScaleMatrix);
+                    GL.Uniform2(v.Shader.GetUniform("cullLine0"), pv[0]);
+                    GL.Uniform2(v.Shader.GetUniform("cullLine1"), pv[1]);
+                }
+                else
+                {
+                    GL.Disable(EnableCap.Blend);
+                    GL.Uniform2(v.Shader.GetUniform("cullLine0"), new Vector2());
+                    GL.Uniform2(v.Shader.GetUniform("cullLine1"), new Vector2());
+                }
 
                 if (v.Shader.GetAttribute("maintexture") != -1)
                 {

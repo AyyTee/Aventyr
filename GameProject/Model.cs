@@ -104,6 +104,26 @@ namespace Game
             return val;
         }
 
+        public Vector3[] GetWorldVerts()
+        {
+            return VectorExt3.Transform(GetVerts(), Transform.GetMatrix());
+        }
+        
+        /// <summary>
+        /// Returns a convex hull of the model projected onto the z-plane in the world space
+        /// </summary>
+        /// <returns></returns>
+        public Vector2[] GetWorldConvexHull()
+        {
+            Vector3[] v = GetWorldVerts();
+            List<Vector2> vProject = new List<Vector2>();
+            for (int i = 0; i < v.Length; i++)
+            {
+                vProject.Add(new Vector2(v[i].X, v[i].Y));
+            }
+            return MathExt.ComputeConvexHull(vProject).ToArray();
+        }
+
         public int[] GetIndices()
         {
             return Indices.ToArray();

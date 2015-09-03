@@ -81,5 +81,22 @@ namespace Game
             }
             return false;
         }
+
+        public IntersectPoint Intersects(Line line, bool segmentOnly)
+        {
+            return MathExt.LineIntersection(Vertices[0], Vertices[1], line.Vertices[0], line.Vertices[1], segmentOnly);
+        }
+
+        public IntersectPoint Intersects(Vector2[] polygon)
+        {
+            for (int i0 = 0; i0 < polygon.Length; i0++)
+            {
+                int i1 = (i0 + 1) % polygon.Length;
+                return MathExt.LineIntersection(Vertices[0], Vertices[1], polygon[i0], polygon[i1], true);
+            }
+            IntersectPoint point = new IntersectPoint();
+            point.Exists = false;
+            return point;
+        }
     }
 }

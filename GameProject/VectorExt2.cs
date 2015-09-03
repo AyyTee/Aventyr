@@ -8,6 +8,10 @@ namespace Game
 {
     public class VectorExt2
     {
+        public static float Cross(Vector2 v0, Vector2 v1)
+        {
+            return v0.X * v1.Y - v0.Y * v1.X;
+        }
         public static Vector2 Transform(Vector2 vector, Matrix4 matrix)
         {
             Vector3 v = Vector3.Transform(new Vector3(vector.X, vector.Y, 1), matrix);

@@ -14,9 +14,10 @@ using System.ComponentModel;
 
 namespace Game
 {
-    class Controller : GameWindow
+    public class Controller : GameWindow
     {
-        public Controller() : base(800, 600, new GraphicsMode(32, 24, 0, 4), "Game", GameWindowFlags.FixedWindow)
+        public Controller()
+            : base((int) CanvasSize.X, (int) CanvasSize.Y, new GraphicsMode(32, 24, 0, 4), "Game", GameWindowFlags.FixedWindow)
         {
             ContextExists = true;
         }
@@ -31,14 +32,16 @@ namespace Game
         Model background;
         QFont Default;
         Entity box2;
-        List<Portal> portals = new List<Portal>();
+        public static List<Portal> portals = new List<Portal>();
         public static List<int> iboGarbage = new List<int>();
+        public static Vector2 CanvasSize = new Vector2(800, 600);
 
         List<Entity> objects = new List<Entity>();
         public static Dictionary<string, int> textures = new Dictionary<string, int>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
 
         Matrix4 viewMatrix;
+        Scene scene;
 
         float Time = 0.0f;
         /// <summary>
@@ -50,6 +53,8 @@ namespace Game
 
         void initProgram()
         {
+            scene = new Scene(this);
+
             Default = new QFont(@"fonts\Times.ttf", 72, new QFontBuilderConfiguration(false));
 
             InputExt = new InputExt(this);
@@ -63,6 +68,7 @@ namespace Game
             textures.Add("default.png", loadImage(@"assets\default.png"));
             textures.Add("grid.png", loadImage(@"assets\grid.png"));
             // Create our objects
+            
 
             background = Model.CreatePlane();
             background.TextureID = textures["grid.png"];
@@ -75,18 +81,18 @@ namespace Game
             objects.Add(back);
 
             Portal portal0 = new Portal(true);
-            //portal0.Transform.Rotation = (float)Math.PI/4f;
-            portal0.Transform.Position = new Vector2(0.5f, 0f);
+            portal0.Transform.Rotation = (float)Math.PI/4f;
+            portal0.Transform.Position = new Vector2(0.5f, 2f);
             portal0.Transform.Scale = new Vector2(1f, 1f);
-            portal0.Models[0].TransformUV.Scale = new Vector2(5f, 5f);
-            objects.Add(portal0);
+            //portal0.Models[0].TransformUV.Scale = new Vector2(5f, 5f);
+            //objects.Add(portal0);
             portals.Add(portal0);
 
             Portal portal1 = new Portal(true);
             portal1.Transform.Rotation = 0.1f;
-            portal1.Transform.Position = new Vector2(-2f, 0f);
-            portal1.Transform.Scale = new Vector2(-1f, 1f);
-            objects.Add(portal1);
+            portal1.Transform.Position = new Vector2(-2f, 2f);
+            portal1.Transform.Scale = new Vector2(1f, -1f);
+            //objects.Add(portal1);
             portals.Add(portal1);
             Portal.Link(portal0, portal1);
 
@@ -113,13 +119,21 @@ namespace Game
                 new Vector2(-0.5f, 0), 
                 new Vector2(0, -0.5f)
             });
+            player.IsPortalable = true;
             player.Transform.Scale = new Vector2(.5f, .5f);
             player.Models.Add(playerModel);
             objects.Add(player);
 
-            Entity last = new Entity();
+            /*Entity last = new Entity();
             last.Models.Add(new Model());
-            objects.Add(last);
+            objects.Add(last);*/
+
+            scene.AddEntity(back);
+            scene.AddPortal(portal0);
+            scene.AddPortal(portal1);
+            scene.AddEntity(box);
+            scene.AddEntity(box2);
+            scene.AddEntity(player);
 
             cam = Camera.CameraOrtho(new Vector3(0f, 0f, 10f), 10, Width / (float)Height);
         }
@@ -153,18 +167,18 @@ namespace Game
             viewMatrix = cam.GetViewMatrix();
             //GL.Disable(EnableCap.StencilTest);
             GL.Enable(EnableCap.DepthTest);
-            //GL.Enable(EnableCap.Blend);
+            GL.Enable(EnableCap.Blend);
             
             
-            DrawScene(viewMatrix, (float)e.Time);
+            //DrawScene(viewMatrix, (float)e.Time);
+            scene.DrawScene(viewMatrix, (float)e.Time);
             DrawDebug();
             
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
-            DrawPortalAll(portals.ToArray(), viewMatrix, viewPos, 4, TimeRenderDelta, 10);
+            DrawPortalAll(portals.ToArray(), viewMatrix, viewPos, 4, TimeRenderDelta, 20);
             Shaders["textured"].DisableVertexAttribArrays();
             Shaders["default"].DisableVertexAttribArrays();
 
-            //GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
             GL.Flush();
             SwapBuffers();
         }
@@ -191,8 +205,6 @@ namespace Game
                 //break;
             }
             GL.Disable(EnableCap.StencilTest);
-            Console.Write(portalCount);
-            Console.WriteLine();
         }
 
         public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Matrix4 viewMatrixPrev, Vector2 viewPos, int depth, float timeDelta, int count, float sceneDepth)
@@ -241,7 +253,7 @@ namespace Game
             if (a.Length >= 3)
             {
                 fov.Models.Add(Model.CreatePolygon(a));
-                fov.Render(viewMatrix, timeDelta);
+                fov.Render(scene, viewMatrix, timeDelta);
             }
             Console.SetOut(console);
 
@@ -253,7 +265,8 @@ namespace Game
 
             GL.Enable(EnableCap.DepthTest);
             Matrix4 portalMatrix = Portal.GetMatrix(portalEnter.Linked, portalEnter) * viewMatrix;
-            DrawScene(portalMatrix, timeDelta);
+            scene.DrawScene(portalMatrix, timeDelta);
+            //DrawScene(portalMatrix, timeDelta);
 
             //GL.Disable(EnableCap.StencilTest);
 
@@ -272,7 +285,7 @@ namespace Game
             }
             
             GL.LineWidth(2f);
-            fovOutline.Render(viewMatrix, timeDelta);
+            fovOutline.Render(scene, viewMatrix, timeDelta);
             GL.LineWidth(1f);
 
             DrawPortal(portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1, sceneDepth);
@@ -290,16 +303,6 @@ namespace Game
             }
             GL.End();
             GL.LineWidth(1f);*/
-        }
-
-        private void DrawScene(Matrix4 viewMatrix, float timeDelta)
-        {
-            // Draw all our objects
-            foreach (Entity v in objects)
-            {
-                v.Render(viewMatrix, (float)Math.Min(TimeRenderDelta, 1 / UpdateFrequency));
-            }
-            
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)

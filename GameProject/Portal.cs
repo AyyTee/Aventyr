@@ -10,9 +10,16 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public class Portal : Entity
+    public class Portal
     {
         private Portal _linked;
+        private Transform2D _transform = new Transform2D();
+
+public Transform2D Transform
+{
+  get { return _transform; }
+  set { _transform = value; }
+}
 
         public Portal Linked
         {
@@ -22,11 +29,11 @@ namespace Game
         public Portal()
         {
             Transform.FixedScale = true;
-            Models.Add(Model.CreatePlane());
+            /*Models.Add(Model.CreatePlane());
             Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             Models.Add(Model.CreatePlane());
-            Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);*/
         }
 
         public Portal(bool leftHanded)
@@ -97,6 +104,11 @@ namespace Game
         public Vector2[] GetVerts()
         {
             return new Vector2[] { new Vector2(0, 0.5f), new Vector2(0, -0.5f)};
+        }
+
+        public Vector2[] GetWorldVerts()
+        {
+            return VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
         }
 
         public Vector2[] GetFOV(Vector2 origin, float distance)
@@ -268,41 +280,5 @@ namespace Game
             }
             return verts;
         }
-
-        /// <summary>
-        /// Returns whether a point is within this portal's FOV
-        /// </summary>
-        public bool IsInsideFOV(Vector2 viewPoint, Vector2 lookPoint)
-        {
-            //get portal vertices within the world space
-            Vector2[] pv = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
-            Line line = new Line(pv);
-            
-            return line.IsInsideFOV(viewPoint, lookPoint);
-        }
-        
-        /// <summary>
-        /// Returns whether a line strip intersects the portal's FOV
-        /// </summary>
-        /*public bool IsInsideFOV(Vector2 viewPoint, Vector2[] lineStrip)
-        {
-            Vector2[] pv = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
-            bool ViewIsLeft = MathExt.PointLeftOfLine(pv[0], pv[1], viewPoint);
-            List<Vector2> LinesValid = new List<Vector2>();
-            bool PreviousIsValid = false;
-            for (int i = 0; i < lineStrip.Length; i++)
-            {
-                if (MathExt.PointLeftOfLine(pv[0], pv[1], lineStrip[i]) != ViewIsLeft)
-                {
-                    PreviousIsValid = true;
-                }
-                else
-                {
-                    PreviousIsValid = false;
-                }
-            }
-
-
-        }*/
     }
 }

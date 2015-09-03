@@ -63,6 +63,7 @@
     <Compile Include="InputExt.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="MathExt.cs" />
+    <Compile Include="Scene.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="PolygonCoordinate.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Model.cs" />
     <Compile Include="Transform2D.cs" />
     <Compile Include="VectorExt2.cs" />
+    <Compile Include="VectorExt3.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\default.png">

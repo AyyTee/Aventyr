@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace Game
     {
         static public Vector2d Matrix2dMult(Vector2d V, Matrix2d M)
         {
-            return new Vector2d(V.X * M.M11 + V.Y * M.M21, V.X * M.M12 + V.Y * M.M22);//new Vector2d(M.Column0 * V, M.Column1 * V);
+            return new Vector2d(V.X * M.M11 + V.Y * M.M21, V.X * M.M12 + V.Y * M.M22);
         }
         static public Vector2 Matrix2Mult(Vector2 V, Matrix2 M)
         {
@@ -252,6 +253,60 @@ namespace Game
         static public bool LineInRectangle(Vector2 topLeft, Vector2 bottomRight, Vector2 lineBegin, Vector2 lineEnd)
         {
             return LineInRectangle(new Vector2d(topLeft.X, topLeft.Y), new Vector2d(bottomRight.X, bottomRight.Y), new Vector2d(lineBegin.X, lineBegin.Y), new Vector2d(lineEnd.X, lineEnd.Y));
+        }
+
+        /// <summary>Computes the convex hull of a polygon, in clockwise order in a Y-up 
+        /// coordinate system (counterclockwise in a Y-down coordinate system).</summary>
+        /// <remarks>Uses the Monotone Chain algorithm, a.k.a. Andrew's Algorithm.
+        /// Script found at: http://loyc-etc.blogspot.com/2014/05/2d-convex-hull-in-c-45-lines-of-code.html
+        /// </remarks>
+        public static List<Vector2> ComputeConvexHull(IEnumerable<Vector2> points)
+        {
+            var list = new List<Vector2>(points);
+            return ComputeConvexHull(list, true);
+        }
+        public static List<Vector2> ComputeConvexHull(List<Vector2> points, bool sortInPlace = false)
+        {
+            if (points.Count <= 3)
+            {
+                return points;
+            }
+            if (!sortInPlace)
+                points = new List<Vector2>(points);
+            points.Sort((a, b) =>
+              a.X == b.X ? a.Y.CompareTo(b.Y) : (a.X > b.X ? 1 : -1));
+
+            List<Vector2> hull = new List<Vector2>();
+            int L = 0, U = 0; // size of lower and upper hulls
+
+            // Builds a hull such that the output polygon starts at the leftmost point.
+            for (int i = points.Count - 1; i >= 0; i--)
+            {
+                Vector2 p = points[i];
+
+                // build lower hull (at end of output list)
+                while (L >= 2 && VectorExt2.Cross(hull[hull.Count - 1] - hull[hull.Count - 2], p - hull[hull.Count - 1]) >= 0)
+                {
+                    hull.RemoveAt(hull.Count - 1);
+                    L--;
+                }
+                hull.Add(p);
+                L++;
+
+                // build upper hull (at beginning of output list)
+
+                while (U >= 2 && VectorExt2.Cross(hull[0] - hull[1], p - hull[0]) <= 0)
+                {
+                    hull.RemoveAt(0);
+                    U--;
+                }
+                if (U != 0) // when U=0, share the point added above
+                    hull.Insert(0, p);
+                U++;
+                Debug.Assert(U + L == hull.Count + 1);
+            }
+            hull.RemoveAt(hull.Count - 1);
+            return hull;
         }
     }
 }
