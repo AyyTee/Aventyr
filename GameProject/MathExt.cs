@@ -308,5 +308,27 @@ namespace Game
             hull.RemoveAt(hull.Count - 1);
             return hull;
         }
+
+        /// <summary>
+        /// Tests if a point is contained in a closed polygon
+        /// </summary>
+        /// <param name="polygon">A closed polygon</param>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        /// <remarks>Code was found here http://dominoc925.blogspot.com/2012/02/c-code-snippet-to-determine-if-point-is.html
+        /// </remarks>
+        public static bool IsPointInPolygon(Vector2[] polygon, Vector2 point)
+        {
+            bool isInside = false;
+            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+            {
+                if (((polygon[i].Y > point.Y) != (polygon[j].Y > point.Y)) &&
+                (point.X < (polygon[j].X - polygon[i].X) * (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) + polygon[i].X))
+                {
+                    isInside = !isInside;
+                }
+            }
+            return isInside;
+        }
     }
 }

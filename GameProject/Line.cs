@@ -87,16 +87,44 @@ namespace Game
             return MathExt.LineIntersection(Vertices[0], Vertices[1], line.Vertices[0], line.Vertices[1], segmentOnly);
         }
 
+        /// <summary>
+        /// Checks if the line intersects the edges of a polygon.  This does not test if the line is contained in the polygon
+        /// </summary>
+        /// <param name="polygon">A closed polygon</param>
+        /// <returns>An intersection point</returns>
         public IntersectPoint Intersects(Vector2[] polygon)
         {
+            IntersectPoint point;
             for (int i0 = 0; i0 < polygon.Length; i0++)
             {
                 int i1 = (i0 + 1) % polygon.Length;
-                return MathExt.LineIntersection(Vertices[0], Vertices[1], polygon[i0], polygon[i1], true);
+                point = MathExt.LineIntersection(Vertices[0], Vertices[1], polygon[i0], polygon[i1], true);
+                if (point.Exists)
+                {
+                    return point;
+                }
             }
-            IntersectPoint point = new IntersectPoint();
+            point = new IntersectPoint();
             point.Exists = false;
             return point;
+        }
+
+        /// <summary>
+        /// Checks if the line is at least partially contained in a polygon
+        /// </summary>
+        /// <param name="polygon">A closed polygon</param>
+        /// <returns></returns>
+        public bool IsInsideOfPolygon(Vector2[] polygon)
+        {
+            if (MathExt.IsPointInPolygon(polygon, Vertices[0]))
+            {
+                return true;
+            }
+            if (MathExt.IsPointInPolygon(polygon, Vertices[1]))
+            {
+                return true;
+            }
+            return Intersects(polygon).Exists;
         }
     }
 }

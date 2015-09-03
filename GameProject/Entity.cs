@@ -117,17 +117,31 @@ namespace Game
                 Matrix4 UVMatrix = v.TransformUV.GetMatrix();
                 GL.UniformMatrix4(v.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
 
-                Portal portal = Controller.portals[0];
-                Line portalLine = new Line(portal.GetWorldVerts());
-                IntersectPoint intersect = portalLine.Intersects(VectorExt2.Transform(v.GetWorldConvexHull(), this.Transform.GetMatrix()));
-                if (IsPortalable && intersect.Exists)
+                if (IsPortalable)
                 {
-                    GL.Enable(EnableCap.Blend);
-                    Vector2[] pv = VectorExt2.Transform(portalLine.Vertices, viewMatrix);
-                    Matrix4 ScaleMatrix =  Matrix4.CreateScale(new Vector3(Controller.CanvasSize.X/2, Controller.CanvasSize.Y/2, 0));
-                    pv = VectorExt2.Transform(pv, Matrix4.CreateTranslation(new Vector3(1,1,0)) * ScaleMatrix);
-                    GL.Uniform2(v.Shader.GetUniform("cullLine0"), pv[0]);
-                    GL.Uniform2(v.Shader.GetUniform("cullLine1"), pv[1]);
+                    foreach (Portal portal in scene.Portals)
+                    {
+                        Line portalLine = new Line(portal.GetWorldVerts());
+                        Vector2[] convexHull = VectorExt2.Transform(v.GetWorldConvexHull(), this.Transform.GetMatrix());
+                        if (portalLine.IsInsideOfPolygon(convexHull))
+                        {
+                            GL.Enable(EnableCap.Blend);
+                            Vector2[] pv = VectorExt2.Transform(portalLine.Vertices, viewMatrix);
+                            Matrix4 ScaleMatrix = Matrix4.CreateScale(new Vector3(Controller.CanvasSize.X / 2, Controller.CanvasSize.Y / 2, 0));
+                            Vector2[] pvScreen = VectorExt2.Transform(pv, Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * ScaleMatrix);
+                            Vector2 pos = VectorExt2.Transform(new Vector2(v.Transform.Position.X, v.Transform.Position.Y), viewMatrix);
+                            if (new Line(pv).PointIsLeft(pos))
+                            {
+                                GL.Uniform2(v.Shader.GetUniform("cullLine0"), pvScreen[1]);
+                                GL.Uniform2(v.Shader.GetUniform("cullLine1"), pvScreen[0]);
+                            }
+                            else
+                            {
+                                GL.Uniform2(v.Shader.GetUniform("cullLine0"), pvScreen[0]);
+                                GL.Uniform2(v.Shader.GetUniform("cullLine1"), pvScreen[1]);
+                            }
+                        }
+                    }
                 }
                 else
                 {

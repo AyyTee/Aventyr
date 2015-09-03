@@ -81,20 +81,36 @@ namespace Game
             objects.Add(back);
 
             Portal portal0 = new Portal(true);
-            portal0.Transform.Rotation = (float)Math.PI/4f;
+            //portal0.Transform.Rotation = (float)Math.PI/4f;
             portal0.Transform.Position = new Vector2(0.5f, 2f);
             portal0.Transform.Scale = new Vector2(1f, 1f);
             //portal0.Models[0].TransformUV.Scale = new Vector2(5f, 5f);
             //objects.Add(portal0);
             portals.Add(portal0);
+            Entity portalEntity0 = new Entity();
+            portalEntity0.Transform = portal0.Transform;
+            portalEntity0.Models.Add(Model.CreatePlane());
+            portalEntity0.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
+            portalEntity0.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
+            portalEntity0.Models.Add(Model.CreatePlane());
+            portalEntity0.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            scene.AddEntity(portalEntity0);
 
             Portal portal1 = new Portal(true);
             portal1.Transform.Rotation = 0.1f;
             portal1.Transform.Position = new Vector2(-2f, 2f);
-            portal1.Transform.Scale = new Vector2(1f, -1f);
+            portal1.Transform.Scale = new Vector2(-1f, 1f);
             //objects.Add(portal1);
             portals.Add(portal1);
             Portal.Link(portal0, portal1);
+            Entity portalEntity1 = new Entity();
+            portalEntity1.Transform = portal1.Transform;
+            portalEntity1.Models.Add(Model.CreatePlane());
+            portalEntity1.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
+            portalEntity1.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
+            portalEntity1.Models.Add(Model.CreatePlane());
+            portalEntity1.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            scene.AddEntity(portalEntity1);
 
             Model tc = Model.CreateCube();
             tc.Transform.Position = new Vector3(1f, 3f, 0);
@@ -326,7 +342,13 @@ namespace Game
                 {
                     camSpeed = .0009f;
                 }
-                
+                if (InputExt.KeyDown(Key.R))
+                {
+                    Quaternion rot = cam.Transform.Rotation;
+                    rot.W += .01f;
+                    cam.Transform.Rotation = rot;
+                    player.Transform.Rotation += .01f;
+                }
                 if (InputExt.KeyDown(Key.W))
                 {
                     v += cam.GetUp() * camSpeed * cam.Transform.Scale.Y;

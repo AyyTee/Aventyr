@@ -15,11 +15,11 @@ namespace Game
         private Portal _linked;
         private Transform2D _transform = new Transform2D();
 
-public Transform2D Transform
-{
-  get { return _transform; }
-  set { _transform = value; }
-}
+        public Transform2D Transform
+        {
+          get { return _transform; }
+          set { _transform = value; }
+        }
 
         public Portal Linked
         {
@@ -29,11 +29,6 @@ public Transform2D Transform
         public Portal()
         {
             Transform.FixedScale = true;
-            /*Models.Add(Model.CreatePlane());
-            Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
-            Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
-            Models.Add(Model.CreatePlane());
-            Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);*/
         }
 
         public Portal(bool leftHanded)

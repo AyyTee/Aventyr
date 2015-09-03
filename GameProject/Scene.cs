@@ -9,6 +9,11 @@ namespace Game
     public class Scene
     {
         private List<Portal> _portals = new List<Portal>();
+
+        public List<Portal> Portals
+        {
+            get { return _portals; }
+        }
         private List<Entity> _entities = new List<Entity>();
         private Controller _window;
 
