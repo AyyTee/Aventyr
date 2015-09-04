@@ -112,24 +112,54 @@ namespace Game
                 GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StaticDraw);
 
                 GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
-                Matrix4 modelMatrix = v.Transform.GetMatrix() * Transform.GetMatrix() * viewMatrix;
-                GL.UniformMatrix4(v.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);
+                
                 Matrix4 UVMatrix = v.TransformUV.GetMatrix();
                 GL.UniformMatrix4(v.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
 
+                if (v.Shader.GetAttribute("maintexture") != -1)
+                {
+                    GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.TextureID);
+                }
+
+                if (v.Wireframe)
+                {
+                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+                }
+                
                 if (IsPortalable)
                 {
+                    
                     foreach (Portal portal in scene.Portals)
                     {
                         Line portalLine = new Line(portal.GetWorldVerts());
                         Vector2[] convexHull = VectorExt2.Transform(v.GetWorldConvexHull(), this.Transform.GetMatrix());
                         if (portalLine.IsInsideOfPolygon(convexHull))
                         {
-                            GL.Enable(EnableCap.Blend);
-                            Vector2[] pv = VectorExt2.Transform(portalLine.Vertices, viewMatrix);
+                            //GL.Enable(EnableCap.Blend);
+                            Vector2[] pv = VectorExt2.Transform(portal.Linked.GetWorldVerts(), viewMatrix);
                             Matrix4 ScaleMatrix = Matrix4.CreateScale(new Vector3(Controller.CanvasSize.X / 2, Controller.CanvasSize.Y / 2, 0));
                             Vector2[] pvScreen = VectorExt2.Transform(pv, Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * ScaleMatrix);
-                            Vector2 pos = VectorExt2.Transform(new Vector2(v.Transform.Position.X, v.Transform.Position.Y), viewMatrix);
+                            Vector2 pos = VectorExt2.Transform(new Vector2(v.Transform.Position.X, v.Transform.Position.Y), this.Transform.GetMatrix());
+                            pos = VectorExt2.Transform(pos, portal.GetMatrix() * viewMatrix);
+                            if (!new Line(pv).PointIsLeft(pos))
+                            {
+                                GL.Uniform2(v.Shader.GetUniform("cullLine0"), pvScreen[1]);
+                                GL.Uniform2(v.Shader.GetUniform("cullLine1"), pvScreen[0]);
+                            }
+                            else
+                            {
+                                GL.Uniform2(v.Shader.GetUniform("cullLine0"), pvScreen[0]);
+                                GL.Uniform2(v.Shader.GetUniform("cullLine1"), pvScreen[1]);
+                            }
+                            _RenderSetTransformMatrix(v, portal.GetMatrix() * viewMatrix);
+                            GL.DrawElements(BeginMode.Triangles, v.Indices.Count, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
+
+
+                            pv = VectorExt2.Transform(portalLine.Vertices, viewMatrix);
+                            //ScaleMatrix = Matrix4.CreateScale(new Vector3(Controller.CanvasSize.X / 2, Controller.CanvasSize.Y / 2, 0));
+                            pvScreen = VectorExt2.Transform(pv, Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * ScaleMatrix);
+                            pos = VectorExt2.Transform(new Vector2(v.Transform.Position.X, v.Transform.Position.Y), this.Transform.GetMatrix());
+                            pos = VectorExt2.Transform(pos, viewMatrix);
                             if (new Line(pv).PointIsLeft(pos))
                             {
                                 GL.Uniform2(v.Shader.GetUniform("cullLine0"), pvScreen[1]);
@@ -141,25 +171,19 @@ namespace Game
                                 GL.Uniform2(v.Shader.GetUniform("cullLine1"), pvScreen[1]);
                             }
                         }
+                        
                     }
                 }
                 else
                 {
-                    GL.Disable(EnableCap.Blend);
+                    //GL.Disable(EnableCap.Blend);
                     GL.Uniform2(v.Shader.GetUniform("cullLine0"), new Vector2());
                     GL.Uniform2(v.Shader.GetUniform("cullLine1"), new Vector2());
                 }
 
-                if (v.Shader.GetAttribute("maintexture") != -1)
-                {
-                    GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.TextureID);
-                }
-
-                if (v.Wireframe)
-                {
-                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-                }
+                _RenderSetTransformMatrix(v, viewMatrix);
                 GL.DrawElements(BeginMode.Triangles, v.Indices.Count, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
+                
                 if (v.Wireframe)
                 {
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
@@ -168,9 +192,15 @@ namespace Game
             }
         }
 
-        /*public virtual Transform GetRenderTransform(float deltaTime)
+        private void _RenderSetTransformMatrix(Model model, Matrix4 viewMatrix)
         {
-            return Transform.Lerp(Transform, Velocity, deltaTime);
-        }*/
+            Matrix4 modelMatrix = model.Transform.GetMatrix() * Transform.GetMatrix() * viewMatrix;
+            GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);    
+        }
+
+        private void _RenderPortalClipping(Portal portalEnter, Matrix4 viewMatrix)
+        {
+
+        }
     }
 }

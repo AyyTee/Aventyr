@@ -14,7 +14,8 @@ main()
 	{
 		if (0 < (cullLine1.x - cullLine0.x) * (gl_FragCoord.y - cullLine0.y) - (cullLine1.y - cullLine0.y) * (gl_FragCoord.x - cullLine0.x))
 		{
-			outputColor = vec4(0, 0, 0, 0);
+			discard;
+			//outputColor = vec4(0, 0, 0, 0);
 			return;
 		}
 	}
