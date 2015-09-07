@@ -1,12 +1,6 @@
 ﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game
 {
@@ -14,6 +8,11 @@ namespace Game
     {
         private Portal _linked;
         private Transform2D _transform = new Transform2D();
+        /// <summary>
+        /// The distance at which an entity enters and exits a portal.  
+        /// It is nessesary to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
+        /// </summary>
+        public const float EntityMinDistance = 0.001f;
 
         public Transform2D Transform
         {

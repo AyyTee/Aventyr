@@ -84,14 +84,14 @@ namespace Game
 
                 GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("vPosition"));
 
-                GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StaticDraw);
+                GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
                 GL.VertexAttribPointer(v.Shader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
 
                 // Buffer vertex color if shader supports it
                 if (v.Shader.GetAttribute("vColor") != -1)
                 {
                     GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("vColor"));
-                    GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StaticDraw);
+                    GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
                     GL.VertexAttribPointer(v.Shader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
                 }
 
@@ -99,7 +99,7 @@ namespace Game
                 if (v.Shader.GetAttribute("texcoord") != -1)
                 {
                     GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("texcoord"));
-                    GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StaticDraw);
+                    GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
                     GL.VertexAttribPointer(v.Shader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
                 }
 
@@ -109,7 +109,7 @@ namespace Game
 
                 // Buffer index data
                 GL.BindBuffer(BufferTarget.ElementArrayBuffer, v.ibo_elements);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StaticDraw);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);
 
                 GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
                 
@@ -128,61 +128,14 @@ namespace Game
                 
                 if (IsPortalable)
                 {
-                    
-                    foreach (Portal portal in scene.Portals)
-                    {
-                        Line portalLine = new Line(portal.GetWorldVerts());
-                        Vector2[] convexHull = VectorExt2.Transform(v.GetWorldConvexHull(), this.Transform.GetMatrix());
-                        if (portalLine.IsInsideOfPolygon(convexHull))
-                        {
-                            //GL.Enable(EnableCap.Blend);
-                            Vector2[] pv = VectorExt2.Transform(portal.Linked.GetWorldVerts(), viewMatrix);
-                            Matrix4 ScaleMatrix = Matrix4.CreateScale(new Vector3(Controller.CanvasSize.X / 2, Controller.CanvasSize.Y / 2, 0));
-                            Vector2[] pvScreen = VectorExt2.Transform(pv, Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * ScaleMatrix);
-                            Vector2 pos = VectorExt2.Transform(new Vector2(v.Transform.Position.X, v.Transform.Position.Y), this.Transform.GetMatrix());
-                            pos = VectorExt2.Transform(pos, portal.GetMatrix() * viewMatrix);
-                            if (!new Line(pv).PointIsLeft(pos))
-                            {
-                                GL.Uniform2(v.Shader.GetUniform("cullLine0"), pvScreen[1]);
-                                GL.Uniform2(v.Shader.GetUniform("cullLine1"), pvScreen[0]);
-                            }
-                            else
-                            {
-                                GL.Uniform2(v.Shader.GetUniform("cullLine0"), pvScreen[0]);
-                                GL.Uniform2(v.Shader.GetUniform("cullLine1"), pvScreen[1]);
-                            }
-                            _RenderSetTransformMatrix(v, portal.GetMatrix() * viewMatrix);
-                            GL.DrawElements(BeginMode.Triangles, v.Indices.Count, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
-
-
-                            pv = VectorExt2.Transform(portalLine.Vertices, viewMatrix);
-                            //ScaleMatrix = Matrix4.CreateScale(new Vector3(Controller.CanvasSize.X / 2, Controller.CanvasSize.Y / 2, 0));
-                            pvScreen = VectorExt2.Transform(pv, Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * ScaleMatrix);
-                            pos = VectorExt2.Transform(new Vector2(v.Transform.Position.X, v.Transform.Position.Y), this.Transform.GetMatrix());
-                            pos = VectorExt2.Transform(pos, viewMatrix);
-                            if (new Line(pv).PointIsLeft(pos))
-                            {
-                                GL.Uniform2(v.Shader.GetUniform("cullLine0"), pvScreen[1]);
-                                GL.Uniform2(v.Shader.GetUniform("cullLine1"), pvScreen[0]);
-                            }
-                            else
-                            {
-                                GL.Uniform2(v.Shader.GetUniform("cullLine0"), pvScreen[0]);
-                                GL.Uniform2(v.Shader.GetUniform("cullLine1"), pvScreen[1]);
-                            }
-                        }
-                        
-                    }
+                    _RenderPortalClipping(scene, v, Transform.Position, null, Matrix4.Identity, viewMatrix, 4);
                 }
                 else
                 {
-                    //GL.Disable(EnableCap.Blend);
-                    GL.Uniform2(v.Shader.GetUniform("cullLine0"), new Vector2());
-                    GL.Uniform2(v.Shader.GetUniform("cullLine1"), new Vector2());
+                    GL.Uniform1(v.Shader.GetUniform("cutLinesLength"), 0);
+                    _RenderSetTransformMatrix(v, viewMatrix);
+                    GL.DrawElements(BeginMode.Triangles, v.Indices.Count, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
                 }
-
-                _RenderSetTransformMatrix(v, viewMatrix);
-                GL.DrawElements(BeginMode.Triangles, v.Indices.Count, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
                 
                 if (v.Wireframe)
                 {
@@ -198,9 +151,78 @@ namespace Game
             GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);    
         }
 
-        private void _RenderPortalClipping(Portal portalEnter, Matrix4 viewMatrix)
+        private void _RenderPortalClipping(Scene scene, Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, Matrix4 viewMatrix, int depth)
         {
+            if (depth <= 0)
+            {
+                return;
+            }
+            List<float> cutLines = new List<float>();
+            List<Portal> collisions = new List<Portal>();
+            foreach (Portal portal in scene.Portals)
+            {
+                Line portalLine = new Line(portal.GetWorldVerts());
+                Vector2[] convexHull = VectorExt2.Transform(model.GetWorldConvexHull(), this.Transform.GetMatrix() * modelMatrix);
+                
+                if (portalLine.IsInsideOfPolygon(convexHull))
+                {
+                    collisions.Add(portal);
+                }
+            }
 
+            collisions = collisions.OrderBy(item => (item.Transform.Position - centerPoint).Length).ToList();
+            for (int i = 0; i < collisions.Count; i++)
+            {
+                Portal portal = collisions[i];
+                for (int j = collisions.Count - 1; j > i; j--)
+                {
+                    Line currentLine = new Line(collisions[i].GetWorldVerts());
+                    Line checkLine = new Line(collisions[j].GetWorldVerts());
+                    Line.Side checkSide = currentLine.GetSideOf(checkLine);
+                    if (checkSide != Line.Side.IsNeither && checkSide != currentLine.GetSideOf(centerPoint))
+                    {
+                        collisions.RemoveAt(j);
+                    }
+                }
+            }
+            Matrix4 ScaleMatrix;
+            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.X / 2, Controller.CanvasSize.Y / 2, 0));
+            
+            foreach (Portal portal in collisions)
+            {
+                Vector2[] pv = portal.GetWorldVerts();
+                Vector2[] pvScreen = VectorExt2.Transform(pv, ScaleMatrix);
+
+                Line portalLine = new Line(pv);
+                Vector2 normal;
+                Vector2 portalNormal = portal.Transform.Position + portal.Transform.GetNormal();
+                if (portalLine.GetSideOf(centerPoint) != portalLine.GetSideOf(portalNormal))
+                {
+                    cutLines.AddRange(new float[4] {
+                        pvScreen[0].X, pvScreen[0].Y,
+                        pvScreen[1].X, pvScreen[1].Y,
+                    });
+                    normal = portal.Transform.GetNormal() * Portal.EntityMinDistance;
+                }
+                else
+                {
+                    cutLines.AddRange(new float[4] {
+                        pvScreen[1].X, pvScreen[1].Y,
+                        pvScreen[0].X, pvScreen[0].Y,
+                    });
+                    normal = -portal.Transform.GetNormal() * Portal.EntityMinDistance;
+                }
+
+                if (portalEnter == null || portal != portalEnter.Linked)
+                {
+                    Vector2 centerPointNext = VectorExt2.Transform(portal.Transform.Position + normal, portal.GetMatrix());
+                    _RenderPortalClipping(scene, model, centerPointNext, portal, modelMatrix * portal.GetMatrix(), viewMatrix, depth - 1);
+                }
+            }
+            GL.Uniform1(model.Shader.GetUniform("cutLinesLength"), cutLines.Count);
+            GL.Uniform1(model.Shader.GetUniform("cutLines"), cutLines.Count, cutLines.ToArray());
+            _RenderSetTransformMatrix(model, modelMatrix * viewMatrix);
+            GL.DrawElements(BeginMode.Triangles, model.Indices.Count, DrawElementsType.UnsignedInt, 0);
         }
     }
 }

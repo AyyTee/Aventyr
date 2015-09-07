@@ -1,9 +1,6 @@
 ﻿using OpenTK;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 
 namespace Game
 {
@@ -84,6 +81,11 @@ namespace Game
         public bool IsMirrored()
         {
             return Scale.X * Scale.Y < 0;
+        }
+
+        public Vector2 GetNormal()
+        {
+            return new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));
         }
     }
 }

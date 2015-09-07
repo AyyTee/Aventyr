@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Entity.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="FontRenderer.cs" />
     <Compile Include="InputExt.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="MathExt.cs" />
@@ -85,10 +86,19 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\fonts\couri.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\fonts\times.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\shaders\fs.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\shaders\fs_tex.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\shaders\fs_text.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="assets\shaders\vs.glsl">
@@ -97,7 +107,11 @@
     <None Include="assets\shaders\vs_tex.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\shaders\vs_text.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

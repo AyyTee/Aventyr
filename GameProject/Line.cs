@@ -8,6 +8,12 @@ namespace Game
 {
     public class Line
     {
+        public enum Side
+        {
+            IsLeftOf,
+            IsRightOf,
+            IsNeither
+        }
         public Vector2[] Vertices = new Vector2[2];
 
         public Line(Vector2 lineStart, Vector2 lineEnd)
@@ -22,17 +28,37 @@ namespace Game
         }
 
         /// <summary>
-        /// Returns whether a point is left of the line.
+        /// Returns whether a point is left or right of the line
         /// </summary>
-        public bool PointIsLeft(Vector2 Point)
+        public Side GetSideOf(Vector2 point)
         {
-            return (Vertices[1].X - Vertices[0].X) * (Point.Y - Vertices[0].Y) - (Vertices[1].Y - Vertices[0].Y) * (Point.X - Vertices[0].X) > 0;
+            if ((Vertices[1].X - Vertices[0].X) * (point.Y - Vertices[0].Y) - (Vertices[1].Y - Vertices[0].Y) * (point.X - Vertices[0].X) > 0)
+            {
+                return Side.IsLeftOf;
+            }
+            return Side.IsRightOf;
+        }
+
+        /// <summary>
+        /// returns whether a line is left, right, or inbetween the line
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        public Side GetSideOf(Line line)
+        {
+            Side side0 = GetSideOf(line.Vertices[0]);
+            Side side1 = GetSideOf(line.Vertices[1]);
+            if (side0 == side1)
+            {
+                return side0;
+            }
+            return Side.IsNeither;
         }
 
         public bool IsInsideFOV(Vector2 viewPoint, Vector2 lookPoint)
         {
             //check if the lookPoint is on the opposite side of the line from the viewPoint
-            if (PointIsLeft(viewPoint) == PointIsLeft(lookPoint))
+            if (GetSideOf(viewPoint) == GetSideOf(lookPoint))
             {
                 return false;
             }
@@ -52,7 +78,7 @@ namespace Game
         public bool IsInsideFOV(Vector2 viewPoint, Line lookLine)
         {
             //check if the lookPoint is on the opposite side of the line from the viewPoint
-            if (PointIsLeft(viewPoint) == PointIsLeft(lookLine.Vertices[0]) && PointIsLeft(viewPoint) == PointIsLeft(lookLine.Vertices[1]))
+            if (GetSideOf(viewPoint) == GetSideOf(lookLine.Vertices[0]) && GetSideOf(viewPoint) == GetSideOf(lookLine.Vertices[1]))
             {
                 return false;
             }

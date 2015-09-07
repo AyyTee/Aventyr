@@ -4,12 +4,10 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Diagnostics;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
-using QuickFont;
 using System.ComponentModel;
 
 namespace Game
@@ -17,12 +15,12 @@ namespace Game
     public class Controller : GameWindow
     {
         public Controller()
-            : base((int) CanvasSize.X, (int) CanvasSize.Y, new GraphicsMode(32, 24, 0, 4), "Game", GameWindowFlags.FixedWindow)
+            : base((int) CanvasSize.X, (int) CanvasSize.Y, new GraphicsMode(32, 24, 8, 1), "Game", GameWindowFlags.FixedWindow)
         {
             ContextExists = true;
         }
         InputExt InputExt;
-        Camera cam;
+        Camera cam, hudCam;
         Vector2 lastMousePos = new Vector2();
         /// <summary>
         /// Intended to keep pointless messages from the Poly2Tri library out of the console window
@@ -30,19 +28,17 @@ namespace Game
         public static StreamWriter Log = new StreamWriter("Triangulating.txt");
         public static bool ContextExists = false;
         Model background;
-        QFont Default;
+        Font Default;
         Entity box2;
-        public static List<Portal> portals = new List<Portal>();
         public static List<int> iboGarbage = new List<int>();
         public static Vector2 CanvasSize = new Vector2(800, 600);
 
-        List<Entity> objects = new List<Entity>();
         public static Dictionary<string, int> textures = new Dictionary<string, int>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
 
         Matrix4 viewMatrix;
-        Scene scene;
-
+        Scene scene, hud;
+        FontRenderer FontRenderer;
         float Time = 0.0f;
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
@@ -50,12 +46,15 @@ namespace Game
         float TimeRenderDelta = 0.0f;
         private int portalCount;
         private Entity player;
-
+        Portal portal1;
         void initProgram()
         {
             scene = new Scene(this);
+            hud = new Scene(this);
+            hudCam = Camera.CameraOrtho(new Vector3(), 1, Width / (float)Height);
 
-            Default = new QFont(@"fonts\Times.ttf", 72, new QFontBuilderConfiguration(false));
+            Default = new Font(@"assets\fonts\times.ttf", 40);
+            FontRenderer = new FontRenderer(Default);
 
             InputExt = new InputExt(this);
             lastMousePos = new Vector2(Mouse.X, Mouse.Y);
@@ -63,10 +62,11 @@ namespace Game
             // Load shaders from file
             Shaders.Add("default", new ShaderProgram(@"assets\shaders\vs.glsl", @"assets\shaders\fs.glsl", true));
             Shaders.Add("textured", new ShaderProgram(@"assets\shaders\vs_tex.glsl", @"assets\shaders\fs_tex.glsl", true));
+            Shaders.Add("text", new ShaderProgram(@"assets\shaders\vs_text.glsl", @"assets\shaders\fs_text.glsl", true));
 
             // Load textures from file
             textures.Add("default.png", loadImage(@"assets\default.png"));
-            textures.Add("grid.png", loadImage(@"assets\grid.png"));
+            textures.Add("grid.png", loadImage(@"assets\grid.png"));//"grid.png", FontRenderer.textureID);
             // Create our objects
             
 
@@ -78,14 +78,12 @@ namespace Game
             background.TransformUV.Scale = new Vector2(size, size);
             Entity back = new Entity(new Vector2(0f, 0f));
             back.Models.Add(background);
-            objects.Add(back);
 
             Portal portal0 = new Portal(true);
-            //portal0.Transform.Rotation = (float)Math.PI/4f;
+            //portal0.Transform.Rotation = (float)(Math.PI/4f + Math.PI);
             portal0.Transform.Position = new Vector2(1f, 0f);
             portal0.Transform.Scale = new Vector2(1f, 1f);
 
-            portals.Add(portal0);
             Entity portalEntity0 = new Entity();
             portalEntity0.Transform = portal0.Transform;
             portalEntity0.Models.Add(Model.CreatePlane());
@@ -93,14 +91,13 @@ namespace Game
             portalEntity0.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity0.Models.Add(Model.CreatePlane());
             portalEntity0.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-            scene.AddEntity(portalEntity0);
+            
 
-            Portal portal1 = new Portal(true);
+            portal1 = new Portal(true);
             //portal1.Transform.Rotation = 0.1f;
-            portal1.Transform.Position = new Vector2(-1f, 0.2f);
+            portal1.Transform.Position = new Vector2(-2f, 0.2f);
             portal1.Transform.Scale = new Vector2(-1f, 1f);
 
-            portals.Add(portal1);
             Portal.Link(portal0, portal1);
             Entity portalEntity1 = new Entity();
             portalEntity1.Transform = portal1.Transform;
@@ -109,20 +106,46 @@ namespace Game
             portalEntity1.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity1.Models.Add(Model.CreatePlane());
             portalEntity1.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-            scene.AddEntity(portalEntity1);
+            
+
+            Portal portal2 = new Portal(true);
+            //portal2.Transform.Rotation = (float)Math.PI/4f;
+            portal2.Transform.Position = new Vector2(1f, 2f);
+            portal2.Transform.Scale = new Vector2(1f, 1f);
+
+            Entity portalEntity2 = new Entity();
+            portalEntity2.Transform = portal2.Transform;
+            portalEntity2.Models.Add(Model.CreatePlane());
+            portalEntity2.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
+            portalEntity2.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
+            portalEntity2.Models.Add(Model.CreatePlane());
+            portalEntity2.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            
+
+            Portal portal3 = new Portal(true);
+            //portal3.Transform.Rotation = 0.4f;
+            portal3.Transform.Position = new Vector2(-1f, -1.2f);
+            portal3.Transform.Scale = new Vector2(-1f, 1f);
+
+            Portal.Link(portal2, portal3);
+            Entity portalEntity3 = new Entity();
+            portalEntity3.Transform = portal3.Transform;
+            portalEntity3.Models.Add(Model.CreatePlane());
+            portalEntity3.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
+            portalEntity3.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
+            portalEntity3.Models.Add(Model.CreatePlane());
+            portalEntity3.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
             Model tc = Model.CreateCube();
             tc.Transform.Position = new Vector3(1f, 3f, 0);
             Entity box = new Entity(new Vector2(0,0));
             box.Models.Add(tc);
-            objects.Add(box);
 
             Model tc2 = Model.CreateCube();
             tc2.Transform.Position = new Vector3(-1f, 3f, 0);
             tc2.Transform.Rotation = new Quaternion(1, 0, 0, 1);
             box2 = new Entity(new Vector2(0, 0));
             box2.Models.Add(tc2);
-            objects.Add(box2);
 
             player = new Entity();
             Model playerModel = Model.CreatePolygon(new Vector2[] {
@@ -134,15 +157,35 @@ namespace Game
                 new Vector2(-0.5f, 0), 
                 new Vector2(0, -0.5f)
             });
-            playerModel.Transform.Scale = new Vector3(8, 1, 1);
+            playerModel.Transform.Scale = new Vector3(20, .2f, 1);
+            playerModel.SetTexture(Controller.textures["default.png"]);
             player.IsPortalable = true;
-            player.Transform.Scale = new Vector2(.5f, .5f);
+            //player.Transform.Scale = new Vector2(.5f, .5f);
             player.Models.Add(playerModel);
-            objects.Add(player);
+            playerModel.SetTexture(Controller.textures["default.png"]);
 
+            Entity origin = new Entity();
+            origin.Transform.Position = new Vector2(0, 0);
+            origin.Models.Add(Model.CreatePlane(new Vector2(0.1f, 0.1f)));
+
+            Entity text = new Entity();
+            text.Transform.Position = new Vector2(-.5f, -.5f);
+            text.Transform.Scale = new Vector2(0.1f, 0.1f);
+            text.Models.Add(FontRenderer.GetModel("testing"));
+            text.Models[0].Transform.Position = new Vector3(0, 0, 1f);
+            //text.Models[0].TextureID = Controller.textures["default.png"];
+
+            hud.AddEntity(text);
+            scene.AddEntity(origin);
             scene.AddEntity(back);
             scene.AddPortal(portal0);
             scene.AddPortal(portal1);
+            scene.AddPortal(portal2);
+            scene.AddPortal(portal3);
+            scene.AddEntity(portalEntity0);
+            scene.AddEntity(portalEntity1);
+            scene.AddEntity(portalEntity2);
+            scene.AddEntity(portalEntity3);
             scene.AddEntity(box);
             scene.AddEntity(box2);
             scene.AddEntity(player);
@@ -184,7 +227,12 @@ namespace Game
             DrawDebug();
             
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
-            //DrawPortalAll(portals.ToArray(), viewMatrix, viewPos, 4, TimeRenderDelta, 20);
+            DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 4, TimeRenderDelta, 20);
+
+            GL.Clear(ClearBufferMask.DepthBufferBit);
+            GL.Enable(EnableCap.Blend);
+            hud.DrawScene(hudCam.GetViewMatrix(), (float)e.Time);
+
             Shaders["textured"].DisableVertexAttribArrays();
             Shaders["default"].DisableVertexAttribArrays();
 
@@ -275,7 +323,6 @@ namespace Game
             GL.Enable(EnableCap.DepthTest);
             Matrix4 portalMatrix = Portal.GetMatrix(portalEnter.Linked, portalEnter) * viewMatrix;
             scene.DrawScene(portalMatrix, timeDelta);
-            //DrawScene(portalMatrix, timeDelta);
 
             //GL.Disable(EnableCap.StencilTest);
 
@@ -373,7 +420,7 @@ namespace Game
                 Vector2[] vArray = new Vector2[2];
                 IntersectPoint i = new IntersectPoint();
                 Portal portalEnter = null;
-                foreach (Portal p in portals)
+                foreach (Portal p in scene.Portals)
                 {
                     vArray = VectorExt2.Transform(p.GetVerts(), p.Transform.GetMatrix());
                     portalEnter = p;
@@ -396,7 +443,7 @@ namespace Game
 
             /*Console.Write(box2.Models[0].Transform.Rotation.W);
             Console.WriteLine();*/
-
+            portal1.Transform.Rotation += .001f;
             box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
             
             /*foreach (Entity v in objects)
