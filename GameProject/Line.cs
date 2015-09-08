@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OpenTK;
+using System.Diagnostics;
 
 namespace Game
 {
@@ -151,6 +152,24 @@ namespace Game
                 return true;
             }
             return Intersects(polygon).Exists;
+        }
+
+        public float PointDistance(Vector2 point, bool isSegment)
+        {
+            Vector2 V;
+            Vector2 VDelta = Vertices[1] - Vertices[0];
+            if ((VDelta.X == 0) && (VDelta.Y == 0))
+            {
+                V = Vertices[0];
+            }
+            else
+            {
+                float t = ((point.X - Vertices[0].X) * VDelta.X + (point.Y - Vertices[0].Y) * VDelta.Y) / (float)(Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
+                Debug.Assert(float.IsNaN(t) == false);
+                if (isSegment) { t = (float)Math.Min(Math.Max(0, t), 1); }
+                V = Vertices[0] + Vector2.Multiply(VDelta, t);
+            }
+            return (point - V).Length;
         }
     }
 }

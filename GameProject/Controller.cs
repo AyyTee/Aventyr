@@ -84,7 +84,7 @@ namespace Game
 
             Portal portal0 = new Portal(true);
             //portal0.Transform.Rotation = (float)(Math.PI/4f + Math.PI);
-            portal0.Transform.Position = new Vector2(1f, 0f);
+            portal0.Transform.Position = new Vector2(.1f, 0f);
             portal0.Transform.Scale = new Vector2(1f, 1f);
 
             Entity portalEntity0 = new Entity();
@@ -97,8 +97,8 @@ namespace Game
             
 
             portal1 = new Portal(true);
-            //portal1.Transform.Rotation = 0.1f;
-            portal1.Transform.Position = new Vector2(-2f, 0.2f);
+            portal1.Transform.Rotation = 0.1f;
+            portal1.Transform.Position = new Vector2(-.1f, 0f);
             portal1.Transform.Scale = new Vector2(-1f, 1f);
 
             Portal.Link(portal0, portal1);
@@ -112,7 +112,7 @@ namespace Game
             
 
             Portal portal2 = new Portal(true);
-            //portal2.Transform.Rotation = (float)Math.PI/4f;
+            portal2.Transform.Rotation = 0.1f;//(float)Math.PI/4f;
             portal2.Transform.Position = new Vector2(1f, 2f);
             portal2.Transform.Scale = new Vector2(1f, 1f);
 
@@ -160,10 +160,11 @@ namespace Game
                 new Vector2(-0.5f, 0), 
                 new Vector2(0, -0.5f)
             });
-            playerModel.Transform.Scale = new Vector3(20, .2f, 1);
+            //playerModel.Transform.Scale = new Vector3(20, .2f, 1);
             playerModel.SetTexture(Controller.textures["default.png"]);
             player.IsPortalable = true;
-            //player.Transform.Scale = new Vector2(.5f, .5f);
+            player.Transform.Scale = new Vector2(.5f, .5f);
+            player.Transform.Position = new Vector2(0f, 0f);
             player.Models.Add(playerModel);
             playerModel.SetTexture(Controller.textures["default.png"]);
 
@@ -190,7 +191,7 @@ namespace Game
             scene.AddEntity(box2);
             scene.AddEntity(player);
 
-            cam = Camera.CameraOrtho(new Vector3(0f, 0f, 10f), 10, Width / (float)Height);
+            cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, Width / (float)Height);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -419,7 +420,7 @@ namespace Game
                 }
                 else if (InputExt.KeyDown(Key.D))
                 {
-                    v += cam.GetRight() * camSpeed * cam.Transform.Scale.X;
+                    v += cam.GetRight() * camSpeed * cam.Transform.Scale.X; //new Vector3(.1f, 0, 0);//
                 }
                 if (InputExt.MouseWheelDelta() != 0)
                 {
@@ -459,7 +460,7 @@ namespace Game
 
             /*Console.Write(box2.Models[0].Transform.Rotation.W);
             Console.WriteLine();*/
-            portal1.Transform.Rotation += .001f;
+            //portal1.Transform.Rotation += .001f;
             text.Models.Clear();
             text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
             box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
