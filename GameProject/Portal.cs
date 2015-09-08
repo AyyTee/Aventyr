@@ -8,6 +8,17 @@ namespace Game
     {
         private Portal _linked;
         private Transform2D _transform = new Transform2D();
+        private bool _oneSided = false;
+
+        /// <summary>
+        /// If OneSided is true then the portal can only be viewed through it's front side.
+        /// Entities can still travel though the portal in both directions however.
+        /// </summary>
+        public bool OneSided
+        {
+            get { return _oneSided; }
+            set { _oneSided = value; }
+        }
         /// <summary>
         /// The distance at which an entity enters and exits a portal.  
         /// It is nessesary to avoid situations where an entity can skip over a portal by sitting exactly on top of it.

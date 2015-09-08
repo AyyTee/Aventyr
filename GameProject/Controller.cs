@@ -15,7 +15,7 @@ namespace Game
     public class Controller : GameWindow
     {
         public Controller()
-            : base((int) CanvasSize.X, (int) CanvasSize.Y, new GraphicsMode(32, 24, 8, 1), "Game", GameWindowFlags.FixedWindow)
+            : base((int) CanvasSize.Width, (int) CanvasSize.Height, new GraphicsMode(32, 24, 8, 1), "Game", GameWindowFlags.FixedWindow)
         {
             ContextExists = true;
         }
@@ -31,7 +31,7 @@ namespace Game
         Font Default;
         Entity box2;
         public static List<int> iboGarbage = new List<int>();
-        public static Vector2 CanvasSize = new Vector2(800, 600);
+        public static Size CanvasSize = new Size(800, 600);
 
         public static Dictionary<string, int> textures = new Dictionary<string, int>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
@@ -47,13 +47,16 @@ namespace Game
         private int portalCount;
         private Entity player;
         Portal portal1;
+        Entity text;
         void initProgram()
         {
             scene = new Scene(this);
             hud = new Scene(this);
-            hudCam = Camera.CameraOrtho(new Vector3(), 1, Width / (float)Height);
+            hudCam = Camera.CameraOrtho(new Vector3(Width/2, Height/2, 0), Height, Width / (float)Height);
 
-            Default = new Font(@"assets\fonts\times.ttf", 40);
+            System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
+            privateFonts.AddFontFile(@"assets\fonts\times.ttf");
+            Default = new Font(privateFonts.Families[0], 14);
             FontRenderer = new FontRenderer(Default);
 
             InputExt = new InputExt(this);
@@ -168,12 +171,9 @@ namespace Game
             origin.Transform.Position = new Vector2(0, 0);
             origin.Models.Add(Model.CreatePlane(new Vector2(0.1f, 0.1f)));
 
-            Entity text = new Entity();
-            text.Transform.Position = new Vector2(-.5f, -.5f);
-            text.Transform.Scale = new Vector2(0.1f, 0.1f);
-            text.Models.Add(FontRenderer.GetModel("testing"));
-            text.Models[0].Transform.Position = new Vector3(0, 0, 1f);
-            //text.Models[0].TextureID = Controller.textures["default.png"];
+            text = new Entity();
+            text.Transform.Position = new Vector2(0, CanvasSize.Height);
+            
 
             hud.AddEntity(text);
             scene.AddEntity(origin);
@@ -231,8 +231,9 @@ namespace Game
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.Blend);
+            GL.Disable(EnableCap.DepthTest);
             hud.DrawScene(hudCam.GetViewMatrix(), (float)e.Time);
-
+            GL.Enable(EnableCap.DepthTest);
             Shaders["textured"].DisableVertexAttribArrays();
             Shaders["default"].DisableVertexAttribArrays();
 
@@ -285,6 +286,18 @@ namespace Game
             {
                 return;
             }
+
+            if (portalEnter.OneSided)
+            {
+                Vector2[] pv2 = portalEnter.GetWorldVerts();
+
+                Line portalLine = new Line(pv2);
+                if (portalLine.GetSideOf(pv2[0] + portalEnter.Transform.GetNormal()) != portalLine.GetSideOf(viewPos))
+                {
+                    return;
+                }
+            }
+
             Vector2[] pv = portalEnter.GetVerts();
             pv = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrix);
             //this will not correctly cull portals if the viewPos begins outside of the viewspace
@@ -292,6 +305,9 @@ namespace Game
             {
                 return;
             }
+
+            
+
             viewMatrix = Matrix4.CreateTranslation(new Vector3(0, 0, sceneDepth)) * viewMatrix;
             portalCount++;
 
@@ -444,6 +460,8 @@ namespace Game
             /*Console.Write(box2.Models[0].Transform.Rotation.W);
             Console.WriteLine();*/
             portal1.Transform.Rotation += .001f;
+            text.Models.Clear();
+            text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
             box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
             
             /*foreach (Entity v in objects)

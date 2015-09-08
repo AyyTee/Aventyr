@@ -186,7 +186,7 @@ namespace Game
                 }
             }
             Matrix4 ScaleMatrix;
-            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.X / 2, Controller.CanvasSize.Y / 2, 0));
+            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / 2, Controller.CanvasSize.Height / 2, 0));
             
             foreach (Portal portal in collisions)
             {
@@ -194,15 +194,19 @@ namespace Game
                 Vector2[] pvScreen = VectorExt2.Transform(pv, ScaleMatrix);
 
                 Line portalLine = new Line(pv);
-                Vector2 normal;
-                Vector2 portalNormal = portal.Transform.Position + portal.Transform.GetNormal();
+                Vector2 normal = portal.Transform.GetNormal();
+                if (portal.Transform.IsMirrored())
+                {
+                    normal = -normal;
+                }
+                Vector2 portalNormal = portal.Transform.Position + normal;
                 if (portalLine.GetSideOf(centerPoint) != portalLine.GetSideOf(portalNormal))
                 {
                     cutLines.AddRange(new float[4] {
                         pvScreen[0].X, pvScreen[0].Y,
                         pvScreen[1].X, pvScreen[1].Y,
                     });
-                    normal = portal.Transform.GetNormal() * Portal.EntityMinDistance;
+                    normal *= Portal.EntityMinDistance;
                 }
                 else
                 {
@@ -210,7 +214,7 @@ namespace Game
                         pvScreen[1].X, pvScreen[1].Y,
                         pvScreen[0].X, pvScreen[0].Y,
                     });
-                    normal = -portal.Transform.GetNormal() * Portal.EntityMinDistance;
+                    normal *= -Portal.EntityMinDistance;
                 }
 
                 if (portalEnter == null || portal != portalEnter.Linked)

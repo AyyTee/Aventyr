@@ -14,21 +14,42 @@ namespace Game
     public class FontRenderer
     {
         Bitmap GlyphBitmap;
-        Point Size;
         Font Font;
         OpenTK.Graphics.OpenGL.PixelFormat Format = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
-        
+
+        public class CharData
+        {
+            public CharData(Rectangle pixelRegion, FontRenderer fontRenderer)
+            {
+                _pixelRegion = pixelRegion;
+                _fontRenderer = fontRenderer;
+            }
+            private Rectangle _pixelRegion;
+            private FontRenderer _fontRenderer;
+
+            public Rectangle PixelRegion
+            {
+                get { return _pixelRegion; }
+            }
+
+            public Box2 UVRegion
+            {
+                get 
+                {
+                    Vector2 v0 = new Vector2(_pixelRegion.Left / (float)_fontRenderer.TextureSize.Width, _pixelRegion.Bottom / (float)_fontRenderer.TextureSize.Height);
+                    Vector2 v1 = new Vector2(_pixelRegion.Right / (float)_fontRenderer.TextureSize.Width, _pixelRegion.Top / (float)_fontRenderer.TextureSize.Height);
+                    return new Box2(v0, v1);
+                }
+            }
+        }
+
+        Size TextureSize = new Size(1024, 1024);
         public int textureID;
-        int charPerRow = 16;
-        Point charSize = new Point(50, 1);
-        int charCount = 255;
+        CharData[] chars = new CharData[255];
         public FontRenderer(Font font)
         {
             Font = font;
-            //System.Drawing.Graphics.MeasureString();
-            charSize.Y = (int)Font.GetHeight();
-            Size = GetTextureSize();
-            GlyphBitmap = new Bitmap(Size.X, Size.Y);
+            GlyphBitmap = new Bitmap(TextureSize.Width, TextureSize.Height);
             
             textureID = GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2D, textureID);
@@ -37,86 +58,82 @@ namespace Game
             
             using (Graphics gfx = Graphics.FromImage(GlyphBitmap))
             {
-                gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
-                gfx.Clear(Color.Transparent);
-                for (int i = 0; i < charCount; i++)
+                Point charPoint = new Point(0, 0);
+                for (int i = 0; i < chars.Length; i++)
                 {
-                    Point p = GetCharCoord(i);
-                    //p.Y += charSize.Y * 2;
-                    gfx.DrawString(new string(new Char[1] { Convert.ToChar(i) }), Font, new SolidBrush(Color.Black), p);
+                    SizeF charSizeF = gfx.MeasureString(new string(new Char[1] { Convert.ToChar(i) }), Font);
+                    Size charSize = new Size((int)Math.Ceiling(charSizeF.Width), (int)Math.Ceiling(charSizeF.Height));
+                    if (charSize.Width + charPoint.X > TextureSize.Width)
+                    {
+                        charPoint.X = 0;
+                        charPoint.Y += (int)Math.Ceiling(Font.GetHeight());
+                    }
+                    chars[i] = new CharData(new Rectangle(charPoint, charSize), this);
+                    charPoint.X += charSize.Width;
+                }
+
+                gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                gfx.Clear(Color.Transparent);
+                for (int i = 0; i < chars.Length; i++)
+                {
+                    PointF point = new PointF(chars[i].PixelRegion.X, chars[i].PixelRegion.Y);
+                    gfx.DrawString(new string(new Char[1] { Convert.ToChar(i) }), Font, new SolidBrush(Color.Black), point);
                 }
             }
 
             BitmapData data = GlyphBitmap.LockBits(new Rectangle(0, 0, GlyphBitmap.Width, GlyphBitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Size.X, Size.Y, 0, Format, PixelType.UnsignedByte, data.Scan0);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, TextureSize.Width, TextureSize.Height, 0, Format, PixelType.UnsignedByte, data.Scan0);
             GlyphBitmap.UnlockBits(data);
         }
 
-        public Point GetTextureSize()
+        public CharData[] GetChar(int[] index)
         {
-            int w = charPerRow * charSize.X;
-            int h = (int)(charCount / charPerRow) * charSize.Y;
-            w = 1 << (int)Math.Ceiling(Math.Log(w, 2));
-            h = 1 << (int)Math.Ceiling(Math.Log(h, 2));
-            return new Point(w, h);
-        }
-
-        public Point GetCharCoord(int index)
-        {
-            Debug.Assert(index < charCount);
-            return new Point((index % charPerRow) * charSize.X, (int)Math.Floor((double)index / charPerRow) * charSize.Y);
-        }
-
-        public Box2 GetCharUV(int index)
-        {
-            Point p = GetCharCoord(index);
-            Vector2 v0 = new Vector2(p.X / (float)Size.X, (p.Y + charSize.Y) / (float)Size.Y);
-            Vector2 v1 = new Vector2((p.X + charSize.X) / (float)Size.X, p.Y / (float)Size.Y);
-            return new Box2(v0, v1); //new Box2(new Vector2(), new Vector2(1, 1));//
-        }
-
-        public Box2[] GetCharUV(int[] index)
-        {
-            Box2[] uv = new Box2[index.Length];
+            CharData[] charData = new CharData[index.Length];
             for (int i = 0; i < index.Length; i++)
             {
-                uv[i] = GetCharUV(index[i]);
+                charData[i] = chars[index[i]];
             }
-            return uv;
+            return charData;
         }
 
-        public Box2[] GetCharUV(string index)
+        public CharData[] GetChar(string index)
         {
             char[] charArray = index.ToCharArray();
             var charList = new List<char>(charArray);
             List<int> intList = charList.ConvertAll(c => Convert.ToInt32(c));
-            return GetCharUV(intList.ToArray());
+            return GetChar(intList.ToArray());
         }
 
         /// <summary>
         /// Creates a model to render a string with
         /// </summary>
         /// <param name="text"></param>
+        /// <param name="alignment">Percentage of offset to apply to the text model. 
+        /// (0,0) is top-left aligned, (0.5,0.5) is centered, and (1,1) is bottom-right aligned.</param>
         /// <returns></returns>
-        public Model GetModel(String text)
+        public Model GetModel(String text, Vector2 alignment, float charSpacing)
         {
-            float charSpacing = 1.1f;
             Model textModel = new Model(Controller.Shaders["text"]);
             textModel.TextureID = textureID;
-            Box2[] uv = GetCharUV(text);
-            Model.Vertex[] vertices = new Model.Vertex[uv.Length * 4];
+            CharData[] charData = GetChar(text);
+            Model.Vertex[] vertices = new Model.Vertex[charData.Length * 4];
             List<int> indices = new List<int>();
-            for (int i = 0; i < uv.Length; i++)
+            float x0 = 0, x1;
+            for (int i = 0; i < charData.Length; i++)
             {
-                float charWidth = Size.X / (float)Size.Y;
                 int index = i * 4;
-                float x0 = i * charWidth * charSpacing;
-                float x1 = x0 + charWidth;
-                vertices[index] = new Model.Vertex(new Vector3(x0, 0, 0), new Vector2(uv[i].Left, uv[i].Top));
-                vertices[index + 1] = new Model.Vertex(new Vector3(x0, 1, 0), new Vector2(uv[i].Left, uv[i].Bottom));
-                vertices[index + 2] = new Model.Vertex(new Vector3(x1, 1, 0), new Vector2(uv[i].Right, uv[i].Bottom));
-                vertices[index + 3] = new Model.Vertex(new Vector3(x1, 0, 0), new Vector2(uv[i].Right, uv[i].Top));
+                x1 = x0 + charData[i].PixelRegion.Width;
+                vertices[index] = new Model.Vertex(new Vector3(x0, 0, 0), new Vector2(charData[i].UVRegion.Left, charData[i].UVRegion.Top));
+                vertices[index + 1] = new Model.Vertex(new Vector3(x0, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UVRegion.Left, charData[i].UVRegion.Bottom));
+                vertices[index + 2] = new Model.Vertex(new Vector3(x1, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UVRegion.Right, charData[i].UVRegion.Bottom));
+                vertices[index + 3] = new Model.Vertex(new Vector3(x1, 0, 0), new Vector2(charData[i].UVRegion.Right, charData[i].UVRegion.Top));
                 indices.AddRange(new int[] { index, index + 1, index + 2, index, index + 2, index + 3 });
+                x0 = x1 + charSpacing;
+            }
+            Vector3 offset = new Vector3((float)Math.Round(-x0 * alignment.X), (float)Math.Round(-Font.Height * (1 - alignment.Y)), 0);
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                vertices[i].Position += offset;
             }
             textModel.Vertices.AddRange(vertices);
             textModel.Indices.AddRange(indices);
