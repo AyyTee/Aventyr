@@ -83,9 +83,9 @@ namespace Game
             back.Models.Add(background);
 
             Portal portal0 = new Portal(true);
-            //portal0.Transform.Rotation = (float)(Math.PI/4f + Math.PI);
+            //portal0.Transform.Rotation = -4.1f;//(float)(Math.PI/4f + Math.PI);
             portal0.Transform.Position = new Vector2(.1f, 0f);
-            portal0.Transform.Scale = new Vector2(1f, 1f);
+            portal0.Transform.Scale = new Vector2(1f, -1f);
 
             Entity portalEntity0 = new Entity();
             portalEntity0.Transform = portal0.Transform;
@@ -97,9 +97,9 @@ namespace Game
             
 
             portal1 = new Portal(true);
-            portal1.Transform.Rotation = 0.1f;
-            portal1.Transform.Position = new Vector2(-.1f, 0f);
-            portal1.Transform.Scale = new Vector2(-1f, 1f);
+            portal1.Transform.Rotation = 4.4f;
+            portal1.Transform.Position = new Vector2(-3f, 0f);
+            portal1.Transform.Scale = new Vector2(-2f, 2f);
 
             Portal.Link(portal0, portal1);
             Entity portalEntity1 = new Entity();
@@ -160,10 +160,10 @@ namespace Game
                 new Vector2(-0.5f, 0), 
                 new Vector2(0, -0.5f)
             });
-            //playerModel.Transform.Scale = new Vector3(20, .2f, 1);
+            //playerModel.Transform.Scale = new Vector3(15, .2f, 1);
             playerModel.SetTexture(Controller.textures["default.png"]);
             player.IsPortalable = true;
-            player.Transform.Scale = new Vector2(.5f, .5f);
+            //player.Transform.Scale = new Vector2(.5f, .5f);
             player.Transform.Position = new Vector2(0f, 0f);
             player.Models.Add(playerModel);
             playerModel.SetTexture(Controller.textures["default.png"]);
@@ -181,12 +181,12 @@ namespace Game
             scene.AddEntity(back);
             scene.AddPortal(portal0);
             scene.AddPortal(portal1);
-            scene.AddPortal(portal2);
-            scene.AddPortal(portal3);
+            //scene.AddPortal(portal2);
+            //scene.AddPortal(portal3);
             scene.AddEntity(portalEntity0);
             scene.AddEntity(portalEntity1);
-            scene.AddEntity(portalEntity2);
-            scene.AddEntity(portalEntity3);
+            //scene.AddEntity(portalEntity2);
+            //scene.AddEntity(portalEntity3);
             scene.AddEntity(box);
             scene.AddEntity(box2);
             scene.AddEntity(player);
@@ -307,8 +307,6 @@ namespace Game
                 return;
             }
 
-            
-
             viewMatrix = Matrix4.CreateTranslation(new Vector3(0, 0, sceneDepth)) * viewMatrix;
             portalCount++;
 
@@ -366,16 +364,6 @@ namespace Game
 
         private void DrawDebug()
         {
-            /*GL.LineWidth(2f);
-            Matrix4 view = cam.Transform.GetMatrix();
-            Vector2[] verts = VectorExt2.Transform(cam.GetVerts(), view);
-            GL.Begin(PrimitiveType.LineLoop);
-            foreach (Vector2 v in verts)
-            {
-                GL.Vertex3(v.X, v.Y, 1);
-            }
-            GL.End();
-            GL.LineWidth(1f);*/
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -450,11 +438,15 @@ namespace Game
                 }
                 player.Transform.Position += new Vector2(v.X, v.Y);
                 cam.Transform.Position += new Vector3(v.X, v.Y, 0);
+
                 if (i.Exists)
                 {
                     portalEnter.Enter(cam.Transform);
                     portalEnter.Enter(player.Transform);
                 }
+
+                //player.PositionUpdate(scene);
+                //cam.Transform = player.Transform.Get3D();
             }
             #endregion
 
@@ -471,12 +463,16 @@ namespace Game
             }*/
             
             //get rid of all ibo elements no longer used
-            foreach (int iboElement in iboGarbage.ToArray())
+            lock ("delete")
             {
-                int a = iboElement;
-                GL.DeleteBuffers(1, ref a);
+                foreach (int iboElement in iboGarbage.ToArray())
+                {
+                    int a = iboElement;
+                    GL.DeleteBuffers(1, ref a);
+                }
+                iboGarbage.Clear();
             }
-            iboGarbage.Clear();
+            
         }
 
         protected override void OnClosing(CancelEventArgs e)

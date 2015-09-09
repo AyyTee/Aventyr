@@ -76,9 +76,12 @@ namespace Game
         {
             if (iboExists)
             {
-                Controller.iboGarbage.Add(ibo_elements);
-                //GL.DeleteBuffers(1, ref ibo_elements);
-                iboExists = false;
+                lock ("delete")
+                {
+                    Controller.iboGarbage.Add(ibo_elements);
+                    //GL.DeleteBuffers(1, ref ibo_elements);
+                    iboExists = false;
+                }
             }
         }
 

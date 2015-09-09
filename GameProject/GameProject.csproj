@@ -64,7 +64,6 @@
     <Compile Include="Scene.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Controller.cs" />
-    <Compile Include="PolygonCoordinate.cs" />
     <Compile Include="Portal.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

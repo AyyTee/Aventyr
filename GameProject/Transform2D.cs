@@ -90,6 +90,7 @@ namespace Game
             {
                 v = -v;
             }
+            //Vector2 v = VectorExt2.Transform(new Vector2(1, 0), GetMatrix());
             return v;
         }
     }

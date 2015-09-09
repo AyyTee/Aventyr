@@ -127,19 +127,13 @@ namespace Game
         /// <param name="entityPos"></param>
         public void Enter(Transform2D entityPos)
         {
-            //Transform2D t = Portal.GetTransform(portalLast, Linked);
-            Matrix4 m = Portal.GetMatrix(this, Linked);
-            Vector2 v0 = entityPos.Position;//new Vector2(entityPos.Position.X, entityPos.Position.Y);
+            Matrix4 m = GetMatrix();
+            Vector2 v0 = entityPos.Position;
             Vector2 v1 = v0 + new Vector2(1, 0);
             Vector2 v2 = v0 + new Vector2(0, 1);
             Vector2 v3 = VectorExt2.Transform(v0, m);
             Vector2 v4 = VectorExt2.Transform(v1, m);
             Vector2 v5 = VectorExt2.Transform(v2, m);
-
-            Vector2 v6 = v0 + new Vector2((float)Math.Cos(entityPos.Rotation), (float)Math.Sin(entityPos.Rotation));
-            Vector2 v7 = VectorExt2.Transform(v6, m) - v3;
-            Transform2D t0 = Transform;
-            Transform2D t1 = Linked.Transform;
 
             entityPos.Position = new Vector2(v3.X, v3.Y);
             //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
@@ -152,10 +146,10 @@ namespace Game
                 {
                     exitNormal = -exitNormal;
                 }
-                if (!Linked.Transform.IsMirrored())
+                /*if (!Linked.Transform.IsMirrored())
                 {
                     exitNormal = -exitNormal;
-                }
+                }*/
                 entityPos.Position += exitNormal * (EntityMinDistance - distanceToPortal);
             }
 
@@ -176,36 +170,8 @@ namespace Game
             float angle;
             if (flipX != flipY)
             {
-                angle = (float)MathExt.AngleVector(v7);
-                entityPos.Rotation = angle;// new Quaternion(cam.Transform.Rotation.X, cam.Transform.Rotation.Y, cam.Transform.Rotation.Z, angle);
-                //angle = m.ExtractRotation(false).W;
-                /*Matrix4 m2 = m * Matrix4.CreateTranslation(new Vector3(v3.X - v0.X, v3.Y - v0.Y, 0)).Inverted();
-                m2 = Matrix4.CreateScale(new Vector3(flipX * (v4 - v3).Length, flipY * (v5 - v3).Length, 1)).Inverted() * m2;
-                Vector3 v7 = Vector3.Transform(new Vector3(1, 0, 0), m);
-
-                angle = -(float)(MathExt.AngleVector(new Vector2(v7.X, v7.Y)));
-                m2 = m2 * Matrix4.CreateRotationZ(angle).Inverted();*/
-
-                /*{
-                    if (Linked.Transform.Rotation == 0 || portalEnter.Transform.Rotation == 0)
-                    {
-                        if (Linked.Transform.Rotation < 0 || portalEnter.Transform.Rotation < 0)
-                        {
-                            angle = -Math.Abs(Linked.Transform.Rotation - portalEnter.Transform.Rotation);
-                        }
-                        else
-                        {
-                            angle = Math.Abs(Linked.Transform.Rotation - portalEnter.Transform.Rotation);
-                        }
-                        cam.Transform.Rotation += new Quaternion(0, 0, 0, -2f * cam.Transform.Rotation.W);
-                    }
-                    else
-                    {
-                        angle = Linked.Transform.Rotation - portalEnter.Transform.Rotation + (float)Math.PI;
-                        //cam.Transform.Rotation += new Quaternion(0, 0, 0, -2f * cam.Transform.Rotation.W);
-                    }
-                    //cam.Transform.Rotation += new Quaternion(0, 0, 0, -2f * cam.Transform.Rotation.W);
-                }*/
+                entityPos.Rotation = -entityPos.Rotation;
+                entityPos.Rotation += Math.Abs(Transform.Rotation + Linked.Transform.Rotation);
             }
             else
             {
@@ -222,27 +188,6 @@ namespace Game
             entity.Position = new Vector3(entity2D.Position.X, entity2D.Position.Y, entity.Position.Z);
             entity.Scale = new Vector3(entity2D.Scale.X, entity2D.Scale.Y, entity.Scale.Z);
         }
-
-        /*public static Transform2D GetTransform(Portal portalEnter, Portal portalExit)
-        {
-            Transform2D t = new Transform2D();
-            Transform2D tEnter = portalEnter.Transform;
-            Transform2D tExit = portalExit.Transform;
-            tExit.Scale = new Vector2(-tExit.Scale.X, tExit.Scale.Y);
-            
-            t.Scale = Vector2.Divide(tExit.Scale, tEnter.Scale);
-            if (tExit.IsMirrored() != tEnter.IsMirrored())
-            {
-                t.Rotation = tExit.Rotation + tEnter.Rotation;
-            }
-            else
-            {
-                t.Rotation = tExit.Rotation - tEnter.Rotation;
-            }
-            Vector3 v = GetMatrix(portalEnter, portalExit).ExtractTranslation();
-            t.Position = new Vector2(v.X, v.Y);
-            return t;
-        }*/
 
         /// <summary>
         /// Returns matrix to transform between one portals coordinate space to another

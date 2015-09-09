@@ -34,6 +34,7 @@ namespace Game
 
         static public double AngleVector(Vector2d V0)
         {
+            //Debug.Assert(V0 == Vector2d.Zero, "Vector must have non-zero length.");
             double val = Math.Atan2(V0.X, V0.Y);
 
             if (Double.IsNaN(val))

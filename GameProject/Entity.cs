@@ -52,6 +52,29 @@ namespace Game
 
         }
 
+        public void PositionUpdate(Scene scene)
+        {
+            foreach (Portal portal in scene.Portals)
+            {
+                //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
+                Line exitLine = new Line(portal.Linked.GetWorldVerts());
+                float distanceToPortal = exitLine.PointDistance(Transform.Position, false);
+                if (distanceToPortal < Portal.EntityMinDistance)
+                {
+                    Vector2 exitNormal = portal.Linked.Transform.GetNormal();
+                    if (exitLine.GetSideOf(Transform.Position) != exitLine.GetSideOf(exitNormal))
+                    {
+                        exitNormal = -exitNormal;
+                    }
+                    if (!portal.Linked.Transform.IsMirrored())
+                    {
+                        exitNormal = -exitNormal;
+                    }
+                    Transform.Position += exitNormal * (Portal.EntityMinDistance - distanceToPortal);
+                }
+            }
+        }
+
         public virtual void Render(Scene scene, Matrix4 viewMatrix, float timeDelta)
         {
             Transform.GetMatrix();
@@ -193,12 +216,19 @@ namespace Game
                 Vector2[] pv = portal.GetWorldVerts();
                 Vector2[] pvScreen = VectorExt2.Transform(pv, ScaleMatrix);
 
+                Vector3 mirrorCheck = viewMatrix.ExtractScale();
+
                 Line portalLine = new Line(pv);
                 Vector2 normal = portal.Transform.GetNormal();
                 if (portal.Transform.IsMirrored())
                 {
                     normal = -normal;
                 }
+                /*if (Math.Sign(mirrorCheck.X) == Math.Sign(mirrorCheck.Y))
+                {
+                    normal = -normal;
+                    //pvScreen = pvScreen.Reverse().ToArray();
+                }*/
                 Vector2 portalNormal = portal.Transform.Position + normal;
                 if (portalLine.GetSideOf(centerPoint) != portalLine.GetSideOf(portalNormal))
                 {
@@ -216,7 +246,6 @@ namespace Game
                     });
                     normal *= -Portal.EntityMinDistance;
                 }
-
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
                     Vector2 centerPointNext = VectorExt2.Transform(portal.Transform.Position + normal, portal.GetMatrix());
