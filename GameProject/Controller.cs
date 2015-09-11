@@ -85,7 +85,7 @@ namespace Game
             Portal portal0 = new Portal(true);
             //portal0.Transform.Rotation = -4.1f;//(float)(Math.PI/4f + Math.PI);
             portal0.Transform.Position = new Vector2(.1f, 0f);
-            portal0.Transform.Scale = new Vector2(-1f, 1f);
+            portal0.Transform.Scale = new Vector2(1f, -1f);
 
             Entity portalEntity0 = new Entity();
             portalEntity0.Transform = portal0.Transform;
@@ -94,12 +94,11 @@ namespace Game
             portalEntity0.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity0.Models.Add(Model.CreatePlane());
             portalEntity0.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-            
 
             portal1 = new Portal(true);
             //portal1.Transform.Rotation = 4.4f;
             portal1.Transform.Position = new Vector2(-3f, 0f);
-            portal1.Transform.Scale = new Vector2(-2f, -2f);
+            portal1.Transform.Scale = new Vector2(-1f, 1f);
 
             Portal.Link(portal0, portal1);
             Entity portalEntity1 = new Entity();
@@ -425,24 +424,27 @@ namespace Game
                 Vector2[] vArray = new Vector2[2];
                 IntersectPoint i = new IntersectPoint();
                 Portal portalEnter = null;
+
+                Vector2 posPrev = player.Transform.Position;
+                player.Transform.Position += new Vector2(v.X, v.Y);
+                player.PositionUpdate(scene);
                 foreach (Portal p in scene.Portals)
                 {
-                    vArray = VectorExt2.Transform(p.GetVerts(), p.Transform.GetMatrix());
+                    vArray = p.GetWorldVerts();
                     portalEnter = p;
                     Vector2 v1 = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
-                    i = MathExt.LineIntersection(vArray[0], vArray[1], v1, v1 + new Vector2(v.X, v.Y), true);
+                    i = MathExt.LineIntersection(vArray[0], vArray[1], posPrev, player.Transform.Position, true);
                     if (i.Exists)
                     {
                         break;
                     }
                 }
-                player.Transform.Position += new Vector2(v.X, v.Y);
+                
                 if (i.Exists)
                 {
                     portalEnter.Enter(player.Transform);
                 }
 
-                //player.PositionUpdate(scene);
                 cam.Transform = player.Transform.Get3D();
             }
             #endregion

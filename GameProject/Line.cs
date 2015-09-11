@@ -169,7 +169,9 @@ namespace Game
                 if (isSegment) { t = (float)Math.Min(Math.Max(0, t), 1); }
                 V = Vertices[0] + Vector2.Multiply(VDelta, t);
             }
-            return (point - V).Length;
+            float distance = (point - V).Length;
+            Debug.Assert(distance >= 0);
+            return distance;
         }
     }
 }

@@ -57,16 +57,12 @@ namespace Game
             foreach (Portal portal in scene.Portals)
             {
                 //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
-                Line exitLine = new Line(portal.Linked.GetWorldVerts());
+                Line exitLine = new Line(portal.GetWorldVerts());
                 float distanceToPortal = exitLine.PointDistance(Transform.Position, true);
                 if (distanceToPortal < Portal.EntityMinDistance)
                 {
-                    Vector2 exitNormal = portal.Linked.Transform.GetNormal(true);
-                    if (exitLine.GetSideOf(Transform.Position) != exitLine.GetSideOf(exitNormal))
-                    {
-                        exitNormal = -exitNormal;
-                    }
-                    if (!portal.Linked.Transform.IsMirrored())
+                    Vector2 exitNormal = portal.Transform.GetNormal();
+                    if (exitLine.GetSideOf(Transform.Position) != exitLine.GetSideOf(exitNormal + portal.Transform.Position))
                     {
                         exitNormal = -exitNormal;
                     }

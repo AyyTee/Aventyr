@@ -83,12 +83,12 @@ namespace Game
             return Scale.X * Scale.Y < 0;
         }
 
-        public Vector2 GetNormal()
+        /*public Vector2 GetNormal()
         {
             return GetNormal(true);
-        }
+        }*/
 
-        public Vector2 GetNormal(bool normalizeValue)
+        public Vector2 GetNormal(bool normalizeValue = true)
         {
             Vector2[] v = new Vector2[2] {
                 new Vector2(0, 0),
