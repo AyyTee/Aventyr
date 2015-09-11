@@ -58,10 +58,10 @@ namespace Game
             {
                 //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
                 Line exitLine = new Line(portal.Linked.GetWorldVerts());
-                float distanceToPortal = exitLine.PointDistance(Transform.Position, false);
+                float distanceToPortal = exitLine.PointDistance(Transform.Position, true);
                 if (distanceToPortal < Portal.EntityMinDistance)
                 {
-                    Vector2 exitNormal = portal.Linked.Transform.GetNormal();
+                    Vector2 exitNormal = portal.Linked.Transform.GetNormal(true);
                     if (exitLine.GetSideOf(Transform.Position) != exitLine.GetSideOf(exitNormal))
                     {
                         exitNormal = -exitNormal;
@@ -71,6 +71,7 @@ namespace Game
                         exitNormal = -exitNormal;
                     }
                     Transform.Position += exitNormal * (Portal.EntityMinDistance - distanceToPortal);
+                    break;
                 }
             }
         }
@@ -224,11 +225,11 @@ namespace Game
                 {
                     normal = -normal;
                 }
-                /*if (Math.Sign(mirrorCheck.X) == Math.Sign(mirrorCheck.Y))
+                if (Math.Sign(mirrorCheck.X) == Math.Sign(mirrorCheck.Y))
                 {
-                    normal = -normal;
+                    //normal = -normal;
                     //pvScreen = pvScreen.Reverse().ToArray();
-                }*/
+                }
                 Vector2 portalNormal = portal.Transform.Position + normal;
                 if (portalLine.GetSideOf(centerPoint) != portalLine.GetSideOf(portalNormal))
                 {

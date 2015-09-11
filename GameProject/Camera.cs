@@ -6,6 +6,8 @@ namespace Game
     class Camera
     {
         private Transform _transform = new Transform();
+        public float Aspect = 1;
+        public float Scale = 1;
         public Transform Transform
         {
             get { return _transform; }
@@ -35,7 +37,9 @@ namespace Game
             Camera cam = new Camera();
             cam.Transform.Rotation = new Quaternion(0, 0, 1, 0);
             cam.Transform.Position = new Vector3(position.X, position.Y, 1000);
-            cam.Transform.Scale = new Vector3(scale * aspect, scale, 1);
+            cam.Transform.Scale = new Vector3(1, 1, 1);
+            cam.Aspect = aspect;
+            cam.Scale = scale;
             cam.Orthographic = true;
             cam.ZNear = -10000f;
             cam.ZFar = 10000f;
@@ -63,7 +67,7 @@ namespace Game
             Matrix4 perspective;
             if (Orthographic)
             {
-                perspective = Matrix4.CreateOrthographic(Transform.Scale.X, Transform.Scale.Y, ZNear, ZFar);
+                perspective = Matrix4.CreateOrthographic(Transform.Scale.X * Scale * Aspect, Transform.Scale.Y * Scale, ZNear, ZFar);
             }
             else
             {

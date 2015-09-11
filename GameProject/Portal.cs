@@ -137,8 +137,9 @@ namespace Game
 
             entityPos.Position = new Vector2(v3.X, v3.Y);
             //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
-            Line exitLine = new Line(Linked.GetWorldVerts());
+            /*Line exitLine = new Line(Linked.GetWorldVerts());
             float distanceToPortal = exitLine.PointDistance(v3, false);
+            Debug.Assert(distanceToPortal > 0);
             if (distanceToPortal < EntityMinDistance)
             {
                 Vector2 exitNormal = Linked.Transform.GetNormal();
@@ -146,12 +147,8 @@ namespace Game
                 {
                     exitNormal = -exitNormal;
                 }
-                /*if (!Linked.Transform.IsMirrored())
-                {
-                    exitNormal = -exitNormal;
-                }*/
                 entityPos.Position += exitNormal * (EntityMinDistance - distanceToPortal);
-            }
+            }*/
 
             Transform2D tEnter = Transform;
             Transform2D tExit = Linked.Transform;

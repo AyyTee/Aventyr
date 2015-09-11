@@ -85,13 +85,21 @@ namespace Game
 
         public Vector2 GetNormal()
         {
-            Vector2 v = new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));
-            if (IsMirrored())
+            return GetNormal(true);
+        }
+
+        public Vector2 GetNormal(bool normalizeValue)
+        {
+            Vector2[] v = new Vector2[2] {
+                new Vector2(0, 0),
+                new Vector2(1, 0)
+            };
+            v = VectorExt2.Transform(v, GetMatrix());
+            if (normalizeValue)
             {
-                v = -v;
+                return (v[1] - v[0]).Normalized();
             }
-            //Vector2 v = VectorExt2.Transform(new Vector2(1, 0), GetMatrix());
-            return v;
+            return v[1] - v[0];
         }
     }
 }

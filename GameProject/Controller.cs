@@ -85,7 +85,7 @@ namespace Game
             Portal portal0 = new Portal(true);
             //portal0.Transform.Rotation = -4.1f;//(float)(Math.PI/4f + Math.PI);
             portal0.Transform.Position = new Vector2(.1f, 0f);
-            portal0.Transform.Scale = new Vector2(1f, -1f);
+            portal0.Transform.Scale = new Vector2(-1f, 1f);
 
             Entity portalEntity0 = new Entity();
             portalEntity0.Transform = portal0.Transform;
@@ -97,9 +97,9 @@ namespace Game
             
 
             portal1 = new Portal(true);
-            portal1.Transform.Rotation = 4.4f;
+            //portal1.Transform.Rotation = 4.4f;
             portal1.Transform.Position = new Vector2(-3f, 0f);
-            portal1.Transform.Scale = new Vector2(-2f, 2f);
+            portal1.Transform.Scale = new Vector2(-2f, -2f);
 
             Portal.Link(portal0, portal1);
             Entity portalEntity1 = new Entity();
@@ -382,10 +382,10 @@ namespace Game
                     Exit();
                 }
                 Vector3 v = new Vector3();
-                float camSpeed = .009f;
+                float camSpeed = .05f;
                 if (InputExt.KeyDown(Key.ShiftLeft))
                 {
-                    camSpeed = .0009f;
+                    camSpeed = .005f;
                 }
                 if (InputExt.KeyDown(Key.R))
                 {
@@ -408,19 +408,19 @@ namespace Game
                 }
                 else if (InputExt.KeyDown(Key.D))
                 {
-                    v += cam.GetRight() * camSpeed * cam.Transform.Scale.X; //new Vector3(.1f, 0, 0);//
+                    v += cam.GetRight() * camSpeed * cam.Transform.Scale.X;
                 }
                 if (InputExt.MouseWheelDelta() != 0)
                 {
-                    cam.Transform.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
+                    cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
                 }
                 else if (InputExt.KeyDown(Key.Q))
                 {
-                    cam.Transform.Scale /= (float)Math.Pow(1.04, 1);
+                    cam.Scale /= (float)Math.Pow(1.04, 1);
                 }
                 else if (InputExt.KeyDown(Key.E))
                 {
-                    cam.Transform.Scale /= (float)Math.Pow(1.04, -1);
+                    cam.Scale /= (float)Math.Pow(1.04, -1);
                 }
                 Vector2[] vArray = new Vector2[2];
                 IntersectPoint i = new IntersectPoint();
@@ -437,16 +437,13 @@ namespace Game
                     }
                 }
                 player.Transform.Position += new Vector2(v.X, v.Y);
-                cam.Transform.Position += new Vector3(v.X, v.Y, 0);
-
                 if (i.Exists)
                 {
-                    portalEnter.Enter(cam.Transform);
                     portalEnter.Enter(player.Transform);
                 }
 
                 //player.PositionUpdate(scene);
-                //cam.Transform = player.Transform.Get3D();
+                cam.Transform = player.Transform.Get3D();
             }
             #endregion
 
