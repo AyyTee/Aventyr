@@ -168,7 +168,7 @@ namespace Game
             if (flipX != flipY)
             {
                 entityPos.Rotation = -entityPos.Rotation;
-                entityPos.Rotation += Math.Abs(Transform.Rotation + Linked.Transform.Rotation);
+                entityPos.Rotation += (float)Math.Abs(MathExt.AngleWrap(Transform.Rotation) + MathExt.AngleWrap(Linked.Transform.Rotation));
             }
             else
             {

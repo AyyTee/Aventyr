@@ -199,7 +199,7 @@ namespace Game
                     Line currentLine = new Line(collisions[i].GetWorldVerts());
                     Line checkLine = new Line(collisions[j].GetWorldVerts());
                     Line.Side checkSide = currentLine.GetSideOf(checkLine);
-                    if (checkSide != Line.Side.IsNeither && checkSide != currentLine.GetSideOf(centerPoint))
+                    if (checkSide != currentLine.GetSideOf(centerPoint))
                     {
                         collisions.RemoveAt(j);
                     }
@@ -213,7 +213,7 @@ namespace Game
                 Vector2[] pv = portal.GetWorldVerts();
                 Vector2[] pvScreen = VectorExt2.Transform(pv, ScaleMatrix);
 
-                Vector3 mirrorCheck = viewMatrix.ExtractScale();
+                //Vector3 mirrorCheck = viewMatrix.ExtractScale();
 
                 Line portalLine = new Line(pv);
                 Vector2 normal = portal.Transform.GetNormal();
@@ -221,28 +221,34 @@ namespace Game
                 {
                     normal = -normal;
                 }
-                if (Math.Sign(mirrorCheck.X) == Math.Sign(mirrorCheck.Y))
-                {
-                    //normal = -normal;
-                    //pvScreen = pvScreen.Reverse().ToArray();
-                }
+
                 Vector2 portalNormal = portal.Transform.Position + normal;
                 if (portalLine.GetSideOf(centerPoint) != portalLine.GetSideOf(portalNormal))
                 {
-                    cutLines.AddRange(new float[4] {
-                        pvScreen[0].X, pvScreen[0].Y,
-                        pvScreen[1].X, pvScreen[1].Y,
-                    });
                     normal *= Portal.EntityMinDistance;
                 }
                 else
                 {
-                    cutLines.AddRange(new float[4] {
-                        pvScreen[1].X, pvScreen[1].Y,
-                        pvScreen[0].X, pvScreen[0].Y,
-                    });
+                    pvScreen = pvScreen.Reverse().ToArray();
                     normal *= -Portal.EntityMinDistance;
                 }
+
+                Vector2[] mirrorTest = new Vector2[3] {
+                    new Vector2(1, 0),
+                    new Vector2(0, 1),
+                    new Vector2(0, 0)
+                };
+                mirrorTest = VectorExt2.Transform(mirrorTest, viewMatrix);
+                if (MathExt.AngleDiff(MathExt.AngleVector(mirrorTest[0] - mirrorTest[2]), MathExt.AngleVector(mirrorTest[1] - mirrorTest[2])) > 0)
+                {
+                    pvScreen = pvScreen.Reverse().ToArray();
+                }
+
+                cutLines.AddRange(new float[4] {
+                    pvScreen[0].X, pvScreen[0].Y,
+                    pvScreen[1].X, pvScreen[1].Y,
+                });
+
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
                     Vector2 centerPointNext = VectorExt2.Transform(portal.Transform.Position + normal, portal.GetMatrix());

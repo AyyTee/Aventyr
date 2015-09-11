@@ -83,9 +83,9 @@ namespace Game
             back.Models.Add(background);
 
             Portal portal0 = new Portal(true);
-            //portal0.Transform.Rotation = -4.1f;//(float)(Math.PI/4f + Math.PI);
+            portal0.Transform.Rotation = (float)Math.PI;
             portal0.Transform.Position = new Vector2(.1f, 0f);
-            portal0.Transform.Scale = new Vector2(1f, -1f);
+            portal0.Transform.Scale = new Vector2(-1.1f, -1.1f);
 
             Entity portalEntity0 = new Entity();
             portalEntity0.Transform = portal0.Transform;
@@ -98,7 +98,7 @@ namespace Game
             portal1 = new Portal(true);
             //portal1.Transform.Rotation = 4.4f;
             portal1.Transform.Position = new Vector2(-3f, 0f);
-            portal1.Transform.Scale = new Vector2(-1f, 1f);
+            portal1.Transform.Scale = new Vector2(-1f, -1f);
 
             Portal.Link(portal0, portal1);
             Entity portalEntity1 = new Entity();
@@ -111,8 +111,8 @@ namespace Game
             
 
             Portal portal2 = new Portal(true);
-            portal2.Transform.Rotation = 0.1f;//(float)Math.PI/4f;
-            portal2.Transform.Position = new Vector2(1f, 2f);
+            //portal2.Transform.Rotation = 0.1f;//(float)Math.PI/4f;
+            portal2.Transform.Position = new Vector2(0.1f, 2f);
             portal2.Transform.Scale = new Vector2(1f, 1f);
 
             Entity portalEntity2 = new Entity();
@@ -126,7 +126,7 @@ namespace Game
 
             Portal portal3 = new Portal(true);
             //portal3.Transform.Rotation = 0.4f;
-            portal3.Transform.Position = new Vector2(-1f, -1.2f);
+            portal3.Transform.Position = new Vector2(-3f, 2f);
             portal3.Transform.Scale = new Vector2(-1f, 1f);
 
             Portal.Link(portal2, portal3);
@@ -159,7 +159,7 @@ namespace Game
                 new Vector2(-0.5f, 0), 
                 new Vector2(0, -0.5f)
             });
-            //playerModel.Transform.Scale = new Vector3(15, .2f, 1);
+            playerModel.Transform.Scale = new Vector3(15, .2f, 1);
             playerModel.SetTexture(Controller.textures["default.png"]);
             player.IsPortalable = true;
             //player.Transform.Scale = new Vector2(.5f, .5f);
@@ -180,12 +180,12 @@ namespace Game
             scene.AddEntity(back);
             scene.AddPortal(portal0);
             scene.AddPortal(portal1);
-            //scene.AddPortal(portal2);
-            //scene.AddPortal(portal3);
+            scene.AddPortal(portal2);
+            scene.AddPortal(portal3);
             scene.AddEntity(portalEntity0);
             scene.AddEntity(portalEntity1);
-            //scene.AddEntity(portalEntity2);
-            //scene.AddEntity(portalEntity3);
+            scene.AddEntity(portalEntity2);
+            scene.AddEntity(portalEntity3);
             scene.AddEntity(box);
             scene.AddEntity(box2);
             scene.AddEntity(player);

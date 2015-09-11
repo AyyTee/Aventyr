@@ -8,6 +8,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing.Imaging;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace Game
 {
@@ -58,11 +59,20 @@ namespace Game
             
             using (Graphics gfx = Graphics.FromImage(GlyphBitmap))
             {
+                //this supposedly improves perforance
+                Application.SetCompatibleTextRenderingDefault(false);
+
+                StringFormat format = new StringFormat(StringFormat.GenericTypographic);
                 Point charPoint = new Point(0, 0);
                 for (int i = 0; i < chars.Length; i++)
                 {
-                    SizeF charSizeF = gfx.MeasureString(new string(new Char[1] { Convert.ToChar(i) }), Font);
+                    SizeF charSizeF = gfx.MeasureString(new string(new Char[1] { Convert.ToChar(i) }), Font, 0, format);
+
                     Size charSize = new Size((int)Math.Ceiling(charSizeF.Width), (int)Math.Ceiling(charSizeF.Height));
+
+                    //fudge factor to prevent glyphs from overlapping
+                    charSize.Width += 2;
+
                     if (charSize.Width + charPoint.X > TextureSize.Width)
                     {
                         charPoint.X = 0;

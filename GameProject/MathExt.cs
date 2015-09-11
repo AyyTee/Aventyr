@@ -76,6 +76,12 @@ namespace Game
             return Value;
         }
 
+        static public double AngleWrap(double value)
+        {
+            double tau = Math.PI * 2;
+            return ((value % tau) + tau) % tau;
+        }
+
         static public double LerpAngle(double Angle0, double Angle1, double T, bool IsClockwise)
         {
             if (IsClockwise == true)
