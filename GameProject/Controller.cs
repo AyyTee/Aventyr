@@ -85,7 +85,7 @@ namespace Game
             Portal portal0 = new Portal(true);
             portal0.Transform.Rotation = (float)Math.PI;
             portal0.Transform.Position = new Vector2(.1f, 0f);
-            portal0.Transform.Scale = new Vector2(-1.1f, -1.1f);
+            portal0.Transform.Scale = new Vector2(-1.5f, -1.5f);
 
             Entity portalEntity0 = new Entity();
             portalEntity0.Transform = portal0.Transform;
@@ -126,7 +126,7 @@ namespace Game
 
             Portal portal3 = new Portal(true);
             //portal3.Transform.Rotation = 0.4f;
-            portal3.Transform.Position = new Vector2(-3f, 2f);
+            portal3.Transform.Position = new Vector2(-1f, 2f);
             portal3.Transform.Scale = new Vector2(-1f, 1f);
 
             Portal.Link(portal2, portal3);
@@ -211,8 +211,10 @@ namespace Game
         {
             base.OnRenderFrame(e);
             TimeRenderDelta += (float)e.Time;
-            //GL.Viewport(0, 0, Width, Height);
+            text.Models.Clear();
+            text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
 
+            GL.Viewport(0, 0, Width, Height);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             Shaders["textured"].EnableVertexAttribArrays();
@@ -227,7 +229,7 @@ namespace Game
             DrawDebug();
             
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
-            DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 4, TimeRenderDelta, 20);
+            DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 20);
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.Blend);
@@ -372,6 +374,31 @@ namespace Game
             TimeRenderDelta = 0;
             
             InputExt.Update();
+            if (InputExt.KeyPress(Key.F4))
+            {
+                if (WindowState == OpenTK.WindowState.Normal)
+                {
+                    WindowState = OpenTK.WindowState.Fullscreen;
+                    WindowBorder = WindowBorder.Hidden;
+                    Size = new Size(1366, 768);
+                    CanvasSize = Size;
+                    cam.Aspect = Width / (float)Height;
+                    hudCam.Aspect = cam.Aspect;
+                    hudCam.Scale = Height;
+                    WindowBorder = WindowBorder.Fixed;
+                }
+                else if (WindowState == OpenTK.WindowState.Fullscreen)
+                {
+                    WindowState = OpenTK.WindowState.Normal;
+                    WindowBorder = WindowBorder.Hidden;
+                    Size = new Size(800, 600);
+                    CanvasSize = Size;
+                    cam.Aspect = Width / (float)Height;
+                    hudCam.Aspect = cam.Aspect;
+                    hudCam.Scale = Height;
+                    WindowBorder = WindowBorder.Fixed;
+                }
+            }
             
             #region camera movement
             if (Focused)
@@ -452,8 +479,7 @@ namespace Game
             /*Console.Write(box2.Models[0].Transform.Rotation.W);
             Console.WriteLine();*/
             //portal1.Transform.Rotation += .001f;
-            text.Models.Clear();
-            text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
+            
             box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
             
             /*foreach (Entity v in objects)
@@ -471,7 +497,6 @@ namespace Game
                 }
                 iboGarbage.Clear();
             }
-            
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -481,6 +506,21 @@ namespace Game
             
             File.Delete("Triangulating.txt");
         }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            
+        }
+
+        /*protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            base.OnKeyPress(e);
+            if (Focused && WindowState == WindowState.Fullscreen && InputExt.KeyDown(Key.Tab) && InputExt.KeyDown(Key.AltLeft))
+            {
+                WindowState = WindowState.Minimized;
+            }
+        }*/
 
         int loadImage(Bitmap image)
         {
