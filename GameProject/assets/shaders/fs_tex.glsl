@@ -14,11 +14,14 @@ main()
 	{
 		vec2 v0 = vec2(cutLines[i], cutLines[i+1]);
 		vec2 v1 = vec2(cutLines[i+2], cutLines[i+3]);
+		//debug color if the vertices lie exactly on top of eachother
 		if (v0 == v1 && i == 0)
 		{
-			outputColor = vec4(1,1,0,1);
+			//outputColor = vec4(cutLines[i]/600,cutLines[i+1]/600,cutLines[i+2]/600,1);
+			outputColor = vec4(1, 1, 0, 1);
 			return;
 		}
+		
 		if (0 < (v1.x - v0.x) * (gl_FragCoord.y - v0.y) - (v1.y - v0.y) * (gl_FragCoord.x - v0.x))
 		{
 			discard;

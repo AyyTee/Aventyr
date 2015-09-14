@@ -15,7 +15,7 @@ namespace Game
     public class Controller : GameWindow
     {
         public Controller()
-            : base((int) CanvasSize.Width, (int) CanvasSize.Height, new GraphicsMode(32, 24, 8, 1), "Game", GameWindowFlags.FixedWindow)
+            : base((int) 800, (int) 600, new GraphicsMode(32, 24, 8, 1), "Game", GameWindowFlags.FixedWindow)
         {
             ContextExists = true;
         }
@@ -31,11 +31,22 @@ namespace Game
         Font Default;
         Entity box2;
         public static List<int> iboGarbage = new List<int>();
-        public static Size CanvasSize = new Size(800, 600);
 
         public static Dictionary<string, int> textures = new Dictionary<string, int>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
 
+        public static String fontFolder = Path.Combine(new String[2] {
+            "assets",
+            "fonts"
+        });
+        public static String shaderFolder = Path.Combine(new String[2] {
+            "assets",
+            "shaders"
+        });
+        public static String textureFolder = Path.Combine(new String[2] {
+            "assets",
+            "textures"
+        });
         Matrix4 viewMatrix;
         Scene scene, hud;
         FontRenderer FontRenderer;
@@ -55,7 +66,7 @@ namespace Game
             hudCam = Camera.CameraOrtho(new Vector3(Width/2, Height/2, 0), Height, Width / (float)Height);
 
             System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
-            privateFonts.AddFontFile(@"assets\fonts\times.ttf");
+            privateFonts.AddFontFile(Path.Combine(fontFolder, "times.ttf"));
             Default = new Font(privateFonts.Families[0], 14);
             FontRenderer = new FontRenderer(Default);
 
@@ -63,13 +74,13 @@ namespace Game
             lastMousePos = new Vector2(Mouse.X, Mouse.Y);
 
             // Load shaders from file
-            Shaders.Add("default", new ShaderProgram(@"assets\shaders\vs.glsl", @"assets\shaders\fs.glsl", true));
-            Shaders.Add("textured", new ShaderProgram(@"assets\shaders\vs_tex.glsl", @"assets\shaders\fs_tex.glsl", true));
-            Shaders.Add("text", new ShaderProgram(@"assets\shaders\vs_text.glsl", @"assets\shaders\fs_text.glsl", true));
+            Shaders.Add("default", new ShaderProgram(Path.Combine(shaderFolder, "vs.glsl"), Path.Combine(shaderFolder, "fs.glsl"), true));
+            Shaders.Add("textured", new ShaderProgram(Path.Combine(shaderFolder, "vs_tex.glsl"), Path.Combine(shaderFolder, "fs_tex.glsl"), true));
+            Shaders.Add("text", new ShaderProgram(Path.Combine(shaderFolder, "vs_text.glsl"), Path.Combine(shaderFolder, "fs_text.glsl"), true));
 
             // Load textures from file
-            textures.Add("default.png", loadImage(@"assets\default.png"));
-            textures.Add("grid.png", loadImage(@"assets\grid.png"));//"grid.png", FontRenderer.textureID);
+            textures.Add("default.png", loadImage(Path.Combine(textureFolder, "default.png")));
+            textures.Add("grid.png", loadImage(Path.Combine(textureFolder, "grid.png")));
             // Create our objects
             
 
@@ -172,7 +183,7 @@ namespace Game
             origin.Models.Add(Model.CreatePlane(new Vector2(0.1f, 0.1f)));
 
             text = new Entity();
-            text.Transform.Position = new Vector2(0, CanvasSize.Height);
+            text.Transform.Position = new Vector2(0, ClientSize.Height);
             
 
             hud.AddEntity(text);
@@ -226,7 +237,6 @@ namespace Game
             GL.Enable(EnableCap.DepthTest);
             
             scene.DrawScene(viewMatrix, (float)e.Time);
-            DrawDebug();
             
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
             DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 20);
@@ -363,10 +373,6 @@ namespace Game
             DrawPortal(portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1, sceneDepth);
         }
 
-        private void DrawDebug()
-        {
-        }
-
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
@@ -379,24 +385,17 @@ namespace Game
                 if (WindowState == OpenTK.WindowState.Normal)
                 {
                     WindowState = OpenTK.WindowState.Fullscreen;
-                    WindowBorder = WindowBorder.Hidden;
-                    Size = new Size(1366, 768);
-                    CanvasSize = Size;
                     cam.Aspect = Width / (float)Height;
                     hudCam.Aspect = cam.Aspect;
                     hudCam.Scale = Height;
-                    WindowBorder = WindowBorder.Fixed;
                 }
                 else if (WindowState == OpenTK.WindowState.Fullscreen)
                 {
                     WindowState = OpenTK.WindowState.Normal;
-                    WindowBorder = WindowBorder.Hidden;
-                    Size = new Size(800, 600);
-                    CanvasSize = Size;
+                    ClientSize = new Size(800, 600);
                     cam.Aspect = Width / (float)Height;
                     hudCam.Aspect = cam.Aspect;
                     hudCam.Scale = Height;
-                    WindowBorder = WindowBorder.Fixed;
                 }
             }
             
@@ -512,15 +511,6 @@ namespace Game
             base.OnResize(e);
             
         }
-
-        /*protected override void OnKeyPress(KeyPressEventArgs e)
-        {
-            base.OnKeyPress(e);
-            if (Focused && WindowState == WindowState.Fullscreen && InputExt.KeyDown(Key.Tab) && InputExt.KeyDown(Key.AltLeft))
-            {
-                WindowState = WindowState.Minimized;
-            }
-        }*/
 
         int loadImage(Bitmap image)
         {

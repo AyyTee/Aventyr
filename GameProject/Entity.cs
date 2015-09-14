@@ -2,6 +2,7 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 
@@ -16,7 +17,10 @@ namespace Game
         private Transform2D _transform = new Transform2D();
         private List<Model> _models = new List<Model>();
         private bool _isPortalable = false;
-
+        /// <summary>
+        /// Represents the size of the cutLines array within the fragment shader
+        /// </summary>
+        private const int CUT_LINE_ARRAY_MAX_LENGTH = 16;
         /// <summary>
         /// Whether or not this entity will interact with portals when intersecting them
         /// </summary>
@@ -206,7 +210,7 @@ namespace Game
                 }
             }
             Matrix4 ScaleMatrix;
-            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / 2, Controller.CanvasSize.Height / 2, 0));
+            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(scene.Window.ClientSize.Width / (float)2, scene.Window.ClientSize.Height / (float)2, 0));
             
             foreach (Portal portal in collisions)
             {
@@ -255,8 +259,10 @@ namespace Game
                     _RenderPortalClipping(scene, model, centerPointNext, portal, modelMatrix * portal.GetMatrix(), viewMatrix, depth - 1);
                 }
             }
+
             GL.Uniform1(model.Shader.GetUniform("cutLinesLength"), cutLines.Count);
-            GL.Uniform1(model.Shader.GetUniform("cutLines"), cutLines.Count, cutLines.ToArray());
+            //GL.Uniform1(model.Shader.GetUniform("cutLines"), cutLines.Count, cutLines.ToArray());
+            GL.Uniform1(GL.GetUniformLocation(model.Shader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
             _RenderSetTransformMatrix(model, modelMatrix * viewMatrix);
             GL.DrawElements(BeginMode.Triangles, model.Indices.Count, DrawElementsType.UnsignedInt, 0);
         }

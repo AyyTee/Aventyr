@@ -21,8 +21,6 @@ C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\OpenTKTutorial6\bin\Debug\assets\default.png
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\obj\x86\Debug\OpenTKTutorial4.exe
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\obj\x86\Debug\OpenTKTutorial4.pdb
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\default.png
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\grid.png
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\shaders\fs.glsl
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\shaders\fs_tex.glsl
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\shaders\vs.glsl
@@ -42,3 +40,6 @@ C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debu
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\fonts\couri.ttf
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\fonts\times.ttf
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\obj\x86\Debug\GameProject.csprojResolveAssemblyReference.cache
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\OpenTKTutorial4.exe.config
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\textures\default.png
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\textures\grid.png

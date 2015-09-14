@@ -17,6 +17,12 @@ namespace Game
         private List<Entity> _entities = new List<Entity>();
         private Controller _window;
 
+        public Controller Window
+        {
+            get { return _window; }
+            set { _window = value; }
+        }
+
         public List<Entity> EntityList
         {
             get { return _entities; }
