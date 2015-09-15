@@ -239,7 +239,10 @@ namespace Game
             scene.DrawScene(viewMatrix, (float)e.Time);
             
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
-            DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 20);
+            TextWriter console = Console.Out;
+            Console.SetOut(Controller.Log);
+            scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 20);
+            Console.SetOut(console);
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.Blend);
@@ -253,124 +256,23 @@ namespace Game
             SwapBuffers();
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="portals"></param>
-        /// <param name="viewMatrix"></param>
-        /// <param name="viewPos"></param>
-        /// <param name="depth"></param>
-        /// <param name="timeDelta"></param>
-        /// <param name="sceneMaxDepth">The difference between the nearest and farthest object in the scene</param>
-        private void DrawPortalAll(Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, float sceneDepth)
+        private void ToggleFullScreen()
         {
-            portalCount = 0;
-
-            //stopgap solution. portals will only recursively draw themselves, not any other portals
-            IOrderedEnumerable<Portal> portalSort = portals.OrderByDescending(item => (item.Transform.Position - viewPos).Length);
-            foreach (Portal p in portalSort)
+            if (WindowState == OpenTK.WindowState.Normal)
             {
-                GL.Clear(ClearBufferMask.StencilBufferBit | ClearBufferMask.DepthBufferBit);
-                DrawPortal(p, viewMatrix, viewPos, depth, timeDelta, 0, sceneDepth);
-                //break;
+                WindowState = OpenTK.WindowState.Fullscreen;
+                cam.Aspect = Width / (float)Height;
+                hudCam.Aspect = cam.Aspect;
+                hudCam.Scale = Height;
             }
-            GL.Disable(EnableCap.StencilTest);
-        }
-
-        public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Matrix4 viewMatrixPrev, Vector2 viewPos, int depth, float timeDelta, int count, float sceneDepth)
-        {
-            Vector2[] pv = portalEnter.Linked.GetVerts();
-            pv = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrix);
-
-            Vector2[] pv2 = portalEnter.GetVerts();
-            pv2 = VectorExt2.Transform(pv2, portalEnter.Transform.GetMatrix() * viewMatrixPrev);
-            Line portalLine = new Line(pv2);
-            Vector2 v = VectorExt2.Transform(viewPos, viewMatrix);
-            if (portalLine.IsInsideFOV(v, new Line(pv)))
+            else if (WindowState == OpenTK.WindowState.Fullscreen)
             {
-                DrawPortal(portalEnter, viewMatrix, viewPos, depth, timeDelta, count, sceneDepth);
+                WindowState = OpenTK.WindowState.Normal;
+                ClientSize = new Size(800, 600);
+                cam.Aspect = Width / (float)Height;
+                hudCam.Aspect = cam.Aspect;
+                hudCam.Scale = Height;
             }
-        }
-
-        public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count, float sceneDepth)
-        {
-            if (depth <= 0)
-            {
-                return;
-            }
-
-            if (portalEnter.OneSided)
-            {
-                Vector2[] pv2 = portalEnter.GetWorldVerts();
-
-                Line portalLine = new Line(pv2);
-                if (portalLine.GetSideOf(pv2[0] + portalEnter.Transform.GetNormal()) != portalLine.GetSideOf(viewPos))
-                {
-                    return;
-                }
-            }
-
-            Vector2[] pv = portalEnter.GetVerts();
-            pv = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrix);
-            //this will not correctly cull portals if the viewPos begins outside of the viewspace
-            if (MathExt.LineInRectangle(new Vector2(-1, -1), new Vector2(1, 1), pv[0], pv[1]) == false)
-            {
-                return;
-            }
-
-            viewMatrix = Matrix4.CreateTranslation(new Vector3(0, 0, sceneDepth)) * viewMatrix;
-            portalCount++;
-
-            //Start using the stencil 
-            GL.ColorMask(false, false, false, false);
-            GL.DepthMask(false);
-            GL.Enable(EnableCap.StencilTest);
-            GL.Disable(EnableCap.DepthTest);
-            GL.StencilFunc(StencilFunction.Always, 1, 0xFF);
-            GL.StencilOp(StencilOp.Incr, StencilOp.Incr, StencilOp.Incr);
-
-            TextWriter console = Console.Out;
-            Console.SetOut(Controller.Log);
-            Entity fov = new Entity();
-            Vector2[] a = portalEnter.GetFOV(viewPos, 50);
-            if (a.Length >= 3)
-            {
-                fov.Models.Add(Model.CreatePolygon(a));
-                fov.Render(scene, viewMatrix, timeDelta);
-            }
-            Console.SetOut(console);
-
-            GL.ColorMask(true, true, true, true);
-            GL.DepthMask(true);
-            GL.StencilFunc(StencilFunction.Less, count, 0xFF);
-            GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
-
-
-            GL.Enable(EnableCap.DepthTest);
-            Matrix4 portalMatrix = Portal.GetMatrix(portalEnter.Linked, portalEnter) * viewMatrix;
-            scene.DrawScene(portalMatrix, timeDelta);
-
-            //GL.Disable(EnableCap.StencilTest);
-
-            Entity fovOutline = new Entity();
-            Vector2[] verts = portalEnter.GetFOV(viewPos, 50, 2);
-            if (verts.Length > 0)
-            {
-                fovOutline.Models.Add(Model.CreateLine(new Vector2[] { verts[1], verts[2] }));
-                fovOutline.Models.Add(Model.CreateLine(new Vector2[] { verts[0], verts[3] }));
-                foreach (Model model in fovOutline.Models)
-                {
-                    Vector3 v = model.Transform.Position;
-                    v.Z = sceneDepth * (depth + count);
-                    model.Transform.Position = v;
-                }
-            }
-            
-            GL.LineWidth(2f);
-            fovOutline.Render(scene, viewMatrix, timeDelta);
-            GL.LineWidth(1f);
-
-            DrawPortal(portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1, sceneDepth);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
@@ -382,21 +284,7 @@ namespace Game
             InputExt.Update();
             if (InputExt.KeyPress(Key.F4))
             {
-                if (WindowState == OpenTK.WindowState.Normal)
-                {
-                    WindowState = OpenTK.WindowState.Fullscreen;
-                    cam.Aspect = Width / (float)Height;
-                    hudCam.Aspect = cam.Aspect;
-                    hudCam.Scale = Height;
-                }
-                else if (WindowState == OpenTK.WindowState.Fullscreen)
-                {
-                    WindowState = OpenTK.WindowState.Normal;
-                    ClientSize = new Size(800, 600);
-                    cam.Aspect = Width / (float)Height;
-                    hudCam.Aspect = cam.Aspect;
-                    hudCam.Scale = Height;
-                }
+                ToggleFullScreen();   
             }
             
             #region camera movement
@@ -504,12 +392,6 @@ namespace Game
             Log.Close();
             
             File.Delete("Triangulating.txt");
-        }
-
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-            
         }
 
         int loadImage(Bitmap image)

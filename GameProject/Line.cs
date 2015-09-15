@@ -173,5 +173,20 @@ namespace Game
             Debug.Assert(distance >= 0);
             return distance;
         }
+
+        /// <summary>
+        /// Swaps the start and end vertice for the line.
+        /// </summary>
+        public void Reverse()
+        {
+            Vector2 temp = Vertices[0];
+            Vertices[0] = Vertices[1];
+            Vertices[1] = temp;
+        }
+
+        public void Transform(Matrix4 transformMatrix)
+        {
+            Vertices = VectorExt2.Transform(Vertices, transformMatrix);
+        }
     }
 }
