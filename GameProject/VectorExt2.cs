@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
@@ -56,6 +57,51 @@ namespace Game
                 vList.Add(VectorExt2.Transform(v, matrix));
             }
             return vList;
+        }
+
+        public static Vector2 ConvertTo(Vector3 v)
+        {
+            return new Vector2(v.X, v.Y);
+        }
+
+        public static Vector2[] ConvertTo(Vector3[] v)
+        {
+            Vector2[] vNew = new Vector2[v.Length];
+            for (int i = 0; i < v.Length; i++)
+            {
+                vNew[i] = ConvertTo(v[i]);
+            }
+            return vNew;
+        }
+
+        public static Vector2 ConvertTo(Xna.Vector2 v)
+        {
+            return new Vector2(v.X, v.Y);
+        }
+
+        public static Vector2[] ConvertTo(Xna.Vector2[] v)
+        {
+            Vector2[] vNew = new Vector2[v.Length];
+            for (int i = 0; i < v.Length; i++)
+            {
+                vNew[i] = ConvertTo(v[i]);
+            }
+            return vNew;
+        }
+
+        public static Xna.Vector2 ConvertToXna(Vector2 v)
+        {
+            return new Xna.Vector2(v.X, v.Y);
+        }
+
+        public static Xna.Vector2[] ConvertToXna(Vector2[] v)
+        {
+            Xna.Vector2[] vNew = new Xna.Vector2[v.Length];
+            for (int i = 0; i < v.Length; i++)
+            {
+                vNew[i] = ConvertToXna(v[i]);
+            }
+            return vNew;
         }
     }
 }

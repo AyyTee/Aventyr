@@ -9,6 +9,13 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.ComponentModel;
+using FarseerPhysics;
+using Xna = Microsoft.Xna.Framework;
+using FarseerPhysics.Factories;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Collision.Shapes;
+//using FarseerPhysics.Common;
+
 
 namespace Game
 {
@@ -55,7 +62,6 @@ namespace Game
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
         float TimeRenderDelta = 0.0f;
-        private int portalCount;
         private Entity player;
         Portal portal1;
         Entity text;
@@ -149,6 +155,7 @@ namespace Game
             portalEntity3.Models.Add(Model.CreatePlane());
             portalEntity3.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
+            #region cubes
             Model tc = Model.CreateCube();
             tc.Transform.Position = new Vector3(1f, 3f, 0);
             Entity box = new Entity(new Vector2(0,0));
@@ -159,7 +166,9 @@ namespace Game
             tc2.Transform.Rotation = new Quaternion(1, 0, 0, 1);
             box2 = new Entity(new Vector2(0, 0));
             box2.Models.Add(tc2);
+            #endregion
 
+            #region player
             player = new Entity();
             Model playerModel = Model.CreatePolygon(new Vector2[] {
                 new Vector2(0.5f, 0), 
@@ -177,13 +186,47 @@ namespace Game
             player.Transform.Position = new Vector2(0f, 0f);
             player.Models.Add(playerModel);
             playerModel.SetTexture(Controller.textures["default.png"]);
+            #endregion
 
-            Entity origin = new Entity();
-            origin.Transform.Position = new Vector2(0, 0);
+            Entity ground = new Entity(new Vector2(0, -2));
+            ground.Models.Add(Model.CreatePolygon(new Vector2[5] {
+                new Vector2(0, 0),
+                new Vector2(1f, 0.5f),
+                new Vector2(1f, -1f),
+                new Vector2(-1f, -1.1f),
+                new Vector2(-0.5f, 0)
+            }));
+            ground.Transform.Scale = new Vector2(2f, 2f);
+            scene.AddEntity(ground);
+
+            Entity origin = Entity.CreatePhysBox(scene, new Vector2(0.4f, 0f), new Vector2(0.5f, 0.5f));
+            /*Entity origin = new Entity();
+            origin.Transform.Position = new Vector2(0.3f, 0);
             origin.Models.Add(Model.CreatePlane(new Vector2(0.1f, 0.1f)));
 
+            Body myBody = BodyFactory.CreateBody(scene.PhysWorld, VectorExt2.ConvertToXna(origin.Transform.Position));
+            //Body myBody2 = BodyFactory.CreateRectangle(PhysWorld, 5, 5, 1);
+            myBody.BodyType = BodyType.Dynamic;
+            myBody.CreateFixture(new CircleShape(1f, 1f));*/
+            Xna.Vector2 v = VectorExt2.ConvertToXna(ground.Transform.Position);
+
+            List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
+            Model.Triangle[] tris = ground.Models[0].GetTris();
+            for (int i = 0; i < tris.Length; i += 1)
+            {
+                var v1 = new FarseerPhysics.Common.Vertices();
+
+                v1.AddRange(VectorExt3.ConvertToXna(tris[i].GetVerts()));
+                vList.Add(v1);
+            }
+            Body bodyPolygon = BodyFactory.CreateCompoundPolygon(scene.PhysWorld, vList, 1, v);
+            ground.LinkBody(bodyPolygon);
+
+            //origin.LinkBody(myBody);
+            
             text = new Entity();
             text.Transform.Position = new Vector2(0, ClientSize.Height);
+            
             
 
             hud.AddEntity(text);
@@ -241,7 +284,7 @@ namespace Game
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
             TextWriter console = Console.Out;
             Console.SetOut(Controller.Log);
-            scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 20);
+            //scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 20);
             Console.SetOut(console);
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
@@ -368,11 +411,8 @@ namespace Game
             //portal1.Transform.Rotation += .001f;
             
             box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
-            
-            /*foreach (Entity v in objects)
-            {
-                v.StepUpdate();
-            }*/
+
+            scene.Step();
             
             //get rid of all ibo elements no longer used
             lock ("delete")

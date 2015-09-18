@@ -48,6 +48,36 @@ namespace Game
             }
         }
 
+        public class Triangle
+        {
+            public const int EDGE_COUNT = 3;
+            Vertex[] Vertices = new Vertex[3];
+
+            public Triangle(Vertex[] vertices)
+            {
+
+                Debug.Assert(vertices.Length == 3);
+                Vertices = vertices;
+            }
+            
+            public Triangle(Vertex v0, Vertex v1, Vertex v2)
+            {
+                Vertices[0] = v0;
+                Vertices[1] = v1;
+                Vertices[2] = v2;
+            }
+
+            public Vector3[] GetVerts()
+            {
+                Vector3[] vList = new Vector3[EDGE_COUNT];
+                for (int i = 0; i < Vertices.Length; i++)
+                {
+                    vList[i] = Vertices[i].Position;
+                }
+                return vList;
+            }
+        }
+
         public List<int> Indices = new List<int>();
         public List<Vertex> Vertices = new List<Vertex>();
 
@@ -110,6 +140,17 @@ namespace Game
         public Vector3[] GetWorldVerts()
         {
             return VectorExt3.Transform(GetVerts(), Transform.GetMatrix());
+        }
+
+        public Triangle[] GetTris()
+        {
+            Debug.Assert(Indices.Count % Triangle.EDGE_COUNT == 0, "Number of indices must be a multiple of 3.");
+            Triangle[] tris = new Triangle[Indices.Count/Triangle.EDGE_COUNT];
+            for (int i = 0; i < Indices.Count; i += Triangle.EDGE_COUNT)
+            {
+                tris[i/Triangle.EDGE_COUNT] = new Triangle(Vertices[Indices[i]], Vertices[Indices[i+1]], Vertices[Indices[i+2]]);
+            }
+            return tris;
         }
         
         /// <summary>

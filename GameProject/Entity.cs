@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using FarseerPhysics.Dynamics;
+using Xna = Microsoft.Xna.Framework;
+using FarseerPhysics.Factories;
 
 namespace Game
 {
@@ -18,6 +20,7 @@ namespace Game
         private List<Model> _models = new List<Model>();
         private List<ClipModel> ClipModels = new List<ClipModel>();
         private bool _isPortalable = false;
+        public Body PhysEntity;
         /// <summary>
         /// Represents the size of the cutLines array within the fragment shader
         /// </summary>
@@ -65,14 +68,34 @@ namespace Game
             Transform = transform;
         }
 
-        public void BufferModels()
+        public static Entity CreatePhysBox(Scene scene, Vector2 position, Vector2 scale)
         {
+            Entity box = new Entity(position);
+            box.Models.Add(Model.CreatePlane(scale));
 
+            //Body body = BodyFactory.CreateBody(scene.PhysWorld, VectorExt2.ConvertToXna(box.Transform.Position));
+            Body body = BodyFactory.CreateRectangle(scene.PhysWorld, scale.X, scale.Y, 1);
+            body.Position = VectorExt2.ConvertToXna(position);
+            box.LinkBody(body);
+            body.BodyType = BodyType.Dynamic;
+            body.FixedRotation = false;
+            //body.CreateFixture(new CircleShape(1f, 1f));*/
+
+            return box;
         }
 
-        public virtual void StepUpdate()
+        public void LinkBody(Body body)
         {
+            PhysEntity = body;
+        }
 
+        public virtual void Step()
+        {
+            if (PhysEntity != null)
+            {
+                Transform.Position = VectorExt2.ConvertTo(PhysEntity.Position);
+                Transform.Rotation = PhysEntity.Rotation;
+            }
         }
 
         public void PositionUpdate(Scene scene)

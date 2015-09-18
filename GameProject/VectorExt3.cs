@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
@@ -26,6 +27,21 @@ namespace Game
                 vList.Add(Vector3.Transform(v, matrix));
             }
             return vList;
+        }
+
+        public static Xna.Vector2 ConvertToXna(Vector3 v)
+        {
+            return new Xna.Vector2(v.X, v.Y);
+        }
+
+        public static Xna.Vector2[] ConvertToXna(Vector3[] v)
+        {
+            Xna.Vector2[] vNew = new Xna.Vector2[v.Length];
+            for (int i = 0; i < v.Length; i++)
+            {
+                vNew[i] = ConvertToXna(v[i]);
+            }
+            return vNew;
         }
     }
 }

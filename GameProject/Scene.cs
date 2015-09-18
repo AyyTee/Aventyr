@@ -4,11 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using OpenTK.Graphics.OpenGL;
+using FarseerPhysics.Dynamics;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
     public class Scene
     {
+        public World PhysWorld;
+        float TimeStepSize = 1 / 60f;
         private List<Portal> _portals = new List<Portal>();
 
         public List<Portal> Portals
@@ -31,7 +35,9 @@ namespace Game
 
         public Scene(Controller controller)
         {
-            _window = controller;   
+            _window = controller;
+            PhysWorld = new World(new Xna.Vector2(0f, -1));//-9.82f));
+
         }
 
         public void DrawScene(Matrix4 viewMatrix, float timeRenderDelta)
@@ -39,6 +45,15 @@ namespace Game
             foreach (Entity v in EntityList)
             {
                 v.Render(this, viewMatrix, (float)Math.Min(timeRenderDelta, 1 / _window.UpdateFrequency));
+            }
+        }
+
+        public void Step()
+        {
+            PhysWorld.Step(TimeStepSize);
+            foreach (Entity e in EntityList)
+            {
+                e.Step();
             }
         }
 
