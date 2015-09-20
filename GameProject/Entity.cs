@@ -2,11 +2,9 @@
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using FarseerPhysics.Dynamics;
-using Xna = Microsoft.Xna.Framework;
-using FarseerPhysics.Factories;
+using System.Diagnostics;
 
 namespace Game
 {
@@ -62,50 +60,33 @@ namespace Game
         
         public Entity(Scene scene)
         {
-            AddToScene(scene);
+            SetScene(scene);
         }
 
         public Entity(Scene scene, Vector2 Position)
         {
-            AddToScene(scene);
+            SetScene(scene);
             Transform = new Transform2D(Position);
         }
 
         public Entity(Scene scene, Transform2D transform)
         {
-            AddToScene(scene);
+            SetScene(scene);
             Transform = transform;
         }
 
         /// <summary>
         /// Adds this entity to a scene. Should only be called once during instantiation.
         /// </summary>
-        private void AddToScene(Scene scene)
+        private void SetScene(Scene scene)
         {
-            Debug.Assert(_scene == null);
+            Debug.Assert(_scene == null, "The Scene can only be assigned once.");
             _scene = scene;
-            Scene.AddEntity(this);
         }
 
         public void RemoveFromScene()
         {
             Scene.RemoveEntity(this);
-        }
-
-        public static Entity CreatePhysBox(Scene scene, Vector2 position, Vector2 scale)
-        {
-            Entity box = new Entity(scene, position);
-            box.Models.Add(Model.CreatePlane(scale));
-
-            //Body body = BodyFactory.CreateBody(scene.PhysWorld, VectorExt2.ConvertToXna(box.Transform.Position));
-            Body body = BodyFactory.CreateRectangle(scene.PhysWorld, scale.X, scale.Y, 1);
-            body.Position = VectorExt2.ConvertToXna(position);
-            box.LinkBody(body);
-            body.BodyType = BodyType.Dynamic;
-            body.FixedRotation = false;
-            //body.CreateFixture(new CircleShape(1f, 1f));*/
-
-            return box;
         }
 
         public void LinkBody(Body body)

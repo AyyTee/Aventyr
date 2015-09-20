@@ -9,6 +9,12 @@ namespace Game
         private Portal _linked;
         private Transform2D _transform = new Transform2D();
         private bool _oneSided = false;
+        private Scene _scene = null;
+
+        public Scene Scene
+        {
+            get { return _scene; }
+        }
 
         /// <summary>
         /// If OneSided is true then the portal can only be viewed through it's front side.
@@ -36,27 +42,40 @@ namespace Game
             get { return _linked; }
         }
 
-        public Portal()
+        public Portal(Scene scene)
         {
+            AddToScene(scene);
             Transform.FixedScale = true;
         }
 
-        public Portal(bool leftHanded)
-            : this()
+        public Portal(Scene scene, bool leftHanded)
+            : this(scene)
         {
             SetFacing(leftHanded);
         }
 
-        public Portal(Vector2 position)
-            : this()
+        public Portal(Scene scene, Vector2 position)
+            : this(scene)
         {
             Transform.Position = position;
         }
 
-        public Portal(Transform2D transform)
-            : this()
+        public Portal(Scene scene, Transform2D transform)
+            : this(scene)
         {
             Transform = transform;
+        }
+
+        private void AddToScene(Scene scene)
+        {
+            //Debug.Assert(_scene == null);
+            _scene = scene;
+            Scene.AddPortal(this);
+        }
+
+        public void RemoveFromScene()
+        {
+            Scene.RemovePortal(this);
         }
 
         public void SetSize(float size)

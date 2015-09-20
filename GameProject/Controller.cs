@@ -96,15 +96,15 @@ namespace Game
             float size = 100;
             background.Transform.Scale = new Vector3(size, size, size);
             background.TransformUV.Scale = new Vector2(size, size);
-            Entity back = new Entity(scene, new Vector2(0f, 0f));
+            Entity back = scene.CreateEntity(new Vector2(0f, 0f));
             back.Models.Add(background);
 
-            Portal portal0 = new Portal(true);
+            Portal portal0 = new Portal(scene, true);
             portal0.Transform.Rotation = (float)Math.PI;
             portal0.Transform.Position = new Vector2(.1f, 0f);
             portal0.Transform.Scale = new Vector2(-1.5f, -1.5f);
 
-            Entity portalEntity0 = new Entity(scene);
+            Entity portalEntity0 = scene.CreateEntity();
             portalEntity0.Transform = portal0.Transform;
             portalEntity0.Models.Add(Model.CreatePlane());
             portalEntity0.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
@@ -112,27 +112,27 @@ namespace Game
             portalEntity0.Models.Add(Model.CreatePlane());
             portalEntity0.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
-            portal1 = new Portal(true);
+            portal1 = new Portal(scene, true);
             //portal1.Transform.Rotation = 4.4f;
             portal1.Transform.Position = new Vector2(-3f, 0f);
             portal1.Transform.Scale = new Vector2(-1f, -1f);
 
             Portal.Link(portal0, portal1);
-            Entity portalEntity1 = new Entity(scene);
+            Entity portalEntity1 = scene.CreateEntity();
             portalEntity1.Transform = portal1.Transform;
             portalEntity1.Models.Add(Model.CreatePlane());
             portalEntity1.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity1.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity1.Models.Add(Model.CreatePlane());
             portalEntity1.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-            
 
-            Portal portal2 = new Portal(true);
-            //portal2.Transform.Rotation = 0.1f;//(float)Math.PI/4f;
+
+            Portal portal2 = new Portal(scene, true);
+            portal2.Transform.Rotation = 0.1f;//(float)Math.PI/4f;
             portal2.Transform.Position = new Vector2(0.1f, 2f);
             portal2.Transform.Scale = new Vector2(1f, 1f);
 
-            Entity portalEntity2 = new Entity(scene);
+            Entity portalEntity2 = scene.CreateEntity();
             portalEntity2.Transform = portal2.Transform;
             portalEntity2.Models.Add(Model.CreatePlane());
             portalEntity2.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
@@ -141,13 +141,13 @@ namespace Game
             portalEntity2.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
             
 
-            Portal portal3 = new Portal(true);
+            Portal portal3 = new Portal(scene, true);
             //portal3.Transform.Rotation = 0.4f;
             portal3.Transform.Position = new Vector2(-1f, 2f);
             portal3.Transform.Scale = new Vector2(-1f, 1f);
 
             Portal.Link(portal2, portal3);
-            Entity portalEntity3 = new Entity(scene);
+            Entity portalEntity3 = scene.CreateEntity();
             portalEntity3.Transform = portal3.Transform;
             portalEntity3.Models.Add(Model.CreatePlane());
             portalEntity3.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
@@ -158,18 +158,18 @@ namespace Game
             #region cubes
             Model tc = Model.CreateCube();
             tc.Transform.Position = new Vector3(1f, 3f, 0);
-            Entity box = new Entity(scene, new Vector2(0,0));
+            Entity box = scene.CreateEntity(new Vector2(0, 0));
             box.Models.Add(tc);
 
             Model tc2 = Model.CreateCube();
             tc2.Transform.Position = new Vector3(-1f, 3f, 0);
             tc2.Transform.Rotation = new Quaternion(1, 0, 0, 1);
-            box2 = new Entity(scene, new Vector2(0, 0));
+            box2 = scene.CreateEntity(new Vector2(0, 0));
             box2.Models.Add(tc2);
             #endregion
 
             #region player
-            player = new Entity(scene);
+            player = scene.CreateEntity();
             Model playerModel = Model.CreatePolygon(new Vector2[] {
                 new Vector2(0.5f, 0), 
                 new Vector2(0.35f, 0.15f), 
@@ -188,44 +188,24 @@ namespace Game
             playerModel.SetTexture(Controller.textures["default.png"]);
             #endregion
 
-            Entity ground = new Entity(scene, new Vector2(0, -2));
-            ground.Models.Add(Model.CreatePolygon(new Vector2[5] {
-                new Vector2(0, 0),
-                new Vector2(1f, 0.5f),
-                new Vector2(1f, -1f),
-                new Vector2(-1f, -1.1f),
+            Vector2[] v = new Vector2[5] {
+                new Vector2(0, 0) * 2,
+                new Vector2(1f, 0.5f) * 2,
+                new Vector2(1f, -1f) * 2,
+                new Vector2(-1f, -1.1f) * 2,
                 new Vector2(-0.5f, 0)
-            }));
-            ground.Transform.Scale = new Vector2(2f, 2f);
-            scene.AddEntity(ground);
-
-            Entity origin = Entity.CreatePhysBox(scene, new Vector2(0.4f, 0f), new Vector2(0.5f, 0.5f));
-
-            Xna.Vector2 v = VectorExt2.ConvertToXna(ground.Transform.Position);
-
-            List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
-            Model.Triangle[] tris = ground.Models[0].GetTris();
-            for (int i = 0; i < tris.Length; i += 1)
-            {
-                var v1 = new FarseerPhysics.Common.Vertices();
-
-                v1.AddRange(VectorExt3.ConvertToXna(tris[i].GetVerts()));
-                vList.Add(v1);
-            }
-            Body bodyPolygon = BodyFactory.CreateCompoundPolygon(scene.PhysWorld, vList, 1, v);
-            ground.LinkBody(bodyPolygon);
+            };
+            
+            Entity ground = scene.CreateEntityPolygon(new Vector2(0, -2), new Vector2(0, 0), v);
+            ground.Models.Add(Model.CreatePolygon(v));
+            
+            Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(0.5f, 0.5f));//Entity.CreatePhysBox(scene, new Vector2(0.4f, 0f), new Vector2(0.5f, 0.5f));
 
             
-            text = new Entity(scene);
+
+            
+            text = hud.CreateEntity();
             text.Transform.Position = new Vector2(0, ClientSize.Height);
-            
-            
-
-            hud.AddEntity(text);
-            scene.AddPortal(portal0);
-            scene.AddPortal(portal1);
-            scene.AddPortal(portal2);
-            scene.AddPortal(portal3);
 
             cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, Width / (float)Height);
         }
@@ -267,7 +247,7 @@ namespace Game
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
             TextWriter console = Console.Out;
             Console.SetOut(Controller.Log);
-            scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 20);
+            scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 10);
             Console.SetOut(console);
 
             GL.Clear(ClearBufferMask.DepthBufferBit);

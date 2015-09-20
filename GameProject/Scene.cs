@@ -7,6 +7,7 @@ using OpenTK.Graphics.OpenGL;
 using FarseerPhysics.Dynamics;
 using Xna = Microsoft.Xna.Framework;
 using System.Diagnostics;
+using FarseerPhysics.Factories;
 
 namespace Game
 {
@@ -58,20 +59,90 @@ namespace Game
             }
         }
 
-        public void AddEntity(Entity entity)
+        private void AddEntity(Entity entity)
         {
-            //Debug.Assert(!_entities.Exists(item => item.Equals(entity)), "This item already has been added to this scene.");
+            Debug.Assert(!_entities.Exists(item => item.Equals(entity)), "This entity has already been added to this scene.");
             _entities.Add(entity);
         }
 
-        public void RemoveEntity(Entity entity)
+        public Entity CreateEntity()
         {
-            _entities.Remove(entity);
+            return CreateEntity(new Vector2(0, 0));
+        }
+
+        public Entity CreateEntity(Vector2 position)
+        {
+            Entity entity = new Entity(this, position);
+            AddEntity(entity);
+            return entity;
+        }
+
+        public Entity CreateEntityBox(Vector2 position, Vector2 scale)
+        {
+            Entity box = CreateEntity();
+            box.Transform.Position = position;
+            box.Models.Add(Model.CreatePlane(scale));
+
+            //Body body = BodyFactory.CreateBody(scene.PhysWorld, VectorExt2.ConvertToXna(box.Transform.Position));
+            Body body = BodyFactory.CreateRectangle(box.Scene.PhysWorld, scale.X, scale.Y, 1);
+            body.Position = VectorExt2.ConvertToXna(position);
+            box.LinkBody(body);
+            body.BodyType = BodyType.Dynamic;
+
+            //body.CreateFixture(new CircleShape(1f, 1f));*/
+
+            return box;
+        }
+
+        public Entity CreateEntityPolygon(Vector2 position, Vector2 scale, Vector2[] vertices)
+        {
+            Entity entity = CreateEntity();
+            entity.Transform.Position = position;
+            entity.Models.Add(Model.CreatePolygon(vertices));
+
+            Xna.Vector2 v = VectorExt2.ConvertToXna(entity.Transform.Position);
+
+            List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
+            Model.Triangle[] tris = entity.Models[0].GetTris();
+            for (int i = 0; i < tris.Length; i += 1)
+            {
+                var v1 = new FarseerPhysics.Common.Vertices();
+                v1.AddRange(VectorExt3.ConvertToXna(tris[i].GetVerts()));
+                vList.Add(v1);
+            }
+            Body bodyPolygon = BodyFactory.CreateCompoundPolygon(this.PhysWorld, vList, 1, v);
+            entity.LinkBody(bodyPolygon);
+
+            return entity;
+        }
+
+        /// <summary>
+        /// Remove entity and it's linked physics body from the scene.
+        /// </summary>
+        /// <param name="entity">Entity to remove.</param>
+        /// <returns>If the entity existed within the scene.</returns>
+        public bool RemoveEntity(Entity entity)
+        {
+            if (_entities.Remove(entity))
+            {
+                if (entity.PhysEntity != null)
+                {
+                    PhysWorld.RemoveBody(entity.PhysEntity);
+                }
+                return true;
+            }
+            return false;
         }
 
         public void AddPortal(Portal portal)
         {
+            Debug.Assert(!_entities.Exists(item => item.Equals(portal)), "This portal has already been added to this scene.");
             _portals.Add(portal);
+        }
+
+        public void RemovePortal(Portal portal)
+        {
+            _portals.Remove(portal);
         }
 
         /// <summary>
@@ -91,7 +162,6 @@ namespace Game
             {
                 GL.Clear(ClearBufferMask.StencilBufferBit | ClearBufferMask.DepthBufferBit);
                 DrawPortal(p, viewMatrix, viewPos, depth, timeDelta, 0, sceneDepth);
-                //break;
             }
             GL.Disable(EnableCap.StencilTest);
         }
