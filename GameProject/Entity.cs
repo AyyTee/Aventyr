@@ -20,6 +20,12 @@ namespace Game
         private List<Model> _models = new List<Model>();
         private List<ClipModel> ClipModels = new List<ClipModel>();
         private bool _isPortalable = false;
+        private Scene _scene = null;
+
+        public Scene Scene
+        {
+            get { return _scene; }
+        }
         public Body PhysEntity;
         /// <summary>
         /// Represents the size of the cutLines array within the fragment shader
@@ -54,23 +60,41 @@ namespace Game
             }
         }
         
-        public Entity()
+        public Entity(Scene scene)
         {
+            AddToScene(scene);
         }
 
-        public Entity(Vector2 Position)
+        public Entity(Scene scene, Vector2 Position)
         {
+            AddToScene(scene);
             Transform = new Transform2D(Position);
         }
 
-        public Entity(Transform2D transform)
+        public Entity(Scene scene, Transform2D transform)
         {
+            AddToScene(scene);
             Transform = transform;
+        }
+
+        /// <summary>
+        /// Adds this entity to a scene. Should only be called once during instantiation.
+        /// </summary>
+        private void AddToScene(Scene scene)
+        {
+            Debug.Assert(_scene == null);
+            _scene = scene;
+            Scene.AddEntity(this);
+        }
+
+        public void RemoveFromScene()
+        {
+            Scene.RemoveEntity(this);
         }
 
         public static Entity CreatePhysBox(Scene scene, Vector2 position, Vector2 scale)
         {
-            Entity box = new Entity(position);
+            Entity box = new Entity(scene, position);
             box.Models.Add(Model.CreatePlane(scale));
 
             //Body body = BodyFactory.CreateBody(scene.PhysWorld, VectorExt2.ConvertToXna(box.Transform.Position));
@@ -98,9 +122,9 @@ namespace Game
             }
         }
 
-        public void PositionUpdate(Scene scene)
+        public void PositionUpdate()
         {
-            foreach (Portal portal in scene.Portals)
+            foreach (Portal portal in Scene.Portals)
             {
                 //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
                 Line exitLine = new Line(portal.GetWorldVerts());
@@ -118,7 +142,7 @@ namespace Game
             }
         }
 
-        public virtual void Render(Scene scene, Matrix4 viewMatrix, float timeDelta)
+        public virtual void Render(Matrix4 viewMatrix, float timeDelta)
         {
             Transform.GetMatrix();
             foreach (Model v in Models)
@@ -194,8 +218,8 @@ namespace Game
                 
                 if (IsPortalable)
                 {
-                    UpdatePortalClipping(scene, 4);
-                    _RenderClipModels(scene ,ClipModels, viewMatrix);
+                    UpdatePortalClipping(4);
+                    _RenderClipModels(ClipModels, viewMatrix);
                     //_RenderPortalClipping(scene, v, Transform.Position, null, Matrix4.Identity, viewMatrix, 4);
                 }
                 else
@@ -219,18 +243,18 @@ namespace Game
             GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);    
         }
 
-        private void UpdatePortalClipping(Scene scene, int depth)
+        private void UpdatePortalClipping(int depth)
         {
             ClipModels.Clear();
             foreach (Model m in Models)
             {
-                _ModelPortalClipping(scene, m, Transform.Position, null, Matrix4.Identity, 4, ref ClipModels);
+                _ModelPortalClipping(m, Transform.Position, null, Matrix4.Identity, 4, ref ClipModels);
             }
         }
 
         /// <param name="depth">Number of iterations.</param>
         /// <param name="clipModels">Adds the ClipModel instances to this list.</param>
-        private void _ModelPortalClipping(Scene scene, Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, ref List<ClipModel> clipModels)
+        private void _ModelPortalClipping(Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, ref List<ClipModel> clipModels)
         {
             if (depth <= 0)
             {
@@ -238,7 +262,7 @@ namespace Game
             }
             List<float> cutLines = new List<float>();
             List<Portal> collisions = new List<Portal>();
-            foreach (Portal portal in scene.Portals)
+            foreach (Portal portal in Scene.Portals)
             {
                 Line portalLine = new Line(portal.GetWorldVerts());
                 Vector2[] convexHull = VectorExt2.Transform(model.GetWorldConvexHull(), this.Transform.GetMatrix() * modelMatrix);
@@ -293,7 +317,7 @@ namespace Game
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
                     Vector2 centerPointNext = VectorExt2.Transform(portal.Transform.Position + normal, portal.GetMatrix());
-                    _ModelPortalClipping(scene, model, centerPointNext, portal, modelMatrix * portal.GetMatrix(), depth - 1, ref clipModels);
+                    _ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetMatrix(), depth - 1, ref clipModels);
                 }
             }
             
@@ -301,10 +325,10 @@ namespace Game
             
         }
 
-        private void _RenderClipModels(Scene scene, List<ClipModel> clipModels, Matrix4 viewMatrix)
+        private void _RenderClipModels(List<ClipModel> clipModels, Matrix4 viewMatrix)
         {
             Matrix4 ScaleMatrix;
-            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(scene.Window.ClientSize.Width / (float)2, scene.Window.ClientSize.Height / (float)2, 0));
+            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Scene.Window.ClientSize.Width / (float)2, Scene.Window.ClientSize.Height / (float)2, 0));
 
             Vector2[] mirrorTest = new Vector2[3] {
                 new Vector2(1, 0),

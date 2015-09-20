@@ -6,6 +6,7 @@ using System.Text;
 using OpenTK.Graphics.OpenGL;
 using FarseerPhysics.Dynamics;
 using Xna = Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace Game
 {
@@ -44,7 +45,7 @@ namespace Game
         {
             foreach (Entity v in EntityList)
             {
-                v.Render(this, viewMatrix, (float)Math.Min(timeRenderDelta, 1 / _window.UpdateFrequency));
+                v.Render(viewMatrix, (float)Math.Min(timeRenderDelta, 1 / _window.UpdateFrequency));
             }
         }
 
@@ -59,7 +60,13 @@ namespace Game
 
         public void AddEntity(Entity entity)
         {
+            //Debug.Assert(!_entities.Exists(item => item.Equals(entity)), "This item already has been added to this scene.");
             _entities.Add(entity);
+        }
+
+        public void RemoveEntity(Entity entity)
+        {
+            _entities.Remove(entity);
         }
 
         public void AddPortal(Portal portal)
@@ -140,14 +147,14 @@ namespace Game
             GL.StencilFunc(StencilFunction.Always, 1, 0xFF);
             GL.StencilOp(StencilOp.Incr, StencilOp.Incr, StencilOp.Incr);
 
-            Entity fov = new Entity();
+            Entity fov = new Entity(this);
             Vector2[] a = portalEnter.GetFOV(viewPos, 50);
             if (a.Length >= 3)
             {
                 fov.Models.Add(Model.CreatePolygon(a));
-                fov.Render(this, viewMatrix, timeDelta);
+                fov.Render(viewMatrix, timeDelta);
             }
-            
+            fov.RemoveFromScene();
 
             GL.ColorMask(true, true, true, true);
             GL.DepthMask(true);
@@ -161,7 +168,7 @@ namespace Game
 
             //GL.Disable(EnableCap.StencilTest);
 
-            Entity fovOutline = new Entity();
+            Entity fovOutline = new Entity(this);
             Vector2[] verts = portalEnter.GetFOV(viewPos, 50, 2);
             if (verts.Length > 0)
             {
@@ -174,9 +181,10 @@ namespace Game
                     model.Transform.Position = v;
                 }
             }
+            fovOutline.RemoveFromScene();
 
             GL.LineWidth(2f);
-            fovOutline.Render(this, viewMatrix, timeDelta);
+            fovOutline.Render(viewMatrix, timeDelta);
             GL.LineWidth(1f);
 
             DrawPortal(portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1, sceneDepth);

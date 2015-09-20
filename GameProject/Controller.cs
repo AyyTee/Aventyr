@@ -96,7 +96,7 @@ namespace Game
             float size = 100;
             background.Transform.Scale = new Vector3(size, size, size);
             background.TransformUV.Scale = new Vector2(size, size);
-            Entity back = new Entity(new Vector2(0f, 0f));
+            Entity back = new Entity(scene, new Vector2(0f, 0f));
             back.Models.Add(background);
 
             Portal portal0 = new Portal(true);
@@ -104,7 +104,7 @@ namespace Game
             portal0.Transform.Position = new Vector2(.1f, 0f);
             portal0.Transform.Scale = new Vector2(-1.5f, -1.5f);
 
-            Entity portalEntity0 = new Entity();
+            Entity portalEntity0 = new Entity(scene);
             portalEntity0.Transform = portal0.Transform;
             portalEntity0.Models.Add(Model.CreatePlane());
             portalEntity0.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
@@ -118,7 +118,7 @@ namespace Game
             portal1.Transform.Scale = new Vector2(-1f, -1f);
 
             Portal.Link(portal0, portal1);
-            Entity portalEntity1 = new Entity();
+            Entity portalEntity1 = new Entity(scene);
             portalEntity1.Transform = portal1.Transform;
             portalEntity1.Models.Add(Model.CreatePlane());
             portalEntity1.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
@@ -132,7 +132,7 @@ namespace Game
             portal2.Transform.Position = new Vector2(0.1f, 2f);
             portal2.Transform.Scale = new Vector2(1f, 1f);
 
-            Entity portalEntity2 = new Entity();
+            Entity portalEntity2 = new Entity(scene);
             portalEntity2.Transform = portal2.Transform;
             portalEntity2.Models.Add(Model.CreatePlane());
             portalEntity2.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
@@ -147,7 +147,7 @@ namespace Game
             portal3.Transform.Scale = new Vector2(-1f, 1f);
 
             Portal.Link(portal2, portal3);
-            Entity portalEntity3 = new Entity();
+            Entity portalEntity3 = new Entity(scene);
             portalEntity3.Transform = portal3.Transform;
             portalEntity3.Models.Add(Model.CreatePlane());
             portalEntity3.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
@@ -158,18 +158,18 @@ namespace Game
             #region cubes
             Model tc = Model.CreateCube();
             tc.Transform.Position = new Vector3(1f, 3f, 0);
-            Entity box = new Entity(new Vector2(0,0));
+            Entity box = new Entity(scene, new Vector2(0,0));
             box.Models.Add(tc);
 
             Model tc2 = Model.CreateCube();
             tc2.Transform.Position = new Vector3(-1f, 3f, 0);
             tc2.Transform.Rotation = new Quaternion(1, 0, 0, 1);
-            box2 = new Entity(new Vector2(0, 0));
+            box2 = new Entity(scene, new Vector2(0, 0));
             box2.Models.Add(tc2);
             #endregion
 
             #region player
-            player = new Entity();
+            player = new Entity(scene);
             Model playerModel = Model.CreatePolygon(new Vector2[] {
                 new Vector2(0.5f, 0), 
                 new Vector2(0.35f, 0.15f), 
@@ -188,7 +188,7 @@ namespace Game
             playerModel.SetTexture(Controller.textures["default.png"]);
             #endregion
 
-            Entity ground = new Entity(new Vector2(0, -2));
+            Entity ground = new Entity(scene, new Vector2(0, -2));
             ground.Models.Add(Model.CreatePolygon(new Vector2[5] {
                 new Vector2(0, 0),
                 new Vector2(1f, 0.5f),
@@ -200,14 +200,7 @@ namespace Game
             scene.AddEntity(ground);
 
             Entity origin = Entity.CreatePhysBox(scene, new Vector2(0.4f, 0f), new Vector2(0.5f, 0.5f));
-            /*Entity origin = new Entity();
-            origin.Transform.Position = new Vector2(0.3f, 0);
-            origin.Models.Add(Model.CreatePlane(new Vector2(0.1f, 0.1f)));
 
-            Body myBody = BodyFactory.CreateBody(scene.PhysWorld, VectorExt2.ConvertToXna(origin.Transform.Position));
-            //Body myBody2 = BodyFactory.CreateRectangle(PhysWorld, 5, 5, 1);
-            myBody.BodyType = BodyType.Dynamic;
-            myBody.CreateFixture(new CircleShape(1f, 1f));*/
             Xna.Vector2 v = VectorExt2.ConvertToXna(ground.Transform.Position);
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
@@ -222,27 +215,17 @@ namespace Game
             Body bodyPolygon = BodyFactory.CreateCompoundPolygon(scene.PhysWorld, vList, 1, v);
             ground.LinkBody(bodyPolygon);
 
-            //origin.LinkBody(myBody);
             
-            text = new Entity();
+            text = new Entity(scene);
             text.Transform.Position = new Vector2(0, ClientSize.Height);
             
             
 
             hud.AddEntity(text);
-            scene.AddEntity(origin);
-            scene.AddEntity(back);
             scene.AddPortal(portal0);
             scene.AddPortal(portal1);
             scene.AddPortal(portal2);
             scene.AddPortal(portal3);
-            scene.AddEntity(portalEntity0);
-            scene.AddEntity(portalEntity1);
-            scene.AddEntity(portalEntity2);
-            scene.AddEntity(portalEntity3);
-            scene.AddEntity(box);
-            scene.AddEntity(box2);
-            scene.AddEntity(player);
 
             cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, Width / (float)Height);
         }
@@ -284,7 +267,7 @@ namespace Game
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
             TextWriter console = Console.Out;
             Console.SetOut(Controller.Log);
-            //scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 20);
+            scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 20);
             Console.SetOut(console);
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
@@ -384,7 +367,7 @@ namespace Game
 
                 Vector2 posPrev = player.Transform.Position;
                 player.Transform.Position += new Vector2(v.X, v.Y);
-                player.PositionUpdate(scene);
+                player.PositionUpdate();
                 foreach (Portal p in scene.Portals)
                 {
                     vArray = p.GetWorldVerts();
