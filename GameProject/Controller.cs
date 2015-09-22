@@ -14,6 +14,7 @@ using Xna = Microsoft.Xna.Framework;
 using FarseerPhysics.Factories;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
+using System.Diagnostics;
 //using FarseerPhysics.Common;
 
 
@@ -37,6 +38,7 @@ namespace Game
         Model background;
         Font Default;
         Entity box2;
+        Entity intersectDot;
         public static List<int> iboGarbage = new List<int>();
 
         public static Dictionary<string, int> textures = new Dictionary<string, int>();
@@ -57,6 +59,7 @@ namespace Game
         Matrix4 viewMatrix;
         Scene scene, hud;
         FontRenderer FontRenderer;
+        Entity tempLine;
         float Time = 0.0f;
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
@@ -64,7 +67,7 @@ namespace Game
         float TimeRenderDelta = 0.0f;
         private Entity player;
         Portal portal1;
-        Entity text;
+        Entity text, text2;
         void initProgram()
         {
             scene = new Scene(this);
@@ -142,7 +145,7 @@ namespace Game
             
 
             Portal portal3 = new Portal(scene, true);
-            //portal3.Transform.Rotation = 0.4f;
+            portal3.Transform.Rotation = 0.4f;
             portal3.Transform.Position = new Vector2(-1f, 2f);
             portal3.Transform.Scale = new Vector2(-1f, 1f);
 
@@ -179,7 +182,7 @@ namespace Game
                 new Vector2(-0.5f, 0), 
                 new Vector2(0, -0.5f)
             });
-            playerModel.Transform.Scale = new Vector3(15, .2f, 1);
+            //playerModel.Transform.Scale = new Vector3(-15, .2f, 1);
             playerModel.SetTexture(Controller.textures["default.png"]);
             player.IsPortalable = true;
             //player.Transform.Scale = new Vector2(.5f, .5f);
@@ -187,6 +190,10 @@ namespace Game
             player.Models.Add(playerModel);
             playerModel.SetTexture(Controller.textures["default.png"]);
             #endregion
+
+            intersectDot = scene.CreateEntity();
+            intersectDot.Models.Add(Model.CreateCube());
+            intersectDot.Transform.Scale = new Vector2(0.2f, 0.2f);
 
             Vector2[] v = new Vector2[5] {
                 new Vector2(0, 0) * 2,
@@ -199,13 +206,14 @@ namespace Game
             Entity ground = scene.CreateEntityPolygon(new Vector2(0, -2), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
             
-            Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(0.5f, 0.5f));//Entity.CreatePhysBox(scene, new Vector2(0.4f, 0f), new Vector2(0.5f, 0.5f));
+            Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(0.5f, 0.5f));
 
             
 
-            
             text = hud.CreateEntity();
             text.Transform.Position = new Vector2(0, ClientSize.Height);
+            text2 = hud.CreateEntity();
+            text2.Transform.Position = new Vector2(0, ClientSize.Height - 40);
 
             cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, Width / (float)Height);
         }
@@ -247,7 +255,7 @@ namespace Game
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
             TextWriter console = Console.Out;
             Console.SetOut(Controller.Log);
-            scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta, 10);
+            //scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta);
             Console.SetOut(console);
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
@@ -292,7 +300,83 @@ namespace Game
             {
                 ToggleFullScreen();   
             }
+
             
+
+            scene.RemoveEntity(tempLine);
+            int lineIndex = -1;
+            tempLine = scene.CreateEntity();
+            tempLine.Transform.Position = player.Transform.Position;
+
+            Vector2 rayBegin = player.Transform.Position;
+            Vector2 rayEnd = VectorExt2.Transform(new Vector2(Mouse.X / (float)(ClientSize.Width / 2) - 1f, -(Mouse.Y / (float)(ClientSize.Height / 2) - 1f)), viewMatrix.Inverted());
+            IntersectPoint intersect = new IntersectPoint();
+            tempLine.IsPortalable = true;
+            tempLine.Models.Add(Model.CreateLine(new Vector2[2] {
+                rayBegin - player.Transform.Position, 
+                rayEnd - player.Transform.Position
+                }));
+            if (rayBegin != rayEnd)
+            {
+                List<FixtureIntersection> intersections = new List<FixtureIntersection>();
+                IntersectPoint intersectLast = new IntersectPoint();
+                scene.PhysWorld.RayCast(
+                    delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
+                    {
+                        Vector2 rayIntersect = VectorExt2.ConvertTo(point);
+                        rayIntersect = rayIntersect + (rayIntersect - rayBegin).Normalized() * 0.0001f;
+                        switch (fixture.Shape.ShapeType)
+                        {
+                            case ShapeType.Polygon:
+                                {
+                                    PolygonShape shape = (PolygonShape)fixture.Shape;
+                                    Vector2[] vertices = VectorExt2.ConvertTo(shape.Vertices);
+                                    var transform = new FarseerPhysics.Common.Transform();
+                                    fixture.Body.GetTransform(out transform);
+                                    Matrix4 matTransform = MatrixExt4.ConvertTo(transform);
+                                    vertices = VectorExt2.Transform(vertices, matTransform);
+                                    for (int i = 0; i < vertices.Count(); i++)
+                                    {
+                                        intersect = MathExt.LineIntersection(
+                                            vertices[i],
+                                            vertices[(i + 1) % vertices.Count()],
+                                            rayBegin,
+                                            rayIntersect,
+                                            
+                                            true);
+                                        if (intersect.Exists)
+                                        {
+                                            //intersections.Add(new FixtureIntersection(fixture, i, (float)intersect.T));
+                                            //lineIndex = i;
+                                            intersectLast = intersect;
+                                            intersections.Add(new FixtureIntersection(fixture, i, (float)intersect.T));
+                                            break;
+                                        }
+                                        Debug.Assert(i + 1 < vertices.Count(), "Intersection edge was not found in shape.");
+                                    }
+                                    break;
+                                }
+                            case ShapeType.Circle:
+                                {
+                                    break;
+                                }
+                        }
+                        return fraction;
+                    },
+                    VectorExt2.ConvertToXna(rayBegin),
+                    VectorExt2.ConvertToXna(rayEnd));
+                IOrderedEnumerable<FixtureIntersection> sortedIntersections = intersections.OrderBy(item => (rayBegin - item.GetPosition()).Length);
+                if (intersectLast.Exists)
+                {
+                    //intersectDot.Transform.Position = new Vector2((float)intersectLast.Vector.X, (float)intersectLast.Vector.Y);
+                    intersectDot.Transform.Position = sortedIntersections.ToArray()[0].GetPosition();
+                }
+            }
+            
+            
+            text2.Models.Clear();
+            text2.Models.Add(FontRenderer.GetModel(lineIndex.ToString()));
+
             #region camera movement
             if (Focused)
             {
@@ -368,7 +452,7 @@ namespace Game
                 cam.Transform = player.Transform.Get3D();
             }
             #endregion
-
+            
             /*Console.Write(box2.Models[0].Transform.Rotation.W);
             Console.WriteLine();*/
             //portal1.Transform.Rotation += .001f;
@@ -376,7 +460,7 @@ namespace Game
             box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
 
             scene.Step();
-            
+
             //get rid of all ibo elements no longer used
             lock ("delete")
             {

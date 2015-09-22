@@ -220,6 +220,11 @@ namespace Game
             return CreatePlane(new Vector2(1, 1));
         }
 
+        /*public static Model CreateCircle()
+        {
+            Model model = new Model();
+        }*/
+
         public static Model CreateCube()
         {
             Vertex[] vertices = new Vertex[] {

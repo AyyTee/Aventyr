@@ -121,6 +121,18 @@ namespace Game
         /// <param name="alignment">Percentage of offset to apply to the text model. 
         /// (0,0) is top-left aligned, (0.5,0.5) is centered, and (1,1) is bottom-right aligned.</param>
         /// <returns></returns>
+        public Model GetModel(String text)
+        {
+            return GetModel(text, new Vector2(0, 0), 0);
+        }
+
+        /// <summary>
+        /// Creates a model to render a string with
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="alignment">Percentage of offset to apply to the text model. 
+        /// (0,0) is top-left aligned, (0.5,0.5) is centered, and (1,1) is bottom-right aligned.</param>
+        /// <returns></returns>
         public Model GetModel(String text, Vector2 alignment, float charSpacing)
         {
             Model textModel = new Model(Controller.Shaders["text"]);

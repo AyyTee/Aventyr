@@ -12,6 +12,7 @@ namespace Game
     {
         public bool Exists;
         public Vector2d Vector;
+        public double T;
     }
     public static class MathExt
     {
@@ -62,6 +63,11 @@ namespace Game
         }
 
         static public Vector2d Lerp(Vector2d Vector0, Vector2d Vector1, double T)
+        {
+            return Vector0 * (1 - T) + Vector1 * T;
+        }
+
+        static public Vector2 Lerp(Vector2 Vector0, Vector2 Vector1, float T)
         {
             return Vector0 * (1 - T) + Vector1 * T;
         }
@@ -216,6 +222,7 @@ namespace Game
             }
             v.Exists = true;
             v.Vector = Lerp(ps0, pe0, ua);
+            v.T = ua;
             return v;
         }
 

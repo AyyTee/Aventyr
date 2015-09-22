@@ -64,6 +64,16 @@ namespace Game
             return new Vector2(v.X, v.Y);
         }
 
+        public static Vector2[] ConvertTo(FarseerPhysics.Common.Vertices v)
+        {
+            Vector2[] vList = new Vector2[v.Count];
+            for (int i = 0; i < vList.Length; i++)
+            {
+                vList[i] = new Vector2(v[i].X, v[i].Y);
+            }
+            return vList;
+        }
+
         public static Vector2[] ConvertTo(Vector3[] v)
         {
             Vector2[] vNew = new Vector2[v.Length];

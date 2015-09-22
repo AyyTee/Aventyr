@@ -188,5 +188,10 @@ namespace Game
         {
             Vertices = VectorExt2.Transform(Vertices, transformMatrix);
         }
+
+        public Vector2 Lerp(float t)
+        {
+            return MathExt.Lerp(Vertices[0], Vertices[1], t);
+        }
     }
 }
