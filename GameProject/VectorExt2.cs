@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using Poly2Tri;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -84,6 +85,11 @@ namespace Game
             return vNew;
         }
 
+        public static Vector2 ConvertTo(TriangulationPoint v)
+        {
+            return new Vector2((float)v.X, (float)v.Y);
+        }
+
         public static Vector2 ConvertTo(Xna.Vector2 v)
         {
             return new Vector2(v.X, v.Y);
@@ -112,6 +118,11 @@ namespace Game
                 vNew[i] = ConvertToXna(v[i]);
             }
             return vNew;
+        }
+
+        public static Xna.Vector2 ConvertToXna(TriangulationPoint v)
+        {
+            return new Xna.Vector2((float)v.X, (float)v.Y);
         }
     }
 }

@@ -8,6 +8,8 @@ using FarseerPhysics.Dynamics;
 using Xna = Microsoft.Xna.Framework;
 using System.Diagnostics;
 using FarseerPhysics.Factories;
+using FarseerPhysics.Collision.Shapes;
+using Poly2Tri;
 
 namespace Game
 {
@@ -99,26 +101,46 @@ namespace Game
         {
             Entity entity = CreateEntity();
             entity.Transform.Position = position;
-            entity.Models.Add(Model.CreatePolygon(vertices));
 
-            Xna.Vector2 v = VectorExt2.ConvertToXna(entity.Transform.Position);
+            Polygon polygon = PolygonFactory.CreatePolygon(vertices);
+
+            entity.Models.Add(Model.CreatePolygon(polygon));
+
+            Xna.Vector2 vPos = VectorExt2.ConvertToXna(entity.Transform.Position);
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
-            Model.Triangle[] tris = entity.Models[0].GetTris();
-            for (int i = 0; i < tris.Length; i += 1)
+
+            Body body = new Body(this.PhysWorld);
+            body.Position = VectorExt2.ConvertToXna(position);
+            for (int i = 0; i < polygon.Triangles.Count; i++)
             {
                 var v1 = new FarseerPhysics.Common.Vertices();
-                v1.AddRange(VectorExt3.ConvertToXna(tris[i].GetVerts()));
+
+                for (int j = 0; j < polygon.Triangles[i].Points.Count(); j++)
+                {
+                    v1.Add(VectorExt2.ConvertToXna(polygon.Triangles[i].Points[j]));
+                }
+
                 vList.Add(v1);
+                PolygonShape shape = new PolygonShape(v1, 1);
+                Fixture fixture = body.CreateFixture(shape);
+                FixtureUserData userData = new FixtureUserData(fixture);
+                for (int j = 0; j < polygon.Triangles[i].Neighbors.Count(); j++)
+                {
+                    //userData.EdgeIsExterior[j] = polygon.Triangles[i].NeighborAcrossFrom(polygon.Triangles[i].Points[j]) == null;
+                    //polygon.Triangles[i].
+
+                    userData.EdgeIsExterior[j] = polygon.Triangles[i].EdgeIsConstrained[(j + 2) % 3];
+                }
             }
-            Body bodyPolygon = BodyFactory.CreateCompoundPolygon(this.PhysWorld, vList, 1, v);
-            entity.LinkBody(bodyPolygon);
+
+            entity.LinkBody(body);
 
             return entity;
         }
 
         /// <summary>
-        /// Remove entity and it's linked physics body from the scene.
+        /// Remove entity and the entity's linked physics body from the scene.
         /// </summary>
         /// <param name="entity">Entity to remove.</param>
         /// <returns>If the entity existed within the scene.</returns>

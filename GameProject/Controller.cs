@@ -121,6 +121,7 @@ namespace Game
             portal1.Transform.Scale = new Vector2(-1f, -1f);
 
             Portal.Link(portal0, portal1);
+            //Portal.Link(portal1, portal1);
             Entity portalEntity1 = scene.CreateEntity();
             portalEntity1.Transform = portal1.Transform;
             portalEntity1.Models.Add(Model.CreatePlane());
@@ -192,11 +193,12 @@ namespace Game
             #endregion
 
             intersectDot = scene.CreateEntity();
-            intersectDot.Models.Add(Model.CreateCube());
-            intersectDot.Transform.Scale = new Vector2(0.2f, 0.2f);
+            //intersectDot.Models.Add(Model.CreateCube());
+            intersectDot.Models = portalEntity0.Models;
+            intersectDot.Transform.Scale = new Vector2(1f, 1f);
 
             Vector2[] v = new Vector2[5] {
-                new Vector2(0, 0) * 2,
+                new Vector2(0.01f, 0) * 2,
                 new Vector2(1f, 0.5f) * 2,
                 new Vector2(1f, -1f) * 2,
                 new Vector2(-1f, -1.1f) * 2,
@@ -255,7 +257,7 @@ namespace Game
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
             TextWriter console = Console.Out;
             Console.SetOut(Controller.Log);
-            //scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta);
+            scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta);
             Console.SetOut(console);
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
@@ -310,70 +312,22 @@ namespace Game
 
             Vector2 rayBegin = player.Transform.Position;
             Vector2 rayEnd = VectorExt2.Transform(new Vector2(Mouse.X / (float)(ClientSize.Width / 2) - 1f, -(Mouse.Y / (float)(ClientSize.Height / 2) - 1f)), viewMatrix.Inverted());
-            IntersectPoint intersect = new IntersectPoint();
             tempLine.IsPortalable = true;
             tempLine.Models.Add(Model.CreateLine(new Vector2[2] {
                 rayBegin - player.Transform.Position, 
                 rayEnd - player.Transform.Position
                 }));
-            if (rayBegin != rayEnd)
+
+            FixtureIntersection intersect = PortalPlacer.Raycast(scene, new Line(rayBegin, rayEnd));
+            if (intersect != null)
             {
-                List<FixtureIntersection> intersections = new List<FixtureIntersection>();
-                IntersectPoint intersectLast = new IntersectPoint();
-                scene.PhysWorld.RayCast(
-                    delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
-                    {
-                        Vector2 rayIntersect = VectorExt2.ConvertTo(point);
-                        rayIntersect = rayIntersect + (rayIntersect - rayBegin).Normalized() * 0.0001f;
-                        switch (fixture.Shape.ShapeType)
-                        {
-                            case ShapeType.Polygon:
-                                {
-                                    PolygonShape shape = (PolygonShape)fixture.Shape;
-                                    Vector2[] vertices = VectorExt2.ConvertTo(shape.Vertices);
-                                    var transform = new FarseerPhysics.Common.Transform();
-                                    fixture.Body.GetTransform(out transform);
-                                    Matrix4 matTransform = MatrixExt4.ConvertTo(transform);
-                                    vertices = VectorExt2.Transform(vertices, matTransform);
-                                    for (int i = 0; i < vertices.Count(); i++)
-                                    {
-                                        intersect = MathExt.LineIntersection(
-                                            vertices[i],
-                                            vertices[(i + 1) % vertices.Count()],
-                                            rayBegin,
-                                            rayIntersect,
-                                            
-                                            true);
-                                        if (intersect.Exists)
-                                        {
-                                            //intersections.Add(new FixtureIntersection(fixture, i, (float)intersect.T));
-                                            //lineIndex = i;
-                                            intersectLast = intersect;
-                                            intersections.Add(new FixtureIntersection(fixture, i, (float)intersect.T));
-                                            break;
-                                        }
-                                        Debug.Assert(i + 1 < vertices.Count(), "Intersection edge was not found in shape.");
-                                    }
-                                    break;
-                                }
-                            case ShapeType.Circle:
-                                {
-                                    break;
-                                }
-                        }
-                        return fraction;
-                    },
-                    VectorExt2.ConvertToXna(rayBegin),
-                    VectorExt2.ConvertToXna(rayEnd));
-                IOrderedEnumerable<FixtureIntersection> sortedIntersections = intersections.OrderBy(item => (rayBegin - item.GetPosition()).Length);
-                if (intersectLast.Exists)
+                intersect = PortalPlacer.GetValid(intersect, new Portal(null));
+                if (intersect != null)
                 {
-                    //intersectDot.Transform.Position = new Vector2((float)intersectLast.Vector.X, (float)intersectLast.Vector.Y);
-                    intersectDot.Transform.Position = sortedIntersections.ToArray()[0].GetPosition();
+                    intersectDot.Transform.Position = intersect.GetPosition();
+                    intersectDot.Transform.Rotation = -(float)MathExt.AngleVector(intersect.GetWorldNormal());
                 }
             }
-            
-            
             text2.Models.Clear();
             text2.Models.Add(FontRenderer.GetModel(lineIndex.ToString()));
 

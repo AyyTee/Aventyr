@@ -15,6 +15,14 @@ namespace Game
             IsRightOf,
             IsNeither
         }
+
+        public float Length
+        {
+            get
+            {
+                return (Vertices[1] - Vertices[0]).Length;
+            }
+        }
         public Vector2[] Vertices = new Vector2[2];
 
         public Line(Vector2 lineStart, Vector2 lineEnd)
@@ -54,6 +62,11 @@ namespace Game
                 return side0;
             }
             return Side.IsNeither;
+        }
+
+        public Vector2 GetNormal()
+        {
+            return (Vertices[1] - Vertices[0]).PerpendicularRight.Normalized();
         }
 
         public bool IsInsideFOV(Vector2 viewPoint, Vector2 lookPoint)

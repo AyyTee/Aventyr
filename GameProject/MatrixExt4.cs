@@ -8,7 +8,7 @@ using OpenTK;
 
 namespace Game
 {
-    public class MatrixExt4
+    public static class MatrixExt4
     {
         public static Matrix4 ConvertTo(FarseerPhysics.Common.Transform transform)
         {

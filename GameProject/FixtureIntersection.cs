@@ -54,7 +54,7 @@ namespace Game
             get { return _edgeT; }
             set 
             {
-                Debug.Assert(value >= 0 && value < 1, "EdgeT must have a value between [0, 1).");
+                Debug.Assert(value >= 0 && value <= 1, "EdgeT must have a value between [0, 1].");
                 _edgeT = value;
             }
         }
@@ -84,6 +84,16 @@ namespace Game
             Matrix4 matTransform = MatrixExt4.ConvertTo(transform);
             line.Transform(matTransform);
             return line;
+        }
+
+        public Vector2 GetNormal()
+        {
+            return GetEdge().GetNormal();
+        }
+
+        public Vector2 GetWorldNormal()
+        {
+            return GetWorldEdge().GetNormal();
         }
 
         public Vector2 GetPosition()

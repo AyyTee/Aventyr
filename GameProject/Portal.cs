@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace Game
 {
-    public class Portal
+    public class Portal : IVertices2D
     {
         private Portal _linked;
         private Transform2D _transform = new Transform2D();
@@ -70,7 +70,10 @@ namespace Game
         {
             //Debug.Assert(_scene == null);
             _scene = scene;
-            Scene.AddPortal(this);
+            if (Scene != null)
+            {
+                Scene.AddPortal(this);
+            }
         }
 
         public void RemoveFromScene()
@@ -147,27 +150,11 @@ namespace Game
         public void Enter(Transform2D entityPos)
         {
             Matrix4 m = GetMatrix();
-            Vector2 v0 = entityPos.Position;
-            Vector2 v1 = v0 + new Vector2(1, 0);
-            Vector2 v2 = v0 + new Vector2(0, 1);
-            Vector2 v3 = VectorExt2.Transform(v0, m);
-            Vector2 v4 = VectorExt2.Transform(v1, m);
-            Vector2 v5 = VectorExt2.Transform(v2, m);
+            Vector2 v0 = VectorExt2.Transform(entityPos.Position, m);
+            Vector2 v1 = VectorExt2.Transform(entityPos.Position + new Vector2(1, 0), m);
+            Vector2 v2 = VectorExt2.Transform(entityPos.Position + new Vector2(0, 1), m);
 
-            entityPos.Position = new Vector2(v3.X, v3.Y);
-            //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
-            /*Line exitLine = new Line(Linked.GetWorldVerts());
-            float distanceToPortal = exitLine.PointDistance(v3, false);
-            Debug.Assert(distanceToPortal > 0);
-            if (distanceToPortal < EntityMinDistance)
-            {
-                Vector2 exitNormal = Linked.Transform.GetNormal();
-                if (exitLine.GetSideOf(v3) != exitLine.GetSideOf(exitNormal))
-                {
-                    exitNormal = -exitNormal;
-                }
-                entityPos.Position += exitNormal * (EntityMinDistance - distanceToPortal);
-            }*/
+            entityPos.Position = new Vector2(v0.X, v0.Y);
 
             Transform2D tEnter = Transform;
             Transform2D tExit = Linked.Transform;
@@ -181,7 +168,7 @@ namespace Game
             {
                 flipY = -1;
             }
-            entityPos.Scale *= new Vector2(flipX * (v4 - v3).Length, flipY * (v5 - v3).Length);
+            entityPos.Scale *= new Vector2(flipX * (v1 - v0).Length, flipY * (v2 - v0).Length);
 
             float angle;
             if (flipX != flipY)
@@ -210,6 +197,7 @@ namespace Game
         /// </summary>
         public static Matrix4 GetMatrix(Portal portalEnter, Portal portalExit)
         {
+            //The portalExit is temporarily mirrored before getting the transformation matrix
             Vector2 v = portalExit.Transform.Scale;
             portalExit.Transform.Scale = new Vector2(-v.X, v.Y);
             Matrix4 m = portalEnter.Transform.GetMatrix().Inverted() * portalExit.Transform.GetMatrix();

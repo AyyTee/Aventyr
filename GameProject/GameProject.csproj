@@ -60,12 +60,17 @@
   <ItemGroup>
     <Compile Include="Entity.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="FixtureUserData.cs" />
     <Compile Include="FontRenderer.cs" />
     <Compile Include="InputExt.cs" />
-    <Compile Include="Intersection.cs" />
+    <Compile Include="FixtureIntersection.cs" />
+    <Compile Include="IVertices.cs" />
+    <Compile Include="IVertices2D.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="MathExt.cs" />
     <Compile Include="MatrixExt4.cs" />
+    <Compile Include="PolygonFactory.cs" />
+    <Compile Include="PortalPlacer.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Controller.cs" />

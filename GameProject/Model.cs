@@ -10,7 +10,7 @@ namespace Game
     /// <summary>
     /// An object made up of vertices
     /// </summary>
-    public class Model : IDisposable
+    public class Model : IDisposable, IVertices
     {
         public Transform Transform = new Transform();
 
@@ -52,19 +52,23 @@ namespace Game
         {
             public const int EDGE_COUNT = 3;
             Vertex[] Vertices = new Vertex[3];
+            int[] Indices = new int[3];
 
-            public Triangle(Vertex[] vertices)
+            public Triangle(Vertex[] vertices, int[] indices)
             {
-
                 Debug.Assert(vertices.Length == 3);
                 Vertices = vertices;
+                Indices = indices;
             }
             
-            public Triangle(Vertex v0, Vertex v1, Vertex v2)
+            public Triangle(Vertex v0, Vertex v1, Vertex v2, int i0, int i1, int i2)
             {
                 Vertices[0] = v0;
                 Vertices[1] = v1;
                 Vertices[2] = v2;
+                Indices[0] = i0;
+                Indices[1] = i1;
+                Indices[2] = i2;
             }
 
             public Vector3[] GetVerts()
@@ -148,7 +152,10 @@ namespace Game
             Triangle[] tris = new Triangle[Indices.Count/Triangle.EDGE_COUNT];
             for (int i = 0; i < Indices.Count; i += Triangle.EDGE_COUNT)
             {
-                tris[i/Triangle.EDGE_COUNT] = new Triangle(Vertices[Indices[i]], Vertices[Indices[i+1]], Vertices[Indices[i+2]]);
+                int i0 = Indices[i];
+                int i1 = Indices[i + 1];
+                int i2 = Indices[i + 2];
+                tris[i/Triangle.EDGE_COUNT] = new Triangle(Vertices[i0], Vertices[i1], Vertices[i2], i0, i1, i2);
             }
             return tris;
         }
@@ -282,12 +289,16 @@ namespace Game
             return model;
         }
 
-        public static Model CreatePolygon(Poly2Tri.Polygon polygon)
+        public static Model CreatePolygon(Vector2[] vertices)
         {
-            P2T.Triangulate(polygon);
-            Vertex[] vertices = new Vertex[polygon.Points.Count];
+            return CreatePolygon(PolygonFactory.CreatePolygon(vertices));
+        }
+
+        public static Model CreatePolygon(Polygon polygon)
+        {
+            Vertex[] verts = new Game.Model.Vertex[polygon.Points.Count];
             List<int> indices = new List<int>();
-            
+
             for (int i = 0; i < polygon.Points.Count; i++)
             {
                 TriangulationPoint p = polygon.Points[i];
@@ -295,9 +306,9 @@ namespace Game
                 float tx = (float)((p.X - polygon.MinX) / (polygon.MaxX - polygon.MinX));
                 float ty = (float)((p.Y - polygon.MinY) / (polygon.MaxY - polygon.MinY));
                 Vector2 tc = new Vector2(tx, ty);
-                vertices[i] = new Vertex(v, tc);
+                verts[i] = new Vertex(v, tc);
             }
-            
+
             foreach (Poly2Tri.DelaunayTriangle t in polygon.Triangles)
             {
                 indices.Add(polygon.IndexOf(t.Points._0));
@@ -305,19 +316,7 @@ namespace Game
                 indices.Add(polygon.IndexOf(t.Points._2));
             }
 
-            Model model = new Model(vertices, indices.ToArray());
-            return model;
-        }
-
-        public static Model CreatePolygon(Vector2[] vertices)
-        {
-            PolygonPoint[] polygonPoints = new PolygonPoint[vertices.Length];
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                polygonPoints[i] = new PolygonPoint(vertices[i].X, vertices[i].Y);
-            }
-            Poly2Tri.Polygon polygon = new Polygon(polygonPoints);
-            return CreatePolygon(polygon);
+            return new Model(verts, indices.ToArray());
         }
 
         public static Model CreateLine(Vector2[] vertices)
