@@ -44,7 +44,7 @@ namespace Game
 
         public Portal(Scene scene)
         {
-            AddToScene(scene);
+            SetScene(scene);
             Transform.FixedScale = true;
         }
 
@@ -66,14 +66,14 @@ namespace Game
             Transform = transform;
         }
 
-        private void AddToScene(Scene scene)
+        private void SetScene(Scene scene)
         {
             //Debug.Assert(_scene == null);
             _scene = scene;
-            if (Scene != null)
+            /*if (Scene != null)
             {
                 Scene.AddPortal(this);
-            }
+            }*/
         }
 
         public void RemoveFromScene()

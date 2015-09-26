@@ -18,6 +18,17 @@ namespace Game
         {
             get { return _fixture; }
         }
+        /// <summary>
+        /// Return the Entity linked to the Body that is linked to the Fixture being intersected.
+        /// </summary>
+        public Entity Entity
+        {
+            get 
+            {
+                BodyUserData userData = (BodyUserData)Fixture.Body.UserData;
+                return userData.LinkedEntity;
+            }
+        }
         private int _edgeIndex;
         /// <summary>
         /// Index value of edge in Fixture's Shape.
@@ -114,6 +125,16 @@ namespace Game
                         return 
                     }*/
             }
+        }
+
+        public Transform2D GetTransform()
+        {
+            Transform2D transform = new Transform2D();
+
+            transform.Position = Entity.Transform.WorldToLocal(GetPosition());
+            transform.Parent = Entity.Transform;
+            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.Transform.Rotation + (float)Math.PI;
+            return transform;
         }
     }
 }

@@ -124,5 +124,10 @@ namespace Game
         {
             return new Xna.Vector2((float)v.X, (float)v.Y);
         }
+
+        public static bool IsNaN(Vector2 v)
+        {
+            return Double.IsNaN(v.X) || Double.IsNaN(v.Y);
+        }
     }
 }

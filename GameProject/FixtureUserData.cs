@@ -14,6 +14,16 @@ namespace Game
         public bool[] EdgeIsExterior;
         private Fixture _fixture;
 
+        public Entity Entity
+        {
+            get
+            {
+                Debug.Assert(Fixture.Body.UserData != null, "Body UserData does not exist.");
+                BodyUserData userData = (BodyUserData) Fixture.Body.UserData;
+                return userData.LinkedEntity;
+            }
+        }
+
         public Fixture Fixture
         {
             get { return _fixture; }

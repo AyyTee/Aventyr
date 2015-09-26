@@ -148,18 +148,30 @@ namespace Game
         {
             if (_entities.Remove(entity))
             {
-                if (entity.PhysEntity != null)
+                if (entity.Body != null)
                 {
-                    PhysWorld.RemoveBody(entity.PhysEntity);
+                    PhysWorld.RemoveBody(entity.Body);
                 }
                 return true;
             }
             return false;
         }
 
+        public Portal CreatePortal()
+        {
+            return CreatePortal(new Vector2(0, 0));
+        }
+
+        public Portal CreatePortal(Vector2 position)
+        {
+            Portal portal = new Portal(this, position);
+            AddPortal(portal);
+            return portal;
+        }
+
         public void AddPortal(Portal portal)
         {
-            Debug.Assert(!_entities.Exists(item => item.Equals(portal)), "This portal has already been added to this scene.");
+            Debug.Assert(!_portals.Exists(item => item.Equals(portal)), "This portal has already been added to this scene.");
             _portals.Add(portal);
         }
 

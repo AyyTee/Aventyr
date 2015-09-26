@@ -11,11 +11,25 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
-    public class PortalPlacer
+    public static class PortalPlacer
     {
         public const float PortalMargin = 0.02f;
         private const float RayCastMargin = 0.0001f;
-        public static FixtureIntersection Raycast(Scene scene, Line ray)
+
+        public static void PortalPlace(Portal portal, Line ray)
+        {
+            FixtureIntersection intersection = RayCast(portal.Scene, ray);
+            if (intersection != null)
+            {
+                intersection = GetValid(intersection, portal);
+                if (intersection != null)
+                {
+                    portal.Transform = intersection.GetTransform();
+                }
+            }
+        }
+
+        public static FixtureIntersection RayCast(Scene scene, Line ray)
         {
             Vector2 rayBegin = ray.Vertices[0];
             Vector2 rayEnd = ray.Vertices[1];
@@ -40,14 +54,17 @@ namespace Game
                                     vertices = VectorExt2.Transform(vertices, matTransform);
                                     for (int i = 0; i < vertices.Count(); i++)
                                     {
+                                        int i0 = i;
+                                        int i1 = (i + 1) % vertices.Count();
                                         IntersectPoint intersect = MathExt.LineIntersection(
-                                            vertices[i],
-                                            vertices[(i + 1) % vertices.Count()],
+                                            vertices[i0],
+                                            vertices[i1],
                                             rayBegin,
                                             rayIntersect,
                                             true);
                                         if (intersect.Exists)
                                         {
+                                            //ignore interior edges
                                             if (fixture.UserData != null)
                                             {
                                                 FixtureUserData userData = (FixtureUserData)fixture.UserData;
@@ -56,6 +73,13 @@ namespace Game
                                                     break;
                                                 }
                                             }
+                                            //ignore edges facing away
+                                            Line rayLine = new Line(vertices[i0], vertices[i1]); 
+                                            if (rayLine.GetSideOf(rayBegin) != rayLine.GetSideOf(rayLine.Vertices[0] + rayLine.GetNormal()))
+                                            {
+                                                break;
+                                            }
+
                                             intersectLast = intersect;
                                             intersections.Add(new FixtureIntersection(fixture, i, (float)intersect.T));
                                             break;

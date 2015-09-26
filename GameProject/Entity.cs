@@ -24,7 +24,7 @@ namespace Game
         {
             get { return _scene; }
         }
-        public Body PhysEntity;
+        public Body Body;
         /// <summary>
         /// Represents the size of the cutLines array within the fragment shader
         /// </summary>
@@ -38,7 +38,15 @@ namespace Game
             set { _isPortalable = value; }
         }
         public virtual Transform2D Velocity { get { return _velocity; } set { _velocity = value; } }
-        public virtual Transform2D Transform { get { return _transform; } set { _transform = value; } }
+        public virtual Transform2D Transform 
+        { 
+            get { return _transform; } 
+            set 
+            {
+                //Debug.Assert(Body == null; "Transform cannot be modified if the Entity is linked to a Body.");
+                _transform = value;
+            } 
+        }
         public virtual List<Model> Models { get { return _models; } set { _models = value; } }
         
         public class ClipModel
@@ -91,15 +99,18 @@ namespace Game
 
         public void LinkBody(Body body)
         {
-            PhysEntity = body;
+            BodyUserData userData = new BodyUserData(this);
+            Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
+            body.UserData = userData;
+            Body = body;
         }
 
         public virtual void Step()
         {
-            if (PhysEntity != null)
+            if (Body != null)
             {
-                Transform.Position = VectorExt2.ConvertTo(PhysEntity.Position);
-                Transform.Rotation = PhysEntity.Rotation;
+                Transform.Position = VectorExt2.ConvertTo(Body.Position);
+                Transform.Rotation = Body.Rotation;
             }
         }
 
@@ -113,6 +124,7 @@ namespace Game
                 if (distanceToPortal < Portal.EntityMinDistance)
                 {
                     Vector2 exitNormal = portal.Transform.GetNormal();
+                    Debug.Assert(!VectorExt2.IsNaN(exitNormal));
                     if (exitLine.GetSideOf(Transform.Position) != exitLine.GetSideOf(exitNormal + portal.Transform.Position))
                     {
                         exitNormal = -exitNormal;

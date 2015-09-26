@@ -43,5 +43,10 @@ namespace Game
             }
             return vNew;
         }
+
+        public static bool IsNaN(Vector3 v)
+        {
+            return Double.IsNaN(v.X) || Double.IsNaN(v.Y) || Double.IsNaN(v.Z);
+        }
     }
 }

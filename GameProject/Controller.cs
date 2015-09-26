@@ -102,7 +102,7 @@ namespace Game
             Entity back = scene.CreateEntity(new Vector2(0f, 0f));
             back.Models.Add(background);
 
-            Portal portal0 = new Portal(scene, true);
+            Portal portal0 = scene.CreatePortal();
             portal0.Transform.Rotation = (float)Math.PI;
             portal0.Transform.Position = new Vector2(.1f, 0f);
             portal0.Transform.Scale = new Vector2(-1.5f, -1.5f);
@@ -115,7 +115,7 @@ namespace Game
             portalEntity0.Models.Add(Model.CreatePlane());
             portalEntity0.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
-            portal1 = new Portal(scene, true);
+            portal1 = scene.CreatePortal();
             //portal1.Transform.Rotation = 4.4f;
             portal1.Transform.Position = new Vector2(-3f, 0f);
             portal1.Transform.Scale = new Vector2(-1f, -1f);
@@ -131,7 +131,7 @@ namespace Game
             portalEntity1.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
 
-            Portal portal2 = new Portal(scene, true);
+            Portal portal2 = scene.CreatePortal();
             portal2.Transform.Rotation = 0.1f;//(float)Math.PI/4f;
             portal2.Transform.Position = new Vector2(0.1f, 2f);
             portal2.Transform.Scale = new Vector2(1f, 1f);
@@ -143,9 +143,9 @@ namespace Game
             portalEntity2.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity2.Models.Add(Model.CreatePlane());
             portalEntity2.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-            
 
-            Portal portal3 = new Portal(scene, true);
+
+            Portal portal3 = scene.CreatePortal();
             portal3.Transform.Rotation = 0.4f;
             portal3.Transform.Position = new Vector2(-1f, 2f);
             portal3.Transform.Scale = new Vector2(-1f, 1f);
@@ -207,10 +207,10 @@ namespace Game
             
             Entity ground = scene.CreateEntityPolygon(new Vector2(0, -2), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
-            
-            Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(0.5f, 0.5f));
 
+            ground.Transform.Rotation = 0.5f;
             
+            Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
 
             text = hud.CreateEntity();
             text.Transform.Position = new Vector2(0, ClientSize.Height);
@@ -318,16 +318,8 @@ namespace Game
                 rayEnd - player.Transform.Position
                 }));
 
-            FixtureIntersection intersect = PortalPlacer.Raycast(scene, new Line(rayBegin, rayEnd));
-            if (intersect != null)
-            {
-                intersect = PortalPlacer.GetValid(intersect, new Portal(null));
-                if (intersect != null)
-                {
-                    intersectDot.Transform.Position = intersect.GetPosition();
-                    intersectDot.Transform.Rotation = -(float)MathExt.AngleVector(intersect.GetWorldNormal());
-                }
-            }
+            PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
+
             text2.Models.Clear();
             text2.Models.Add(FontRenderer.GetModel(lineIndex.ToString()));
 
