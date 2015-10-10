@@ -4,10 +4,9 @@ using System.Diagnostics;
 
 namespace Game
 {
-    public class Portal : IVertices2D
+    public class Portal : Placeable2D, IVertices2D
     {
         private Portal _linked;
-        private Transform2D _transform = new Transform2D();
         private bool _oneSided = false;
         private Scene _scene = null;
 
@@ -30,12 +29,6 @@ namespace Game
         /// It is nessesary to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
         /// </summary>
         public const float EntityMinDistance = 0.001f;
-
-        public Transform2D Transform
-        {
-          get { return _transform; }
-          set { _transform = value; }
-        }
 
         public Portal Linked
         {
@@ -135,7 +128,7 @@ namespace Game
 
         public Vector2[] GetWorldVerts()
         {
-            return VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
+            return VectorExt2.Transform(GetVerts(), Transform.GetWorldMatrix());
         }
 
         public Vector2[] GetFOV(Vector2 origin, float distance)
@@ -149,7 +142,7 @@ namespace Game
         /// <param name="entityPos"></param>
         public void Enter(Transform2D entityPos)
         {
-            Matrix4 m = GetMatrix();
+            Matrix4 m = GetPortalMatrix();
             Vector2 v0 = VectorExt2.Transform(entityPos.Position, m);
             Vector2 v1 = VectorExt2.Transform(entityPos.Position + new Vector2(1, 0), m);
             Vector2 v2 = VectorExt2.Transform(entityPos.Position + new Vector2(0, 1), m);
@@ -160,11 +153,11 @@ namespace Game
             Transform2D tExit = Linked.Transform;
             float flipX = 1;
             float flipY = 1;
-            if (Math.Sign(tEnter.Scale.X) == Math.Sign(tExit.Scale.X))
+            if (Math.Sign(tEnter.WorldScale.X) == Math.Sign(tExit.WorldScale.X))
             {
                 flipX = -1;
             }
-            if (Math.Sign(tEnter.Scale.Y) != Math.Sign(tExit.Scale.Y))
+            if (Math.Sign(tEnter.WorldScale.Y) != Math.Sign(tExit.WorldScale.Y))
             {
                 flipY = -1;
             }
@@ -174,11 +167,11 @@ namespace Game
             if (flipX != flipY)
             {
                 entityPos.Rotation = -entityPos.Rotation;
-                entityPos.Rotation += (float)(MathExt.AngleWrap(Transform.Rotation) + MathExt.AngleWrap(Linked.Transform.Rotation));
+                entityPos.Rotation += (float)(MathExt.AngleWrap(Transform.WorldRotation) + MathExt.AngleWrap(Linked.Transform.WorldRotation));
             }
             else
             {
-                angle = Linked.Transform.Rotation - Transform.Rotation;
+                angle = Linked.Transform.WorldRotation - Transform.WorldRotation;
                 entityPos.Rotation += angle;
             }
         }
@@ -195,20 +188,20 @@ namespace Game
         /// <summary>
         /// Returns matrix to transform between one portals coordinate space to another
         /// </summary>
-        public static Matrix4 GetMatrix(Portal portalEnter, Portal portalExit)
+        public static Matrix4 GetPortalMatrix(Portal portalEnter, Portal portalExit)
         {
             //The portalExit is temporarily mirrored before getting the transformation matrix
             Vector2 v = portalExit.Transform.Scale;
             portalExit.Transform.Scale = new Vector2(-v.X, v.Y);
-            Matrix4 m = portalEnter.Transform.GetMatrix().Inverted() * portalExit.Transform.GetMatrix();
+            Matrix4 m = portalEnter.Transform.GetWorldMatrix().Inverted() * portalExit.Transform.GetWorldMatrix();
             portalExit.Transform.Scale = v;
             return m;
         }
 
-        public Matrix4 GetMatrix()
+        public Matrix4 GetPortalMatrix()
         {
             Debug.Assert(Linked != null, "Portal must be linked to another portal.");
-            return GetMatrix(this, Linked);
+            return GetPortalMatrix(this, Linked);
         }
 
         /// <summary>
@@ -216,7 +209,7 @@ namespace Game
         /// </summary>
         public Vector2[] GetFOV(Vector2 viewPoint, float distance, int detail)
         {
-            Matrix4 a = Transform.GetMatrix();
+            Matrix4 a = Transform.GetWorldMatrix();
             Vector2[] verts = new Vector2[detail + 2];
             Vector2[] portal = GetVerts();
             for (int i = 0; i < portal.Length; i++)

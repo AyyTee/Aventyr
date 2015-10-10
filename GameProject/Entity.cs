@@ -11,10 +11,9 @@ namespace Game
     /// <summary>
     /// An object that exists within the world space and can be drawn
     /// </summary>
-    public class Entity
+    public class Entity : Placeable2D
     {
         private Transform2D _velocity = new Transform2D();
-        private Transform2D _transform = new Transform2D();
         private List<Model> _models = new List<Model>();
         private List<ClipModel> ClipModels = new List<ClipModel>();
         private bool _isPortalable = false;
@@ -38,15 +37,7 @@ namespace Game
             set { _isPortalable = value; }
         }
         public virtual Transform2D Velocity { get { return _velocity; } set { _velocity = value; } }
-        public virtual Transform2D Transform 
-        { 
-            get { return _transform; } 
-            set 
-            {
-                //Debug.Assert(Body == null; "Transform cannot be modified if the Entity is linked to a Body.");
-                _transform = value;
-            } 
-        }
+
         public virtual List<Model> Models { get { return _models; } set { _models = value; } }
         
         public class ClipModel
@@ -99,6 +90,7 @@ namespace Game
 
         public void LinkBody(Body body)
         {
+            Transform.FixedScale = true;
             BodyUserData userData = new BodyUserData(this);
             Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
             body.UserData = userData;
@@ -124,7 +116,6 @@ namespace Game
                 if (distanceToPortal < Portal.EntityMinDistance)
                 {
                     Vector2 exitNormal = portal.Transform.GetNormal();
-                    Debug.Assert(!VectorExt2.IsNaN(exitNormal));
                     if (exitLine.GetSideOf(Transform.Position) != exitLine.GetSideOf(exitNormal + portal.Transform.Position))
                     {
                         exitNormal = -exitNormal;
@@ -137,7 +128,6 @@ namespace Game
 
         public virtual void Render(Matrix4 viewMatrix, float timeDelta)
         {
-            Transform.GetMatrix();
             foreach (Model v in Models)
             {
                 List<Vector3> verts = new List<Vector3>();
@@ -213,7 +203,6 @@ namespace Game
                 {
                     UpdatePortalClipping(4);
                     _RenderClipModels(ClipModels, viewMatrix);
-                    //_RenderPortalClipping(scene, v, Transform.Position, null, Matrix4.Identity, viewMatrix, 4);
                 }
                 else
                 {
@@ -232,7 +221,7 @@ namespace Game
 
         private void _RenderSetTransformMatrix(Model model, Matrix4 viewMatrix)
         {
-            Matrix4 modelMatrix = model.Transform.GetMatrix() * Transform.GetMatrix() * viewMatrix;
+            Matrix4 modelMatrix = model.Transform.GetMatrix() * Transform.GetWorldMatrix() * viewMatrix;
             GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);    
         }
 
@@ -241,7 +230,7 @@ namespace Game
             ClipModels.Clear();
             foreach (Model m in Models)
             {
-                _ModelPortalClipping(m, Transform.Position, null, Matrix4.Identity, 4, ref ClipModels);
+                _ModelPortalClipping(m, Transform.WorldPosition, null, Matrix4.Identity, 4, ref ClipModels);
             }
         }
 
@@ -258,7 +247,7 @@ namespace Game
             foreach (Portal portal in Scene.Portals)
             {
                 Line portalLine = new Line(portal.GetWorldVerts());
-                Vector2[] convexHull = VectorExt2.Transform(model.GetWorldConvexHull(), this.Transform.GetMatrix() * modelMatrix);
+                Vector2[] convexHull = VectorExt2.Transform(model.GetWorldConvexHull(), this.Transform.GetWorldMatrix() * modelMatrix);
 
                 if (portalLine.IsInsideOfPolygon(convexHull))
                 {
@@ -266,7 +255,7 @@ namespace Game
                 }
             }
 
-            collisions = collisions.OrderBy(item => (item.Transform.Position - centerPoint).Length).ToList();
+            collisions = collisions.OrderBy(item => (item.Transform.WorldPosition - centerPoint).Length).ToList();
             for (int i = 0; i < collisions.Count; i++)
             {
                 Portal portal = collisions[i];
@@ -289,13 +278,13 @@ namespace Game
                 Line clipLine = new Line(pv);
 
                 Line portalLine = new Line(pv);
-                Vector2 normal = portal.Transform.GetNormal();
-                if (portal.Transform.IsMirrored())
+                Vector2 normal = portal.Transform.GetWorldNormal();
+                if (portal.Transform.WorldIsMirrored())
                 {
                     normal = -normal;
                 }
 
-                Vector2 portalNormal = portal.Transform.Position + normal;
+                Vector2 portalNormal = portal.Transform.WorldPosition + normal;
                 if (portalLine.GetSideOf(centerPoint) != portalLine.GetSideOf(portalNormal))
                 {
                     normal *= Portal.EntityMinDistance;
@@ -309,8 +298,8 @@ namespace Game
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = VectorExt2.Transform(portal.Transform.Position + normal, portal.GetMatrix());
-                    _ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetMatrix(), depth - 1, ref clipModels);
+                    Vector2 centerPointNext = VectorExt2.Transform(portal.Transform.WorldPosition + normal, portal.GetPortalMatrix());
+                    _ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, ref clipModels);
                 }
             }
             
@@ -348,9 +337,6 @@ namespace Game
                         l.Vertices[1].Y
                     });
                 }
-
-
-                //Vector2cutLines = Vector2.Transform(cm.ClipLines.ToArray, viewMatrix);
 
                 GL.Uniform1(cm.Model.Shader.GetUniform("cutLinesLength"), cutLines.Count);
                 //GL.Uniform1(model.Shader.GetUniform("cutLines"), cutLines.Count, cutLines.ToArray());

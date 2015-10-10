@@ -13,18 +13,7 @@ namespace Game
         {
             get 
             {
-                if (_matrixUpdate)
-                {
-                    return _matrixUpdate;
-                }
-                if (_parent != null)
-                {
-                    if (Parent.MatrixUpdate)
-                    {
-                        return Parent.MatrixUpdate;
-                    }
-                }
-                return false;
+                return _matrixUpdate;
             }
         }
         private Vector2 _position = new Vector2();
@@ -59,6 +48,20 @@ namespace Game
                 _matrixUpdate = true; 
             } 
         }
+
+        public float WorldRotation
+        {
+            get 
+            {
+                float rot = 0;
+                if (_parent != null)
+                {
+                    rot = _parent.WorldRotation;
+                }
+                return rot + Rotation;
+            }
+        }
+
         public Vector2 Scale 
         { 
             get { return _scale; }
@@ -74,6 +77,20 @@ namespace Game
                 _scale = value; 
             } 
         }
+
+        public Vector2 WorldScale
+        {
+            get
+            {
+                Vector2 scale = new Vector2(1, 1);
+                if (_parent != null)
+                {
+                    scale = _parent.WorldScale;
+                }
+                return scale * Scale;
+            }
+        }
+
         public Vector2 Position 
         { 
             get { return _position; } 
@@ -84,6 +101,22 @@ namespace Game
                 _matrixUpdate = true; 
             } 
         }
+
+        public Vector2 WorldPosition
+        {
+            get
+            {
+                if (_parent != null)
+                {
+                    return VectorExt2.Transform(Position, _parent.GetWorldMatrix());
+                }
+                else
+                {
+                    return Position;
+                }
+            }
+        }
+        
 
         public Transform2D()
         {
@@ -132,20 +165,31 @@ namespace Game
         {
             if (MatrixUpdate)
             {
-                Matrix = Matrix4.Identity;
-                if (_parent != null)
-                {
-                    Matrix = _parent.GetMatrix();
-                }
-                Matrix = Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0)) * Matrix;
+                Matrix = Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
                 _matrixUpdate = false;
             }
+            return Matrix;
+        }
+
+        public Matrix4 GetWorldMatrix()
+        {
+            Matrix4 Matrix = Matrix4.Identity;
+            if (_parent != null)
+            {
+                Matrix = _parent.GetMatrix();
+            }
+            Matrix = GetMatrix() * Matrix;//Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0)) * Matrix;
             return Matrix; 
         }
 
         public bool IsMirrored()
         {
-            return Scale.X * Scale.Y < 0;
+            return Math.Sign(Scale.X) != Math.Sign(Scale.Y);
+        }
+
+        public bool WorldIsMirrored()
+        {
+            return Math.Sign(WorldScale.X) != Math.Sign(WorldScale.Y);
         }
 
         public Vector2 GetNormal(bool normalizeValue = true)
@@ -157,6 +201,22 @@ namespace Game
             v = VectorExt2.Transform(v, GetMatrix());
             if (normalizeValue)
             {
+                Debug.Assert(!VectorExt2.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
+                return (v[1] - v[0]).Normalized();
+            }
+            return v[1] - v[0];
+        }
+
+        public Vector2 GetWorldNormal(bool normalizeValue = true)
+        {
+            Vector2[] v = new Vector2[2] {
+                new Vector2(0, 0),
+                new Vector2(1, 0)
+            };
+            v = VectorExt2.Transform(v, GetWorldMatrix());
+            if (normalizeValue)
+            {
+                Debug.Assert(!VectorExt2.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
                 return (v[1] - v[0]).Normalized();
             }
             return v[1] - v[0];
@@ -188,6 +248,29 @@ namespace Game
             transform.FixedScale = FixedScale;
             transform._parent = Parent;
             return transform;
+        }
+
+        public static bool operator ==(Transform2D transformFirst, Transform2D transformLast)
+        {
+
+            if ((object)transformFirst == null || (object)transformLast == null)
+            {
+                if ((object)transformFirst == (object)transformLast)
+                {
+                    return true;
+                }
+                return false;
+            }
+            if (transformFirst.Rotation == transformLast.Rotation && transformFirst.Scale == transformLast.Scale && transformFirst.Position == transformLast.Position)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static bool operator !=(Transform2D transformFirst, Transform2D transformLast)
+        {
+            return !(transformFirst == transformLast);
         }
     }
 }

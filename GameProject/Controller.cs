@@ -15,7 +15,10 @@ using FarseerPhysics.Factories;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
 using System.Diagnostics;
-//using FarseerPhysics.Common;
+using OpenTK.Audio;
+using OpenTK.Audio.OpenAL;
+using Cgen.Audio;
+using System.Threading;
 
 
 namespace Game
@@ -38,6 +41,7 @@ namespace Game
         Model background;
         Font Default;
         Entity box2;
+        Entity boxChild;
         Entity intersectDot;
         public static List<int> iboGarbage = new List<int>();
 
@@ -56,20 +60,35 @@ namespace Game
             "assets",
             "textures"
         });
+        public static String soundFolder = Path.Combine(new String[2] {
+            "assets",
+            "sounds"
+        });
         Matrix4 viewMatrix;
         Scene scene, hud;
         FontRenderer FontRenderer;
         Entity tempLine;
+        Portal portal0, portal1, portal2, portal3;
         float Time = 0.0f;
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
         float TimeRenderDelta = 0.0f;
         private Entity player;
-        Portal portal1;
         Entity text, text2;
+        Playback playback = null;
         void initProgram()
         {
+            
+            SoundSystem soundPlayer = SoundSystem.Instance();
+            soundPlayer.Init();
+            Sound sound = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
+            sound.Play();
+           
+            /*Thread.Sleep(250);
+            Sound sound2 = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
+            sound2.Play();
+            */
             scene = new Scene(this);
             hud = new Scene(this);
             hudCam = Camera.CameraOrtho(new Vector3(Width/2, Height/2, 0), Height, Width / (float)Height);
@@ -102,9 +121,9 @@ namespace Game
             Entity back = scene.CreateEntity(new Vector2(0f, 0f));
             back.Models.Add(background);
 
-            Portal portal0 = scene.CreatePortal();
+            portal0 = scene.CreatePortal();
             portal0.Transform.Rotation = (float)Math.PI;
-            portal0.Transform.Position = new Vector2(.1f, 0f);
+            portal0.Transform.Position = new Vector2(2.1f, 0f);
             portal0.Transform.Scale = new Vector2(-1.5f, -1.5f);
 
             Entity portalEntity0 = scene.CreateEntity();
@@ -131,9 +150,9 @@ namespace Game
             portalEntity1.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
 
-            Portal portal2 = scene.CreatePortal();
+            portal2 = scene.CreatePortal();
             portal2.Transform.Rotation = 0.1f;//(float)Math.PI/4f;
-            portal2.Transform.Position = new Vector2(0.1f, 2f);
+            portal2.Transform.Position = new Vector2(2.1f, 2f);
             portal2.Transform.Scale = new Vector2(1f, 1f);
 
             Entity portalEntity2 = scene.CreateEntity();
@@ -145,9 +164,9 @@ namespace Game
             portalEntity2.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
 
-            Portal portal3 = scene.CreatePortal();
+            portal3 = scene.CreatePortal();
             portal3.Transform.Rotation = 0.4f;
-            portal3.Transform.Position = new Vector2(-1f, 2f);
+            portal3.Transform.Position = new Vector2(-2f, 2f);
             portal3.Transform.Scale = new Vector2(-1f, 1f);
 
             Portal.Link(portal2, portal3);
@@ -166,10 +185,17 @@ namespace Game
             box.Models.Add(tc);
 
             Model tc2 = Model.CreateCube();
-            tc2.Transform.Position = new Vector3(-1f, 3f, 0);
-            tc2.Transform.Rotation = new Quaternion(1, 0, 0, 1);
+            tc2.Transform.Position = new Vector3(0f, 0f, 0);
+            tc2.Transform.Rotation = new Quaternion(0.1f, 0, 0, 1);
             box2 = scene.CreateEntity(new Vector2(0, 0));
             box2.Models.Add(tc2);
+
+            
+            boxChild = scene.CreateEntity(new Vector2(0, 1));
+            boxChild.Models.Add(tc2);
+            boxChild.Transform.Parent = box2.Transform;
+
+            //portal3.Transform.Parent = boxChild.Transform;
             #endregion
 
             #region player
@@ -205,12 +231,12 @@ namespace Game
                 new Vector2(-0.5f, 0)
             };
             
-            Entity ground = scene.CreateEntityPolygon(new Vector2(0, -2), new Vector2(0, 0), v);
+            /*Entity ground = scene.CreateEntityPolygon(new Vector2(0, -2), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
 
-            ground.Transform.Rotation = 0.5f;
+            ground.Transform.Rotation = 0.5f;*/
             
-            Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
+            //Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
 
             text = hud.CreateEntity();
             text.Transform.Position = new Vector2(0, ClientSize.Height);
@@ -318,7 +344,11 @@ namespace Game
                 rayEnd - player.Transform.Position
                 }));
 
-            PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
+            if (InputExt.MousePress(MouseButton.Left))
+            {
+                PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
+            }
+            
 
             text2.Models.Clear();
             text2.Models.Add(FontRenderer.GetModel(lineIndex.ToString()));
@@ -403,8 +433,29 @@ namespace Game
             Console.WriteLine();*/
             //portal1.Transform.Rotation += .001f;
             
-            box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
+            //box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
+            box2.Transform.Rotation -= 0.01f;
+            box2.Transform.Position = new Vector2(1f, 0f);
+            boxChild.Transform.Parent = null;
 
+            if (InputExt.KeyDown(Key.X))
+            {
+                portal3.Transform.Parent = null;
+                portal3.Transform.Rotation = 2f;
+                portal3.Transform.Position = new Vector2(1f, -2f);
+                portal3.Transform.Scale = new Vector2(-1f, 1f);
+            }
+            else
+            {
+                portal3.Transform.Rotation = 0f;
+                portal3.Transform.Position = new Vector2(1, 0.5f);
+                portal3.Transform.Scale = new Vector2(1, 1);
+                portal3.Transform.Parent = boxChild.Transform;
+                boxChild.Transform.Rotation += 0.01f;
+                boxChild.Transform.Position = new Vector2(1f, -2f);
+                boxChild.Transform.Scale = new Vector2(-1f, -1f);
+            }
+            
             scene.Step();
 
             //get rid of all ibo elements no longer used
@@ -423,7 +474,7 @@ namespace Game
         {
             base.OnClosing(e);
             Log.Close();
-            
+            //playback.ContextFree();
             File.Delete("Triangulating.txt");
         }
 

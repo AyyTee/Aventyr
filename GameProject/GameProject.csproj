@@ -16,7 +16,7 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -37,6 +37,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Cgen.Audio, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\cgen audio\Cgen.Audio\bin\x86\Debug\Cgen.Audio.dll</HintPath>
+    </Reference>
     <Reference Include="FarseerPhysics">
       <HintPath>..\..\..\..\Farseer Physics Engine 3.3.1 Class\Farseer Physics Engine 3.3.1 Class\bin\Debug\FarseerPhysics.dll</HintPath>
     </Reference>
@@ -71,6 +75,8 @@
     <Compile Include="Line.cs" />
     <Compile Include="MathExt.cs" />
     <Compile Include="MatrixExt4.cs" />
+    <Compile Include="Placeable2D.cs" />
+    <Compile Include="Playback.cs" />
     <Compile Include="PolygonFactory.cs" />
     <Compile Include="PortalPlacer.cs" />
     <Compile Include="Scene.cs" />
@@ -86,6 +92,12 @@
     <Compile Include="VectorExt3.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="assets\sounds\test_sound.ogg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\sounds\test_sound.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="assets\textures\default.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -120,7 +132,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -192,7 +192,7 @@ namespace Game
         public void DrawPortalAll(Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta)
         {
             //stopgap solution. portals will only recursively draw themselves, not any other portals
-            IOrderedEnumerable<Portal> portalSort = portals.OrderByDescending(item => (item.Transform.Position - viewPos).Length);
+            IOrderedEnumerable<Portal> portalSort = portals.OrderByDescending(item => (item.Transform.WorldPosition - viewPos).Length);
             foreach (Portal p in portalSort)
             {
                 GL.Clear(ClearBufferMask.StencilBufferBit | ClearBufferMask.DepthBufferBit);
@@ -204,10 +204,10 @@ namespace Game
         public void DrawPortal(Portal portalEnter, Matrix4 viewMatrix, Matrix4 viewMatrixPrev, Vector2 viewPos, int depth, float timeDelta, int count)
         {
             Vector2[] pv = portalEnter.Linked.GetVerts();
-            pv = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrix);
+            pv = VectorExt2.Transform(pv, portalEnter.Transform.GetWorldMatrix() * viewMatrix);
 
             Vector2[] pv2 = portalEnter.GetVerts();
-            pv2 = VectorExt2.Transform(pv2, portalEnter.Transform.GetMatrix() * viewMatrixPrev);
+            pv2 = VectorExt2.Transform(pv2, portalEnter.Transform.GetWorldMatrix() * viewMatrixPrev);
             Line portalLine = new Line(pv2);
             Vector2 v = VectorExt2.Transform(viewPos, viewMatrix);
             if (portalLine.IsInsideFOV(v, new Line(pv)))
@@ -228,14 +228,14 @@ namespace Game
                 Vector2[] pv2 = portalEnter.GetWorldVerts();
 
                 Line portalLine = new Line(pv2);
-                if (portalLine.GetSideOf(pv2[0] + portalEnter.Transform.GetNormal()) != portalLine.GetSideOf(viewPos))
+                if (portalLine.GetSideOf(pv2[0] + portalEnter.Transform.GetWorldNormal()) != portalLine.GetSideOf(viewPos))
                 {
                     return;
                 }
             }
 
             Vector2[] pv = portalEnter.GetVerts();
-            pv = VectorExt2.Transform(pv, portalEnter.Transform.GetMatrix() * viewMatrix);
+            pv = VectorExt2.Transform(pv, portalEnter.Transform.GetWorldMatrix() * viewMatrix);
             //this will not correctly cull portals if the viewPos begins outside of the viewspace
             if (MathExt.LineInRectangle(new Vector2(-1, -1), new Vector2(1, 1), pv[0], pv[1]) == false)
             {
@@ -268,7 +268,7 @@ namespace Game
 
 
             GL.Enable(EnableCap.DepthTest);
-            Matrix4 portalMatrix = Portal.GetMatrix(portalEnter.Linked, portalEnter) * viewMatrix;
+            Matrix4 portalMatrix = Portal.GetPortalMatrix(portalEnter.Linked, portalEnter) * viewMatrix;
             DrawScene(portalMatrix, timeDelta);
 
             //GL.Disable(EnableCap.StencilTest);
@@ -292,7 +292,7 @@ namespace Game
             fovOutline.Render(viewMatrix, timeDelta);
             GL.LineWidth(1f);
 
-            DrawPortal(portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, Portal.GetMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
+            DrawPortal(portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, Portal.GetPortalMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
         }
     }
 }

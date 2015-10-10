@@ -3,7 +3,7 @@ using System;
 
 namespace Game
 {
-    class Camera
+    public class Camera
     {
         private Transform _transform = new Transform();
         public float Aspect = 1;
@@ -13,15 +13,16 @@ namespace Game
             get { return _transform; }
             set { _transform = value; }
         }
-        private float FOV 
+        private float _fov = 35;
+        public float FOV 
         {
             get
             {
-                return FOV;
+                return _fov;
             }
             set
             {
-                this.FOV = (float)MathHelper.Clamp(value, float.Epsilon, Math.PI - 0.1);
+                _fov = (float)MathHelper.Clamp(value, float.Epsilon, Math.PI - 0.1);
             }
         }
         public float ZNear { get; set; }
