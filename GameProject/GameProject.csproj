@@ -76,9 +76,9 @@
     <Compile Include="MathExt.cs" />
     <Compile Include="MatrixExt4.cs" />
     <Compile Include="Placeable2D.cs" />
-    <Compile Include="Playback.cs" />
     <Compile Include="PolygonFactory.cs" />
     <Compile Include="PortalPlacer.cs" />
+    <Compile Include="SaveState.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Controller.cs" />

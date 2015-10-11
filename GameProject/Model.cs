@@ -54,6 +54,10 @@ namespace Game
             Vertex[] Vertices = new Vertex[3];
             int[] Indices = new int[3];
 
+            private Triangle()
+            {
+            }
+
             public Triangle(Vertex[] vertices, int[] indices)
             {
                 Debug.Assert(vertices.Length == 3);

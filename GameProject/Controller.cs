@@ -29,6 +29,7 @@ namespace Game
             : base((int) 800, (int) 600, new GraphicsMode(32, 24, 8, 1), "Game", GameWindowFlags.FixedWindow)
         {
             ContextExists = true;
+            ClientSize = base.ClientSize;
         }
         InputExt InputExt;
         Camera cam, hudCam;
@@ -38,6 +39,9 @@ namespace Game
         /// </summary>
         public static StreamWriter Log = new StreamWriter("Triangulating.txt");
         public static bool ContextExists = false;
+        public static Size ClientSize;
+        public const int StepsPerSecond = 60;
+        public const int DrawsPerSecond = 60;
         Model background;
         Font Default;
         Entity box2;
@@ -76,21 +80,25 @@ namespace Game
         float TimeRenderDelta = 0.0f;
         private Entity player;
         Entity text, text2;
-        Playback playback = null;
+        SoundSystem soundPlayer;
+        Sound testSound;
         void initProgram()
         {
-            
-            SoundSystem soundPlayer = SoundSystem.Instance();
+            soundPlayer = SoundSystem.Instance();
             soundPlayer.Init();
-            Sound sound = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
-            sound.Play();
+            
+            testSound = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
+            //testSound.Play();
+            //testSound.SetLoop(true);
+            //sound.SetPosition(1000, 0, 0);
+            
            
             /*Thread.Sleep(250);
             Sound sound2 = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
             sound2.Play();
             */
-            scene = new Scene(this);
-            hud = new Scene(this);
+            scene = new Scene();
+            hud = new Scene();
             hudCam = Camera.CameraOrtho(new Vector3(Width/2, Height/2, 0), Height, Width / (float)Height);
 
             System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
@@ -231,10 +239,10 @@ namespace Game
                 new Vector2(-0.5f, 0)
             };
             
-            /*Entity ground = scene.CreateEntityPolygon(new Vector2(0, -2), new Vector2(0, 0), v);
+            Entity ground = scene.CreateEntityPolygon(new Vector2(0, -2), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
 
-            ground.Transform.Rotation = 0.5f;*/
+            ground.Transform.Rotation = 0.5f;
             
             //Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
 
@@ -432,29 +440,22 @@ namespace Game
             /*Console.Write(box2.Models[0].Transform.Rotation.W);
             Console.WriteLine();*/
             //portal1.Transform.Rotation += .001f;
-            
             //box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
             box2.Transform.Rotation -= 0.01f;
             box2.Transform.Position = new Vector2(1f, 0f);
             boxChild.Transform.Parent = null;
 
-            if (InputExt.KeyDown(Key.X))
+            if (InputExt.KeyPress(Key.X))
             {
-                portal3.Transform.Parent = null;
-                portal3.Transform.Rotation = 2f;
-                portal3.Transform.Position = new Vector2(1f, -2f);
-                portal3.Transform.Scale = new Vector2(-1f, 1f);
+                scene.Save();
             }
-            else
-            {
-                portal3.Transform.Rotation = 0f;
-                portal3.Transform.Position = new Vector2(1, 0.5f);
-                portal3.Transform.Scale = new Vector2(1, 1);
-                portal3.Transform.Parent = boxChild.Transform;
-                boxChild.Transform.Rotation += 0.01f;
-                boxChild.Transform.Position = new Vector2(1f, -2f);
-                boxChild.Transform.Scale = new Vector2(-1f, -1f);
-            }
+            portal3.Transform.Rotation = 0f;
+            portal3.Transform.Position = new Vector2(1, 0.5f);
+            portal3.Transform.Scale = new Vector2(1, 1);
+            portal3.Transform.Parent = boxChild.Transform;
+            boxChild.Transform.Rotation += 0.01f;
+            boxChild.Transform.Position = new Vector2(1f, -2f);
+            boxChild.Transform.Scale = new Vector2(-1f, -1f);
             
             scene.Step();
 
@@ -474,7 +475,7 @@ namespace Game
         {
             base.OnClosing(e);
             Log.Close();
-            //playback.ContextFree();
+            soundPlayer.Dispose();
             File.Delete("Triangulating.txt");
         }
 

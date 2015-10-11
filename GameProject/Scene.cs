@@ -10,6 +10,8 @@ using System.Diagnostics;
 using FarseerPhysics.Factories;
 using FarseerPhysics.Collision.Shapes;
 using Poly2Tri;
+using System.Xml.Serialization;
+using System.IO;
 
 namespace Game
 {
@@ -25,31 +27,23 @@ namespace Game
             get { return _portals; }
         }
         private List<Entity> _entities = new List<Entity>();
-        private Controller _window;
-
-        public Controller Window
-        {
-            get { return _window; }
-            set { _window = value; }
-        }
 
         public List<Entity> EntityList
         {
             get { return _entities; }
         }
 
-        public Scene(Controller controller)
+        public Scene()
         {
-            _window = controller;
-            PhysWorld = new World(new Xna.Vector2(0f, -1));//-9.82f));
-
+            PhysWorld = new World(new Xna.Vector2(0f, -1));
+            
         }
 
         public void DrawScene(Matrix4 viewMatrix, float timeRenderDelta)
         {
             foreach (Entity v in EntityList)
             {
-                v.Render(viewMatrix, (float)Math.Min(timeRenderDelta, 1 / _window.UpdateFrequency));
+                v.Render(viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond));
             }
         }
 
@@ -293,6 +287,18 @@ namespace Game
             GL.LineWidth(1f);
 
             DrawPortal(portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, Portal.GetPortalMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
+        }
+
+        public void Save()
+        {
+            /*string path = "filepath";
+            FileStream outFile = File.Create(path);
+            var a = new FarseerPhysics.Common.WorldXmlSerializer();
+            a.Serialize(PhysWorld, outFile);*/
+            string path = "filepath";
+            FileStream outFile = File.Create(path);
+            XmlSerializer formatter = new XmlSerializer(GetType());
+            formatter.Serialize(outFile, this);
         }
     }
 }

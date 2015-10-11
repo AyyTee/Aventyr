@@ -35,6 +35,10 @@ namespace Game
             get { return _linked; }
         }
 
+        private Portal()
+        {
+        }
+
         public Portal(Scene scene)
         {
             SetScene(scene);

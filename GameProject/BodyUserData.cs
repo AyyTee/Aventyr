@@ -15,6 +15,10 @@ namespace Game
             get { return _linkedEntity; }
         }
 
+        private BodyUserData()
+        {
+        }
+
         public BodyUserData(Entity linkedEntity)
         {
             _linkedEntity = linkedEntity;

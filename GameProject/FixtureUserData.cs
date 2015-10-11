@@ -29,6 +29,11 @@ namespace Game
             get { return _fixture; }
         }
 
+        private FixtureUserData()
+        {
+
+        }
+
         public FixtureUserData(Fixture fixture)
         {
             _fixture = fixture;

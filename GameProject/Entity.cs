@@ -310,7 +310,7 @@ namespace Game
         private void _RenderClipModels(List<ClipModel> clipModels, Matrix4 viewMatrix)
         {
             Matrix4 ScaleMatrix;
-            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Scene.Window.ClientSize.Width / (float)2, Scene.Window.ClientSize.Height / (float)2, 0));
+            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Controller.ClientSize.Width / (float)2, Controller.ClientSize.Height / (float)2, 0));
 
             Vector2[] mirrorTest = new Vector2[3] {
                 new Vector2(1, 0),
