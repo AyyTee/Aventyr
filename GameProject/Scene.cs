@@ -20,8 +20,15 @@ namespace Game
         public World PhysWorld;
         float TimeStepSize = 1 / 60f;
         private float sceneDepth = 20;
-        private List<Portal> _portals = new List<Portal>();
+        private Camera _activeCamera;
 
+        public Camera ActiveCamera
+        {
+            get { return _activeCamera; }
+            set { _activeCamera = value; }
+        }
+        private List<Portal> _portals = new List<Portal>();
+        //private Dictionary<int, Portal> _portals = new Dictionary<int, Portal>();
         public List<Portal> Portals
         {
             get { return _portals; }
@@ -297,8 +304,8 @@ namespace Game
             a.Serialize(PhysWorld, outFile);*/
             string path = "filepath";
             FileStream outFile = File.Create(path);
-            XmlSerializer formatter = new XmlSerializer(GetType());
-            formatter.Serialize(outFile, this);
+            /*XmlSerializer formatter = new XmlSerializer(GetType());
+            formatter.Serialize(outFile, this);*/
         }
     }
 }

@@ -8,6 +8,10 @@ namespace Game
         private Transform _transform = new Transform();
         public float Aspect = 1;
         public float Scale = 1;
+        /// <summary>
+        /// Position used for casting line of sight rays for portals
+        /// </summary>
+        public Vector2 Viewpoint = new Vector2();
         public Transform Transform
         {
             get { return _transform; }

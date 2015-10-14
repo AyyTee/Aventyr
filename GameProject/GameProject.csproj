@@ -78,6 +78,7 @@
     <Compile Include="Placeable2D.cs" />
     <Compile Include="PolygonFactory.cs" />
     <Compile Include="PortalPlacer.cs" />
+    <Compile Include="Renderer.cs" />
     <Compile Include="SaveState.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Transform.cs" />

@@ -68,7 +68,6 @@ namespace Game
             "assets",
             "sounds"
         });
-        Matrix4 viewMatrix;
         Scene scene, hud;
         FontRenderer FontRenderer;
         Entity tempLine;
@@ -82,6 +81,7 @@ namespace Game
         Entity text, text2;
         SoundSystem soundPlayer;
         Sound testSound;
+        Renderer renderer;
         void initProgram()
         {
             soundPlayer = SoundSystem.Instance();
@@ -92,11 +92,6 @@ namespace Game
             //testSound.SetLoop(true);
             //sound.SetPosition(1000, 0, 0);
             
-           
-            /*Thread.Sleep(250);
-            Sound sound2 = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
-            sound2.Play();
-            */
             scene = new Scene();
             hud = new Scene();
             hudCam = Camera.CameraOrtho(new Vector3(Width/2, Height/2, 0), Height, Width / (float)Height);
@@ -117,7 +112,6 @@ namespace Game
             // Load textures from file
             textures.Add("default.png", loadImage(Path.Combine(textureFolder, "default.png")));
             textures.Add("grid.png", loadImage(Path.Combine(textureFolder, "grid.png")));
-            // Create our objects
             
 
             background = Model.CreatePlane();
@@ -143,7 +137,7 @@ namespace Game
             portalEntity0.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
             portal1 = scene.CreatePortal();
-            //portal1.Transform.Rotation = 4.4f;
+            portal1.Transform.Rotation = 4.4f;
             portal1.Transform.Position = new Vector2(-3f, 0f);
             portal1.Transform.Scale = new Vector2(-1f, -1f);
 
@@ -252,20 +246,18 @@ namespace Game
             text2.Transform.Position = new Vector2(0, ClientSize.Height - 40);
 
             cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, Width / (float)Height);
+            scene.ActiveCamera = cam;
+            hud.ActiveCamera = hudCam;
+            renderer = new Renderer(this);
+            renderer.RenderScenes.Add(scene);
+            renderer.RenderScenes.Add(hud);
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
             initProgram();
-
-            GL.ClearColor(Color.HotPink);
-            GL.ClearStencil(0);
-            GL.PointSize(5f);
-            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-
-            OnUpdateFrame(new FrameEventArgs());
+            Renderer.Init();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -275,7 +267,9 @@ namespace Game
             text.Models.Clear();
             text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
 
-            GL.Viewport(0, 0, Width, Height);
+            renderer.Render();
+
+            /*GL.Viewport(0, 0, Width, Height);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             Shaders["textured"].EnableVertexAttribArrays();
@@ -285,9 +279,10 @@ namespace Game
             viewMatrix = cam.GetViewMatrix();
             //GL.Disable(EnableCap.StencilTest);
             GL.Enable(EnableCap.DepthTest);
-            
+
+
             scene.DrawScene(viewMatrix, (float)e.Time);
-            
+
             Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
             TextWriter console = Console.Out;
             Console.SetOut(Controller.Log);
@@ -303,7 +298,7 @@ namespace Game
             Shaders["default"].DisableVertexAttribArrays();
 
             GL.Flush();
-            SwapBuffers();
+            SwapBuffers();*/
         }
 
         private void ToggleFullScreen()
@@ -345,7 +340,7 @@ namespace Game
             tempLine.Transform.Position = player.Transform.Position;
 
             Vector2 rayBegin = player.Transform.Position;
-            Vector2 rayEnd = VectorExt2.Transform(new Vector2(Mouse.X / (float)(ClientSize.Width / 2) - 1f, -(Mouse.Y / (float)(ClientSize.Height / 2) - 1f)), viewMatrix.Inverted());
+            Vector2 rayEnd = VectorExt2.Transform(new Vector2(Mouse.X / (float)(ClientSize.Width / 2) - 1f, -(Mouse.Y / (float)(ClientSize.Height / 2) - 1f)), cam.GetViewMatrix().Inverted());
             tempLine.IsPortalable = true;
             tempLine.Models.Add(Model.CreateLine(new Vector2[2] {
                 rayBegin - player.Transform.Position, 
@@ -458,7 +453,7 @@ namespace Game
             boxChild.Transform.Scale = new Vector2(-1f, -1f);
             
             scene.Step();
-
+            cam.Viewpoint = player.Transform.Position;
             //get rid of all ibo elements no longer used
             lock ("delete")
             {
