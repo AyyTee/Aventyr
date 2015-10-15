@@ -45,7 +45,7 @@ namespace Game
 
                 TextWriter console = Console.Out;
                 Console.SetOut(Controller.Log);
-                scene.DrawPortalAll(scene.Portals.ToArray(), camera.GetViewMatrix(), camera.Viewpoint, 6, TimeRenderDelta);
+                scene.DrawPortalAll(scene.PortalList.ToArray(), camera.GetViewMatrix(), camera.Viewpoint, 6, TimeRenderDelta);
                 Console.SetOut(console);
                 GL.Clear(ClearBufferMask.DepthBufferBit);
             }

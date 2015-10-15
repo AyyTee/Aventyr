@@ -17,6 +17,8 @@ namespace Game
 {
     public class Scene
     {
+        /*public ResourceMap<Portal> portalMap = new ResourceMap<Portal>();
+        public ResourceMap<Entity> entityMap = new ResourceMap<Entity>();*/
         public World PhysWorld;
         float TimeStepSize = 1 / 60f;
         private float sceneDepth = 20;
@@ -27,17 +29,16 @@ namespace Game
             get { return _activeCamera; }
             set { _activeCamera = value; }
         }
-        private List<Portal> _portals = new List<Portal>();
-        //private Dictionary<int, Portal> _portals = new Dictionary<int, Portal>();
-        public List<Portal> Portals
+        private List<Portal> _portalList = new List<Portal>();
+        public List<Portal> PortalList
         {
-            get { return _portals; }
+            get { return _portalList; }
         }
-        private List<Entity> _entities = new List<Entity>();
+        private List<Entity> _entityList = new List<Entity>();
 
         public List<Entity> EntityList
         {
-            get { return _entities; }
+            get { return _entityList; }
         }
 
         public Scene()
@@ -65,8 +66,8 @@ namespace Game
 
         private void AddEntity(Entity entity)
         {
-            Debug.Assert(!_entities.Exists(item => item.Equals(entity)), "This entity has already been added to this scene.");
-            _entities.Add(entity);
+            Debug.Assert(!EntityList.Exists(item => item.Equals(entity)), "This entity has already been added to this scene.");
+            EntityList.Add(entity);
         }
 
         public Entity CreateEntity()
@@ -77,7 +78,9 @@ namespace Game
         public Entity CreateEntity(Vector2 position)
         {
             Entity entity = new Entity(this, position);
-            AddEntity(entity);
+            //AddEntity(entity);
+            Debug.Assert(!EntityList.Exists(item => item.Equals(entity)), "This entity has already been added to this scene.");
+            EntityList.Add(entity);
             return entity;
         }
 
@@ -147,7 +150,7 @@ namespace Game
         /// <returns>If the entity existed within the scene.</returns>
         public bool RemoveEntity(Entity entity)
         {
-            if (_entities.Remove(entity))
+            if (EntityList.Remove(entity))
             {
                 if (entity.Body != null)
                 {
@@ -166,19 +169,15 @@ namespace Game
         public Portal CreatePortal(Vector2 position)
         {
             Portal portal = new Portal(this, position);
-            AddPortal(portal);
+            //AddPortal(portal);
+            Debug.Assert(!PortalList.Exists(item => item.Equals(portal)), "This portal has already been added to this scene.");
+            PortalList.Add(portal);
             return portal;
-        }
-
-        public void AddPortal(Portal portal)
-        {
-            Debug.Assert(!_portals.Exists(item => item.Equals(portal)), "This portal has already been added to this scene.");
-            _portals.Add(portal);
         }
 
         public void RemovePortal(Portal portal)
         {
-            _portals.Remove(portal);
+            PortalList.Remove(portal);
         }
 
         /// <summary>
@@ -298,12 +297,12 @@ namespace Game
 
         public void Save()
         {
-            /*string path = "filepath";
-            FileStream outFile = File.Create(path);
-            var a = new FarseerPhysics.Common.WorldXmlSerializer();
-            a.Serialize(PhysWorld, outFile);*/
             string path = "filepath";
             FileStream outFile = File.Create(path);
+            var a = new FarseerPhysics.Common.WorldXmlSerializer();
+            a.Serialize(PhysWorld, outFile);
+            /*string path = "filepath";
+            FileStream outFile = File.Create(path);*/
             /*XmlSerializer formatter = new XmlSerializer(GetType());
             formatter.Serialize(outFile, this);*/
         }

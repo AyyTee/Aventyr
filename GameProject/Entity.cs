@@ -11,8 +11,22 @@ namespace Game
     /// <summary>
     /// An object that exists within the world space and can be drawn
     /// </summary>
-    public class Entity : Placeable2D
+    public class Entity : Placeable2D//, IResource<Entity>
     {
+        public static Dictionary<Guid, Entity> IDMap = new Dictionary<Guid, Entity>();
+        /*public static ResourceMap<Entity> ResourceMap = new ResourceMap<Entity>();
+        private ResourceMap<Entity>.ResourceID _id;
+
+        public ResourceMap<Entity>.ResourceID ID
+        {
+            get { return _id; }
+        }*/
+        private Guid _id = new Guid();
+
+        public Guid ID
+        {
+            get { return _id; }
+        }
         private Transform2D _velocity = new Transform2D();
         private List<Model> _models = new List<Model>();
         private List<ClipModel> ClipModels = new List<ClipModel>();
@@ -56,7 +70,7 @@ namespace Game
                 _transform = transform;
             }
         }
-        
+
         public Entity(Scene scene)
         {
             SetScene(scene);
@@ -108,7 +122,7 @@ namespace Game
 
         public void PositionUpdate()
         {
-            foreach (Portal portal in Scene.Portals)
+            foreach (Portal portal in Scene.PortalList)
             {
                 //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
                 Line exitLine = new Line(portal.GetWorldVerts());
@@ -244,7 +258,7 @@ namespace Game
             }
             List<float> cutLines = new List<float>();
             List<Portal> collisions = new List<Portal>();
-            foreach (Portal portal in Scene.Portals)
+            foreach (Portal portal in Scene.PortalList)
             {
                 Line portalLine = new Line(portal.GetWorldVerts());
                 Vector2[] convexHull = VectorExt2.Transform(model.GetWorldConvexHull(), this.Transform.GetWorldMatrix() * modelMatrix);

@@ -4,8 +4,16 @@ using System.Diagnostics;
 
 namespace Game
 {
-    public class Portal : Placeable2D, IVertices2D
+    public class Portal : Placeable2D, IVertices2D//, IResource<Portal>
     {
+        /*public static ResourceMap<Portal> ResourceMap = new ResourceMap<Portal>();
+        private ResourceMap<Portal>.ResourceID _id;
+
+        public ResourceMap<Portal>.ResourceID ID
+        {
+            get { return _id; }
+        }*/
+
         private Portal _linked;
         private bool _oneSided = false;
         private Scene _scene = null;

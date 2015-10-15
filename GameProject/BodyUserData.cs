@@ -3,16 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Game
 {
     public class BodyUserData
     {
-        Entity _linkedEntity;
-
+        private Entity _linkedEntity;
+        //[XmlIgnore]
+        /// <summary>
+        /// This will cause XMLSerializer to store the Guid of the Entity.  This is neccesary to preserve references to the Entity.
+        /// </summary>
+        public Guid EntityID;
         public Entity LinkedEntity
         {
-            get { return _linkedEntity; }
+            get 
+            { 
+                return _linkedEntity; 
+            }
         }
 
         private BodyUserData()
@@ -22,6 +30,7 @@ namespace Game
         public BodyUserData(Entity linkedEntity)
         {
             _linkedEntity = linkedEntity;
+            EntityID = linkedEntity.ID;
         }
     }
 }

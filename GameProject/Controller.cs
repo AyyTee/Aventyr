@@ -333,8 +333,10 @@ namespace Game
             }
 
             
-
-            scene.RemoveEntity(tempLine);
+            if (tempLine != null)
+            {
+                scene.RemoveEntity(tempLine);
+            }
             int lineIndex = -1;
             tempLine = scene.CreateEntity();
             tempLine.Transform.Position = player.Transform.Position;
@@ -411,7 +413,7 @@ namespace Game
                 Vector2 posPrev = player.Transform.Position;
                 player.Transform.Position += new Vector2(v.X, v.Y);
                 player.PositionUpdate();
-                foreach (Portal p in scene.Portals)
+                foreach (Portal p in scene.PortalList)
                 {
                     vArray = p.GetWorldVerts();
                     portalEnter = p;
