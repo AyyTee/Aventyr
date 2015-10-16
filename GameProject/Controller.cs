@@ -49,7 +49,7 @@ namespace Game
         Entity intersectDot;
         public static List<int> iboGarbage = new List<int>();
 
-        public static Dictionary<string, int> textures = new Dictionary<string, int>();
+        public static Dictionary<string, int> Textures = new Dictionary<string, int>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
 
         public static String fontFolder = Path.Combine(new String[2] {
@@ -110,12 +110,12 @@ namespace Game
             Shaders.Add("text", new ShaderProgram(Path.Combine(shaderFolder, "vs_text.glsl"), Path.Combine(shaderFolder, "fs_text.glsl"), true));
 
             // Load textures from file
-            textures.Add("default.png", loadImage(Path.Combine(textureFolder, "default.png")));
-            textures.Add("grid.png", loadImage(Path.Combine(textureFolder, "grid.png")));
+            Textures.Add("default.png", loadImage(Path.Combine(textureFolder, "default.png")));
+            Textures.Add("grid.png", loadImage(Path.Combine(textureFolder, "grid.png")));
             
 
             background = Model.CreatePlane();
-            background.TextureID = textures["grid.png"];
+            background.TextureID = Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
             background.Transform.Scale = new Vector3(size, size, size);
@@ -212,13 +212,16 @@ namespace Game
                 new Vector2(0, -0.5f)
             });
             //playerModel.Transform.Scale = new Vector3(-15, .2f, 1);
-            playerModel.SetTexture(Controller.textures["default.png"]);
+            playerModel.SetTexture(Controller.Textures["default.png"]);
             player.IsPortalable = true;
             //player.Transform.Scale = new Vector2(.5f, .5f);
             player.Transform.Position = new Vector2(0f, 0f);
             player.Models.Add(playerModel);
-            playerModel.SetTexture(Controller.textures["default.png"]);
+            playerModel.SetTexture(Controller.Textures["default.png"]);
             #endregion
+
+            Entity playerParent = scene.CreateEntity(new Vector2(1, 0));
+            //player.Transform.Parent = playerParent.Transform;
 
             intersectDot = scene.CreateEntity();
             //intersectDot.Models.Add(Model.CreateCube());
@@ -238,7 +241,7 @@ namespace Game
 
             ground.Transform.Rotation = 0.5f;
             
-            //Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
+            Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
 
             text = hud.CreateEntity();
             text.Transform.Position = new Vector2(0, ClientSize.Height);
@@ -246,6 +249,7 @@ namespace Game
             text2.Transform.Position = new Vector2(0, ClientSize.Height - 40);
 
             cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, Width / (float)Height);
+            
             scene.ActiveCamera = cam;
             hud.ActiveCamera = hudCam;
             renderer = new Renderer(this);
@@ -268,37 +272,6 @@ namespace Game
             text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
 
             renderer.Render();
-
-            /*GL.Viewport(0, 0, Width, Height);
-            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
-
-            Shaders["textured"].EnableVertexAttribArrays();
-            Shaders["default"].EnableVertexAttribArrays();
-
-            // Update model view matrices
-            viewMatrix = cam.GetViewMatrix();
-            //GL.Disable(EnableCap.StencilTest);
-            GL.Enable(EnableCap.DepthTest);
-
-
-            scene.DrawScene(viewMatrix, (float)e.Time);
-
-            Vector2 viewPos = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
-            TextWriter console = Console.Out;
-            Console.SetOut(Controller.Log);
-            scene.DrawPortalAll(scene.Portals.ToArray(), viewMatrix, viewPos, 6, TimeRenderDelta);
-            Console.SetOut(console);
-
-            GL.Clear(ClearBufferMask.DepthBufferBit);
-            GL.Enable(EnableCap.Blend);
-            GL.Disable(EnableCap.DepthTest);
-            hud.DrawScene(hudCam.GetViewMatrix(), (float)e.Time);
-            GL.Enable(EnableCap.DepthTest);
-            Shaders["textured"].DisableVertexAttribArrays();
-            Shaders["default"].DisableVertexAttribArrays();
-
-            GL.Flush();
-            SwapBuffers();*/
         }
 
         private void ToggleFullScreen()
@@ -337,7 +310,7 @@ namespace Game
             {
                 scene.RemoveEntity(tempLine);
             }
-            int lineIndex = -1;
+            
             tempLine = scene.CreateEntity();
             tempLine.Transform.Position = player.Transform.Position;
 
@@ -356,7 +329,7 @@ namespace Game
             
 
             text2.Models.Clear();
-            text2.Models.Add(FontRenderer.GetModel(lineIndex.ToString()));
+            //text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(true).ToString()));
 
             #region camera movement
             if (Focused)
@@ -410,14 +383,14 @@ namespace Game
                 IntersectPoint i = new IntersectPoint();
                 Portal portalEnter = null;
 
-                Vector2 posPrev = player.Transform.Position;
+                Vector2 posPrev = player.Transform.WorldPosition;
                 player.Transform.Position += new Vector2(v.X, v.Y);
                 player.PositionUpdate();
                 foreach (Portal p in scene.PortalList)
                 {
                     vArray = p.GetWorldVerts();
                     portalEnter = p;
-                    Vector2 v1 = new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
+                    Vector2 v1 = player.Transform.WorldPosition;//new Vector2(player.Transform.Position.X, player.Transform.Position.Y);
                     i = MathExt.LineIntersection(vArray[0], vArray[1], posPrev, player.Transform.Position, true);
                     if (i.Exists)
                     {
@@ -430,7 +403,8 @@ namespace Game
                     portalEnter.Enter(player.Transform);
                 }
 
-                cam.Transform = player.Transform.Get3D();
+                cam.Transform = player.Transform.GetWorld3D();
+                cam.Viewpoint = player.Transform.WorldPosition;
             }
             #endregion
             
@@ -453,9 +427,8 @@ namespace Game
             boxChild.Transform.Rotation += 0.01f;
             boxChild.Transform.Position = new Vector2(1f, -2f);
             boxChild.Transform.Scale = new Vector2(-1f, -1f);
-            
             scene.Step();
-            cam.Viewpoint = player.Transform.Position;
+            
             //get rid of all ibo elements no longer used
             lock ("delete")
             {

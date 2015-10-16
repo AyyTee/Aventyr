@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using FarseerPhysics.Dynamics;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Xml.Serialization;
 
 namespace Game
 {
@@ -13,20 +15,15 @@ namespace Game
     /// </summary>
     public class Entity : Placeable2D//, IResource<Entity>
     {
-        public static Dictionary<Guid, Entity> IDMap = new Dictionary<Guid, Entity>();
-        /*public static ResourceMap<Entity> ResourceMap = new ResourceMap<Entity>();
-        private ResourceMap<Entity>.ResourceID _id;
-
-        public ResourceMap<Entity>.ResourceID ID
-        {
-            get { return _id; }
-        }*/
-        private Guid _id = new Guid();
-
-        public Guid ID
+        //public static ConditionalWeakTable<ResourceID<Entity>, Entity> IDMap = new ConditionalWeakTable<ResourceID<Entity>, Entity>();
+        public static Dictionary<ResourceID<Entity>, Entity> IDMap = new Dictionary<ResourceID<Entity>, Entity>();
+        //public static ResourceMap<Entity> ResourceMap = new ResourceMap<Entity>();
+        private ResourceID<Entity> _id = new ResourceID<Entity>();
+        public ResourceID<Entity> ID
         {
             get { return _id; }
         }
+
         private Transform2D _velocity = new Transform2D();
         private List<Model> _models = new List<Model>();
         private List<ClipModel> ClipModels = new List<ClipModel>();
@@ -37,6 +34,7 @@ namespace Game
         {
             get { return _scene; }
         }
+        [XmlIgnore]
         public Body Body;
         /// <summary>
         /// Represents the size of the cutLines array within the fragment shader
@@ -51,7 +49,7 @@ namespace Game
             set { _isPortalable = value; }
         }
         public virtual Transform2D Velocity { get { return _velocity; } set { _velocity = value; } }
-
+        [XmlIgnore]
         public virtual List<Model> Models { get { return _models; } set { _models = value; } }
         
         public class ClipModel
@@ -70,21 +68,24 @@ namespace Game
                 _transform = transform;
             }
         }
+        private Entity()
+        {
+
+        }
 
         public Entity(Scene scene)
         {
             SetScene(scene);
+            IDMap.Add(ID, this);
         }
 
-        public Entity(Scene scene, Vector2 Position)
+        public Entity(Scene scene, Vector2 Position) : this(scene)
         {
-            SetScene(scene);
             Transform = new Transform2D(Position);
         }
 
-        public Entity(Scene scene, Transform2D transform)
+        public Entity(Scene scene, Transform2D transform) : this(scene)
         {
-            SetScene(scene);
             Transform = transform;
         }
 
@@ -94,12 +95,14 @@ namespace Game
         private void SetScene(Scene scene)
         {
             Debug.Assert(_scene == null, "The Scene can only be assigned once.");
+            Debug.Assert(scene != null, "Scene cannot be a null value.");
             _scene = scene;
         }
 
         public void RemoveFromScene()
         {
             Scene.RemoveEntity(this);
+            Entity.IDMap.Remove(ID);
         }
 
         public void LinkBody(Body body)
@@ -134,7 +137,13 @@ namespace Game
                     {
                         exitNormal = -exitNormal;
                     }
-                    Transform.Position += exitNormal * (Portal.EntityMinDistance - distanceToPortal);
+
+                    Vector2 pos = exitNormal * (Portal.EntityMinDistance - distanceToPortal);
+                    /*if (Transform.Parent != null)
+                    {
+                        pos = Transform.Parent.WorldToLocal(pos);
+                    }*/
+                    Transform.Position += pos;
                     break;
                 }
             }

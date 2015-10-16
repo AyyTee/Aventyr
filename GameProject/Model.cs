@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Poly2Tri;
 using System.Diagnostics;
 using System;
+using System.Xml.Serialization;
 
 namespace Game
 {
@@ -13,9 +14,10 @@ namespace Game
     public class Model : IDisposable, IVertices
     {
         public Transform Transform = new Transform();
-
+        [XmlIgnore]
         public int ibo_elements;
         public bool iboExists = true;
+        [XmlIgnore]
         public ShaderProgram Shader;
 
         public bool IsTextured = false;
@@ -28,6 +30,10 @@ namespace Game
             public Vector3 Position = new Vector3();
             public Vector3 Color = new Vector3();
             public Vector2 TextureCoord = new Vector2();
+
+            public Vertex()
+            {
+            }
 
             public Vertex(Vector3 position)
             {
@@ -221,7 +227,7 @@ namespace Game
             Model model = new Model(vertices, indices);
             if (Controller.ContextExists)
             {
-                model.SetTexture(Controller.textures["default.png"]);
+                model.SetTexture(Controller.Textures["default.png"]);
             }
             return model;
         }
@@ -288,7 +294,7 @@ namespace Game
             Model model = new Model(vertices, indices);
             if (Controller.ContextExists)
             {
-                model.SetTexture(Controller.textures["default.png"]);
+                model.SetTexture(Controller.Textures["default.png"]);
             }
             return model;
         }

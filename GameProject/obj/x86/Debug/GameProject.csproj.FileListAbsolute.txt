@@ -43,7 +43,7 @@ C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debu
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\obj\x86\Debug\OpenTKTutorial4.exe
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\obj\x86\Debug\OpenTKTutorial4.pdb
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\sounds\test_sound.wav
-C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\obj\x86\Debug\GameProject.csprojResolveAssemblyReference.cache
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\assets\sounds\test_sound.ogg
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\Cgen.Audio.dll
 C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\Cgen.Audio.pdb
+C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\obj\x86\Debug\GameProject.csprojResolveAssemblyReference.cache

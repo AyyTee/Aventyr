@@ -161,6 +161,11 @@ namespace Game
             return new Transform(new Vector3(Position.X, Position.Y, 0), new Vector3(Scale.X, Scale.Y, 1), new Quaternion(0, 0, 1, Rotation));
         }
 
+        public Transform GetWorld3D()
+        {
+            return new Transform(new Vector3(WorldPosition.X, WorldPosition.Y, 0), new Vector3(WorldScale.X, WorldScale.Y, 1), new Quaternion(0, 0, 1, WorldRotation));
+        }
+
         public Matrix4 GetMatrix()
         {
             if (MatrixUpdate)

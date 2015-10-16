@@ -80,6 +80,7 @@
     <Compile Include="PolygonFactory.cs" />
     <Compile Include="PortalPlacer.cs" />
     <Compile Include="Renderer.cs" />
+    <Compile Include="ResourceID.cs" />
     <Compile Include="ResourceMap.cs" />
     <Compile Include="SaveState.cs" />
     <Compile Include="Scene.cs" />
