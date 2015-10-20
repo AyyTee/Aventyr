@@ -29,6 +29,14 @@ namespace Game
             get { return _fixture; }
         }
 
+        private int _fixtureId;
+
+        public int FixtureId
+        {
+            get { return _fixtureId; }
+            set { _fixtureId = value; }
+        }
+
         private FixtureUserData()
         {
 
@@ -37,6 +45,7 @@ namespace Game
         public FixtureUserData(Fixture fixture)
         {
             _fixture = fixture;
+            _fixtureId = fixture.FixtureId;
             Debug.Assert(Fixture.UserData == null, "UserData has already been assigned for this fixture.");
             Fixture.UserData = this;
             switch (Fixture.ShapeType)

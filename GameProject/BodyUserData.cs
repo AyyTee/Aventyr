@@ -9,16 +9,21 @@ namespace Game
 {
     public class BodyUserData
     {
-        //private Entity _linkedEntity;
+        private Entity _linkedEntity;
         /// <summary>
         /// This will cause XMLSerializer to store the Guid of the Entity.  This is neccesary to preserve references to the Entity.
         /// </summary>
-        public ResourceID<Entity> EntityID;
+        //public ResourceID<Entity> EntityID;
+        [XmlIgnore]
         public Entity LinkedEntity
         {
             get 
-            { 
-                return Entity.IDMap[EntityID];
+            {
+                return _linkedEntity;//Entity.IDMap[EntityID];
+            }
+            set
+            {
+                _linkedEntity = value;
             }
         }
 
@@ -28,8 +33,8 @@ namespace Game
 
         public BodyUserData(Entity linkedEntity)
         {
-            //_linkedEntity = linkedEntity;
-            EntityID = linkedEntity.ID;
+            _linkedEntity = linkedEntity;
+            //EntityID = linkedEntity.ID;
         }
     }
 }

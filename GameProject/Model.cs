@@ -14,10 +14,8 @@ namespace Game
     public class Model : IDisposable, IVertices
     {
         public Transform Transform = new Transform();
-        [XmlIgnore]
         public int ibo_elements;
         public bool iboExists = true;
-        [XmlIgnore]
         public ShaderProgram Shader;
 
         public bool IsTextured = false;
@@ -123,7 +121,6 @@ namespace Game
                 lock ("delete")
                 {
                     Controller.iboGarbage.Add(ibo_elements);
-                    //GL.DeleteBuffers(1, ref ibo_elements);
                     iboExists = false;
                 }
             }

@@ -84,6 +84,7 @@ namespace Game
         Renderer renderer;
         void initProgram()
         {
+
             soundPlayer = SoundSystem.Instance();
             soundPlayer.Init();
             
@@ -228,17 +229,17 @@ namespace Game
             intersectDot.Models = portalEntity0.Models;
             intersectDot.Transform.Scale = new Vector2(1f, 1f);
 
-            Vector2[] v = new Vector2[5] {
+            Vector2[] v = new Vector2[6] {
                 new Vector2(0.01f, 0) * 2,
                 new Vector2(1f, 0.5f) * 2,
                 new Vector2(1f, -1f) * 2,
                 new Vector2(-1f, -1.1f) * 2,
-                new Vector2(-0.5f, 0)
+                new Vector2(-0.5f, 0),
+                new Vector2(-0.5f, 0.1f)
             };
             
-            Entity ground = scene.CreateEntityPolygon(new Vector2(0, -2), new Vector2(0, 0), v);
+            Entity ground = scene.CreateEntityPolygon(new Vector2(0, -4f), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
-
             ground.Transform.Rotation = 0.5f;
             
             Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
@@ -329,7 +330,7 @@ namespace Game
             
 
             text2.Models.Clear();
-            //text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(true).ToString()));
+            text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
 
             #region camera movement
             if (Focused)
@@ -408,10 +409,6 @@ namespace Game
             }
             #endregion
             
-            /*Console.Write(box2.Models[0].Transform.Rotation.W);
-            Console.WriteLine();*/
-            //portal1.Transform.Rotation += .001f;
-            //box2.Models[0].Transform.Rotation += new Quaternion(0, 0, 0, .01f);
             box2.Transform.Rotation -= 0.01f;
             box2.Transform.Position = new Vector2(1f, 0f);
             boxChild.Transform.Parent = null;
@@ -428,7 +425,7 @@ namespace Game
             boxChild.Transform.Position = new Vector2(1f, -2f);
             boxChild.Transform.Scale = new Vector2(-1f, -1f);
             scene.Step();
-            
+
             //get rid of all ibo elements no longer used
             lock ("delete")
             {

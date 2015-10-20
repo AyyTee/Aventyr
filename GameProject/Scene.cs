@@ -12,6 +12,8 @@ using FarseerPhysics.Collision.Shapes;
 using Poly2Tri;
 using System.Xml.Serialization;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Reflection;
 
 namespace Game
 {
@@ -19,11 +21,10 @@ namespace Game
     {
         //public Dictionary<ResourceID<Portal>, Portal> portalMap = new Dictionary<ResourceID<Portal>, Portal>();
         //public Dictionary<ResourceID<Entity>, Entity> entityMap = new Dictionary<ResourceID<Entity>, Entity>();
-        [XmlIgnore]
+        [IgnoreDataMemberAttribute]
         public World PhysWorld;
-        float TimeStepSize = 1 / 60f;
+        public float TimeStepSize = 1 / 60f;
         private Camera _activeCamera;
-
         public Camera ActiveCamera
         {
             get { return _activeCamera; }
@@ -35,7 +36,6 @@ namespace Game
             get { return _portalList; }
         }
         private List<Entity> _entityList = new List<Entity>();
-
         public List<Entity> EntityList
         {
             get { return _entityList; }
@@ -43,7 +43,7 @@ namespace Game
 
         public Scene()
         {
-            PhysWorld = new World(new Xna.Vector2(0f, -1));
+            PhysWorld = new World(new Xna.Vector2(0f, -9.8f/2));
         }
 
         public void Step()
@@ -146,6 +146,7 @@ namespace Game
                 {
                     PhysWorld.RemoveBody(entity.Body);
                 }
+                //Entity.IDMap.Remove(entity.ID);
                 return true;
             }
             return false;
@@ -172,15 +173,35 @@ namespace Game
 
         public void Save()
         {
-            string path = "save.xml";
-            FileStream outFile = File.Create(path);
+            FileStream physicsFile = File.Create("savePhys.xml");
+            FileStream sceneFile = File.Create("save.xml");
+            Save(sceneFile, physicsFile);
+            physicsFile.Close();
+            sceneFile.Close();
+        }
 
-            /*var a = new FarseerPhysics.Common.WorldXmlSerializer();
-            a.Serialize(PhysWorld, outFile);*/
+        public void Save(FileStream sceneFile, FileStream physicsFile)
+        {
+            var physSerializer = new FarseerPhysics.Common.WorldXmlSerializer();
+            physSerializer.Serialize(PhysWorld, physicsFile);
+            
             /*string path = "filepath";
             FileStream outFile = File.Create(path);*/
-            XmlSerializer formatter = new XmlSerializer(GetType());
-            formatter.Serialize(outFile, this);
+            /*XmlSerializer formatter = new XmlSerializer(GetType());
+            formatter.Serialize(outFile, this);*/
+            
+            Assembly assembly = Assembly.GetAssembly(GetType());//Assembly.Load(new AssemblyName());
+            var types = from t in Assembly.GetExecutingAssembly().GetTypes()
+                        where t.IsSubclassOf(GetType())
+                        select t;
+            DataContractSerializer serializer = new DataContractSerializer(GetType(), "Game", "Game", types,
+            0x7FFF /*maxObjectsInGraph*/,
+            false/*ignoreExtensionDataObject*/,
+            true/*preserveObjectReferences*/,
+            null/*dataContractSurrogate*/,
+            new PhysDataContractResolver(assembly));
+
+            serializer.WriteObject(sceneFile, this);
         }
 
         /// <summary>

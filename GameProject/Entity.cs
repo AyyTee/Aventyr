@@ -7,16 +7,18 @@ using FarseerPhysics.Dynamics;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
+using System.Runtime.Serialization;
 
 namespace Game
 {
     /// <summary>
     /// An object that exists within the world space and can be drawn
     /// </summary>
-    public class Entity : Placeable2D//, IResource<Entity>
+    public class Entity : Placeable2D
     {
         //public static ConditionalWeakTable<ResourceID<Entity>, Entity> IDMap = new ConditionalWeakTable<ResourceID<Entity>, Entity>();
-        public static Dictionary<ResourceID<Entity>, Entity> IDMap = new Dictionary<ResourceID<Entity>, Entity>();
+        //[IgnoreDataMemberAttribute]
+        //public static Dictionary<ResourceID<Entity>, Entity> IDMap = new Dictionary<ResourceID<Entity>, Entity>();
         //public static ResourceMap<Entity> ResourceMap = new ResourceMap<Entity>();
         private ResourceID<Entity> _id = new ResourceID<Entity>();
         public ResourceID<Entity> ID
@@ -29,12 +31,10 @@ namespace Game
         private List<ClipModel> ClipModels = new List<ClipModel>();
         private bool _isPortalable = false;
         private Scene _scene = null;
-
         public Scene Scene
         {
             get { return _scene; }
         }
-        [XmlIgnore]
         public Body Body;
         /// <summary>
         /// Represents the size of the cutLines array within the fragment shader
@@ -49,7 +49,7 @@ namespace Game
             set { _isPortalable = value; }
         }
         public virtual Transform2D Velocity { get { return _velocity; } set { _velocity = value; } }
-        [XmlIgnore]
+        [IgnoreDataMemberAttribute]
         public virtual List<Model> Models { get { return _models; } set { _models = value; } }
         
         public class ClipModel
@@ -76,7 +76,7 @@ namespace Game
         public Entity(Scene scene)
         {
             SetScene(scene);
-            IDMap.Add(ID, this);
+            //IDMap.Add(ID, this);
         }
 
         public Entity(Scene scene, Vector2 Position) : this(scene)
@@ -102,7 +102,7 @@ namespace Game
         public void RemoveFromScene()
         {
             Scene.RemoveEntity(this);
-            Entity.IDMap.Remove(ID);
+            //Entity.IDMap.Remove(ID);
         }
 
         public void LinkBody(Body body)
