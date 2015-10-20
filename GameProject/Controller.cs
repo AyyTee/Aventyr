@@ -130,7 +130,7 @@ namespace Game
             portal0.Transform.Scale = new Vector2(-1.5f, -1.5f);
 
             Entity portalEntity0 = scene.CreateEntity();
-            portalEntity0.Transform = portal0.Transform;
+            portalEntity0.Transform.Parent = portal0.Transform;
             portalEntity0.Models.Add(Model.CreatePlane());
             portalEntity0.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity0.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
@@ -145,7 +145,7 @@ namespace Game
             Portal.Link(portal0, portal1);
             //Portal.Link(portal1, portal1);
             Entity portalEntity1 = scene.CreateEntity();
-            portalEntity1.Transform = portal1.Transform;
+            portalEntity1.Transform.Parent = portal1.Transform; 
             portalEntity1.Models.Add(Model.CreatePlane());
             portalEntity1.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity1.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
@@ -159,7 +159,7 @@ namespace Game
             portal2.Transform.Scale = new Vector2(1f, 1f);
 
             Entity portalEntity2 = scene.CreateEntity();
-            portalEntity2.Transform = portal2.Transform;
+            portalEntity2.Transform.Parent = portal2.Transform;
             portalEntity2.Models.Add(Model.CreatePlane());
             portalEntity2.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity2.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
@@ -174,7 +174,7 @@ namespace Game
 
             Portal.Link(portal2, portal3);
             Entity portalEntity3 = scene.CreateEntity();
-            portalEntity3.Transform = portal3.Transform;
+            portalEntity3.Transform.Parent = portal3.Transform;
             portalEntity3.Models.Add(Model.CreatePlane());
             portalEntity3.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity3.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
@@ -238,12 +238,12 @@ namespace Game
                 new Vector2(-0.5f, 0.1f)
             };
             
-            Entity ground = scene.CreateEntityPolygon(new Vector2(0, -4f), new Vector2(0, 0), v);
+            /*Entity ground = scene.CreateEntityPolygon(new Vector2(0, -4f), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
             ground.Transform.Rotation = 0.5f;
             
             Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
-
+            */
             text = hud.CreateEntity();
             text.Transform.Position = new Vector2(0, ClientSize.Height);
             text2 = hud.CreateEntity();
@@ -269,8 +269,8 @@ namespace Game
         {
             base.OnRenderFrame(e);
             TimeRenderDelta += (float)e.Time;
-            text.Models.Clear();
-            text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
+            /*text.Models.Clear();
+            text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));*/
 
             renderer.Render();
         }
@@ -307,7 +307,7 @@ namespace Game
             }
 
             
-            if (tempLine != null)
+            /*if (tempLine != null)
             {
                 scene.RemoveEntity(tempLine);
             }
@@ -331,14 +331,27 @@ namespace Game
 
             text2.Models.Clear();
             text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
-
-            #region camera movement
+            */
+            
+            
             if (Focused)
             {
                 if (InputExt.KeyPress(Key.Escape))
                 {
                     Exit();
                 }
+                if (InputExt.KeyPress(Key.X))
+                {
+                    scene.Save();
+                }
+                if (InputExt.KeyPress(Key.C))
+                {
+                    scene = Scene.Load();
+                    renderer.RenderScenes.Clear();
+                    renderer.RenderScenes.Add(scene);
+                }
+                #region camera movement
+                
                 Vector3 v = new Vector3();
                 float camSpeed = .05f;
                 if (InputExt.KeyDown(Key.ShiftLeft))
@@ -404,26 +417,26 @@ namespace Game
                     portalEnter.Enter(player.Transform);
                 }
 
-                cam.Transform = player.Transform.GetWorld3D();
+                Transform transformNew = player.Transform.GetWorld3D();
+                cam.Transform.Position = transformNew.Position;
+                cam.Transform.Rotation = transformNew.Rotation;
+                cam.Transform.Scale = transformNew.Scale;
                 cam.Viewpoint = player.Transform.WorldPosition;
+                
+                #endregion
             }
-            #endregion
             
-            box2.Transform.Rotation -= 0.01f;
+            /*box2.Transform.Rotation -= 0.01f;
             box2.Transform.Position = new Vector2(1f, 0f);
-            boxChild.Transform.Parent = null;
-
-            if (InputExt.KeyPress(Key.X))
-            {
-                scene.Save();
-            }
-            portal3.Transform.Rotation = 0f;
+            boxChild.Transform.Parent = null;*/
+            /*portal3.Transform.Rotation = 0f;
             portal3.Transform.Position = new Vector2(1, 0.5f);
             portal3.Transform.Scale = new Vector2(1, 1);
-            portal3.Transform.Parent = boxChild.Transform;
-            boxChild.Transform.Rotation += 0.01f;
-            boxChild.Transform.Position = new Vector2(1f, -2f);
-            boxChild.Transform.Scale = new Vector2(-1f, -1f);
+            portal3.Transform.Parent = boxChild.Transform;*/
+
+            scene.PortalList[1].Transform.Rotation += 0.01f;
+            //scene.EntityList[1].Transform.Position = new Vector2(1f, -2f);
+            //scene.EntityList[1].Transform.Scale = new Vector2(-1f, -1f);
             scene.Step();
 
             //get rid of all ibo elements no longer used

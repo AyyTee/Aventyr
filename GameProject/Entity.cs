@@ -16,10 +16,6 @@ namespace Game
     /// </summary>
     public class Entity : Placeable2D
     {
-        //public static ConditionalWeakTable<ResourceID<Entity>, Entity> IDMap = new ConditionalWeakTable<ResourceID<Entity>, Entity>();
-        //[IgnoreDataMemberAttribute]
-        //public static Dictionary<ResourceID<Entity>, Entity> IDMap = new Dictionary<ResourceID<Entity>, Entity>();
-        //public static ResourceMap<Entity> ResourceMap = new ResourceMap<Entity>();
         private ResourceID<Entity> _id = new ResourceID<Entity>();
         public ResourceID<Entity> ID
         {
@@ -30,12 +26,22 @@ namespace Game
         private List<Model> _models = new List<Model>();
         private List<ClipModel> ClipModels = new List<ClipModel>();
         private bool _isPortalable = false;
-        private Scene _scene = null;
-        public Scene Scene
+        
+        public int BodyId = -1;
+
+        public Body Body
         {
-            get { return _scene; }
+            get 
+            {
+                if (BodyId == -1)
+                {
+                    return null;
+                }
+                Debug.Assert(Scene != null, "Entity must be assigned to a scene.");
+                Debug.Assert(Scene.PhysWorld.BodyList.Exists(item => (item.BodyId == BodyId)), "Body id does not exist.");
+                return Scene.PhysWorld.BodyList.Find(item => (item.BodyId == BodyId)); 
+            }
         }
-        public Body Body;
         /// <summary>
         /// Represents the size of the cutLines array within the fragment shader
         /// </summary>
@@ -49,7 +55,7 @@ namespace Game
             set { _isPortalable = value; }
         }
         public virtual Transform2D Velocity { get { return _velocity; } set { _velocity = value; } }
-        [IgnoreDataMemberAttribute]
+        //[IgnoreDataMemberAttribute]
         public virtual List<Model> Models { get { return _models; } set { _models = value; } }
         
         public class ClipModel
@@ -68,6 +74,7 @@ namespace Game
                 _transform = transform;
             }
         }
+
         private Entity()
         {
 
@@ -76,12 +83,16 @@ namespace Game
         public Entity(Scene scene)
         {
             SetScene(scene);
-            //IDMap.Add(ID, this);
         }
 
-        public Entity(Scene scene, Vector2 Position) : this(scene)
+        public Entity(Vector2 position)
         {
-            Transform = new Transform2D(Position);
+            Transform = new Transform2D(position);
+        }
+
+        public Entity(Scene scene, Vector2 position) : this(scene)
+        {
+            Transform = new Transform2D(position);
         }
 
         public Entity(Scene scene, Transform2D transform) : this(scene)
@@ -94,15 +105,14 @@ namespace Game
         /// </summary>
         private void SetScene(Scene scene)
         {
-            Debug.Assert(_scene == null, "The Scene can only be assigned once.");
-            Debug.Assert(scene != null, "Scene cannot be a null value.");
-            _scene = scene;
+            Debug.Assert(Scene == null, "The Scene can only be assigned once.");
+            //Debug.Assert(scene != null, "Scene cannot be a null value.");
+            Scene = scene;
         }
 
         public void RemoveFromScene()
         {
             Scene.RemoveEntity(this);
-            //Entity.IDMap.Remove(ID);
         }
 
         public void LinkBody(Body body)
@@ -111,7 +121,7 @@ namespace Game
             BodyUserData userData = new BodyUserData(this);
             Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
             body.UserData = userData;
-            Body = body;
+            BodyId = body.BodyId;
         }
 
         public virtual void Step()

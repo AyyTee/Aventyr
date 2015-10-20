@@ -15,6 +15,10 @@ namespace Game
         private int sceneDepth = 20;
         public List<Scene> RenderScenes = new List<Scene>();
         private Controller _controller;
+
+        /*public static Dictionary<string, int> Textures = new Dictionary<string, int>();
+        public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
+        */
         public Renderer(Controller controller)
         {
             _controller = controller;
@@ -130,14 +134,14 @@ namespace Game
             GL.StencilFunc(StencilFunction.Always, 1, 0xFF);
             GL.StencilOp(StencilOp.Incr, StencilOp.Incr, StencilOp.Incr);
 
-            Entity fov = new Entity(scene);
+            Entity fov = new Entity(new Vector2());
             Vector2[] a = portalEnter.GetFOV(viewPos, 50);
             if (a.Length >= 3)
             {
                 fov.Models.Add(Model.CreatePolygon(a));
                 fov.Render(viewMatrix, timeDelta);
             }
-            fov.RemoveFromScene();
+            //fov.RemoveFromScene();
 
             GL.ColorMask(true, true, true, true);
             GL.DepthMask(true);
@@ -151,7 +155,7 @@ namespace Game
 
             //GL.Disable(EnableCap.StencilTest);
 
-            Entity fovOutline = new Entity(scene);
+            Entity fovOutline = new Entity(new Vector2());
             Vector2[] verts = portalEnter.GetFOV(viewPos, 50, 2);
             if (verts.Length > 0)
             {
@@ -164,7 +168,7 @@ namespace Game
                     model.Transform.Position = v;
                 }
             }
-            fovOutline.RemoveFromScene();
+            //fovOutline.RemoveFromScene();
 
             GL.LineWidth(2f);
             fovOutline.Render(viewMatrix, timeDelta);

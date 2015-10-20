@@ -197,6 +197,25 @@ namespace Game
             return Math.Sign(WorldScale.X) != Math.Sign(WorldScale.Y);
         }
 
+        /// <summary>
+        /// Assign new position, scale, and rotation for this transform.
+        /// </summary>
+        public void SetLocal(Vector2 position, Vector2 scale, float rotation)
+        {
+            Position = position;
+            Scale = scale;
+            Rotation = rotation;
+        }
+
+        /// <summary>
+        /// Assign new position, scale, and rotation from another Transform2D instance.
+        /// </summary>
+        /// <param name="transform"></param>
+        public void SetLocal(Transform2D transform)
+        {
+            SetLocal(transform.Position, transform.Scale, transform.Rotation);
+        }
+
         public Vector2 GetNormal(bool normalizeValue = true)
         {
             Vector2[] v = new Vector2[2] {

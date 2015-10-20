@@ -204,21 +204,25 @@ namespace Game
             serializer.WriteObject(sceneFile, this);
         }
 
-        /// <summary>
-        /// Creates a deep copy of this scene.
-        /// </summary>
-        /*public Scene Copy()
+        public static Scene Load()
         {
-            Scene scene = new Scene();
-            //var a = new Body(PhysWorld);
-            foreach (Portal p in PortalList)
-            {
+            Assembly assembly = Assembly.GetAssembly(typeof(Scene));//Assembly.Load(new AssemblyName());
+            var types = from t in Assembly.GetExecutingAssembly().GetTypes()
+                        where t.IsSubclassOf(typeof(Scene))
+                        select t;
+            DataContractSerializer serializer = new DataContractSerializer(typeof(Scene), "Game", "Game", types,
+            0x7FFF /*maxObjectsInGraph*/,
+            false/*ignoreExtensionDataObject*/,
+            true/*preserveObjectReferences*/,
+            null/*dataContractSurrogate*/,
+            new PhysDataContractResolver(assembly));
 
-            }
-            foreach (Entity e in EntityList)
-            {
-
-            }
-        }*/
+            FileStream physicsFile = File.OpenRead("savePhys.xml");
+            FileStream sceneFile = File.OpenRead("save.xml");
+            Scene scene = (Scene)serializer.ReadObject(sceneFile);
+            physicsFile.Close();
+            sceneFile.Close();
+            return scene;
+        }
     }
 }

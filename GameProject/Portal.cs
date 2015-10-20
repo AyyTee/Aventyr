@@ -4,24 +4,10 @@ using System.Diagnostics;
 
 namespace Game
 {
-    public class Portal : Placeable2D, IVertices2D//, IResource<Portal>
+    public class Portal : Placeable2D, IVertices2D
     {
-        /*public static ResourceMap<Portal> ResourceMap = new ResourceMap<Portal>();
-        private ResourceMap<Portal>.ResourceID _id;
-
-        public ResourceMap<Portal>.ResourceID ID
-        {
-            get { return _id; }
-        }*/
-
-        private Portal _linked;
+        private Portal _linked = null;
         private bool _oneSided = false;
-        private Scene _scene = null;
-
-        public Scene Scene
-        {
-            get { return _scene; }
-        }
 
         /// <summary>
         /// If OneSided is true then the portal can only be viewed through it's front side.
@@ -41,6 +27,7 @@ namespace Game
         public Portal Linked
         {
             get { return _linked; }
+            set { _linked = value; }
         }
 
         private Portal()
@@ -49,6 +36,7 @@ namespace Game
 
         public Portal(Scene scene)
         {
+            Transform = new Transform2D();
             SetScene(scene);
             Transform.FixedScale = true;
         }
@@ -74,7 +62,7 @@ namespace Game
         private void SetScene(Scene scene)
         {
             //Debug.Assert(_scene == null);
-            _scene = scene;
+            Scene = scene;
             /*if (Scene != null)
             {
                 Scene.AddPortal(this);

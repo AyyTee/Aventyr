@@ -24,7 +24,7 @@ namespace Game
                 intersection = GetValid(intersection, portal);
                 if (intersection != null)
                 {
-                    portal.Transform = intersection.GetTransform();
+                    portal.Transform.SetLocal(intersection.GetTransform());
                 }
             }
         }
