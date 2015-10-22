@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace Game
 {
+    [Serializable]
     public class Transform2D
     {
         private Matrix4 Matrix;
@@ -19,7 +20,7 @@ namespace Game
         private Vector2 _position = new Vector2();
         private float _rotation = 0;
         private Vector2 _scale = new Vector2(1, 1);
-        private bool _fixedScale = false;
+        private bool _uniformScale = false;
         private Transform2D _parent = null;
 
         public Transform2D Parent
@@ -32,10 +33,10 @@ namespace Game
             }
         }
 
-        public bool FixedScale 
+        public bool UniformScale 
         { 
-            get { return _fixedScale; }
-            set { _fixedScale = value; }
+            get { return _uniformScale; }
+            set { _uniformScale = value; }
         }
 
         public float Rotation 
@@ -67,12 +68,12 @@ namespace Game
             get { return _scale; }
             set 
             { 
-                if (FixedScale)
+                if (UniformScale)
                 {
                     Debug.Assert(Math.Abs(value.X) == Math.Abs(value.Y), "Transforms with fixed scale cannot have non-uniform scale.");
                 }
                 Debug.Assert(!VectorExt2.IsNaN(value));
-                Debug.Assert(value.X != 0 && value.Y != 0, "Scale vector must have non-zero componenets");
+                Debug.Assert(value.X != 0 && value.Y != 0, "Scale vector must have non-zero components");
                 _matrixUpdate = true;
                 _scale = value; 
             } 
@@ -139,7 +140,7 @@ namespace Game
 
         public Transform2D(Vector2 position, Vector2 scale, float rotation, Transform2D parent, bool fixedScale)
         {
-            FixedScale = fixedScale;
+            UniformScale = fixedScale;
             Position = position;
             Scale = scale;
             Rotation = rotation;
@@ -269,7 +270,7 @@ namespace Game
         public Transform2D Copy()
         {
             Transform2D transform = new Transform2D(Position, Scale, Rotation);
-            transform.FixedScale = FixedScale;
+            transform.UniformScale = UniformScale;
             transform._parent = Parent;
             return transform;
         }

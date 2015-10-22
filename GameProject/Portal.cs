@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace Game
 {
+    [Serializable]
     public class Portal : Placeable2D, IVertices2D
     {
         private Portal _linked = null;
@@ -27,18 +28,16 @@ namespace Game
         public Portal Linked
         {
             get { return _linked; }
-            set { _linked = value; }
         }
 
         private Portal()
         {
         }
 
-        public Portal(Scene scene)
+        public Portal(Scene scene) 
+            : base(scene)
         {
-            Transform = new Transform2D();
-            SetScene(scene);
-            Transform.FixedScale = true;
+            Transform.UniformScale = true;
         }
 
         public Portal(Scene scene, bool leftHanded)
@@ -56,22 +55,7 @@ namespace Game
         public Portal(Scene scene, Transform2D transform)
             : this(scene)
         {
-            Transform = transform;
-        }
-
-        private void SetScene(Scene scene)
-        {
-            //Debug.Assert(_scene == null);
-            Scene = scene;
-            /*if (Scene != null)
-            {
-                Scene.AddPortal(this);
-            }*/
-        }
-
-        public void RemoveFromScene()
-        {
-            Scene.RemovePortal(this);
+            Transform.SetLocal(transform);
         }
 
         public void SetSize(float size)

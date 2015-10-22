@@ -7,6 +7,7 @@ using OpenTK.Graphics.OpenGL;
 using OpenTK;
 using System.IO;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Game
 {
@@ -16,9 +17,9 @@ namespace Game
         public List<Scene> RenderScenes = new List<Scene>();
         private Controller _controller;
 
-        /*public static Dictionary<string, int> Textures = new Dictionary<string, int>();
+        public static Dictionary<string, int> Textures = new Dictionary<string, int>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
-        */
+        
         public Renderer(Controller controller)
         {
             _controller = controller;
@@ -37,8 +38,8 @@ namespace Game
             GL.Viewport(0, 0, _controller.Width, _controller.Height);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
-            Controller.Shaders["textured"].EnableVertexAttribArrays();
-            Controller.Shaders["default"].EnableVertexAttribArrays();
+            Renderer.Shaders["textured"].EnableVertexAttribArrays();
+            Renderer.Shaders["default"].EnableVertexAttribArrays();
             float TimeRenderDelta = 0;
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
@@ -55,8 +56,8 @@ namespace Game
                 GL.Clear(ClearBufferMask.DepthBufferBit);
             }
             
-            Controller.Shaders["textured"].DisableVertexAttribArrays();
-            Controller.Shaders["default"].DisableVertexAttribArrays();
+            Renderer.Shaders["textured"].DisableVertexAttribArrays();
+            Renderer.Shaders["default"].DisableVertexAttribArrays();
 
             GL.Flush();
             _controller.SwapBuffers();
@@ -182,6 +183,37 @@ namespace Game
             foreach (Entity v in scene.EntityList)
             {
                 v.Render(viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond));
+            }
+        }
+
+        public static int LoadImage(Bitmap image)
+        {
+            int texID = GL.GenTexture();
+
+            GL.BindTexture(TextureTarget.Texture2D, texID);
+            BitmapData data = image.LockBits(new System.Drawing.Rectangle(0, 0, image.Width, image.Height),
+                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0,
+                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+
+            image.UnlockBits(data);
+
+            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+
+            return texID;
+        }
+
+        public static int LoadImage(string filename)
+        {
+            try
+            {
+                Bitmap file = new Bitmap(filename);
+                return LoadImage(file);
+            }
+            catch (FileNotFoundException e)
+            {
+                return -1;
             }
         }
     }

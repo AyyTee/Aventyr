@@ -7,13 +7,11 @@ using System.Xml.Serialization;
 
 namespace Game
 {
+    
     public class BodyUserData
     {
         private Entity _linkedEntity;
-        /// <summary>
-        /// This will cause XMLSerializer to store the Guid of the Entity.  This is neccesary to preserve references to the Entity.
-        /// </summary>
-        //public ResourceID<Entity> EntityID;
+        public ResourceID<Entity> EntityID;
         [XmlIgnore]
         public Entity LinkedEntity
         {
@@ -27,7 +25,7 @@ namespace Game
             }
         }
 
-        private BodyUserData()
+        public BodyUserData()
         {
         }
 

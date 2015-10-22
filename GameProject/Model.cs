@@ -14,13 +14,22 @@ namespace Game
     public class Model : IDisposable, IVertices
     {
         public Transform Transform = new Transform();
-        public int ibo_elements;
-        public bool iboExists = true;
-        public ShaderProgram Shader;
+        public int IboElements;
+        public bool IboExists = true;
+
+        public string ShaderName = null;
+        public ShaderProgram Shader
+        {
+            get
+            {
+                Debug.Assert(Renderer.Shaders.ContainsKey(ShaderName), "Shader doesn't exist.");
+                return Renderer.Shaders[ShaderName]; 
+            }
+        }
 
         public bool IsTextured = false;
-        public int TextureID;
-        public Transform2D TransformUV = new Transform2D();
+        public int TextureId;
+        public Transform2D TransformUv = new Transform2D();
         public bool Wireframe = false;
 
         public class Vertex
@@ -97,8 +106,8 @@ namespace Game
         {
             if (Controller.ContextExists)
             {
-                Shader = Controller.Shaders["textured"];
-                GL.GenBuffers(1, out ibo_elements);
+                ShaderName = "textured";
+                GL.GenBuffers(1, out IboElements);
             }
         }
 
@@ -116,25 +125,25 @@ namespace Game
 
         public void Dispose()
         {
-            if (iboExists)
+            if (IboExists)
             {
                 lock ("delete")
                 {
-                    Controller.iboGarbage.Add(ibo_elements);
-                    iboExists = false;
+                    Controller.iboGarbage.Add(IboElements);
+                    IboExists = false;
                 }
             }
         }
 
-        public Model(ShaderProgram shader)
+        public Model(string shaderName)
         {
-            Shader = shader;
-            GL.GenBuffers(1, out ibo_elements);
+            ShaderName = shaderName;
+            GL.GenBuffers(1, out IboElements);
         }
 
         public void SetTexture(int textureID)
         {
-            TextureID = textureID;
+            TextureId = textureID;
             IsTextured = true;
         }
 
@@ -224,7 +233,7 @@ namespace Game
             Model model = new Model(vertices, indices);
             if (Controller.ContextExists)
             {
-                model.SetTexture(Controller.Textures["default.png"]);
+                model.SetTexture(Renderer.Textures["default.png"]);
             }
             return model;
         }
@@ -291,7 +300,7 @@ namespace Game
             Model model = new Model(vertices, indices);
             if (Controller.ContextExists)
             {
-                model.SetTexture(Controller.Textures["default.png"]);
+                model.SetTexture(Renderer.Textures["default.png"]);
             }
             return model;
         }

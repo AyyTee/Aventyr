@@ -37,9 +37,8 @@ namespace Game
             set { _fixtureId = value; }
         }
 
-        private FixtureUserData()
+        public FixtureUserData()
         {
-
         }
 
         public FixtureUserData(Fixture fixture)

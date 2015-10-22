@@ -49,9 +49,6 @@ namespace Game
         Entity intersectDot;
         public static List<int> iboGarbage = new List<int>();
 
-        public static Dictionary<string, int> Textures = new Dictionary<string, int>();
-        public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
-
         public static String fontFolder = Path.Combine(new String[2] {
             "assets",
             "fonts"
@@ -106,21 +103,21 @@ namespace Game
             lastMousePos = new Vector2(Mouse.X, Mouse.Y);
 
             // Load shaders from file
-            Shaders.Add("default", new ShaderProgram(Path.Combine(shaderFolder, "vs.glsl"), Path.Combine(shaderFolder, "fs.glsl"), true));
-            Shaders.Add("textured", new ShaderProgram(Path.Combine(shaderFolder, "vs_tex.glsl"), Path.Combine(shaderFolder, "fs_tex.glsl"), true));
-            Shaders.Add("text", new ShaderProgram(Path.Combine(shaderFolder, "vs_text.glsl"), Path.Combine(shaderFolder, "fs_text.glsl"), true));
+            Renderer.Shaders.Add("default", new ShaderProgram(Path.Combine(shaderFolder, "vs.glsl"), Path.Combine(shaderFolder, "fs.glsl"), true));
+            Renderer.Shaders.Add("textured", new ShaderProgram(Path.Combine(shaderFolder, "vs_tex.glsl"), Path.Combine(shaderFolder, "fs_tex.glsl"), true));
+            Renderer.Shaders.Add("text", new ShaderProgram(Path.Combine(shaderFolder, "vs_text.glsl"), Path.Combine(shaderFolder, "fs_text.glsl"), true));
 
             // Load textures from file
-            Textures.Add("default.png", loadImage(Path.Combine(textureFolder, "default.png")));
-            Textures.Add("grid.png", loadImage(Path.Combine(textureFolder, "grid.png")));
+            Renderer.Textures.Add("default.png", Renderer.LoadImage(Path.Combine(textureFolder, "default.png")));
+            Renderer.Textures.Add("grid.png", Renderer.LoadImage(Path.Combine(textureFolder, "grid.png")));
             
 
             background = Model.CreatePlane();
-            background.TextureID = Textures["grid.png"];
+            background.TextureId = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
             background.Transform.Scale = new Vector3(size, size, size);
-            background.TransformUV.Scale = new Vector2(size, size);
+            background.TransformUv.Scale = new Vector2(size, size);
             Entity back = scene.CreateEntity(new Vector2(0f, 0f));
             back.Models.Add(background);
 
@@ -213,12 +210,12 @@ namespace Game
                 new Vector2(0, -0.5f)
             });
             //playerModel.Transform.Scale = new Vector3(-15, .2f, 1);
-            playerModel.SetTexture(Controller.Textures["default.png"]);
+            playerModel.SetTexture(Renderer.Textures["default.png"]);
             player.IsPortalable = true;
             //player.Transform.Scale = new Vector2(.5f, .5f);
             player.Transform.Position = new Vector2(0f, 0f);
             player.Models.Add(playerModel);
-            playerModel.SetTexture(Controller.Textures["default.png"]);
+            playerModel.SetTexture(Renderer.Textures["default.png"]);
             #endregion
 
             Entity playerParent = scene.CreateEntity(new Vector2(1, 0));
@@ -240,10 +237,11 @@ namespace Game
             
             /*Entity ground = scene.CreateEntityPolygon(new Vector2(0, -4f), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
-            ground.Transform.Rotation = 0.5f;
+            ground.Transform.Rotation = 0.5f;*/
             
             Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
-            */
+            scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
+            
             text = hud.CreateEntity();
             text.Transform.Position = new Vector2(0, ClientSize.Height);
             text2 = hud.CreateEntity();
@@ -328,10 +326,9 @@ namespace Game
                 PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
             }
             
-
+            */
             text2.Models.Clear();
             text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
-            */
             
             
             if (Focused)
@@ -346,9 +343,9 @@ namespace Game
                 }
                 if (InputExt.KeyPress(Key.C))
                 {
+                    renderer.RenderScenes.Remove(scene);
                     scene = Scene.Load();
-                    renderer.RenderScenes.Clear();
-                    renderer.RenderScenes.Add(scene);
+                    renderer.RenderScenes.Insert(0, scene);
                 }
                 #region camera movement
                 
@@ -459,35 +456,6 @@ namespace Game
             File.Delete("Triangulating.txt");
         }
 
-        int loadImage(Bitmap image)
-        {
-            int texID = GL.GenTexture();
-
-            GL.BindTexture(TextureTarget.Texture2D, texID);
-            BitmapData data = image.LockBits(new System.Drawing.Rectangle(0, 0, image.Width, image.Height),
-                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0,
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-
-            image.UnlockBits(data);
-
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-            return texID;
-        }
-
-        int loadImage(string filename)
-        {
-            try
-            {
-                Bitmap file = new Bitmap(filename);
-                return loadImage(file);
-            }
-            catch (FileNotFoundException e)
-            {
-                return -1;
-            }
-        }
+        
     }
 }

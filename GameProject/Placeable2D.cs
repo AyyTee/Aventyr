@@ -1,29 +1,31 @@
 ﻿
+using System;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 namespace Game
 {
+    [Serializable]
     public abstract class Placeable2D
     {
-        private Transform2D _transform = null;
+        public Placeable2D()
+        {
+        }
+
+        public Placeable2D(Scene scene)
+        {
+            _scene = scene;
+        }
+
+        private Transform2D _transform = new Transform2D();
         public Transform2D Transform
         {
             get { return _transform; }
-            set 
-            {
-                Debug.Assert(_transform == null, "Transform can only be assigned once.");
-                _transform = value; 
-            }
         }
 
         private Scene _scene = null;
         public Scene Scene
         {
             get { return _scene; }
-            set 
-            {
-                Debug.Assert(_scene == null, "This has already been assigned to a scene.");
-                _scene = value; 
-            }
         }
     }
 }

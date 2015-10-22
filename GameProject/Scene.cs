@@ -1,28 +1,29 @@
 ﻿using OpenTK;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using OpenTK.Graphics.OpenGL;
 using FarseerPhysics.Dynamics;
 using Xna = Microsoft.Xna.Framework;
 using System.Diagnostics;
 using FarseerPhysics.Factories;
 using FarseerPhysics.Collision.Shapes;
 using Poly2Tri;
-using System.Xml.Serialization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Reflection;
+using System;
 
 namespace Game
 {
+    [Serializable]
     public class Scene
     {
-        //public Dictionary<ResourceID<Portal>, Portal> portalMap = new Dictionary<ResourceID<Portal>, Portal>();
-        //public Dictionary<ResourceID<Entity>, Entity> entityMap = new Dictionary<ResourceID<Entity>, Entity>();
-        [IgnoreDataMemberAttribute]
-        public World PhysWorld;
+        [NonSerialized]
+        private World _physWorld;
+
+        public World PhysWorld
+        {
+            get { return _physWorld; }
+        }
         public float TimeStepSize = 1 / 60f;
         private Camera _activeCamera;
         public Camera ActiveCamera
@@ -43,12 +44,15 @@ namespace Game
 
         public Scene()
         {
-            PhysWorld = new World(new Xna.Vector2(0f, -9.8f/2));
+            SetPhysicsWorld(new World(new Xna.Vector2(0f, -9.8f/2)));
         }
 
         public void Step()
         {
-            PhysWorld.Step(TimeStepSize);
+            if (PhysWorld != null)
+            {
+                PhysWorld.Step(TimeStepSize);
+            }
             foreach (Entity e in EntityList)
             {
                 e.Step();
@@ -86,8 +90,6 @@ namespace Game
             box.LinkBody(body);
             body.BodyType = BodyType.Dynamic;
 
-            //body.CreateFixture(new CircleShape(1f, 1f));*/
-
             return box;
         }
 
@@ -121,9 +123,6 @@ namespace Game
                 FixtureUserData userData = new FixtureUserData(fixture);
                 for (int j = 0; j < polygon.Triangles[i].Neighbors.Count(); j++)
                 {
-                    //userData.EdgeIsExterior[j] = polygon.Triangles[i].NeighborAcrossFrom(polygon.Triangles[i].Points[j]) == null;
-                    //polygon.Triangles[i].
-
                     userData.EdgeIsExterior[j] = polygon.Triangles[i].EdgeIsConstrained[(j + 2) % 3];
                 }
             }
@@ -171,6 +170,15 @@ namespace Game
             PortalList.Remove(portal);
         }
 
+        /// <summary>
+        /// Assigns a physics world to this scene. Can only be done if there isn't already a physics world assigned.
+        /// </summary>
+        public void SetPhysicsWorld(World world)
+        {
+            Debug.Assert(PhysWorld == null, "A physics world has already been assigned to this scene.");
+            _physWorld = world;
+        }
+
         public void Save()
         {
             FileStream physicsFile = File.Create("savePhys.xml");
@@ -182,31 +190,50 @@ namespace Game
 
         public void Save(FileStream sceneFile, FileStream physicsFile)
         {
-            var physSerializer = new FarseerPhysics.Common.WorldXmlSerializer();
-            physSerializer.Serialize(PhysWorld, physicsFile);
-            
-            /*string path = "filepath";
-            FileStream outFile = File.Create(path);*/
-            /*XmlSerializer formatter = new XmlSerializer(GetType());
-            formatter.Serialize(outFile, this);*/
-            
-            Assembly assembly = Assembly.GetAssembly(GetType());//Assembly.Load(new AssemblyName());
-            var types = from t in Assembly.GetExecutingAssembly().GetTypes()
-                        where t.IsSubclassOf(GetType())
-                        select t;
-            DataContractSerializer serializer = new DataContractSerializer(GetType(), "Game", "Game", types,
-            0x7FFF /*maxObjectsInGraph*/,
-            false/*ignoreExtensionDataObject*/,
-            true/*preserveObjectReferences*/,
-            null/*dataContractSurrogate*/,
-            new PhysDataContractResolver(assembly));
+            /*int idMin = PhysWorld.BodyList.Min(item => item.BodyId);
+            foreach (Body body in PhysWorld.BodyList)
+            {
+                body.BodyId -= idMin;
+                ((BodyUserData)body.UserData).LinkedEntity.BodyId -= idMin;
+                body.UserData = null;
+            }*/
+
+            var physicsSerializer = new FarseerPhysics.Common.WorldXmlSerializer();
+            physicsSerializer.Serialize(PhysWorld, physicsFile);
+
+            DataContractSerializer serializer = GetSceneSerializer();
 
             serializer.WriteObject(sceneFile, this);
         }
 
         public static Scene Load()
         {
-            Assembly assembly = Assembly.GetAssembly(typeof(Scene));//Assembly.Load(new AssemblyName());
+            FileStream physicsFile = File.OpenRead("savePhys.xml");
+            FileStream sceneFile = File.OpenRead("save.xml");
+            Scene scene = Load(sceneFile, physicsFile);
+            physicsFile.Close();
+            sceneFile.Close();
+            return scene;
+        }
+
+        public static Scene Load(FileStream sceneFile, FileStream physicsFile)
+        {
+            DataContractSerializer serializer = GetSceneSerializer();
+            Scene scene = (Scene)serializer.ReadObject(sceneFile);
+
+            var physicsDeserializer = new FarseerPhysics.Common.WorldXmlDeserializer();
+
+            World physWorld = physicsDeserializer.Deserialize(physicsFile);
+            
+            
+            scene.SetPhysicsWorld(physWorld);
+
+            return scene;
+        }
+
+        private static DataContractSerializer GetSceneSerializer()
+        {
+            Assembly assembly = Assembly.GetAssembly(typeof(Scene));
             var types = from t in Assembly.GetExecutingAssembly().GetTypes()
                         where t.IsSubclassOf(typeof(Scene))
                         select t;
@@ -216,13 +243,7 @@ namespace Game
             true/*preserveObjectReferences*/,
             null/*dataContractSurrogate*/,
             new PhysDataContractResolver(assembly));
-
-            FileStream physicsFile = File.OpenRead("savePhys.xml");
-            FileStream sceneFile = File.OpenRead("save.xml");
-            Scene scene = (Scene)serializer.ReadObject(sceneFile);
-            physicsFile.Close();
-            sceneFile.Close();
-            return scene;
+            return serializer;
         }
     }
 }

@@ -21,14 +21,15 @@ namespace Game
         {
             get { return _id; }
         }
-
+        
         private Transform2D _velocity = new Transform2D();
         private List<Model> _models = new List<Model>();
         private List<ClipModel> ClipModels = new List<ClipModel>();
         private bool _isPortalable = false;
-        
+
         public int BodyId = -1;
 
+        //public Body Body;
         public Body Body
         {
             get 
@@ -77,51 +78,36 @@ namespace Game
 
         private Entity()
         {
-
         }
 
         public Entity(Scene scene)
+            : base(scene)
         {
-            SetScene(scene);
         }
 
         public Entity(Vector2 position)
         {
-            Transform = new Transform2D(position);
+            Transform.Position = position;
         }
 
         public Entity(Scene scene, Vector2 position) : this(scene)
         {
-            Transform = new Transform2D(position);
+            Transform.Position = position;
         }
 
         public Entity(Scene scene, Transform2D transform) : this(scene)
         {
-            Transform = transform;
-        }
-
-        /// <summary>
-        /// Adds this entity to a scene. Should only be called once during instantiation.
-        /// </summary>
-        private void SetScene(Scene scene)
-        {
-            Debug.Assert(Scene == null, "The Scene can only be assigned once.");
-            //Debug.Assert(scene != null, "Scene cannot be a null value.");
-            Scene = scene;
-        }
-
-        public void RemoveFromScene()
-        {
-            Scene.RemoveEntity(this);
+            Transform.SetLocal(transform);
         }
 
         public void LinkBody(Body body)
         {
-            Transform.FixedScale = true;
+            Transform.UniformScale = true;
             BodyUserData userData = new BodyUserData(this);
             Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
             body.UserData = userData;
             BodyId = body.BodyId;
+            //Body = body;
         }
 
         public virtual void Step()
@@ -214,17 +200,17 @@ namespace Game
                 GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
                 // Buffer index data
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, v.ibo_elements);
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, v.IboElements);
                 GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);
 
-                GL.BindTexture(TextureTarget.Texture2D, v.TextureID);
+                GL.BindTexture(TextureTarget.Texture2D, v.TextureId);
                 
-                Matrix4 UVMatrix = v.TransformUV.GetMatrix();
+                Matrix4 UVMatrix = v.TransformUv.GetMatrix();
                 GL.UniformMatrix4(v.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
 
                 if (v.Shader.GetAttribute("maintexture") != -1)
                 {
-                    GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.TextureID);
+                    GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.TextureId);
                 }
 
                 if (v.Wireframe)
