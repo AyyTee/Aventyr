@@ -235,9 +235,9 @@ namespace Game
                 new Vector2(-0.5f, 0.1f)
             };
             
-            /*Entity ground = scene.CreateEntityPolygon(new Vector2(0, -4f), new Vector2(0, 0), v);
+            Entity ground = scene.CreateEntityPolygon(new Vector2(0, -4f), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
-            ground.Transform.Rotation = 0.5f;*/
+            ground.Transform.Rotation = 0.5f;
             
             Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
             scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
@@ -450,12 +450,11 @@ namespace Game
 
         protected override void OnClosing(CancelEventArgs e)
         {
+            //Context.Dispose();
             base.OnClosing(e);
             Log.Close();
             soundPlayer.Dispose();
             File.Delete("Triangulating.txt");
         }
-
-        
     }
 }

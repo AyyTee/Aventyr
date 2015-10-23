@@ -24,13 +24,15 @@ namespace Game
         {
             get { return _physWorld; }
         }
-        public float TimeStepSize = 1 / 60f;
-        private Camera _activeCamera;
-        public Camera ActiveCamera
+        private int _entityIdCount = 0;
+
+        public int EntityIdCount
         {
-            get { return _activeCamera; }
-            set { _activeCamera = value; }
+            get { return _entityIdCount; }
         }
+
+        public float TimeStepSize = 1 / 60f;
+        public Camera ActiveCamera { get; set; }
         private List<Portal> _portalList = new List<Portal>();
         public List<Portal> PortalList
         {
@@ -63,6 +65,7 @@ namespace Game
         {
             Debug.Assert(!EntityList.Exists(item => item.Equals(entity)), "This entity has already been added to this scene.");
             EntityList.Add(entity);
+            _entityIdCount++;
         }
 
         public Entity CreateEntity()
@@ -73,9 +76,7 @@ namespace Game
         public Entity CreateEntity(Vector2 position)
         {
             Entity entity = new Entity(this, position);
-            //AddEntity(entity);
-            Debug.Assert(!EntityList.Exists(item => item.Equals(entity)), "This entity has already been added to this scene.");
-            EntityList.Add(entity);
+            AddEntity(entity);
             return entity;
         }
 
@@ -121,12 +122,13 @@ namespace Game
                 PolygonShape shape = new PolygonShape(v1, 1);
                 Fixture fixture = body.CreateFixture(shape);
                 FixtureUserData userData = new FixtureUserData(fixture);
+                FixtureExt.SetUserData(fixture, userData);
                 for (int j = 0; j < polygon.Triangles[i].Neighbors.Count(); j++)
                 {
                     userData.EdgeIsExterior[j] = polygon.Triangles[i].EdgeIsConstrained[(j + 2) % 3];
                 }
             }
-
+            
             entity.LinkBody(body);
 
             return entity;
@@ -177,6 +179,16 @@ namespace Game
         {
             Debug.Assert(PhysWorld == null, "A physics world has already been assigned to this scene.");
             _physWorld = world;
+            PhysWorld.ProcessChanges();
+
+            foreach (Body body in PhysWorld.BodyList)
+            {
+                var userData = ((List<BodyUserData>)body.UserData)[0];
+                Entity entity = EntityList.Find(item => (item.Id == userData.EntityID));
+
+                BodyExt.SetUserData(body, entity);
+                entity.BodyId = body.BodyId;
+            }
         }
 
         public void Save()
@@ -190,14 +202,6 @@ namespace Game
 
         public void Save(FileStream sceneFile, FileStream physicsFile)
         {
-            /*int idMin = PhysWorld.BodyList.Min(item => item.BodyId);
-            foreach (Body body in PhysWorld.BodyList)
-            {
-                body.BodyId -= idMin;
-                ((BodyUserData)body.UserData).LinkedEntity.BodyId -= idMin;
-                body.UserData = null;
-            }*/
-
             var physicsSerializer = new FarseerPhysics.Common.WorldXmlSerializer();
             physicsSerializer.Serialize(PhysWorld, physicsFile);
 
@@ -222,7 +226,6 @@ namespace Game
             Scene scene = (Scene)serializer.ReadObject(sceneFile);
 
             var physicsDeserializer = new FarseerPhysics.Common.WorldXmlDeserializer();
-
             World physWorld = physicsDeserializer.Deserialize(physicsFile);
             
             

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph ZoomLevel="1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\GameProject.csproj" Category="CSProject" Bounds="8.80555691787264,135.483765520628,111.610778135102,85.9204991840707" Group="Expanded" Label="GameProject" UseManualLocation="True" />
+    <Node Id="C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\Game.exe" Bounds="28.7938745169681,175.460577645612,71.6366981351023,25.9593791840707" Label="Game.exe" />
+    <Node Id="C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\UnitTest\UnitTest.csproj" Category="CSProject" Bounds="5.70717968611234E-08,-11.1603954189275,119.21,85.9602000000001" Group="Expanded" Label="UnitTest" />
+    <Node Id="C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\UnitTest\bin\Debug\UnitTest.dll" Bounds="19.9999995117392,28.8399238153631,79.21,25.96" Label="UnitTest.dll" />
+  </Nodes>
+  <Links>
+    <Link Source="C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\GameProject.csproj" Target="C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\bin\Debug\Game.exe" Category="Contains" />
+    <Link Source="C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\UnitTest\UnitTest.csproj" Target="C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\GameProject\GameProject.csproj" Bounds="61.0723969424526,74.7998045810726,1.76473701936764,51.6892016889086" />
+    <Link Source="C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\UnitTest\UnitTest.csproj" Target="C:\Users\Martin\Documents\Visual Studio 2013\Projects\Game2\UnitTest\bin\Debug\UnitTest.dll" Category="Contains" />
+  </Links>
+  <Categories>
+    <Category Id="CSProject" Background="#FF3A8F35" />
+    <Category Id="Contains" Label="Contains" Description="Whether the source of the link contains the target object" CanBeDataDriven="False" CanLinkedNodesBeDataDriven="True" IncomingActionLabel="Contained By" IsContainment="True" OutgoingActionLabel="Contains" />
+  </Categories>
+  <Properties>
+    <Property Id="Background" Label="Background" Description="The background color" DataType="System.Windows.Media.Brush" />
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="CanBeDataDriven" Label="CanBeDataDriven" Description="CanBeDataDriven" DataType="System.Boolean" />
+    <Property Id="CanLinkedNodesBeDataDriven" Label="CanLinkedNodesBeDataDriven" Description="CanLinkedNodesBeDataDriven" DataType="System.Boolean" />
+    <Property Id="Group" Label="Group" Description="Display the node as a group" DataType="Microsoft.VisualStudio.GraphModel.GraphGroupStyle" />
+    <Property Id="IncomingActionLabel" Label="IncomingActionLabel" Description="IncomingActionLabel" DataType="System.String" />
+    <Property Id="IsContainment" DataType="System.Boolean" />
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="OutgoingActionLabel" Label="OutgoingActionLabel" Description="OutgoingActionLabel" DataType="System.String" />
+    <Property Id="UseManualLocation" DataType="System.Boolean" />
+    <Property Id="ZoomLevel" DataType="System.String" />
+  </Properties>
+</DirectedGraph>

@@ -10,20 +10,9 @@ namespace Game
     
     public class BodyUserData
     {
-        private Entity _linkedEntity;
-        public ResourceID<Entity> EntityID;
+        public int EntityID;
         [XmlIgnore]
-        public Entity LinkedEntity
-        {
-            get 
-            {
-                return _linkedEntity;//Entity.IDMap[EntityID];
-            }
-            set
-            {
-                _linkedEntity = value;
-            }
-        }
+        public Entity LinkedEntity { get; private set; }
 
         public BodyUserData()
         {
@@ -31,8 +20,8 @@ namespace Game
 
         public BodyUserData(Entity linkedEntity)
         {
-            _linkedEntity = linkedEntity;
-            //EntityID = linkedEntity.ID;
+            LinkedEntity = linkedEntity;
+            EntityID = linkedEntity.Id;
         }
     }
 }

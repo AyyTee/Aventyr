@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CE5CD75D-8626-4CD8-83FC-B7A4868DAEC0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Game</RootNamespace>
     <AssemblyName>Game</AssemblyName>
@@ -51,6 +51,9 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Cgen.Audio, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -93,15 +96,12 @@
     <Compile Include="Line.cs" />
     <Compile Include="MathExt.cs" />
     <Compile Include="MatrixExt4.cs" />
+    <Compile Include="BodyExt.cs" />
     <Compile Include="PhysDataContractResolver.cs" />
-    <Compile Include="PhysDeserializer.cs" />
     <Compile Include="Placeable2D.cs" />
     <Compile Include="PolygonFactory.cs" />
     <Compile Include="PortalPlacer.cs" />
     <Compile Include="Renderer.cs" />
-    <Compile Include="ResourceID.cs" />
-    <Compile Include="ResourceMap.cs" />
-    <Compile Include="SaveState.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Controller.cs" />
@@ -154,6 +154,7 @@
     <None Include="assets\shaders\vs_text.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

@@ -14,10 +14,11 @@ namespace Game
     /// <summary>
     /// An object that exists within the world space and can be drawn
     /// </summary>
+    [Serializable]
     public class Entity : Placeable2D
     {
-        private ResourceID<Entity> _id = new ResourceID<Entity>();
-        public ResourceID<Entity> ID
+        private int _id;
+        public int Id
         {
             get { return _id; }
         }
@@ -56,9 +57,8 @@ namespace Game
             set { _isPortalable = value; }
         }
         public virtual Transform2D Velocity { get { return _velocity; } set { _velocity = value; } }
-        //[IgnoreDataMemberAttribute]
         public virtual List<Model> Models { get { return _models; } set { _models = value; } }
-        
+        [DataContractAttribute]
         public class ClipModel
         {
             private Line[] _clipLines;
@@ -83,19 +83,26 @@ namespace Game
         public Entity(Scene scene)
             : base(scene)
         {
+            if (scene != null)
+            {
+                _id = scene.EntityIdCount;
+            }
         }
 
         public Entity(Vector2 position)
+            : this(null)
         {
             Transform.Position = position;
         }
 
-        public Entity(Scene scene, Vector2 position) : this(scene)
+        public Entity(Scene scene, Vector2 position) 
+            : this(scene)
         {
             Transform.Position = position;
         }
 
-        public Entity(Scene scene, Transform2D transform) : this(scene)
+        public Entity(Scene scene, Transform2D transform) 
+            : this(scene)
         {
             Transform.SetLocal(transform);
         }
@@ -105,9 +112,10 @@ namespace Game
             Transform.UniformScale = true;
             BodyUserData userData = new BodyUserData(this);
             Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
-            body.UserData = userData;
             BodyId = body.BodyId;
-            //Body = body;
+
+            BodyExt.SetUserData(body, this);
+            
         }
 
         public virtual void Step()
