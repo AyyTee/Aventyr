@@ -133,7 +133,7 @@ namespace Game
 
             transform.Position = Entity.Transform.WorldToLocal(GetPosition());
             transform.Parent = Entity.Transform;
-            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.Transform.Rotation + (float)Math.PI;
+            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.Transform.Rotation;// +(float)Math.PI;
             return transform;
         }
     }

@@ -10,7 +10,7 @@ namespace Game
 {
     public static class MatrixExt4
     {
-        private const float EQUALS_ERROR_MARGIN = 0.001f;
+        private const float EQUALS_ERROR_MARGIN = 0.0001f;
         public static Matrix4 ConvertTo(FarseerPhysics.Common.Transform transform)
         {
             Matrix4 matrix = Matrix4.CreateRotationZ(transform.R.Angle);

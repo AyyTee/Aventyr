@@ -307,7 +307,6 @@ namespace Game
             {
                 ToggleFullScreen();   
             }
-
             
             Entity player = scene.GetEntityByName("player");
             Entity tempLine = scene.GetEntityByName("tempLine");
@@ -423,17 +422,6 @@ namespace Game
                 #endregion
             }
             
-            /*box2.Transform.Rotation -= 0.01f;
-            box2.Transform.Position = new Vector2(1f, 0f);
-            boxChild.Transform.Parent = null;*/
-            /*portal3.Transform.Rotation = 0f;
-            portal3.Transform.Position = new Vector2(1, 0.5f);
-            portal3.Transform.Scale = new Vector2(1, 1);
-            portal3.Transform.Parent = boxChild.Transform;*/
-
-            //scene.PortalList[1].Transform.Rotation += 0.01f;
-            //scene.EntityList[1].Transform.Position = new Vector2(1f, -2f);
-            //scene.EntityList[1].Transform.Scale = new Vector2(-1f, -1f);
             scene.Step();
 
             //get rid of all ibo elements no longer used
@@ -450,7 +438,6 @@ namespace Game
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            //Context.Dispose();
             base.OnClosing(e);
             Log.Close();
             soundPlayer.Dispose();
