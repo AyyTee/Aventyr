@@ -68,6 +68,16 @@ namespace Game
             _entityIdCount++;
         }
 
+        public Entity GetEntityById(int id)
+        {
+            return EntityList.Find(item => (item.Id == id));
+        }
+
+        public Entity GetEntityByName(string name)
+        {
+            return EntityList.Find(item => (item.Name == name));
+        }
+
         public Entity CreateEntity()
         {
             return CreateEntity(new Vector2(0, 0));
@@ -222,6 +232,7 @@ namespace Game
 
         public static Scene Load(FileStream sceneFile, FileStream physicsFile)
         {
+            
             DataContractSerializer serializer = GetSceneSerializer();
             Scene scene = (Scene)serializer.ReadObject(sceneFile);
 
@@ -241,7 +252,7 @@ namespace Game
                         where t.IsSubclassOf(typeof(Scene))
                         select t;
             DataContractSerializer serializer = new DataContractSerializer(typeof(Scene), "Game", "Game", types,
-            0x7FFF /*maxObjectsInGraph*/,
+            0x7FFFF /*maxObjectsInGraph*/,
             false/*ignoreExtensionDataObject*/,
             true/*preserveObjectReferences*/,
             null/*dataContractSurrogate*/,

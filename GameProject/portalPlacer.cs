@@ -25,6 +25,7 @@ namespace Game
                 if (intersection != null)
                 {
                     portal.Transform.SetLocal(intersection.GetTransform());
+                    portal.Transform.Parent = intersection.Entity.Transform;
                 }
             }
         }
@@ -67,7 +68,7 @@ namespace Game
                                             //ignore interior edges
                                             if (fixture.UserData != null)
                                             {
-                                                FixtureUserData userData = (FixtureUserData)fixture.UserData;
+                                                FixtureUserData userData = FixtureExt.GetUserData(fixture);
                                                 if (userData.EdgeIsExterior[i] == false)
                                                 {
                                                     break;

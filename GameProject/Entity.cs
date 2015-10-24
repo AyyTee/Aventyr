@@ -17,11 +17,8 @@ namespace Game
     [Serializable]
     public class Entity : Placeable2D
     {
-        private int _id;
-        public int Id
-        {
-            get { return _id; }
-        }
+        public int Id { get; private set; }
+        public string Name { get; set; }
         
         private Transform2D _velocity = new Transform2D();
         private List<Model> _models = new List<Model>();
@@ -29,8 +26,6 @@ namespace Game
         private bool _isPortalable = false;
 
         public int BodyId = -1;
-
-        //public Body Body;
         public Body Body
         {
             get 
@@ -85,8 +80,9 @@ namespace Game
         {
             if (scene != null)
             {
-                _id = scene.EntityIdCount;
+                Id = scene.EntityIdCount;
             }
+            Transform.UniformScale = true;
         }
 
         public Entity(Vector2 position)
@@ -366,7 +362,6 @@ namespace Game
                 }
 
                 GL.Uniform1(cm.Model.Shader.GetUniform("cutLinesLength"), cutLines.Count);
-                //GL.Uniform1(model.Shader.GetUniform("cutLines"), cutLines.Count, cutLines.ToArray());
                 GL.Uniform1(GL.GetUniformLocation(cm.Model.Shader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
                 _RenderSetTransformMatrix(cm.Model, cm.Transform * viewMatrix);
                 GL.DrawElements(BeginMode.Triangles, cm.Model.Indices.Count, DrawElementsType.UnsignedInt, 0);

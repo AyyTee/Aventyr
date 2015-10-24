@@ -32,7 +32,6 @@ namespace Game
             ClientSize = base.ClientSize;
         }
         InputExt InputExt;
-        Camera cam, hudCam;
         Vector2 lastMousePos = new Vector2();
         /// <summary>
         /// Intended to keep pointless messages from the Poly2Tri library out of the console window
@@ -67,14 +66,12 @@ namespace Game
         });
         Scene scene, hud;
         FontRenderer FontRenderer;
-        Entity tempLine;
         Portal portal0, portal1, portal2, portal3;
         float Time = 0.0f;
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
         float TimeRenderDelta = 0.0f;
-        private Entity player;
         Entity text, text2;
         SoundSystem soundPlayer;
         Sound testSound;
@@ -92,7 +89,7 @@ namespace Game
             
             scene = new Scene();
             hud = new Scene();
-            hudCam = Camera.CameraOrtho(new Vector3(Width/2, Height/2, 0), Height, Width / (float)Height);
+            Camera hudCam = Camera.CameraOrtho(new Vector3(Width/2, Height/2, 0), Height, Width / (float)Height);
 
             System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
             privateFonts.AddFontFile(Path.Combine(fontFolder, "times.ttf"));
@@ -110,7 +107,6 @@ namespace Game
             // Load textures from file
             Renderer.Textures.Add("default.png", Renderer.LoadImage(Path.Combine(textureFolder, "default.png")));
             Renderer.Textures.Add("grid.png", Renderer.LoadImage(Path.Combine(textureFolder, "grid.png")));
-            
 
             background = Model.CreatePlane();
             background.TextureId = Renderer.Textures["grid.png"];
@@ -199,7 +195,8 @@ namespace Game
             #endregion
 
             #region player
-            player = scene.CreateEntity();
+            Entity player = scene.CreateEntity();
+            player.Name = "player";
             Model playerModel = Model.CreatePolygon(new Vector2[] {
                 new Vector2(0.5f, 0), 
                 new Vector2(0.35f, 0.15f), 
@@ -220,6 +217,9 @@ namespace Game
 
             Entity playerParent = scene.CreateEntity(new Vector2(1, 0));
             //player.Transform.Parent = playerParent.Transform;
+
+            Entity tempLine = scene.CreateEntity();
+            tempLine.Name = "tempLine";
 
             intersectDot = scene.CreateEntity();
             //intersectDot.Models.Add(Model.CreateCube());
@@ -247,13 +247,15 @@ namespace Game
             text2 = hud.CreateEntity();
             text2.Transform.Position = new Vector2(0, ClientSize.Height - 40);
 
-            cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, Width / (float)Height);
+            Camera cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, Width / (float)Height);
             
             scene.ActiveCamera = cam;
             hud.ActiveCamera = hudCam;
             renderer = new Renderer(this);
             renderer.RenderScenes.Add(scene);
             renderer.RenderScenes.Add(hud);
+
+            //GraphicsContext.CurrentContext.SwapInterval = true;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -267,10 +269,12 @@ namespace Game
         {
             base.OnRenderFrame(e);
             TimeRenderDelta += (float)e.Time;
-            /*text.Models.Clear();
-            text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));*/
+            text.Models.Clear();
+            text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
 
             renderer.Render();
+            /*int sleepTimeSpan = (int)Math.Max((1 / 60 - TimeRenderDelta) * 1000, 0);
+            System.Threading.Thread.Sleep(sleepTimeSpan);*/
         }
 
         private void ToggleFullScreen()
@@ -278,17 +282,17 @@ namespace Game
             if (WindowState == OpenTK.WindowState.Normal)
             {
                 WindowState = OpenTK.WindowState.Fullscreen;
-                cam.Aspect = Width / (float)Height;
-                hudCam.Aspect = cam.Aspect;
-                hudCam.Scale = Height;
+                scene.ActiveCamera.Aspect = Width / (float)Height;
+                hud.ActiveCamera.Aspect = Width / (float)Height;
+                hud.ActiveCamera.Scale = Height;
             }
             else if (WindowState == OpenTK.WindowState.Fullscreen)
             {
                 WindowState = OpenTK.WindowState.Normal;
                 ClientSize = new Size(800, 600);
-                cam.Aspect = Width / (float)Height;
-                hudCam.Aspect = cam.Aspect;
-                hudCam.Scale = Height;
+                scene.ActiveCamera.Aspect = Width / (float)Height;
+                hud.ActiveCamera.Aspect = Width / (float)Height;
+                hud.ActiveCamera.Scale = Height;
             }
         }
 
@@ -305,17 +309,14 @@ namespace Game
             }
 
             
-            /*if (tempLine != null)
-            {
-                scene.RemoveEntity(tempLine);
-            }
-            
-            tempLine = scene.CreateEntity();
+            Entity player = scene.GetEntityByName("player");
+            Entity tempLine = scene.GetEntityByName("tempLine");
             tempLine.Transform.Position = player.Transform.Position;
 
             Vector2 rayBegin = player.Transform.Position;
-            Vector2 rayEnd = VectorExt2.Transform(new Vector2(Mouse.X / (float)(ClientSize.Width / 2) - 1f, -(Mouse.Y / (float)(ClientSize.Height / 2) - 1f)), cam.GetViewMatrix().Inverted());
+            Vector2 rayEnd = VectorExt2.Transform(new Vector2(Mouse.X / (float)(ClientSize.Width / 2) - 1f, -(Mouse.Y / (float)(ClientSize.Height / 2) - 1f)), scene.ActiveCamera.GetViewMatrix().Inverted());
             tempLine.IsPortalable = true;
+            tempLine.Models.Clear();
             tempLine.Models.Add(Model.CreateLine(new Vector2[2] {
                 rayBegin - player.Transform.Position, 
                 rayEnd - player.Transform.Position
@@ -326,10 +327,8 @@ namespace Game
                 PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
             }
             
-            */
             text2.Models.Clear();
             text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
-            
             
             if (Focused)
             {
@@ -355,6 +354,7 @@ namespace Game
                 {
                     camSpeed = .005f;
                 }
+                Camera cam = scene.ActiveCamera;
                 if (InputExt.KeyDown(Key.R))
                 {
                     Quaternion rot = cam.Transform.Rotation;
@@ -431,7 +431,7 @@ namespace Game
             portal3.Transform.Scale = new Vector2(1, 1);
             portal3.Transform.Parent = boxChild.Transform;*/
 
-            scene.PortalList[1].Transform.Rotation += 0.01f;
+            //scene.PortalList[1].Transform.Rotation += 0.01f;
             //scene.EntityList[1].Transform.Position = new Vector2(1f, -2f);
             //scene.EntityList[1].Transform.Scale = new Vector2(-1f, -1f);
             scene.Step();

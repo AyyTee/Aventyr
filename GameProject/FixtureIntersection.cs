@@ -25,7 +25,7 @@ namespace Game
         {
             get 
             {
-                BodyUserData userData = (BodyUserData)Fixture.Body.UserData;
+                BodyUserData userData = BodyExt.GetUserData(Fixture.Body);//(BodyUserData)Fixture.Body.UserData;
                 return userData.LinkedEntity;
             }
         }

@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Game
 {
@@ -21,6 +22,8 @@ namespace Game
         private float _rotation = 0;
         private Vector2 _scale = new Vector2(1, 1);
         private bool _uniformScale = false;
+        private const float UNIFORM_SCALE_ERROR_MARGIN = 0.0001f;
+        private const float EQUAL_ERROR_MARGIN = 0.0001f;
         private Transform2D _parent = null;
 
         public Transform2D Parent
@@ -28,8 +31,13 @@ namespace Game
             get { return _parent; }
             set 
             {
-                _matrixUpdate = true;
-                _parent = value; 
+                Transform2D parentPrev = value;
+                _parent = value;
+                if (ParentLoopExists())
+                {
+                    _parent = parentPrev;
+                    throw (new Exception("Cannot make circlular dependencies in parents."));
+                }
             }
         }
 
@@ -67,13 +75,16 @@ namespace Game
         { 
             get { return _scale; }
             set 
-            { 
-                if (UniformScale)
-                {
-                    Debug.Assert(Math.Abs(value.X) == Math.Abs(value.Y), "Transforms with fixed scale cannot have non-uniform scale.");
-                }
+            {
                 Debug.Assert(!VectorExt2.IsNaN(value));
                 Debug.Assert(value.X != 0 && value.Y != 0, "Scale vector must have non-zero components");
+                if (UniformScale)
+                {
+                    Debug.Assert(
+                        Math.Abs(value.X) - Math.Abs(value.Y) <= UNIFORM_SCALE_ERROR_MARGIN, 
+                        "Transforms with fixed scale cannot have non-uniform scale.");
+                    value.Y = Math.Sign(value.Y) * Math.Abs(value.X);
+                }
                 _matrixUpdate = true;
                 _scale = value; 
             } 
@@ -144,7 +155,7 @@ namespace Game
             Position = position;
             Scale = scale;
             Rotation = rotation;
-            _parent = parent;
+            Parent = parent;
         }
 
         /// <summary>
@@ -182,7 +193,7 @@ namespace Game
             Matrix4 Matrix = Matrix4.Identity;
             if (_parent != null)
             {
-                Matrix = _parent.GetMatrix();
+                Matrix = _parent.GetWorldMatrix();
             }
             Matrix = GetMatrix() * Matrix;//Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0)) * Matrix;
             return Matrix; 
@@ -275,27 +286,41 @@ namespace Game
             return transform;
         }
 
-        public static bool operator ==(Transform2D transformFirst, Transform2D transformLast)
+        /// <summary>
+        /// Returns true if there is a loop in the Parent dependencies.
+        /// </summary>
+        /// <returns></returns>
+        private bool ParentLoopExists()
         {
-
-            if ((object)transformFirst == null || (object)transformLast == null)
+            const int DONT_CARE = 0;
+            Dictionary<Transform2D, int> map = new Dictionary<Transform2D, int>();
+            Transform2D transform = this;
+            while (transform._parent != null)
             {
-                if ((object)transformFirst == (object)transformLast)
+                transform = transform._parent;
+                if (map.ContainsKey(transform))
                 {
                     return true;
                 }
-                return false;
-            }
-            if (transformFirst.Rotation == transformLast.Rotation && transformFirst.Scale == transformLast.Scale && transformFirst.Position == transformLast.Position)
-            {
-                return true;
+                map.Add(transform, DONT_CARE);
             }
             return false;
         }
 
-        public static bool operator !=(Transform2D transformFirst, Transform2D transformLast)
+        public bool LocalEquals(Transform2D transform)
         {
-            return !(transformFirst == transformLast);
+            if (transform != null)
+            {
+                if (Math.Abs(Rotation - transform.Rotation) <= EQUAL_ERROR_MARGIN &&
+                    Math.Abs(Scale.X - transform.Scale.X) <= EQUAL_ERROR_MARGIN &&
+                    Math.Abs(Scale.Y - transform.Scale.Y) <= EQUAL_ERROR_MARGIN &&
+                    Math.Abs(Position.X - transform.Position.X) <= EQUAL_ERROR_MARGIN &&
+                    Math.Abs(Position.Y - transform.Position.Y) <= EQUAL_ERROR_MARGIN)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
