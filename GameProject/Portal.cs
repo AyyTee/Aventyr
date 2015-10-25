@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using FarseerPhysics.Dynamics;
+using OpenTK;
 using System;
 using System.Diagnostics;
 
@@ -44,6 +45,8 @@ namespace Game
             : this(scene)
         {
             SetFacing(leftHanded);
+            Body CollisionEdges = new Body(scene.PhysWorld);
+            //CollisionEdges.FixtureList
         }
 
         public Portal(Scene scene, Vector2 position)

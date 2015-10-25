@@ -120,7 +120,7 @@ namespace Game
             portal0 = scene.CreatePortal();
             portal0.Transform.Rotation = (float)Math.PI;
             portal0.Transform.Position = new Vector2(2.1f, 0f);
-            portal0.Transform.Scale = new Vector2(-1.5f, -1.5f);
+            portal0.Transform.Scale = new Vector2(-1f, -1f);
 
             Entity portalEntity0 = scene.CreateEntity();
             portalEntity0.Transform.Parent = portal0.Transform;
@@ -175,7 +175,7 @@ namespace Game
             portalEntity3.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
             #region cubes
-            Model tc = Model.CreateCube();
+            /*Model tc = Model.CreateCube();
             tc.Transform.Position = new Vector3(1f, 3f, 0);
             Entity box = scene.CreateEntity(new Vector2(0, 0));
             box.Models.Add(tc);
@@ -191,7 +191,7 @@ namespace Game
             boxChild.Models.Add(tc2);
             boxChild.Transform.Parent = box2.Transform;
 
-            //portal3.Transform.Parent = boxChild.Transform;
+            //portal3.Transform.Parent = boxChild.Transform;*/
             #endregion
 
             #region player
@@ -226,13 +226,12 @@ namespace Game
             intersectDot.Models = portalEntity0.Models;
             intersectDot.Transform.Scale = new Vector2(1f, 1f);
 
-            Vector2[] v = new Vector2[6] {
-                new Vector2(0.01f, 0) * 2,
-                new Vector2(1f, 0.5f) * 2,
-                new Vector2(1f, -1f) * 2,
-                new Vector2(-1f, -1.1f) * 2,
-                new Vector2(-0.5f, 0),
-                new Vector2(-0.5f, 0.1f)
+            Vector2[] v = new Vector2[5] {
+                new Vector2(-2, -1),
+                new Vector2(2, -1),
+                new Vector2(3, 0),
+                new Vector2(3, -2),
+                new Vector2(-2, -2)
             };
             
             Entity ground = scene.CreateEntityPolygon(new Vector2(0, -4f), new Vector2(0, 0), v);
@@ -240,7 +239,7 @@ namespace Game
             ground.Transform.Rotation = 0.5f;
             
             Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
-            scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
+            //scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
             
             text = hud.CreateEntity();
             text.Transform.Position = new Vector2(0, ClientSize.Height);
@@ -254,8 +253,6 @@ namespace Game
             renderer = new Renderer(this);
             renderer.RenderScenes.Add(scene);
             renderer.RenderScenes.Add(hud);
-
-            //GraphicsContext.CurrentContext.SwapInterval = true;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -312,8 +309,10 @@ namespace Game
             Entity tempLine = scene.GetEntityByName("tempLine");
             tempLine.Transform.Position = player.Transform.Position;
 
+            Vector2 mousePos = scene.ActiveCamera.ScreenToWorld(new Vector2(Mouse.X, Mouse.Y));
+
             Vector2 rayBegin = player.Transform.Position;
-            Vector2 rayEnd = VectorExt2.Transform(new Vector2(Mouse.X / (float)(ClientSize.Width / 2) - 1f, -(Mouse.Y / (float)(ClientSize.Height / 2) - 1f)), scene.ActiveCamera.GetViewMatrix().Inverted());
+            Vector2 rayEnd = mousePos;
             tempLine.IsPortalable = true;
             tempLine.Models.Clear();
             tempLine.Models.Add(Model.CreateLine(new Vector2[2] {
@@ -325,7 +324,10 @@ namespace Game
             {
                 PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
             }
-            
+            if (InputExt.MousePress(MouseButton.Right))
+            {
+                scene.CreateEntityBox(mousePos, new Vector2(0.5f, 0.5f));
+            }
             text2.Models.Clear();
             text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
             

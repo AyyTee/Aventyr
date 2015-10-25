@@ -9,7 +9,7 @@ namespace Game
 {
     public static class BodyExt
     {
-        public static void SetUserData(Body body, Entity entity)
+        public static void SetUserData(Body body, Placeable2D entity)
         {
             //Ugly solution to storing Game classes in a way that still works when deserializing the data.
             //This list is intended to only store one element.

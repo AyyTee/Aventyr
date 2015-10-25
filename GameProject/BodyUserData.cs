@@ -12,16 +12,16 @@ namespace Game
     {
         public int EntityID;
         [XmlIgnore]
-        public Entity LinkedEntity { get; private set; }
+        public Placeable2D LinkedEntity { get; private set; }
 
         public BodyUserData()
         {
         }
 
-        public BodyUserData(Entity linkedEntity)
+        public BodyUserData(Placeable2D linked)
         {
-            LinkedEntity = linkedEntity;
-            EntityID = linkedEntity.Id;
+            LinkedEntity = linked;
+            EntityID = linked.Id;
         }
     }
 }

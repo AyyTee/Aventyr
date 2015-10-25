@@ -11,6 +11,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Reflection;
 using System;
+using FarseerPhysics.Dynamics.Contacts;
 
 namespace Game
 {
@@ -30,6 +31,9 @@ namespace Game
         {
             get { return _entityIdCount; }
         }
+        [NonSerialized]
+        private PhysContactListener _contactListener;
+
 
         public float TimeStepSize = 1 / 60f;
         public Camera ActiveCamera { get; set; }
@@ -98,9 +102,9 @@ namespace Game
 
             Body body = BodyFactory.CreateRectangle(box.Scene.PhysWorld, scale.X, scale.Y, 1);
             body.Position = VectorExt2.ConvertToXna(position);
-            box.LinkBody(body);
+            box.SetBody(body);
             body.BodyType = BodyType.Dynamic;
-
+            
             return box;
         }
 
@@ -139,7 +143,7 @@ namespace Game
                 }
             }
             
-            entity.LinkBody(body);
+            entity.SetBody(body);
 
             return entity;
         }
@@ -190,7 +194,8 @@ namespace Game
             Debug.Assert(PhysWorld == null, "A physics world has already been assigned to this scene.");
             _physWorld = world;
             PhysWorld.ProcessChanges();
-
+            _contactListener = new PhysContactListener(this);
+            
             foreach (Body body in PhysWorld.BodyList)
             {
                 var userData = ((List<BodyUserData>)body.UserData)[0];
@@ -259,5 +264,7 @@ namespace Game
             new PhysDataContractResolver(assembly));
             return serializer;
         }
+
+        
     }
 }

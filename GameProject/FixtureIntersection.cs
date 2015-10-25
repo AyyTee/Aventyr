@@ -21,7 +21,7 @@ namespace Game
         /// <summary>
         /// Return the Entity linked to the Body that is linked to the Fixture being intersected.
         /// </summary>
-        public Entity Entity
+        public Placeable2D Entity
         {
             get 
             {

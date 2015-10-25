@@ -17,28 +17,11 @@ namespace Game
     [Serializable]
     public class Entity : Placeable2D
     {
-        public int Id { get; private set; }
-        public string Name { get; set; }
-        
         private Transform2D _velocity = new Transform2D();
         private List<Model> _models = new List<Model>();
         private List<ClipModel> ClipModels = new List<ClipModel>();
         private bool _isPortalable = false;
 
-        public int BodyId = -1;
-        public Body Body
-        {
-            get 
-            {
-                if (BodyId == -1)
-                {
-                    return null;
-                }
-                Debug.Assert(Scene != null, "Entity must be assigned to a scene.");
-                Debug.Assert(Scene.PhysWorld.BodyList.Exists(item => (item.BodyId == BodyId)), "Body id does not exist.");
-                return Scene.PhysWorld.BodyList.Find(item => (item.BodyId == BodyId)); 
-            }
-        }
         /// <summary>
         /// Represents the size of the cutLines array within the fragment shader
         /// </summary>
@@ -78,10 +61,6 @@ namespace Game
         public Entity(Scene scene)
             : base(scene)
         {
-            if (scene != null)
-            {
-                Id = scene.EntityIdCount;
-            }
             Transform.UniformScale = true;
         }
 
@@ -101,26 +80,6 @@ namespace Game
             : this(scene)
         {
             Transform.SetLocal(transform);
-        }
-
-        public void LinkBody(Body body)
-        {
-            Transform.UniformScale = true;
-            BodyUserData userData = new BodyUserData(this);
-            Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
-            BodyId = body.BodyId;
-
-            BodyExt.SetUserData(body, this);
-            
-        }
-
-        public virtual void Step()
-        {
-            if (Body != null)
-            {
-                Transform.Position = VectorExt2.ConvertTo(Body.Position);
-                Transform.Rotation = Body.Rotation;
-            }
         }
 
         public void PositionUpdate()

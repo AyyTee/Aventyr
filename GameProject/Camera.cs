@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using System;
+using System.Diagnostics;
 
 namespace Game
 {
@@ -91,6 +92,13 @@ namespace Game
         {
             Matrix4 m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
             return Vector3.Transform(new Vector3(1, 0, 0), m);
+        }
+
+        public Vector2 ScreenToWorld(Vector2 screenCoord)
+        {
+            Debug.Assert(Orthographic, "Only ortho projection is allowed for now.");
+            Vector2 clipCoord = new Vector2(screenCoord.X / (float)(Controller.ClientSize.Width / 2) - 1f, -(screenCoord.Y / (float)(Controller.ClientSize.Height / 2) - 1f));
+            return VectorExt2.Transform(clipCoord, GetViewMatrix().Inverted());
         }
     }
 }
