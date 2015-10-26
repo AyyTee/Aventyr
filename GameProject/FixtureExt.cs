@@ -22,5 +22,10 @@ namespace Game
         {
             return ((List<FixtureUserData>)fixture.UserData)[0];
         }
+
+        public static void MirrorFixture(bool mirrorX, bool mirrorY)
+        {
+
+        }
     }
 }

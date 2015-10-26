@@ -1,7 +1,10 @@
-﻿using FarseerPhysics.Dynamics;
+﻿using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Dynamics;
 using OpenTK;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
@@ -25,6 +28,7 @@ namespace Game
         /// It is nessesary to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
         /// </summary>
         public const float EntityMinDistance = 0.001f;
+        public const float PortalMargin = 0.02f;
 
         public Portal Linked
         {
@@ -38,15 +42,44 @@ namespace Game
         public Portal(Scene scene) 
             : base(scene)
         {
+            Debug.Assert(scene != null, "Portal must be assigned to a scene.");
             Transform.UniformScale = true;
+
+            Body body = new Body(scene.PhysWorld);
+            body.IsStatic = true;
+            Vector2[] verts = GetVerts();
+            Xna.Vector2 v0, v1, v2, v3;
+
+            v0 = VectorExt2.ConvertToXna(verts[0]);
+            v1 = v0 + new Xna.Vector2(0, PortalMargin);
+            FarseerPhysics.Common.Vertices fixtureVerts0 = new FarseerPhysics.Common.Vertices();
+            fixtureVerts0.Add(v0);
+            fixtureVerts0.Add(v1);
+            fixtureVerts0.Add(v0 + new Xna.Vector2(-PortalMargin, 0));
+            new Fixture(body, new PolygonShape(fixtureVerts0, 1f));
+
+            v2 = VectorExt2.ConvertToXna(verts[1]);
+            v3 = v2 + new Xna.Vector2(0, -PortalMargin);
+            FarseerPhysics.Common.Vertices fixtureVerts1 = new FarseerPhysics.Common.Vertices();
+            fixtureVerts1.Add(v3);
+            fixtureVerts1.Add(v2);
+            fixtureVerts1.Add(v2 + new Xna.Vector2(-PortalMargin, 0));
+            new Fixture(body, new PolygonShape(fixtureVerts1, 1f));
+
+            /*Entity entity = Scene.CreateEntity();
+            entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts0)));
+            entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts1)));
+            entity.Transform.Parent = Transform;*/
+            SetBody(body);
         }
 
         public Portal(Scene scene, bool leftHanded)
             : this(scene)
         {
             SetFacing(leftHanded);
-            Body CollisionEdges = new Body(scene.PhysWorld);
+            //Body CollisionEdges = new Body(scene.PhysWorld);
             //CollisionEdges.FixtureList
+            
         }
 
         public Portal(Scene scene, Vector2 position)
@@ -78,31 +111,26 @@ namespace Game
             }
         }
 
-        public static void Link(Portal portal0, Portal portal1)
+        public static void ConnectPortals(Portal portal0, Portal portal1)
         {
             portal0._linked = portal1;
             portal1._linked = portal0;
         }
 
-        private void SetLink(Portal portal)
+        private void SetPortal(Portal portal)
         {
             if (_linked != portal)
             {
                 if (_linked != null)
                 {
-                    _linked.SetLink(null);
+                    _linked.SetPortal(null);
                 }
                 _linked = portal;
                 if (_linked != null)
                 {
-                    _linked.SetLink(this);
+                    _linked.SetPortal(this);
                 }
             }
-        }
-
-        public void Unlink(Portal portal)
-        {
-            SetLink(null);
         }
 
         /// <summary>

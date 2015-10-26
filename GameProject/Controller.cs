@@ -43,8 +43,6 @@ namespace Game
         public const int DrawsPerSecond = 60;
         Model background;
         Font Default;
-        Entity box2;
-        Entity boxChild;
         Entity intersectDot;
         public static List<int> iboGarbage = new List<int>();
 
@@ -120,7 +118,7 @@ namespace Game
             portal0 = scene.CreatePortal();
             portal0.Transform.Rotation = (float)Math.PI;
             portal0.Transform.Position = new Vector2(2.1f, 0f);
-            portal0.Transform.Scale = new Vector2(-1f, -1f);
+            //portal0.Transform.Scale = new Vector2(1f, 1f);
 
             Entity portalEntity0 = scene.CreateEntity();
             portalEntity0.Transform.Parent = portal0.Transform;
@@ -133,9 +131,9 @@ namespace Game
             portal1 = scene.CreatePortal();
             portal1.Transform.Rotation = 4.4f;
             portal1.Transform.Position = new Vector2(-3f, 0f);
-            portal1.Transform.Scale = new Vector2(-1f, -1f);
+            //portal1.Transform.Scale = new Vector2(-1f, -1f);
 
-            Portal.Link(portal0, portal1);
+            Portal.ConnectPortals(portal0, portal1);
             //Portal.Link(portal1, portal1);
             Entity portalEntity1 = scene.CreateEntity();
             portalEntity1.Transform.Parent = portal1.Transform; 
@@ -163,9 +161,9 @@ namespace Game
             portal3 = scene.CreatePortal();
             portal3.Transform.Rotation = 0.4f;
             portal3.Transform.Position = new Vector2(-2f, 2f);
-            portal3.Transform.Scale = new Vector2(-1f, 1f);
+            //portal3.Transform.Scale = new Vector2(-1f, 1f);
 
-            Portal.Link(portal2, portal3);
+            Portal.ConnectPortals(portal2, portal3);
             Entity portalEntity3 = scene.CreateEntity();
             portalEntity3.Transform.Parent = portal3.Transform;
             portalEntity3.Models.Add(Model.CreatePlane());
@@ -234,9 +232,10 @@ namespace Game
                 new Vector2(-2, -2)
             };
             
-            Entity ground = scene.CreateEntityPolygon(new Vector2(0, -4f), new Vector2(0, 0), v);
+            Entity ground = scene.CreateEntityPolygon(new Vector2(0, 0), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
             ground.Transform.Rotation = 0.5f;
+            ground.Transform.Position = new Vector2(0, -4f);
             
             Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
             //scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
@@ -320,19 +319,25 @@ namespace Game
                 rayEnd - player.Transform.Position
                 }));
 
-            if (InputExt.MousePress(MouseButton.Left))
-            {
-                PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
-            }
-            if (InputExt.MousePress(MouseButton.Right))
-            {
-                scene.CreateEntityBox(mousePos, new Vector2(0.5f, 0.5f));
-            }
+            
             text2.Models.Clear();
             text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
             
             if (Focused)
             {
+                if (InputExt.MousePress(MouseButton.Left))
+                {
+                    if (!PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd)))
+                    {
+                        portal1.Transform.Rotation = portal1.Transform.WorldRotation;
+                        portal1.Transform.Parent = null;
+                        portal1.Transform.Position = mousePos;
+                    }
+                }
+                if (InputExt.MousePress(MouseButton.Right))
+                {
+                    scene.CreateEntityBox(mousePos, new Vector2(0.5f, 0.5f));
+                }
                 if (InputExt.KeyPress(Key.Escape))
                 {
                     Exit();

@@ -48,7 +48,7 @@ namespace Game
             _scene = scene;
             if (scene != null)
             {
-                Id = scene.EntityIdCount;
+                Id = scene.IdCount;
             }
         }
 
@@ -73,6 +73,9 @@ namespace Game
             Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
             BodyId = body.BodyId;
 
+            body.Position = VectorExt2.ConvertToXna(Transform.Position);
+            body.Rotation = Transform.Rotation;
+            //Scene.PhysWorld.ProcessChanges();
             BodyExt.SetUserData(body, this);
         }
     }

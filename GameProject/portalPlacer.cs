@@ -13,10 +13,9 @@ namespace Game
 {
     public static class PortalPlacer
     {
-        public const float PortalMargin = 0.02f;
         private const float RayCastMargin = 0.0001f;
 
-        public static void PortalPlace(Portal portal, Line ray)
+        public static bool PortalPlace(Portal portal, Line ray)
         {
             FixtureIntersection intersection = RayCast(portal.Scene, ray);
             if (intersection != null)
@@ -26,8 +25,10 @@ namespace Game
                 {
                     portal.Transform.SetLocal(intersection.GetTransform());
                     portal.Transform.Parent = intersection.Entity.Transform;
+                    return true;
                 }
             }
+            return false;
         }
 
         public static FixtureIntersection RayCast(Scene scene, Line ray)
@@ -118,7 +119,7 @@ namespace Game
             Line portalLine = new Line(portal.GetWorldVerts());
             float portalSize = portalLine.Length;
             Line edge = intersection.GetWorldEdge();
-            float portalSizeT = portalSize / edge.Length + PortalMargin * 2;
+            float portalSizeT = portalSize / edge.Length + Portal.PortalMargin * 2;
             if (portalSizeT > 1)
             {
                 return null;

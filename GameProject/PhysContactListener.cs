@@ -21,10 +21,12 @@ namespace Game
 
         public bool CollisionListener(Contact target)
         {
-            //target.FixtureA.
+            /*FixtureUserData userDataA = (FixtureUserData)target.FixtureA.UserData;
+            FixtureUserData userDataB = (FixtureUserData)target.FixtureB.UserData;
+            userDataA*/
             foreach (Portal p in Scene.PortalList)
             {
-
+                
             }
             return true;
         }

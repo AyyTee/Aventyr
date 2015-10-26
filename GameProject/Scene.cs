@@ -25,11 +25,13 @@ namespace Game
         {
             get { return _physWorld; }
         }
-        private int _entityIdCount = 0;
-
-        public int EntityIdCount
+        private int _idCount = 0;
+        /// <summary>
+        /// Number of unique ids that have been used for objects in the scene
+        /// </summary>
+        public int IdCount
         {
-            get { return _entityIdCount; }
+            get { return _idCount; }
         }
         [NonSerialized]
         private PhysContactListener _contactListener;
@@ -55,11 +57,30 @@ namespace Game
 
         public void Step()
         {
+            PhysWorld.ProcessChanges();
+            List<Placeable2D> list = new List<Placeable2D>();
+            list.AddRange(EntityList);
+            list.AddRange(PortalList);
+            foreach (Placeable2D e in list)
+            {
+                if (e.Body != null)
+                {
+                    Xna.Vector2 v0 = VectorExt2.ConvertToXna(e.Transform.WorldPosition);
+                    if (v0 != e.Body.Position || e.Transform.Rotation != e.Body.Rotation)
+                    {
+                        e.Body.SetTransform(v0, e.Transform.WorldRotation);
+                    }
+                }
+            }
             if (PhysWorld != null)
             {
                 PhysWorld.Step(TimeStepSize);
             }
-            foreach (Entity e in EntityList)
+            list = new List<Placeable2D>();
+            list.AddRange(EntityList);
+            //list.AddRange(PortalList);
+
+            foreach (Placeable2D e in list)
             {
                 e.Step();
             }
@@ -69,7 +90,14 @@ namespace Game
         {
             Debug.Assert(!EntityList.Exists(item => item.Equals(entity)), "This entity has already been added to this scene.");
             EntityList.Add(entity);
-            _entityIdCount++;
+            _idCount++;
+        }
+
+        private void AddPortal(Portal portal)
+        {
+            Debug.Assert(!PortalList.Exists(item => item.Equals(portal)), "This portal has already been added to this scene.");
+            PortalList.Add(portal);
+            _idCount++;
         }
 
         public Entity GetEntityById(int id)
@@ -175,9 +203,8 @@ namespace Game
         public Portal CreatePortal(Vector2 position)
         {
             Portal portal = new Portal(this, position);
-            //AddPortal(portal);
-            Debug.Assert(!PortalList.Exists(item => item.Equals(portal)), "This portal has already been added to this scene.");
-            PortalList.Add(portal);
+            AddPortal(portal);
+            
             return portal;
         }
 
@@ -199,8 +226,11 @@ namespace Game
             foreach (Body body in PhysWorld.BodyList)
             {
                 var userData = ((List<BodyUserData>)body.UserData)[0];
-                Entity entity = EntityList.Find(item => (item.Id == userData.EntityID));
-
+                Placeable2D entity = EntityList.Find(item => (item.Id == userData.EntityID));
+                if (entity == null)
+                {
+                    entity = PortalList.Find(item => (item.Id == userData.EntityID));
+                }
                 BodyExt.SetUserData(body, entity);
                 entity.BodyId = body.BodyId;
             }
@@ -264,7 +294,5 @@ namespace Game
             new PhysDataContractResolver(assembly));
             return serializer;
         }
-
-        
     }
 }
