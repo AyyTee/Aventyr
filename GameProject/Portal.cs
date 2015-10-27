@@ -13,7 +13,7 @@ namespace Game
     {
         private Portal _linked = null;
         private bool _oneSided = false;
-
+        private Exception _nullScene = new Exception("Portal must be assigned to a scene.");
         /// <summary>
         /// If OneSided is true then the portal can only be viewed through it's front side.
         /// Entities can still travel though the portal in both directions however.
@@ -39,51 +39,68 @@ namespace Game
         {
         }
 
-        public Portal(Scene scene) 
+        public Portal(Scene scene, Transform2D transform, Entity parentEntity)
             : base(scene)
         {
-            Debug.Assert(scene != null, "Portal must be assigned to a scene.");
+            if (scene == null)
+            {
+                throw _nullScene;
+            }
+            if (transform != null)
+            {
+                Transform.SetLocal(transform);
+            }
             Transform.UniformScale = true;
 
-            Body body = new Body(scene.PhysWorld);
-            body.IsStatic = true;
-            Vector2[] verts = GetVerts();
-            Xna.Vector2 v0, v1, v2, v3;
+            if (parentEntity != null)
+            {
+                Transform.Parent = parentEntity.Transform.Parent;
 
-            v0 = VectorExt2.ConvertToXna(verts[0]);
-            v1 = v0 + new Xna.Vector2(0, PortalMargin);
-            FarseerPhysics.Common.Vertices fixtureVerts0 = new FarseerPhysics.Common.Vertices();
-            fixtureVerts0.Add(v0);
-            fixtureVerts0.Add(v1);
-            fixtureVerts0.Add(v0 + new Xna.Vector2(-PortalMargin, 0));
-            new Fixture(body, new PolygonShape(fixtureVerts0, 1f));
+                /*Body body = new Body(scene.PhysWorld);
+                body.IsStatic = true;
+                Vector2[] verts = GetVerts();
+                Xna.Vector2 v0, v1, v2, v3;
 
-            v2 = VectorExt2.ConvertToXna(verts[1]);
-            v3 = v2 + new Xna.Vector2(0, -PortalMargin);
-            FarseerPhysics.Common.Vertices fixtureVerts1 = new FarseerPhysics.Common.Vertices();
-            fixtureVerts1.Add(v3);
-            fixtureVerts1.Add(v2);
-            fixtureVerts1.Add(v2 + new Xna.Vector2(-PortalMargin, 0));
-            new Fixture(body, new PolygonShape(fixtureVerts1, 1f));
+                v0 = VectorExt2.ConvertToXna(verts[0]);
+                v1 = v0 + new Xna.Vector2(0, PortalMargin);
+                FarseerPhysics.Common.Vertices fixtureVerts0 = new FarseerPhysics.Common.Vertices();
+                fixtureVerts0.Add(v0);
+                fixtureVerts0.Add(v1);
+                fixtureVerts0.Add(v0 + new Xna.Vector2(-PortalMargin, 0));
+                new Fixture(body, new PolygonShape(fixtureVerts0, 1f));
 
-            /*Entity entity = Scene.CreateEntity();
-            entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts0)));
-            entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts1)));
-            entity.Transform.Parent = Transform;*/
-            SetBody(body);
+                v2 = VectorExt2.ConvertToXna(verts[1]);
+                v3 = v2 + new Xna.Vector2(0, -PortalMargin);
+                FarseerPhysics.Common.Vertices fixtureVerts1 = new FarseerPhysics.Common.Vertices();
+                fixtureVerts1.Add(v3);
+                fixtureVerts1.Add(v2);
+                fixtureVerts1.Add(v2 + new Xna.Vector2(-PortalMargin, 0));
+                new Fixture(body, new PolygonShape(fixtureVerts1, 1f));
+
+
+                Fixture fixture = new Fixture(body, new EdgeShape(v0, v2));
+                fixture.IsSensor = true;
+                Entity entity = Scene.CreateEntity();
+                entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts0)));
+                entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts1)));
+                entity.Transform.Parent = Transform;
+                //SetBody(body);*/
+            }
+        }
+
+        public Portal(Scene scene) 
+            : this(scene, null, null)
+        {
         }
 
         public Portal(Scene scene, bool leftHanded)
-            : this(scene)
+            : this(scene, null, null)
         {
-            SetFacing(leftHanded);
-            //Body CollisionEdges = new Body(scene.PhysWorld);
-            //CollisionEdges.FixtureList
-            
+            SetFacing(leftHanded);   
         }
 
         public Portal(Scene scene, Vector2 position)
-            : this(scene)
+            : this(scene, null, null)
         {
             Transform.Position = position;
         }

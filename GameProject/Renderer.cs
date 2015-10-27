@@ -140,7 +140,7 @@ namespace Game
             if (a.Length >= 3)
             {
                 fov.Models.Add(Model.CreatePolygon(a));
-                fov.Render(viewMatrix, timeDelta);
+                RenderEntity(fov, viewMatrix, timeDelta);
             }
             //fov.RemoveFromScene();
 
@@ -172,7 +172,7 @@ namespace Game
             //fovOutline.RemoveFromScene();
 
             GL.LineWidth(2f);
-            fovOutline.Render(viewMatrix, timeDelta);
+            RenderEntity(fovOutline, viewMatrix, timeDelta);
             GL.LineWidth(1f);
 
             DrawPortal(scene, portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, Portal.GetPortalMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
@@ -182,7 +182,100 @@ namespace Game
         {
             foreach (Entity v in scene.EntityList)
             {
-                v.Render(viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond));
+                RenderEntity(v, viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond));
+            }
+        }
+
+        public virtual void RenderEntity(Entity entity, Matrix4 viewMatrix, float timeDelta)
+        {
+            foreach (Model v in entity.Models)
+            {
+                List<Vector3> verts = new List<Vector3>();
+                List<int> inds = new List<int>();
+                List<Vector3> colors = new List<Vector3>();
+                List<Vector2> texcoords = new List<Vector2>();
+
+                // Assemble vertex and indice data for all volumes
+                int vertcount = 0;
+
+                verts.AddRange(v.GetVerts().ToList());
+                inds.AddRange(v.GetIndices().ToList());
+                colors.AddRange(v.GetColorData().ToList());
+                texcoords.AddRange(v.GetTextureCoords());
+                vertcount += v.Vertices.Count;
+
+                Vector3[] vertdata;
+                Vector3[] coldata;
+                Vector2[] texcoorddata;
+                int[] indicedata;
+                int indiceat = 0;
+
+                vertdata = verts.ToArray();
+                indicedata = inds.ToArray();
+                coldata = colors.ToArray();
+                texcoorddata = texcoords.ToArray();
+
+                GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("vPosition"));
+
+                GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
+                GL.VertexAttribPointer(v.Shader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
+
+                // Buffer vertex color if shader supports it
+                if (v.Shader.GetAttribute("vColor") != -1)
+                {
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("vColor"));
+                    GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
+                    GL.VertexAttribPointer(v.Shader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
+                }
+
+                // Buffer texture coordinates if shader supports it
+                if (v.Shader.GetAttribute("texcoord") != -1)
+                {
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("texcoord"));
+                    GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
+                    GL.VertexAttribPointer(v.Shader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
+                }
+
+                GL.UseProgram(v.Shader.ProgramID);
+
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+                // Buffer index data
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, v.IboElements);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);
+
+                GL.BindTexture(TextureTarget.Texture2D, v.TextureId);
+
+                Matrix4 UVMatrix = v.TransformUv.GetMatrix();
+                GL.UniformMatrix4(v.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
+
+                if (v.Shader.GetAttribute("maintexture") != -1)
+                {
+                    GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.TextureId);
+                }
+
+                if (v.Wireframe)
+                {
+                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+                }
+
+                if (entity.IsPortalable)
+                {
+                    entity.UpdatePortalClipping(4);
+                    entity.RenderClipModels(viewMatrix);
+                }
+                else
+                {
+                    GL.Uniform1(v.Shader.GetUniform("cutLinesLength"), 0);
+                    entity._RenderSetTransformMatrix(v, viewMatrix);
+                    GL.DrawElements(BeginMode.Triangles, v.Indices.Count, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
+                }
+
+                if (v.Wireframe)
+                {
+                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+                }
+                //indiceat += v.IndiceCount;
             }
         }
 

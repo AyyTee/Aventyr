@@ -11,21 +11,6 @@ namespace Game
     {
         public int Id { get; private set; }
         public string Name { get; set; }
-
-        public int BodyId = -1;
-        public Body Body
-        {
-            get
-            {
-                if (BodyId == -1)
-                {
-                    return null;
-                }
-                Debug.Assert(Scene != null, "Entity must be assigned to a scene.");
-                Debug.Assert(Scene.PhysWorld.BodyList.Exists(item => (item.BodyId == BodyId)), "Body id does not exist.");
-                return Scene.PhysWorld.BodyList.Find(item => (item.BodyId == BodyId));
-            }
-        }
         
         private Transform2D _transform = new Transform2D();
         public Transform2D Transform
@@ -52,31 +37,6 @@ namespace Game
             }
         }
 
-        public void Step()
-        {
-            if (Body != null)
-            {
-                Transform.Position = VectorExt2.ConvertTo(Body.Position);
-                Transform.Rotation = Body.Rotation;
-            }
-        }
-
-        public void SetBody(Body body)
-        {
-            if (Body != null)
-            {
-                Scene.PhysWorld.RemoveBody(Body);
-            }
-
-            Transform.UniformScale = true;
-            BodyUserData userData = new BodyUserData(this);
-            Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
-            BodyId = body.BodyId;
-
-            body.Position = VectorExt2.ConvertToXna(Transform.Position);
-            body.Rotation = Transform.Rotation;
-            //Scene.PhysWorld.ProcessChanges();
-            BodyExt.SetUserData(body, this);
-        }
+        
     }
 }

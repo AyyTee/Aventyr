@@ -58,10 +58,7 @@ namespace Game
         public void Step()
         {
             PhysWorld.ProcessChanges();
-            List<Placeable2D> list = new List<Placeable2D>();
-            list.AddRange(EntityList);
-            list.AddRange(PortalList);
-            foreach (Placeable2D e in list)
+            foreach (Entity e in EntityList)
             {
                 if (e.Body != null)
                 {
@@ -76,11 +73,8 @@ namespace Game
             {
                 PhysWorld.Step(TimeStepSize);
             }
-            list = new List<Placeable2D>();
-            list.AddRange(EntityList);
-            //list.AddRange(PortalList);
 
-            foreach (Placeable2D e in list)
+            foreach (Entity e in EntityList)
             {
                 e.Step();
             }
@@ -226,11 +220,7 @@ namespace Game
             foreach (Body body in PhysWorld.BodyList)
             {
                 var userData = ((List<BodyUserData>)body.UserData)[0];
-                Placeable2D entity = EntityList.Find(item => (item.Id == userData.EntityID));
-                if (entity == null)
-                {
-                    entity = PortalList.Find(item => (item.Id == userData.EntityID));
-                }
+                Entity entity = EntityList.Find(item => (item.Id == userData.EntityID));
                 BodyExt.SetUserData(body, entity);
                 entity.BodyId = body.BodyId;
             }

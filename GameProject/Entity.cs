@@ -54,6 +54,21 @@ namespace Game
             }
         }
 
+        public int BodyId = -1;
+        public Body Body
+        {
+            get
+            {
+                if (BodyId == -1)
+                {
+                    return null;
+                }
+                Debug.Assert(Scene != null, "Entity must be assigned to a scene.");
+                Debug.Assert(Scene.PhysWorld.BodyList.Exists(item => (item.BodyId == BodyId)), "Body id does not exist.");
+                return Scene.PhysWorld.BodyList.Find(item => (item.BodyId == BodyId));
+            }
+        }
+
         private Entity()
         {
         }
@@ -61,6 +76,10 @@ namespace Game
         public Entity(Scene scene)
             : base(scene)
         {
+            if (scene != null)
+            {
+
+            }
             Transform.UniformScale = true;
         }
 
@@ -108,106 +127,42 @@ namespace Game
             }
         }
 
-        public virtual void Render(Matrix4 viewMatrix, float timeDelta)
+        public void Step()
         {
-            foreach (Model v in Models)
+            if (Body != null)
             {
-                List<Vector3> verts = new List<Vector3>();
-                List<int> inds = new List<int>();
-                List<Vector3> colors = new List<Vector3>();
-                List<Vector2> texcoords = new List<Vector2>();
-
-                // Assemble vertex and indice data for all volumes
-                int vertcount = 0;
-                
-                verts.AddRange(v.GetVerts().ToList());
-                inds.AddRange(v.GetIndices().ToList());
-                colors.AddRange(v.GetColorData().ToList());
-                texcoords.AddRange(v.GetTextureCoords());
-                vertcount += v.Vertices.Count;
-
-                Vector3[] vertdata;
-                Vector3[] coldata;
-                Vector2[] texcoorddata;
-                int[] indicedata;
-                int indiceat = 0;
-
-                vertdata = verts.ToArray();
-                indicedata = inds.ToArray();
-                coldata = colors.ToArray();
-                texcoorddata = texcoords.ToArray();
-
-                GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("vPosition"));
-
-                GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
-                GL.VertexAttribPointer(v.Shader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
-
-                // Buffer vertex color if shader supports it
-                if (v.Shader.GetAttribute("vColor") != -1)
-                {
-                    GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("vColor"));
-                    GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
-                    GL.VertexAttribPointer(v.Shader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
-                }
-
-                // Buffer texture coordinates if shader supports it
-                if (v.Shader.GetAttribute("texcoord") != -1)
-                {
-                    GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("texcoord"));
-                    GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
-                    GL.VertexAttribPointer(v.Shader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
-                }
-
-                GL.UseProgram(v.Shader.ProgramID);
-
-                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-                // Buffer index data
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, v.IboElements);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);
-
-                GL.BindTexture(TextureTarget.Texture2D, v.TextureId);
-                
-                Matrix4 UVMatrix = v.TransformUv.GetMatrix();
-                GL.UniformMatrix4(v.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
-
-                if (v.Shader.GetAttribute("maintexture") != -1)
-                {
-                    GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.TextureId);
-                }
-
-                if (v.Wireframe)
-                {
-                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-                }
-                
-                if (IsPortalable)
-                {
-                    UpdatePortalClipping(4);
-                    _RenderClipModels(ClipModels, viewMatrix);
-                }
-                else
-                {
-                    GL.Uniform1(v.Shader.GetUniform("cutLinesLength"), 0);
-                    _RenderSetTransformMatrix(v, viewMatrix);
-                    GL.DrawElements(BeginMode.Triangles, v.Indices.Count, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
-                }
-                
-                if (v.Wireframe)
-                {
-                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-                }
-                //indiceat += v.IndiceCount;
+                Transform.Position = VectorExt2.ConvertTo(Body.Position);
+                Transform.Rotation = Body.Rotation;
             }
         }
 
-        private void _RenderSetTransformMatrix(Model model, Matrix4 viewMatrix)
+        public void SetBody(Body body)
+        {
+            if (Body != null)
+            {
+                Scene.PhysWorld.RemoveBody(Body);
+            }
+
+            Transform.UniformScale = true;
+            BodyUserData userData = new BodyUserData(this);
+            Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
+            BodyId = body.BodyId;
+
+            body.Position = VectorExt2.ConvertToXna(Transform.Position);
+            body.Rotation = Transform.Rotation;
+            //Scene.PhysWorld.ProcessChanges();
+            BodyExt.SetUserData(body, this);
+        }
+
+        
+
+        public void _RenderSetTransformMatrix(Model model, Matrix4 viewMatrix)
         {
             Matrix4 modelMatrix = model.Transform.GetMatrix() * Transform.GetWorldMatrix() * viewMatrix;
             GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);    
         }
 
-        private void UpdatePortalClipping(int depth)
+        public void UpdatePortalClipping(int depth)
         {
             ClipModels.Clear();
             foreach (Model m in Models)
@@ -287,6 +242,11 @@ namespace Game
             
             ClipModels.Add(new ClipModel(model, clipLines.ToArray(), modelMatrix));
             
+        }
+
+        public void RenderClipModels(Matrix4 viewMatrix)
+        {
+            _RenderClipModels(ClipModels, viewMatrix);
         }
 
         private void _RenderClipModels(List<ClipModel> clipModels, Matrix4 viewMatrix)

@@ -14,7 +14,7 @@ namespace Game
         public bool[] EdgeIsExterior;
         private Fixture _fixture;
 
-        public Placeable2D Entity
+        public Entity Entity
         {
             get
             {
