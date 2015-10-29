@@ -142,7 +142,6 @@ namespace Game
                 fov.Models.Add(Model.CreatePolygon(a));
                 RenderEntity(fov, viewMatrix, timeDelta);
             }
-            //fov.RemoveFromScene();
 
             GL.ColorMask(true, true, true, true);
             GL.DepthMask(true);
@@ -169,7 +168,6 @@ namespace Game
                     model.Transform.Position = v;
                 }
             }
-            //fovOutline.RemoveFromScene();
 
             GL.LineWidth(2f);
             RenderEntity(fovOutline, viewMatrix, timeDelta);

@@ -1,6 +1,8 @@
-﻿using FarseerPhysics.Dynamics;
+﻿using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Dynamics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,12 +22,24 @@ namespace Game
 
         public static FixtureUserData GetUserData(Fixture fixture)
         {
-            return ((List<FixtureUserData>)fixture.UserData)[0];
+            Debug.Assert(fixture.UserData != null);
+            FixtureUserData userData = ((List<FixtureUserData>)fixture.UserData)[0];
+            Debug.Assert(userData != null);
+            return userData;
         }
 
-        public static void MirrorFixture(bool mirrorX, bool mirrorY)
+        public static Fixture CreateFixture(Body body, Shape shape)
         {
+            Fixture fixture = new Fixture(body, shape);
+            SetUserData(fixture, new FixtureUserData(fixture));
+            return fixture;
+        }
 
+        public static Fixture CreatePortalFixture(Body body, Shape shape, Portal portal)
+        {
+            Fixture fixture = CreateFixture(body, shape);
+            GetUserData(fixture).Portal = portal;
+            return fixture;
         }
     }
 }

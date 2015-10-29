@@ -350,5 +350,52 @@ namespace Game
             }
             return isInside;
         }
+
+        /// <summary>
+        /// Returns true if vertices are ordered clockwise, false they are counter-clockwise.  It is assumed that the polygon they form is simple.
+        /// </summary>
+        /// <param name="v">Array of vertices that form a polygon</param>
+        /// <returns></returns
+        public static bool IsClockwise(Vector2[] polygon)
+        {
+            Debug.Assert(polygon.Length >= 3, "Polygon must have 3 or more vertices.");
+            double signedArea = 0;
+            for (int i0 = 0; i0 < polygon.Length; i0++)
+            {
+                int i1 = (i0 + 1) % polygon.Length;
+                signedArea += (polygon[i0].X * polygon[i1].Y - polygon[i1].X * polygon[i0].Y);
+            }
+            Debug.Assert(signedArea != 0, "Polygon has 0 area.");
+            return Math.Sign(signedArea) == -1;
+        }
+
+        public static bool IsClockwise(List<Vector2> polygon)
+        {
+            return IsClockwise(polygon.ToArray());
+        }
+
+        /// <summary>
+        /// Sets the handedness of a polygon.
+        /// </summary>
+        /// <param name="polygon">A polygon represented as a list of vectors.</param>
+        /// <param name="clockwise">Clockwise if true, C.Clockwise if false.</param>
+        /// <returns></returns>
+        public static List<Vector2> SetHandedness(List<Vector2> polygon, bool clockwise)
+        {
+            if (IsClockwise(polygon) != clockwise)
+            {
+                polygon.Reverse();
+            }
+            return polygon;
+        }
+
+        public static Vector2[] SetHandedness(Vector2[] polygon, bool clockwise)
+        {
+            if (IsClockwise(polygon) != clockwise)
+            {
+                Array.Reverse(polygon);
+            }
+            return polygon;
+        }
     }
 }

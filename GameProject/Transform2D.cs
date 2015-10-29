@@ -220,12 +220,15 @@ namespace Game
         }
 
         /// <summary>
-        /// Assign new position, scale, and rotation from another Transform2D instance.
+        /// Assign new position, scale, and rotation from another Transform2D instance.  
+        /// Other properties and fields are not copied.  If transform is null then nothing is changed.
         /// </summary>
-        /// <param name="transform"></param>
         public void SetLocal(Transform2D transform)
         {
-            SetLocal(transform.Position, transform.Scale, transform.Rotation);
+            if (transform != null)
+            {
+                SetLocal(transform.Position, transform.Scale, transform.Rotation);
+            }
         }
 
         public Vector2 GetNormal(bool normalizeValue = true)

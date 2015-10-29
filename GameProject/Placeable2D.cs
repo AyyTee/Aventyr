@@ -13,7 +13,7 @@ namespace Game
         public string Name { get; set; }
         
         private Transform2D _transform = new Transform2D();
-        public Transform2D Transform
+        public virtual Transform2D Transform
         {
             get { return _transform; }
         }

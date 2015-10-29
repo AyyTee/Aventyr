@@ -12,7 +12,17 @@ namespace Game
     public class Portal : Placeable2D, IVertices2D
     {
         private Portal _linked = null;
-        private bool _oneSided = false;
+        private bool _oneSided = true;
+        public Entity EntityParent { get; private set; }
+        private List<int> _fixtureIds = new List<int>();
+        public Body EntityBody
+        {
+            get
+            {
+                return EntityParent.Body;
+            }
+        }
+        public Fixture SensorFixture { get; private set; }
         private Exception _nullScene = new Exception("Portal must be assigned to a scene.");
         /// <summary>
         /// If OneSided is true then the portal can only be viewed through it's front side.
@@ -28,7 +38,7 @@ namespace Game
         /// It is nessesary to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
         /// </summary>
         public const float EntityMinDistance = 0.001f;
-        public const float PortalMargin = 0.02f;
+        public const float PortalMargin = 0.01f;
 
         public Portal Linked
         {
@@ -39,7 +49,7 @@ namespace Game
         {
         }
 
-        public Portal(Scene scene, Transform2D transform, Entity parentEntity)
+        public Portal(Scene scene, Transform2D transform, Entity entityParent)
             : base(scene)
         {
             if (scene == null)
@@ -52,39 +62,9 @@ namespace Game
             }
             Transform.UniformScale = true;
 
-            if (parentEntity != null)
+            if (entityParent != null)
             {
-                Transform.Parent = parentEntity.Transform.Parent;
-
-                /*Body body = new Body(scene.PhysWorld);
-                body.IsStatic = true;
-                Vector2[] verts = GetVerts();
-                Xna.Vector2 v0, v1, v2, v3;
-
-                v0 = VectorExt2.ConvertToXna(verts[0]);
-                v1 = v0 + new Xna.Vector2(0, PortalMargin);
-                FarseerPhysics.Common.Vertices fixtureVerts0 = new FarseerPhysics.Common.Vertices();
-                fixtureVerts0.Add(v0);
-                fixtureVerts0.Add(v1);
-                fixtureVerts0.Add(v0 + new Xna.Vector2(-PortalMargin, 0));
-                new Fixture(body, new PolygonShape(fixtureVerts0, 1f));
-
-                v2 = VectorExt2.ConvertToXna(verts[1]);
-                v3 = v2 + new Xna.Vector2(0, -PortalMargin);
-                FarseerPhysics.Common.Vertices fixtureVerts1 = new FarseerPhysics.Common.Vertices();
-                fixtureVerts1.Add(v3);
-                fixtureVerts1.Add(v2);
-                fixtureVerts1.Add(v2 + new Xna.Vector2(-PortalMargin, 0));
-                new Fixture(body, new PolygonShape(fixtureVerts1, 1f));
-
-
-                Fixture fixture = new Fixture(body, new EdgeShape(v0, v2));
-                fixture.IsSensor = true;
-                Entity entity = Scene.CreateEntity();
-                entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts0)));
-                entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts1)));
-                entity.Transform.Parent = Transform;
-                //SetBody(body);*/
+                SetEntityParent(entityParent, null);
             }
         }
 
@@ -111,6 +91,63 @@ namespace Game
             Transform.SetLocal(transform);
         }
 
+        public void Remove()
+        {
+            Fixture[] fixtures = GetFixtures();
+            foreach (Fixture f in fixtures)
+            {
+                EntityBody.DestroyFixture(f);
+            }
+            _fixtureIds.Clear();
+            Transform.Parent = null;
+        }
+
+        /// <summary>
+        /// Sets whichs Entity this Portal is parented too.  Fixtures are added to this Entity's Body for handling portal collisions.
+        /// If this Portal was previously parented to an Entity, the previously added Fixtures will be removed.
+        /// </summary>
+        /// <param name="parentEntity">Entity that Portal is parented to.  If null then this Portal is not parented to any Entity.</param>
+        /// <param name="transform">Transform relative to the parent Entity.  Values are copied so references are not preserved.</param>
+        public void SetEntityParent(Entity parentEntity, Transform2D transform)
+        {
+            Remove();
+            Transform.SetLocal(transform);
+            EntityParent = parentEntity;
+            if (parentEntity != null)
+            {
+                Transform.Parent = EntityParent.Transform;
+
+                List<Fixture> fixtures = new List<Fixture>();
+                Vector2[][] verts = new Vector2[2][];
+
+                Entity entity = Scene.CreateEntity();
+                entity.Transform.Parent = EntityParent.Transform;
+
+                verts[0] = VectorExt2.Transform(GetFixtureLeftVerts(), Transform.GetMatrix());
+                verts[1] = VectorExt2.Transform(GetFixtureRightVerts(), Transform.GetMatrix());
+                for (int i = 0; i < verts.Length; i++)
+                {
+                    verts[i] = MathExt.SetHandedness(verts[i], false);
+                    FarseerPhysics.Common.Vertices fixtureVerts = new FarseerPhysics.Common.Vertices();
+                    fixtureVerts.AddRange(VectorExt2.ConvertToXna(verts[i]));
+                    fixtures.Add(FixtureExt.CreatePortalFixture(parentEntity.Body, new PolygonShape(fixtureVerts, 0), this));
+
+                    entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts)));
+                }
+
+                verts[0] = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
+                Xna.Vector2[] vertsXna = VectorExt2.ConvertToXna(verts[0]);
+                SensorFixture = FixtureExt.CreatePortalFixture(parentEntity.Body, new EdgeShape(vertsXna[0], vertsXna[1]), this);
+                SensorFixture.IsSensor = true;
+                fixtures.Add(SensorFixture);
+                
+                foreach (Fixture f in fixtures)
+                {
+                    _fixtureIds.Add(f.FixtureId);
+                }
+            }
+        }
+
         public void SetSize(float size)
         {
             Transform.Scale = new Vector2(Transform.Scale.X, size);
@@ -126,6 +163,18 @@ namespace Game
             {
                 Transform.Scale = new Vector2(-1, Transform.Scale.Y);
             }
+        }
+
+        public Fixture[] GetFixtures()
+        {
+            Fixture[] fixture = new Fixture[_fixtureIds.Count];
+            for (int i = 0; i < _fixtureIds.Count; i++)
+            {
+                int fixtureId = _fixtureIds[i];
+                fixture[i] = EntityBody.FixtureList.Find(item => item.FixtureId == fixtureId);
+                Debug.Assert(fixture[i] != null, "Fixture could not be found.");
+            }
+            return fixture;
         }
 
         public static void ConnectPortals(Portal portal0, Portal portal1)
@@ -156,6 +205,24 @@ namespace Game
         public Vector2[] GetVerts()
         {
             return new Vector2[] { new Vector2(0, 0.5f), new Vector2(0, -0.5f)};
+        }
+
+        private Vector2[] GetFixtureLeftVerts()
+        {
+            return new Vector2[] { 
+                new Vector2(0, 0.5f),
+                new Vector2(0, 0.5f + PortalMargin),
+                new Vector2(-PortalMargin, 0.5f),
+            };
+        }
+
+        private Vector2[] GetFixtureRightVerts()
+        {
+            return new Vector2[] { 
+                new Vector2(0, -0.5f),
+                new Vector2(-PortalMargin, -0.5f),
+                new Vector2(0, -(0.5f + PortalMargin)), 
+            };
         }
 
         public Vector2[] GetWorldVerts()

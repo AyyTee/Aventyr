@@ -126,7 +126,10 @@ namespace Game
             body.Position = VectorExt2.ConvertToXna(position);
             box.SetBody(body);
             body.BodyType = BodyType.Dynamic;
+
+            FixtureUserData userData = new FixtureUserData(body.FixtureList[0]);
             
+            FixtureExt.SetUserData(body.FixtureList[0], userData);
             return box;
         }
 
@@ -281,7 +284,7 @@ namespace Game
             false/*ignoreExtensionDataObject*/,
             true/*preserveObjectReferences*/,
             null/*dataContractSurrogate*/,
-            new PhysDataContractResolver(assembly));
+            null);//new PhysDataContractResolver(assembly));
             return serializer;
         }
     }

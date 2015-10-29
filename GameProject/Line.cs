@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using OpenTK;
 using System.Diagnostics;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
@@ -31,6 +32,12 @@ namespace Game
             Vertices[1] = lineEnd;
         }
 
+        public Line(Xna.Vector2 lineStart, Xna.Vector2 lineEnd)
+        {
+            Vertices[0] = VectorExt2.ConvertTo(lineStart);
+            Vertices[1] = VectorExt2.ConvertTo(lineEnd);
+        }
+
         public Line(Vector2[] line)
         {
             Vertices = line;
@@ -46,6 +53,14 @@ namespace Game
                 return Side.IsLeftOf;
             }
             return Side.IsRightOf;
+        }
+
+        /// <summary>
+        /// Returns whether a point is left or right of the line
+        /// </summary>
+        public Side GetSideOf(Xna.Vector2 point)
+        {
+            return GetSideOf(VectorExt2.ConvertTo(point));
         }
 
         /// <summary>

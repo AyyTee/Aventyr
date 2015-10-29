@@ -131,7 +131,7 @@ namespace Game
             portal1 = scene.CreatePortal();
             portal1.Transform.Rotation = 4.4f;
             portal1.Transform.Position = new Vector2(-3f, 0f);
-            //portal1.Transform.Scale = new Vector2(-1f, -1f);
+            portal1.Transform.Scale = new Vector2(1f, -1f);
 
             Portal.ConnectPortals(portal0, portal1);
             //Portal.Link(portal1, portal1);
@@ -160,7 +160,7 @@ namespace Game
 
             portal3 = scene.CreatePortal();
             portal3.Transform.Rotation = 0.4f;
-            portal3.Transform.Position = new Vector2(-2f, 2f);
+            portal3.Transform.Position = new Vector2(-1f, 1f);
             //portal3.Transform.Scale = new Vector2(-1f, 1f);
 
             Portal.ConnectPortals(portal2, portal3);
@@ -219,10 +219,10 @@ namespace Game
             Entity tempLine = scene.CreateEntity();
             tempLine.Name = "tempLine";
 
-            intersectDot = scene.CreateEntity();
+            /*intersectDot = scene.CreateEntity();
             //intersectDot.Models.Add(Model.CreateCube());
             intersectDot.Models = portalEntity0.Models;
-            intersectDot.Transform.Scale = new Vector2(1f, 1f);
+            intersectDot.Transform.Scale = new Vector2(1f, 1f);*/
 
             Vector2[] v = new Vector2[5] {
                 new Vector2(-2, -1),
@@ -278,6 +278,7 @@ namespace Game
             if (WindowState == OpenTK.WindowState.Normal)
             {
                 WindowState = OpenTK.WindowState.Fullscreen;
+                ClientSize = new Size(Width, Height);
                 scene.ActiveCamera.Aspect = Width / (float)Height;
                 hud.ActiveCamera.Aspect = Width / (float)Height;
                 hud.ActiveCamera.Scale = Height;
@@ -286,6 +287,7 @@ namespace Game
             {
                 WindowState = OpenTK.WindowState.Normal;
                 ClientSize = new Size(800, 600);
+                //Controller.ClientSize = ClientSize;
                 scene.ActiveCamera.Aspect = Width / (float)Height;
                 hud.ActiveCamera.Aspect = Width / (float)Height;
                 hud.ActiveCamera.Scale = Height;
@@ -329,9 +331,9 @@ namespace Game
                 {
                     if (!PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd)))
                     {
-                        portal1.Transform.Rotation = portal1.Transform.WorldRotation;
+                        /*portal1.Transform.Rotation = portal1.Transform.WorldRotation;
                         portal1.Transform.Parent = null;
-                        portal1.Transform.Position = mousePos;
+                        portal1.Transform.Position = mousePos;*/
                     }
                 }
                 if (InputExt.MousePress(MouseButton.Right))

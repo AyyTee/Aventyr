@@ -1,11 +1,7 @@
 ﻿using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game
 {
@@ -13,7 +9,19 @@ namespace Game
     {
         public bool[] EdgeIsExterior;
         private Fixture _fixture;
+        /// <summary>
+        /// Ids of all portal sensor fixtures that this fixture is colliding with.
+        /// </summary>
+        public List<Fixture> PortalSensorCollisions = new List<Fixture>();
 
+        public Portal Portal { get; set; }
+        public bool IsPortalSensor 
+        { 
+            get
+            {
+                return Portal != null && _fixture.IsSensor;
+            }
+        }
         public Entity Entity
         {
             get
@@ -41,8 +49,9 @@ namespace Game
         {
         }
 
-        public FixtureUserData(Fixture fixture)
+        public FixtureUserData(Fixture fixture, Portal portal)
         {
+            Portal = portal;
             _fixture = fixture;
             _fixtureId = fixture.FixtureId;
             Debug.Assert(Fixture.UserData == null, "UserData has already been assigned for this fixture.");
@@ -53,9 +62,19 @@ namespace Game
                     {
                         PolygonShape shape = (PolygonShape) Fixture.Shape;
                         EdgeIsExterior = new bool[shape.Vertices.Count];
+                        for (int i = 0; i < EdgeIsExterior.Length; i++)
+                        {
+                            EdgeIsExterior[i] = true;
+                        }
                         break;
                     }
             }
+        }
+
+        public FixtureUserData(Fixture fixture)
+            :this(fixture, null)
+        {
+
         }
     }
 }

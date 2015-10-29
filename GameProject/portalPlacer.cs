@@ -23,8 +23,9 @@ namespace Game
                 intersection = GetValid(intersection, portal);
                 if (intersection != null)
                 {
-                    portal.Transform.SetLocal(intersection.GetTransform());
-                    portal.Transform.Parent = intersection.Entity.Transform;
+                    Transform2D transform = intersection.GetTransform();
+                    transform.Scale = portal.Transform.Scale;
+                    portal.SetEntityParent(intersection.Entity, transform);
                     return true;
                 }
             }
@@ -66,14 +67,9 @@ namespace Game
                                             true);
                                         if (intersect.Exists)
                                         {
-                                            //ignore interior edges
-                                            if (fixture.UserData != null)
+                                            if (!EdgeIsValid(fixture, i))
                                             {
-                                                FixtureUserData userData = FixtureExt.GetUserData(fixture);
-                                                if (userData.EdgeIsExterior[i] == false)
-                                                {
-                                                    break;
-                                                }
+                                                break;
                                             }
                                             //ignore edges facing away
                                             Line rayLine = new Line(vertices[i0], vertices[i1]); 
@@ -99,7 +95,7 @@ namespace Game
                     },
                     VectorExt2.ConvertToXna(rayBegin),
                     VectorExt2.ConvertToXna(rayEnd));
-                IOrderedEnumerable<FixtureIntersection> sortedIntersections = intersections.OrderBy(item => (rayBegin - item.GetPosition()).Length);
+                var sortedIntersections = intersections.OrderBy(item => (rayBegin - item.GetPosition()).Length);
                 if (sortedIntersections.Count() > 0)
                 {
                     return sortedIntersections.ToArray()[0];
@@ -129,6 +125,24 @@ namespace Game
             portalT = Math.Min(portalT, 1 - portalSizeT / 2);
             FixtureIntersection intersectValid = new FixtureIntersection(intersection.Fixture, intersection.EdgeIndex, portalT);
             return intersectValid;
+        }
+
+        /// <summary>
+        /// Checks if an edge can have a portal placed on it.  This does not account for size of edge.
+        /// </summary>
+        /// <param name="fixture"></param>
+        /// <param name="edgeIndex"></param>
+        /// <returns></returns>
+        public static bool EdgeIsValid(Fixture fixture, int edgeIndex)
+        {
+            Debug.Assert(fixture.UserData != null);
+            //interior edges are not valid
+            FixtureUserData userData = FixtureExt.GetUserData(fixture);
+            if (!userData.EdgeIsExterior[edgeIndex])
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

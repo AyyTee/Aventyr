@@ -155,5 +155,63 @@ namespace UnitTest
                 );
         }
         #endregion
+
+        #region IsClockwise tests
+        [TestMethod]
+        public void IsClockwiseTest0()
+        {
+            Vector2[] v = new Vector2[] {
+                new Vector2(),
+                new Vector2(0, 1),
+                new Vector2(1, 0)
+            };
+            Assert.IsTrue(MathExt.IsClockwise(v));
+        }
+        [TestMethod]
+        public void IsClockwiseTest1()
+        {
+            Vector2[] v = new Vector2[] {
+                new Vector2(),
+                new Vector2(1, 0),
+                new Vector2(0, 1)
+            };
+            Assert.IsFalse(MathExt.IsClockwise(v));
+        }
+        [TestMethod]
+        public void IsClockwiseTest2()
+        {
+            Vector2[] v = new Vector2[] {
+                new Vector2(1f, 9f),
+                new Vector2(10f, 10f),
+                new Vector2(11f, -5f),
+                new Vector2(-6f, -6.3f)
+            };
+            Assert.IsTrue(MathExt.IsClockwise(v));
+        }
+        [TestMethod]
+        public void IsClockwiseTest3()
+        {
+            Vector2[] v = new Vector2[] {
+                new Vector2(1f, 1f),
+                new Vector2(1f, 0f),
+                new Vector2(0f, 0f),
+                new Vector2(0f, 1f),
+            };
+            Assert.IsTrue(MathExt.IsClockwise(v));
+        }
+        [TestMethod]
+        public void IsClockwiseTest4()
+        {
+            Vector2[] v = new Vector2[] {
+                new Vector2(1f, 1f),
+                new Vector2(1f, 0f),
+                new Vector2(0f, 0f),
+                new Vector2(0f, 1f),
+            };
+            List<Vector2> vList = new List<Vector2>(v);
+            vList.Reverse();
+            Assert.IsFalse(MathExt.IsClockwise(vList));
+        }
+        #endregion
     }
 }

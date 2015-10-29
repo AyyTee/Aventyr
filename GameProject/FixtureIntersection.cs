@@ -21,7 +21,7 @@ namespace Game
         /// <summary>
         /// Return the Entity linked to the Body that is linked to the Fixture being intersected.
         /// </summary>
-        public Placeable2D Entity
+        public Entity Entity
         {
             get 
             {
@@ -133,7 +133,7 @@ namespace Game
 
             transform.Position = Entity.Transform.WorldToLocal(GetPosition());
             transform.Parent = Entity.Transform;
-            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.Transform.Rotation;// +(float)Math.PI;
+            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.Transform.Rotation;
             return transform;
         }
     }
