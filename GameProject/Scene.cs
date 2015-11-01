@@ -57,6 +57,8 @@ namespace Game
 
         public void Step()
         {
+            Console.Out.Write("Step");
+            Console.Out.WriteLine();
             PhysWorld.ProcessChanges();
             foreach (Entity e in EntityList)
             {
@@ -71,6 +73,7 @@ namespace Game
             }
             if (PhysWorld != null)
             {
+                _contactListener.Step();
                 PhysWorld.Step(TimeStepSize);
             }
 
@@ -119,6 +122,7 @@ namespace Game
         public Entity CreateEntityBox(Vector2 position, Vector2 scale)
         {
             Entity box = CreateEntity();
+            box.IsPortalable = true;
             box.Transform.Position = position;
             box.Models.Add(Model.CreatePlane(scale));
 

@@ -12,7 +12,7 @@ namespace Game
         /// <summary>
         /// Ids of all portal sensor fixtures that this fixture is colliding with.
         /// </summary>
-        public List<Fixture> PortalSensorCollisions = new List<Fixture>();
+        public List<Portal> PortalCollisions = new List<Portal>();
 
         public Portal Portal { get; set; }
         public bool IsPortalSensor 

@@ -202,6 +202,11 @@ namespace Game
             return distance;
         }
 
+        public float PointDistance(Xna.Vector2 point, bool isSegment)
+        {
+            return PointDistance(VectorExt2.ConvertTo(point), isSegment);
+        }
+
         /// <summary>
         /// Swaps the start and end vertice for the line.
         /// </summary>
@@ -220,6 +225,21 @@ namespace Game
         public Vector2 Lerp(float t)
         {
             return MathExt.Lerp(Vertices[0], Vertices[1], t);
+        }
+
+        /// <summary>
+        /// Returns the T value of the nearest point on this line to a vector.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public float NearestT(Vector2 v)
+        {
+            return Vector2.Dot(v - Vertices[0], Vertices[1] - Vertices[0]);
+        }
+
+        public float NearestT(Xna.Vector2 v)
+        {
+            return NearestT(VectorExt2.ConvertTo(v));
         }
     }
 }

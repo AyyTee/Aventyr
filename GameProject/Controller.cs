@@ -41,6 +41,7 @@ namespace Game
         public static Size ClientSize;
         public const int StepsPerSecond = 60;
         public const int DrawsPerSecond = 60;
+        private bool ManualStepMode = false;
         Model background;
         Font Default;
         Entity intersectDot;
@@ -224,17 +225,17 @@ namespace Game
             intersectDot.Models = portalEntity0.Models;
             intersectDot.Transform.Scale = new Vector2(1f, 1f);*/
 
-            Vector2[] v = new Vector2[5] {
-                new Vector2(-2, -1),
+            Vector2[] v = new Vector2[] {
+                new Vector2(-8, -1),
                 new Vector2(2, -1),
                 new Vector2(3, 0),
                 new Vector2(3, -2),
-                new Vector2(-2, -2)
+                new Vector2(-10, -2)
             };
             
             Entity ground = scene.CreateEntityPolygon(new Vector2(0, 0), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
-            ground.Transform.Rotation = 0.5f;
+            //ground.Transform.Rotation = 0.5f;
             ground.Transform.Position = new Vector2(0, -4f);
             
             Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
@@ -354,6 +355,10 @@ namespace Game
                     scene = Scene.Load();
                     renderer.RenderScenes.Insert(0, scene);
                 }
+                if (InputExt.KeyPress(Key.M))
+                {
+                    ManualStepMode = !ManualStepMode;
+                }
                 #region camera movement
                 
                 Vector3 v = new Vector3();
@@ -430,9 +435,11 @@ namespace Game
                 
                 #endregion
             }
+            if (ManualStepMode == false || InputExt.KeyPress(Key.Enter))
+            {
+                scene.Step();
+            }
             
-            scene.Step();
-
             //get rid of all ibo elements no longer used
             lock ("delete")
             {

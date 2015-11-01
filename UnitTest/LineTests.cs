@@ -2,6 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
 using OpenTK;
+using FarseerPhysics;
 
 namespace UnitTest
 {
@@ -234,6 +235,26 @@ namespace UnitTest
                 Line line = new Line(VectorExt2.Transform(p0.GetVerts(), p0.Transform.GetMatrix()));
                 Assert.IsFalse(line.IsInsideFOV(viewPoint, lookPoint));
             }
+        }
+        #endregion
+        #region NearestT tests
+        [TestMethod]
+        public void NearestTTest0()
+        {
+            Line line = new Line(new Vector2(), new Vector2(1, 0));
+            Assert.IsTrue(line.NearestT(new Vector2(1, 5)) == 1);
+        }
+        [TestMethod]
+        public void NearestTTest1()
+        {
+            Line line = new Line(new Vector2(), new Vector2(0, 1));
+            Assert.IsTrue(line.NearestT(new Vector2(-4, 2)) == 2);
+        }
+        [TestMethod]
+        public void NearestTTest2()
+        {
+            Line line = new Line(new Vector2(3.3f,-4.9f), new Vector2(-5.3f, -6.1f));
+            Assert.IsTrue(Math.Abs(line.NearestT(new Vector2(-4, 2)) - 54.5) < 0.0001f);
         }
         #endregion
     }

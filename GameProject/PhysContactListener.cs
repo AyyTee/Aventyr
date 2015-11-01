@@ -9,12 +9,16 @@ using FarseerPhysics.Dynamics.Contacts;
 using Xna = Microsoft.Xna.Framework;
 using System.Diagnostics;
 using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Collision;
 
 namespace Game
 {
     public class PhysContactListener
     {
         public Scene Scene { get; private set; }
+        private bool _isFirstPreSolve = true;
+        private List<Contact> _contactList = new List<Contact>();
+        private List<Fixture> _fixtures = new List<Fixture>();
 
         public PhysContactListener(Scene scene)
         {
@@ -22,41 +26,79 @@ namespace Game
             /*Scene.PhysWorld.ContactManager.BeginContact += BeginContactListener;
             Scene.PhysWorld.ContactManager.EndContact += EndContactListener;*/
             Scene.PhysWorld.ContactManager.PreSolve = PreSolveListener;
+            Scene.PhysWorld.ContactManager.PostSolve = PostSolveListener;
+        }
+
+        public void Step()
+        {
+            _fixtures.Clear();
+            foreach (Body body in Scene.PhysWorld.BodyList)
+            {
+                foreach (Fixture f in body.FixtureList)
+                {
+                    FixtureExt.GetUserData(f).PortalCollisions.Clear();
+                }
+            }
+            foreach (Portal p in Scene.PortalList)
+            {
+                if (p.SensorFixture != null)
+                {
+                    //EdgeShape edge = (EdgeShape)p.SensorFixture.Shape;
+                    Xna.Vector2[] verts = VectorExt2.ConvertToXna(p.GetWorldVerts());
+                    Scene.PhysWorld.RayCast(
+                        delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
+                        {
+                            //ignore any fixtures that are attached to the same body as the portal fixture
+                            if (fixture.Body != p.SensorFixture.Body)
+                            {
+                                //_fixtures.Add(fixture);
+                                FixtureExt.GetUserData(fixture).PortalCollisions.Add(p);
+                            }
+                            return -1;
+                        },
+                        verts[0],
+                        verts[1]);
+                }
+            }
         }
 
         private void PreSolveListener(Contact contact, ref FarseerPhysics.Collision.Manifold oldManifold)
         {
+            if (_isFirstPreSolve)
+            {
+                Console.Out.Write("Begin");
+                Console.Out.WriteLine();
+                _isFirstPreSolve = false;
+            }
+            
             FixtureUserData userDataA = FixtureExt.GetUserData(contact.FixtureA);
             FixtureUserData userDataB = FixtureExt.GetUserData(contact.FixtureB);
 
-            Xna.Vector2 normal;// = new Xna.Vector2();
-            var vList = new FarseerPhysics.Common.FixedArray2<Xna.Vector2>();
-            contact.GetWorldManifold(out normal, out vList);
-
-            Fixture[] fixtures = GetContactFixtures(contact);
-            for (int i = 0; i < fixtures.Length; i++)
+            if (!IsContactValid(contact))
             {
+                contact.Enabled = false;
+            }
 
-                FixtureUserData userData = FixtureExt.GetUserData(fixtures[i]);
-                foreach (Fixture portalFixture in userData.PortalSensorCollisions)
+            /*if (contact.Enabled)
+            {
+                _contactList.Add(contact);
+                if (contact.FixtureA.IsSensor || contact.FixtureB.IsSensor)
                 {
-                    if (FixtureExt.GetUserData(portalFixture).Portal == userDataA.Portal)
+
+                }
+                if (userDataA.IsPortalSensor || userDataB.IsPortalSensor)
+                {
+                    Debug.Assert(userDataA.IsPortalSensor != userDataB.IsPortalSensor);
+                    if (userDataA.IsPortalSensor == false)
                     {
-                        break;
+                        userDataB.PortalSensorCollisions.Add(contact.FixtureA);
                     }
-                    else if (FixtureExt.GetUserData(portalFixture).Portal == userDataB.Portal)
+                    else
                     {
-                        break;
-                    }
-                    EdgeShape edge = (EdgeShape)portalFixture.Shape;
-                    Line line = new Line(edge.Vertex1, edge.Vertex2);
-                    //if (line.GetSideOf(vList[0]) != line.GetSideOf(f.Body.Position))
-                    {
-                        contact.Enabled = false;
-                        break;
+                        userDataA.PortalSensorCollisions.Add(contact.FixtureB);
                     }
                 }
-            }
+            }*/
             /*if (vList[0].X == 0 && vList[0].Y == 0)
             {
                 contact.Enabled = false;
@@ -72,6 +114,88 @@ namespace Game
             }*/
         }
 
+        private void PostSolveListener(Contact contact, ContactConstraint impulse)
+        {
+            Console.Out.Write("Post");
+            Console.Out.WriteLine();
+            _isFirstPreSolve = true;
+        }
+
+        /// <summary>
+        /// Returns true if a contact should not be disabled due to portal clipping.
+        /// </summary>
+        private bool IsContactValid(Contact contact)
+        {
+            FixtureUserData userDataA = FixtureExt.GetUserData(contact.FixtureA);
+            FixtureUserData userDataB = FixtureExt.GetUserData(contact.FixtureB);
+
+            Xna.Vector2 normal;
+            var vList = new FarseerPhysics.Common.FixedArray2<Xna.Vector2>();
+            contact.GetWorldManifold(out normal, out vList);
+            //contact.Manifold.Points[0] = contact.Manifold.Points[1];
+            //contact.Manifold.PointCount = 1;
+            //
+            //contact.Manifold.
+            //contact.Manifold.
+            //contact.GetManifold();
+            foreach (Portal portal in Scene.PortalList)
+            {
+                if (userDataA.Portal == portal || userDataB.Portal == portal)
+                {
+                    continue;
+                }
+                Line line = new Line(portal.GetWorldVerts());
+                float[] vDist = new float[2];
+                vDist[0] = line.PointDistance(vList[0], true);
+                vDist[1] = line.PointDistance(vList[1], true);
+                float[] vTPos = new float[2];
+                vTPos[0] = line.NearestT(vList[0]);
+                vTPos[1] = line.NearestT(vList[1]);
+                if (vDist[0] < Portal.PortalMargin)// && vTPos[0] >= 0 && vTPos[0] <= 1)
+                {
+                    return false;
+                }
+                else if (vDist[1] < Portal.PortalMargin && contact.Manifold.PointCount == 1)// && vTPos[1] >= 0 && vTPos[1] <= 1)
+                {
+                    return false;
+                }
+            }
+
+            if (vList[0] != new Xna.Vector2(0, 0) || vList[1] != new Xna.Vector2(0, 0))
+            {
+                Console.Out.Write("Pre");
+                Console.Out.WriteLine();
+            }
+            foreach (Portal portal in userDataA.PortalCollisions)
+            {
+                if (userDataA.Portal == portal || userDataB.Portal == portal)
+                {
+                    continue;
+                }
+                EdgeShape edge = (EdgeShape)portal.SensorFixture.Shape;
+                Line portalLine = new Line(portal.GetWorldVerts());
+                if (portalLine.GetSideOf(vList[0]) != portalLine.GetSideOf(contact.FixtureA.Body.Position))
+                {
+                    return false;
+                }
+            }
+
+            foreach (Portal portal in userDataB.PortalCollisions)
+            {
+                if (userDataA.Portal == portal || userDataB.Portal == portal)
+                {
+                    continue;
+                }
+                EdgeShape edge = (EdgeShape)portal.SensorFixture.Shape;
+                Line portalLine = new Line(portal.GetWorldVerts());
+                if (portalLine.GetSideOf(vList[0]) != portalLine.GetSideOf(contact.FixtureB.Body.Position))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private bool BeginContactListener(Contact contact)
         {
             FixtureUserData userDataA = FixtureExt.GetUserData(contact.FixtureA);
@@ -79,11 +203,11 @@ namespace Game
 
             if (userDataA.IsPortalSensor)
             {
-                userDataB.PortalSensorCollisions.Add(contact.FixtureA);
+                userDataB.PortalCollisions.Add(userDataA.Portal);
             }
             else if (userDataB.IsPortalSensor)
             {
-                userDataA.PortalSensorCollisions.Add(contact.FixtureB);
+                userDataB.PortalCollisions.Add(userDataB.Portal);
             }
             return true;
         }
@@ -94,11 +218,11 @@ namespace Game
             FixtureUserData userDataB = FixtureExt.GetUserData(contact.FixtureB);
             if (userDataB.IsPortalSensor)
             {
-                Debug.Assert(userDataA.PortalSensorCollisions.Remove(contact.FixtureB));
+                Debug.Assert(userDataA.PortalCollisions.Remove(userDataB.Portal));
             }
             if (userDataA.IsPortalSensor)
             {
-                Debug.Assert(userDataB.PortalSensorCollisions.Remove(contact.FixtureA));
+                Debug.Assert(userDataB.PortalCollisions.Remove(userDataA.Portal));
             }
         }
 

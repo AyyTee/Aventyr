@@ -183,6 +183,10 @@ namespace Game
             List<Portal> collisions = new List<Portal>();
             foreach (Portal portal in Scene.PortalList)
             {
+                if (portal.EntityParent == this)
+                {
+                    continue;
+                }
                 Line portalLine = new Line(portal.GetWorldVerts());
                 Vector2[] convexHull = VectorExt2.Transform(model.GetWorldConvexHull(), this.Transform.GetWorldMatrix() * modelMatrix);
 

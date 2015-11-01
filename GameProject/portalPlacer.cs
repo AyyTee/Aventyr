@@ -25,6 +25,7 @@ namespace Game
                 {
                     Transform2D transform = intersection.GetTransform();
                     transform.Scale = portal.Transform.Scale;
+                    transform.Position = transform.Position + new Vector2(0f, 0f);
                     portal.SetEntityParent(intersection.Entity, transform);
                     return true;
                 }

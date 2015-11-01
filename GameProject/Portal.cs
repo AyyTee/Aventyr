@@ -35,10 +35,10 @@ namespace Game
         }
         /// <summary>
         /// The distance at which an entity enters and exits a portal.  
-        /// It is nessesary to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
+        /// It is used to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
         /// </summary>
         public const float EntityMinDistance = 0.001f;
-        public const float PortalMargin = 0.01f;
+        public const float PortalMargin = 0.02f;
 
         public Portal Linked
         {
