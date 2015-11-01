@@ -339,7 +339,7 @@ namespace Game
                 }
                 if (InputExt.MousePress(MouseButton.Right))
                 {
-                    scene.CreateEntityBox(mousePos, new Vector2(0.5f, 0.5f));
+                    scene.CreateEntityBox(mousePos, new Vector2(0.4f, 0.4f));
                 }
                 if (InputExt.KeyPress(Key.Escape))
                 {

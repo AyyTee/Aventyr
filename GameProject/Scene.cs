@@ -57,8 +57,6 @@ namespace Game
 
         public void Step()
         {
-            Console.Out.Write("Step");
-            Console.Out.WriteLine();
             PhysWorld.ProcessChanges();
             foreach (Entity e in EntityList)
             {
@@ -270,7 +268,6 @@ namespace Game
 
             var physicsDeserializer = new FarseerPhysics.Common.WorldXmlDeserializer();
             World physWorld = physicsDeserializer.Deserialize(physicsFile);
-            
             
             scene.SetPhysicsWorld(physWorld);
 

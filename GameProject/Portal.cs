@@ -1,4 +1,5 @@
-﻿using FarseerPhysics.Collision.Shapes;
+﻿using FarseerPhysics.Collision;
+using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
 using OpenTK;
 using System;
@@ -14,6 +15,7 @@ namespace Game
         private Portal _linked = null;
         private bool _oneSided = true;
         public Entity EntityParent { get; private set; }
+        public Fixture FixtureParent { get; private set; }
         private List<int> _fixtureIds = new List<int>();
         public Body EntityBody
         {
@@ -119,6 +121,7 @@ namespace Game
             //Transform.SetLocal(transform);
             
             EntityParent = null;
+            FixtureParent = fixture;
             if (fixture != null)
             {
                 Vector2[][] verts = new Vector2[2][];
@@ -153,17 +156,16 @@ namespace Game
                         }
                 }
 
+                //wake up all the bodies so that they will fall if there is now a portal entrance below them
+                foreach (Body b in Scene.PhysWorld.BodyList)
+                {
+                    b.Awake = true;
+                }
+
                 EntityParent = FixtureExt.GetUserData(fixture).Entity;
                 Transform.Parent = EntityParent.Transform;
 
                 List<Fixture> fixtures = new List<Fixture>();
-                
-
-                /*Entity entity = Scene.CreateEntity();
-                entity.Transform.Parent = EntityParent.Transform;*/
-
-                /*verts[0] = VectorExt2.Transform(GetFixtureLeftVerts(), Transform.GetMatrix());
-                verts[1] = VectorExt2.Transform(GetFixtureRightVerts(), Transform.GetMatrix());*/
                 
                 for (int i = 0; i < verts.Length; i++)
                 {
@@ -171,8 +173,6 @@ namespace Game
                     FarseerPhysics.Common.Vertices fixtureVerts = new FarseerPhysics.Common.Vertices();
                     fixtureVerts.AddRange(VectorExt2.ConvertToXna(verts[i]));
                     fixtures.Add(FixtureExt.CreatePortalFixture(EntityParent.Body, new PolygonShape(fixtureVerts, 0), this));
-
-                    //entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts)));
                 }
 
                 verts[0] = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
@@ -215,6 +215,24 @@ namespace Game
                 Debug.Assert(fixture[i] != null, "Fixture could not be found.");
             }
             return fixture;
+        }
+
+        public Vector2[] GetBounds(float margin)
+        {
+            float width, height;
+            width = (float)Math.Abs(Math.Cos(Transform.Rotation) * Transform.WorldScale.X) + margin * 2;
+            height = (float)Math.Abs(Math.Sin(Transform.Rotation) * Transform.WorldScale.X) + margin * 2;
+            return new Vector2[] {
+                Transform.WorldPosition + new Vector2(-width/2f, -height/2f),
+                Transform.WorldPosition + new Vector2(-width/2f, height/2f),
+                Transform.WorldPosition + new Vector2(width/2f, height/2f),
+                Transform.WorldPosition + new Vector2(width/2f, -height/2f)
+            };
+        }
+
+        public Vector2[] GetBounds()
+        {
+            return GetBounds(0);
         }
 
         public static void ConnectPortals(Portal portal0, Portal portal1)

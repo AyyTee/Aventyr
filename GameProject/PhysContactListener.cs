@@ -16,7 +16,6 @@ namespace Game
     public class PhysContactListener
     {
         public Scene Scene { get; private set; }
-        private bool _isFirstPreSolve = true;
         private List<Contact> _contactList = new List<Contact>();
         private List<Fixture> _fixtures = new List<Fixture>();
 
@@ -64,12 +63,6 @@ namespace Game
 
         private void PreSolveListener(Contact contact, ref FarseerPhysics.Collision.Manifold oldManifold)
         {
-            if (_isFirstPreSolve)
-            {
-                Console.Out.Write("Begin");
-                Console.Out.WriteLine();
-                _isFirstPreSolve = false;
-            }
             
             FixtureUserData userDataA = FixtureExt.GetUserData(contact.FixtureA);
             FixtureUserData userDataB = FixtureExt.GetUserData(contact.FixtureB);
@@ -78,27 +71,6 @@ namespace Game
             {
                 contact.Enabled = false;
             }
-
-            /*if (contact.Enabled)
-            {
-                _contactList.Add(contact);
-                if (contact.FixtureA.IsSensor || contact.FixtureB.IsSensor)
-                {
-
-                }
-                if (userDataA.IsPortalSensor || userDataB.IsPortalSensor)
-                {
-                    Debug.Assert(userDataA.IsPortalSensor != userDataB.IsPortalSensor);
-                    if (userDataA.IsPortalSensor == false)
-                    {
-                        userDataB.PortalSensorCollisions.Add(contact.FixtureA);
-                    }
-                    else
-                    {
-                        userDataA.PortalSensorCollisions.Add(contact.FixtureB);
-                    }
-                }
-            }*/
             /*if (vList[0].X == 0 && vList[0].Y == 0)
             {
                 contact.Enabled = false;
@@ -116,9 +88,6 @@ namespace Game
 
         private void PostSolveListener(Contact contact, ContactConstraint impulse)
         {
-            Console.Out.Write("Post");
-            Console.Out.WriteLine();
-            _isFirstPreSolve = true;
         }
 
         /// <summary>
@@ -126,21 +95,17 @@ namespace Game
         /// </summary>
         private bool IsContactValid(Contact contact)
         {
-            FixtureUserData userDataA = FixtureExt.GetUserData(contact.FixtureA);
-            FixtureUserData userDataB = FixtureExt.GetUserData(contact.FixtureB);
+            FixtureUserData[] userData = new FixtureUserData[2];
+            userData[0] = FixtureExt.GetUserData(contact.FixtureA);
+            userData[1] = FixtureExt.GetUserData(contact.FixtureB);
 
             Xna.Vector2 normal;
             var vList = new FarseerPhysics.Common.FixedArray2<Xna.Vector2>();
             contact.GetWorldManifold(out normal, out vList);
-            //contact.Manifold.Points[0] = contact.Manifold.Points[1];
-            //contact.Manifold.PointCount = 1;
-            //
-            //contact.Manifold.
-            //contact.Manifold.
-            //contact.GetManifold();
+
             foreach (Portal portal in Scene.PortalList)
             {
-                if (userDataA.Portal == portal || userDataB.Portal == portal)
+                if (userData[0].Portal == portal || userData[1].Portal == portal)
                 {
                     continue;
                 }
@@ -148,46 +113,45 @@ namespace Game
                 float[] vDist = new float[2];
                 vDist[0] = line.PointDistance(vList[0], true);
                 vDist[1] = line.PointDistance(vList[1], true);
-                if (vDist[0] < Portal.PortalMargin * 2)
+                if (contact.FixtureA == portal.FixtureParent || contact.FixtureB == portal.FixtureParent)
                 {
-                    return false;
-                }
-                else if (vDist[1] < Portal.PortalMargin * 2 && contact.Manifold.PointCount == 2)
-                {
-                    return false;
-                }
-            }
-
-            if (vList[0] != new Xna.Vector2(0, 0) || vList[1] != new Xna.Vector2(0, 0))
-            {
-                Console.Out.Write("Pre");
-                Console.Out.WriteLine();
-            }
-            foreach (Portal portal in userDataA.PortalCollisions)
-            {
-                if (userDataA.Portal == portal || userDataB.Portal == portal)
-                {
-                    continue;
-                }
-                EdgeShape edge = (EdgeShape)portal.SensorFixture.Shape;
-                Line portalLine = new Line(portal.GetWorldVerts());
-                if (portalLine.GetSideOf(vList[0]) != portalLine.GetSideOf(contact.FixtureA.Body.Position))
-                {
-                    return false;
+                    if (contact.Manifold.PointCount == 1)
+                    {
+                        if (vDist[0] < Portal.PortalMargin)
+                        {
+                            return false;
+                        }
+                    }
+                    else if (vDist[0] < Portal.PortalMargin || vDist[1] < Portal.PortalMargin)
+                    {
+                        return false;
+                    }
                 }
             }
 
-            foreach (Portal portal in userDataB.PortalCollisions)
+            for (int i0 = 0; i0 < userData.Length; i0++)
             {
-                if (userDataA.Portal == portal || userDataB.Portal == portal)
+                int i1 = (i0 + 1) % userData.Length;
+                foreach (Portal portal in userData[i0].PortalCollisions)
                 {
-                    continue;
-                }
-                EdgeShape edge = (EdgeShape)portal.SensorFixture.Shape;
-                Line portalLine = new Line(portal.GetWorldVerts());
-                if (portalLine.GetSideOf(vList[0]) != portalLine.GetSideOf(contact.FixtureB.Body.Position))
-                {
-                    return false;
+                    if (userData[i0].Portal == portal || userData[i1].Portal == portal)
+                    {
+                        continue;
+                    }
+                    EdgeShape edge = (EdgeShape)portal.SensorFixture.Shape;
+                    Line line = new Line(portal.GetWorldVerts());
+                    bool sideOf = line.GetSideOf(vList[0]) != line.GetSideOf(userData[i0].Fixture.Body.Position);
+                    if (contact.Manifold.PointCount == 1)
+                    {
+                        if (sideOf)
+                        {
+                            return false;
+                        }
+                    }
+                    else if (sideOf && line.GetSideOf(vList[1]) != line.GetSideOf(userData[i0].Fixture.Body.Position))
+                    {
+                        return false;
+                    }
                 }
             }
             return true;

@@ -19,7 +19,11 @@ namespace Game
         { 
             get
             {
-                return Portal != null && _fixture.IsSensor;
+                if (Portal != null)
+                {
+                    return Portal.SensorFixture == Fixture;
+                }
+                return false;
             }
         }
         public Entity Entity
