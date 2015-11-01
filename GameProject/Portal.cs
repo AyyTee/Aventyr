@@ -49,7 +49,7 @@ namespace Game
         {
         }
 
-        public Portal(Scene scene, Transform2D transform, Entity entityParent)
+        public Portal(Scene scene, Transform2D transform, Fixture fixture, int edgeIndex, float edgeT)
             : base(scene)
         {
             if (scene == null)
@@ -62,25 +62,25 @@ namespace Game
             }
             Transform.UniformScale = true;
 
-            if (entityParent != null)
+            if (fixture != null)
             {
-                SetEntityParent(entityParent, null);
+                SetEntityParent(fixture, edgeIndex, edgeT);
             }
         }
 
         public Portal(Scene scene) 
-            : this(scene, null, null)
+            : this(scene, null, null, 0, 0)
         {
         }
 
         public Portal(Scene scene, bool leftHanded)
-            : this(scene, null, null)
+            : this(scene, null, null, 0, 0)
         {
             SetFacing(leftHanded);   
         }
 
         public Portal(Scene scene, Vector2 position)
-            : this(scene, null, null)
+            : this(scene, null, null, 0, 0)
         {
             Transform.Position = position;
         }
@@ -102,42 +102,82 @@ namespace Game
             Transform.Parent = null;
         }
 
+        public void SetEntityParent(FixtureIntersection fixturePoint)
+        {
+            SetEntityParent(fixturePoint.Fixture, fixturePoint.EdgeIndex, fixturePoint.EdgeT);
+        }
+
         /// <summary>
         /// Sets whichs Entity this Portal is parented too.  Fixtures are added to this Entity's Body for handling portal collisions.
         /// If this Portal was previously parented to an Entity, the previously added Fixtures will be removed.
         /// </summary>
         /// <param name="parentEntity">Entity that Portal is parented to.  If null then this Portal is not parented to any Entity.</param>
         /// <param name="transform">Transform relative to the parent Entity.  Values are copied so references are not preserved.</param>
-        public void SetEntityParent(Entity parentEntity, Transform2D transform)
+        public void SetEntityParent(Fixture fixture, int edgeIndex, float edgeT)
         {
             Remove();
-            Transform.SetLocal(transform);
-            EntityParent = parentEntity;
-            if (parentEntity != null)
+            //Transform.SetLocal(transform);
+            
+            EntityParent = null;
+            if (fixture != null)
             {
+                Vector2[][] verts = new Vector2[2][];
+
+                switch (fixture.ShapeType)
+                {
+                    case ShapeType.Polygon:
+                        {
+                            PolygonShape shape = (PolygonShape)fixture.Shape;
+                            Vector2 v0 = new Vector2(shape.Vertices[edgeIndex].X, shape.Vertices[edgeIndex].Y);
+                            int index = (edgeIndex + 1) % shape.Vertices.Count;
+                            Vector2 v1 = new Vector2(shape.Vertices[index].X, shape.Vertices[index].Y);
+                            Line line = new Line(v0, v1);
+                            Transform.Position = line.Lerp(edgeT);
+                            Transform.Rotation = -line.Angle() + (float)Math.PI/2;
+
+                            var tempVerts = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
+                            verts[0] = new Vector2[3];
+                            verts[0][0] = tempVerts[0];
+                            verts[0][1] = VectorExt2.ConvertTo(shape.Vertices[edgeIndex]);
+                            verts[0][2] = VectorExt2.Transform(GetVerts()[0] + new Vector2(-PortalMargin, 0), Transform.GetMatrix());
+                            verts[1] = new Vector2[3];
+                            verts[1][0] = tempVerts[1];
+                            verts[1][1] = VectorExt2.ConvertTo(shape.Vertices[index]);
+                            verts[1][2] = VectorExt2.Transform(GetVerts()[1] + new Vector2(-PortalMargin, 0), Transform.GetMatrix());
+                            break;
+                        }
+                    default:
+                        {
+                            Debug.Assert(false, "Invalid shape type for fixture.");
+                            break;
+                        }
+                }
+
+                EntityParent = FixtureExt.GetUserData(fixture).Entity;
                 Transform.Parent = EntityParent.Transform;
 
                 List<Fixture> fixtures = new List<Fixture>();
-                Vector2[][] verts = new Vector2[2][];
+                
 
-                Entity entity = Scene.CreateEntity();
-                entity.Transform.Parent = EntityParent.Transform;
+                /*Entity entity = Scene.CreateEntity();
+                entity.Transform.Parent = EntityParent.Transform;*/
 
-                verts[0] = VectorExt2.Transform(GetFixtureLeftVerts(), Transform.GetMatrix());
-                verts[1] = VectorExt2.Transform(GetFixtureRightVerts(), Transform.GetMatrix());
+                /*verts[0] = VectorExt2.Transform(GetFixtureLeftVerts(), Transform.GetMatrix());
+                verts[1] = VectorExt2.Transform(GetFixtureRightVerts(), Transform.GetMatrix());*/
+                
                 for (int i = 0; i < verts.Length; i++)
                 {
                     verts[i] = MathExt.SetHandedness(verts[i], false);
                     FarseerPhysics.Common.Vertices fixtureVerts = new FarseerPhysics.Common.Vertices();
                     fixtureVerts.AddRange(VectorExt2.ConvertToXna(verts[i]));
-                    fixtures.Add(FixtureExt.CreatePortalFixture(parentEntity.Body, new PolygonShape(fixtureVerts, 0), this));
+                    fixtures.Add(FixtureExt.CreatePortalFixture(EntityParent.Body, new PolygonShape(fixtureVerts, 0), this));
 
-                    entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts)));
+                    //entity.Models.Add(Model.CreatePolygon(VectorExt2.ConvertTo(fixtureVerts)));
                 }
 
                 verts[0] = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
                 Xna.Vector2[] vertsXna = VectorExt2.ConvertToXna(verts[0]);
-                SensorFixture = FixtureExt.CreatePortalFixture(parentEntity.Body, new EdgeShape(vertsXna[0], vertsXna[1]), this);
+                SensorFixture = FixtureExt.CreatePortalFixture(EntityParent.Body, new EdgeShape(vertsXna[0], vertsXna[1]), this);
                 SensorFixture.IsSensor = true;
                 fixtures.Add(SensorFixture);
                 

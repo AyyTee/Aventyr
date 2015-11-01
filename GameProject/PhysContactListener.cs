@@ -148,14 +148,11 @@ namespace Game
                 float[] vDist = new float[2];
                 vDist[0] = line.PointDistance(vList[0], true);
                 vDist[1] = line.PointDistance(vList[1], true);
-                float[] vTPos = new float[2];
-                vTPos[0] = line.NearestT(vList[0]);
-                vTPos[1] = line.NearestT(vList[1]);
-                if (vDist[0] < Portal.PortalMargin)// && vTPos[0] >= 0 && vTPos[0] <= 1)
+                if (vDist[0] < Portal.PortalMargin * 2)
                 {
                     return false;
                 }
-                else if (vDist[1] < Portal.PortalMargin && contact.Manifold.PointCount == 1)// && vTPos[1] >= 0 && vTPos[1] <= 1)
+                else if (vDist[1] < Portal.PortalMargin * 2 && contact.Manifold.PointCount == 2)
                 {
                     return false;
                 }

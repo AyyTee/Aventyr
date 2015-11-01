@@ -23,10 +23,7 @@ namespace Game
                 intersection = GetValid(intersection, portal);
                 if (intersection != null)
                 {
-                    Transform2D transform = intersection.GetTransform();
-                    transform.Scale = portal.Transform.Scale;
-                    transform.Position = transform.Position + new Vector2(0f, 0f);
-                    portal.SetEntityParent(intersection.Entity, transform);
+                    portal.SetEntityParent(intersection);
                     return true;
                 }
             }
@@ -46,6 +43,10 @@ namespace Game
                     {
                         Vector2 rayIntersect = VectorExt2.ConvertTo(point);
                         rayIntersect = rayIntersect + (rayIntersect - rayBegin).Normalized() * RayCastMargin;
+                        if (FixtureExt.GetUserData(fixture).Portal != null)
+                        {
+                            return -1;
+                        }
                         switch (fixture.Shape.ShapeType)
                         {
                             case ShapeType.Polygon:

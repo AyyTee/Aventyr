@@ -27,7 +27,7 @@ namespace Game
             get
             {
                 Debug.Assert(Fixture.Body.UserData != null, "Body UserData does not exist.");
-                BodyUserData userData = (BodyUserData) Fixture.Body.UserData;
+                BodyUserData userData = (BodyUserData)BodyExt.GetUserData(Fixture.Body);
                 return userData.LinkedEntity;
             }
         }

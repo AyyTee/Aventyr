@@ -145,7 +145,7 @@ namespace Game
             portalEntity1.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
 
-            portal2 = scene.CreatePortal();
+            /*portal2 = scene.CreatePortal();
             portal2.Transform.Rotation = 0.1f;//(float)Math.PI/4f;
             portal2.Transform.Position = new Vector2(2.1f, 2f);
             portal2.Transform.Scale = new Vector2(1f, 1f);
@@ -171,7 +171,7 @@ namespace Game
             portalEntity3.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity3.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity3.Models.Add(Model.CreatePlane());
-            portalEntity3.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            portalEntity3.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);*/
 
             #region cubes
             /*Model tc = Model.CreateCube();
@@ -235,7 +235,7 @@ namespace Game
             
             Entity ground = scene.CreateEntityPolygon(new Vector2(0, 0), new Vector2(0, 0), v);
             ground.Models.Add(Model.CreatePolygon(v));
-            //ground.Transform.Rotation = 0.5f;
+            ground.Transform.Rotation = 0.05f;
             ground.Transform.Position = new Vector2(0, -4f);
             
             Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));

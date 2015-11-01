@@ -241,5 +241,10 @@ namespace Game
         {
             return NearestT(VectorExt2.ConvertTo(v));
         }
+
+        public float Angle()
+        {
+            return (float)MathExt.AngleLine(Vertices[0], Vertices[1]);
+        }
     }
 }
