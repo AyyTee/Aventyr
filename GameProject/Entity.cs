@@ -108,15 +108,15 @@ namespace Game
                 //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
                 Line exitLine = new Line(portal.GetWorldVerts());
                 float distanceToPortal = exitLine.PointDistance(Transform.Position, true);
-                if (distanceToPortal < Portal.EntityMinDistance)
+                if (distanceToPortal < Portal.EnterMinDistance)
                 {
-                    Vector2 exitNormal = portal.Transform.GetNormal();
-                    if (exitLine.GetSideOf(Transform.Position) != exitLine.GetSideOf(exitNormal + portal.Transform.Position))
+                    Vector2 exitNormal = portal.GetTransform().GetNormal();
+                    if (exitLine.GetSideOf(Transform.Position) != exitLine.GetSideOf(exitNormal + portal.GetTransform().Position))
                     {
                         exitNormal = -exitNormal;
                     }
 
-                    Vector2 pos = exitNormal * (Portal.EntityMinDistance - distanceToPortal);
+                    Vector2 pos = exitNormal * (Portal.EnterMinDistance - distanceToPortal);
                     /*if (Transform.Parent != null)
                     {
                         pos = Transform.Parent.WorldToLocal(pos);
@@ -196,7 +196,7 @@ namespace Game
                 }
             }
 
-            collisions = collisions.OrderBy(item => (item.Transform.WorldPosition - centerPoint).Length).ToList();
+            collisions = collisions.OrderBy(item => (item.GetTransform().WorldPosition - centerPoint).Length).ToList();
             for (int i = 0; i < collisions.Count; i++)
             {
                 Portal portal = collisions[i];
@@ -219,27 +219,27 @@ namespace Game
                 Line clipLine = new Line(pv);
 
                 Line portalLine = new Line(pv);
-                Vector2 normal = portal.Transform.GetWorldNormal();
-                if (portal.Transform.WorldIsMirrored())
+                Vector2 normal = portal.GetTransform().GetWorldNormal();
+                if (portal.GetTransform().WorldIsMirrored())
                 {
                     normal = -normal;
                 }
 
-                Vector2 portalNormal = portal.Transform.WorldPosition + normal;
+                Vector2 portalNormal = portal.GetTransform().WorldPosition + normal;
                 if (portalLine.GetSideOf(centerPoint) != portalLine.GetSideOf(portalNormal))
                 {
-                    normal *= Portal.EntityMinDistance;
+                    normal *= Portal.EnterMinDistance;
                 }
                 else
                 {
                     clipLine.Reverse();
-                    normal *= -Portal.EntityMinDistance;
+                    normal *= -Portal.EnterMinDistance;
                 }
 
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = VectorExt2.Transform(portal.Transform.WorldPosition + normal, portal.GetPortalMatrix());
+                    Vector2 centerPointNext = VectorExt2.Transform(portal.GetTransform().WorldPosition + normal, portal.GetPortalMatrix());
                     _ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, ref clipModels);
                 }
             }

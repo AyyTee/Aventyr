@@ -34,21 +34,25 @@ namespace Game
             }
             foreach (Portal p in Scene.PortalList)
             {
-                if (p.Position != null)
+                if (p.GetType() == typeof(FixturePortal))
                 {
-                    Xna.Vector2[] verts = VectorExt2.ConvertToXna(p.GetWorldVerts());
-                    Scene.PhysWorld.RayCast(
-                        delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
-                        {
-                            //ignore any fixtures that are attached to the same body as the portal fixture
-                            if (fixture.Body != p.FixtureParent.Body)
+                    FixturePortal portal = (FixturePortal)p;
+                    if (portal.Position != null)
+                    {
+                        Xna.Vector2[] verts = VectorExt2.ConvertToXna(p.GetWorldVerts());
+                        Scene.PhysWorld.RayCast(
+                            delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
                             {
-                                FixtureExt.GetUserData(fixture).PortalCollisions.Add(p);
-                            }
-                            return -1;
-                        },
-                        verts[0],
-                        verts[1]);
+                                //ignore any fixtures that are attached to the same body as the portal fixture
+                                if (fixture.Body != portal.FixtureParent.Body)
+                                {
+                                    FixtureExt.GetUserData(fixture).PortalCollisions.Add(portal);
+                                }
+                                return -1;
+                            },
+                            verts[0],
+                            verts[1]);
+                    }
                 }
             }
         }
@@ -87,28 +91,32 @@ namespace Game
             var vList = new FarseerPhysics.Common.FixedArray2<Xna.Vector2>();
             contact.GetWorldManifold(out normal, out vList);
 
-            foreach (Portal portal in Scene.PortalList)
+            foreach (Portal p in Scene.PortalList)
             {
-                if (userData[0].Portal == portal || userData[1].Portal == portal)
+                if (p.GetType() == typeof(FixturePortal))
                 {
-                    continue;
-                }
-                Line line = new Line(portal.GetWorldVerts());
-                float[] vDist = new float[2];
-                vDist[0] = line.PointDistance(vList[0], true);
-                vDist[1] = line.PointDistance(vList[1], true);
-                if (contact.FixtureA == portal.FixtureParent || contact.FixtureB == portal.FixtureParent)
-                {
-                    if (contact.Manifold.PointCount == 1)
+                    FixturePortal portal = (FixturePortal)p;
+                    if (userData[0].Portal == portal || userData[1].Portal == portal)
                     {
-                        if (vDist[0] < Portal.PortalMargin)
+                        continue;
+                    }
+                    Line line = new Line(portal.GetWorldVerts());
+                    float[] vDist = new float[2];
+                    vDist[0] = line.PointDistance(vList[0], true);
+                    vDist[1] = line.PointDistance(vList[1], true);
+                    if (contact.FixtureA == portal.FixtureParent || contact.FixtureB == portal.FixtureParent)
+                    {
+                        if (contact.Manifold.PointCount == 1)
+                        {
+                            if (vDist[0] < FixturePortal.CollisionMargin)
+                            {
+                                return false;
+                            }
+                        }
+                        else if (vDist[0] < FixturePortal.CollisionMargin || vDist[1] < FixturePortal.CollisionMargin)
                         {
                             return false;
                         }
-                    }
-                    else if (vDist[0] < Portal.PortalMargin || vDist[1] < Portal.PortalMargin)
-                    {
-                        return false;
                     }
                 }
             }
@@ -116,7 +124,7 @@ namespace Game
             for (int i0 = 0; i0 < userData.Length; i0++)
             {
                 int i1 = (i0 + 1) % userData.Length;
-                foreach (Portal portal in userData[i0].PortalCollisions)
+                foreach (FixturePortal portal in userData[i0].PortalCollisions)
                 {
                     if (userData[i0].Portal == portal || userData[i1].Portal == portal)
                     {

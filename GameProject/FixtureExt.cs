@@ -35,7 +35,7 @@ namespace Game
             return fixture;
         }
 
-        public static Fixture CreatePortalFixture(Body body, Shape shape, Portal portal)
+        public static Fixture CreatePortalFixture(Body body, Shape shape, FixturePortal portal)
         {
             Fixture fixture = CreateFixture(body, shape);
             GetUserData(fixture).Portal = portal;

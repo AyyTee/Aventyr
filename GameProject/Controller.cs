@@ -65,7 +65,8 @@ namespace Game
         });
         Scene scene, hud;
         FontRenderer FontRenderer;
-        Portal portal0, portal1, portal2, portal3;
+        FloatPortal portal0, portal2, portal3;
+        FixturePortal portal1;
         float Time = 0.0f;
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
@@ -116,7 +117,7 @@ namespace Game
             Entity back = scene.CreateEntity(new Vector2(0f, 0f));
             back.Models.Add(background);
 
-            portal0 = scene.CreatePortal();
+            portal0 = new FloatPortal(scene);
             portal0.Transform.Rotation = (float)Math.PI;
             portal0.Transform.Position = new Vector2(2.1f, 0f);
             //portal0.Transform.Scale = new Vector2(1f, 1f);
@@ -129,26 +130,20 @@ namespace Game
             portalEntity0.Models.Add(Model.CreatePlane());
             portalEntity0.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
-            portal1 = scene.CreatePortal();
-            portal1.Transform.Rotation = 4.4f;
-            portal1.Transform.Position = new Vector2(-3f, 0f);
-            portal1.Transform.Scale = new Vector2(1f, -1f);
-
-            Portal.ConnectPortals(portal0, portal1);
+            
             //Portal.Link(portal1, portal1);
-            Entity portalEntity1 = scene.CreateEntity();
+            /*Entity portalEntity1 = scene.CreateEntity();
             portalEntity1.Transform.Parent = portal1.Transform; 
             portalEntity1.Models.Add(Model.CreatePlane());
             portalEntity1.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity1.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity1.Models.Add(Model.CreatePlane());
-            portalEntity1.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            portalEntity1.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);*/
 
-
-            /*portal2 = scene.CreatePortal();
-            portal2.Transform.Rotation = 0.1f;//(float)Math.PI/4f;
+            portal2 = new FloatPortal(scene);
+            portal2.Transform.Rotation = 0.1f;
             portal2.Transform.Position = new Vector2(2.1f, 2f);
-            portal2.Transform.Scale = new Vector2(1f, 1f);
+            portal2.Transform.Scale = new Vector2(-1f, 1f);
 
             Entity portalEntity2 = scene.CreateEntity();
             portalEntity2.Transform.Parent = portal2.Transform;
@@ -157,9 +152,9 @@ namespace Game
             portalEntity2.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity2.Models.Add(Model.CreatePlane());
             portalEntity2.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            
 
-
-            portal3 = scene.CreatePortal();
+            portal3 = new FloatPortal(scene);
             portal3.Transform.Rotation = 0.4f;
             portal3.Transform.Position = new Vector2(-1f, 1f);
             //portal3.Transform.Scale = new Vector2(-1f, 1f);
@@ -171,7 +166,7 @@ namespace Game
             portalEntity3.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity3.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity3.Models.Add(Model.CreatePlane());
-            portalEntity3.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);*/
+            portalEntity3.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
             #region cubes
             /*Model tc = Model.CreateCube();
@@ -237,6 +232,10 @@ namespace Game
             ground.Models.Add(Model.CreatePolygon(v));
             ground.Transform.Rotation = 0.05f;
             ground.Transform.Position = new Vector2(0, -4f);
+            scene.PhysWorld.ProcessChanges();
+            portal1 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 2, 0.5f));
+
+            FixturePortal.ConnectPortals(portal0, portal1);
             
             Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
             //scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));

@@ -12,9 +12,9 @@ namespace Game
         /// <summary>
         /// Ids of all portal sensor fixtures that this fixture is colliding with.
         /// </summary>
-        public List<Portal> PortalCollisions = new List<Portal>();
+        public List<FixturePortal> PortalCollisions = new List<FixturePortal>();
 
-        public Portal Portal { get; set; }
+        public FixturePortal Portal { get; set; }
         public Entity Entity
         {
             get
@@ -42,7 +42,7 @@ namespace Game
         {
         }
 
-        public FixtureUserData(Fixture fixture, Portal portal)
+        public FixtureUserData(Fixture fixture, FixturePortal portal)
         {
             Portal = portal;
             _fixture = fixture;

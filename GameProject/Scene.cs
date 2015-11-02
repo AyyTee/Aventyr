@@ -88,7 +88,7 @@ namespace Game
             _idCount++;
         }
 
-        private void AddPortal(Portal portal)
+        private void AddPortal(FixturePortal portal)
         {
             Debug.Assert(!PortalList.Exists(item => item.Equals(portal)), "This portal has already been added to this scene.");
             PortalList.Add(portal);
@@ -194,23 +194,23 @@ namespace Game
             return false;
         }
 
-        public Portal CreatePortal()
+        /*public FixturePortal CreatePortal()
         {
             return CreatePortal(new Vector2(0, 0));
         }
 
-        public Portal CreatePortal(Vector2 position)
+        public FixturePortal CreatePortal(Vector2 position)
         {
-            Portal portal = new Portal(this, position);
+            FixturePortal portal = new FixturePortal(this, position);
             AddPortal(portal);
             
             return portal;
         }
 
-        public void RemovePortal(Portal portal)
+        public void RemovePortal(FixturePortal portal)
         {
             PortalList.Remove(portal);
-        }
+        }*/
 
         /// <summary>
         /// Assigns a physics world to this scene. Can only be done if there isn't already a physics world assigned.
