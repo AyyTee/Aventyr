@@ -10,14 +10,12 @@ using System.Diagnostics;
 
 namespace Game
 {
-    public class FixtureIntersection
+    /// <summary>
+    /// A coordinate defined it's position on a edge in a Fixture
+    /// </summary>
+    public class FixtureEdgeCoord
     {
-        private Fixture _fixture;
-
-        public Fixture Fixture
-        {
-            get { return _fixture; }
-        }
+        public Fixture Fixture { get; private set; }
         /// <summary>
         /// Return the Entity linked to the Body that is linked to the Fixture being intersected.
         /// </summary>
@@ -25,8 +23,7 @@ namespace Game
         {
             get 
             {
-                BodyUserData userData = BodyExt.GetUserData(Fixture.Body);//(BodyUserData)Fixture.Body.UserData;
-                return userData.LinkedEntity;
+                return BodyExt.GetUserData(Fixture.Body).LinkedEntity;
             }
         }
         private int _edgeIndex;
@@ -42,7 +39,7 @@ namespace Game
                 {
                     case ShapeType.Polygon:
                         {
-                            PolygonShape shape = (PolygonShape)_fixture.Shape;
+                            PolygonShape shape = (PolygonShape)Fixture.Shape;
                             Debug.Assert(value >= 0 && value < shape.Vertices.Count, "EdgeIndex must have a value between [0, vertex count).");
                             break;
                         }
@@ -70,16 +67,16 @@ namespace Game
             }
         }
 
-        public FixtureIntersection(Fixture fixture, int edgeIndex = 0, float edgeT = 0)
+        public FixtureEdgeCoord(Fixture fixture, int edgeIndex = 0, float edgeT = 0)
         {
-            _fixture = fixture;
+            Fixture = fixture;
             EdgeT = edgeT;
             EdgeIndex = edgeIndex;
         }
 
         public Line GetEdge()
         {
-            PolygonShape shape = (PolygonShape)_fixture.Shape;
+            PolygonShape shape = (PolygonShape)Fixture.Shape;
             Line line = new Line(
                 VectorExt2.ConvertTo(shape.Vertices[EdgeIndex]),
                 VectorExt2.ConvertTo(shape.Vertices[(EdgeIndex + 1) % shape.Vertices.Count])
@@ -91,7 +88,7 @@ namespace Game
         {
             Line line = GetEdge();
             var transform = new FarseerPhysics.Common.Transform();
-            _fixture.Body.GetTransform(out transform);
+            Fixture.Body.GetTransform(out transform);
             Matrix4 matTransform = MatrixExt4.ConvertTo(transform);
             line.Transform(matTransform);
             return line;
@@ -109,7 +106,7 @@ namespace Game
 
         public Vector2 GetPosition()
         {
-            switch (_fixture.ShapeType)
+            switch (Fixture.ShapeType)
             {
                 case ShapeType.Polygon:
                     {

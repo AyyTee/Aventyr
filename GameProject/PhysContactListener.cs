@@ -16,21 +16,15 @@ namespace Game
     public class PhysContactListener
     {
         public Scene Scene { get; private set; }
-        private List<Contact> _contactList = new List<Contact>();
-        private List<Fixture> _fixtures = new List<Fixture>();
 
         public PhysContactListener(Scene scene)
         {
             Scene = scene;
-            /*Scene.PhysWorld.ContactManager.BeginContact += BeginContactListener;
-            Scene.PhysWorld.ContactManager.EndContact += EndContactListener;*/
             Scene.PhysWorld.ContactManager.PreSolve = PreSolveListener;
-            Scene.PhysWorld.ContactManager.PostSolve = PostSolveListener;
         }
 
         public void Step()
         {
-            _fixtures.Clear();
             foreach (Body body in Scene.PhysWorld.BodyList)
             {
                 foreach (Fixture f in body.FixtureList)
@@ -40,17 +34,15 @@ namespace Game
             }
             foreach (Portal p in Scene.PortalList)
             {
-                if (p.SensorFixture != null)
+                if (p.Position != null)
                 {
-                    //EdgeShape edge = (EdgeShape)p.SensorFixture.Shape;
                     Xna.Vector2[] verts = VectorExt2.ConvertToXna(p.GetWorldVerts());
                     Scene.PhysWorld.RayCast(
                         delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
                         {
                             //ignore any fixtures that are attached to the same body as the portal fixture
-                            if (fixture.Body != p.SensorFixture.Body)
+                            if (fixture.Body != p.FixtureParent.Body)
                             {
-                                //_fixtures.Add(fixture);
                                 FixtureExt.GetUserData(fixture).PortalCollisions.Add(p);
                             }
                             return -1;
@@ -63,10 +55,6 @@ namespace Game
 
         private void PreSolveListener(Contact contact, ref FarseerPhysics.Collision.Manifold oldManifold)
         {
-            
-            FixtureUserData userDataA = FixtureExt.GetUserData(contact.FixtureA);
-            FixtureUserData userDataB = FixtureExt.GetUserData(contact.FixtureB);
-
             if (!IsContactValid(contact))
             {
                 contact.Enabled = false;
@@ -84,10 +72,6 @@ namespace Game
                 entity.Models.Add(Model.CreateCube());
                 
             }*/
-        }
-
-        private void PostSolveListener(Contact contact, ContactConstraint impulse)
-        {
         }
 
         /// <summary>
@@ -138,7 +122,6 @@ namespace Game
                     {
                         continue;
                     }
-                    EdgeShape edge = (EdgeShape)portal.SensorFixture.Shape;
                     Line line = new Line(portal.GetWorldVerts());
                     bool sideOf = line.GetSideOf(vList[0]) != line.GetSideOf(userData[i0].Fixture.Body.Position);
                     if (contact.Manifold.PointCount == 1)
@@ -155,44 +138,6 @@ namespace Game
                 }
             }
             return true;
-        }
-
-        private bool BeginContactListener(Contact contact)
-        {
-            FixtureUserData userDataA = FixtureExt.GetUserData(contact.FixtureA);
-            FixtureUserData userDataB = FixtureExt.GetUserData(contact.FixtureB);
-
-            if (userDataA.IsPortalSensor)
-            {
-                userDataB.PortalCollisions.Add(userDataA.Portal);
-            }
-            else if (userDataB.IsPortalSensor)
-            {
-                userDataB.PortalCollisions.Add(userDataB.Portal);
-            }
-            return true;
-        }
-
-        private void EndContactListener(Contact contact)
-        {
-            FixtureUserData userDataA = FixtureExt.GetUserData(contact.FixtureA);
-            FixtureUserData userDataB = FixtureExt.GetUserData(contact.FixtureB);
-            if (userDataB.IsPortalSensor)
-            {
-                Debug.Assert(userDataA.PortalCollisions.Remove(userDataB.Portal));
-            }
-            if (userDataA.IsPortalSensor)
-            {
-                Debug.Assert(userDataB.PortalCollisions.Remove(userDataA.Portal));
-            }
-        }
-
-        private Fixture[] GetContactFixtures(Contact contact)
-        {
-            Fixture[] fixtures = new Fixture[2];
-            fixtures[0] = contact.FixtureA;
-            fixtures[1] = contact.FixtureB;
-            return fixtures;
         }
     }
 }

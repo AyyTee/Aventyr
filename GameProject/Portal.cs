@@ -12,10 +12,19 @@ namespace Game
     [Serializable]
     public class Portal : Placeable2D, IVertices2D
     {
-        private Portal _linked = null;
         private bool _oneSided = true;
-        public Entity EntityParent { get; private set; }
-        public Fixture FixtureParent { get; private set; }
+        public Entity EntityParent
+        {
+            get
+            {
+                if (Position != null)
+                {
+                    return FixtureExt.GetUserData(Position.Fixture).Entity;
+                }
+                return null;
+            }
+        }
+        public FixtureEdgeCoord Position { get; private set; }
         private List<int> _fixtureIds = new List<int>();
         public Body EntityBody
         {
@@ -24,7 +33,16 @@ namespace Game
                 return EntityParent.Body;
             }
         }
-        public Fixture SensorFixture { get; private set; }
+        public Fixture FixtureParent {
+            get
+            {
+                if (Position != null)
+                {
+                    return Position.Fixture;
+                }
+                return null;
+            }
+        }
         private Exception _nullScene = new Exception("Portal must be assigned to a scene.");
         /// <summary>
         /// If OneSided is true then the portal can only be viewed through it's front side.
@@ -42,16 +60,14 @@ namespace Game
         public const float EntityMinDistance = 0.001f;
         public const float PortalMargin = 0.02f;
 
-        public Portal Linked
-        {
-            get { return _linked; }
-        }
+        public Portal Linked { get; private set; }
 
+        #region constructors
         private Portal()
         {
         }
 
-        public Portal(Scene scene, Transform2D transform, Fixture fixture, int edgeIndex, float edgeT)
+        public Portal(Scene scene, Transform2D transform, FixtureEdgeCoord position, int edgeIndex, float edgeT)
             : base(scene)
         {
             if (scene == null)
@@ -64,9 +80,9 @@ namespace Game
             }
             Transform.UniformScale = true;
 
-            if (fixture != null)
+            if (position != null)
             {
-                SetEntityParent(fixture, edgeIndex, edgeT);
+                SetEntityParent(position);
             }
         }
 
@@ -92,7 +108,7 @@ namespace Game
         {
             Transform.SetLocal(transform);
         }
-
+        #endregion
         public void Remove()
         {
             Fixture[] fixtures = GetFixtures();
@@ -104,49 +120,28 @@ namespace Game
             Transform.Parent = null;
         }
 
-        public void SetEntityParent(FixtureIntersection fixturePoint)
-        {
-            SetEntityParent(fixturePoint.Fixture, fixturePoint.EdgeIndex, fixturePoint.EdgeT);
-        }
-
-        /// <summary>
-        /// Sets whichs Entity this Portal is parented too.  Fixtures are added to this Entity's Body for handling portal collisions.
-        /// If this Portal was previously parented to an Entity, the previously added Fixtures will be removed.
-        /// </summary>
-        /// <param name="parentEntity">Entity that Portal is parented to.  If null then this Portal is not parented to any Entity.</param>
-        /// <param name="transform">Transform relative to the parent Entity.  Values are copied so references are not preserved.</param>
-        public void SetEntityParent(Fixture fixture, int edgeIndex, float edgeT)
+        public void SetEntityParent(FixtureEdgeCoord position)
         {
             Remove();
-            //Transform.SetLocal(transform);
             
-            EntityParent = null;
-            FixtureParent = fixture;
-            if (fixture != null)
+            Position = position;
+            if (Position != null)
             {
                 Vector2[][] verts = new Vector2[2][];
-
+                Fixture fixture = Position.Fixture;
                 switch (fixture.ShapeType)
                 {
                     case ShapeType.Polygon:
                         {
                             PolygonShape shape = (PolygonShape)fixture.Shape;
-                            Vector2 v0 = new Vector2(shape.Vertices[edgeIndex].X, shape.Vertices[edgeIndex].Y);
-                            int index = (edgeIndex + 1) % shape.Vertices.Count;
+                            Vector2 v0 = new Vector2(shape.Vertices[Position.EdgeIndex].X, shape.Vertices[Position.EdgeIndex].Y);
+                            int index = (Position.EdgeIndex + 1) % shape.Vertices.Count;
                             Vector2 v1 = new Vector2(shape.Vertices[index].X, shape.Vertices[index].Y);
                             Line line = new Line(v0, v1);
-                            Transform.Position = line.Lerp(edgeT);
+                            Transform.Position = line.Lerp(Position.EdgeT);
                             Transform.Rotation = -line.Angle() + (float)Math.PI/2;
 
-                            var tempVerts = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
-                            verts[0] = new Vector2[3];
-                            verts[0][0] = tempVerts[0];
-                            verts[0][1] = VectorExt2.ConvertTo(shape.Vertices[edgeIndex]);
-                            verts[0][2] = VectorExt2.Transform(GetVerts()[0] + new Vector2(-PortalMargin, 0), Transform.GetMatrix());
-                            verts[1] = new Vector2[3];
-                            verts[1][0] = tempVerts[1];
-                            verts[1][1] = VectorExt2.ConvertTo(shape.Vertices[index]);
-                            verts[1][2] = VectorExt2.Transform(GetVerts()[1] + new Vector2(-PortalMargin, 0), Transform.GetMatrix());
+                            verts = GetEdgeVertices(Position);
                             break;
                         }
                     default:
@@ -162,30 +157,35 @@ namespace Game
                     b.Awake = true;
                 }
 
-                EntityParent = FixtureExt.GetUserData(fixture).Entity;
                 Transform.Parent = EntityParent.Transform;
-
-                List<Fixture> fixtures = new List<Fixture>();
                 
                 for (int i = 0; i < verts.Length; i++)
                 {
                     verts[i] = MathExt.SetHandedness(verts[i], false);
                     FarseerPhysics.Common.Vertices fixtureVerts = new FarseerPhysics.Common.Vertices();
                     fixtureVerts.AddRange(VectorExt2.ConvertToXna(verts[i]));
-                    fixtures.Add(FixtureExt.CreatePortalFixture(EntityParent.Body, new PolygonShape(fixtureVerts, 0), this));
-                }
-
-                verts[0] = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
-                Xna.Vector2[] vertsXna = VectorExt2.ConvertToXna(verts[0]);
-                SensorFixture = FixtureExt.CreatePortalFixture(EntityParent.Body, new EdgeShape(vertsXna[0], vertsXna[1]), this);
-                SensorFixture.IsSensor = true;
-                fixtures.Add(SensorFixture);
-                
-                foreach (Fixture f in fixtures)
-                {
-                    _fixtureIds.Add(f.FixtureId);
+                    Fixture fixtureTemp = FixtureExt.CreatePortalFixture(EntityParent.Body, new PolygonShape(fixtureVerts, 0), this);
+                    _fixtureIds.Add(fixtureTemp.FixtureId);
                 }
             }
+        }
+
+        private Vector2[][] GetEdgeVertices(FixtureEdgeCoord position)
+        {
+            Vector2[][] edgeFixtures = new Vector2[2][];
+            var tempVerts = VectorExt2.Transform(GetVerts(), Transform.GetMatrix());
+            Line edge = Position.GetEdge();
+            PolygonShape shape = (PolygonShape)position.Fixture.Shape;
+            for (int i = 0; i < 2; i++)
+            {
+                Vector2[] verts = new Vector2[3];
+                edgeFixtures[i] = verts;
+                int index = (position.EdgeIndex + i) % shape.Vertices.Count;
+                verts[0] = tempVerts[i];
+                verts[1] = VectorExt2.ConvertTo(shape.Vertices[index]);
+                verts[2] = VectorExt2.Transform(GetVerts()[i] + new Vector2(-PortalMargin, 0), Transform.GetMatrix());
+            }
+            return edgeFixtures;
         }
 
         public void SetSize(float size)
@@ -237,22 +237,22 @@ namespace Game
 
         public static void ConnectPortals(Portal portal0, Portal portal1)
         {
-            portal0._linked = portal1;
-            portal1._linked = portal0;
+            portal0.Linked = portal1;
+            portal1.Linked = portal0;
         }
 
         private void SetPortal(Portal portal)
         {
-            if (_linked != portal)
+            if (Linked != portal)
             {
-                if (_linked != null)
+                if (Linked != null)
                 {
-                    _linked.SetPortal(null);
+                    Linked.SetPortal(null);
                 }
-                _linked = portal;
-                if (_linked != null)
+                Linked = portal;
+                if (Linked != null)
                 {
-                    _linked.SetPortal(this);
+                    Linked.SetPortal(this);
                 }
             }
         }

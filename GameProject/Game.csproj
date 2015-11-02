@@ -90,7 +90,7 @@
     <Compile Include="FontRenderer.cs" />
     <Compile Include="IResource.cs" />
     <Compile Include="InputExt.cs" />
-    <Compile Include="FixtureIntersection.cs" />
+    <Compile Include="FixtureEdgeCoord.cs" />
     <Compile Include="IVertices.cs" />
     <Compile Include="IVertices2D.cs" />
     <Compile Include="Line.cs" />

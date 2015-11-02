@@ -17,7 +17,7 @@ namespace Game
 
         public static bool PortalPlace(Portal portal, Line ray)
         {
-            FixtureIntersection intersection = RayCast(portal.Scene, ray);
+            FixtureEdgeCoord intersection = RayCast(portal.Scene, ray);
             if (intersection != null)
             {
                 intersection = GetValid(intersection, portal);
@@ -30,13 +30,13 @@ namespace Game
             return false;
         }
 
-        public static FixtureIntersection RayCast(Scene scene, Line ray)
+        public static FixtureEdgeCoord RayCast(Scene scene, Line ray)
         {
             Vector2 rayBegin = ray.Vertices[0];
             Vector2 rayEnd = ray.Vertices[1];
             if (rayBegin != rayEnd)
             {
-                List<FixtureIntersection> intersections = new List<FixtureIntersection>();
+                List<FixtureEdgeCoord> intersections = new List<FixtureEdgeCoord>();
                 IntersectPoint intersectLast = new IntersectPoint();
                 scene.PhysWorld.RayCast(
                     delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
@@ -81,7 +81,7 @@ namespace Game
                                             }
 
                                             intersectLast = intersect;
-                                            intersections.Add(new FixtureIntersection(fixture, i, (float)intersect.T));
+                                            intersections.Add(new FixtureEdgeCoord(fixture, i, (float)intersect.T));
                                             break;
                                         }
                                         Debug.Assert(i + 1 < vertices.Count(), "Intersection edge was not found in shape.");
@@ -112,7 +112,7 @@ namespace Game
         /// <param name="intersection"></param>
         /// <param name="portal"></param>
         /// <returns></returns>
-        public static FixtureIntersection GetValid(FixtureIntersection intersection, Portal portal)
+        public static FixtureEdgeCoord GetValid(FixtureEdgeCoord intersection, Portal portal)
         {
             Line portalLine = new Line(portal.GetWorldVerts());
             float portalSize = portalLine.Length;
@@ -125,7 +125,7 @@ namespace Game
             float portalT = intersection.EdgeT;
             portalT = Math.Max(portalT, portalSizeT / 2);
             portalT = Math.Min(portalT, 1 - portalSizeT / 2);
-            FixtureIntersection intersectValid = new FixtureIntersection(intersection.Fixture, intersection.EdgeIndex, portalT);
+            FixtureEdgeCoord intersectValid = new FixtureEdgeCoord(intersection.Fixture, intersection.EdgeIndex, portalT);
             return intersectValid;
         }
 

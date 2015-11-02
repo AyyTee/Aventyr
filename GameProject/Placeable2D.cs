@@ -36,7 +36,5 @@ namespace Game
                 Id = scene.IdCount;
             }
         }
-
-        
     }
 }

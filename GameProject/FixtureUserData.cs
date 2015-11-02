@@ -15,17 +15,6 @@ namespace Game
         public List<Portal> PortalCollisions = new List<Portal>();
 
         public Portal Portal { get; set; }
-        public bool IsPortalSensor 
-        { 
-            get
-            {
-                if (Portal != null)
-                {
-                    return Portal.SensorFixture == Fixture;
-                }
-                return false;
-            }
-        }
         public Entity Entity
         {
             get
