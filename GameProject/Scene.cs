@@ -52,7 +52,7 @@ namespace Game
 
         public Scene()
         {
-            SetPhysicsWorld(new World(new Xna.Vector2(0f, -9.8f/2)));
+            SetPhysicsWorld(new World(new Xna.Vector2(0f, 0f)));
         }
 
         public void Step()
@@ -62,7 +62,7 @@ namespace Game
             {
                 if (e.Body != null)
                 {
-                    Xna.Vector2 v0 = VectorExt2.ConvertToXna(e.Transform.WorldPosition);
+                    Xna.Vector2 v0 = Vector2Ext.ConvertToXna(e.Transform.WorldPosition);
                     if (v0 != e.Body.Position || e.Transform.Rotation != e.Body.Rotation)
                     {
                         e.Body.SetTransform(v0, e.Transform.WorldRotation);
@@ -71,8 +71,9 @@ namespace Game
             }
             if (PhysWorld != null)
             {
-                _contactListener.Step();
+                _contactListener.StepBegin();
                 PhysWorld.Step(TimeStepSize);
+                _contactListener.StepEnd();
             }
 
             foreach (Entity e in EntityList)
@@ -125,7 +126,7 @@ namespace Game
             box.Models.Add(Model.CreatePlane(scale));
 
             Body body = BodyFactory.CreateRectangle(box.Scene.PhysWorld, scale.X, scale.Y, 1);
-            body.Position = VectorExt2.ConvertToXna(position);
+            body.Position = Vector2Ext.ConvertToXna(position);
             box.SetBody(body);
             body.BodyType = BodyType.Dynamic;
 
@@ -144,19 +145,19 @@ namespace Game
 
             entity.Models.Add(Model.CreatePolygon(polygon));
 
-            Xna.Vector2 vPos = VectorExt2.ConvertToXna(entity.Transform.Position);
+            Xna.Vector2 vPos = Vector2Ext.ConvertToXna(entity.Transform.Position);
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 
             Body body = new Body(this.PhysWorld);
-            body.Position = VectorExt2.ConvertToXna(position);
+            body.Position = Vector2Ext.ConvertToXna(position);
             for (int i = 0; i < polygon.Triangles.Count; i++)
             {
                 var v1 = new FarseerPhysics.Common.Vertices();
 
                 for (int j = 0; j < polygon.Triangles[i].Points.Count(); j++)
                 {
-                    v1.Add(VectorExt2.ConvertToXna(polygon.Triangles[i].Points[j]));
+                    v1.Add(Vector2Ext.ConvertToXna(polygon.Triangles[i].Points[j]));
                 }
 
                 vList.Add(v1);
@@ -193,24 +194,6 @@ namespace Game
             }
             return false;
         }
-
-        /*public FixturePortal CreatePortal()
-        {
-            return CreatePortal(new Vector2(0, 0));
-        }
-
-        public FixturePortal CreatePortal(Vector2 position)
-        {
-            FixturePortal portal = new FixturePortal(this, position);
-            AddPortal(portal);
-            
-            return portal;
-        }
-
-        public void RemovePortal(FixturePortal portal)
-        {
-            PortalList.Remove(portal);
-        }*/
 
         /// <summary>
         /// Assigns a physics world to this scene. Can only be done if there isn't already a physics world assigned.

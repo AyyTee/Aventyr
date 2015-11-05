@@ -131,7 +131,7 @@ namespace Game
         {
             if (Body != null)
             {
-                Transform.Position = VectorExt2.ConvertTo(Body.Position);
+                Transform.Position = Vector2Ext.ConvertTo(Body.Position);
                 Transform.Rotation = Body.Rotation;
             }
         }
@@ -148,7 +148,7 @@ namespace Game
             Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
             BodyId = body.BodyId;
 
-            body.Position = VectorExt2.ConvertToXna(Transform.Position);
+            body.Position = Vector2Ext.ConvertToXna(Transform.Position);
             body.Rotation = Transform.Rotation;
             //Scene.PhysWorld.ProcessChanges();
             BodyExt.SetUserData(body, this);
@@ -188,7 +188,7 @@ namespace Game
                     continue;
                 }
                 Line portalLine = new Line(portal.GetWorldVerts());
-                Vector2[] convexHull = VectorExt2.Transform(model.GetWorldConvexHull(), this.Transform.GetWorldMatrix() * modelMatrix);
+                Vector2[] convexHull = Vector2Ext.Transform(model.GetWorldConvexHull(), this.Transform.GetWorldMatrix() * modelMatrix);
 
                 if (portalLine.IsInsideOfPolygon(convexHull))
                 {
@@ -220,7 +220,7 @@ namespace Game
 
                 Line portalLine = new Line(pv);
                 Vector2 normal = portal.GetTransform().GetWorldNormal();
-                if (portal.GetTransform().WorldIsMirrored())
+                if (portal.GetTransform().IsWorldMirrored())
                 {
                     normal = -normal;
                 }
@@ -239,7 +239,7 @@ namespace Game
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = VectorExt2.Transform(portal.GetTransform().WorldPosition + normal, portal.GetPortalMatrix());
+                    Vector2 centerPointNext = Vector2Ext.Transform(portal.GetTransform().WorldPosition + normal, portal.GetPortalMatrix());
                     _ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, ref clipModels);
                 }
             }
@@ -264,7 +264,7 @@ namespace Game
                 new Vector2(0, 0)
             };
             bool isMirrored;
-            mirrorTest = VectorExt2.Transform(mirrorTest, viewMatrix);
+            mirrorTest = Vector2Ext.Transform(mirrorTest, viewMatrix);
             isMirrored = MathExt.AngleDiff(MathExt.AngleVector(mirrorTest[0] - mirrorTest[2]), MathExt.AngleVector(mirrorTest[1] - mirrorTest[2])) > 0;
             foreach (ClipModel cm in clipModels)
             {

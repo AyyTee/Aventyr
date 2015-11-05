@@ -25,6 +25,7 @@ namespace Game
         }
         public FixtureEdgeCoord Position { get; private set; }
         private List<int> _fixtureIds = new List<int>();
+        public bool IsMirrored { get; set; }
         public Body EntityBody
         {
             get
@@ -51,10 +52,14 @@ namespace Game
         {
             if (position != null)
             {
-                SetEntityParent(position);
+                SetFixtureParent(position);
             }
         }
 
+        /// <summary>
+        /// Returns a copy of the Transform local to the Body this is attached to.
+        /// </summary>
+        /// <returns></returns>
         public override Transform2D GetTransform()
         {
             Transform2D transform = new Transform2D();
@@ -65,13 +70,12 @@ namespace Game
             Line edge = Position.GetEdge();
             transform.Position = edge.Lerp(Position.EdgeT);
             transform.Rotation = -edge.Angle() + (float)Math.PI/2;
-            transform.Scale = new Vector2(1, 1);
-
-            Transform2D parent = new Transform2D();
-            parent.Position = VectorExt2.ConvertTo(Position.Fixture.Body.Position);
-            parent.Rotation = Position.Fixture.Body.Rotation;
-
-            transform.Parent = parent;
+            if (IsMirrored)
+            {
+                transform.Scale = new Vector2(1, -1);
+            }
+            
+            transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.Transform;
             return transform;
         }
 
@@ -85,7 +89,7 @@ namespace Game
             _fixtureIds.Clear();
         }
 
-        public void SetEntityParent(FixtureEdgeCoord position)
+        public void SetFixtureParent(FixtureEdgeCoord position)
         {
             Remove();
             
@@ -119,7 +123,7 @@ namespace Game
                 {
                     verts[i] = MathExt.SetHandedness(verts[i], false);
                     FarseerPhysics.Common.Vertices fixtureVerts = new FarseerPhysics.Common.Vertices();
-                    fixtureVerts.AddRange(VectorExt2.ConvertToXna(verts[i]));
+                    fixtureVerts.AddRange(Vector2Ext.ConvertToXna(verts[i]));
                     Fixture fixtureTemp = FixtureExt.CreatePortalFixture(EntityParent.Body, new PolygonShape(fixtureVerts, 0), this);
                     _fixtureIds.Add(fixtureTemp.FixtureId);
 
@@ -131,17 +135,22 @@ namespace Game
         private Vector2[][] GetEdgeVertices(FixtureEdgeCoord position)
         {
             Vector2[][] edgeFixtures = new Vector2[2][];
-            var tempVerts = VectorExt2.Transform(GetVerts(), GetTransform().GetMatrix());
+            var tempVerts = Vector2Ext.Transform(GetVerts(), GetTransform().GetMatrix());
             Line edge = Position.GetEdge();
             PolygonShape shape = (PolygonShape)position.Fixture.Shape;
             for (int i = 0; i < 2; i++)
             {
+                int i0 = i;
+                if (!IsMirrored)
+                {
+                    i0 = (i + 1) % 2;
+                }
                 Vector2[] verts = new Vector2[3];
                 edgeFixtures[i] = verts;
                 int index = (position.EdgeIndex + i) % shape.Vertices.Count;
-                verts[0] = tempVerts[(i + 1) % 2];
-                verts[1] = VectorExt2.ConvertTo(shape.Vertices[index]);
-                verts[2] = VectorExt2.Transform(GetVerts()[(i + 1) % 2] + new Vector2(-EdgeMargin, 0), GetTransform().GetMatrix());
+                verts[0] = tempVerts[i0];
+                verts[1] = Vector2Ext.ConvertTo(shape.Vertices[index]);
+                verts[2] = Vector2Ext.Transform(GetVerts()[i0] + new Vector2(-EdgeMargin, 0), GetTransform().GetMatrix());
             }
             return edgeFixtures;
         }

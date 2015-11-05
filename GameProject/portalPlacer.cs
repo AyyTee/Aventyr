@@ -23,7 +23,7 @@ namespace Game
                 intersection = GetValid(intersection, portal);
                 if (intersection != null)
                 {
-                    portal.SetEntityParent(intersection);
+                    portal.SetFixtureParent(intersection);
                     return true;
                 }
             }
@@ -41,7 +41,7 @@ namespace Game
                 scene.PhysWorld.RayCast(
                     delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
                     {
-                        Vector2 rayIntersect = VectorExt2.ConvertTo(point);
+                        Vector2 rayIntersect = Vector2Ext.ConvertTo(point);
                         rayIntersect = rayIntersect + (rayIntersect - rayBegin).Normalized() * RayCastMargin;
                         if (FixtureExt.GetUserData(fixture).Portal != null)
                         {
@@ -52,11 +52,11 @@ namespace Game
                             case ShapeType.Polygon:
                                 {
                                     PolygonShape shape = (PolygonShape)fixture.Shape;
-                                    Vector2[] vertices = VectorExt2.ConvertTo(shape.Vertices);
+                                    Vector2[] vertices = Vector2Ext.ConvertTo(shape.Vertices);
                                     var transform = new FarseerPhysics.Common.Transform();
                                     fixture.Body.GetTransform(out transform);
                                     Matrix4 matTransform = MatrixExt4.ConvertTo(transform);
-                                    vertices = VectorExt2.Transform(vertices, matTransform);
+                                    vertices = Vector2Ext.Transform(vertices, matTransform);
                                     for (int i = 0; i < vertices.Count(); i++)
                                     {
                                         int i0 = i;
@@ -95,8 +95,8 @@ namespace Game
                         }
                         return fraction;
                     },
-                    VectorExt2.ConvertToXna(rayBegin),
-                    VectorExt2.ConvertToXna(rayEnd));
+                    Vector2Ext.ConvertToXna(rayBegin),
+                    Vector2Ext.ConvertToXna(rayEnd));
                 var sortedIntersections = intersections.OrderBy(item => (rayBegin - item.GetPosition()).Length);
                 if (sortedIntersections.Count() > 0)
                 {

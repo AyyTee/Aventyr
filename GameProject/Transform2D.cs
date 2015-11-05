@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
@@ -22,8 +23,8 @@ namespace Game
         private float _rotation = 0;
         private Vector2 _scale = new Vector2(1, 1);
         private bool _uniformScale = false;
-        private const float UNIFORM_SCALE_ERROR_MARGIN = 0.0001f;
-        private const float EQUAL_ERROR_MARGIN = 0.0001f;
+        private const float UNIFORM_SCALE_EPSILON = 0.0001f;
+        private const float EQUALITY_EPSILON = 0.0001f;
         private Transform2D _parent = null;
 
         public Transform2D Parent
@@ -76,12 +77,12 @@ namespace Game
             get { return _scale; }
             set 
             {
-                Debug.Assert(!VectorExt2.IsNaN(value));
+                Debug.Assert(!Vector2Ext.IsNaN(value));
                 Debug.Assert(value.X != 0 && value.Y != 0, "Scale vector must have non-zero components");
                 if (UniformScale)
                 {
                     Debug.Assert(
-                        Math.Abs(value.X) - Math.Abs(value.Y) <= UNIFORM_SCALE_ERROR_MARGIN, 
+                        Math.Abs(value.X) - Math.Abs(value.Y) <= UNIFORM_SCALE_EPSILON, 
                         "Transforms with fixed scale cannot have non-uniform scale.");
                     value.Y = Math.Sign(value.Y) * Math.Abs(value.X);
                 }
@@ -105,13 +106,13 @@ namespace Game
 
         public Vector2 Position 
         { 
-            get { return _position; } 
+            get { return _position; }
             set 
             {
-                Debug.Assert(!VectorExt2.IsNaN(value));
+                Debug.Assert(!Vector2Ext.IsNaN(value));
                 _position = value; 
                 _matrixUpdate = true; 
-            } 
+            }
         }
 
         public Vector2 WorldPosition
@@ -120,7 +121,7 @@ namespace Game
             {
                 if (_parent != null)
                 {
-                    return VectorExt2.Transform(Position, _parent.GetWorldMatrix());
+                    return Vector2Ext.Transform(Position, _parent.GetWorldMatrix());
                 }
                 else
                 {
@@ -128,8 +129,8 @@ namespace Game
                 }
             }
         }
-        
 
+        #region constructors
         public Transform2D()
         {
         }
@@ -144,8 +145,18 @@ namespace Game
         {
         }
 
+        public Transform2D(Vector2 position, float rotation)
+            : this(position, new Vector2(1, 1), rotation, null, false)
+        {
+        }
+
         public Transform2D(Vector2 position, Vector2 scale, float rotation)
             :this(position, scale, rotation, null, false)
+        {
+        }
+
+        public Transform2D(Xna.Vector2 position, float rotation)
+            : this(Vector2Ext.ConvertTo(position), new Vector2(1, 1), rotation, null, false)
         {
         }
 
@@ -167,6 +178,7 @@ namespace Game
             Scale = new Vector2(transform.Scale.X, transform.Scale.Y);
             Rotation = transform.Rotation;
         }
+        #endregion
 
         public Transform Get3D()
         {
@@ -204,7 +216,7 @@ namespace Game
             return Math.Sign(Scale.X) != Math.Sign(Scale.Y);
         }
 
-        public bool WorldIsMirrored()
+        public bool IsWorldMirrored()
         {
             return Math.Sign(WorldScale.X) != Math.Sign(WorldScale.Y);
         }
@@ -237,10 +249,10 @@ namespace Game
                 new Vector2(0, 0),
                 new Vector2(1, 0)
             };
-            v = VectorExt2.Transform(v, GetMatrix());
+            v = Vector2Ext.Transform(v, GetMatrix());
             if (normalizeValue)
             {
-                Debug.Assert(!VectorExt2.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
+                Debug.Assert(!Vector2Ext.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
                 return (v[1] - v[0]).Normalized();
             }
             return v[1] - v[0];
@@ -252,10 +264,10 @@ namespace Game
                 new Vector2(0, 0),
                 new Vector2(1, 0)
             };
-            v = VectorExt2.Transform(v, GetWorldMatrix());
+            v = Vector2Ext.Transform(v, GetWorldMatrix());
             if (normalizeValue)
             {
-                Debug.Assert(!VectorExt2.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
+                Debug.Assert(!Vector2Ext.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
                 return (v[1] - v[0]).Normalized();
             }
             return v[1] - v[0];
@@ -263,22 +275,22 @@ namespace Game
 
         public Vector2 WorldToLocal(Vector2 v)
         {
-            return VectorExt2.Transform(v, GetMatrix().Inverted());
+            return Vector2Ext.Transform(v, GetMatrix().Inverted());
         }
 
         public Vector2[] WorldToLocal(Vector2[] v)
         {
-            return VectorExt2.Transform(v, GetMatrix().Inverted());
+            return Vector2Ext.Transform(v, GetMatrix().Inverted());
         }
 
         public Vector2 LocalToWorld(Vector2 v)
         {
-            return VectorExt2.Transform(v, GetMatrix());
+            return Vector2Ext.Transform(v, GetMatrix());
         }
 
         public Vector2[] LocalToWorld(Vector2[] v)
         {
-            return VectorExt2.Transform(v, GetMatrix());
+            return Vector2Ext.Transform(v, GetMatrix());
         }
 
         public Transform2D Copy()
@@ -314,11 +326,11 @@ namespace Game
         {
             if (transform != null)
             {
-                if (Math.Abs(Rotation - transform.Rotation) <= EQUAL_ERROR_MARGIN &&
-                    Math.Abs(Scale.X - transform.Scale.X) <= EQUAL_ERROR_MARGIN &&
-                    Math.Abs(Scale.Y - transform.Scale.Y) <= EQUAL_ERROR_MARGIN &&
-                    Math.Abs(Position.X - transform.Position.X) <= EQUAL_ERROR_MARGIN &&
-                    Math.Abs(Position.Y - transform.Position.Y) <= EQUAL_ERROR_MARGIN)
+                if (Math.Abs(Rotation - transform.Rotation) <= EQUALITY_EPSILON &&
+                    Math.Abs(Scale.X - transform.Scale.X) <= EQUALITY_EPSILON &&
+                    Math.Abs(Scale.Y - transform.Scale.Y) <= EQUALITY_EPSILON &&
+                    Math.Abs(Position.X - transform.Position.X) <= EQUALITY_EPSILON &&
+                    Math.Abs(Position.Y - transform.Position.Y) <= EQUALITY_EPSILON)
                 {
                     return true;
                 }

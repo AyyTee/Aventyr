@@ -87,12 +87,12 @@ namespace Game
         public void DrawPortal(Scene scene, Portal portalEnter, Matrix4 viewMatrix, Matrix4 viewMatrixPrev, Vector2 viewPos, int depth, float timeDelta, int count)
         {
             Vector2[] pv = portalEnter.Linked.GetVerts();
-            pv = VectorExt2.Transform(pv, portalEnter.GetTransform().GetWorldMatrix() * viewMatrix);
+            pv = Vector2Ext.Transform(pv, portalEnter.GetTransform().GetWorldMatrix() * viewMatrix);
 
             Vector2[] pv2 = portalEnter.GetVerts();
-            pv2 = VectorExt2.Transform(pv2, portalEnter.GetTransform().GetWorldMatrix() * viewMatrixPrev);
+            pv2 = Vector2Ext.Transform(pv2, portalEnter.GetTransform().GetWorldMatrix() * viewMatrixPrev);
             Line portalLine = new Line(pv2);
-            Vector2 v = VectorExt2.Transform(viewPos, viewMatrix);
+            Vector2 v = Vector2Ext.Transform(viewPos, viewMatrix);
             if (portalLine.IsInsideFOV(v, new Line(pv)))
             {
                 DrawPortal(scene, portalEnter, viewMatrix, viewPos, depth, timeDelta, count);
@@ -118,7 +118,7 @@ namespace Game
             }
 
             Vector2[] pv = portalEnter.GetVerts();
-            pv = VectorExt2.Transform(pv, portalEnter.GetTransform().GetWorldMatrix() * viewMatrix);
+            pv = Vector2Ext.Transform(pv, portalEnter.GetTransform().GetWorldMatrix() * viewMatrix);
             //this will not correctly cull portals if the viewPos begins outside of the viewspace
             if (MathExt.LineInRectangle(new Vector2(-1, -1), new Vector2(1, 1), pv[0], pv[1]) == false)
             {
@@ -173,7 +173,7 @@ namespace Game
             RenderEntity(fovOutline, viewMatrix, timeDelta);
             GL.LineWidth(1f);
 
-            DrawPortal(scene, portalEnter, portalMatrix, viewMatrix, VectorExt2.Transform(viewPos, FixturePortal.GetPortalMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
+            DrawPortal(scene, portalEnter, portalMatrix, viewMatrix, Vector2Ext.Transform(viewPos, FixturePortal.GetPortalMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
         }
 
         public void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta)

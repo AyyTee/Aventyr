@@ -44,15 +44,15 @@ namespace Game
         /// <summary>
         /// Converts a Transform2D from one portal's coordinate space to the portal it is linked with.  If it isn't linked then the Transform2D is unchanged
         /// </summary>
-        /// <param name="entityPos"></param>
-        public void Enter(Transform2D entityPos)
+        /// <param name="position"></param>
+        public void Enter(Transform2D position)
         {
             Matrix4 m = GetPortalMatrix();
-            Vector2 v0 = VectorExt2.Transform(entityPos.Position, m);
-            Vector2 v1 = VectorExt2.Transform(entityPos.Position + new Vector2(1, 0), m);
-            Vector2 v2 = VectorExt2.Transform(entityPos.Position + new Vector2(0, 1), m);
+            Vector2 v0 = Vector2Ext.Transform(position.Position, m);
+            Vector2 v1 = Vector2Ext.Transform(position.Position + new Vector2(1, 0), m);
+            Vector2 v2 = Vector2Ext.Transform(position.Position + new Vector2(0, 1), m);
 
-            entityPos.Position = new Vector2(v0.X, v0.Y);
+            position.Position = new Vector2(v0.X, v0.Y);
 
             Transform2D tEnter = GetTransform();
             Transform2D tExit = Linked.GetTransform();
@@ -66,28 +66,40 @@ namespace Game
             {
                 flipY = -1;
             }
-            entityPos.Scale *= new Vector2(flipX * (v1 - v0).Length, flipY * (v2 - v0).Length);
+            position.Scale *= new Vector2(flipX * (v1 - v0).Length, flipY * (v2 - v0).Length);
 
             float angle;
             if (flipX != flipY)
             {
-                entityPos.Rotation = -entityPos.Rotation;
-                entityPos.Rotation += (float)(MathExt.AngleWrap(GetTransform().WorldRotation) + MathExt.AngleWrap(Linked.GetTransform().WorldRotation));
+                position.Rotation = -position.Rotation;
+                position.Rotation += (float)(MathExt.AngleWrap(GetTransform().WorldRotation) + MathExt.AngleWrap(Linked.GetTransform().WorldRotation));
             }
             else
             {
                 angle = Linked.GetTransform().WorldRotation - GetTransform().WorldRotation;
-                entityPos.Rotation += angle;
+                position.Rotation += angle;
             }
         }
 
-        public void Enter(Transform entity)
+        public void Enter(Transform position)
         {
-            Transform2D entity2D = entity.GetTransform2D();
+            Transform2D entity2D = position.GetTransform2D();
             Enter(entity2D);
-            entity.Rotation = new Quaternion(entity.Rotation.X, entity.Rotation.Y, entity.Rotation.Z, entity2D.Rotation);
-            entity.Position = new Vector3(entity2D.Position.X, entity2D.Position.Y, entity.Position.Z);
-            entity.Scale = new Vector3(entity2D.Scale.X, entity2D.Scale.Y, entity.Scale.Z);
+            position.Rotation = new Quaternion(position.Rotation.X, position.Rotation.Y, position.Rotation.Z, entity2D.Rotation);
+            position.Position = new Vector3(entity2D.Position.X, entity2D.Position.Y, position.Position.Z);
+            position.Scale = new Vector3(entity2D.Scale.X, entity2D.Scale.Y, position.Scale.Z);
+        }
+
+        public void Enter(Transform2D position, Transform2D velocity)
+        {
+            float rotationPrev = position.Rotation;
+            Enter(position);
+            velocity.Position = Vector2Ext.Transform(velocity.Position, Matrix4.CreateRotationZ(position.Rotation - rotationPrev + (float)Math.PI));
+            
+            if (GetTransform().IsWorldMirrored() == Linked.GetTransform().IsWorldMirrored())
+            {
+                velocity.Rotation = -velocity.Rotation;
+            }
         }
 
         public static void ConnectPortals(Portal portal0, Portal portal1)
@@ -122,7 +134,7 @@ namespace Game
 
         public Vector2[] GetWorldVerts()
         {
-            return VectorExt2.Transform(GetVerts(), GetTransform().GetWorldMatrix());
+            return Vector2Ext.Transform(GetVerts(), GetTransform().GetWorldMatrix());
         }
 
         public Matrix4 GetPortalMatrix()

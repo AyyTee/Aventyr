@@ -78,8 +78,8 @@ namespace Game
         {
             PolygonShape shape = (PolygonShape)Fixture.Shape;
             Line line = new Line(
-                VectorExt2.ConvertTo(shape.Vertices[EdgeIndex]),
-                VectorExt2.ConvertTo(shape.Vertices[(EdgeIndex + 1) % shape.Vertices.Count])
+                Vector2Ext.ConvertTo(shape.Vertices[EdgeIndex]),
+                Vector2Ext.ConvertTo(shape.Vertices[(EdgeIndex + 1) % shape.Vertices.Count])
                 );
             return line;
         }

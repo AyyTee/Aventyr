@@ -114,8 +114,8 @@
     <Compile Include="ShaderProgram.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Transform2D.cs" />
-    <Compile Include="VectorExt2.cs" />
-    <Compile Include="VectorExt3.cs" />
+    <Compile Include="Vector2Ext.cs" />
+    <Compile Include="Vector3Ext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\sounds\test_sound.ogg">

@@ -305,7 +305,7 @@ namespace Game
                 Vector2 p = points[i];
 
                 // build lower hull (at end of output list)
-                while (L >= 2 && VectorExt2.Cross(hull[hull.Count - 1] - hull[hull.Count - 2], p - hull[hull.Count - 1]) >= 0)
+                while (L >= 2 && Vector2Ext.Cross(hull[hull.Count - 1] - hull[hull.Count - 2], p - hull[hull.Count - 1]) >= 0)
                 {
                     hull.RemoveAt(hull.Count - 1);
                     L--;
@@ -315,7 +315,7 @@ namespace Game
 
                 // build upper hull (at beginning of output list)
 
-                while (U >= 2 && VectorExt2.Cross(hull[0] - hull[1], p - hull[0]) <= 0)
+                while (U >= 2 && Vector2Ext.Cross(hull[0] - hull[1], p - hull[0]) <= 0)
                 {
                     hull.RemoveAt(0);
                     U--;

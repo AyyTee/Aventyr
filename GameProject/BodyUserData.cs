@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
@@ -13,6 +14,7 @@ namespace Game
         public int EntityID;
         [XmlIgnore]
         public Entity LinkedEntity { get; private set; }
+        public Xna.Vector2 PreviousPosition { get; set; }
 
         public BodyUserData()
         {

@@ -7,7 +7,7 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
-    public class VectorExt3
+    public class Vector3Ext
     {
         public static Vector3[] Transform(Vector3[] vectors, Matrix4 matrix)
         {

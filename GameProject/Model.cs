@@ -159,7 +159,7 @@ namespace Game
 
         public Vector3[] GetWorldVerts()
         {
-            return VectorExt3.Transform(GetVerts(), Transform.GetMatrix());
+            return Vector3Ext.Transform(GetVerts(), Transform.GetMatrix());
         }
 
         public Triangle[] GetTris()

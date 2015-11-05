@@ -9,7 +9,7 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
-    public class VectorExt2
+    public class Vector2Ext
     {
         public static float Cross(Vector2 v0, Vector2 v1)
         {
@@ -46,7 +46,7 @@ namespace Game
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
-                vList[i] = VectorExt2.Transform(vectors[i], matrix);
+                vList[i] = Vector2Ext.Transform(vectors[i], matrix);
             }
             return vList;
         }
@@ -56,7 +56,7 @@ namespace Game
             List<Vector2> vList = new List<Vector2>();
             foreach (Vector2 v in vectors)
             {
-                vList.Add(VectorExt2.Transform(v, matrix));
+                vList.Add(Vector2Ext.Transform(v, matrix));
             }
             return vList;
         }

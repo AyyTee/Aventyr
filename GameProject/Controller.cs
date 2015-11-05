@@ -44,7 +44,6 @@ namespace Game
         private bool ManualStepMode = false;
         Model background;
         Font Default;
-        Entity intersectDot;
         public static List<int> iboGarbage = new List<int>();
 
         public static String fontFolder = Path.Combine(new String[2] {
@@ -65,8 +64,8 @@ namespace Game
         });
         Scene scene, hud;
         FontRenderer FontRenderer;
-        FloatPortal portal0, portal2, portal3;
-        FixturePortal portal1;
+        FloatPortal portal2, portal3;
+        FixturePortal portal0, portal1;
         float Time = 0.0f;
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
@@ -117,19 +116,7 @@ namespace Game
             Entity back = scene.CreateEntity(new Vector2(0f, 0f));
             back.Models.Add(background);
 
-            portal0 = new FloatPortal(scene);
-            portal0.Transform.Rotation = (float)Math.PI;
-            portal0.Transform.Position = new Vector2(2.1f, 0f);
-            //portal0.Transform.Scale = new Vector2(1f, 1f);
-
-            Entity portalEntity0 = scene.CreateEntity();
-            portalEntity0.Transform.Parent = portal0.Transform;
-            portalEntity0.Models.Add(Model.CreatePlane());
-            portalEntity0.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
-            portalEntity0.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
-            portalEntity0.Models.Add(Model.CreatePlane());
-            portalEntity0.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-
+            
             
             //Portal.Link(portal1, portal1);
             /*Entity portalEntity1 = scene.CreateEntity();
@@ -233,8 +220,19 @@ namespace Game
             ground.Transform.Rotation = 0.05f;
             ground.Transform.Position = new Vector2(0, -4f);
             scene.PhysWorld.ProcessChanges();
-            portal1 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 2, 0.5f));
+            portal1 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 0, 0.5f));
 
+            portal0 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 0, 0.5f));
+            portal0.IsMirrored = true;
+            /*Entity portalEntity0 = scene.CreateEntity();
+            portalEntity0.Transform.Parent = portal0.Transform;
+            portalEntity0.Models.Add(Model.CreatePlane());
+            portalEntity0.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
+            portalEntity0.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
+            portalEntity0.Models.Add(Model.CreatePlane());
+            portalEntity0.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            */
+            
             FixturePortal.ConnectPortals(portal0, portal1);
             
             Entity origin = scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
@@ -329,16 +327,19 @@ namespace Game
             {
                 if (InputExt.MousePress(MouseButton.Left))
                 {
-                    if (!PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd)))
-                    {
-                        /*portal1.Transform.Rotation = portal1.Transform.WorldRotation;
-                        portal1.Transform.Parent = null;
-                        portal1.Transform.Position = mousePos;*/
-                    }
+                    PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
                 }
-                if (InputExt.MousePress(MouseButton.Right))
+                else if (InputExt.MousePress(MouseButton.Right))
                 {
-                    scene.CreateEntityBox(mousePos, new Vector2(0.4f, 0.4f));
+                    PortalPlacer.PortalPlace(portal0, new Line(rayBegin, rayEnd));
+                }
+                if (InputExt.KeyPress(Key.Space))
+                {
+                    scene.CreateEntityBox(mousePos, new Vector2(0.4f, 4.4f));
+                }
+                if (InputExt.KeyPress(Key.ShiftLeft))
+                {
+                    scene.CreateEntityBox(mousePos, new Vector2(2.4f, 0.4f));
                 }
                 if (InputExt.KeyPress(Key.Escape))
                 {

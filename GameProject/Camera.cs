@@ -98,7 +98,7 @@ namespace Game
         {
             Debug.Assert(Orthographic, "Only ortho projection is allowed for now.");
             Vector2 clipCoord = new Vector2(screenCoord.X / (float)(Controller.ClientSize.Width / 2) - 1f, -(screenCoord.Y / (float)(Controller.ClientSize.Height / 2) - 1f));
-            return VectorExt2.Transform(clipCoord, GetViewMatrix().Inverted());
+            return Vector2Ext.Transform(clipCoord, GetViewMatrix().Inverted());
         }
     }
 }

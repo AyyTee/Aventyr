@@ -34,8 +34,8 @@ namespace Game
 
         public Line(Xna.Vector2 lineStart, Xna.Vector2 lineEnd)
         {
-            Vertices[0] = VectorExt2.ConvertTo(lineStart);
-            Vertices[1] = VectorExt2.ConvertTo(lineEnd);
+            Vertices[0] = Vector2Ext.ConvertTo(lineStart);
+            Vertices[1] = Vector2Ext.ConvertTo(lineEnd);
         }
 
         public Line(Vector2[] line)
@@ -60,7 +60,7 @@ namespace Game
         /// </summary>
         public Side GetSideOf(Xna.Vector2 point)
         {
-            return GetSideOf(VectorExt2.ConvertTo(point));
+            return GetSideOf(Vector2Ext.ConvertTo(point));
         }
 
         /// <summary>
@@ -204,7 +204,12 @@ namespace Game
 
         public float PointDistance(Xna.Vector2 point, bool isSegment)
         {
-            return PointDistance(VectorExt2.ConvertTo(point), isSegment);
+            return PointDistance(Vector2Ext.ConvertTo(point), isSegment);
+        }
+
+        public float GetOffset()
+        {
+            return PointDistance(new Vector2(), false);
         }
 
         /// <summary>
@@ -219,7 +224,7 @@ namespace Game
 
         public void Transform(Matrix4 transformMatrix)
         {
-            Vertices = VectorExt2.Transform(Vertices, transformMatrix);
+            Vertices = Vector2Ext.Transform(Vertices, transformMatrix);
         }
 
         public Vector2 Lerp(float t)
@@ -239,7 +244,7 @@ namespace Game
 
         public float NearestT(Xna.Vector2 v)
         {
-            return NearestT(VectorExt2.ConvertTo(v));
+            return NearestT(Vector2Ext.ConvertTo(v));
         }
 
         public float Angle()
