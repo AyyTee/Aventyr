@@ -83,13 +83,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BodyUserData.cs" />
+    <Compile Include="EdgeData.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="FixtureExt.cs" />
     <Compile Include="FixtureUserData.cs" />
     <Compile Include="FloatPortal.cs" />
     <Compile Include="FontRenderer.cs" />
-    <Compile Include="IResource.cs" />
     <Compile Include="InputExt.cs" />
     <Compile Include="FixtureEdgeCoord.cs" />
     <Compile Include="IVertices.cs" />

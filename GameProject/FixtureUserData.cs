@@ -10,11 +10,28 @@ namespace Game
         public bool[] EdgeIsExterior;
         private Fixture _fixture;
         /// <summary>
-        /// Ids of all portal sensor fixtures that this fixture is colliding with.
+        /// All FixturePortals that this fixture is colliding with.
         /// </summary>
         public List<FixturePortal> PortalCollisions = new List<FixturePortal>();
 
-        public FixturePortal Portal { get; set; }
+        //Portal this fixture belongs to.
+        private FixturePortal _portal;
+        public FixturePortal Portal 
+        { 
+            get
+            {
+                return _portal;
+            }
+            set
+            {
+                Debug.Assert(_childPortals.Count == 0, "This fixture cannot be assigned to a portal.");
+                _portal = value;
+            }
+        }
+        /// <summary>
+        /// A list of FixturePortals that are parented to this fixture.
+        /// </summary>
+        private List<FixturePortal> _childPortals = new List<FixturePortal>();
         public Entity Entity
         {
             get
@@ -66,6 +83,17 @@ namespace Game
 
         public FixtureUserData(Fixture fixture)
             :this(fixture, null)
+        {
+
+        }
+
+        public void AddChildPortal(FixturePortal portal)
+        {
+            Debug.Assert(Portal == null, "Portals cannot be parented to this Fixture.");
+            _childPortals.Add(portal);
+        }
+
+        public void Update()
         {
 
         }
