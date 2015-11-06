@@ -24,7 +24,6 @@ namespace Game
             }
         }
         public FixtureEdgeCoord Position { get; private set; }
-        private List<int> _fixtureIds = new List<int>();
         public bool IsMirrored { get; set; }
         public Body EntityBody
         {
@@ -79,92 +78,29 @@ namespace Game
             return transform;
         }
 
-        public void Remove()
+        private void Remove()
         {
-            Fixture[] fixtures = GetFixtures();
-            foreach (Fixture f in fixtures)
+            if (Position != null)
             {
-                EntityBody.DestroyFixture(f);
+                FixtureExt.GetUserData(Position.Fixture).RemovePortal(this);
             }
-            _fixtureIds.Clear();
         }
 
         public void SetFixtureParent(FixtureEdgeCoord position)
         {
             Remove();
-            
             Position = position;
+            Debug.Assert(position.Entity != null);
+            Debug.Assert(position.Fixture != null);
             if (Position != null)
             {
-                Vector2[][] verts = new Vector2[2][];
-                Fixture fixture = Position.Fixture;
-                switch (fixture.ShapeType)
-                {
-                    case ShapeType.Polygon:
-                        {
-                            verts = GetEdgeVertices(Position);
-                            break;
-                        }
-                    default:
-                        {
-                            Debug.Assert(false, "Invalid shape type for fixture.");
-                            break;
-                        }
-                }
-
+                FixtureExt.GetUserData(Position.Fixture).AddPortal(this);
                 //wake up all the bodies so that they will fall if there is now a portal entrance below them
                 foreach (Body b in Scene.PhysWorld.BodyList)
                 {
                     b.Awake = true;
                 }
-                /*Entity entity = Scene.CreateEntity();
-                entity.Transform.Parent = GetTransform().Parent;*/
-                for (int i = 0; i < verts.Length; i++)
-                {
-                    verts[i] = MathExt.SetHandedness(verts[i], false);
-                    FarseerPhysics.Common.Vertices fixtureVerts = new FarseerPhysics.Common.Vertices();
-                    fixtureVerts.AddRange(Vector2Ext.ConvertToXna(verts[i]));
-                    Fixture fixtureTemp = FixtureExt.CreatePortalFixture(EntityParent.Body, new PolygonShape(fixtureVerts, 0), this);
-                    _fixtureIds.Add(fixtureTemp.FixtureId);
-
-                    //entity.Models.Add(Model.CreatePolygon(verts[i]));
-                }
             }
-        }
-
-        private Vector2[][] GetEdgeVertices(FixtureEdgeCoord position)
-        {
-            Vector2[][] edgeFixtures = new Vector2[2][];
-            var tempVerts = Vector2Ext.Transform(GetVerts(), GetTransform().GetMatrix());
-            Line edge = Position.GetEdge();
-            PolygonShape shape = (PolygonShape)position.Fixture.Shape;
-            for (int i = 0; i < 2; i++)
-            {
-                int i0 = i;
-                if (!IsMirrored)
-                {
-                    i0 = (i + 1) % 2;
-                }
-                Vector2[] verts = new Vector2[3];
-                edgeFixtures[i] = verts;
-                int index = (position.EdgeIndex + i) % shape.Vertices.Count;
-                verts[0] = tempVerts[i0];
-                verts[1] = Vector2Ext.ConvertTo(shape.Vertices[index]);
-                verts[2] = Vector2Ext.Transform(GetVerts()[i0] + new Vector2(-EdgeMargin, 0), GetTransform().GetMatrix());
-            }
-            return edgeFixtures;
-        }
-
-        public Fixture[] GetFixtures()
-        {
-            Fixture[] fixture = new Fixture[_fixtureIds.Count];
-            for (int i = 0; i < _fixtureIds.Count; i++)
-            {
-                int fixtureId = _fixtureIds[i];
-                fixture[i] = EntityBody.FixtureList.Find(item => item.FixtureId == fixtureId);
-                Debug.Assert(fixture[i] != null, "Fixture could not be found.");
-            }
-            return fixture;
         }
 
         public Vector2[] GetBounds(float margin)

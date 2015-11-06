@@ -31,8 +31,11 @@ namespace Game
         {
             foreach (Body body in Scene.PhysWorld.BodyList)
             {
-                foreach (Fixture f in body.FixtureList)
+                Fixture[] fixtureCopy = new Fixture[body.FixtureList.Count];
+                body.FixtureList.CopyTo(fixtureCopy);
+                foreach (Fixture f in fixtureCopy)
                 {
+                    FixtureExt.GetUserData(f).ProcessChanges();
                     FixtureExt.GetUserData(f).PortalCollisions.Clear();
                 }
                 BodyExt.GetUserData(body).PreviousPosition = body.Position;

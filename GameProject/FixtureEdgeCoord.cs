@@ -67,6 +67,11 @@ namespace Game
             }
         }
 
+        /// <summary>
+        /// EdgeIndex + EdgeT
+        /// </summary>
+        public float EdgeIndexT { get {return (float)EdgeIndex + EdgeT;} }
+
         public FixtureEdgeCoord(Fixture fixture, int edgeIndex = 0, float edgeT = 0)
         {
             Fixture = fixture;

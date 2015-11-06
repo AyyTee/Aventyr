@@ -220,9 +220,9 @@ namespace Game
             ground.Transform.Rotation = 0.05f;
             ground.Transform.Position = new Vector2(0, -4f);
             scene.PhysWorld.ProcessChanges();
-            portal1 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 0, 0.5f));
+            portal1 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.3f));
 
-            portal0 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 0, 0.5f));
+            portal0 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.6f));
             portal0.IsMirrored = true;
             /*Entity portalEntity0 = scene.CreateEntity();
             portalEntity0.Transform.Parent = portal0.Transform;
