@@ -140,7 +140,7 @@ namespace Game
         {
             Entity entity = CreateEntity();
             entity.Transform.Position = position;
-
+            vertices = MathExt.SetHandedness(vertices, false);
             Polygon polygon = PolygonFactory.CreatePolygon(vertices);
 
             entity.Models.Add(Model.CreatePolygon(polygon));

@@ -335,7 +335,8 @@ namespace Game
                 }
                 if (InputExt.KeyPress(Key.Space))
                 {
-                    scene.CreateEntityBox(mousePos, new Vector2(0.4f, 4.4f));
+                    Entity box = scene.CreateEntityBox(mousePos, new Vector2(0.2f, 4.4f));
+                    box.Transform.Rotation = 2.5f * (float)Math.PI / 4;
                 }
                 if (InputExt.KeyPress(Key.ShiftLeft))
                 {

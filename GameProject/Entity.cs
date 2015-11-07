@@ -154,8 +154,6 @@ namespace Game
             BodyExt.SetUserData(body, this);
         }
 
-        
-
         public void _RenderSetTransformMatrix(Model model, Matrix4 viewMatrix)
         {
             Matrix4 modelMatrix = model.Transform.GetMatrix() * Transform.GetWorldMatrix() * viewMatrix;
@@ -167,13 +165,13 @@ namespace Game
             ClipModels.Clear();
             foreach (Model m in Models)
             {
-                _ModelPortalClipping(m, Transform.WorldPosition, null, Matrix4.Identity, 4, ref ClipModels);
+                _ModelPortalClipping(m, Transform.WorldPosition, null, Matrix4.Identity, 4, 0, ref ClipModels);
             }
         }
 
         /// <param name="depth">Number of iterations.</param>
         /// <param name="clipModels">Adds the ClipModel instances to this list.</param>
-        private void _ModelPortalClipping(Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, ref List<ClipModel> clipModels)
+        private void _ModelPortalClipping(Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, int count, ref List<ClipModel> clipModels)
         {
             if (depth <= 0)
             {
@@ -183,7 +181,8 @@ namespace Game
             List<Portal> collisions = new List<Portal>();
             foreach (Portal portal in Scene.PortalList)
             {
-                if (portal.EntityParent == this)
+                //ignore any portal attached to this entity on the first recursive iteration
+                if (portal.EntityParent == this && count == 0)
                 {
                     continue;
                 }
@@ -240,7 +239,7 @@ namespace Game
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
                     Vector2 centerPointNext = Vector2Ext.Transform(portal.GetTransform().WorldPosition + normal, portal.GetPortalMatrix());
-                    _ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, ref clipModels);
+                    _ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, count + 1, ref clipModels);
                 }
             }
             

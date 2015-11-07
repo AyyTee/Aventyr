@@ -17,17 +17,17 @@ namespace Game
         public List<FixturePortal> PortalCollisions = new List<FixturePortal>();
         public bool Update { get; private set; }
         //Portal this fixture belongs to.
-        private FixturePortal _portal;
-        public FixturePortal Portal 
+        private FixturePortal[] _portalParents = new FixturePortal[2];
+        public FixturePortal[] PortalParents 
         { 
             get
             {
-                return _portal;
+                return _portalParents;
             }
-            set
+            private set
             {
                 Debug.Assert(_childPortals.Count == 0, "This fixture cannot be assigned to a portal.");
-                _portal = value;
+                _portalParents = value;
             }
         }
         /// <summary>
@@ -62,9 +62,8 @@ namespace Game
         {
         }
 
-        public FixtureUserData(Fixture fixture, FixturePortal portal)
+        public FixtureUserData(Fixture fixture)
         {
-            Portal = portal;
             _fixture = fixture;
             _fixtureId = fixture.FixtureId;
             Debug.Assert(Fixture.UserData == null, "UserData has already been assigned for this fixture.");
@@ -84,15 +83,19 @@ namespace Game
             }
         }
 
-        public FixtureUserData(Fixture fixture)
-            :this(fixture, null)
+        public bool IsPortalChild(FixturePortal portal)
         {
+            return PortalParents[0] == portal || PortalParents[1] == portal;
+        }
 
+        public bool IsPortalParentless()
+        {
+            return PortalParents[0] == null && PortalParents[1] == null;
         }
 
         public void AddPortal(FixturePortal portal)
         {
-            Debug.Assert(Portal == null, "Portals cannot be parented to this Fixture.");
+            Debug.Assert(IsPortalParentless(), "Portals cannot be parented to this Fixture.");
             Debug.Assert(!_childPortals.Exists(item => item == portal), "Portal has already been added to this fixture.");
             _childPortals.Add(portal);
             Update = true;
@@ -126,14 +129,22 @@ namespace Game
                     {
                         Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], true));
                         _fixtureChildList.Add(fixture);
-                        FixtureExt.GetUserData(fixture).Portal = sortedPortals[i];
+                        FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
+                            sortedPortals[i],
+                            null
+                        };
+                        //sortedPortals[i].CollisionFixturePrevious = fixture;
                     }
                 }
                 else
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], true));
                     _fixtureChildList.Add(fixture);
-                    FixtureExt.GetUserData(fixture).Portal = sortedPortals[i];
+                    FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
+                            sortedPortals[i],
+                            null
+                        };
+                    //sortedPortals[i].CollisionFixturePrevious = fixture;
                 }
                 if (i < sortedPortals.Count() - 1)
                 {
@@ -141,48 +152,35 @@ namespace Game
                     {
                         Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], false));
                         _fixtureChildList.Add(fixture);
-                        FixtureExt.GetUserData(fixture).Portal = sortedPortals[i];
+                        FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
+                            sortedPortals[i],
+                            null
+                        };
+                        //sortedPortals[i].CollisionFixtureNext = fixture;
                     }
                     else
                     {
                         Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], sortedPortals[i + 1]));
                         _fixtureChildList.Add(fixture);
+                        FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
+                            sortedPortals[i],
+                            sortedPortals[i+1]
+                        };
+                        //sortedPortals[i].CollisionFixtureNext = fixture;
+                        //sortedPortals[i+1].CollisionFixturePrevious = fixture;
                     }
                 }
                 else
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], false));
                     _fixtureChildList.Add(fixture);
-                    FixtureExt.GetUserData(fixture).Portal = sortedPortals[i];
+                    FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
+                        sortedPortals[i],
+                        null
+                    };
+                    //sortedPortals[i].CollisionFixtureNext = fixture;
                 }
             }
-            /*Vector2[][] verts = new Vector2[2][];
-
-            switch (Fixture.ShapeType)
-            {
-                case ShapeType.Polygon:
-                    {
-                        verts = GetEdgeVertices(Position);
-                        break;
-                    }
-                default:
-                    {
-                        Debug.Assert(false, "Invalid shape type for fixture.");
-                        break;
-                    }
-            }*/
-            /*Entity entity = Scene.CreateEntity();
-                entity.Transform.Parent = GetTransform().Parent;*/
-            /*for (int i = 0; i < verts.Length; i++)
-            {
-                verts[i] = MathExt.SetHandedness(verts[i], false);
-                FarseerPhysics.Common.Vertices fixtureVerts = new FarseerPhysics.Common.Vertices();
-                fixtureVerts.AddRange(Vector2Ext.ConvertToXna(verts[i]));
-                Fixture fixtureTemp = FixtureExt.CreatePortalFixture(EntityParent.Body, new PolygonShape(fixtureVerts, 0), this);
-                _fixtureIds.Add(fixtureTemp.FixtureId);
-
-                //entity.Models.Add(Model.CreatePolygon(verts[i]));
-            }*/
         }
 
         private PolygonShape CreatePortalShape(FixturePortal portal, FixturePortal portalNext)

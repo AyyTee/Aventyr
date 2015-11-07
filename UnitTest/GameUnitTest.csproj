@@ -62,6 +62,7 @@
     <Compile Include="LineTests.cs" />
     <Compile Include="Transform2DTests.cs" />
     <Compile Include="SceneTests.cs" />
+    <Compile Include="FixtureUserDataTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameProject\Game.csproj">

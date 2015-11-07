@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,10 +17,15 @@ namespace Game
                 return null;
             }
         }
-        public FloatPortal(Scene scene)
+        public FloatPortal(Scene scene, Vector2 position)
             : base(scene)
         {
-            Transform = new Transform2D();
+            Transform = new Transform2D(position);
+        }
+
+        public FloatPortal(Scene scene)
+            :this(scene, new Vector2())
+        {
         }
 
         public override Transform2D GetTransform()

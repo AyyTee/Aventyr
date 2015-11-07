@@ -116,7 +116,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 10)
             {
                 Scene scene = new Scene();
-                FixturePortal p0 = new FixturePortal(scene, null);
+                FloatPortal p0 = new FloatPortal(scene);
                 p0.Transform.Rotation = (float)(i + Math.PI / 4);
                 Vector2 viewPoint = new Vector2((float)Math.Cos(i + Math.PI), (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2((float)Math.Cos(i), (float)Math.Sin(i));
@@ -132,7 +132,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 10)
             {
                 Scene scene = new Scene();
-                FixturePortal p0 = new FixturePortal(scene, new Vector2(x, y));
+                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
                 p0.Transform.Rotation = (float)(i + Math.PI / 4);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
@@ -148,7 +148,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 10)
             {
                 Scene scene = new Scene();
-                FixturePortal p0 = new FixturePortal(scene, new Vector2(x, y));
+                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
                 p0.Transform.Rotation = (float)(i + Math.PI / 4);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI)/100000, y + (float)Math.Sin(i + Math.PI)/100000);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i)/100000, y + (float)Math.Sin(i)/100000);
@@ -164,7 +164,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 10)
             {
                 Scene scene = new Scene();
-                FixturePortal p0 = new FixturePortal(scene, new Vector2(x, y));
+                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
                 p0.Transform.Rotation = (float)(i + Math.PI / 4);
                 Vector2 viewPoint = new Vector2(x, y);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
@@ -180,7 +180,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 10)
             {
                 Scene scene = new Scene();
-                FixturePortal p0 = new FixturePortal(scene, new Vector2(x, y));
+                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
                 p0.Transform.Rotation = (float)(i + Math.PI / 4);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2(x, y);
@@ -196,7 +196,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 10)
             {
                 Scene scene = new Scene();
-                FixturePortal p0 = new FixturePortal(scene, new Vector2(x, y));
+                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
                 p0.Transform.Rotation = (float)(i + Math.PI / 4);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
                 Vector2 lookPoint = new Vector2(x, y);
@@ -212,7 +212,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 10)
             {
                 Scene scene = new Scene();
-                FixturePortal p0 = new FixturePortal(scene, new Vector2(x, y));
+                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
                 p0.Transform.Rotation = (float)(i + Math.PI / 4);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i) * 2, y + (float)Math.Sin(i) * 2);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
@@ -228,7 +228,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 10)
             {
                 Scene scene = new Scene();
-                FixturePortal p0 = new FixturePortal(scene, new Vector2(x, y));
+                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
                 p0.Transform.Rotation = (float)(i + Math.PI / 4);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i) * 2, y + (float)Math.Sin(i) * 2);

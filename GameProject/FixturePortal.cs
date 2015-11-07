@@ -25,6 +25,8 @@ namespace Game
         }
         public FixtureEdgeCoord Position { get; private set; }
         public bool IsMirrored { get; set; }
+        public Fixture CollisionFixtureNext;
+        public Fixture CollisionFixturePrevious;
         public Body EntityBody
         {
             get

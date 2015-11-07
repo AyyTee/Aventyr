@@ -165,7 +165,7 @@ namespace Game
             FixtureUserData[] userData = new FixtureUserData[2];
             userData[0] = FixtureExt.GetUserData(contact.FixtureA);
             userData[1] = FixtureExt.GetUserData(contact.FixtureB);
-
+            
             Xna.Vector2 normal;
             FarseerPhysics.Common.FixedArray2<Xna.Vector2> vList;
             contact.GetWorldManifold(out normal, out vList);
@@ -176,7 +176,7 @@ namespace Game
                 {
                     FixturePortal portal = (FixturePortal)p;
                     //don't consider fixtures that are a part of this portal
-                    if (userData[0].Portal == portal || userData[1].Portal == portal)
+                    if (userData[0].IsPortalChild(portal) || userData[1].IsPortalChild(portal))
                     {
                         continue;
                     }
@@ -209,7 +209,7 @@ namespace Game
                 int i1 = (i0 + 1) % userData.Length;
                 foreach (FixturePortal portal in userData[i0].PortalCollisions)
                 {
-                    if (userData[i0].Portal == portal || userData[i1].Portal == portal)
+                    if (userData[i0].IsPortalChild(portal) || userData[i1].IsPortalChild(portal))
                     {
                         continue;
                     }

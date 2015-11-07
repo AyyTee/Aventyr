@@ -43,7 +43,7 @@ namespace Game
                     {
                         Vector2 rayIntersect = Vector2Ext.ConvertTo(point);
                         rayIntersect = rayIntersect + (rayIntersect - rayBegin).Normalized() * RayCastMargin;
-                        if (FixtureExt.GetUserData(fixture).Portal != null)
+                        if (FixtureExt.GetUserData(fixture).IsPortalParentless() == false)
                         {
                             return -1;
                         }
