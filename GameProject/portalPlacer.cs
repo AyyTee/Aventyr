@@ -32,8 +32,8 @@ namespace Game
 
         public static FixtureEdgeCoord RayCast(Scene scene, Line ray)
         {
-            Vector2 rayBegin = ray.Vertices[0];
-            Vector2 rayEnd = ray.Vertices[1];
+            Vector2 rayBegin = ray[0];
+            Vector2 rayEnd = ray[1];
             if (rayBegin != rayEnd)
             {
                 List<FixtureEdgeCoord> intersections = new List<FixtureEdgeCoord>();
@@ -75,7 +75,7 @@ namespace Game
                                             }
                                             //ignore edges facing away
                                             Line rayLine = new Line(vertices[i0], vertices[i1]); 
-                                            if (rayLine.GetSideOf(rayBegin) != rayLine.GetSideOf(rayLine.Vertices[0] + rayLine.GetNormal()))
+                                            if (rayLine.GetSideOf(rayBegin) != rayLine.GetSideOf(rayLine[0] + rayLine.GetNormal()))
                                             {
                                                 break;
                                             }

@@ -19,7 +19,7 @@ namespace Game
     {
         public Scene Scene { get; private set; }
         Entity DebugEntity;
-        bool DebugMode = true;
+        bool DebugMode = false;
 
         public PhysContactListener(Scene scene)
         {
@@ -81,6 +81,7 @@ namespace Game
                 double portalTDistance = 1f;
 
                 Line position = new Line(body.Position, BodyExt.GetUserData(body).PreviousPosition);
+                //portalNearest = Scene.PortalList.Min(item => new Line(item.GetWorldVerts()).);
                 foreach (Portal p in Scene.PortalList)
                 {
                     Line line = new Line(p.GetWorldVerts());
@@ -93,13 +94,7 @@ namespace Game
                 }
                 if (portalNearest != null)
                 {
-                    Transform2D transform = new Transform2D(body.Position, body.Rotation);
-                    Transform2D velocity = new Transform2D(body.LinearVelocity, body.AngularVelocity);
-                    portalNearest.Enter(transform, velocity);
-                    body.Position = Vector2Ext.ConvertToXna(transform.Position);
-                    body.Rotation = transform.Rotation;
-                    body.LinearVelocity = Vector2Ext.ConvertToXna(velocity.Position);
-                    body.AngularVelocity = velocity.Rotation;
+                    portalNearest.Enter(body);
                 }
             }
         }

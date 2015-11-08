@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FarseerPhysics.Dynamics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,19 @@ namespace Game
         [XmlIgnore]
         public Entity LinkedEntity { get; private set; }
         public Xna.Vector2 PreviousPosition { get; set; }
+
+        public List<Body> BodyChildren = new List<Body>();
+
+        public struct ChildBody
+        {
+            public Body Body;
+            public Portal Portal;
+            public ChildBody(Body body, Portal portal)
+            {
+                Body = body;
+                Portal = portal;
+            }
+        }
 
         public BodyUserData()
         {

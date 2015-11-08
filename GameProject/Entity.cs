@@ -276,10 +276,10 @@ namespace Game
                     }
                     l.Transform(ScaleMatrix);
                     cutLines.AddRange(new float[4] {
-                        l.Vertices[0].X,
-                        l.Vertices[0].Y,
-                        l.Vertices[1].X,
-                        l.Vertices[1].Y
+                        l[0].X,
+                        l[0].Y,
+                        l[1].X,
+                        l[1].Y
                     });
                 }
 

@@ -123,52 +123,23 @@ namespace Game
 
             for (int i = 0; i < sortedPortals.Count(); i++)
             {
-                if (i > 0)
-                {
-                    if (sortedPortals[i].Position.EdgeIndex != sortedPortals[i - 1].Position.EdgeIndex)
-                    {
-                        Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], true));
-                        _fixtureChildList.Add(fixture);
-                        FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
-                            sortedPortals[i],
-                            null
-                        };
-                        //sortedPortals[i].CollisionFixturePrevious = fixture;
-                    }
-                }
-                else
+                if (i == 0 || (i > 0 && sortedPortals[i].Position.EdgeIndex != sortedPortals[i - 1].Position.EdgeIndex))
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], true));
                     _fixtureChildList.Add(fixture);
                     FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
-                            sortedPortals[i],
-                            null
-                        };
-                    //sortedPortals[i].CollisionFixturePrevious = fixture;
+                        sortedPortals[i],
+                        null
+                    };
                 }
-                if (i < sortedPortals.Count() - 1)
+                if (i < sortedPortals.Count() - 1 && sortedPortals[i].Position.EdgeIndex == sortedPortals[i + 1].Position.EdgeIndex)
                 {
-                    if (sortedPortals[i].Position.EdgeIndex != sortedPortals[i + 1].Position.EdgeIndex)
-                    {
-                        Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], false));
-                        _fixtureChildList.Add(fixture);
-                        FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
-                            sortedPortals[i],
-                            null
-                        };
-                        //sortedPortals[i].CollisionFixtureNext = fixture;
-                    }
-                    else
-                    {
-                        Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], sortedPortals[i + 1]));
-                        _fixtureChildList.Add(fixture);
-                        FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
-                            sortedPortals[i],
-                            sortedPortals[i+1]
-                        };
-                        //sortedPortals[i].CollisionFixtureNext = fixture;
-                        //sortedPortals[i+1].CollisionFixturePrevious = fixture;
-                    }
+                    Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], sortedPortals[i + 1]));
+                    _fixtureChildList.Add(fixture);
+                    FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
+                        sortedPortals[i],
+                        sortedPortals[i+1]
+                    };
                 }
                 else
                 {
@@ -178,7 +149,6 @@ namespace Game
                         sortedPortals[i],
                         null
                     };
-                    //sortedPortals[i].CollisionFixtureNext = fixture;
                 }
             }
         }
@@ -242,7 +212,7 @@ namespace Game
 
             /*Entity debugEntity = Entity.Scene.CreateEntity();
             debugEntity.Models.Add(Model.CreatePolygon(verts));*/
-
+            
             return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
         }
     }

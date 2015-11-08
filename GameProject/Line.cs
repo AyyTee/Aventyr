@@ -25,6 +25,12 @@ namespace Game
             }
         }
         public Vector2[] Vertices = new Vector2[2];
+        public Vector2 Center { get { return (Vertices[0] + Vertices[1]) / 2; } }
+
+        #region constructors
+        public Line()
+        {
+        }
 
         public Line(Vector2 lineStart, Vector2 lineEnd)
         {
@@ -41,6 +47,26 @@ namespace Game
         public Line(Vector2[] line)
         {
             Vertices = line;
+        }
+
+        public Line(Vector2 center, float rotation, float length)
+        {
+            Vector2 offset = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * length;
+            Vertices[0] = center + offset;
+            Vertices[1] = center - offset;
+        }
+        #endregion
+
+        public Vector2 this[int index]
+        {
+            get
+            {
+                return Vertices[index];
+            }
+            set
+            {
+                Vertices[index] = value;
+            }
         }
 
         /// <summary>
@@ -70,8 +96,8 @@ namespace Game
         /// <returns></returns>
         public Side GetSideOf(Line line)
         {
-            Side side0 = GetSideOf(line.Vertices[0]);
-            Side side1 = GetSideOf(line.Vertices[1]);
+            Side side0 = GetSideOf(line[0]);
+            Side side1 = GetSideOf(line[1]);
             if (side0 == side1)
             {
                 return side0;
@@ -107,7 +133,7 @@ namespace Game
         public bool IsInsideFOV(Vector2 viewPoint, Line lookLine)
         {
             //check if the lookPoint is on the opposite side of the line from the viewPoint
-            if (GetSideOf(viewPoint) == GetSideOf(lookLine.Vertices[0]) && GetSideOf(viewPoint) == GetSideOf(lookLine.Vertices[1]))
+            if (GetSideOf(viewPoint) == GetSideOf(lookLine[0]) && GetSideOf(viewPoint) == GetSideOf(lookLine[1]))
             {
                 return false;
             }
@@ -115,9 +141,9 @@ namespace Game
             double Angle0 = MathExt.AngleVector(Vertices[0] - viewPoint);
             double Angle1 = MathExt.AngleVector(Vertices[1] - viewPoint);
             double AngleDiff = MathExt.AngleDiff(Angle0, Angle1);
-            double AngleLook = MathExt.AngleVector(lookLine.Vertices[0] - viewPoint);
+            double AngleLook = MathExt.AngleVector(lookLine[0] - viewPoint);
             double AngleLookDiff = MathExt.AngleDiff(Angle0, AngleLook);
-            double AngleLook2 = MathExt.AngleVector(lookLine.Vertices[1] - viewPoint);
+            double AngleLook2 = MathExt.AngleVector(lookLine[1] - viewPoint);
             double AngleLookDiff2 = MathExt.AngleDiff(Angle0, AngleLook2);
             //check if the first point is in the FOV
             if (Math.Abs(AngleDiff) >= Math.Abs(AngleLookDiff) && Math.Sign(AngleDiff) == Math.Sign(AngleLookDiff))
@@ -139,7 +165,7 @@ namespace Game
 
         public IntersectPoint Intersects(Line line, bool segmentOnly)
         {
-            return MathExt.LineIntersection(Vertices[0], Vertices[1], line.Vertices[0], line.Vertices[1], segmentOnly);
+            return MathExt.LineIntersection(Vertices[0], Vertices[1], line[0], line[1], segmentOnly);
         }
 
         /// <summary>
@@ -250,6 +276,29 @@ namespace Game
         public float Angle()
         {
             return (float)MathExt.AngleLine(Vertices[0], Vertices[1]);
+        }
+
+        /// <summary>
+        /// Approximates the time at which a moving line and a moving point intersect or if they don't intersect at all.
+        /// </summary>
+        /// <param name="velocity"></param>
+        /// <param name="rotVelocity"></param>
+        /// <param name="pointMotion"></param>
+        /// <returns></returns>
+        public float IntersectsParametric(Vector2 velocity, float rotVelocity, Line pointMotion, int detail)
+        {
+            Matrix4 transform = Matrix4.CreateTranslation(new Vector3(velocity.X, velocity.Y, 0) / detail);
+            transform = Matrix4.CreateRotationZ(rotVelocity / detail);
+            for (int i = 0; i < detail - 1; i++ )
+            {
+                Vector2 centerCurrent = Center + velocity * i / detail;
+                Line line = new Line(centerCurrent, Angle() + rotVelocity * i / detail, Length);
+                Line lineNext = new Line(centerCurrent, Angle() + rotVelocity * (i + 1) / detail, Length);
+                Vector2[] verts = new Vector2[] {
+                    new Vector2()
+                };
+            }
+            return 1;
         }
     }
 }

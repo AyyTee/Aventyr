@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using FarseerPhysics.Dynamics;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -100,6 +101,17 @@ namespace Game
             {
                 velocity.Rotation = -velocity.Rotation;
             }
+        }
+
+        public void Enter(Body body)
+        {
+            Transform2D transform = new Transform2D(body.Position, body.Rotation);
+            Transform2D velocity = new Transform2D(body.LinearVelocity, body.AngularVelocity);
+            this.Enter(transform, velocity);
+            body.Position = Vector2Ext.ConvertToXna(transform.Position);
+            body.Rotation = transform.Rotation;
+            body.LinearVelocity = Vector2Ext.ConvertToXna(velocity.Position);
+            body.AngularVelocity = velocity.Rotation;
         }
 
         public static void ConnectPortals(Portal portal0, Portal portal1)

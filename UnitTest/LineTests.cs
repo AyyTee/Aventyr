@@ -9,6 +9,15 @@ namespace UnitTest
     [TestClass]
     public class LineTests
     {
+        #region Constructor tests
+        [TestMethod]
+        public void ConstructorTest0()
+        {
+            Line line = new Line();
+            Assert.IsTrue(line[0] == new Vector2());
+            Assert.IsTrue(line[1] == new Vector2());
+        }
+        #endregion
         #region GetSideOf tests
         [TestMethod]
         public void GetSideOfTest0()
@@ -107,6 +116,24 @@ namespace UnitTest
                 Line line = new Line(v0, v1);
                 Assert.IsTrue(line.GetSideOf(v2) == Line.Side.IsRightOf);
             }
+        }
+        #endregion
+        #region ArrayAccessor tests
+        [TestMethod]
+        public void ArrayAccessorTest0()
+        {
+            Line line = new Line(new Vector2(1f, 5f), new Vector2(100.1f, 2f));
+            Assert.IsTrue(line[0] == new Vector2(1f, 5f));
+            Assert.IsTrue(line[1] == new Vector2(100.1f, 2f));
+        }
+        [TestMethod]
+        public void ArrayAccessorTest1()
+        {
+            Line line = new Line(new Vector2(1f, 5f), new Vector2(100.1f, 2f));
+            line[0] = new Vector2(9f, 2.2f);
+            line[1] = new Vector2(99f, 92.2f);
+            Assert.IsTrue(line[0] == new Vector2(9f, 2.2f));
+            Assert.IsTrue(line[1] == new Vector2(99f, 92.2f));
         }
         #endregion
         #region IsInsideFOV test
