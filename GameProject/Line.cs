@@ -278,6 +278,11 @@ namespace Game
             return (float)MathExt.AngleLine(Vertices[0], Vertices[1]);
         }
 
+        public Line Copy()
+        {
+            return new Line(Vertices);
+        }
+
         /// <summary>
         /// Approximates the time at which a moving line and a moving point intersect or if they don't intersect at all.
         /// </summary>
@@ -285,20 +290,38 @@ namespace Game
         /// <param name="rotVelocity"></param>
         /// <param name="pointMotion"></param>
         /// <returns></returns>
-        public float IntersectsParametric(Vector2 velocity, float rotVelocity, Line pointMotion, int detail)
+        public IntersectPoint IntersectsParametric(Vector2 velocity, float rotVelocity, Line pointMotion, int detail)
         {
             Matrix4 transform = Matrix4.CreateTranslation(new Vector3(velocity.X, velocity.Y, 0) / detail);
-            transform = Matrix4.CreateRotationZ(rotVelocity / detail);
-            for (int i = 0; i < detail - 1; i++ )
+            transform = Matrix4.CreateRotationZ(rotVelocity / detail) * transform;
+            Line line = Copy();
+            IntersectPoint intersect = new IntersectPoint();
+            for (int i = 0; i < detail; i++ )
             {
-                Vector2 centerCurrent = Center + velocity * i / detail;
-                Line line = new Line(centerCurrent, Angle() + rotVelocity * i / detail, Length);
-                Line lineNext = new Line(centerCurrent, Angle() + rotVelocity * (i + 1) / detail, Length);
+                Line lineNext = line.Copy();
+                lineNext.Transform(transform);
+
                 Vector2[] verts = new Vector2[] {
-                    new Vector2()
+                    line[0],
+                    line[1],
+                    lineNext[1],
+                    lineNext[0]
                 };
+
+                Line pointLine = new Line(pointMotion.Lerp(i/detail), pointMotion.Lerp((i+1)/detail));
+                if (pointLine.IsInsideOfPolygon(verts))
+                {
+                    
+                    intersect.T = (i + 0.5f) / detail;
+                    intersect.Exists = true;
+                    Vector2 pos = pointMotion.Lerp((float)intersect.T);
+                    intersect.Position = new Vector2d(pos.X, pos.Y);
+                    return intersect;
+                }
+                line = lineNext;
             }
-            return 1;
+            intersect.Exists = false;
+            return intersect;
         }
     }
 }

@@ -284,5 +284,47 @@ namespace UnitTest
             Assert.IsTrue(Math.Abs(line.NearestT(new Vector2(-4, 2)) - 54.5) < 0.0001f);
         }
         #endregion
+        #region IntersectParametric test
+        [TestMethod]
+        public void IntersectParametricTest0()
+        {
+            Line line = new Line(new Vector2(), new Vector2(0, 1));
+            Line pointMotion = new Line(new Vector2(-1, 0.5f), new Vector2(2, 0.5f));
+            Vector2 velocity = new Vector2(1, 0);
+            IntersectPoint intersect = line.IntersectsParametric(velocity, 0, pointMotion, 1);
+            Assert.IsTrue(intersect.Exists);
+            Assert.IsTrue(intersect.T >= 0 && intersect.T <= 1);
+        }
+        [TestMethod]
+        public void IntersectParametricTest1()
+        {
+            Line line = new Line(new Vector2(), new Vector2(0, 1));
+            Line pointMotion = new Line(new Vector2(-1, 0.5f), new Vector2(2, 0.5f));
+            Vector2 velocity = new Vector2(1, 0);
+            IntersectPoint intersect = line.IntersectsParametric(velocity, 0, pointMotion, 10);
+            Assert.IsTrue(intersect.Exists);
+            Assert.IsTrue(intersect.T >= 0 && intersect.T <= 1);
+        }
+        [TestMethod]
+        public void IntersectParametricTest2()
+        {
+            Line line = new Line(new Vector2(), new Vector2(0, 1));
+            Line pointMotion = new Line(new Vector2(2, 0.5f), new Vector2(-1, 0.5f));
+            Vector2 velocity = new Vector2(1, 0);
+            IntersectPoint intersect = line.IntersectsParametric(velocity, 0, pointMotion, 10);
+            Assert.IsTrue(intersect.Exists);
+            Assert.IsTrue(intersect.T >= 0 && intersect.T <= 1);
+        }
+        [TestMethod]
+        public void IntersectParametricTest3()
+        {
+            Line line = new Line(new Vector2(), new Vector2(0, 1));
+            Line pointMotion = new Line(new Vector2(0.6f, 0.4f), new Vector2(0.6f, 0.4f));
+            Vector2 velocity = new Vector2(1, 0);
+            IntersectPoint intersect = line.IntersectsParametric(velocity, 0, pointMotion, 1);
+            Assert.IsTrue(intersect.Exists);
+            Assert.IsTrue(intersect.T >= 0 && intersect.T <= 1);
+        }
+        #endregion
     }
 }

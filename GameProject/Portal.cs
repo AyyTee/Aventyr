@@ -36,6 +36,7 @@ namespace Game
             Scene.PortalList.Add(this);
         }
         public abstract Transform2D GetTransform();
+        public abstract Transform2D GetVelocity();
 
         public Vector2[] GetFOV(Vector2 origin, float distance)
         {
@@ -112,6 +113,11 @@ namespace Game
             body.Rotation = transform.Rotation;
             body.LinearVelocity = Vector2Ext.ConvertToXna(velocity.Position);
             body.AngularVelocity = velocity.Rotation;
+        }
+
+        public void Enter(Entity entity)
+        {
+            this.Enter(entity.Transform, entity.Velocity);
         }
 
         public static void ConnectPortals(Portal portal0, Portal portal1)

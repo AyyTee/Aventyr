@@ -86,6 +86,7 @@
     <Compile Include="EdgeData.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="EntityFactory.cs" />
     <Compile Include="FixtureExt.cs" />
     <Compile Include="FixtureUserData.cs" />
     <Compile Include="FloatPortal.cs" />

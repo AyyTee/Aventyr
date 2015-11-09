@@ -82,17 +82,10 @@ namespace Game
             }
         }
 
-        private void AddEntity(Entity entity)
+        public void AddEntity(Entity entity)
         {
             Debug.Assert(!EntityList.Exists(item => item.Equals(entity)), "This entity has already been added to this scene.");
             EntityList.Add(entity);
-            _idCount++;
-        }
-
-        private void AddPortal(FixturePortal portal)
-        {
-            Debug.Assert(!PortalList.Exists(item => item.Equals(portal)), "This portal has already been added to this scene.");
-            PortalList.Add(portal);
             _idCount++;
         }
 
@@ -104,76 +97,6 @@ namespace Game
         public Entity GetEntityByName(string name)
         {
             return EntityList.Find(item => (item.Name == name));
-        }
-
-        public Entity CreateEntity()
-        {
-            return CreateEntity(new Vector2(0, 0));
-        }
-
-        public Entity CreateEntity(Vector2 position)
-        {
-            Entity entity = new Entity(this, position);
-            AddEntity(entity);
-            return entity;
-        }
-
-        public Entity CreateEntityBox(Vector2 position, Vector2 scale)
-        {
-            Entity box = CreateEntity();
-            box.IsPortalable = true;
-            box.Transform.Position = position;
-            box.Models.Add(Model.CreatePlane(scale));
-
-            Body body = BodyFactory.CreateRectangle(box.Scene.PhysWorld, scale.X, scale.Y, 1);
-            body.Position = Vector2Ext.ConvertToXna(position);
-            box.SetBody(body);
-            body.BodyType = BodyType.Dynamic;
-
-            FixtureUserData userData = new FixtureUserData(body.FixtureList[0]);
-            
-            FixtureExt.SetUserData(body.FixtureList[0], userData);
-            return box;
-        }
-
-        public Entity CreateEntityPolygon(Vector2 position, Vector2 scale, Vector2[] vertices)
-        {
-            Entity entity = CreateEntity();
-            entity.Transform.Position = position;
-            vertices = MathExt.SetHandedness(vertices, false);
-            Polygon polygon = PolygonFactory.CreatePolygon(vertices);
-
-            entity.Models.Add(Model.CreatePolygon(polygon));
-
-            Xna.Vector2 vPos = Vector2Ext.ConvertToXna(entity.Transform.Position);
-
-            List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
-
-            Body body = new Body(this.PhysWorld);
-            body.Position = Vector2Ext.ConvertToXna(position);
-            for (int i = 0; i < polygon.Triangles.Count; i++)
-            {
-                var v1 = new FarseerPhysics.Common.Vertices();
-
-                for (int j = 0; j < polygon.Triangles[i].Points.Count(); j++)
-                {
-                    v1.Add(Vector2Ext.ConvertToXna(polygon.Triangles[i].Points[j]));
-                }
-
-                vList.Add(v1);
-                PolygonShape shape = new PolygonShape(v1, 1);
-                Fixture fixture = body.CreateFixture(shape);
-                FixtureUserData userData = new FixtureUserData(fixture);
-                FixtureExt.SetUserData(fixture, userData);
-                for (int j = 0; j < polygon.Triangles[i].Neighbors.Count(); j++)
-                {
-                    userData.EdgeIsExterior[j] = polygon.Triangles[i].EdgeIsConstrained[(j + 2) % 3];
-                }
-            }
-            
-            entity.SetBody(body);
-
-            return entity;
         }
 
         /// <summary>

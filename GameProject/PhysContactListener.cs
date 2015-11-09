@@ -70,7 +70,7 @@ namespace Game
             }
 
             Scene.RemoveEntity(DebugEntity);
-            DebugEntity = Scene.CreateEntity();
+            DebugEntity = new Entity(Scene);
         }
 
         public void StepEnd()

@@ -11,7 +11,7 @@ namespace Game
     public struct IntersectPoint
     {
         public bool Exists;
-        public Vector2d Vector;
+        public Vector2d Position;
         public double T;
     }
     public static class MathExt
@@ -221,7 +221,7 @@ namespace Game
                 return v;
             }
             v.Exists = true;
-            v.Vector = Lerp(ps0, pe0, ua);
+            v.Position = Lerp(ps0, pe0, ua);
             v.T = ua;
             return v;
         }

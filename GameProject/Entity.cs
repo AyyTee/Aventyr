@@ -17,7 +17,6 @@ namespace Game
     [Serializable]
     public class Entity : Placeable2D
     {
-        private Transform2D _velocity = new Transform2D();
         private List<Model> _models = new List<Model>();
         private List<ClipModel> ClipModels = new List<ClipModel>();
         private bool _isPortalable = false;
@@ -34,7 +33,7 @@ namespace Game
             get { return _isPortalable; }
             set { _isPortalable = value; }
         }
-        public virtual Transform2D Velocity { get { return _velocity; } set { _velocity = value; } }
+        public virtual Transform2D Velocity { get; private set; }
         public virtual List<Model> Models { get { return _models; } set { _models = value; } }
         [DataContractAttribute]
         public class ClipModel
@@ -78,8 +77,9 @@ namespace Game
         {
             if (scene != null)
             {
-
+                scene.AddEntity(this);
             }
+            Velocity = new Transform2D();
             Transform.UniformScale = true;
         }
 
@@ -89,7 +89,7 @@ namespace Game
             Transform.Position = position;
         }
 
-        public Entity(Scene scene, Vector2 position) 
+        public Entity(Scene scene, Vector2 position)
             : this(scene)
         {
             Transform.Position = position;

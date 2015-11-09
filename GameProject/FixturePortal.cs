@@ -80,6 +80,18 @@ namespace Game
             return transform;
         }
 
+        public override Transform2D GetVelocity()
+        {
+            Transform2D transform = new Transform2D();
+            if (Position == null)
+            {
+                return transform;
+            }
+            
+            transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.Transform;
+            return transform;
+        }
+
         private void Remove()
         {
             if (Position != null)

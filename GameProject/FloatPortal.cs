@@ -9,7 +9,8 @@ namespace Game
 {
     public class FloatPortal : Portal
     {
-        public Transform2D Transform { get; set; }
+        public Transform2D Transform { get; private set; }
+        public Transform2D Velocity { get; private set; }
         public override Entity EntityParent
         {
             get
@@ -21,6 +22,8 @@ namespace Game
             : base(scene)
         {
             Transform = new Transform2D(position);
+            Velocity = new Transform2D();
+            Velocity.UniformScale = true;
         }
 
         public FloatPortal(Scene scene)
@@ -31,6 +34,11 @@ namespace Game
         public override Transform2D GetTransform()
         {
             return Transform;
+        }
+
+        public override Transform2D GetVelocity()
+        {
+            return Velocity;
         }
     }
 }
