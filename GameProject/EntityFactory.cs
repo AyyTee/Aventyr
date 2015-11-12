@@ -23,7 +23,7 @@ namespace Game
         public static Entity CreateEntityBox(Scene scene, Transform2D transform)
         {
             Debug.Assert(scene != null);
-            Entity box = new Entity(scene, transform);
+            Entity box = new Entity(scene, new Transform2D(transform.Position, transform.Rotation));
             box.IsPortalable = true;
             box.Models.Add(Model.CreatePlane(transform.Scale));
 
@@ -38,9 +38,9 @@ namespace Game
             return box;
         }
 
-        public static Entity CreateEntityPolygon(Scene scene, Vector2 position)
+        public static Entity CreateEntityPolygon(Scene scene, Vector2 position, Vector2[] vertices)
         {
-            return CreateEntityBox(scene, new Transform2D(position));
+            return CreateEntityPolygon(scene, new Transform2D(position), vertices);
         }
 
         public static Entity CreateEntityPolygon(Scene scene, Transform2D transform, Vector2[] vertices)

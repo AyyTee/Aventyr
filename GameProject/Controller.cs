@@ -321,7 +321,8 @@ namespace Game
 
             
             text2.Models.Clear();
-            text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
+            //text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
+            text2.Models.Add(FontRenderer.GetModel(scene.PhysWorld.BodyList.Count.ToString()));
             Camera cam = scene.ActiveCamera;
             if (Focused)
             {
@@ -336,9 +337,9 @@ namespace Game
                 if (InputExt.KeyPress(Key.Space))
                 {
                     Entity box = EntityFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(0.2f, 4.4f)));
-                    box.Transform.Rotation = 2.5f * (float)Math.PI / 4;
+                    //box.Transform.Rotation = 2.5f * (float)Math.PI / 4;
                 }
-                if (InputExt.KeyPress(Key.ShiftLeft))
+                if (InputExt.KeyPress(Key.ControlLeft))
                 {
                     EntityFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(2.4f, 0.4f)));
                 }
@@ -443,9 +444,6 @@ namespace Game
                 {
                     portalEnter.Enter(player);
                 }
-
-                
-                
                 #endregion
             }
             if (ManualStepMode == false || InputExt.KeyPress(Key.Enter))

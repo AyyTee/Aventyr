@@ -101,6 +101,16 @@ namespace Game
             Transform.SetLocal(transform);
         }
 
+        /*public Entity Clone()
+        {
+            Entity clone = new Entity(base.Scene);
+            clone._isPortalable = _isPortalable;
+            clone._models = _models;
+            clone.BodyId = Body.DeepClone().BodyId;
+
+            return clone;
+        }*/
+        
         public void PositionUpdate()
         {
             foreach (Portal portal in Scene.PortalList)

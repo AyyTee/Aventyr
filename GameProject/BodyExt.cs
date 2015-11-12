@@ -3,6 +3,7 @@ using FarseerPhysics.Dynamics;
 using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace Game
 
         public static BodyUserData GetUserData(Body body)
         {
+            Debug.Assert(body != null);
             return ((List<BodyUserData>)body.UserData)[0];
         }
 
@@ -30,6 +32,17 @@ namespace Game
         {
             return new Transform2D(Vector2Ext.ConvertTo(body.Position), body.Rotation);
         }
+
+        /*public Body Clone(Body body)
+        {
+            Body bodyClone = body.DeepClone();
+
+            BodyUserData clone = new BodyUserData();
+            clone.LinkedEntity = LinkedEntity;
+            clone.PreviousPosition = PreviousPosition;
+            clone.Body = bodyClone;
+            return bodyClone;
+        }*/
 
         /// <summary>
         /// Returns the area of non-portal fixtures that are in the same coordinate space as localPoint. 

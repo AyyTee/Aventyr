@@ -168,7 +168,6 @@ namespace Game
 
         public static Scene Load(FileStream sceneFile, FileStream physicsFile)
         {
-            
             DataContractSerializer serializer = GetSceneSerializer();
             Scene scene = (Scene)serializer.ReadObject(sceneFile);
 

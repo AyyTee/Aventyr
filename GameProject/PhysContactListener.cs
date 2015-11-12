@@ -63,10 +63,16 @@ namespace Game
                     }
                 }
             }
+            List<Body> bodiesToRemove = new List<Body>();
 
             foreach (Body b in Scene.PhysWorld.BodyList)
             {
+                BodyExt.GetUserData(b).UpdatePortalCollisions(ref bodiesToRemove);
                 b.ApplyForce(new Xna.Vector2(0, -9.8f/2) * b.Mass);
+            }
+            foreach (Body b in bodiesToRemove)
+            {
+                Scene.PhysWorld.RemoveBody(b);
             }
 
             Scene.RemoveEntity(DebugEntity);
