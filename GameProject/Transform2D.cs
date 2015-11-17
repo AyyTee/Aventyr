@@ -10,15 +10,7 @@ namespace Game
     public class Transform2D
     {
         private Matrix4 Matrix;
-        private bool _matrixUpdate = true;
-
-        public bool MatrixUpdate
-        {
-            get 
-            {
-                return _matrixUpdate;
-            }
-        }
+        public bool MatrixUpdate { get; private set; }
         private Vector2 _position = new Vector2();
         private float _rotation = 0;
         private Vector2 _scale = new Vector2(1, 1);
@@ -55,7 +47,7 @@ namespace Game
             {
                 Debug.Assert(!Double.IsNaN(value));
                 _rotation = value; 
-                _matrixUpdate = true; 
+                MatrixUpdate = true; 
             } 
         }
 
@@ -86,7 +78,7 @@ namespace Game
                         "Transforms with fixed scale cannot have non-uniform scale.");
                     value.Y = Math.Sign(value.Y) * Math.Abs(value.X);
                 }
-                _matrixUpdate = true;
+                MatrixUpdate = true;
                 _scale = value; 
             } 
         }
@@ -111,7 +103,7 @@ namespace Game
             {
                 Debug.Assert(!Vector2Ext.IsNaN(value));
                 _position = value; 
-                _matrixUpdate = true; 
+                MatrixUpdate = true; 
             }
         }
 
@@ -133,6 +125,7 @@ namespace Game
         #region constructors
         public Transform2D()
         {
+            MatrixUpdate = true;
         }
 
         public Transform2D(Vector2 position)
@@ -167,6 +160,7 @@ namespace Game
             Scale = scale;
             Rotation = rotation;
             Parent = parent;
+            MatrixUpdate = true;
         }
 
         /// <summary>
@@ -195,7 +189,7 @@ namespace Game
             if (MatrixUpdate)
             {
                 Matrix = Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
-                _matrixUpdate = false;
+                MatrixUpdate = false;
             }
             return Matrix;
         }

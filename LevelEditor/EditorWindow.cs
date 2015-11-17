@@ -9,16 +9,22 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using System.Threading;
+using Game;
 
 namespace LevelEditor
 {
     public partial class EditorWindow : Form
     {
         bool loaded = false;
+        Controller controller = new Controller();
+        Random rand = new Random();
         public EditorWindow()
         {
             InitializeComponent();
-            
+            Application.Idle += ApplicationIdle;
+            //Game.Program program = new Game.Program();
+            //Thread thread = new Thread()
         }
 
         private void glControl1_Load(object sender, EventArgs e)
@@ -35,8 +41,33 @@ namespace LevelEditor
 
         protected override void OnLoad(EventArgs e)
         {
-
             base.OnLoad(e);
+            loaded = true;
+            controller = new Controller(true);
+            //controller.InitProgram();
+        }
+
+        void ApplicationIdle(object sender, EventArgs e)
+        {
+            /*if (!glControl1.IsHandleCreated)
+            {
+                return;
+            }*/
+            if (!loaded)
+            {
+                return;
+            }
+            List<Color> colors = new List<Color>();
+            colors.Add(Color.LightBlue);
+            colors.Add(Color.Blue);
+            int i = (int)(rand.NextDouble() * 2);
+            GL.ClearColor(colors[i]);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            glControl1.SwapBuffers();
+            glControl1.Invalidate();
+            /*double milliseconds = ComputeTimeSlice();
+            Accumulate(milliseconds);
+            Animate(milliseconds);*/
         }
     }
 }

@@ -31,6 +31,11 @@ namespace Game
             ContextExists = true;
             ClientSize = base.ClientSize;
         }
+
+        public Controller(bool IsWindow)
+        {
+            ContextExists = true;
+        }
         InputExt InputExt;
         Vector2 lastMousePos = new Vector2();
         /// <summary>
@@ -75,20 +80,28 @@ namespace Game
         SoundSystem soundPlayer;
         Sound testSound;
         Renderer renderer;
-        void initProgram()
+        public void InitProgram()
         {
+            Renderer.Init();
+            //soundPlayer = SoundSystem.Instance();
+            if (soundPlayer != null)
+            {
+                soundPlayer.Init();
 
-            soundPlayer = SoundSystem.Instance();
-            soundPlayer.Init();
+                testSound = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
+                //testSound.Play();
+                //testSound.SetLoop(true);
+                //sound.SetPosition(1000, 0, 0);
+            }
             
-            testSound = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
-            //testSound.Play();
-            //testSound.SetLoop(true);
-            //sound.SetPosition(1000, 0, 0);
             
             scene = new Scene();
             hud = new Scene();
             Camera hudCam = Camera.CameraOrtho(new Vector3(Width/2, Height/2, 0), Height, Width / (float)Height);
+
+            // Load textures from file
+            Renderer.Textures.Add("default.png", Renderer.LoadImage(Path.Combine(textureFolder, "default.png")));
+            Renderer.Textures.Add("grid.png", Renderer.LoadImage(Path.Combine(textureFolder, "grid.png")));
 
             System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
             privateFonts.AddFontFile(Path.Combine(fontFolder, "times.ttf"));
@@ -102,10 +115,6 @@ namespace Game
             Renderer.Shaders.Add("default", new ShaderProgram(Path.Combine(shaderFolder, "vs.glsl"), Path.Combine(shaderFolder, "fs.glsl"), true));
             Renderer.Shaders.Add("textured", new ShaderProgram(Path.Combine(shaderFolder, "vs_tex.glsl"), Path.Combine(shaderFolder, "fs_tex.glsl"), true));
             Renderer.Shaders.Add("text", new ShaderProgram(Path.Combine(shaderFolder, "vs_text.glsl"), Path.Combine(shaderFolder, "fs_text.glsl"), true));
-
-            // Load textures from file
-            Renderer.Textures.Add("default.png", Renderer.LoadImage(Path.Combine(textureFolder, "default.png")));
-            Renderer.Textures.Add("grid.png", Renderer.LoadImage(Path.Combine(textureFolder, "grid.png")));
 
             background = Model.CreatePlane();
             background.TextureId = Renderer.Textures["grid.png"];
@@ -216,10 +225,12 @@ namespace Game
             };
             
             Entity ground = EntityFactory.CreateEntityPolygon(scene, new Transform2D(), v);
+            ground.Name = "ground";
+            //ground.IsPortalable = true;
             ground.Models.Add(Model.CreatePolygon(v));
             ground.Transform.Rotation = 0.05f;
             ground.Transform.Position = new Vector2(0, -4f);
-            scene.PhysWorld.ProcessChanges();
+            scene.World.ProcessChanges();
             portal1 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.3f));
 
             portal0 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.6f));
@@ -255,8 +266,7 @@ namespace Game
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            initProgram();
-            Renderer.Init();
+            InitProgram();
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -306,6 +316,8 @@ namespace Game
             
             Entity player = scene.GetEntityByName("player");
             Entity tempLine = scene.GetEntityByName("tempLine");
+            Entity ground = scene.GetEntityByName("ground");
+            ground.Velocity.Position = new Vector2((float)Math.Sin(Time), 0);
             tempLine.Transform.Position = player.Transform.Position;
 
             Vector2 mousePos = scene.ActiveCamera.ScreenToWorld(new Vector2(Mouse.X, Mouse.Y));
@@ -322,7 +334,10 @@ namespace Game
             
             text2.Models.Clear();
             //text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
-            text2.Models.Add(FontRenderer.GetModel(scene.PhysWorld.BodyList.Count.ToString()));
+            //text2.Models.Add(FontRenderer.GetModel(scene.PhysWorld.BodyList.Count.ToString()));
+            int fixtureCount = WorldExt.GetFixtures(scene.World).Count;
+            int bodyCount = scene.World.BodyList.Count;
+            text2.Models.Add(FontRenderer.GetModel(fixtureCount.ToString() + "        " + bodyCount.ToString()));
             Camera cam = scene.ActiveCamera;
             if (Focused)
             {
@@ -473,7 +488,10 @@ namespace Game
         {
             base.OnClosing(e);
             Log.Close();
-            soundPlayer.Dispose();
+            if (soundPlayer != null)
+            {
+                soundPlayer.Dispose();
+            }
             File.Delete("Triangulating.txt");
         }
     }

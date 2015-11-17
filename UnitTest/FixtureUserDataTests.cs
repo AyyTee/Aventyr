@@ -28,7 +28,7 @@ namespace UnitTest
         {
             Scene scene = new Scene();
             Entity ground = CreateGround(scene);
-            scene.PhysWorld.ProcessChanges();
+            scene.World.ProcessChanges();
             Fixture fixture = ground.Body.FixtureList[0];
             FixturePortal portal = new FixturePortal(scene, new FixtureEdgeCoord(fixture, 0, 0.3f));
 

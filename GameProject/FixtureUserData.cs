@@ -58,6 +58,7 @@ namespace Game
             set { _fixtureId = value; }
         }
 
+        #region constructors
         public FixtureUserData()
         {
         }
@@ -82,6 +83,7 @@ namespace Game
                     }
             }
         }
+        #endregion
 
         public bool IsPortalChild(FixturePortal portal)
         {

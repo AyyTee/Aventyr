@@ -94,7 +94,7 @@ namespace Game
             Line line = GetEdge();
             var transform = new FarseerPhysics.Common.Transform();
             Fixture.Body.GetTransform(out transform);
-            Matrix4 matTransform = MatrixExt4.ConvertTo(transform);
+            Matrix4 matTransform = Matrix4Ext.ConvertTo(transform);
             line.Transform(matTransform);
             return line;
         }

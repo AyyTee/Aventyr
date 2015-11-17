@@ -16,7 +16,7 @@ namespace Game
         public int EntityID;
         [XmlIgnore]
         public Entity LinkedEntity { get; private set; }
-        public Body Body { get { return LinkedEntity.Body; } }
+        public Body Body { get; private set; }
         public Xna.Vector2 PreviousPosition { get; set; }
         public HashSet<FixturePortal> PortalCollisions = new HashSet<FixturePortal>();
         public List<ChildBody> BodyChildren = new List<ChildBody>();
@@ -33,15 +33,27 @@ namespace Game
             }
         }
 
+        #region constructors
         public BodyUserData()
         {
         }
 
-        public BodyUserData(Entity linked)
+        public BodyUserData(Entity linked, Body body)
         {
             LinkedEntity = linked;
-            EntityID = linked.Id;
+            if (LinkedEntity != null)
+            {
+                EntityID = linked.Id;
+            }
+            Body = body;
         }
+
+        public BodyUserData(Body body)
+        {
+            Body = body;
+            LinkedEntity = null;
+        }
+        #endregion
 
         public void UpdatePortalCollisions(ref List<Body> bodiesToRemove)
         {
@@ -93,16 +105,22 @@ namespace Game
 
         private void AddChildBody(FixturePortal portal)
         {
-            BodyUserData bodyUserData = BodyExt.GetUserData(Body);
-            if (bodyUserData.BodyParent.Portal != portal)
+            BodyUserData userData = BodyExt.GetUserData(Body);
+            if (userData.LinkedEntity == null)
             {
+                return;
+            }
+            if (userData.BodyParent.Portal != portal)
+            {
+                Debug.Assert(!userData.BodyChildren.Exists(item => item.Portal == portal));
                 Body bodyClone = Body.DeepClone();
-                
-                ChildBody parentBody = new ChildBody(Body, portal.Linked);
-                BodyExt.GetUserData(bodyClone).BodyParent = parentBody;
+                BodyUserData userDataClone = BodyExt.SetUserData(bodyClone, null);
+                userDataClone.BodyParent = new ChildBody(Body, portal.Linked);
                 portal.Enter(bodyClone);
+
                 ChildBody childBody = new ChildBody(bodyClone, portal);
-                bodyUserData.BodyChildren.Add(childBody);
+                userData.BodyChildren.Add(childBody);
+
                 Debug.Assert(childBody.Body != Body);
             }
         }

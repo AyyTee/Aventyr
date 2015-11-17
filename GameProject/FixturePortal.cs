@@ -46,7 +46,7 @@ namespace Game
         }
         
         public const float EdgeMargin = 0.02f;
-        public const float CollisionMargin = 0.02f;
+        public const float CollisionMargin = 0.1f;
 
         public FixturePortal(Scene scene, FixtureEdgeCoord position)
             : base(scene)
@@ -110,7 +110,7 @@ namespace Game
             {
                 FixtureExt.GetUserData(Position.Fixture).AddPortal(this);
                 //wake up all the bodies so that they will fall if there is now a portal entrance below them
-                foreach (Body b in Scene.PhysWorld.BodyList)
+                foreach (Body b in Scene.World.BodyList)
                 {
                     b.Awake = true;
                 }

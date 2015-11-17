@@ -33,8 +33,8 @@ namespace Game
             get { return _isPortalable; }
             set { _isPortalable = value; }
         }
-        public virtual Transform2D Velocity { get; private set; }
-        public virtual List<Model> Models { get { return _models; } set { _models = value; } }
+        public Transform2D Velocity { get; private set; }
+        public List<Model> Models { get { return _models; } set { _models = value; } }
         [DataContractAttribute]
         public class ClipModel
         {
@@ -63,8 +63,8 @@ namespace Game
                     return null;
                 }
                 Debug.Assert(Scene != null, "Entity must be assigned to a scene.");
-                Debug.Assert(Scene.PhysWorld.BodyList.Exists(item => (item.BodyId == BodyId)), "Body id does not exist.");
-                return Scene.PhysWorld.BodyList.Find(item => (item.BodyId == BodyId));
+                Debug.Assert(Scene.World.BodyList.Exists(item => (item.BodyId == BodyId)), "Body id does not exist.");
+                return Scene.World.BodyList.Find(item => (item.BodyId == BodyId));
             }
         }
 
@@ -143,6 +143,8 @@ namespace Game
             {
                 Transform.Position = Vector2Ext.ConvertTo(Body.Position);
                 Transform.Rotation = Body.Rotation;
+                Velocity.Position = Vector2Ext.ConvertTo(Body.LinearVelocity);
+                Velocity.Rotation = Body.AngularVelocity;
             }
         }
 
@@ -150,11 +152,11 @@ namespace Game
         {
             if (Body != null)
             {
-                Scene.PhysWorld.RemoveBody(Body);
+                Scene.World.RemoveBody(Body);
             }
 
             Transform.UniformScale = true;
-            BodyUserData userData = new BodyUserData(this);
+            BodyUserData userData = new BodyUserData(this, body);
             Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
             BodyId = body.BodyId;
 

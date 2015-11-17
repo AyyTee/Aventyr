@@ -97,7 +97,7 @@
     <Compile Include="IVertices2D.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="MathExt.cs" />
-    <Compile Include="MatrixExt4.cs" />
+    <Compile Include="Matrix4Ext.cs" />
     <Compile Include="BodyExt.cs" />
     <Compile Include="PhysContactListener.cs" />
     <Compile Include="PhysDataContractResolver.cs" />
@@ -117,6 +117,7 @@
     <Compile Include="Transform2D.cs" />
     <Compile Include="Vector2Ext.cs" />
     <Compile Include="Vector3Ext.cs" />
+    <Compile Include="WorldExt.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\sounds\test_sound.ogg">

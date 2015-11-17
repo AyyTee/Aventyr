@@ -18,61 +18,47 @@ namespace Game
     [Serializable]
     public class Scene
     {
-        [NonSerialized]
-        private World _physWorld;
-
-        public World PhysWorld
-        {
-            get { return _physWorld; }
-        }
-        private int _idCount = 0;
+        public World World { get; private set; }
         /// <summary>
         /// Number of unique ids that have been used for objects in the scene
         /// </summary>
-        public int IdCount
-        {
-            get { return _idCount; }
-        }
+        public int IdCount { get; private set; }
         [NonSerialized]
         private PhysContactListener _contactListener;
 
-
         public float TimeStepSize = 1 / 60f;
         public Camera ActiveCamera { get; set; }
-        private List<Portal> _portalList = new List<Portal>();
-        public List<Portal> PortalList
-        {
-            get { return _portalList; }
-        }
-        private List<Entity> _entityList = new List<Entity>();
-        public List<Entity> EntityList
-        {
-            get { return _entityList; }
-        }
+        public List<Portal> PortalList { get; private set; }
+        public List<Entity> EntityList { get; private set; }
 
+        #region constructors
         public Scene()
         {
+            IdCount = 0;
+            PortalList = new List<Portal>();
+            EntityList = new List<Entity>();
             SetPhysicsWorld(new World(new Xna.Vector2(0f, 0f)));
         }
-
+        #endregion
+        
         public void Step()
         {
-            PhysWorld.ProcessChanges();
+            World.ProcessChanges();
             foreach (Entity e in EntityList)
             {
+                e.PositionUpdate();
                 if (e.Body != null)
                 {
                     Xna.Vector2 v0 = Vector2Ext.ConvertToXna(e.Transform.WorldPosition);
-                    if (v0 != e.Body.Position || e.Transform.Rotation != e.Body.Rotation)
-                    {
-                        e.Body.SetTransform(v0, e.Transform.WorldRotation);
-                    }
+                    e.Body.SetTransform(v0, e.Transform.WorldRotation);
+                    e.Body.LinearVelocity = Vector2Ext.ConvertToXna(e.Velocity.Position);
+                    e.Body.AngularVelocity = e.Velocity.Rotation;
                 }
             }
-            if (PhysWorld != null)
+            if (World != null)
             {
                 _contactListener.StepBegin();
-                PhysWorld.Step(TimeStepSize);
+                World.Step(TimeStepSize);
                 _contactListener.StepEnd();
             }
 
@@ -86,12 +72,12 @@ namespace Game
         {
             Debug.Assert(!EntityList.Exists(item => item.Equals(entity)), "This entity has already been added to this scene.");
             EntityList.Add(entity);
-            _idCount++;
+            IdCount++;
         }
 
         public Entity GetEntityById(int id)
         {
-            return EntityList.Find(item => (item.Id == id));
+            return EntityList.Find(item => item.Id == id);
         }
 
         public Entity GetEntityByName(string name)
@@ -110,7 +96,7 @@ namespace Game
             {
                 if (entity.Body != null)
                 {
-                    PhysWorld.RemoveBody(entity.Body);
+                    World.RemoveBody(entity.Body);
                 }
                 //Entity.IDMap.Remove(entity.ID);
                 return true;
@@ -123,12 +109,12 @@ namespace Game
         /// </summary>
         public void SetPhysicsWorld(World world)
         {
-            Debug.Assert(PhysWorld == null, "A physics world has already been assigned to this scene.");
-            _physWorld = world;
-            PhysWorld.ProcessChanges();
+            Debug.Assert(World == null, "A physics world has already been assigned to this scene.");
+            World = world;
+            World.ProcessChanges();
             _contactListener = new PhysContactListener(this);
             
-            foreach (Body body in PhysWorld.BodyList)
+            foreach (Body body in World.BodyList)
             {
                 var userData = ((List<BodyUserData>)body.UserData)[0];
                 Entity entity = EntityList.Find(item => (item.Id == userData.EntityID));
@@ -149,7 +135,7 @@ namespace Game
         public void Save(FileStream sceneFile, FileStream physicsFile)
         {
             var physicsSerializer = new FarseerPhysics.Common.WorldXmlSerializer();
-            physicsSerializer.Serialize(PhysWorld, physicsFile);
+            physicsSerializer.Serialize(World, physicsFile);
 
             DataContractSerializer serializer = GetSceneSerializer();
 

@@ -13,13 +13,14 @@ namespace Game
 {
     public static class BodyExt
     {
-        public static void SetUserData(Body body, Entity entity)
+        public static BodyUserData SetUserData(Body body, Entity entity)
         {
             //Ugly solution to storing Game classes in a way that still works when deserializing the data.
             //This list is intended to only store one element.
             var a = new List<BodyUserData>();
             body.UserData = a;
-            a.Add(new BodyUserData(entity));
+            a.Add(new BodyUserData(entity, body));
+            return a[0];
         }
 
         public static BodyUserData GetUserData(Body body)
@@ -33,16 +34,13 @@ namespace Game
             return new Transform2D(Vector2Ext.ConvertTo(body.Position), body.Rotation);
         }
 
-        /*public Body Clone(Body body)
+        public static Body Clone(Body body)
         {
             Body bodyClone = body.DeepClone();
 
             BodyUserData clone = new BodyUserData();
-            clone.LinkedEntity = LinkedEntity;
-            clone.PreviousPosition = PreviousPosition;
-            clone.Body = bodyClone;
             return bodyClone;
-        }*/
+        }
 
         /// <summary>
         /// Returns the area of non-portal fixtures that are in the same coordinate space as localPoint. 

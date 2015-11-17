@@ -276,7 +276,7 @@ namespace UnitTest
             Matrix4 worldMatrix = child.GetWorldMatrix();
             Matrix4 referenceMatrix = parent.GetMatrix() * grandparent.GetMatrix();
             referenceMatrix = child.GetMatrix() * referenceMatrix;
-            Assert.IsTrue(MatrixExt4.Equals(worldMatrix, referenceMatrix));
+            Assert.IsTrue(Matrix4Ext.Equals(worldMatrix, referenceMatrix));
         }
         #endregion
         #region Equal tests

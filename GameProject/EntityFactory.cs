@@ -27,7 +27,7 @@ namespace Game
             box.IsPortalable = true;
             box.Models.Add(Model.CreatePlane(transform.Scale));
 
-            Body body = BodyFactory.CreateRectangle(box.Scene.PhysWorld, transform.Scale.X, transform.Scale.Y, 1);
+            Body body = BodyFactory.CreateRectangle(box.Scene.World, transform.Scale.X, transform.Scale.Y, 1);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             box.SetBody(body);
             body.BodyType = BodyType.Dynamic;
@@ -56,7 +56,7 @@ namespace Game
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 
-            Body body = new Body(scene.PhysWorld);
+            Body body = new Body(scene.World);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             for (int i = 0; i < polygon.Triangles.Count; i++)
             {

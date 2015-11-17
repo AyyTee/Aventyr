@@ -19,17 +19,17 @@ namespace Game
     {
         public Scene Scene { get; private set; }
         Entity DebugEntity;
-        bool DebugMode = false;
+        bool DebugMode = true;
 
         public PhysContactListener(Scene scene)
         {
             Scene = scene;
-            Scene.PhysWorld.ContactManager.PreSolve = PreSolveListener;
+            Scene.World.ContactManager.PreSolve = PreSolveListener;
         }
 
         public void StepBegin()
         {
-            foreach (Body body in Scene.PhysWorld.BodyList)
+            foreach (Body body in Scene.World.BodyList)
             {
                 Fixture[] fixtureCopy = new Fixture[body.FixtureList.Count];
                 body.FixtureList.CopyTo(fixtureCopy);
@@ -48,7 +48,7 @@ namespace Game
                     if (portal.Position != null)
                     {
                         Xna.Vector2[] verts = Vector2Ext.ConvertToXna(p.GetWorldVerts());
-                        Scene.PhysWorld.RayCast(
+                        Scene.World.RayCast(
                             delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
                             {
                                 //ignore any fixtures that are attached to the same body as the portal fixture
@@ -63,17 +63,17 @@ namespace Game
                     }
                 }
             }
-            List<Body> bodiesToRemove = new List<Body>();
+            //List<Body> bodiesToRemove = new List<Body>();
 
-            foreach (Body b in Scene.PhysWorld.BodyList)
+            foreach (Body b in Scene.World.BodyList)
             {
-                BodyExt.GetUserData(b).UpdatePortalCollisions(ref bodiesToRemove);
+                //BodyExt.GetUserData(b).UpdatePortalCollisions(ref bodiesToRemove);
                 b.ApplyForce(new Xna.Vector2(0, -9.8f/2) * b.Mass);
             }
-            foreach (Body b in bodiesToRemove)
+            /*foreach (Body b in bodiesToRemove)
             {
-                Scene.PhysWorld.RemoveBody(b);
-            }
+                Scene.World.RemoveBody(b);
+            }*/
 
             Scene.RemoveEntity(DebugEntity);
             DebugEntity = new Entity(Scene);
@@ -81,8 +81,17 @@ namespace Game
 
         public void StepEnd()
         {
-            foreach (Body body in Scene.PhysWorld.BodyList)
+            foreach (Body body in Scene.World.BodyList)
             {
+                if ((body.Position - BodyExt.GetUserData(body).PreviousPosition).Length() > .2f)
+                {
+
+                }
+                if ((body.Position - BodyExt.GetUserData(body).PreviousPosition).Length() > .2f)
+                {
+
+                }
+
                 Portal portalNearest = null;
                 double portalTDistance = 1f;
 
@@ -100,7 +109,9 @@ namespace Game
                 }
                 if (portalNearest != null)
                 {
+                    //float rot = body.Rotation;
                     portalNearest.Enter(body);
+                    //Debug.Assert(Math.Abs(rot - body.Rotation) < .01f || Math.Abs(rot - body.Rotation) > Math.PI - .01f);
                 }
             }
         }
@@ -181,7 +192,7 @@ namespace Game
                     {
                         continue;
                     }
-                    
+
                     Line line = new Line(portal.GetWorldVerts());
                     float[] vDist = new float[2];
                     vDist[0] = line.PointDistance(vList[0], true);
@@ -198,6 +209,7 @@ namespace Game
                             }
                         }
                         else if (vDist[0] < FixturePortal.CollisionMargin || vDist[1] < FixturePortal.CollisionMargin)
+                        //else if ((vDist[0] + vDist[1])/2 < FixturePortal.CollisionMargin)
                         {
                             return false;
                         }
@@ -218,6 +230,7 @@ namespace Game
                     //Xna.Vector2 pos = userData[i0].Fixture.Body.Position;
                     Xna.Vector2 pos = BodyExt.GetUserData(userData[i0].Fixture.Body).PreviousPosition;
                     bool sideOf = line.GetSideOf(vList[0]) != line.GetSideOf(pos);
+                    Debug.Assert(contact.Manifold.PointCount > 0);
                     if (contact.Manifold.PointCount == 1)
                     {
                         if (sideOf)
@@ -225,7 +238,8 @@ namespace Game
                             return false;
                         }
                     }
-                    else if (sideOf || line.GetSideOf(vList[1]) != line.GetSideOf(pos))
+                    //else if (sideOf || line.GetSideOf(vList[1]) != line.GetSideOf(pos))
+                    else if (line.GetSideOf((vList[0] + vList[1])/2) != line.GetSideOf(pos))
                     {
                         return false;
                     }

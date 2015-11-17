@@ -38,7 +38,7 @@ namespace Game
             {
                 List<FixtureEdgeCoord> intersections = new List<FixtureEdgeCoord>();
                 IntersectPoint intersectLast = new IntersectPoint();
-                scene.PhysWorld.RayCast(
+                scene.World.RayCast(
                     delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
                     {
                         Vector2 rayIntersect = Vector2Ext.ConvertTo(point);
@@ -55,7 +55,7 @@ namespace Game
                                     Vector2[] vertices = Vector2Ext.ConvertTo(shape.Vertices);
                                     var transform = new FarseerPhysics.Common.Transform();
                                     fixture.Body.GetTransform(out transform);
-                                    Matrix4 matTransform = MatrixExt4.ConvertTo(transform);
+                                    Matrix4 matTransform = Matrix4Ext.ConvertTo(transform);
                                     vertices = Vector2Ext.Transform(vertices, matTransform);
                                     for (int i = 0; i < vertices.Count(); i++)
                                     {
