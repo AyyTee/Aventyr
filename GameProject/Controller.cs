@@ -1,72 +1,60 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using OpenTK;
-using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System.ComponentModel;
-using FarseerPhysics;
-using Xna = Microsoft.Xna.Framework;
-using FarseerPhysics.Factories;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Collision.Shapes;
-using System.Diagnostics;
-using OpenTK.Audio;
-using OpenTK.Audio.OpenAL;
 using Cgen.Audio;
 using System.Threading;
 
 
 namespace Game
 {
-    public class Controller : GameWindow
+    public class Controller
     {
-        public Controller()
-            : base((int) 800, (int) 600, new GraphicsMode(32, 24, 8, 1), "Game", GameWindowFlags.FixedWindow)
+        public Controller(Window window)
+            : this(window.ClientSize, window.InputExt)
         {
-            ContextExists = true;
-            ClientSize = base.ClientSize;
         }
 
-        public Controller(bool IsWindow)
+        public Controller(Size canvasSize, InputExt input)
         {
             ContextExists = true;
+            CanvasSize = canvasSize;
+            InputExt = input;
         }
-        InputExt InputExt;
-        Vector2 lastMousePos = new Vector2();
+
+        public InputExt InputExt;
         /// <summary>
         /// Intended to keep pointless messages from the Poly2Tri library out of the console window
         /// </summary>
         public static StreamWriter Log = new StreamWriter("Triangulating.txt");
         public static bool ContextExists = false;
-        public static Size ClientSize;
+        public static Size _canvasSize;
+        public const int MICROSECONDS_IN_SECOND = 1000000;
+        public static Size CanvasSize
+        {
+            get { return _canvasSize; }
+            set
+            {
+                _canvasSize = value;
+                /*scene.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
+                hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
+                hud.ActiveCamera.Scale = CanvasSize.Height;*/
+            }
+        }
         public const int StepsPerSecond = 60;
         public const int DrawsPerSecond = 60;
-        private bool ManualStepMode = false;
-        Model background;
+        private bool SingleStepMode = false;
         Font Default;
         public static List<int> iboGarbage = new List<int>();
 
-        public static String fontFolder = Path.Combine(new String[2] {
-            "assets",
-            "fonts"
-        });
-        public static String shaderFolder = Path.Combine(new String[2] {
-            "assets",
-            "shaders"
-        });
-        public static String textureFolder = Path.Combine(new String[2] {
-            "assets",
-            "textures"
-        });
-        public static String soundFolder = Path.Combine(new String[2] {
-            "assets",
-            "sounds"
-        });
+        public static String fontFolder = Path.Combine(new String[2] { "assets", "fonts" });
+        public static String shaderFolder = Path.Combine(new String[2] { "assets", "shaders" });
+        public static String textureFolder = Path.Combine(new String[2] { "assets", "textures" });
+        public static String soundFolder = Path.Combine(new String[2] { "assets", "sounds" });
         Scene scene, hud;
         FontRenderer FontRenderer;
         FloatPortal portal2, portal3;
@@ -87,17 +75,15 @@ namespace Game
             if (soundPlayer != null)
             {
                 soundPlayer.Init();
-
                 testSound = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
                 //testSound.Play();
                 //testSound.SetLoop(true);
                 //sound.SetPosition(1000, 0, 0);
             }
             
-            
             scene = new Scene();
             hud = new Scene();
-            Camera hudCam = Camera.CameraOrtho(new Vector3(Width/2, Height/2, 0), Height, Width / (float)Height);
+            Camera hudCam = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
 
             // Load textures from file
             Renderer.Textures.Add("default.png", Renderer.LoadImage(Path.Combine(textureFolder, "default.png")));
@@ -106,17 +92,15 @@ namespace Game
             System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
             privateFonts.AddFontFile(Path.Combine(fontFolder, "times.ttf"));
             Default = new Font(privateFonts.Families[0], 14);
-            FontRenderer = new FontRenderer(Default);
 
-            InputExt = new InputExt(this);
-            lastMousePos = new Vector2(Mouse.X, Mouse.Y);
+            FontRenderer = new FontRenderer(Default);
 
             // Load shaders from file
             Renderer.Shaders.Add("default", new ShaderProgram(Path.Combine(shaderFolder, "vs.glsl"), Path.Combine(shaderFolder, "fs.glsl"), true));
             Renderer.Shaders.Add("textured", new ShaderProgram(Path.Combine(shaderFolder, "vs_tex.glsl"), Path.Combine(shaderFolder, "fs_tex.glsl"), true));
             Renderer.Shaders.Add("text", new ShaderProgram(Path.Combine(shaderFolder, "vs_text.glsl"), Path.Combine(shaderFolder, "fs_text.glsl"), true));
 
-            background = Model.CreatePlane();
+            Model background = Model.CreatePlane();
             background.TextureId = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
@@ -125,8 +109,6 @@ namespace Game
             Entity back = new Entity(scene, new Vector2(0f, 0f));
             back.Models.Add(background);
 
-            
-            
             //Portal.Link(portal1, portal1);
             /*Entity portalEntity1 = scene.CreateEntity();
             portalEntity1.Transform.Parent = portal1.Transform; 
@@ -250,11 +232,11 @@ namespace Game
             //scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
             
             text = new Entity(hud);
-            text.Transform.Position = new Vector2(0, ClientSize.Height);
+            text.Transform.Position = new Vector2(0, CanvasSize.Height);
             text2 = new Entity(hud);
-            text2.Transform.Position = new Vector2(0, ClientSize.Height - 40);
+            text2.Transform.Position = new Vector2(0, CanvasSize.Height - 40);
 
-            Camera cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, Width / (float)Height);
+            Camera cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height);
             
             scene.ActiveCamera = cam;
             hud.ActiveCamera = hudCam;
@@ -263,15 +245,13 @@ namespace Game
             renderer.RenderScenes.Add(hud);
         }
 
-        protected override void OnLoad(EventArgs e)
+        public void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
             InitProgram();
         }
 
-        protected override void OnRenderFrame(FrameEventArgs e)
+        public void OnRenderFrame(FrameEventArgs e)
         {
-            base.OnRenderFrame(e);
             TimeRenderDelta += (float)e.Time;
             text.Models.Clear();
             text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
@@ -281,38 +261,10 @@ namespace Game
             System.Threading.Thread.Sleep(sleepTimeSpan);*/
         }
 
-        private void ToggleFullScreen()
+        public void OnUpdateFrame(FrameEventArgs e)
         {
-            if (WindowState == OpenTK.WindowState.Normal)
-            {
-                WindowState = OpenTK.WindowState.Fullscreen;
-                ClientSize = new Size(Width, Height);
-                scene.ActiveCamera.Aspect = Width / (float)Height;
-                hud.ActiveCamera.Aspect = Width / (float)Height;
-                hud.ActiveCamera.Scale = Height;
-            }
-            else if (WindowState == OpenTK.WindowState.Fullscreen)
-            {
-                WindowState = OpenTK.WindowState.Normal;
-                ClientSize = new Size(800, 600);
-                //Controller.ClientSize = ClientSize;
-                scene.ActiveCamera.Aspect = Width / (float)Height;
-                hud.ActiveCamera.Aspect = Width / (float)Height;
-                hud.ActiveCamera.Scale = Height;
-            }
-        }
-
-        protected override void OnUpdateFrame(FrameEventArgs e)
-        {
-            base.OnUpdateFrame(e);
-            Time += (float)e.Time;
+            Time += MICROSECONDS_IN_SECOND / (float)StepsPerSecond;//(float)e.Time;
             TimeRenderDelta = 0;
-            
-            InputExt.Update();
-            if (InputExt.KeyPress(Key.F4))
-            {
-                ToggleFullScreen();   
-            }
             
             Entity player = scene.GetEntityByName("player");
             Entity tempLine = scene.GetEntityByName("tempLine");
@@ -320,7 +272,7 @@ namespace Game
             ground.Velocity.Position = new Vector2((float)Math.Sin(Time), 0);
             tempLine.Transform.Position = player.Transform.Position;
 
-            Vector2 mousePos = scene.ActiveCamera.ScreenToWorld(new Vector2(Mouse.X, Mouse.Y));
+            Vector2 mousePos = scene.ActiveCamera.ScreenToWorld(InputExt.MousePos);
 
             Vector2 rayBegin = player.Transform.Position;
             Vector2 rayEnd = mousePos;
@@ -337,131 +289,127 @@ namespace Game
             //text2.Models.Add(FontRenderer.GetModel(scene.PhysWorld.BodyList.Count.ToString()));
             int fixtureCount = WorldExt.GetFixtures(scene.World).Count;
             int bodyCount = scene.World.BodyList.Count;
-            text2.Models.Add(FontRenderer.GetModel(fixtureCount.ToString() + "        " + bodyCount.ToString()));
+            //text2.Models.Add(FontRenderer.GetModel(fixtureCount.ToString() + "        " + bodyCount.ToString()));
             Camera cam = scene.ActiveCamera;
-            if (Focused)
+            
+            if (InputExt.MousePress(MouseButton.Left))
             {
-                if (InputExt.MousePress(MouseButton.Left))
-                {
-                    PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
-                }
-                else if (InputExt.MousePress(MouseButton.Right))
-                {
-                    PortalPlacer.PortalPlace(portal0, new Line(rayBegin, rayEnd));
-                }
-                if (InputExt.KeyPress(Key.Space))
-                {
-                    Entity box = EntityFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(0.2f, 4.4f)));
-                    //box.Transform.Rotation = 2.5f * (float)Math.PI / 4;
-                }
-                if (InputExt.KeyPress(Key.ControlLeft))
-                {
-                    EntityFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(2.4f, 0.4f)));
-                }
-                if (InputExt.KeyPress(Key.Escape))
-                {
-                    Exit();
-                }
-                if (InputExt.KeyPress(Key.X))
-                {
-                    scene.Save();
-                }
-                if (InputExt.KeyPress(Key.C))
-                {
-                    renderer.RenderScenes.Remove(scene);
-                    scene = Scene.Load();
-                    renderer.RenderScenes.Insert(0, scene);
-                }
-                if (InputExt.KeyPress(Key.M))
-                {
-                    ManualStepMode = !ManualStepMode;
-                }
-                #region camera movement
+                PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
+            }
+            else if (InputExt.MousePress(MouseButton.Right))
+            {
+                PortalPlacer.PortalPlace(portal0, new Line(rayBegin, rayEnd));
+            }
+            if (InputExt.KeyPress(Key.Space))
+            {
+                Entity box = EntityFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(0.2f, 4.4f)));
+                //box.Transform.Rotation = 2.5f * (float)Math.PI / 4;
+            }
+            if (InputExt.KeyPress(Key.ControlLeft))
+            {
+                EntityFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(2.4f, 0.4f)));
+            }
+            
+            if (InputExt.KeyPress(Key.X))
+            {
+                scene.Save();
+            }
+            if (InputExt.KeyPress(Key.C))
+            {
+                renderer.RenderScenes.Remove(scene);
+                scene = Scene.Load();
+                renderer.RenderScenes.Insert(0, scene);
+            }
+            if (InputExt.KeyPress(Key.M))
+            {
+                SingleStepMode = !SingleStepMode;
+            }
+            #region camera movement
                 
-                Vector3 v = new Vector3();
-                float camSpeed = .05f;
-                if (InputExt.KeyDown(Key.ShiftLeft))
-                {
-                    camSpeed = .005f;
-                }
+            Vector3 v = new Vector3();
+            float camSpeed = .05f;
+            if (InputExt.KeyDown(Key.ShiftLeft))
+            {
+                camSpeed = .005f;
+            }
                 
-                if (InputExt.KeyDown(Key.R))
-                {
-                    Quaternion rot = cam.Transform.Rotation;
-                    rot.W += .01f;
-                    cam.Transform.Rotation = rot;
-                    player.Transform.Rotation += .01f;
-                }
-                if (InputExt.KeyDown(Key.W))
-                {
-                    v += cam.GetUp() * camSpeed * cam.Transform.Scale.Y;
-                }
-                else if (InputExt.KeyDown(Key.S))
-                {
-                    v -= cam.GetUp() * camSpeed * cam.Transform.Scale.Y;
-                }
-                if (InputExt.KeyDown(Key.A))
-                {
-                    v -= cam.GetRight() * camSpeed * cam.Transform.Scale.X;
-                }
-                else if (InputExt.KeyDown(Key.D))
-                {
-                    v += cam.GetRight() * camSpeed * cam.Transform.Scale.X;
-                }
-                if (InputExt.MouseWheelDelta() != 0)
-                {
-                    cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
-                }
-                else if (InputExt.KeyDown(Key.Q))
-                {
-                    cam.Scale /= (float)Math.Pow(1.04, 1);
-                }
-                else if (InputExt.KeyDown(Key.E))
-                {
-                    cam.Scale /= (float)Math.Pow(1.04, -1);
-                }
+            if (InputExt.KeyDown(Key.R))
+            {
+                Quaternion rot = cam.Transform.Rotation;
+                rot.W += .01f;
+                cam.Transform.Rotation = rot;
+                player.Transform.Rotation += .01f;
+            }
+            if (InputExt.KeyDown(Key.W))
+            {
+                v += cam.GetUp() * camSpeed * cam.Transform.Scale.Y;
+            }
+            else if (InputExt.KeyDown(Key.S))
+            {
+                v -= cam.GetUp() * camSpeed * cam.Transform.Scale.Y;
+            }
+            if (InputExt.KeyDown(Key.A))
+            {
+                v -= cam.GetRight() * camSpeed * cam.Transform.Scale.X;
+            }
+            else if (InputExt.KeyDown(Key.D))
+            {
+                v += cam.GetRight() * camSpeed * cam.Transform.Scale.X;
+            }
+            if (InputExt.MouseWheelDelta() != 0)
+            {
+                cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
+            }
+            else if (InputExt.KeyDown(Key.Q))
+            {
+                cam.Scale /= (float)Math.Pow(1.04, 1);
+            }
+            else if (InputExt.KeyDown(Key.E))
+            {
+                cam.Scale /= (float)Math.Pow(1.04, -1);
+            }
 
 
-                Vector2[] vArray = new Vector2[2];
-                IntersectPoint intersect = new IntersectPoint();
-                Portal portalEnter = null;
+            Vector2[] vArray = new Vector2[2];
+            IntersectPoint intersect = new IntersectPoint();
+            Portal portalEnter = null;
 
-                Vector2 posPrev = player.Transform.WorldPosition;
-                player.Transform.Position += new Vector2(v.X, v.Y);
-                player.PositionUpdate();
-                portal2.Velocity.Position = new Vector2(-(float)Math.Cos(Time * 1) / 16, (float)Math.Sin(Time * 1) / 16);
-                portal2.Velocity.Rotation = -(float)(1 / (32 * Math.PI));
-                foreach (Portal p in scene.PortalList)
-                {
-                    vArray = p.GetWorldVerts();
-                    Line line = new Line(vArray);
-                    portalEnter = p;
-                    Line playerLine = new Line(posPrev, player.Transform.WorldPosition);
-                    intersect = line.IntersectsParametric(p.GetVelocity().Position, p.GetVelocity().Rotation, playerLine, 5);
-                    if (intersect.Exists)
-                    {
-                        break;
-                    }
-                }
-
-                foreach (Portal p in scene.PortalList)
-                {
-                    if (p.GetType() == typeof(FloatPortal))
-                    {
-                        FloatPortal portal = (FloatPortal)p;
-                        portal.Transform.Position += portal.Velocity.Position;
-                        portal.Transform.Rotation += portal.Velocity.Rotation;
-                        portal.Transform.Scale *= portal.Velocity.Scale;
-                    }
-                }
-
+            Vector2 posPrev = player.Transform.WorldPosition;
+            player.Transform.Position += new Vector2(v.X, v.Y);
+            player.PositionUpdate();
+            portal3.Velocity.Position = new Vector2(-(float)Math.Cos(Time / 5000000) / (float)160, (float)Math.Sin(Time / 5000000) / (float)160);
+            //portal2.Velocity.Rotation = -(float)(1 / (32 * Math.PI));
+            foreach (Portal p in scene.PortalList)
+            {
+                vArray = p.GetWorldVerts();
+                Line line = new Line(vArray);
+                portalEnter = p;
+                Line playerLine = new Line(posPrev, player.Transform.WorldPosition);
+                intersect = line.IntersectsParametric(p.GetVelocity().Position, p.GetVelocity().Rotation, playerLine, 5);
                 if (intersect.Exists)
                 {
-                    portalEnter.Enter(player);
+                    break;
                 }
-                #endregion
             }
-            if (ManualStepMode == false || InputExt.KeyPress(Key.Enter))
+
+            foreach (Portal p in scene.PortalList)
+            {
+                if (p.GetType() == typeof(FloatPortal))
+                {
+                    FloatPortal portal = (FloatPortal)p;
+                    portal.Transform.Position += portal.Velocity.Position;
+                    portal.Transform.Rotation += portal.Velocity.Rotation;
+                    portal.Transform.Scale *= portal.Velocity.Scale;
+                }
+            }
+
+            if (intersect.Exists)
+            {
+                portalEnter.Enter(player);
+            }
+            #endregion
+
+            if (SingleStepMode == false || InputExt.KeyPress(Key.Enter))
             {
                 scene.Step();
             }
@@ -484,15 +432,21 @@ namespace Game
             }
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        public void OnClosing(CancelEventArgs e)
         {
-            base.OnClosing(e);
             Log.Close();
             if (soundPlayer != null)
             {
                 soundPlayer.Dispose();
             }
             File.Delete("Triangulating.txt");
+        }
+
+        public void OnResize(EventArgs e, Size canvasSize)
+        {
+            CanvasSize = canvasSize;
+            scene.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
+            hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
         }
     }
 }

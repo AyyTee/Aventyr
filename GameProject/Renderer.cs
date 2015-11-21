@@ -35,7 +35,7 @@ namespace Game
 
         public void Render()
         {
-            GL.Viewport(0, 0, _controller.Width, _controller.Height);
+            GL.Viewport(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
 
             Renderer.Shaders["textured"].EnableVertexAttribArrays();
@@ -60,7 +60,7 @@ namespace Game
             Renderer.Shaders["default"].DisableVertexAttribArrays();
 
             GL.Flush();
-            _controller.SwapBuffers();
+            //_controller.Window.SwapBuffers();
         }
 
         /// <summary>

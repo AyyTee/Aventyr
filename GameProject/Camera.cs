@@ -97,7 +97,7 @@ namespace Game
         public Vector2 ScreenToWorld(Vector2 screenCoord)
         {
             Debug.Assert(Orthographic, "Only ortho projection is allowed for now.");
-            Vector2 clipCoord = new Vector2(screenCoord.X / (float)(Controller.ClientSize.Width / 2) - 1f, -(screenCoord.Y / (float)(Controller.ClientSize.Height / 2) - 1f));
+            Vector2 clipCoord = new Vector2(screenCoord.X / (float)(Controller.CanvasSize.Width / 2) - 1f, -(screenCoord.Y / (float)(Controller.CanvasSize.Height / 2) - 1f));
             return Vector2Ext.Transform(clipCoord, GetViewMatrix().Inverted());
         }
     }

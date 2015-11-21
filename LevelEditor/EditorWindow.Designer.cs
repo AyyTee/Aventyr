@@ -1,4 +1,5 @@
-﻿namespace LevelEditor
+﻿using OpenTK.Graphics;
+namespace LevelEditor
 {
     partial class EditorWindow
     {
@@ -29,12 +30,13 @@
         private void InitializeComponent()
         {
             this.button1 = new System.Windows.Forms.Button();
-            this.glControl1 = new OpenTK.GLControl();
             this.label1 = new System.Windows.Forms.Label();
+            this.canvasPlaceholder = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // button1
             // 
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.button1.Location = new System.Drawing.Point(12, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
@@ -42,31 +44,30 @@
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // glControl1
-            // 
-            this.glControl1.BackColor = System.Drawing.Color.Black;
-            this.glControl1.Location = new System.Drawing.Point(93, 3);
-            this.glControl1.Name = "glControl1";
-            this.glControl1.Size = new System.Drawing.Size(800, 600);
-            this.glControl1.TabIndex = 1;
-            this.glControl1.VSync = false;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 70);
+            this.label1.Location = new System.Drawing.Point(12, 50);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 2;
             this.label1.Text = "label1";
+            // 
+            // canvasPlaceholder
+            // 
+            this.canvasPlaceholder.Location = new System.Drawing.Point(93, 12);
+            this.canvasPlaceholder.Name = "canvasPlaceholder";
+            this.canvasPlaceholder.Size = new System.Drawing.Size(800, 600);
+            this.canvasPlaceholder.TabIndex = 3;
+            this.canvasPlaceholder.Visible = false;
             // 
             // EditorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(902, 629);
+            this.Controls.Add(this.canvasPlaceholder);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.glControl1);
             this.Controls.Add(this.button1);
             this.Name = "EditorWindow";
             this.Text = "Aventyr Edityr";
@@ -78,8 +79,8 @@
         #endregion
 
         private System.Windows.Forms.Button button1;
-        private OpenTK.GLControl glControl1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel canvasPlaceholder;
     }
 }
 

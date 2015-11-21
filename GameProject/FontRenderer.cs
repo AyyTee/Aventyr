@@ -60,7 +60,7 @@ namespace Game
             using (Graphics gfx = Graphics.FromImage(GlyphBitmap))
             {
                 //this supposedly improves perforance
-                Application.SetCompatibleTextRenderingDefault(false);
+                //Application.SetCompatibleTextRenderingDefault(false);
 
                 StringFormat format = new StringFormat(StringFormat.GenericTypographic);
                 Point charPoint = new Point(0, 0);
