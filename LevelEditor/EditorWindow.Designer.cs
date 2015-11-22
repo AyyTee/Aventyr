@@ -36,6 +36,8 @@ namespace LevelEditor
             this.fileOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.fileSave = new System.Windows.Forms.ToolStripMenuItem();
             this.fileExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.eDITToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.vIEWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dropdownAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.dropdownRun = new System.Windows.Forms.ToolStripMenuItem();
             this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -60,6 +62,8 @@ namespace LevelEditor
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.dropdownFile,
+            this.eDITToolStripMenuItem,
+            this.vIEWToolStripMenuItem,
             this.dropdownAdd,
             this.dropdownRun});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -103,6 +107,18 @@ namespace LevelEditor
             this.fileExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             this.fileExit.Size = new System.Drawing.Size(134, 22);
             this.fileExit.Text = "Exit";
+            // 
+            // eDITToolStripMenuItem
+            // 
+            this.eDITToolStripMenuItem.Name = "eDITToolStripMenuItem";
+            this.eDITToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+            this.eDITToolStripMenuItem.Text = "EDIT";
+            // 
+            // vIEWToolStripMenuItem
+            // 
+            this.vIEWToolStripMenuItem.Name = "vIEWToolStripMenuItem";
+            this.vIEWToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.vIEWToolStripMenuItem.Text = "VIEW";
             // 
             // dropdownAdd
             // 
@@ -148,7 +164,7 @@ namespace LevelEditor
             this.canvasPlaceholder.Location = new System.Drawing.Point(0, 49);
             this.canvasPlaceholder.Margin = new System.Windows.Forms.Padding(0);
             this.canvasPlaceholder.Name = "canvasPlaceholder";
-            this.canvasPlaceholder.Size = new System.Drawing.Size(937, 467);
+            this.canvasPlaceholder.Size = new System.Drawing.Size(937, 558);
             this.canvasPlaceholder.TabIndex = 9;
             // 
             // glControlExt
@@ -157,7 +173,7 @@ namespace LevelEditor
             this.glControlExt.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glControlExt.Location = new System.Drawing.Point(0, 0);
             this.glControlExt.Name = "glControlExt";
-            this.glControlExt.Size = new System.Drawing.Size(937, 467);
+            this.glControlExt.Size = new System.Drawing.Size(937, 558);
             this.glControlExt.TabIndex = 1;
             this.glControlExt.VSync = false;
             // 
@@ -234,7 +250,7 @@ namespace LevelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(937, 516);
+            this.ClientSize = new System.Drawing.Size(937, 607);
             this.Controls.Add(this.canvasPlaceholder);
             this.Controls.Add(this.tools);
             this.Controls.Add(this.menuStrip1);
@@ -274,6 +290,8 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripMenuItem eDITToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem vIEWToolStripMenuItem;
     }
 }
 

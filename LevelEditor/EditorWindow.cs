@@ -19,14 +19,21 @@ namespace LevelEditor
 {
     public partial class EditorWindow : Form
     {
-        Controller controller;
-        Stopwatch stopwatch = new Stopwatch();
-        int millisecondsPerStep = 1000 / 60;
-        Thread GLThread;
+        GLLoop _loop;
         public EditorWindow()
         {
             InitializeComponent();
+
             fileExit.Click += exitToolStripMenuItem_Click;
+            FormClosing += EditorWindow_FormClosing;
+        }
+
+        private void EditorWindow_FormClosing(object sender, CancelEventArgs e)
+        {
+            _loop.Stop();
+            while (_loop.IsRunning)
+            {
+            }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -37,35 +44,8 @@ namespace LevelEditor
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            controller = new Controller(glControlExt.ClientSize, new InputExt(glControlExt));
-            controller.OnLoad(new EventArgs());
-            glControlExt.Context.MakeCurrent(null);
-            GLThread = new Thread(new ThreadStart(GLLoop));
-            GLThread.Start();
-        }
-
-        /// <summary>
-        /// Loop that drives the GL canvas. Currently not thread safe when closing the application.
-        /// </summary>
-        void GLLoop()
-        {
-            glControlExt.MakeCurrent();
-            while (true)
-            {
-                stopwatch.Restart();
-                controller.InputExt.Update();
-                controller.OnUpdateFrame(new FrameEventArgs());
-                controller.OnRenderFrame(new FrameEventArgs());
-                controller.OnResize(new EventArgs(), glControlExt.ClientSize);
-                //temporary solution (hopefully) until a proper solution is made for freeing the GL context in a thread safe way
-                try { glControlExt.SwapBuffers(); }
-                catch {}
-                glControlExt.Invalidate();
-
-                stopwatch.Stop();
-                int sleepLength = Math.Max(1, millisecondsPerStep - (int)stopwatch.ElapsedMilliseconds);
-                Thread.Sleep(sleepLength);
-            }
+            _loop = new GLLoop(glControlExt);
+            _loop.Run(60);
         }
     }
 }
