@@ -8,6 +8,7 @@ using OpenTK.Input;
 using System.ComponentModel;
 using Cgen.Audio;
 using System.Threading;
+using System.Diagnostics;
 
 
 namespace Game
@@ -60,6 +61,8 @@ namespace Game
         FloatPortal portal2, portal3;
         FixturePortal portal0, portal1;
         float Time = 0.0f;
+        int RenderCount = 0;
+        Stopwatch TimeSinceStart = new Stopwatch();
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
@@ -70,6 +73,7 @@ namespace Game
         Renderer renderer;
         public void InitProgram()
         {
+            TimeSinceStart.Start();
             Renderer.Init();
             //soundPlayer = SoundSystem.Instance();
             if (soundPlayer != null)
@@ -253,9 +257,11 @@ namespace Game
         public void OnRenderFrame(FrameEventArgs e)
         {
             TimeRenderDelta += (float)e.Time;
+            RenderCount++;
             text.Models.Clear();
             text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
-
+            text2.Models.Add(FontRenderer.GetModel((TimeSinceStart.ElapsedMilliseconds / RenderCount).ToString()));
+            
             renderer.Render();
             /*int sleepTimeSpan = (int)Math.Max((1 / 60 - TimeRenderDelta) * 1000, 0);
             System.Threading.Thread.Sleep(sleepTimeSpan);*/
@@ -265,7 +271,6 @@ namespace Game
         {
             Time += MICROSECONDS_IN_SECOND / (float)StepsPerSecond;//(float)e.Time;
             TimeRenderDelta = 0;
-            
             Entity player = scene.GetEntityByName("player");
             Entity tempLine = scene.GetEntityByName("tempLine");
             Entity ground = scene.GetEntityByName("ground");

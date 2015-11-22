@@ -10,11 +10,9 @@ namespace Game
 {
     public class InputExt
     {
-        public KeyboardState KeyCurrent, KeyPrevious;
-        public MouseState MouseCurrent, MousePrevious;
+        private KeyboardState KeyCurrent, KeyPrevious;
+        private MouseState MouseCurrent, MousePrevious;
         public Vector2 MousePos{ get; private set; }
-        //private Keyboard keyboard;
-        //private Mouse mouse;
         private GameWindow Ctx;
         public InputExt(GameWindow ctx)
         {
@@ -22,9 +20,14 @@ namespace Game
             Update();
         }
 
-        public InputExt()
+        public InputExt(GLControl control)
         {
-            Ctx = null;
+            control.MouseMove += control_MouseMove;
+        }
+
+        private void control_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            MousePos = new Vector2((float)e.X, (float)e.Y);
         }
 
         /*public InputExt(Keyboard keyboard, Mouse mouse)
@@ -38,7 +41,10 @@ namespace Game
             KeyCurrent = Keyboard.GetState();
             MousePrevious = MouseCurrent;
             MouseCurrent = Mouse.GetState();
-            MousePos = new Vector2(Ctx.Mouse.X, Ctx.Mouse.Y);
+            if (Ctx != null)
+            {
+                MousePos = new Vector2(Ctx.Mouse.X, Ctx.Mouse.Y);
+            }
         }
 
         public bool KeyDown(Key Input)

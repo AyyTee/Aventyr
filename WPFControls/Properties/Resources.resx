@@ -46,7 +46,7 @@
     
     mimetype: application/x-microsoft.net.object.binary.base64
     value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : System.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
     
     mimetype: application/x-microsoft.net.object.soap.base64
@@ -60,7 +60,6 @@
             : and then encoded with base64 encoding.
     -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -69,10 +68,9 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" />
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
               <xsd:attribute name="type" type="xsd:string" />
               <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
@@ -87,10 +85,9 @@
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="name" type="xsd:string" msdata:Ordinal="1" />
               <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
               <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -112,62 +109,9 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="toolStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>552, 17</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="toolPause.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAElSURBVDhPYxhcwH7ey5l2c1+cAWEQG5cYTmA54/GZKQ/+
-        /++79e8/iA0Tm3wfVQwnMJl090zn1d//K458/w9iw8TaLqGK4QT6nVfO1J/+/j9r28f/IDZMrGjfm/+R
-        Sx/AxXACzfpTZyqPfgYqfvgfxIaJxa+++99lwhm4GE6gUHrgTOLmx//tJ1/4D2LDxMJW3EERwwmk83ae
-        8dv04r/unLv/QWyYmMvqpyhiOIFIyvoz5ts+/ZdY/vY/iA0T09n4AUUMJ+CJXnZGadef/2zrf/8HsWFi
-        Ylt/o4jhBOxBc8/I7/3/X3DH//8gNkxMAMjn3IoQwwVYmK2KFzL5zjgDwkD2MqCYFIiGi1kXLwaKsYFV
-        YwEsQCwCxFJ4sDgQ4zRgIAADAwDWBNe0IP8nKgAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="toolStart.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEqSURBVDhPY6A6sJ/3cqb93BcxUC7pwGbG4zNgPPsZeYZY
-        TL53ZubT//9BtPmku6QbYtx380zHld//pz/+/x/ENuy9QZoheu2XztSf/v4/a9vH/xPu/P0P4uu0nife
-        EI36U2eqjn39n7j25f/wxff/N5z5+B8kplZzijhDFEoPnEnb8vS/y6Rz/50nngXj/D3P/4PEoUrwA+m8
-        nWcC1j35bzLzJhgn7H71HyQGxMS5QCxt4xnLze//yy559d9r76f/ID4QEx8GAvGrziju+P3fZP/v/yC2
-        QOJq0mKBO3zRGdX9//+DaO6IxaRpBgG2oLlnQJjVppx0zUDAwWhVuIjJKKkEyDYAYg0gVgBiCSBmB2KC
-        gAWIxYBYCohBmkSAWACIeYAYJEdtwMAAAHRnklQ0NRz1AAAAAElFTkSuQmCC
-</value>
-  </data>
-  <data name="toolStop.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFSSURBVDhPzYxPKINhHMeXV+RfmjmIi6LkIBeX7eC92I2D
-        3fTmoCgXWuREKRdx8Gd2eJWJw7wctNTLLMKN9JAyDtM0djDplXbQasvX8+Rp64m3ufGpT0+/+nwfy/9B
-        Xn1ebvclSD5ZxycidjVOvDFg/u5DcC6S03MPsI5PRNo8UTJ7m8H4acrU6es0WMcnIq0zYTJ1mcJQKJl1
-        UDfQt/2E3q1HKFoM7sMXsI5PRJonz8nE2TsGdgz0+B/QqYbhXLxAxwLJqmgRsI5PROrHToj7+BVO9Qby
-        0tWPuvwRsI5PROqGQ6RbT6BlJWqqvBkH6/hEpLo/QBzBJGo0w9SmwBtYxyci5coGaTzIoCiQNrVKT4N1
-        fCJS7PKRhiPAFgKs+0BlEKiglu0BpdSSXXrTl3V8IiBJ9pG1gi6V5FNyjK7TvvBrlkOiWqm1v9BG/fbB
-        X2GxfAICO0AaumTNoQAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="toolStripButton1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACQSURBVDhPrYsxCoNAFER3T2AbUuSuNpaWOYVIQFAEC4uA
-        TS7gBXIO5/8dYcsd9MFjH8P+cAsxxhp2gjVPExh6ptwOhg9TbgfDkNkU9MDTBIaRKbeDYWbK7WBYMtuC
-        XniawLAy5XYwfJlyOxi2zHdBbzxNYPgx5T7Z+Rpqhxec4F/Q/tudU8EHfAraf7u7SggHy69PTAKF7lEA
-        AAAASUVORK5CYII=
-</value>
-  </data>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>59</value>
-  </metadata>
 </root>

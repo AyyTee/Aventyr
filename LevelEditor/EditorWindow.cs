@@ -19,99 +19,52 @@ namespace LevelEditor
 {
     public partial class EditorWindow : Form
     {
-        bool loaded = false;
         Controller controller;
-        Random rand = new Random();
         Stopwatch stopwatch = new Stopwatch();
-        long elapsedTime;
-        long microsecondsPerStep = 1000000 / 60;
-        GLControl GLControl;
-        bool Running;
-        Thread GameLoop;
+        int millisecondsPerStep = 1000 / 60;
+        Thread GLThread;
         public EditorWindow()
         {
             InitializeComponent();
-
-            GLControl = new GLControl(new GraphicsMode(32, 24, 8, 1));
-            SuspendLayout();
-            GLControl.BackColor = System.Drawing.Color.Black;
-            GLControl.Location = canvasPlaceholder.Location;
-            //GLControl.Parent = canvasPlaceholder;
-            GLControl.Name = "GLControl";
-            GLControl.Size = canvasPlaceholder.Size;
-            GLControl.VSync = false;
-            Controls.Add(GLControl);
-            ResumeLayout(false);
-            PerformLayout();
+            fileExit.Click += exitToolStripMenuItem_Click;
         }
 
-        private void glControl1_Resize(object sender, EventArgs e)
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!loaded)
-                return;
+            Application.Exit();
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            loaded = true;
-            //glControl1.
-            controller = new Controller(GLControl.ClientSize, new InputExt());
+            controller = new Controller(glControlExt.ClientSize, new InputExt(glControlExt));
             controller.OnLoad(new EventArgs());
-            stopwatch.Start();
-            //Application.Idle += ApplicationIdle;
-            Application.ApplicationExit += ApplicationExit;
-            Application.ThreadExit += Window_Closing;
-            Running = true;
-            GLControl.Context.MakeCurrent(null);
-            GameLoop = new Thread(new ThreadStart(ApplicationIdle));
-            GameLoop.Start();
+            glControlExt.Context.MakeCurrent(null);
+            GLThread = new Thread(new ThreadStart(GLLoop));
+            GLThread.Start();
         }
 
-        private void Window_Closing(object sender, EventArgs e)
+        /// <summary>
+        /// Loop that drives the GL canvas. Currently not thread safe when closing the application.
+        /// </summary>
+        void GLLoop()
         {
-            lock ("Loop")
+            glControlExt.MakeCurrent();
+            while (true)
             {
-                Running = false;
-            }
-        }
-
-        private void ApplicationExit(object sender, EventArgs e)
-        {
-            lock("Loop")
-            {
-                Running = false;
-            }
-            //Application.Idle -= ApplicationIdle;
-        }
-
-        //void ApplicationIdle(object sender, EventArgs e)
-        void ApplicationIdle()
-        {
-            GLControl.MakeCurrent();
-            while (Running)
-            {
-                stopwatch.Stop();
-                elapsedTime += stopwatch.ElapsedMilliseconds * 1000;
                 stopwatch.Restart();
-                Console.Write(elapsedTime);
-                Console.WriteLine();
-                if (elapsedTime > microsecondsPerStep)
-                {
-                    lock("Loop")
-                    {
-                        if (!Running)
-                        {
-                            break;
-                        }
-                        controller.OnUpdateFrame(new FrameEventArgs(elapsedTime));
-                        controller.OnRenderFrame(new FrameEventArgs(elapsedTime));
-                        GLControl.SwapBuffers();
-                        GLControl.Invalidate();
-                        elapsedTime = 0;
-                    }
-                }
-                Thread.Sleep(2);
+                controller.InputExt.Update();
+                controller.OnUpdateFrame(new FrameEventArgs());
+                controller.OnRenderFrame(new FrameEventArgs());
+                controller.OnResize(new EventArgs(), glControlExt.ClientSize);
+                //temporary solution (hopefully) until a proper solution is made for freeing the GL context in a thread safe way
+                try { glControlExt.SwapBuffers(); }
+                catch {}
+                glControlExt.Invalidate();
+
+                stopwatch.Stop();
+                int sleepLength = Math.Max(1, millisecondsPerStep - (int)stopwatch.ElapsedMilliseconds);
+                Thread.Sleep(sleepLength);
             }
         }
     }
