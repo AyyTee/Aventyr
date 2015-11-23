@@ -16,6 +16,7 @@ namespace Game
     {
         Bitmap GlyphBitmap;
         Font Font;
+        int charHeight;
         OpenTK.Graphics.OpenGL.PixelFormat Format = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
 
         public class CharData
@@ -50,6 +51,7 @@ namespace Game
         public FontRenderer(Font font)
         {
             Font = font;
+            charHeight = -Font.Height;
             GlyphBitmap = new Bitmap(TextureSize.Width, TextureSize.Height);
             
             textureID = GL.GenTexture();
@@ -152,7 +154,7 @@ namespace Game
                 indices.AddRange(new int[] { index, index + 1, index + 2, index, index + 2, index + 3 });
                 x0 = x1 + charSpacing;
             }
-            Vector3 offset = new Vector3((float)Math.Round(-x0 * alignment.X), (float)Math.Round(-Font.Height * (1 - alignment.Y)), 0);
+            Vector3 offset = new Vector3((float)Math.Round(-x0 * alignment.X), (float)Math.Round(charHeight * (1 - alignment.Y)), 0);
             for (int i = 0; i < vertices.Length; i++)
             {
                 vertices[i].Position += offset;

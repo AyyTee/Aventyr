@@ -66,34 +66,37 @@ namespace LevelEditor
         /// </summary>
         void Loop()
         {
-            IsRunning = true;
-            _control.MakeCurrent();
-            while (!IsStopping)
+            lock (this)
             {
-                stopwatch.Restart();
-                if (_focused)
+                IsRunning = true;
+                _control.MakeCurrent();
+                while (!IsStopping)
                 {
-                    _loopControl.InputExt.Update();
+                    stopwatch.Restart();
+                    if (_focused)
+                    {
+                        _loopControl.InputExt.Update();
+                    }
+
+                    if (_resize)
+                    {
+                        _loopControl.OnResize(new EventArgs(), _control.ClientSize);
+                        _resize = false;
+                    }
+                    _loopControl.OnUpdateFrame(new FrameEventArgs());
+                    _loopControl.OnRenderFrame(new FrameEventArgs());
+
+                    _control.SwapBuffers();
+                    _control.Invalidate();
+
+                    stopwatch.Stop();
+                    int sleepLength = Math.Max(0, millisecondsPerStep - (int)stopwatch.ElapsedMilliseconds);
+                    Thread.Sleep(sleepLength);
                 }
-
-                if (_resize)
-                {
-                    _loopControl.OnResize(new EventArgs(), _control.ClientSize);
-                    _resize = false;
-                }
-                _loopControl.OnUpdateFrame(new FrameEventArgs());
-                _loopControl.OnRenderFrame(new FrameEventArgs());
-
-                _control.SwapBuffers();
-                _control.Invalidate();
-
-                stopwatch.Stop();
-                int sleepLength = Math.Max(0, millisecondsPerStep - (int)stopwatch.ElapsedMilliseconds);
-                Thread.Sleep(sleepLength);
+                _control.Context.MakeCurrent(null);
+                IsRunning = false;
+                IsStopping = false;
             }
-            _control.Context.MakeCurrent(null);
-            IsRunning = false;
-            IsStopping = false;
         }
     }
 }

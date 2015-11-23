@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using Xna = Microsoft.Xna.Framework;
+using System.ComponentModel;
 
 namespace Game
 {

@@ -26,12 +26,14 @@ namespace LevelEditor
 
             fileExit.Click += exitToolStripMenuItem_Click;
             FormClosing += EditorWindow_FormClosing;
+
+            propertyGrid.SelectedObject = new Property();
         }
 
         private void EditorWindow_FormClosing(object sender, CancelEventArgs e)
         {
             _loop.Stop();
-            while (_loop.IsRunning)
+            lock(_loop)
             {
             }
         }
