@@ -51,8 +51,8 @@ namespace LevelEditor
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.mainSplitter = new System.Windows.Forms.SplitContainer();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.glControlExt = new WPFControls.GLControlExt();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.menuStrip1.SuspendLayout();
             this.tools.SuspendLayout();
@@ -257,6 +257,16 @@ namespace LevelEditor
             this.mainSplitter.SplitterDistance = 701;
             this.mainSplitter.TabIndex = 4;
             // 
+            // glControlExt
+            // 
+            this.glControlExt.BackColor = System.Drawing.Color.Black;
+            this.glControlExt.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.glControlExt.Location = new System.Drawing.Point(0, 0);
+            this.glControlExt.Name = "glControlExt";
+            this.glControlExt.Size = new System.Drawing.Size(701, 558);
+            this.glControlExt.TabIndex = 2;
+            this.glControlExt.VSync = false;
+            // 
             // splitContainer1
             // 
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -272,18 +282,9 @@ namespace LevelEditor
             this.splitContainer1.SplitterDistance = 293;
             this.splitContainer1.TabIndex = 5;
             // 
-            // glControlExt
-            // 
-            this.glControlExt.BackColor = System.Drawing.Color.Black;
-            this.glControlExt.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.glControlExt.Location = new System.Drawing.Point(0, 0);
-            this.glControlExt.Name = "glControlExt";
-            this.glControlExt.Size = new System.Drawing.Size(701, 558);
-            this.glControlExt.TabIndex = 2;
-            this.glControlExt.VSync = false;
-            // 
             // propertyGrid
             // 
+            this.propertyGrid.DisabledItemForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid.Location = new System.Drawing.Point(0, 0);
             this.propertyGrid.Name = "propertyGrid";

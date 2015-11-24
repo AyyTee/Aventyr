@@ -35,6 +35,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FarseerPhysics, Version=3.3.5299.6196, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Farseer Physics Engine 3.3.1 Class\Farseer Physics Engine 3.3.1 Class\bin\Debug\FarseerPhysics.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4" />
     <Reference Include="OpenTK.GLControl, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -56,12 +60,15 @@
     <Compile Include="EditorWindow.Designer.cs">
       <DependentUpon>EditorWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Entity.cs" />
+    <Compile Include="EntityProperty.cs" />
     <Compile Include="GLLoop.cs" />
     <Compile Include="PolygonBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Property.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubProperty.cs" />
+    <Compile Include="Transform2DProperty.cs" />
+    <Compile Include="PropertyGridConverter.cs" />
     <EmbeddedResource Include="EditorWindow.resx">
       <DependentUpon>EditorWindow.cs</DependentUpon>
       <LastGenOutput>EditorWindow1.Designer.cs</LastGenOutput>

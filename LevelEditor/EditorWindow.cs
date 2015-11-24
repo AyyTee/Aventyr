@@ -27,7 +27,7 @@ namespace LevelEditor
             fileExit.Click += exitToolStripMenuItem_Click;
             FormClosing += EditorWindow_FormClosing;
 
-            propertyGrid.SelectedObject = new Property();
+            propertyGrid.SelectedObject = new EntityProperty(new Entity(new Scene()));
         }
 
         private void EditorWindow_FormClosing(object sender, CancelEventArgs e)

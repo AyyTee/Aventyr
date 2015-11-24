@@ -1,4 +1,5 @@
 ﻿using Game;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,12 +22,19 @@ namespace LevelEditor
             get { return "aaa"; } 
             set { } 
         }
+        /*[BrowsableAttribute(true)]
+        Transform2D transform = new Transform2D();*/
+        [System.ComponentModel.TypeConverter(typeof(PropertyGridConverter)), BrowsableAttribute(true)]
+        public Vector3 vec3 { get; set; }
+        [System.ComponentModel.TypeConverter(typeof(PropertyGridConverter)), BrowsableAttribute(true)]
+        public Vector2 vec2 { get; set; }
         [BrowsableAttribute(true)]
-        Transform2D transform = new Transform2D();
-
+        [TypeConverter(typeof(ExpandableObjectConverter))]
+        public SubProperty subproperty { get; set; }
         public Property()
         {
-
+            subproperty = new SubProperty();
+            vec3 = new Vector3(0, 2, 3);
         }
     }
 }
