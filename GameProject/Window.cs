@@ -13,13 +13,13 @@ namespace Game
 {
     public class Window : GameWindow
     {
-        Controller controller;
+        ControllerGame controller;
         public InputExt InputExt;
         public Window()
             : base((int) 800, (int) 600, new GraphicsMode(32, 24, 8, 1), "Game", GameWindowFlags.FixedWindow)
         {
             InputExt = new InputExt(this);
-            controller = new Controller(this);
+            controller = new ControllerGame(this);
         }
 
         protected override void OnLoad(EventArgs e)

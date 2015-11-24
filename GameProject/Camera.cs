@@ -6,25 +6,17 @@ namespace Game
 {
     public class Camera
     {
-        private Transform _transform = new Transform();
         public float Aspect = 1;
         public float Scale = 1;
         /// <summary>
         /// Position used for casting line of sight rays for portals
         /// </summary>
         public Vector2 Viewpoint = new Vector2();
-        public Transform Transform
-        {
-            get { return _transform; }
-            set { _transform = value; }
-        }
+        public Transform Transform { get; set; }
         private float _fov = 35;
         public float FOV 
         {
-            get
-            {
-                return _fov;
-            }
+            get { return _fov; }
             set
             {
                 _fov = (float)MathHelper.Clamp(value, float.Epsilon, Math.PI - 0.1);
@@ -36,6 +28,7 @@ namespace Game
 
         public Camera()
         {
+            Transform = new Transform();
         }
 
         public static Camera CameraOrtho(Vector3 position, float scale, float aspect)
@@ -100,5 +93,12 @@ namespace Game
             Vector2 clipCoord = new Vector2(screenCoord.X / (float)(Controller.CanvasSize.Width / 2) - 1f, -(screenCoord.Y / (float)(Controller.CanvasSize.Height / 2) - 1f));
             return Vector2Ext.Transform(clipCoord, GetViewMatrix().Inverted());
         }
+
+        /*public Camera Clone()
+        {
+            Camera camera = new Camera();
+            //camera.Transform = Transform.Clone();
+            return camera;
+        }*/
     }
 }

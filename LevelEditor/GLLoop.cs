@@ -22,7 +22,7 @@ namespace LevelEditor
         int millisecondsPerStep;
         Stopwatch stopwatch = new Stopwatch();
         GLControl _control;
-        Controller _loopControl;
+        ControllerEditor _loopControl;
         public bool IsStopping { get; private set; }
         public bool IsRunning { get; private set; }
 
@@ -31,7 +31,7 @@ namespace LevelEditor
             _control = control;
             IsRunning = false;
             IsStopping = false;
-            _loopControl = new Controller(_control.ClientSize, new InputExt(_control));
+            _loopControl = new ControllerEditor(_control.ClientSize, new InputExt(_control));
             _loopControl.OnLoad(new EventArgs());
             _control.GotFocus += delegate { _focused = true; };
             _control.LostFocus += delegate { _focused = false; };

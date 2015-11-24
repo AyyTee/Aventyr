@@ -104,11 +104,8 @@ namespace Game
 
         public Model()
         {
-            if (Controller.ContextExists)
-            {
-                ShaderName = "textured";
-                GL.GenBuffers(1, out IboElements);
-            }
+            ShaderName = "textured";
+            GL.GenBuffers(1, out IboElements);
         }
 
         public Model(Vertex[] vertices, int[] indices)
@@ -231,10 +228,7 @@ namespace Game
                 0, 3, 2,
             };
             Model model = new Model(vertices, indices);
-            if (Controller.ContextExists)
-            {
-                model.SetTexture(Renderer.Textures["default.png"]);
-            }
+            model.SetTexture(Renderer.Textures["default.png"]);
             return model;
         }
 
@@ -298,10 +292,7 @@ namespace Game
                 20,21,22,20,22,23
             };
             Model model = new Model(vertices, indices);
-            if (Controller.ContextExists)
-            {
-                model.SetTexture(Renderer.Textures["default.png"]);
-            }
+            model.SetTexture(Renderer.Textures["default.png"]);
             return model;
         }
 

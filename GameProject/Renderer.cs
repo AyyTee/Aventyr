@@ -14,7 +14,7 @@ namespace Game
     public class Renderer
     {
         private int sceneDepth = 20;
-        public List<Scene> RenderScenes = new List<Scene>();
+        private List<Scene> _scenes = new List<Scene>();
         private Controller _controller;
 
         public static Dictionary<string, int> Textures = new Dictionary<string, int>();
@@ -33,19 +33,24 @@ namespace Game
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
         }
 
+        public void AddScene(Scene scene)
+        {
+            _scenes.Add(scene);
+        }
+
         public void Render()
         {
             GL.Viewport(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
-            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
+            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit | ClearBufferMask.ColorBufferBit);
 
             Renderer.Shaders["textured"].EnableVertexAttribArrays();
             Renderer.Shaders["default"].EnableVertexAttribArrays();
             float TimeRenderDelta = 0;
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
-            for (int i = 0; i < RenderScenes.Count(); i++)
+            for (int i = 0; i < _scenes.Count(); i++)
             {
-                Scene scene = RenderScenes[i];
+                Scene scene = _scenes[i];
                 Camera camera = scene.ActiveCamera;
                 DrawScene(scene, camera.GetViewMatrix(), 0);
 

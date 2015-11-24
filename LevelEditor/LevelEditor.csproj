@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="EntityProperty.cs" />
     <Compile Include="GLLoop.cs" />
+    <Compile Include="ControllerEditor.cs" />
     <Compile Include="PolygonBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Property.cs" />

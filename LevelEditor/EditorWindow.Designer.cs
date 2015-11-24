@@ -254,7 +254,7 @@ namespace LevelEditor
             // 
             this.mainSplitter.Panel2.Controls.Add(this.splitContainer1);
             this.mainSplitter.Size = new System.Drawing.Size(937, 558);
-            this.mainSplitter.SplitterDistance = 701;
+            this.mainSplitter.SplitterDistance = 742;
             this.mainSplitter.TabIndex = 4;
             // 
             // glControlExt
@@ -263,7 +263,7 @@ namespace LevelEditor
             this.glControlExt.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glControlExt.Location = new System.Drawing.Point(0, 0);
             this.glControlExt.Name = "glControlExt";
-            this.glControlExt.Size = new System.Drawing.Size(701, 558);
+            this.glControlExt.Size = new System.Drawing.Size(742, 558);
             this.glControlExt.TabIndex = 2;
             this.glControlExt.VSync = false;
             // 
@@ -278,7 +278,7 @@ namespace LevelEditor
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.propertyGrid);
-            this.splitContainer1.Size = new System.Drawing.Size(232, 558);
+            this.splitContainer1.Size = new System.Drawing.Size(191, 558);
             this.splitContainer1.SplitterDistance = 293;
             this.splitContainer1.TabIndex = 5;
             // 
@@ -288,7 +288,7 @@ namespace LevelEditor
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid.Location = new System.Drawing.Point(0, 0);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(230, 259);
+            this.propertyGrid.Size = new System.Drawing.Size(189, 259);
             this.propertyGrid.TabIndex = 0;
             // 
             // EditorWindow
