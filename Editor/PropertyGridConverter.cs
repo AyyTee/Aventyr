@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LevelEditor
+namespace Editor
 {
     public class PropertyGridConverter : System.ComponentModel.ExpandableObjectConverter
     {

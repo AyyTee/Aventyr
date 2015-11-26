@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WPFControls;
 
-namespace LevelEditor
+namespace Editor
 {
     /// <summary>
     /// Drives a GLControl instance to redraw at a specified frequency.

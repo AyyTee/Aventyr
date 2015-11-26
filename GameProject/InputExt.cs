@@ -12,17 +12,23 @@ namespace Game
     {
         private KeyboardState KeyCurrent, KeyPrevious;
         private MouseState MouseCurrent, MousePrevious;
-        public Vector2 MousePos{ get; private set; }
-        private GameWindow Ctx;
+        public Vector2 MousePos { get; private set; }
+        bool _mouseInside;
+        GameWindow Ctx;
+        public bool MouseInside { get; private set; }
         public InputExt(GameWindow ctx)
         {
             Ctx = ctx;
             Update();
+            Ctx.MouseEnter += delegate { _mouseInside = true; };
+            Ctx.MouseLeave += delegate { _mouseInside = false; };
         }
 
         public InputExt(GLControl control)
         {
             control.MouseMove += control_MouseMove;
+            control.MouseEnter += delegate { _mouseInside = true; };
+            control.MouseLeave += delegate { _mouseInside = false; };
         }
 
         private void control_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -30,17 +36,13 @@ namespace Game
             MousePos = new Vector2((float)e.X, (float)e.Y);
         }
 
-        /*public InputExt(Keyboard keyboard, Mouse mouse)
-        {
-
-        }*/
-
         public void Update()
         {
             KeyPrevious = KeyCurrent;
             KeyCurrent = Keyboard.GetState();
             MousePrevious = MouseCurrent;
             MouseCurrent = Mouse.GetState();
+            MouseInside = _mouseInside;
             if (Ctx != null)
             {
                 MousePos = new Vector2(Ctx.Mouse.X, Ctx.Mouse.Y);

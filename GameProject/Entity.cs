@@ -146,6 +146,12 @@ namespace Game
                 Velocity.Position = Vector2Ext.ConvertTo(Body.LinearVelocity);
                 Velocity.Rotation = Body.AngularVelocity;
             }
+            else
+            {
+                Transform.Position += Velocity.Position;
+                Transform.Rotation += Velocity.Rotation;
+                Transform.Scale *= Velocity.Scale;
+            }
         }
 
         public void SetBody(Body body)

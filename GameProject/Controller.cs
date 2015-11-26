@@ -36,6 +36,7 @@ namespace Game
         public static Size CanvasSize;
         public const int StepsPerSecond = 60;
         public const int DrawsPerSecond = 60;
+        public int RenderCount = 0;
         
         public static List<int> iboGarbage = new List<int>();
 
@@ -81,6 +82,7 @@ namespace Game
 
         public virtual void OnRenderFrame(FrameEventArgs e)
         {
+            RenderCount++;
             TimeRenderDelta += (float)e.Time;
             renderer.Render();
         }

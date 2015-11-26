@@ -8,19 +8,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LevelEditor
+namespace Editor
 {
     public class ControllerEditor : Controller
     {
-        Scene Level;
+        Scene Level, Hud;
         bool _isPaused;
-        ControllerCamera camControl;
+        ControllerCamera _camControl;
         public delegate void EntityAddedHandler(ControllerEditor controller, Entity entity);
         public event EntityAddedHandler EntityAdded;
         public delegate void SceneEventHandler(ControllerEditor controller, Scene scene);
         public event SceneEventHandler ScenePaused;
         public event SceneEventHandler ScenePlayed;
         public event SceneEventHandler SceneStopped;
+        Entity debugText;
 
         public ControllerEditor(Window window)
             : base(window)
@@ -37,6 +38,8 @@ namespace LevelEditor
             base.OnLoad(e);
             Level = new Scene();
             renderer.AddScene(Level);
+            Hud = new Scene();
+            renderer.AddScene(Hud);
 
             Model background = Model.CreatePlane();
             background.TextureId = Renderer.Textures["grid.png"];
@@ -47,23 +50,36 @@ namespace LevelEditor
             Entity back = new Entity(Level, new Vector2(0f, 0f));
             back.Models.Add(background);
 
-            Camera cam = Camera.CameraOrtho(new Vector3(0, 0, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            FloatPortal portal = new FloatPortal(Level);
+            portal.Transform.Rotation = 4f;
+            portal.Transform.Position = new Vector2(1, 1);
+            FloatPortal portal2 = new FloatPortal(Level);
+            portal2.Transform.Position = new Vector2(-1, 0);
+            Portal.ConnectPortals(portal, portal2);
 
-            Level.ActiveCamera = cam;
+            Level.ActiveCamera = Camera.CameraOrtho(new Vector3(0, 0, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height); ;
 
-            camControl = new ControllerCamera(cam, InputExt);
+            _camControl = new ControllerCamera(Level.ActiveCamera, InputExt);
+
+            
+            Hud.ActiveCamera = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
+
+            debugText = new Entity(Hud);
+            debugText.Transform.Position = new Vector2(0, CanvasSize.Height - 40);
         }
 
         public override void OnRenderFrame(OpenTK.FrameEventArgs e)
         {
             base.OnRenderFrame(e);
+            debugText.Models.Clear();
+            debugText.Models.Add(FontRenderer.GetModel((Time.ElapsedMilliseconds / RenderCount).ToString()));
         }
 
         public override void OnUpdateFrame(OpenTK.FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
 
-            camControl.Update();
+            _camControl.Update();
             if (InputExt.MouseInside)
             {
                 if (InputExt.MousePress(MouseButton.Right))
@@ -114,6 +130,7 @@ namespace LevelEditor
         {
             base.OnResize(e, canvasSize);
             Level.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
+            Hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
         }
     }
 }

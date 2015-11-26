@@ -40,11 +40,11 @@ namespace LevelEditor
             this.vIEWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dropdownAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.dropdownRun = new System.Windows.Forms.ToolStripMenuItem();
-            this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runStart = new System.Windows.Forms.ToolStripMenuItem();
+            this.runPause = new System.Windows.Forms.ToolStripMenuItem();
+            this.runStop = new System.Windows.Forms.ToolStripMenuItem();
             this.tools = new System.Windows.Forms.Panel();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolPause = new System.Windows.Forms.ToolStripButton();
             this.toolStart = new System.Windows.Forms.ToolStripButton();
             this.toolStop = new System.Windows.Forms.ToolStripButton();
@@ -54,9 +54,12 @@ namespace LevelEditor
             this.glControlExt = new WPFControls.GLControlExt();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
+            this.entityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.portalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolLabelTime = new System.Windows.Forms.ToolStripLabel();
             this.menuStrip1.SuspendLayout();
             this.tools.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
+            this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitter)).BeginInit();
             this.mainSplitter.Panel1.SuspendLayout();
             this.mainSplitter.Panel2.SuspendLayout();
@@ -133,6 +136,9 @@ namespace LevelEditor
             // 
             // dropdownAdd
             // 
+            this.dropdownAdd.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.entityToolStripMenuItem,
+            this.portalToolStripMenuItem});
             this.dropdownAdd.Name = "dropdownAdd";
             this.dropdownAdd.Size = new System.Drawing.Size(43, 20);
             this.dropdownAdd.Text = "ADD";
@@ -140,40 +146,38 @@ namespace LevelEditor
             // dropdownRun
             // 
             this.dropdownRun.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.startToolStripMenuItem,
-            this.pauseToolStripMenuItem,
-            this.stopToolStripMenuItem});
+            this.runStart,
+            this.runPause,
+            this.runStop});
             this.dropdownRun.Name = "dropdownRun";
             this.dropdownRun.Size = new System.Drawing.Size(43, 20);
             this.dropdownRun.Text = "RUN";
             // 
-            // startToolStripMenuItem
+            // runStart
             // 
-            this.startToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("startToolStripMenuItem.Image")));
-            this.startToolStripMenuItem.Name = "startToolStripMenuItem";
-            this.startToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
-            this.startToolStripMenuItem.Text = "Start";
+            this.runStart.Image = ((System.Drawing.Image)(resources.GetObject("runStart.Image")));
+            this.runStart.Name = "runStart";
+            this.runStart.Size = new System.Drawing.Size(105, 22);
+            this.runStart.Text = "Start";
             // 
-            // pauseToolStripMenuItem
+            // runPause
             // 
-            this.pauseToolStripMenuItem.Enabled = false;
-            this.pauseToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("pauseToolStripMenuItem.Image")));
-            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
-            this.pauseToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
-            this.pauseToolStripMenuItem.Text = "Pause";
+            this.runPause.Image = ((System.Drawing.Image)(resources.GetObject("runPause.Image")));
+            this.runPause.Name = "runPause";
+            this.runPause.Size = new System.Drawing.Size(105, 22);
+            this.runPause.Text = "Pause";
             // 
-            // stopToolStripMenuItem
+            // runStop
             // 
-            this.stopToolStripMenuItem.Enabled = false;
-            this.stopToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("stopToolStripMenuItem.Image")));
-            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-            this.stopToolStripMenuItem.Size = new System.Drawing.Size(105, 22);
-            this.stopToolStripMenuItem.Text = "Stop";
+            this.runStop.Image = ((System.Drawing.Image)(resources.GetObject("runStop.Image")));
+            this.runStop.Name = "runStop";
+            this.runStop.Size = new System.Drawing.Size(105, 22);
+            this.runStop.Text = "Stop";
             // 
             // tools
             // 
             this.tools.AutoSize = true;
-            this.tools.Controls.Add(this.toolStrip1);
+            this.tools.Controls.Add(this.toolStrip);
             this.tools.Dock = System.Windows.Forms.DockStyle.Top;
             this.tools.Location = new System.Drawing.Point(0, 24);
             this.tools.Margin = new System.Windows.Forms.Padding(0);
@@ -181,20 +185,21 @@ namespace LevelEditor
             this.tools.Size = new System.Drawing.Size(937, 25);
             this.tools.TabIndex = 8;
             // 
-            // toolStrip1
+            // toolStrip
             // 
-            this.toolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolPause,
             this.toolStart,
             this.toolStop,
+            this.toolLabelTime,
             this.toolStripSeparator1,
             this.toolStripButton1});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(937, 25);
-            this.toolStrip1.TabIndex = 8;
-            this.toolStrip1.Text = "toolStrip1";
+            this.toolStrip.Location = new System.Drawing.Point(0, 0);
+            this.toolStrip.Name = "toolStrip";
+            this.toolStrip.Size = new System.Drawing.Size(937, 25);
+            this.toolStrip.TabIndex = 8;
+            this.toolStrip.Text = "toolStrip1";
             // 
             // toolPause
             // 
@@ -253,7 +258,7 @@ namespace LevelEditor
             // mainSplitter.Panel2
             // 
             this.mainSplitter.Panel2.Controls.Add(this.splitContainer1);
-            this.mainSplitter.Size = new System.Drawing.Size(937, 558);
+            this.mainSplitter.Size = new System.Drawing.Size(937, 418);
             this.mainSplitter.SplitterDistance = 742;
             this.mainSplitter.TabIndex = 4;
             // 
@@ -263,7 +268,7 @@ namespace LevelEditor
             this.glControlExt.Dock = System.Windows.Forms.DockStyle.Fill;
             this.glControlExt.Location = new System.Drawing.Point(0, 0);
             this.glControlExt.Name = "glControlExt";
-            this.glControlExt.Size = new System.Drawing.Size(742, 558);
+            this.glControlExt.Size = new System.Drawing.Size(742, 418);
             this.glControlExt.TabIndex = 2;
             this.glControlExt.VSync = false;
             // 
@@ -278,8 +283,8 @@ namespace LevelEditor
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.propertyGrid);
-            this.splitContainer1.Size = new System.Drawing.Size(191, 558);
-            this.splitContainer1.SplitterDistance = 293;
+            this.splitContainer1.Size = new System.Drawing.Size(191, 418);
+            this.splitContainer1.SplitterDistance = 215;
             this.splitContainer1.TabIndex = 5;
             // 
             // propertyGrid
@@ -288,14 +293,32 @@ namespace LevelEditor
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid.Location = new System.Drawing.Point(0, 0);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(189, 259);
+            this.propertyGrid.Size = new System.Drawing.Size(189, 197);
             this.propertyGrid.TabIndex = 0;
+            // 
+            // entityToolStripMenuItem
+            // 
+            this.entityToolStripMenuItem.Name = "entityToolStripMenuItem";
+            this.entityToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.entityToolStripMenuItem.Text = "Entity";
+            // 
+            // portalToolStripMenuItem
+            // 
+            this.portalToolStripMenuItem.Name = "portalToolStripMenuItem";
+            this.portalToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.portalToolStripMenuItem.Text = "Portal";
+            // 
+            // toolLabelTime
+            // 
+            this.toolLabelTime.AutoSize = false;
+            this.toolLabelTime.Name = "toolLabelTime";
+            this.toolLabelTime.Size = new System.Drawing.Size(20, 22);
             // 
             // EditorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(937, 607);
+            this.ClientSize = new System.Drawing.Size(937, 467);
             this.Controls.Add(this.mainSplitter);
             this.Controls.Add(this.tools);
             this.Controls.Add(this.menuStrip1);
@@ -305,8 +328,8 @@ namespace LevelEditor
             this.menuStrip1.PerformLayout();
             this.tools.ResumeLayout(false);
             this.tools.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.toolStrip.ResumeLayout(false);
+            this.toolStrip.PerformLayout();
             this.mainSplitter.Panel1.ResumeLayout(false);
             this.mainSplitter.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.mainSplitter)).EndInit();
@@ -329,14 +352,14 @@ namespace LevelEditor
         private System.Windows.Forms.ToolStripMenuItem dropdownAdd;
         private System.Windows.Forms.ToolStripMenuItem fileExit;
         private System.Windows.Forms.ToolStripMenuItem dropdownRun;
-        private System.Windows.Forms.ToolStripMenuItem startToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runStart;
         private System.Windows.Forms.Panel tools;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStrip toolStrip;
         private System.Windows.Forms.ToolStripButton toolPause;
         private System.Windows.Forms.ToolStripButton toolStart;
         private System.Windows.Forms.ToolStripButton toolStop;
-        private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runStop;
+        private System.Windows.Forms.ToolStripMenuItem runPause;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripMenuItem eDITToolStripMenuItem;
@@ -345,6 +368,9 @@ namespace LevelEditor
         private WPFControls.GLControlExt glControlExt;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.PropertyGrid propertyGrid;
+        private System.Windows.Forms.ToolStripMenuItem entityToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem portalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripLabel toolLabelTime;
     }
 }
 

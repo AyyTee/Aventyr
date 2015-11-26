@@ -26,7 +26,6 @@ namespace Game
         [NonSerialized]
         private PhysContactListener _contactListener;
 
-        public float TimeStepSize = 1 / 60f;
         public Camera ActiveCamera { get; set; }
         public List<Portal> PortalList { get; private set; }
         public List<Entity> EntityList { get; private set; }
@@ -43,6 +42,11 @@ namespace Game
         
         public void Step()
         {
+            Step(1/Controller.StepsPerSecond);
+        }
+
+        public void Step(float stepSize)
+        {
             World.ProcessChanges();
             foreach (Entity e in EntityList)
             {
@@ -58,7 +62,7 @@ namespace Game
             if (World != null)
             {
                 _contactListener.StepBegin();
-                World.Step(TimeStepSize);
+                World.Step(stepSize);
                 _contactListener.StepEnd();
             }
 

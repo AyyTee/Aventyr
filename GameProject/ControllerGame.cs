@@ -19,7 +19,6 @@ namespace Game
         Scene scene, hud;
         FloatPortal portal2, portal3;
         FixturePortal portal0, portal1;
-        int RenderCount = 0;
         private bool SingleStepMode = false;
 
         public ControllerGame(Window window)
@@ -149,11 +148,10 @@ namespace Game
 
         public override void OnRenderFrame(FrameEventArgs e)
         {
-            RenderCount++;
             text.Models.Clear();
             text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
-            text2.Models.Add(FontRenderer.GetModel((Time.ElapsedMilliseconds / RenderCount).ToString()));
             base.OnRenderFrame(e);
+            text2.Models.Add(FontRenderer.GetModel((Time.ElapsedMilliseconds / RenderCount).ToString()));
         }
 
         public override void OnUpdateFrame(FrameEventArgs e)
@@ -261,7 +259,6 @@ namespace Game
             {
                 cam.Scale /= (float)Math.Pow(1.04, -1);
             }
-
 
             Vector2[] vArray = new Vector2[2];
             IntersectPoint intersect = new IntersectPoint();
