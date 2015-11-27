@@ -88,6 +88,7 @@ namespace Editor
                     Entity entity = new Entity(Level);
                     entity.Transform.Position = cam.ScreenToWorld(InputExt.MousePos);
                     entity.Models.Add(Model.CreateCube());
+                    entity.Velocity.Rotation = .1f;
                     if (EntityAdded != null)
                     {
                         EntityAdded(this, entity);

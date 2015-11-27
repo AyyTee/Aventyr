@@ -43,6 +43,11 @@ namespace Editor
             //this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             InitializeComponent();
 
+            var property = new Xceed.Wpf.Toolkit.PropertyGrid.PropertyGrid();
+            gridSideColumn.Children.Add(property);
+            Grid.SetRow(property, 1);
+            
+            //property.Parent = gridSideColumn;
             /*fileExit.Click += exitToolStripMenuItem_Click;
             FormClosing += EditorWindow_FormClosing;
 

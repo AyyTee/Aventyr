@@ -12,7 +12,23 @@
         </Grid.RowDefinitions>
         <Menu>
             <MenuItem Header="FILE">
-                <MenuItem Header="Exit" Click="MenuItem_Click"/>
+                <MenuItem Header="New">
+                    <MenuItem.Icon>
+                        <Image Source="/assets/document.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Open">
+                    <MenuItem.Icon>
+                        <Image Source="/assets/folder-open.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Save">
+                    <MenuItem.Icon>
+                        <Image Source="/assets/disk.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Exit">
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="EDIT">
                 <MenuItem Header="Exit"/>
@@ -49,7 +65,7 @@
                 <Image Source="/assets/control-stop-square.png" />
             </Button>
             <Slider Margin="6,0,6,0" Width="100" IsSnapToTickEnabled="True" TickFrequency="0.2" Minimum="0" Maximum="2" />
-            <Label Width="30" Content="x2" Padding="5,2" FontSize="14" FontWeight="Bold"/>
+            <Label Width="30" Content="x2" Padding="5,1" FontSize="14" FontWeight="Bold"/>
             <Separator VerticalAlignment="Stretch"/>
         </ToolBar>
         <Grid Grid.Row="2">
@@ -61,6 +77,12 @@
             <WindowsFormsHost  x:Name="wfContainer" Background="Transparent">
                 <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" Resize="GLControl_Resize" Paint="GLControl_Paint" />
             </WindowsFormsHost>
+            <Grid Grid.Column="1" Name="gridSideColumn">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+            </Grid>
         </Grid>
     </Grid>
 </Window>
