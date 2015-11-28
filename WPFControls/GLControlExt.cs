@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
+using Game;
 
 namespace WPFControls
 {
     public partial class GLControlExt : GLControl
     {
         public GLControlExt()
-            : base(new GraphicsMode(32, 24, 8, 1))
+            : base(Window.DefaultGraphics)
         {
             InitializeComponent();
         }

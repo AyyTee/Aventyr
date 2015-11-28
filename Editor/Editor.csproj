@@ -130,7 +130,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="assets\Thumbs.db" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -141,26 +140,28 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="assets\control-pause.png" />
-    <Resource Include="assets\control.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="assets\control-stop-square.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\GameProject\Game.csproj">
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
       <Name>Game</Name>
     </ProjectReference>
-    <ProjectReference Include="..\WPFControls\WPFControls.csproj">
+    <ProjectReference Include="..\WPFControls\EditorControls.csproj">
       <Project>{c7d74749-e76c-4b1a-b68e-55757ce38889}</Project>
-      <Name>WPFControls</Name>
+      <Name>EditorControls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="assets\disk.png" />
-    <Resource Include="assets\document.png" />
-    <Resource Include="assets\folder-open.png" />
+    <Resource Include="assets\icons\control-pause.png" />
+    <Resource Include="assets\icons\control-stop-square.png" />
+    <Resource Include="assets\icons\control.png" />
+    <Resource Include="assets\icons\disk.png" />
+    <Resource Include="assets\icons\document.png" />
+    <Resource Include="assets\icons\entityIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="assets\icons\folder-open.png" />
+    <Resource Include="assets\icons\portalIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

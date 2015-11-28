@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
@@ -26,6 +23,9 @@ using Game;
 using System.Diagnostics;
 using OpenTK;
 using OpenTK.Input;
+using System.IO;
+using System.Reflection;
+using WPFControls;
 
 namespace Editor
 {
@@ -37,26 +37,31 @@ namespace Editor
         GLLoop _loop;
         ControllerEditor ControllerEditor;
         delegate void SetControllerCallback(Entity entity);
+        string localDir = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         public MainWindow()
         {
-            //this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             InitializeComponent();
 
             var property = new Xceed.Wpf.Toolkit.PropertyGrid.PropertyGrid();
             gridSideColumn.Children.Add(property);
             Grid.SetRow(property, 1);
             
-            //property.Parent = gridSideColumn;
-            /*fileExit.Click += exitToolStripMenuItem_Click;
-            FormClosing += EditorWindow_FormClosing;
-
-            toolStart.Click += new System.EventHandler(toolStart_Click);
-            toolPause.Click += new System.EventHandler(toolPause_Click);
-            toolStop.Click += new System.EventHandler(toolStop_Click);
-            runStart.Click += new System.EventHandler(toolStart_Click);
-            runPause.Click += new System.EventHandler(toolPause_Click);
-            runStop.Click += new System.EventHandler(toolStop_Click);*/
+            for (int i = 0; i < 3; i++)
+            {
+                ToolButton button = new ToolButton(new BitmapImage(new Uri(localDir + @"\assets\icons\entityIcon.png")));
+                ToolPanel.Children.Add(button);
+                /*var button = new System.Windows.Controls.Button();
+                button.Width = 80;
+                button.Height = 80;
+                button.Content = new System.Windows.Controls.Image
+                {
+                    Source = new BitmapImage(new Uri(localDir + @"\assets\icons\entityIcon.png")),
+                    //Source = new BitmapImage(new Uri("C:\\Users\\Martin\\Documents\\Visual Studio 2013\\Projects\\Game2\\Editor\\assets\\entityIcon.png")),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                ToolPanel.Children.Add(button);*/
+            }
         }
 
         public void GLControl_Load(object sender, EventArgs e)

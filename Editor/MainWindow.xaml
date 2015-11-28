@@ -14,17 +14,17 @@
             <MenuItem Header="FILE">
                 <MenuItem Header="New">
                     <MenuItem.Icon>
-                        <Image Source="/assets/document.png" />
+                        <Image Source="/assets/icons/document.png" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Header="Open">
                     <MenuItem.Icon>
-                        <Image Source="/assets/folder-open.png" />
+                        <Image Source="/assets/icons/folder-open.png" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Header="Save">
                     <MenuItem.Icon>
-                        <Image Source="/assets/disk.png" />
+                        <Image Source="/assets/icons/disk.png" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Header="Exit" Click="Button_Close">
@@ -39,30 +39,30 @@
             <MenuItem Header="RUN">
                 <MenuItem Name="menuRunStart" Header="Start" Click="Button_Play">
                     <MenuItem.Icon>
-                        <Image Source="/assets/control.png" />
+                        <Image Source="/assets/icons/control.png" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Name="menuRunPause" Header="Pause" Click="Button_Pause">
                     <MenuItem.Icon>
-                        <Image Source="/assets/control-pause.png" />
+                        <Image Source="/assets/icons/control-pause.png" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem Name="menuRunStop" Header="Stop" Click="Button_Stop">
                     <MenuItem.Icon>
-                        <Image Source="/assets/control-stop-square.png" />
+                        <Image Source="/assets/icons/control-stop-square.png" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
         </Menu>
         <ToolBar Grid.Row="1">
             <Button Name="toolPause" Height="22" Click="Button_Pause">
-                <Image Source="/assets/control-pause.png" />
+                <Image Source="/assets/icons/control-pause.png" />
             </Button>
             <Button Name="toolStart" Height="22" Click="Button_Play">
-                <Image Source="/assets/control.png" />
+                <Image Source="/assets/icons/control.png" />
             </Button>
             <Button Name="toolStop" Height="22" Click="Button_Stop">
-                <Image Source="/assets/control-stop-square.png" />
+                <Image Source="/assets/icons/control-stop-square.png" />
             </Button>
             <Slider Margin="6,0,6,0" Width="100" IsSnapToTickEnabled="True" TickFrequency="0.2" Minimum="0" Maximum="2" />
             <Label Width="30" Content="x2" Padding="5,1" FontSize="14" FontWeight="Bold"/>
@@ -70,11 +70,11 @@
         </ToolBar>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" MinWidth="100"/>
                 <ColumnDefinition Width="200" />
             </Grid.ColumnDefinitions>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
-            <WindowsFormsHost  x:Name="wfContainer" Background="Black">
+            <WindowsFormsHost  x:Name="wfContainer" Background="Black" MinWidth="100" MinHeight="100">
                 <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" Resize="GLControl_Resize" Paint="GLControl_Paint" />
             </WindowsFormsHost>
             <Grid Grid.Column="1" Name="gridSideColumn" Margin="5,0,0,0">
@@ -83,8 +83,8 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <GridSplitter Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
-                <Grid Margin="0,0,0,5">
-                </Grid>
+                <WrapPanel Name="ToolPanel" Margin="0,0,0,5">
+                </WrapPanel>
             </Grid>
         </Grid>
     </Grid>

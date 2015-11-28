@@ -13,10 +13,11 @@ namespace Game
 {
     public class Window : GameWindow
     {
+        public readonly static GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
         ControllerGame controller;
         public InputExt InputExt;
         public Window()
-            : base((int) 800, (int) 600, new GraphicsMode(32, 24, 8, 1), "Game", GameWindowFlags.FixedWindow)
+            : base((int)800, (int)600, DefaultGraphics, "Game", GameWindowFlags.FixedWindow)
         {
             InputExt = new InputExt(this);
             controller = new ControllerGame(this);
