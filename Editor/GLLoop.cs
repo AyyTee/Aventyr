@@ -34,8 +34,10 @@ namespace Editor
             IsStopping = false;
             _loopControl = loopControl;
             _loopControl.OnLoad(new EventArgs());
-            _control.GotFocus += delegate { _focused = true; };
-            _control.LostFocus += delegate { _focused = false; };
+            /*_control.GotFocus += delegate { _focused = true; };
+            _control.LostFocus += delegate { _focused = false; };*/
+            _control.MouseEnter += delegate { _focused = true; };
+            _control.MouseLeave += delegate { _focused = false; };
             _control.Resize += delegate { _resize = true; };
         }
 

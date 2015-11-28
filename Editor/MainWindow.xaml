@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:WF="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     xmlns:GL="clr-namespace:WPFControls;assembly=WPFControls"
-    Title="Avenyr Edityr" Height="600" Width="800">
+    Title="Avenyr Edityr" Height="650" Width="1000">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="22" />
@@ -27,7 +27,7 @@
                         <Image Source="/assets/disk.png" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Exit">
+                <MenuItem Header="Exit" Click="Button_Close">
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="EDIT">
@@ -71,17 +71,20 @@
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="200" />
             </Grid.ColumnDefinitions>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
-            <WindowsFormsHost  x:Name="wfContainer" Background="Transparent">
+            <WindowsFormsHost  x:Name="wfContainer" Background="Black">
                 <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" Resize="GLControl_Resize" Paint="GLControl_Paint" />
             </WindowsFormsHost>
-            <Grid Grid.Column="1" Name="gridSideColumn">
+            <Grid Grid.Column="1" Name="gridSideColumn" Margin="5,0,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+                <GridSplitter Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                <Grid Margin="0,0,0,5">
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

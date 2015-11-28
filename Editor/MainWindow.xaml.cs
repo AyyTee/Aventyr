@@ -88,7 +88,7 @@ namespace Editor
             }
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void Button_Close(object sender, RoutedEventArgs e)
         {
             Close();
         }

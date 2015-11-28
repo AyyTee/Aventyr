@@ -50,12 +50,12 @@ namespace Editor
             Entity back = new Entity(Level, new Vector2(0f, 0f));
             back.Models.Add(background);
 
-            FloatPortal portal = new FloatPortal(Level);
+            /*FloatPortal portal = new FloatPortal(Level);
             portal.Transform.Rotation = 4f;
             portal.Transform.Position = new Vector2(1, 1);
             FloatPortal portal2 = new FloatPortal(Level);
             portal2.Transform.Position = new Vector2(-1, 0);
-            Portal.ConnectPortals(portal, portal2);
+            Portal.ConnectPortals(portal, portal2);*/
 
             Level.ActiveCamera = Camera.CameraOrtho(new Vector3(0, 0, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height); ;
 
