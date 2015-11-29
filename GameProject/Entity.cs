@@ -17,14 +17,14 @@ namespace Game
     [Serializable]
     public class Entity : Placeable2D
     {
-        private List<Model> _models = new List<Model>();
-        private List<ClipModel> ClipModels = new List<ClipModel>();
-        private bool _isPortalable = false;
+        List<Model> _models = new List<Model>();
+        List<ClipModel> ClipModels = new List<ClipModel>();
+        bool _isPortalable = false;
 
         /// <summary>
         /// Represents the size of the cutLines array within the fragment shader
         /// </summary>
-        private const int CUT_LINE_ARRAY_MAX_LENGTH = 16;
+        const int CUT_LINE_ARRAY_MAX_LENGTH = 16;
         /// <summary>
         /// Whether or not this entity will interact with portals when intersecting them
         /// </summary>
@@ -33,6 +33,10 @@ namespace Game
             get { return _isPortalable; }
             set { _isPortalable = value; }
         }
+        /// <summary>
+        /// Gets or sets whether this Entity can be rendered.
+        /// </summary>
+        public bool Visible { get; set; }
         public Transform2D Velocity { get; private set; }
         public List<Model> Models { get { return _models; } set { _models = value; } }
         [DataContractAttribute]
@@ -81,6 +85,7 @@ namespace Game
             }
             Velocity = new Transform2D();
             Transform.UniformScale = true;
+            Visible = true;
         }
 
         public Entity(Vector2 position)

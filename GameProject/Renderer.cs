@@ -13,9 +13,9 @@ namespace Game
 {
     public class Renderer
     {
-        private int sceneDepth = 20;
-        private List<Scene> _scenes = new List<Scene>();
-        private Controller _controller;
+        int sceneDepth = 20;
+        List<Scene> _scenes = new List<Scene>();
+        Controller _controller;
 
         public static Dictionary<string, int> Textures = new Dictionary<string, int>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
@@ -191,6 +191,10 @@ namespace Game
 
         public virtual void RenderEntity(Entity entity, Matrix4 viewMatrix, float timeDelta)
         {
+            if (!entity.Visible)
+            {
+                return;
+            }
             foreach (Model v in entity.Models)
             {
                 List<Vector3> verts = new List<Vector3>();

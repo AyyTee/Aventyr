@@ -14,17 +14,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WPFControls
+namespace Editor
 {
     /// <summary>
     /// Interaction logic for ToolButton.xaml
     /// </summary>
     public partial class ToolButton : UserControl
     {
-        public ToolButton(BitmapImage image)
+        public Tool Tool { get; private set; }
+        public ToolButton(Tool tool, BitmapImage image)
         {
             InitializeComponent();
-
+            Tool = tool;
             Button.Content = new System.Windows.Controls.Image
             {
                 Source = image,

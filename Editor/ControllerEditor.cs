@@ -15,13 +15,17 @@ namespace Editor
         Scene Level, Hud;
         bool _isPaused;
         ControllerCamera _camControl;
-        public delegate void EntityAddedHandler(ControllerEditor controller, Entity entity);
-        public event EntityAddedHandler EntityAdded;
+        public delegate void EntityHandler(ControllerEditor controller, Entity entity);
+        public event EntityHandler EntityAdded;
+        public event EntityHandler EntitySelected;
         public delegate void SceneEventHandler(ControllerEditor controller, Scene scene);
         public event SceneEventHandler ScenePaused;
         public event SceneEventHandler ScenePlayed;
         public event SceneEventHandler SceneStopped;
         Entity debugText;
+        Entity _selectedEntity;
+        Entity mouseFollow;
+        List<Entity> Entities = new List<Entity>();
 
         public ControllerEditor(Window window)
             : base(window)
@@ -40,6 +44,9 @@ namespace Editor
             renderer.AddScene(Level);
             Hud = new Scene();
             renderer.AddScene(Hud);
+
+            mouseFollow = new Entity(Level);
+            mouseFollow.Models.Add(Model.CreateCube());
 
             Model background = Model.CreatePlane();
             background.TextureId = Renderer.Textures["grid.png"];
@@ -66,6 +73,8 @@ namespace Editor
 
             debugText = new Entity(Hud);
             debugText.Transform.Position = new Vector2(0, CanvasSize.Height - 40);
+
+            ScenePause();
         }
 
         public override void OnRenderFrame(OpenTK.FrameEventArgs e)
@@ -82,6 +91,10 @@ namespace Editor
             _camControl.Update();
             if (InputExt.MouseInside)
             {
+                if (InputExt.MousePress(MouseButton.Left))
+                {
+                    SetSelectedEntity(GetNearestEntity());
+                }
                 if (InputExt.MousePress(MouseButton.Right))
                 {
                     Camera cam = Level.ActiveCamera;
@@ -89,16 +102,47 @@ namespace Editor
                     entity.Transform.Position = cam.ScreenToWorld(InputExt.MousePos);
                     entity.Models.Add(Model.CreateCube());
                     entity.Velocity.Rotation = .1f;
+                    Entities.Add(entity);
                     if (EntityAdded != null)
                     {
                         EntityAdded(this, entity);
                     }
+                    SetSelectedEntity(entity);
                 }
+                mouseFollow.Transform.Position = Level.ActiveCamera.ScreenToWorld(InputExt.MousePos);
+                mouseFollow.Visible = true;
             }
+            else
+            {
+                mouseFollow.Visible = false;
+            }
+            
             if (!_isPaused)
             {
                 Level.Step();
             }
+        }
+
+        public Entity GetNearestEntity()
+        {
+            Vector2 mouseWorldPos = Level.ActiveCamera.ScreenToWorld(InputExt.MousePos);
+            var sorted = Entities.OrderBy(item => (mouseWorldPos - item.Transform.Position).Length);
+            if (sorted.ToArray().Length > 0)
+            {
+                Entity nearest = sorted.ToArray()[0];
+                if ((mouseWorldPos - nearest.Transform.Position).Length < 1)
+                {
+                    return nearest;
+                }
+            }
+            return null;
+        }
+
+        public void SetSelectedEntity(Entity selected)
+        {
+            _selectedEntity = selected;
+            if (EntitySelected != null)
+                EntitySelected(this, selected);
         }
 
         public void ScenePlay()

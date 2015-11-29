@@ -4,7 +4,7 @@
     xmlns:WF="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     xmlns:GL="clr-namespace:WPFControls;assembly=WPFControls"
     Title="Avenyr Edityr" Height="650" Width="1000">
-    <Grid>
+    <Grid Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="22" />
             <RowDefinition Height="27" />
@@ -55,6 +55,13 @@
             </MenuItem>
         </Menu>
         <ToolBar Grid.Row="1">
+            <ToolBar.Background>
+                <LinearGradientBrush EndPoint="0.5,1" MappingMode="RelativeToBoundingBox" StartPoint="0.5,0">
+                    <GradientStop Color="White" Offset="0"/>
+                    <GradientStop Color="#FFFFFBFF" Offset="0.5"/>
+                    <GradientStop Color="#FFF7F7F7" Offset="1"/>
+                </LinearGradientBrush>
+            </ToolBar.Background>
             <Button Name="toolPause" Height="22" Click="Button_Pause">
                 <Image Source="/assets/icons/control-pause.png" />
             </Button>
@@ -68,14 +75,14 @@
             <Label Width="30" Content="x2" Padding="5,1" FontSize="14" FontWeight="Bold"/>
             <Separator VerticalAlignment="Stretch"/>
         </ToolBar>
-        <Grid Grid.Row="2">
+        <Grid Name="Body" Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" MinWidth="100"/>
-                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="250" />
             </Grid.ColumnDefinitions>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
             <WindowsFormsHost  x:Name="wfContainer" Background="Black" MinWidth="100" MinHeight="100">
-                <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" Resize="GLControl_Resize" Paint="GLControl_Paint" />
+                <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" Resize="GLControl_Resize" />
             </WindowsFormsHost>
             <Grid Grid.Column="1" Name="gridSideColumn" Margin="5,0,0,0">
                 <Grid.RowDefinitions>

@@ -1,6 +1,6 @@
 ﻿namespace WPFControls
 {
-    partial class Form1
+    partial class SomeForm
     {
         /// <summary>
         /// Required designer variable.

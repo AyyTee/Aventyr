@@ -12,10 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 using System.Data;
 using System.Drawing;
-using System.Windows.Forms;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System.Threading;
@@ -36,6 +34,7 @@ namespace Editor
     {
         GLLoop _loop;
         ControllerEditor ControllerEditor;
+        //public Entity SelectedEntity { get; private set; }
         delegate void SetControllerCallback(Entity entity);
         string localDir = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
@@ -43,31 +42,18 @@ namespace Editor
         {
             InitializeComponent();
 
-            var property = new Xceed.Wpf.Toolkit.PropertyGrid.PropertyGrid();
-            gridSideColumn.Children.Add(property);
-            Grid.SetRow(property, 1);
-            
             for (int i = 0; i < 3; i++)
             {
-                ToolButton button = new ToolButton(new BitmapImage(new Uri(localDir + @"\assets\icons\entityIcon.png")));
+                ToolButton button = new ToolButton(new Tool(), new BitmapImage(new Uri(localDir + @"\assets\icons\entityIcon.png")));
                 ToolPanel.Children.Add(button);
-                /*var button = new System.Windows.Controls.Button();
-                button.Width = 80;
-                button.Height = 80;
-                button.Content = new System.Windows.Controls.Image
-                {
-                    Source = new BitmapImage(new Uri(localDir + @"\assets\icons\entityIcon.png")),
-                    //Source = new BitmapImage(new Uri("C:\\Users\\Martin\\Documents\\Visual Studio 2013\\Projects\\Game2\\Editor\\assets\\entityIcon.png")),
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                ToolPanel.Children.Add(button);*/
             }
         }
 
         public void GLControl_Load(object sender, EventArgs e)
         {
-            ControllerEditor = new ControllerEditor(glControl.ClientSize, new InputExt(glControl));
-            //ControllerEditor.EntityAdded += ControllerEditor_EntityAdded;
+            ControllerEditor = new ControllerEditor(glControl.ClientSize, new InputExt(glControl, MainGrid));
+            ControllerEditor.EntityAdded += ControllerEditor_EntityAdded;
+            ControllerEditor.EntitySelected += ControllerEditor_EntitySelected;
             ControllerEditor.ScenePlayed += ControllerEditor_ScenePlayed;
             ControllerEditor.ScenePaused += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopped += ControllerEditor_ScenePaused;
@@ -75,9 +61,11 @@ namespace Editor
             _loop.Run(60);
         }
 
-        public void GLControl_Paint(object sender, PaintEventArgs e)
+        private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, Entity entity)
         {
-
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+            }));
         }
 
         public void GLControl_Resize(object sender, EventArgs e)
@@ -115,7 +103,6 @@ namespace Editor
 
         private void ControllerEditor_ScenePaused(ControllerEditor controller, Scene scene)
         {
-            //propertyGrid.Enabled = true;
             toolStart.IsEnabled = true;
             toolPause.IsEnabled = false;
             toolStop.IsEnabled = false;
@@ -126,7 +113,6 @@ namespace Editor
 
         private void ControllerEditor_ScenePlayed(ControllerEditor controller, Scene scene)
         {
-            //propertyGrid.Enabled = false;
             toolStart.IsEnabled = false;
             toolPause.IsEnabled = true;
             toolStop.IsEnabled = true;
@@ -135,25 +121,10 @@ namespace Editor
             menuRunPause.IsEnabled = true;
         }
 
-        /*private void ControllerEditor_EntityAdded(LevelEditor.ControllerEditor controller, Entity entity)
-        {
-            SetCurrentEntity(entity);
-        }
 
-        private void SetCurrentEntity(Entity entity)
+        private void ControllerEditor_EntityAdded(Editor.ControllerEditor controller, Entity entity)
         {
-            // InvokeRequired required compares the thread ID of the
-            // calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (this.propertyGrid.InvokeRequired)
-            {
-                SetControllerCallback d = new SetControllerCallback(SetCurrentEntity);
-                this.Invoke(d, new object[] { entity });
-            }
-            else
-            {
-                propertyGrid.SelectedObject = new EntityProperty(entity);
-            }
-        }*/
+            
+        }
     }
 }

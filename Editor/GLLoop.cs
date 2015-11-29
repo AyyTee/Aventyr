@@ -19,7 +19,6 @@ namespace Editor
         Thread _thread;
         bool _resize = false;
         bool _focused;
-        bool _mouseInside;
         int millisecondsPerStep;
         Stopwatch stopwatch = new Stopwatch();
         GLControl _control;

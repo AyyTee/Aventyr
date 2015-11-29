@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,11 +12,16 @@ namespace Game
 {
     public class InputExt
     {
-        private KeyboardState KeyCurrent, KeyPrevious;
-        private MouseState MouseCurrent, MousePrevious;
+        KeyboardState KeyCurrent, KeyPrevious;
+        MouseState MouseCurrent, MousePrevious;
+        public Vector2 _mousePos;
         public Vector2 MousePos { get; private set; }
+        public Vector2 MousePosPrev { get; private set; }
         bool _mouseInside;
+
         GameWindow Ctx;
+        GLControl Control;
+        Grid ParentControl;
         public bool MouseInside { get; private set; }
         public InputExt(GameWindow ctx)
         {
@@ -24,16 +31,18 @@ namespace Game
             Ctx.MouseLeave += delegate { _mouseInside = false; };
         }
 
-        public InputExt(GLControl control)
+        public InputExt(GLControl control, Grid parentControl)
         {
+            ParentControl = parentControl;
+            Control = control;
             control.MouseMove += control_MouseMove;
-            control.MouseEnter += delegate { _mouseInside = true; };
             control.MouseLeave += delegate { _mouseInside = false; };
+            control.MouseEnter += delegate { _mouseInside = true; };
         }
 
         private void control_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            MousePos = new Vector2((float)e.X, (float)e.Y);
+            _mousePos = new Vector2((float)e.X, (float)e.Y);
         }
 
         public void Update()
@@ -42,7 +51,10 @@ namespace Game
             KeyCurrent = Keyboard.GetState();
             MousePrevious = MouseCurrent;
             MouseCurrent = Mouse.GetState();
+            //Point mousePoint = System.Windows.Input.Mouse.GetPosition(ParentControl);
             MouseInside = _mouseInside;
+            MousePosPrev = MousePos;
+            MousePos = _mousePos; //new Vector2((float)mousePoint.X, (float)mousePoint.Y);//
             if (Ctx != null)
             {
                 MousePos = new Vector2(Ctx.Mouse.X, Ctx.Mouse.Y);
