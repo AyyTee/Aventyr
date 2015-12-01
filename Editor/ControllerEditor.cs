@@ -32,6 +32,7 @@ namespace Editor
         Tool _toolDefault;
         Tool _nextTool;
         List<Entity> Entities = new List<Entity>();
+        Model _entiyMarker;
 
         public ControllerEditor(Window window)
             : base(window)
@@ -60,7 +61,6 @@ namespace Editor
             _gripper.Visible = false;
             //_gripper.Models[0].SetTexture(Renderer.Textures["default.png"]);
 
-
             Model background = ModelFactory.CreatePlane();
             background.TextureId = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
@@ -69,6 +69,8 @@ namespace Editor
             background.TransformUv.Scale = new Vector2(size, size);
             Entity back = new Entity(Level, new Vector2(0f, 0f));
             back.Models.Add(background);
+
+            _entiyMarker = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
 
             /*FloatPortal portal = new FloatPortal(Level);
             portal.Transform.Rotation = 4f;
@@ -103,12 +105,25 @@ namespace Editor
             return cam.ScreenToWorld(InputExt.MousePos);
         }
 
-        public void AddEntity(Entity entity)
+        public void AddLevelEntity(Entity entity)
         {
             Entities.Add(entity);
+            Entity marker = new Entity(Level);
+            marker.Transform.Parent = entity.Transform;
+            marker.Models.Add(_entiyMarker);
             if (EntityAdded != null)
             {
                 EntityAdded(this, entity);
+            }
+        }
+
+        public void RemoveLevelEntity(Entity entity)
+        {
+            Entities.Remove(entity);
+            Level.RemoveEntity(entity);
+            if (GetSelectedEntity() == entity)
+            {
+                SetSelectedEntity(null);
             }
         }
 
@@ -120,18 +135,6 @@ namespace Editor
             
             _setTool(_nextTool);
             _activeTool.Update();
-            if (InputExt.MouseInside)
-            {
-                if (InputExt.MousePress(MouseButton.Left))
-                {
-                    _activeTool.LeftClick();
-                }
-                if (InputExt.MousePress(MouseButton.Right))
-                {
-                    _activeTool.RightClick();
-                }
-            }
-            
             if (!_isPaused)
             {
                 Level.Step();
@@ -195,6 +198,11 @@ namespace Editor
             }
             if (EntitySelected != null)
                 EntitySelected(this, selected);
+        }
+
+        public Entity GetSelectedEntity()
+        {
+            return _selectedEntity;
         }
 
         public void ScenePlay()

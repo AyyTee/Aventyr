@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Input;
 
 namespace Editor
 {
@@ -11,29 +12,9 @@ namespace Editor
     {
         Entity _mouseFollow;
 
-        public ToolAddEntity(ControllerEditor controller) 
+        public ToolAddEntity(ControllerEditor controller)
             : base(controller)
         {
-        }
-
-        public override void LeftClick()
-        {
-            Entity entity = new Entity(_controller.Level);
-            entity.Transform.Position = _controller.GetMouseWorldPosition();
-            entity.Models.Add(ModelFactory.CreateCube());
-            entity.Velocity.Rotation = .1f;
-            _controller.AddEntity(entity);
-            _controller.SetSelectedEntity(entity);
-
-            if (!(_controller.InputExt.KeyDown(OpenTK.Input.Key.ShiftLeft) || _controller.InputExt.KeyDown(OpenTK.Input.Key.ShiftRight)))
-            {
-                _controller.SetTool(null);
-            }
-        }
-
-        public override void RightClick()
-        {
-            _controller.SetTool(null);
         }
 
         public override void Update()
@@ -41,6 +22,24 @@ namespace Editor
             if (_mouseFollow != null)
             {
                 _mouseFollow.Transform.Position = _controller.GetMouseWorldPosition();
+            }
+            if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape) || _input.MousePress(MouseButton.Right))
+            {
+                _controller.SetTool(null);
+            }
+            else if (_input.MousePress(MouseButton.Left))
+            {
+                Entity entity = new Entity(_controller.Level);
+                entity.Transform.Position = _controller.GetMouseWorldPosition();
+                entity.Models.Add(ModelFactory.CreateCube());
+                entity.Velocity.Rotation = .1f;
+                _controller.AddLevelEntity(entity);
+                _controller.SetSelectedEntity(entity);
+
+                if (!(_input.KeyDown(Key.ShiftLeft) || _input.KeyDown(Key.ShiftRight)))
+                {
+                    _controller.SetTool(null);
+                }
             }
         }
 

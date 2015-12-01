@@ -47,7 +47,6 @@ namespace Editor
         public void GLControl_Load(object sender, EventArgs e)
         {
             ControllerEditor = new ControllerEditor(glControl.ClientSize, new InputExt(glControl, MainGrid));
-            ControllerEditor.EntityAdded += ControllerEditor_EntityAdded;
             ControllerEditor.EntitySelected += ControllerEditor_EntitySelected;
             ControllerEditor.ScenePlayed += ControllerEditor_ScenePlayed;
             ControllerEditor.ScenePaused += ControllerEditor_ScenePaused;
@@ -58,13 +57,6 @@ namespace Editor
             ToolPanel ToolPanel = new ToolPanel(ControllerEditor);
             gridSideColumn.Children.Add(ToolPanel);
         }
-
-        private void ControllerEditor_ToolChanged(Editor.ControllerEditor controller, Tool tool)
-        {
-            
-        }
-
-
 
         private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, Entity entity)
         {
@@ -124,12 +116,6 @@ namespace Editor
             menuRunStop.IsEnabled = true;
             menuRunStart.IsEnabled = false;
             menuRunPause.IsEnabled = true;
-        }
-
-
-        private void ControllerEditor_EntityAdded(Editor.ControllerEditor controller, Entity entity)
-        {
-            
         }
     }
 }

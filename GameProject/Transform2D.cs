@@ -49,7 +49,7 @@ namespace Game
                 Debug.Assert(!Double.IsNaN(value));
                 _rotation = value; 
                 MatrixUpdate = true; 
-            } 
+            }
         }
 
         public float WorldRotation

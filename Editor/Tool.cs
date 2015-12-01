@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,8 @@ namespace Editor
 {
     public abstract class Tool
     {
+        protected InputExt _input { get { return _controller.InputExt; } }
+
         public ControllerEditor _controller { get; private set; }
 
         #region constructors
@@ -22,8 +25,6 @@ namespace Editor
         }
         #endregion
 
-        public abstract void LeftClick();
-        public abstract void RightClick();
         public abstract void Update();
         public abstract void Enable();
         public abstract void Disable();

@@ -147,10 +147,10 @@ namespace Game
             {
                 int index = i * 4;
                 x1 = x0 + charData[i].PixelRegion.Width;
-                vertices[index] = new Model.Vertex(new Vector3(x0, 0, 0), new Vector2(charData[i].UVRegion.Left, charData[i].UVRegion.Top));
-                vertices[index + 1] = new Model.Vertex(new Vector3(x0, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UVRegion.Left, charData[i].UVRegion.Bottom));
-                vertices[index + 2] = new Model.Vertex(new Vector3(x1, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UVRegion.Right, charData[i].UVRegion.Bottom));
-                vertices[index + 3] = new Model.Vertex(new Vector3(x1, 0, 0), new Vector2(charData[i].UVRegion.Right, charData[i].UVRegion.Top));
+                vertices[index + 3] = new Model.Vertex(new Vector3(x0, 0, 0), new Vector2(charData[i].UVRegion.Left, charData[i].UVRegion.Top));
+                vertices[index + 2] = new Model.Vertex(new Vector3(x0, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UVRegion.Left, charData[i].UVRegion.Bottom));
+                vertices[index + 1] = new Model.Vertex(new Vector3(x1, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UVRegion.Right, charData[i].UVRegion.Bottom));
+                vertices[index] = new Model.Vertex(new Vector3(x1, 0, 0), new Vector2(charData[i].UVRegion.Right, charData[i].UVRegion.Top));
                 indices.AddRange(new int[] { index, index + 1, index + 2, index, index + 2, index + 3 });
                 x0 = x1 + charSpacing;
             }

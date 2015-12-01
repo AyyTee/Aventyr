@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Input;
 
 namespace Editor
 {
@@ -11,24 +12,9 @@ namespace Editor
     {
         FloatPortal _mouseFollow;
 
-        public ToolAddPortal(ControllerEditor controller) 
+        public ToolAddPortal(ControllerEditor controller)
             : base(controller)
         {
-        }
-
-        public override void LeftClick()
-        {
-
-        }
-
-        public override void RightClick()
-        {
-            Entity entity = new Entity(_controller.Level);
-            entity.Transform.Position = _controller.GetMouseWorldPosition();
-            entity.Models.Add(ModelFactory.CreateCube());
-            entity.Velocity.Rotation = .1f;
-            _controller.AddEntity(entity);
-            _controller.SetSelectedEntity(entity);
         }
 
         public override void Update()
@@ -36,6 +22,10 @@ namespace Editor
             if (_mouseFollow != null)
             {
                 _mouseFollow.Transform.Position = _controller.GetMouseWorldPosition();
+            }
+            if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape))
+            {
+                _controller.SetTool(null);
             }
         }
 
