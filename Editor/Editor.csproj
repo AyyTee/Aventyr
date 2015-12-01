@@ -76,10 +76,16 @@
     </ApplicationDefinition>
     <Compile Include="ControllerCamera.cs" />
     <Compile Include="ControllerEditor.cs" />
+    <Compile Include="ToolAddEntity.cs" />
     <Compile Include="PropertyGridConverter.cs" />
     <Compile Include="Tool.cs" />
+    <Compile Include="ToolAddPortal.cs" />
     <Compile Include="ToolButton.xaml.cs">
       <DependentUpon>ToolButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ToolDefault.cs" />
+    <Compile Include="ToolPanel.xaml.cs">
+      <DependentUpon>ToolPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Transform2DProperty.cs" />
     <Page Include="MainWindow.xaml">
@@ -99,6 +105,10 @@
     <Page Include="ToolButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ToolPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

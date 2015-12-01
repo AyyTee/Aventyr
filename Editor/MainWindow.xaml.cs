@@ -36,17 +36,12 @@ namespace Editor
         ControllerEditor ControllerEditor;
         //public Entity SelectedEntity { get; private set; }
         delegate void SetControllerCallback(Entity entity);
-        string localDir = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public static string LocalDirectory { get; private set; }
 
         public MainWindow()
         {
+            LocalDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             InitializeComponent();
-
-            for (int i = 0; i < 3; i++)
-            {
-                ToolButton button = new ToolButton(new Tool(), new BitmapImage(new Uri(localDir + @"\assets\icons\entityIcon.png")));
-                ToolPanel.Children.Add(button);
-            }
         }
 
         public void GLControl_Load(object sender, EventArgs e)
@@ -59,7 +54,17 @@ namespace Editor
             ControllerEditor.SceneStopped += ControllerEditor_ScenePaused;
             _loop = new GLLoop(glControl, ControllerEditor);
             _loop.Run(60);
+
+            ToolPanel ToolPanel = new ToolPanel(ControllerEditor);
+            gridSideColumn.Children.Add(ToolPanel);
         }
+
+        private void ControllerEditor_ToolChanged(Editor.ControllerEditor controller, Tool tool)
+        {
+            
+        }
+
+
 
         private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, Entity entity)
         {

@@ -90,8 +90,6 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
                 <GridSplitter Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
-                <WrapPanel Name="ToolPanel" Margin="0,0,0,5">
-                </WrapPanel>
             </Grid>
         </Grid>
     </Grid>

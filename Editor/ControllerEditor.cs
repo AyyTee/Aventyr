@@ -3,6 +3,7 @@ using OpenTK;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Editor
 {
     public class ControllerEditor : Controller
     {
-        Scene Level, Hud;
+        public Scene Level, Hud;
         bool _isPaused;
         ControllerCamera _camControl;
         public delegate void EntityHandler(ControllerEditor controller, Entity entity);
@@ -22,19 +23,28 @@ namespace Editor
         public event SceneEventHandler ScenePaused;
         public event SceneEventHandler ScenePlayed;
         public event SceneEventHandler SceneStopped;
+        public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
+        public event ToolEventHandler ToolChanged;
         Entity debugText;
         Entity _selectedEntity;
-        Entity mouseFollow;
+        Entity _gripper;
+        Tool _activeTool;
+        Tool _toolDefault;
+        Tool _nextTool;
         List<Entity> Entities = new List<Entity>();
 
         public ControllerEditor(Window window)
             : base(window)
         {
+            
         }
 
         public ControllerEditor(Size canvasSize, InputExt input)
             : base(canvasSize, input)
         {
+            _toolDefault = new ToolDefault(this);
+            _activeTool = _toolDefault;
+            _nextTool = _activeTool;
         }
 
         public override void OnLoad(EventArgs e)
@@ -45,10 +55,13 @@ namespace Editor
             Hud = new Scene();
             renderer.AddScene(Hud);
 
-            mouseFollow = new Entity(Level);
-            mouseFollow.Models.Add(Model.CreateCube());
+            _gripper = new Entity(Level);
+            _gripper.Models.Add(ModelFactory.CreateCircle(new Vector3(0, 0, 10f), 0.1f, 16));
+            _gripper.Visible = false;
+            //_gripper.Models[0].SetTexture(Renderer.Textures["default.png"]);
 
-            Model background = Model.CreatePlane();
+
+            Model background = ModelFactory.CreatePlane();
             background.TextureId = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
@@ -84,42 +97,72 @@ namespace Editor
             debugText.Models.Add(FontRenderer.GetModel((Time.ElapsedMilliseconds / RenderCount).ToString()));
         }
 
+        public Vector2 GetMouseWorldPosition()
+        {
+            Camera cam = Level.ActiveCamera;
+            return cam.ScreenToWorld(InputExt.MousePos);
+        }
+
+        public void AddEntity(Entity entity)
+        {
+            Entities.Add(entity);
+            if (EntityAdded != null)
+            {
+                EntityAdded(this, entity);
+            }
+        }
+
         public override void OnUpdateFrame(OpenTK.FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
 
             _camControl.Update();
+            
+            _setTool(_nextTool);
+            _activeTool.Update();
             if (InputExt.MouseInside)
             {
                 if (InputExt.MousePress(MouseButton.Left))
                 {
-                    SetSelectedEntity(GetNearestEntity());
+                    _activeTool.LeftClick();
                 }
                 if (InputExt.MousePress(MouseButton.Right))
                 {
-                    Camera cam = Level.ActiveCamera;
-                    Entity entity = new Entity(Level);
-                    entity.Transform.Position = cam.ScreenToWorld(InputExt.MousePos);
-                    entity.Models.Add(Model.CreateCube());
-                    entity.Velocity.Rotation = .1f;
-                    Entities.Add(entity);
-                    if (EntityAdded != null)
-                    {
-                        EntityAdded(this, entity);
-                    }
-                    SetSelectedEntity(entity);
+                    _activeTool.RightClick();
                 }
-                mouseFollow.Transform.Position = Level.ActiveCamera.ScreenToWorld(InputExt.MousePos);
-                mouseFollow.Visible = true;
-            }
-            else
-            {
-                mouseFollow.Visible = false;
             }
             
             if (!_isPaused)
             {
                 Level.Step();
+            }
+        }
+
+        private void _setTool(Tool tool)
+        {
+            Debug.Assert(tool != null, "Tool cannot be null.");
+            if (_activeTool == _nextTool)
+            {
+                return;
+            }
+            _activeTool.Disable();
+            _activeTool = tool;
+            _activeTool.Enable();
+            if (ToolChanged != null)
+            {
+                ToolChanged(this, tool);
+            }
+        }
+
+        public void SetTool(Tool tool)
+        {
+            if (tool == null)
+            {
+                _nextTool = _toolDefault;
+            }
+            else
+            {
+                _nextTool = tool;
             }
         }
 
@@ -141,6 +184,15 @@ namespace Editor
         public void SetSelectedEntity(Entity selected)
         {
             _selectedEntity = selected;
+            if (selected != null)
+            {
+                _gripper.Visible = true;
+                _gripper.Transform.Position = _selectedEntity.Transform.Position;
+            }
+            else
+            {
+                _gripper.Visible = false;
+            }
             if (EntitySelected != null)
                 EntitySelected(this, selected);
         }

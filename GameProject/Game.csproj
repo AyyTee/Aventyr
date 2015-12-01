@@ -127,6 +127,7 @@
     <Compile Include="MathExt.cs" />
     <Compile Include="Matrix4Ext.cs" />
     <Compile Include="BodyExt.cs" />
+    <Compile Include="ModelFactory.cs" />
     <Compile Include="PhysContactListener.cs" />
     <Compile Include="PhysDataContractResolver.cs" />
     <Compile Include="Placeable2D.cs" />

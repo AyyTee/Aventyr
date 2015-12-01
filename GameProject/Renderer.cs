@@ -28,6 +28,8 @@ namespace Game
         public static void Init()
         {
             GL.ClearColor(Color.HotPink);
+            GL.CullFace(CullFaceMode.Back);
+            GL.Enable(EnableCap.CullFace);
             GL.ClearStencil(0);
             GL.PointSize(5f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
@@ -144,7 +146,7 @@ namespace Game
             Vector2[] a = portalEnter.GetFOV(viewPos, 50);
             if (a.Length >= 3)
             {
-                fov.Models.Add(Model.CreatePolygon(a));
+                fov.Models.Add(ModelFactory.CreatePolygon(a));
                 RenderEntity(fov, viewMatrix, timeDelta);
             }
 
@@ -164,8 +166,8 @@ namespace Game
             Vector2[] verts = portalEnter.GetFOV(viewPos, 50, 2);
             if (verts.Length > 0)
             {
-                fovOutline.Models.Add(Model.CreateLine(new Vector2[] { verts[1], verts[2] }));
-                fovOutline.Models.Add(Model.CreateLine(new Vector2[] { verts[0], verts[3] }));
+                fovOutline.Models.Add(ModelFactory.CreateLine(new Vector2[] { verts[1], verts[2] }));
+                fovOutline.Models.Add(ModelFactory.CreateLine(new Vector2[] { verts[0], verts[3] }));
                 foreach (Model model in fovOutline.Models)
                 {
                     Vector3 v = model.Transform.Position;
@@ -263,6 +265,7 @@ namespace Game
 
                 if (v.Wireframe)
                 {
+                    GL.Disable(EnableCap.CullFace);
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
                 }
 
@@ -280,6 +283,7 @@ namespace Game
 
                 if (v.Wireframe)
                 {
+                    GL.Enable(EnableCap.CullFace);
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
                 }
                 //indiceat += v.IndiceCount;

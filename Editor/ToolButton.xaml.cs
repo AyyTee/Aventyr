@@ -21,16 +21,27 @@ namespace Editor
     /// </summary>
     public partial class ToolButton : UserControl
     {
-        public Tool Tool { get; private set; }
-        public ToolButton(Tool tool, BitmapImage image)
+        /// <summary>
+        /// Default Tool instantiation. Typically a copy of ToolDefault will be used.  Modifying ToolDefault will apply changes to all future copies.
+        /// </summary>
+        Tool _tool;
+        ControllerEditor _controller;
+        public ToolButton(ControllerEditor controller, Tool tool, BitmapImage image)
         {
             InitializeComponent();
-            Tool = tool;
+            _tool = tool;
+            _controller = controller;
             Button.Content = new System.Windows.Controls.Image
             {
                 Source = image,
                 VerticalAlignment = VerticalAlignment.Center
             };
+            Button.Click += Button_Click;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            _controller.SetTool(_tool);
         }
     }
 }

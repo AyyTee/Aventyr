@@ -25,7 +25,7 @@ namespace Game
             Debug.Assert(scene != null);
             Entity box = new Entity(scene, new Transform2D(transform.Position, transform.Rotation));
             box.IsPortalable = true;
-            box.Models.Add(Model.CreatePlane(transform.Scale));
+            box.Models.Add(ModelFactory.CreatePlane(transform.Scale));
 
             Body body = BodyFactory.CreateRectangle(box.Scene.World, transform.Scale.X, transform.Scale.Y, 1);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
@@ -50,7 +50,7 @@ namespace Game
             vertices = MathExt.SetHandedness(vertices, false);
             Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(vertices);
 
-            entity.Models.Add(Model.CreatePolygon(polygon));
+            entity.Models.Add(ModelFactory.CreatePolygon(polygon));
 
             Xna.Vector2 vPos = Vector2Ext.ConvertToXna(entity.Transform.Position);
 

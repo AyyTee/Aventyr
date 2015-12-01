@@ -138,13 +138,13 @@ namespace Game
                     {
                         for (int i = 0; i < 2; i++)
                         {
-                            Model model = Model.CreateCube();
+                            Model model = ModelFactory.CreateCube();
                             model.Transform.Scale = new Vector3(0.2f, 0.2f, 0.2f);
                             DebugEntity.Models.Add(model);
                             model.Transform.Position = new Vector3(userData[i].Fixture.Body.Position.X, userData[i].Fixture.Body.Position.Y, 0);
 
                             BodyUserData bodyUserData = BodyExt.GetUserData(userData[i].Fixture.Body);
-                            model = Model.CreateCube();
+                            model = ModelFactory.CreateCube();
                             model.Transform.Scale = new Vector3(0.15f, 0.15f, 0.15f);
                             model.Transform.Rotation = new Quaternion(0, 1, 1, (float)Math.PI/2);
                             DebugEntity.Models.Add(model);
@@ -153,7 +153,7 @@ namespace Game
                         }
                         for (int i = 0; i < 2; i++)
                         {
-                            Model model = Model.CreateCube();
+                            Model model = ModelFactory.CreateCube();
                             model.Transform.Scale = new Vector3(0.1f, 0.1f, 0.1f);
                             DebugEntity.Models.Add(model);
                             if (contact.Enabled)

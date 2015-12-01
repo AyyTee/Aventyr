@@ -44,7 +44,7 @@ namespace Game
             Camera hudCam = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
 
 
-            Model background = Model.CreatePlane();
+            Model background = ModelFactory.CreatePlane();
             background.TextureId = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
@@ -60,10 +60,10 @@ namespace Game
 
             Entity portalEntity2 = new Entity(scene);
             portalEntity2.Transform.Parent = portal2.Transform;
-            portalEntity2.Models.Add(Model.CreatePlane());
+            portalEntity2.Models.Add(ModelFactory.CreatePlane());
             portalEntity2.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity2.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
-            portalEntity2.Models.Add(Model.CreatePlane());
+            portalEntity2.Models.Add(ModelFactory.CreatePlane());
             portalEntity2.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
 
@@ -75,16 +75,16 @@ namespace Game
             Portal.ConnectPortals(portal2, portal3);
             Entity portalEntity3 = new Entity(scene);
             portalEntity3.Transform.Parent = portal3.Transform;
-            portalEntity3.Models.Add(Model.CreatePlane());
+            portalEntity3.Models.Add(ModelFactory.CreatePlane());
             portalEntity3.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity3.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
-            portalEntity3.Models.Add(Model.CreatePlane());
+            portalEntity3.Models.Add(ModelFactory.CreatePlane());
             portalEntity3.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
             #region player
             Entity player = new Entity(scene);
             player.Name = "player";
-            Model playerModel = Model.CreatePolygon(new Vector2[] {
+            Model playerModel = ModelFactory.CreatePolygon(new Vector2[] {
                 new Vector2(0.5f, 0), 
                 new Vector2(0.35f, 0.15f), 
                 new Vector2(0.15f, 0.15f), 
@@ -100,6 +100,7 @@ namespace Game
             player.Transform.Position = new Vector2(0f, 0f);
             player.Models.Add(playerModel);
             playerModel.SetTexture(Renderer.Textures["default.png"]);
+            player.Models.Add(ModelFactory.CreateCube());
             #endregion
 
             Entity playerParent = new Entity(scene, new Vector2(1, 0));
@@ -119,7 +120,7 @@ namespace Game
             Entity ground = EntityFactory.CreateEntityPolygon(scene, new Transform2D(), v);
             ground.Name = "ground";
             //ground.IsPortalable = true;
-            ground.Models.Add(Model.CreatePolygon(v));
+            ground.Models.Add(ModelFactory.CreatePolygon(v));
             ground.Transform.Rotation = 0.05f;
             ground.Transform.Position = new Vector2(0, -4f);
             scene.World.ProcessChanges();
@@ -169,7 +170,7 @@ namespace Game
             Vector2 rayEnd = mousePos;
             tempLine.IsPortalable = true;
             tempLine.Models.Clear();
-            tempLine.Models.Add(Model.CreateLine(new Vector2[2] {
+            tempLine.Models.Add(ModelFactory.CreateLine(new Vector2[2] {
                 rayBegin - player.Transform.Position, 
                 rayEnd - player.Transform.Position
                 }));
