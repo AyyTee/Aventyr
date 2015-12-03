@@ -2,6 +2,7 @@
 using Poly2Tri;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,11 +13,11 @@ namespace Game
     {
         public static Model CreatePlane(Vector2 Scale)
         {
-            Model.Vertex[] vertices = new Model.Vertex[] {
-                new Model.Vertex(new Vector3(-0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(0, 1)),
-                new Model.Vertex(new Vector3(0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(1, 1)),
-                new Model.Vertex(new Vector3(0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(1, 0)),
-                new Model.Vertex(new Vector3(-0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(0, 0))
+            Vertex[] vertices = new Vertex[] {
+                new Vertex(new Vector3(-0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(0, 1)),
+                new Vertex(new Vector3(0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(1, 1)),
+                new Vertex(new Vector3(0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(1, 0)),
+                new Vertex(new Vector3(-0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(0, 0))
             };
 
             int[] indices = new int[] {
@@ -40,37 +41,37 @@ namespace Game
 
         public static Model CreateCube()
         {
-            Model.Vertex[] vertices = new Model.Vertex[] {
+            Vertex[] vertices = new Vertex[] {
                 //left
-                new Model.Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
-                new Model.Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(0.0f, 1.0f)),
-                new Model.Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(0.0f, 0.0f)),
-                new Model.Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
                 //back
-                new Model.Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
-                new Model.Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
-                new Model.Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
-                new Model.Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
                 //right
-                new Model.Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
-                new Model.Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(1.0f, 0.0f)),
-                new Model.Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(1.0f, 1.0f)),
-                new Model.Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
                 //top
-                new Model.Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
-                new Model.Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
-                new Model.Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
-                new Model.Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
                 //front
-                new Model.Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(0.0f, 0.0f)), 
-                new Model.Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(1.0f, 1.0f)), 
-                new Model.Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(0.0f, 1.0f)),
-                new Model.Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(0.0f, 0.0f)), 
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(1.0f, 1.0f)), 
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(1.0f, 0.0f)),
                 //bottom
-                new Model.Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)), 
-                new Model.Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
-                new Model.Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
-                new Model.Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f))
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)), 
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f))
             };
 
             int[] indices = new int[] {
@@ -94,22 +95,32 @@ namespace Game
 
         public static Model CreatePolygon(Vector2[] vertices)
         {
-            return CreatePolygon(PolygonFactory.CreatePolygon(vertices));
+            return CreatePolygon(PolygonFactory.CreatePolygon(vertices), new Vector3());
         }
 
         public static Model CreatePolygon(Polygon polygon)
         {
-            Model.Vertex[] verts = new Model.Vertex[polygon.Points.Count];
+            return CreatePolygon(polygon, new Vector3());
+        }
+
+        public static Model CreatePolygon(Vector2[] vertices, Vector3 offset)
+        {
+            return CreatePolygon(PolygonFactory.CreatePolygon(vertices), offset);
+        }
+
+        public static Model CreatePolygon(Polygon polygon, Vector3 offset)
+        {
+            Vertex[] verts = new Vertex[polygon.Points.Count];
             List<int> indices = new List<int>();
 
             for (int i = 0; i < polygon.Points.Count; i++)
             {
                 TriangulationPoint p = polygon.Points[i];
-                Vector3 v = new Vector3((float)p.X, (float)p.Y, 0);
+                Vector3 v = new Vector3((float)p.X, (float)p.Y, 0) + offset;
                 float tx = (float)((p.X - polygon.MinX) / (polygon.MaxX - polygon.MinX));
                 float ty = (float)((p.Y - polygon.MinY) / (polygon.MaxY - polygon.MinY));
                 Vector2 tc = new Vector2(tx, ty);
-                verts[i] = new Model.Vertex(v, tc);
+                verts[i] = new Vertex(v, tc);
             }
 
             foreach (Poly2Tri.DelaunayTriangle t in polygon.Triangles)
@@ -129,7 +140,7 @@ namespace Game
             for (int i = 0; i < vertices.Length; i++)
             {
                 Vector3 v = new Vector3(vertices[i].X, vertices[i].Y, 0);
-                model.Vertices.Add(new Model.Vertex(v));
+                model.Vertices.Add(new Vertex(v));
                 if (i > 0)
                 {
                     model.Indices.AddRange(new int[] { i - 1, i, i });
@@ -140,22 +151,52 @@ namespace Game
 
         public static Model CreateCircle(Vector3 origin, float radius, int detail)
         {
+            Debug.Assert(detail >= 3, "Detail must be greater or equal to 3.");
             Model model = new Model();
             for (int i = 0; i < detail; i++)
             {
                 double rad = Math.PI * 2 * i / detail;
                 Vector3 pos = new Vector3((float)Math.Cos(rad), (float)Math.Sin(rad), 0) * radius + origin;
                 Vector2 textureCoord = new Vector2((float)(1 + Math.Cos(rad) / 2), (float)(1 + Math.Sin(rad) / 2));
-                model.Vertices.Add(new Model.Vertex(pos, textureCoord));
+                model.Vertices.Add(new Vertex(pos, textureCoord));
             }
 
             for (int i = 0; i < detail - 1; i++)
             {
+                if (i == detail - 1 - i || i + 1 == detail - 1 - i)
+                {
+                    continue;
+                }
                 model.Indices.Add(i);
                 model.Indices.Add(i + 1);
                 model.Indices.Add(detail - 1 - i);
             }
             return model;
+        }
+
+        /// <summary>
+        /// Creates a 2 dimensional arrow.
+        /// </summary>
+        /// <param name="origin">Starting point of the arrow.</param>
+        /// <param name="pointAt">Position of the tip of the arrow relative to the origin.</param>
+        /// <param name="lineThickness">Thickness of the line.</param>
+        /// <param name="arrowLength">Length of the arrow head.</param>
+        /// <param name="arrowThickness">Thickness of the arrow head.</param>
+        /// <returns></returns>
+        public static Model CreateArrow(Vector3 origin, Vector2 pointAt, float lineThickness, float arrowLength, float arrowThickness)
+        {
+            float length = pointAt.Length;
+            Vector2[] polygon = new Vector2[] {
+                new Vector2(0, length),
+                new Vector2(-arrowThickness, length - arrowLength),
+                new Vector2(-lineThickness/2, length - arrowLength),
+                new Vector2(-lineThickness/2, 0),
+                new Vector2(lineThickness/2, 0),
+                new Vector2(lineThickness/2, length - arrowLength),
+                new Vector2(arrowThickness, length - arrowLength),
+            };
+            polygon = Vector2Ext.Transform(polygon, Matrix4.CreateRotationZ((float)-(MathExt.AngleVector(pointAt) + Math.PI / 2)));
+            return CreatePolygon(polygon, origin);
         }
     }
 }

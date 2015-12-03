@@ -100,7 +100,6 @@ namespace Game
             player.Transform.Position = new Vector2(0f, 0f);
             player.Models.Add(playerModel);
             playerModel.SetTexture(Renderer.Textures["default.png"]);
-            player.Models.Add(ModelFactory.CreateCube());
             #endregion
 
             Entity playerParent = new Entity(scene, new Vector2(1, 0));

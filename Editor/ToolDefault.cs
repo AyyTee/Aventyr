@@ -17,10 +17,10 @@ namespace Editor
 
         public override void Update()
         {
-            Entity selected = _controller.GetSelectedEntity();
+            EditorObject selected = _controller.GetSelectedEntity();
             if (_input.KeyPress(Key.Delete) && selected != null)
             {
-                _controller.RemoveLevelEntity(selected);
+                _controller.Remove(selected);
             }
             if (_input.MousePress(MouseButton.Left))
             {

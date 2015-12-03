@@ -140,17 +140,17 @@ namespace Game
             Model textModel = new Model("text");
             textModel.TextureId = textureID;
             CharData[] charData = GetChar(text);
-            Model.Vertex[] vertices = new Model.Vertex[charData.Length * 4];
+            Vertex[] vertices = new Vertex[charData.Length * 4];
             List<int> indices = new List<int>();
             float x0 = 0, x1;
             for (int i = 0; i < charData.Length; i++)
             {
                 int index = i * 4;
                 x1 = x0 + charData[i].PixelRegion.Width;
-                vertices[index + 3] = new Model.Vertex(new Vector3(x0, 0, 0), new Vector2(charData[i].UVRegion.Left, charData[i].UVRegion.Top));
-                vertices[index + 2] = new Model.Vertex(new Vector3(x0, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UVRegion.Left, charData[i].UVRegion.Bottom));
-                vertices[index + 1] = new Model.Vertex(new Vector3(x1, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UVRegion.Right, charData[i].UVRegion.Bottom));
-                vertices[index] = new Model.Vertex(new Vector3(x1, 0, 0), new Vector2(charData[i].UVRegion.Right, charData[i].UVRegion.Top));
+                vertices[index + 3] = new Vertex(new Vector3(x0, 0, 0), new Vector2(charData[i].UVRegion.Left, charData[i].UVRegion.Top));
+                vertices[index + 2] = new Vertex(new Vector3(x0, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UVRegion.Left, charData[i].UVRegion.Bottom));
+                vertices[index + 1] = new Vertex(new Vector3(x1, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UVRegion.Right, charData[i].UVRegion.Bottom));
+                vertices[index] = new Vertex(new Vector3(x1, 0, 0), new Vector2(charData[i].UVRegion.Right, charData[i].UVRegion.Top));
                 indices.AddRange(new int[] { index, index + 1, index + 2, index, index + 2, index + 3 });
                 x0 = x1 + charSpacing;
             }

@@ -32,60 +32,26 @@ namespace Game
         public Transform2D TransformUv = new Transform2D();
         public bool Wireframe = false;
 
-        public class Vertex
-        {
-            public Vector3 Position = new Vector3();
-            public Vector3 Color = new Vector3();
-            public Vector2 TextureCoord = new Vector2();
-
-            public Vertex()
-            {
-            }
-
-            public Vertex(Vector3 position)
-            {
-                Position = position;
-            }
-
-            public Vertex(Vector3 position, Vector2 textureCoord)
-            {
-                Position = position;
-                TextureCoord = textureCoord;
-            }
-
-            public Vertex(Vector3 position, Vector2 textureCoord, Vector3 color)
-            {
-                Position = position;
-                TextureCoord = textureCoord;
-                Color = color;
-            }
-        }
-
         public class Triangle
         {
             public const int EDGE_COUNT = 3;
-            Vertex[] Vertices = new Vertex[3];
-            int[] Indices = new int[3];
+            public Vertex[] Vertices = new Vertex[3];
 
             private Triangle()
             {
             }
 
-            public Triangle(Vertex[] vertices, int[] indices)
+            public Triangle(Vertex[] vertices)
             {
                 Debug.Assert(vertices.Length == 3);
                 Vertices = vertices;
-                Indices = indices;
             }
             
-            public Triangle(Vertex v0, Vertex v1, Vertex v2, int i0, int i1, int i2)
+            public Triangle(Vertex v0, Vertex v1, Vertex v2)
             {
                 Vertices[0] = v0;
                 Vertices[1] = v1;
                 Vertices[2] = v2;
-                Indices[0] = i0;
-                Indices[1] = i1;
-                Indices[2] = i2;
             }
 
             public Vector3[] GetVerts()
@@ -104,7 +70,7 @@ namespace Game
 
         public Model()
         {
-            ShaderName = "textured";
+            SetShader("textured");
             GL.GenBuffers(1, out IboElements);
         }
 
@@ -134,14 +100,30 @@ namespace Game
 
         public Model(string shaderName)
         {
-            ShaderName = shaderName;
+            SetShader(shaderName);
             GL.GenBuffers(1, out IboElements);
+        }
+
+        public void SetShader(string shaderName)
+        {
+            ShaderName = shaderName;
         }
 
         public void SetTexture(int textureID)
         {
             TextureId = textureID;
             IsTextured = true;
+        }
+
+        /// <summary>
+        /// Replaces all vertex colors with a single uniform color.
+        /// </summary>
+        public void SetColor(Vector3 color)
+        {
+            foreach (Vertex v in Vertices)
+            {
+                v.Color = color;
+            }
         }
 
         public Vector3[] GetVerts()
@@ -168,7 +150,7 @@ namespace Game
                 int i0 = Indices[i];
                 int i1 = Indices[i + 1];
                 int i2 = Indices[i + 2];
-                tris[i/Triangle.EDGE_COUNT] = new Triangle(Vertices[i0], Vertices[i1], Vertices[i2], i0, i1, i2);
+                tris[i/Triangle.EDGE_COUNT] = new Triangle(Vertices[i0], Vertices[i1], Vertices[i2]);
             }
             return tris;
         }

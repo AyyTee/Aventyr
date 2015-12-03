@@ -82,6 +82,11 @@ namespace Game
             return Value;
         }
 
+        static public double Round(double value, double size)
+        {
+            return Math.Round(value/size) * size;
+        }
+
         static public double AngleWrap(double value)
         {
             double tau = Math.PI * 2;

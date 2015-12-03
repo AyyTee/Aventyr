@@ -16,6 +16,7 @@ namespace Editor
         public InputExt InputExt { get; private set; }
         public float ZoomMin = 0.5f;
         public float ZoomMax = 1000f;
+        public float KeyMoveSpeed = 0.1f;
 
         private float _zoomScrollFactor;
         /// <summary>
@@ -95,6 +96,22 @@ namespace Editor
             if (InputExt.KeyPress(Key.Space))
             {
                 Camera.Transform.Rotation = new Quaternion(0, 0, 1, 0);
+            }
+            if (InputExt.KeyDown(Key.Left))
+            {
+                Camera.Transform.Position += new Vector3(-KeyMoveSpeed, 0, 0);
+            }
+            if (InputExt.KeyDown(Key.Right))
+            {
+                Camera.Transform.Position += new Vector3(KeyMoveSpeed, 0, 0);
+            }
+            if (InputExt.KeyDown(Key.Up))
+            {
+                Camera.Transform.Position += new Vector3(0, KeyMoveSpeed, 0);
+            }
+            if (InputExt.KeyDown(Key.Down))
+            {
+                Camera.Transform.Position += new Vector3(0, -KeyMoveSpeed, 0);
             }
         }
     }

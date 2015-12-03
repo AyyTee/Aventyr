@@ -26,6 +26,7 @@ namespace Game
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            Context.SwapInterval = 1;
             controller.OnLoad(e);
         }
 

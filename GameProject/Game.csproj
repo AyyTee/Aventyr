@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BodyUserData.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="ControllerGame.cs" />
     <Compile Include="EdgeData.cs" />
     <Compile Include="Entity.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="Transform2D.cs" />
     <Compile Include="Vector2Ext.cs" />
     <Compile Include="Vector3Ext.cs" />
+    <Compile Include="Vertex.cs" />
     <Compile Include="Window.cs" />
     <Compile Include="WorldExt.cs" />
   </ItemGroup>

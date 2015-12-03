@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Editor
 {
@@ -16,9 +17,9 @@ namespace Editor
         public Scene Level, Hud;
         bool _isPaused;
         ControllerCamera _camControl;
-        public delegate void EntityHandler(ControllerEditor controller, Entity entity);
-        public event EntityHandler EntityAdded;
-        public event EntityHandler EntitySelected;
+        public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
+        public event EditorObjectHandler EntityAdded;
+        public event EditorObjectHandler EntitySelected;
         public delegate void SceneEventHandler(ControllerEditor controller, Scene scene);
         public event SceneEventHandler ScenePaused;
         public event SceneEventHandler ScenePlayed;
@@ -26,19 +27,19 @@ namespace Editor
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
         public event ToolEventHandler ToolChanged;
         Entity debugText;
-        Entity _selectedEntity;
+        EditorObject _selectedEntity;
         Entity _gripper;
         Tool _activeTool;
         Tool _toolDefault;
         Tool _nextTool;
-        List<Entity> Entities = new List<Entity>();
-        Model _entiyMarker;
+        List<EditorEntity> Entities = new List<EditorEntity>();
+        List<EditorPortal> Portals = new List<EditorPortal>();
 
-        public ControllerEditor(Window window)
+        /*public ControllerEditor(Window window)
             : base(window)
         {
             
-        }
+        }*/
 
         public ControllerEditor(Size canvasSize, InputExt input)
             : base(canvasSize, input)
@@ -69,8 +70,6 @@ namespace Editor
             background.TransformUv.Scale = new Vector2(size, size);
             Entity back = new Entity(Level, new Vector2(0f, 0f));
             back.Models.Add(background);
-
-            _entiyMarker = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
 
             /*FloatPortal portal = new FloatPortal(Level);
             portal.Transform.Rotation = 4f;
@@ -105,34 +104,55 @@ namespace Editor
             return cam.ScreenToWorld(InputExt.MousePos);
         }
 
-        public void AddLevelEntity(Entity entity)
+        /*public void SetMouseWorldPosition(Vector2 mousePosition)
         {
+            Level.ActiveCamera.WorldToScreen(mousePosition);
+            //System.Windows.Forms.Cursor.Position = mousePosition;
+        }*/
+
+        public EditorEntity CreateLevelEntity()
+        {
+            EditorEntity entity = new EditorEntity(Level);
             Entities.Add(entity);
-            Entity marker = new Entity(Level);
-            marker.Transform.Parent = entity.Transform;
-            marker.Models.Add(_entiyMarker);
+            
             if (EntityAdded != null)
             {
                 EntityAdded(this, entity);
             }
+            return entity;
         }
 
-        public void RemoveLevelEntity(Entity entity)
+        public void Remove(EditorObject editorObject)
         {
-            Entities.Remove(entity);
-            Level.RemoveEntity(entity);
-            if (GetSelectedEntity() == entity)
+            if (editorObject.GetType() == typeof(EditorEntity))
+            {
+                EditorEntity entity = (EditorEntity)editorObject;
+                Entities.Remove(entity);
+                entity.Remove();
+            }
+            else if (editorObject.GetType() == typeof(EditorPortal))
+            {
+                EditorPortal portal = (EditorPortal)editorObject;
+                Portals.Remove(portal);
+                portal.Remove();
+            }
+            if (GetSelectedEntity() == editorObject)
             {
                 SetSelectedEntity(null);
             }
         }
 
+        public EditorPortal CreateLevelPortal()
+        {
+            EditorPortal portal = new EditorPortal(Level);
+            Portals.Add(portal);
+            return portal;
+        }
+
         public override void OnUpdateFrame(OpenTK.FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-
             _camControl.Update();
-            
             _setTool(_nextTool);
             _activeTool.Update();
             if (!_isPaused)
@@ -169,14 +189,17 @@ namespace Editor
             }
         }
 
-        public Entity GetNearestEntity()
+        public EditorObject GetNearestEntity()
         {
             Vector2 mouseWorldPos = Level.ActiveCamera.ScreenToWorld(InputExt.MousePos);
-            var sorted = Entities.OrderBy(item => (mouseWorldPos - item.Transform.Position).Length);
+            List<EditorObject> tempList = new List<EditorObject>();
+            tempList.AddRange(Entities);
+            tempList.AddRange(Portals);
+            var sorted = tempList.OrderBy(item => (mouseWorldPos - item.GetTransform().Position).Length);
             if (sorted.ToArray().Length > 0)
             {
-                Entity nearest = sorted.ToArray()[0];
-                if ((mouseWorldPos - nearest.Transform.Position).Length < 1)
+                EditorObject nearest = sorted.ToArray()[0];
+                if ((mouseWorldPos - nearest.GetTransform().Position).Length < 1)
                 {
                     return nearest;
                 }
@@ -184,13 +207,13 @@ namespace Editor
             return null;
         }
 
-        public void SetSelectedEntity(Entity selected)
+        public void SetSelectedEntity(EditorObject selected)
         {
             _selectedEntity = selected;
             if (selected != null)
             {
                 _gripper.Visible = true;
-                _gripper.Transform.Position = _selectedEntity.Transform.Position;
+                _gripper.Transform.Position = _selectedEntity.GetTransform().Position;
             }
             else
             {
@@ -200,7 +223,7 @@ namespace Editor
                 EntitySelected(this, selected);
         }
 
-        public Entity GetSelectedEntity()
+        public EditorObject GetSelectedEntity()
         {
             return _selectedEntity;
         }

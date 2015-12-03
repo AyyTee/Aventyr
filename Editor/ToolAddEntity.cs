@@ -29,11 +29,11 @@ namespace Editor
             }
             else if (_input.MousePress(MouseButton.Left))
             {
-                Entity entity = new Entity(_controller.Level);
-                entity.Transform.Position = _controller.GetMouseWorldPosition();
-                entity.Models.Add(ModelFactory.CreateCube());
-                entity.Velocity.Rotation = .1f;
-                _controller.AddLevelEntity(entity);
+                EditorEntity entity = _controller.CreateLevelEntity();
+                entity.Entity.Transform.Position = _controller.GetMouseWorldPosition();
+                entity.Entity.Models.Add(ModelFactory.CreateCube());
+                entity.Entity.Velocity.Rotation = .1f;
+                
                 _controller.SetSelectedEntity(entity);
 
                 if (!(_input.KeyDown(Key.ShiftLeft) || _input.KeyDown(Key.ShiftRight)))

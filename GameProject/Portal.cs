@@ -14,6 +14,10 @@ namespace Game
         public Scene Scene { get; private set; }
         public Portal Linked { get; private set; }
         /// <summary>
+        /// True if entities can travel through this portal.  Does not affect portal clipping.
+        /// </summary>
+        //public bool IsPortalable { get; set; }
+        /// <summary>
         /// The distance at which an entity enters and exits a portal.  
         /// It is used to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
         /// </summary>

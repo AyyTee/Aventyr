@@ -55,10 +55,10 @@ namespace Editor
             _loop.Run(60);
 
             ToolPanel ToolPanel = new ToolPanel(ControllerEditor);
-            gridSideColumn.Children.Add(ToolPanel);
+            ToolGrid.Children.Add(ToolPanel);
         }
 
-        private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, Entity entity)
+        private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, EditorObject entity)
         {
             this.Dispatcher.Invoke((Action)(() =>
             {

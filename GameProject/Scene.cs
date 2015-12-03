@@ -109,6 +109,14 @@ namespace Game
         }
 
         /// <summary>
+        /// Remove portal from the scene.
+        /// </summary>
+        public bool RemovePortal(Portal portal)
+        {
+            return PortalList.Remove(portal);
+        }
+
+        /// <summary>
         /// Assigns a physics world to this scene. Can only be done if there isn't already a physics world assigned.
         /// </summary>
         public void SetPhysicsWorld(World world)

@@ -87,12 +87,13 @@
             <WindowsFormsHost  x:Name="wfContainer" Background="Black" MinWidth="100" MinHeight="100">
                 <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" Resize="GLControl_Resize" />
             </WindowsFormsHost>
-            <Grid Grid.Column="1" Name="gridSideColumn" Margin="5,0,0,0">
+            <Grid Grid.Column="1" Margin="5,0,0,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <GridSplitter Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+                <Grid Name="ToolGrid" Margin="0,0,0,5"/>
+                <GridSplitter  Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
             </Grid>
         </Grid>
     </Grid>

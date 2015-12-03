@@ -17,7 +17,6 @@ main()
 		//debug color if the vertices lie exactly on top of eachother
 		if (v0 == v1 && i == 0)
 		{
-			//outputColor = vec4(cutLines[i]/600,cutLines[i+1]/600,cutLines[i+2]/600,1);
 			outputColor = vec4(1, 1, 0, 1);
 			return;
 		}
