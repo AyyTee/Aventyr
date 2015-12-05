@@ -28,59 +28,62 @@ namespace Game
         }
 
         public bool IsTextured = false;
-        public int TextureId;
+        public Texture Texture;
         public Transform2D TransformUv = new Transform2D();
         public bool Wireframe = false;
 
         public class Triangle
         {
-            public const int EDGE_COUNT = 3;
-            public Vertex[] Vertices = new Vertex[3];
+            public const int NUMBER_OF_VERTICES = 3;
+            public int[] Indices = new int[NUMBER_OF_VERTICES];
 
             private Triangle()
             {
             }
 
-            public Triangle(Vertex[] vertices)
+            public Triangle(int i0, int i1, int i2)
             {
-                Debug.Assert(vertices.Length == 3);
-                Vertices = vertices;
-            }
-            
-            public Triangle(Vertex v0, Vertex v1, Vertex v2)
-            {
-                Vertices[0] = v0;
-                Vertices[1] = v1;
-                Vertices[2] = v2;
+                Indices[0] = i0;
+                Indices[1] = i1;
+                Indices[2] = i2;
             }
 
-            public Vector3[] GetVerts()
+            public Triangle(int[] indices)
             {
-                Vector3[] vList = new Vector3[EDGE_COUNT];
-                for (int i = 0; i < Vertices.Length; i++)
-                {
-                    vList[i] = Vertices[i].Position;
-                }
-                return vList;
+                Debug.Assert(indices.Length == NUMBER_OF_VERTICES, "There can only be 3 indices assigned to a Triangle.");
+                Indices = indices;
             }
         }
 
-        public List<int> Indices = new List<int>();
+        //public List<int> Indices = new List<int>();
         public List<Vertex> Vertices = new List<Vertex>();
-
+        List<Triangle> Triangles = new List<Triangle>();
+        #region constructors
         public Model()
         {
             SetShader("textured");
             GL.GenBuffers(1, out IboElements);
         }
 
-        public Model(Vertex[] vertices, int[] indices)
+        public Model(Vertex[] vertices)
+            : this(vertices, new Triangle[0])
+        {
+        }
+
+        public Model(Vertex[] vertices, Triangle[] triangles)
             : this()
         {
             Vertices.AddRange(vertices);
-            Indices.AddRange(indices);
+            Triangles.AddRange(triangles);
         }
 
+        public Model(string shaderName)
+        {
+            SetShader(shaderName);
+            GL.GenBuffers(1, out IboElements);
+        }
+
+        #endregion
         ~Model()
         {
             Dispose();
@@ -98,20 +101,14 @@ namespace Game
             }
         }
 
-        public Model(string shaderName)
-        {
-            SetShader(shaderName);
-            GL.GenBuffers(1, out IboElements);
-        }
-
         public void SetShader(string shaderName)
         {
             ShaderName = shaderName;
         }
 
-        public void SetTexture(int textureID)
+        public void SetTexture(Texture texture)
         {
-            TextureId = textureID;
+            Texture = texture;
             IsTextured = true;
         }
 
@@ -141,18 +138,38 @@ namespace Game
             return Vector3Ext.Transform(GetVerts(), Transform.GetMatrix());
         }
 
-        public Triangle[] GetTris()
+        public void AddTriangle(Triangle triangle)
         {
-            Debug.Assert(Indices.Count % Triangle.EDGE_COUNT == 0, "Number of indices must be a multiple of 3.");
-            Triangle[] tris = new Triangle[Indices.Count/Triangle.EDGE_COUNT];
-            for (int i = 0; i < Indices.Count; i += Triangle.EDGE_COUNT)
+            Triangles.Add(triangle);
+        }
+
+        public void AddTriangles(Triangle[] triangles)
+        {
+            Triangles.AddRange(triangles);
+        }
+
+        public void AddTriangle(int index0, int index1, int index2)
+        {
+            Triangles.Add(new Triangle(index0, index1, index2));
+        }
+
+        public void AddTriangles(int[] indices)
+        {
+            for (int i = 0; i < indices.Length; i += 3)
             {
-                int i0 = Indices[i];
-                int i1 = Indices[i + 1];
-                int i2 = Indices[i + 2];
-                tris[i/Triangle.EDGE_COUNT] = new Triangle(Vertices[i0], Vertices[i1], Vertices[i2]);
+                AddTriangle(indices[i], indices[i + 1], indices[i + 2]);
             }
-            return tris;
+        }
+
+        /// <summary>
+        /// Adds a Vertex and returns its Id.
+        /// </summary>
+        /// <param name="vertex"></param>
+        /// <returns></returns>
+        public int AddVertex(Vertex vertex)
+        {
+            Vertices.Add(vertex);
+            return Vertices.Count - 1;
         }
         
         /// <summary>
@@ -170,9 +187,17 @@ namespace Game
             return MathExt.ComputeConvexHull(vProject).ToArray();
         }
 
+        /// <summary>
+        /// Gets a list of Vertex indices.  Each set of 3 indices defines a triangle.
+        /// </summary>
         public int[] GetIndices()
         {
-            return Indices.ToArray();
+            List<int> indices = new List<int>();
+            foreach (Triangle t in Triangles)
+            {
+                indices.AddRange(t.Indices);
+            }
+            return indices.ToArray();
         }
 
         public Vector3[] GetColorData()

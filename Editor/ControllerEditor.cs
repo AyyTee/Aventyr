@@ -34,6 +34,7 @@ namespace Editor
         Tool _nextTool;
         List<EditorEntity> Entities = new List<EditorEntity>();
         List<EditorPortal> Portals = new List<EditorPortal>();
+        public Queue<Action> Actions = new Queue<Action>();
 
         /*public ControllerEditor(Window window)
             : base(window)
@@ -63,7 +64,7 @@ namespace Editor
             //_gripper.Models[0].SetTexture(Renderer.Textures["default.png"]);
 
             Model background = ModelFactory.CreatePlane();
-            background.TextureId = Renderer.Textures["grid.png"];
+            background.Texture = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
             background.Transform.Scale = new Vector3(size, size, size);
@@ -152,6 +153,11 @@ namespace Editor
         public override void OnUpdateFrame(OpenTK.FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
+            foreach (Action item in Actions)
+            {
+                item();
+            }
+            Actions.Clear();
             _camControl.Update();
             _setTool(_nextTool);
             _activeTool.Update();

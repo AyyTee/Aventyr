@@ -24,6 +24,7 @@ using OpenTK.Input;
 using System.IO;
 using System.Reflection;
 using WPFControls;
+using System.Windows.Forms;
 
 namespace Editor
 {
@@ -37,11 +38,14 @@ namespace Editor
         //public Entity SelectedEntity { get; private set; }
         delegate void SetControllerCallback(Entity entity);
         public static string LocalDirectory { get; private set; }
+        OpenFileDialog _openFileDialog = new OpenFileDialog();
 
         public MainWindow()
         {
             LocalDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             InitializeComponent();
+
+            _openFileDialog.FileOk += _openFileDialog_FileOk;
         }
 
         public void GLControl_Load(object sender, EventArgs e)
@@ -116,6 +120,29 @@ namespace Editor
             menuRunStop.IsEnabled = true;
             menuRunStart.IsEnabled = false;
             menuRunPause.IsEnabled = true;
+        }
+
+        private void LoadModel(object sender, RoutedEventArgs e)
+        {
+
+            _openFileDialog.Filter = "Wavefront (*.obj)|*.obj";
+            _openFileDialog.ShowDialog();
+            
+            /*if (openFileDialog.ShowDialog() == true)
+                txtEditor.Text = File.ReadAllText(openFileDialog.FileName);*/
+        }
+
+        private void _openFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ControllerEditor.Actions.Enqueue(() => {
+                string fileName = ((OpenFileDialog)sender).FileName;
+                ModelLoader loader = new ModelLoader();
+                Model model = loader.LoadObj(fileName);
+                EditorEntity entity = ControllerEditor.CreateLevelEntity();
+                entity.Entity.Models.Add(model);
+                //model.Wireframe = true;
+            });
+            
         }
     }
 }

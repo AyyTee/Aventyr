@@ -309,7 +309,7 @@ namespace Game
                 GL.Uniform1(cm.Model.Shader.GetUniform("cutLinesLength"), cutLines.Count);
                 GL.Uniform1(GL.GetUniformLocation(cm.Model.Shader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
                 _RenderSetTransformMatrix(cm.Model, cm.Transform * viewMatrix);
-                GL.DrawElements(BeginMode.Triangles, cm.Model.Indices.Count, DrawElementsType.UnsignedInt, 0);
+                GL.DrawElements(BeginMode.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
             }
         }
     }

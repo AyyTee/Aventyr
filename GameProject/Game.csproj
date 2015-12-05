@@ -110,7 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BodyUserData.cs" />
-    <Compile Include="Class1.cs" />
+    <Compile Include="ModelLoader.cs" />
     <Compile Include="ControllerGame.cs" />
     <Compile Include="EdgeData.cs" />
     <Compile Include="Entity.cs" />
@@ -137,6 +137,7 @@
     <Compile Include="PortalPlacer.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="Texture.cs" />
     <Compile Include="Transform.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="FixturePortal.cs" />
@@ -191,7 +192,6 @@
     <None Include="assets\shaders\vs_text.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />

@@ -34,7 +34,7 @@
                 <MenuItem Header="Exit"/>
             </MenuItem>
             <MenuItem Header="ADD">
-                <MenuItem Header="Exit"/>
+                <MenuItem Header="From file..." Click="LoadModel"/>
             </MenuItem>
             <MenuItem Header="RUN">
                 <MenuItem Name="menuRunStart" Header="Start" Click="Button_Play">

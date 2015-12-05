@@ -45,7 +45,7 @@ namespace Game
 
 
             Model background = ModelFactory.CreatePlane();
-            background.TextureId = Renderer.Textures["grid.png"];
+            background.Texture = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
             background.Transform.Scale = new Vector3(size, size, size);

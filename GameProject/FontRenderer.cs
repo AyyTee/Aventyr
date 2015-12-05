@@ -46,7 +46,7 @@ namespace Game
         }
 
         Size TextureSize = new Size(1024, 1024);
-        public int textureID;
+        public Texture texture;
         CharData[] chars = new CharData[255];
         public FontRenderer(Font font)
         {
@@ -54,8 +54,8 @@ namespace Game
             charHeight = -Font.Height;
             GlyphBitmap = new Bitmap(TextureSize.Width, TextureSize.Height);
             
-            textureID = GL.GenTexture();
-            GL.BindTexture(TextureTarget.Texture2D, textureID);
+            texture = new Texture(GL.GenTexture());
+            GL.BindTexture(TextureTarget.Texture2D, texture.Id);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
             
@@ -138,7 +138,7 @@ namespace Game
         public Model GetModel(String text, Vector2 alignment, float charSpacing)
         {
             Model textModel = new Model("text");
-            textModel.TextureId = textureID;
+            textModel.Texture = texture;
             CharData[] charData = GetChar(text);
             Vertex[] vertices = new Vertex[charData.Length * 4];
             List<int> indices = new List<int>();
@@ -160,7 +160,8 @@ namespace Game
                 vertices[i].Position += offset;
             }
             textModel.Vertices.AddRange(vertices);
-            textModel.Indices.AddRange(indices);
+            //textModel.Indices.AddRange(indices);
+            textModel.AddTriangles(indices.ToArray());
             return textModel;
         }
     }

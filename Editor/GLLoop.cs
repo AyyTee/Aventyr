@@ -16,7 +16,7 @@ namespace Editor
     /// </summary>
     public class GLLoop
     {
-        Thread _thread;
+        public Thread Thread { get; private set; }
         bool _resize = false;
         bool _focused;
         int millisecondsPerStep;
@@ -50,8 +50,8 @@ namespace Editor
             Debug.Assert(IsRunning == false);
             millisecondsPerStep = 1000 / updatesPerSecond;
             _control.Context.MakeCurrent(null);
-            _thread = new Thread(new ThreadStart(Loop));
-            _thread.Start();
+            Thread = new Thread(new ThreadStart(Loop));
+            Thread.Start();
         }
 
         /// <summary>

@@ -20,11 +20,13 @@ namespace Game
                 new Vertex(new Vector3(-0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(0, 0))
             };
 
-            int[] indices = new int[] {
+            /*int[] indices = new int[] {
                 0, 2, 1,
                 0, 3, 2,
-            };
-            Model model = new Model(vertices, indices);
+            };*/
+            Model model = new Model(vertices);
+            model.AddTriangle(0, 2, 1);
+            model.AddTriangle(0, 3, 2);
             model.SetTexture(Renderer.Textures["default.png"]);
             return model;
         }
@@ -88,7 +90,9 @@ namespace Game
                 //bottom 
                 20,21,22,20,22,23
             };
-            Model model = new Model(vertices, indices);
+            
+            Model model = new Model(vertices);
+            model.AddTriangles(indices);
             model.SetTexture(Renderer.Textures["default.png"]);
             return model;
         }
@@ -110,6 +114,7 @@ namespace Game
 
         public static Model CreatePolygon(Polygon polygon, Vector3 offset)
         {
+            Model model = new Model();
             Vertex[] verts = new Vertex[polygon.Points.Count];
             List<int> indices = new List<int>();
 
@@ -120,17 +125,20 @@ namespace Game
                 float tx = (float)((p.X - polygon.MinX) / (polygon.MaxX - polygon.MinX));
                 float ty = (float)((p.Y - polygon.MinY) / (polygon.MaxY - polygon.MinY));
                 Vector2 tc = new Vector2(tx, ty);
-                verts[i] = new Vertex(v, tc);
+                //verts[i] = new Vertex(v, tc);
+                model.Vertices.Add(new Vertex(v, tc));
             }
 
             foreach (Poly2Tri.DelaunayTriangle t in polygon.Triangles)
             {
-                indices.Add(polygon.IndexOf(t.Points._0));
-                indices.Add(polygon.IndexOf(t.Points._1));
-                indices.Add(polygon.IndexOf(t.Points._2));
+                int index0, index1, index2;
+                index0 = polygon.IndexOf(t.Points._0);
+                index1 = polygon.IndexOf(t.Points._1);
+                index2 = polygon.IndexOf(t.Points._2);
+                model.AddTriangle(index0, index1, index2);
             }
 
-            return new Model(verts, indices.ToArray());
+            return model;
         }
 
         public static Model CreateLine(Vector2[] vertices)
@@ -143,7 +151,8 @@ namespace Game
                 model.Vertices.Add(new Vertex(v));
                 if (i > 0)
                 {
-                    model.Indices.AddRange(new int[] { i - 1, i, i });
+                    //model.Indices.AddRange(new int[] { i - 1, i, i });
+                    model.AddTriangle(i - 1, i, i);
                 }
             }
             return model;
@@ -167,9 +176,10 @@ namespace Game
                 {
                     continue;
                 }
-                model.Indices.Add(i);
+                /*model.Indices.Add(i);
                 model.Indices.Add(i + 1);
-                model.Indices.Add(detail - 1 - i);
+                model.Indices.Add(detail - 1 - i);*/
+                model.AddTriangle(i, i + 1, detail - 1 - i);
             }
             return model;
         }

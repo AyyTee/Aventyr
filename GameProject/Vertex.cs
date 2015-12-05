@@ -40,5 +40,20 @@ namespace Game
             Color = color;
             Normal = normal;
         }
+
+        /// <summary>
+        /// Returns true if a vertex has the same position, normal, color, and texture coordinate as this.
+        /// </summary>
+        public bool Compare(Vertex vertex)
+        {
+            if (vertex.Position == Position && 
+                vertex.Normal == Normal && 
+                vertex.TextureCoord == TextureCoord && 
+                vertex.Color == Color)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

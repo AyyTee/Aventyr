@@ -158,7 +158,7 @@ namespace Game
                             DebugEntity.Models.Add(model);
                             if (contact.Enabled)
                             {
-                                model.TextureId = Renderer.Textures["grid.png"];
+                                model.Texture = Renderer.Textures["grid.png"];
                             }
                             model.Transform.Position = new Vector3(vList[i].X, vList[i].Y, 0);
                         }

@@ -9,10 +9,6 @@ namespace Game
             {
                 Window.Run(Controller.StepsPerSecond, Controller.DrawsPerSecond);
             }
-            /*using (Controller Controller = new Controller())
-            {
-                Controller.Run(Controller.StepsPerSecond, Controller.DrawsPerSecond);
-            }*/
         }
     }
 }

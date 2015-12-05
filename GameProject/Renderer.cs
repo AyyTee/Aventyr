@@ -17,7 +17,7 @@ namespace Game
         List<Scene> _scenes = new List<Scene>();
         Controller _controller;
 
-        public static Dictionary<string, int> Textures = new Dictionary<string, int>();
+        public static Dictionary<string, Texture> Textures = new Dictionary<string, Texture>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
         
         public Renderer(Controller controller)
@@ -33,6 +33,7 @@ namespace Game
             GL.ClearStencil(0);
             GL.PointSize(5f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.Enable(EnableCap.ScissorTest);
         }
 
         public void AddScene(Scene scene)
@@ -43,6 +44,7 @@ namespace Game
         public void Render()
         {
             GL.Viewport(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
+            GL.Scissor(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit | ClearBufferMask.ColorBufferBit);
 
             Renderer.Shaders["textured"].EnableVertexAttribArrays();
@@ -67,7 +69,6 @@ namespace Game
             Renderer.Shaders["default"].DisableVertexAttribArrays();
 
             GL.Flush();
-            //_controller.Window.SwapBuffers();
         }
 
         /// <summary>
@@ -76,9 +77,9 @@ namespace Game
         /// <param name="portals"></param>
         /// <param name="viewMatrix"></param>
         /// <param name="viewPos"></param>
-        /// <param name="depth"></param>
+        /// <param name="depth">Maximum number of recursions.</param>
         /// <param name="timeDelta"></param>
-        /// <param name="sceneMaxDepth">The difference between the nearest and farthest object in the scene</param>
+        /// <param name="sceneMaxDepth">The difference between the nearest and farthest object in the scene.</param>
         public void DrawPortalAll(Scene scene, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta)
         {
             //stopgap solution. portals will only recursively draw themselves, not any other portals
@@ -257,15 +258,26 @@ namespace Game
                 GL.BindBuffer(BufferTarget.ElementArrayBuffer, v.IboElements);
                 GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);
 
-                GL.BindTexture(TextureTarget.Texture2D, v.TextureId);
-
                 Matrix4 UVMatrix = v.TransformUv.GetMatrix();
                 GL.UniformMatrix4(v.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
-
-                if (v.Shader.GetAttribute("maintexture") != -1)
+                if (v.Texture != null)
                 {
-                    GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.TextureId);
+                    GL.BindTexture(TextureTarget.Texture2D, v.Texture.Id);
+                    if (v.Shader.GetAttribute("maintexture") != -1)
+                    {
+                        GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.Texture.Id);
+                    }
                 }
+                else
+                {
+                    GL.BindTexture(TextureTarget.Texture2D, -1);
+                    if (v.Shader.GetAttribute("maintexture") != -1)
+                    {
+                        GL.Uniform1(v.Shader.GetAttribute("maintexture"), -1);
+                    }
+                }
+                
+                
 
                 if (v.Wireframe)
                 {
@@ -282,7 +294,7 @@ namespace Game
                 {
                     GL.Uniform1(v.Shader.GetUniform("cutLinesLength"), 0);
                     entity._RenderSetTransformMatrix(v, viewMatrix);
-                    GL.DrawElements(BeginMode.Triangles, v.Indices.Count, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
+                    GL.DrawElements(BeginMode.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
                 }
 
                 if (v.Wireframe)
@@ -290,11 +302,10 @@ namespace Game
                     GL.Enable(EnableCap.CullFace);
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
                 }
-                //indiceat += v.IndiceCount;
             }
         }
 
-        public static int LoadImage(Bitmap image)
+        public static Texture LoadImage(Bitmap image)
         {
             int texID = GL.GenTexture();
 
@@ -309,19 +320,22 @@ namespace Game
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-            return texID;
+            Texture texture = new Texture(texID);
+            return texture;
         }
 
-        public static int LoadImage(string filename)
+        public static Texture LoadImage(string filename)
         {
             try
             {
                 Bitmap file = new Bitmap(filename);
-                return LoadImage(file);
+                Texture texture = LoadImage(file);
+                texture.SetFilepath(filename);
+                return texture;
             }
             catch (FileNotFoundException e)
             {
-                return -1;
+                return null;
             }
         }
     }
