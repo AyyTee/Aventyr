@@ -73,7 +73,7 @@ namespace Game
             }
 
             string mtlFilePath = Path.Combine(Path.GetDirectoryName(stream.Name), mtlFileName);
-            LoadMtl(mtlFilePath);
+            model.SetTexture(LoadMtl(mtlFilePath));
             return model;
         }
 
@@ -190,15 +190,15 @@ namespace Game
             }
         }
 
-        public void LoadMtl(string file)
+        public Texture LoadMtl(string file)
         {
             using (FileStream s = File.Open(file, FileMode.Open))
             {
-                LoadMtl(s);
+                return LoadMtl(s);
             }
         }
 
-        public void LoadMtl(FileStream stream)
+        public Texture LoadMtl(FileStream stream)
         {
             StreamReader reader = new StreamReader(stream);
             string line;
@@ -212,9 +212,10 @@ namespace Game
                 {
                     textureFile = string.Join(splitChar.ToString(), parameters, 1, parameters.Length - 1);
                     string textureFilePath = Path.Combine(Path.GetDirectoryName(stream.Name), textureFile);
-                    break;
+                    return Renderer.LoadImage(textureFilePath);
                 }
             }
+            return null;
         }
 
         private string GetKey(int verts, int tex, int norm)

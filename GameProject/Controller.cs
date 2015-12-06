@@ -39,6 +39,7 @@ namespace Game
         public int RenderCount = 0;
         
         public static List<int> iboGarbage = new List<int>();
+        public static List<int> textureGarbage = new List<int>();
 
         public static String fontFolder = Path.Combine(new String[2] { "assets", "fonts" });
         public static String shaderFolder = Path.Combine(new String[2] { "assets", "shaders" });
@@ -92,7 +93,7 @@ namespace Game
             TimeFixedStep += MICROSECONDS_IN_SECOND / (float)StepsPerSecond;
             TimeRenderDelta = 0;
             //get rid of all ibo elements no longer used
-            lock ("delete")
+            lock (Model.LockDelete)
             {
                 foreach (int iboElement in iboGarbage.ToArray())
                 {
@@ -100,6 +101,15 @@ namespace Game
                     GL.DeleteBuffers(1, ref a);
                 }
                 iboGarbage.Clear();
+            }
+            lock (Texture.LockDelete)
+            {
+                foreach (int iboElement in textureGarbage.ToArray())
+                {
+                    int a = iboElement;
+                    GL.DeleteTextures(1, ref a);
+                }
+                textureGarbage.Clear();
             }
         }
 

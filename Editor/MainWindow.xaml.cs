@@ -124,25 +124,20 @@ namespace Editor
 
         private void LoadModel(object sender, RoutedEventArgs e)
         {
-
             _openFileDialog.Filter = "Wavefront (*.obj)|*.obj";
             _openFileDialog.ShowDialog();
-            
-            /*if (openFileDialog.ShowDialog() == true)
-                txtEditor.Text = File.ReadAllText(openFileDialog.FileName);*/
         }
 
         private void _openFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ControllerEditor.Actions.Enqueue(() => {
+            ControllerEditor.AddAction(() =>
+            {
                 string fileName = ((OpenFileDialog)sender).FileName;
                 ModelLoader loader = new ModelLoader();
                 Model model = loader.LoadObj(fileName);
                 EditorEntity entity = ControllerEditor.CreateLevelEntity();
                 entity.Entity.Models.Add(model);
-                //model.Wireframe = true;
             });
-            
         }
     }
 }

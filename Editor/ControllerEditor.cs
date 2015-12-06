@@ -16,7 +16,7 @@ namespace Editor
     {
         public Scene Level, Hud;
         bool _isPaused;
-        ControllerCamera _camControl;
+        public ControllerCamera CamControl { get; private set; }
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
         public event EditorObjectHandler EntityAdded;
         public event EditorObjectHandler EntitySelected;
@@ -28,40 +28,27 @@ namespace Editor
         public event ToolEventHandler ToolChanged;
         Entity debugText;
         EditorObject _selectedEntity;
-        Entity _gripper;
         Tool _activeTool;
         Tool _toolDefault;
         Tool _nextTool;
         List<EditorEntity> Entities = new List<EditorEntity>();
         List<EditorPortal> Portals = new List<EditorPortal>();
-        public Queue<Action> Actions = new Queue<Action>();
-
-        /*public ControllerEditor(Window window)
-            : base(window)
-        {
-            
-        }*/
+        Queue<Action> Actions = new Queue<Action>();
 
         public ControllerEditor(Size canvasSize, InputExt input)
             : base(canvasSize, input)
         {
-            _toolDefault = new ToolDefault(this);
-            _activeTool = _toolDefault;
-            _nextTool = _activeTool;
         }
 
         public override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             Level = new Scene();
+            Level.ActiveCamera = Camera.CameraOrtho(new Vector3(0, 0, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height);
             renderer.AddScene(Level);
             Hud = new Scene();
+            Hud.ActiveCamera = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
             renderer.AddScene(Hud);
-
-            _gripper = new Entity(Level);
-            _gripper.Models.Add(ModelFactory.CreateCircle(new Vector3(0, 0, 10f), 0.1f, 16));
-            _gripper.Visible = false;
-            //_gripper.Models[0].SetTexture(Renderer.Textures["default.png"]);
 
             Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];
@@ -72,23 +59,16 @@ namespace Editor
             Entity back = new Entity(Level, new Vector2(0f, 0f));
             back.Models.Add(background);
 
-            /*FloatPortal portal = new FloatPortal(Level);
-            portal.Transform.Rotation = 4f;
-            portal.Transform.Position = new Vector2(1, 1);
-            FloatPortal portal2 = new FloatPortal(Level);
-            portal2.Transform.Position = new Vector2(-1, 0);
-            Portal.ConnectPortals(portal, portal2);*/
+            
 
-            Level.ActiveCamera = Camera.CameraOrtho(new Vector3(0, 0, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height); ;
-
-            _camControl = new ControllerCamera(Level.ActiveCamera, InputExt);
+            CamControl = new ControllerCamera(Level.ActiveCamera, InputExt);
 
             
-            Hud.ActiveCamera = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
-
+            
             debugText = new Entity(Hud);
             debugText.Transform.Position = new Vector2(0, CanvasSize.Height - 40);
 
+            InitTools();
             ScenePause();
         }
 
@@ -158,7 +138,7 @@ namespace Editor
                 item();
             }
             Actions.Clear();
-            _camControl.Update();
+            CamControl.Update();
             _setTool(_nextTool);
             _activeTool.Update();
             if (!_isPaused)
@@ -181,6 +161,14 @@ namespace Editor
             {
                 ToolChanged(this, tool);
             }
+        }
+
+        private void InitTools()
+        {
+            _toolDefault = new ToolDefault(this);
+            _activeTool = _toolDefault;
+            _nextTool = _activeTool;
+            _activeTool.Enable();
         }
 
         public void SetTool(Tool tool)
@@ -216,15 +204,6 @@ namespace Editor
         public void SetSelectedEntity(EditorObject selected)
         {
             _selectedEntity = selected;
-            if (selected != null)
-            {
-                _gripper.Visible = true;
-                _gripper.Transform.Position = _selectedEntity.GetTransform().Position;
-            }
-            else
-            {
-                _gripper.Visible = false;
-            }
             if (EntitySelected != null)
                 EntitySelected(this, selected);
         }
@@ -253,6 +232,11 @@ namespace Editor
             _isPaused = true;
             if (SceneStopped != null)
                 SceneStopped(this, Level);
+        }
+
+        public void AddAction(Action action)
+        {
+            Actions.Enqueue(action);
         }
 
         public override void OnClosing(System.ComponentModel.CancelEventArgs e)

@@ -50,48 +50,44 @@ namespace Game
                         switch (fixture.Shape.ShapeType)
                         {
                             case ShapeType.Polygon:
+                                PolygonShape shape = (PolygonShape)fixture.Shape;
+                                Vector2[] vertices = Vector2Ext.ConvertTo(shape.Vertices);
+                                var transform = new FarseerPhysics.Common.Transform();
+                                fixture.Body.GetTransform(out transform);
+                                Matrix4 matTransform = Matrix4Ext.ConvertTo(transform);
+                                vertices = Vector2Ext.Transform(vertices, matTransform);
+                                for (int i = 0; i < vertices.Count(); i++)
                                 {
-                                    PolygonShape shape = (PolygonShape)fixture.Shape;
-                                    Vector2[] vertices = Vector2Ext.ConvertTo(shape.Vertices);
-                                    var transform = new FarseerPhysics.Common.Transform();
-                                    fixture.Body.GetTransform(out transform);
-                                    Matrix4 matTransform = Matrix4Ext.ConvertTo(transform);
-                                    vertices = Vector2Ext.Transform(vertices, matTransform);
-                                    for (int i = 0; i < vertices.Count(); i++)
+                                    int i0 = i;
+                                    int i1 = (i + 1) % vertices.Count();
+                                    IntersectPoint intersect = MathExt.LineIntersection(
+                                        vertices[i0],
+                                        vertices[i1],
+                                        rayBegin,
+                                        rayIntersect,
+                                        true);
+                                    if (intersect.Exists)
                                     {
-                                        int i0 = i;
-                                        int i1 = (i + 1) % vertices.Count();
-                                        IntersectPoint intersect = MathExt.LineIntersection(
-                                            vertices[i0],
-                                            vertices[i1],
-                                            rayBegin,
-                                            rayIntersect,
-                                            true);
-                                        if (intersect.Exists)
+                                        if (!EdgeIsValid(fixture, i))
                                         {
-                                            if (!EdgeIsValid(fixture, i))
-                                            {
-                                                break;
-                                            }
-                                            //ignore edges facing away
-                                            Line rayLine = new Line(vertices[i0], vertices[i1]); 
-                                            if (rayLine.GetSideOf(rayBegin) != rayLine.GetSideOf(rayLine[0] + rayLine.GetNormal()))
-                                            {
-                                                break;
-                                            }
-
-                                            intersectLast = intersect;
-                                            intersections.Add(new FixtureEdgeCoord(fixture, i, (float)intersect.T));
                                             break;
                                         }
-                                        Debug.Assert(i + 1 < vertices.Count(), "Intersection edge was not found in shape.");
+                                        //ignore edges facing away
+                                        Line rayLine = new Line(vertices[i0], vertices[i1]); 
+                                        if (rayLine.GetSideOf(rayBegin) != rayLine.GetSideOf(rayLine[0] + rayLine.GetNormal()))
+                                        {
+                                            break;
+                                        }
+
+                                        intersectLast = intersect;
+                                        intersections.Add(new FixtureEdgeCoord(fixture, i, (float)intersect.T));
+                                        break;
                                     }
-                                    break;
+                                    Debug.Assert(i + 1 < vertices.Count(), "Intersection edge was not found in shape.");
                                 }
+                                break;
                             case ShapeType.Circle:
-                                {
-                                    break;
-                                }
+                                break;
                         }
                         return fraction;
                     },

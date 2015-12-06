@@ -31,17 +31,20 @@ namespace Editor
             InitializeComponent();
             _tool = tool;
             _controller = controller;
-            Button.Content = new System.Windows.Controls.Image
+            if (image != null)
             {
-                Source = image,
-                VerticalAlignment = VerticalAlignment.Center
-            };
+                Button.Content = new System.Windows.Controls.Image
+                {
+                    Source = image,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+            }
             Button.Click += Button_Click;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            _controller.SetTool(_tool);
+            _controller.AddAction(() => { _controller.SetTool(_tool); });
         }
     }
 }

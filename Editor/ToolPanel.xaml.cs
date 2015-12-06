@@ -35,9 +35,9 @@ namespace Editor
             tools[1] = new ToolAddPortal(_controller);
             tools[2] = new ToolAddEntity(_controller);
             BitmapImage[] bitmaps = new BitmapImage[3];
-            bitmaps[0] = new BitmapImage(new Uri(MainWindow.LocalDirectory + @"\assets\icons\entityIcon.png"));
-            bitmaps[1] = new BitmapImage(new Uri(MainWindow.LocalDirectory + @"\assets\icons\portalIcon.png"));
-            bitmaps[2] = new BitmapImage(new Uri(MainWindow.LocalDirectory + @"\assets\icons\entityIcon.png"));
+            bitmaps[0] = new BitmapImage(new Uri(MainWindow.LocalDirectory + @"\editor assets\icons\entityIcon.png"));
+            bitmaps[1] = new BitmapImage(new Uri(MainWindow.LocalDirectory + @"\editor assets\icons\portalIcon.png"));
+            bitmaps[2] = new BitmapImage(new Uri(MainWindow.LocalDirectory + @"\editor assets\icons\entityIcon.png"));
             for (int i = 0; i < 3; i++)
             {
                 AddButton(tools[i], bitmaps[i]);

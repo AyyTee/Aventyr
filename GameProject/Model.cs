@@ -13,6 +13,8 @@ namespace Game
     /// </summary>
     public class Model : IDisposable, IVertices
     {
+        static object _deleteLock = new object();
+        public static object LockDelete { get { return _deleteLock; } }
         public Transform Transform = new Transform();
         public int IboElements;
         public bool IboExists = true;
@@ -93,7 +95,7 @@ namespace Game
         {
             if (IboExists)
             {
-                lock ("delete")
+                lock (LockDelete)
                 {
                     Controller.iboGarbage.Add(IboElements);
                     IboExists = false;

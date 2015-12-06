@@ -29,7 +29,7 @@ namespace Editor
 
         public override void SetTransform(Transform2D transform)
         {
-            throw new NotImplementedException();
+            Entity.Transform.SetLocal(transform);
         }
 
         public override Transform2D GetTransform()

@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public class Texture
+    public class Texture : IDisposable
     {
+        static object _deleteLock = new object();
+        public static object LockDelete { get { return _deleteLock; } }
         public string Filepath { get; private set; }
         /// <summary>
         /// GL texture id
@@ -23,6 +25,23 @@ namespace Game
         public void SetFilepath(string filepath)
         {
             Filepath = filepath;
+        }
+
+        ~Texture()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            if (Id != -1)
+            {
+                lock (LockDelete)
+                {
+                    Controller.textureGarbage.Add(Id);
+                    Id = -1;
+                }
+            }
         }
     }
 }

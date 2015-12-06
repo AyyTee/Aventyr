@@ -92,26 +92,20 @@ namespace Game
                 switch (f.ShapeType)
                 {
                     case ShapeType.Polygon:
-                        {
-                            break;
-                        }
+                        break;
+
                     case ShapeType.Edge:
-                        {
-                            EdgeShape mirrorTemp = (EdgeShape)mirrorShape;
-                            
-                            break;
-                        }
+                        EdgeShape mirrorTemp = (EdgeShape)mirrorShape;
+                        break;
+
                     case ShapeType.Loop:
-                        {
-                            LoopShape mirrorTemp = (LoopShape)mirrorShape;
-                            //mirrorTemp.
-                            break;
-                        }
+                        //LoopShape mirrorTemp = (LoopShape)mirrorShape;
+                        //mirrorTemp.
+                        break;
+
                     case ShapeType.Circle:
-                        {
-                            mirrorShape = f.Shape.Clone();
-                            break;
-                        }
+                        mirrorShape = f.Shape.Clone();
+                        break;
                 }
                 //Shape mirrorShape = new Shape();
                 //Fixture mirrorFixture = new Fixture(body, )

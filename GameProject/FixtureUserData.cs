@@ -72,15 +72,13 @@ namespace Game
             switch (Fixture.ShapeType)
             {
                 case ShapeType.Polygon:
+                    PolygonShape shape = (PolygonShape) Fixture.Shape;
+                    EdgeIsExterior = new bool[shape.Vertices.Count];
+                    for (int i = 0; i < EdgeIsExterior.Length; i++)
                     {
-                        PolygonShape shape = (PolygonShape) Fixture.Shape;
-                        EdgeIsExterior = new bool[shape.Vertices.Count];
-                        for (int i = 0; i < EdgeIsExterior.Length; i++)
-                        {
-                            EdgeIsExterior[i] = true;
-                        }
-                        break;
+                        EdgeIsExterior[i] = true;
                     }
+                    break;
             }
         }
         #endregion

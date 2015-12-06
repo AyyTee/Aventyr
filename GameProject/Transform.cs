@@ -105,5 +105,14 @@ namespace Game
             return new Transform2D(new Vector2(Position.X, Position.Y), new Vector2(Scale.X, Scale.Y), Rotation.W);
         }
 
+        /// <summary>
+        /// Returns true if this has the same position, rotation, and scale as another Transform.
+        /// </summary>
+        /// <param name="transform"></param>
+        /// <returns></returns>
+        public bool Compare(Transform transform)
+        {
+            return Position == transform.Position && Scale == transform.Scale && Rotation == transform.Rotation;
+        }
     }
 }

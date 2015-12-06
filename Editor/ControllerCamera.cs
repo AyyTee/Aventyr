@@ -12,6 +12,12 @@ namespace Editor
 {
     public class ControllerCamera
     {
+        public delegate void CameraObjectHandler(ControllerCamera controller, Camera camera);
+        /// <summary>
+        /// Event is fired if the camera Transform is modified by this controller.
+        /// </summary>
+        public event CameraObjectHandler CameraMoved;
+
         public Camera Camera { get; private set; }
         public InputExt InputExt { get; private set; }
         public float ZoomMin = 0.5f;
@@ -58,6 +64,7 @@ namespace Editor
 
         public void Update()
         {
+            Transform copy = new Transform(Camera.Transform);
             if (InputExt.MouseInside)
             {
                 if (InputExt.MouseDown(MouseButton.Middle))
@@ -112,6 +119,10 @@ namespace Editor
             if (InputExt.KeyDown(Key.Down))
             {
                 Camera.Transform.Position += new Vector3(0, -KeyMoveSpeed, 0);
+            }
+            if (!copy.Compare(Camera.Transform) && CameraMoved != null)
+            {
+                CameraMoved(this, Camera);
             }
         }
     }

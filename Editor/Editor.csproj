@@ -127,10 +127,21 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Content Include="editor assets\models\coordinateArrowsTex.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="editor assets\icons\Thumbs.db" />
+    <Content Include="editor assets\models\coordinateArrows.mtl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="editor assets\models\coordinateArrows.obj">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="editor assets\Thumbs.db" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -151,22 +162,35 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="assets\icons\control-pause.png" />
-    <Resource Include="assets\icons\control-stop-square.png" />
-    <Resource Include="assets\icons\control.png" />
-    <Resource Include="assets\icons\disk.png" />
-    <Resource Include="assets\icons\document.png" />
-    <Resource Include="assets\icons\entityIcon.png">
+    <Resource Include="editor assets\icons\control-pause.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="assets\icons\folder-open.png" />
-    <Resource Include="assets\icons\portalIcon.png">
+    <Resource Include="editor assets\icons\control-stop-square.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="editor assets\icons\control.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="editor assets\icons\disk.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="editor assets\icons\document.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="editor assets\icons\entityIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Resource Include="editor assets\icons\folder-open.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="editor assets\icons\grid-snap.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="editor assets\icons\portalIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="assets\icons\grid-snap.png" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

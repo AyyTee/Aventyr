@@ -38,16 +38,13 @@ namespace Game
                 switch (Fixture.ShapeType)
                 {
                     case ShapeType.Polygon:
-                        {
-                            PolygonShape shape = (PolygonShape)Fixture.Shape;
-                            Debug.Assert(value >= 0 && value < shape.Vertices.Count, "EdgeIndex must have a value between [0, vertex count).");
-                            break;
-                        }
+                        PolygonShape shape = (PolygonShape)Fixture.Shape;
+                        Debug.Assert(value >= 0 && value < shape.Vertices.Count, "EdgeIndex must have a value between [0, vertex count).");
+                        break;
+
                     case ShapeType.Circle:
-                        {
-                            Debug.Assert(value == 0, "EdgeIndex cannot be assigned a value other than 0 for a circle fixture.");
-                            break;
-                        }
+                        Debug.Assert(value == 0, "EdgeIndex cannot be assigned a value other than 0 for a circle fixture.");
+                        break;
                 }
                 _edgeIndex = value;
             }
@@ -114,14 +111,11 @@ namespace Game
             switch (Fixture.ShapeType)
             {
                 case ShapeType.Polygon:
-                    {
-                        Line line = GetWorldEdge();
-                        return line.Lerp(EdgeT);
-                    }
+                    Line line = GetWorldEdge();
+                    return line.Lerp(EdgeT);
+
                 default:
-                    {
-                        return new Vector2();
-                    }
+                    return new Vector2();
                 /*case ShapeType.Circle:
                     {
                         return 
