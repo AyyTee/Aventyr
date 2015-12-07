@@ -18,7 +18,9 @@ namespace Editor
             Entity = new Entity(scene);
             _marker = new Entity(scene);
             _marker.Transform.Parent = Entity.Transform;
-            _marker.Models.Add(ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10));
+            Model circle = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
+            circle.SetColor(new Vector3(0.8f, 0.8f, 0));
+            _marker.Models.Add(circle);
         }
 
         public void Remove()

@@ -141,21 +141,31 @@ namespace Game
             return model;
         }
 
-        public static Model CreateLine(Vector2[] vertices)
+        public static Model CreateLineStrip(Vector2[] vertices, Vector3[] colors)
         {
+            Debug.Assert(vertices.Length >= 2);
             Model model = new Model();
             model.Wireframe = true;
-            for (int i = 0; i < vertices.Length; i++)
+            for (int i = 0; i < vertices.Length - 1; i++)
             {
-                Vector3 v = new Vector3(vertices[i].X, vertices[i].Y, 0);
-                model.Vertices.Add(new Vertex(v));
-                if (i > 0)
+                Vector3 v, color = new Vector3();
+                if (colors != null)
                 {
-                    //model.Indices.AddRange(new int[] { i - 1, i, i });
-                    model.AddTriangle(i - 1, i, i);
+                    color = colors[i];
                 }
+                
+                v = new Vector3(vertices[i].X, vertices[i].Y, 0);
+                int index0 = model.AddVertex(new Vertex(v, new Vector2(), color));
+                v = new Vector3(vertices[i + 1].X, vertices[i + 1].Y, 0);
+                int index1 = model.AddVertex(new Vertex(v, new Vector2(), color));
+                model.AddTriangle(index0, index1, index1);
             }
             return model;
+        }
+
+        public static Model CreateLineStrip(Vector2[] vertices)
+        {
+            return CreateLineStrip(vertices, null);
         }
 
         public static Model CreateCircle(Vector3 origin, float radius, int detail)

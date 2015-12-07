@@ -38,11 +38,13 @@ namespace Editor
         //public Entity SelectedEntity { get; private set; }
         delegate void SetControllerCallback(Entity entity);
         public static string LocalDirectory { get; private set; }
+        public static string AssetsDirectory { get; private set; }
         OpenFileDialog _openFileDialog = new OpenFileDialog();
 
         public MainWindow()
         {
             LocalDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            AssetsDirectory = System.IO.Path.Combine(LocalDirectory, "editor assets");
             InitializeComponent();
 
             _openFileDialog.FileOk += _openFileDialog_FileOk;

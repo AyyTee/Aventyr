@@ -78,6 +78,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\cgen audio\Cgen.Audio\bin\x86\Debug\Cgen.Audio.dll</HintPath>
     </Reference>
+    <Reference Include="clipper_library">
+      <HintPath>..\packages\Clipper.6.2.10\lib\net40\clipper_library.dll</HintPath>
+    </Reference>
     <Reference Include="FarseerPhysics">
       <HintPath>..\..\..\..\Farseer Physics Engine 3.3.1 Class\Farseer Physics Engine 3.3.1 Class\bin\Debug\FarseerPhysics.dll</HintPath>
     </Reference>
@@ -132,6 +135,7 @@
     <Compile Include="PhysContactListener.cs" />
     <Compile Include="PhysDataContractResolver.cs" />
     <Compile Include="Placeable2D.cs" />
+    <Compile Include="PolyCoord.cs" />
     <Compile Include="PolygonFactory.cs" />
     <Compile Include="Portal.cs" />
     <Compile Include="PortalPlacer.cs" />
@@ -191,6 +195,9 @@
     </None>
     <None Include="assets\shaders\vs_text.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>

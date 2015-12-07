@@ -10,10 +10,10 @@ namespace Editor
 {
     public abstract class Tool
     {
-        protected InputExt _input { get { return _controller.InputExt; } }
+        protected InputExt _input { get { return Controller.InputExt; } }
         public bool Enabled { get; private set; }
 
-        public ControllerEditor _controller { get; private set; }
+        public ControllerEditor Controller { get; private set; }
 
         #region constructors
         public Tool()
@@ -24,7 +24,7 @@ namespace Editor
         public Tool(ControllerEditor controller)
         {
             Enabled = false;
-            _controller = controller;
+            Controller = controller;
         }
         #endregion
 

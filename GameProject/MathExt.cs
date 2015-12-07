@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using ClipperLib;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -199,7 +200,7 @@ namespace Game
         }
 
         /// <summary>
-        /// Tests if two lines intersect
+        /// Tests if two lines intersect.
         /// </summary>
         /// <returns>Location where the two lines intersect</returns>
         static public IntersectPoint LineIntersection(Vector2d ps0, Vector2d pe0, Vector2d ps1, Vector2d pe1, bool SegmentOnly)
@@ -401,6 +402,36 @@ namespace Game
                 Array.Reverse(polygon);
             }
             return polygon;
+        }
+
+        /// <summary>
+        /// Returns all self intersections in a line strip.  The line strip is defined by an array of Vectors.
+        /// </summary>
+        /// <param name="vertices"></param>
+        /// <param name="includeTwice">If true, each intersection will be added twice relative to each intersecting line.</param>
+        /// <returns></returns>
+        public static PolyCoord[] GetLineStripIntersections(Vector2[] vertices, bool includeTwice)
+        {
+            List<PolyCoord> intersections = new List<PolyCoord>();
+            //for now we'll just use the slow O(n^2) implementation
+            for (int i = 0; i < vertices.Length - 1; i++)
+            {
+                for (int j = i + 2; j < vertices.Length - 1; j++)
+                {
+                    IntersectPoint first = LineIntersection(vertices[i], vertices[i + 1], vertices[j], vertices[j + 1], true);
+                    if (first.Exists && first.T < 1)
+                    {
+                        intersections.Add(new PolyCoord(i, (float)first.T));
+                        if (includeTwice)
+                        {
+                            IntersectPoint second = LineIntersection(vertices[i], vertices[i + 1], vertices[j], vertices[j + 1], true);
+                            Debug.Assert(second.Exists);
+                            intersections.Add(new PolyCoord(j, (float)second.T));
+                        }
+                    }
+                }
+            }
+            return intersections.ToArray();
         }
     }
 }

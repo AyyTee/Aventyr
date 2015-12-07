@@ -36,6 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="clipper_library">
+      <HintPath>..\packages\Clipper.6.2.10\lib\net40\clipper_library.dll</HintPath>
+    </Reference>
     <Reference Include="FarseerPhysics, Version=3.3.5299.6196, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Farseer Physics Engine 3.3.1 Class\Farseer Physics Engine 3.3.1 Class\bin\Debug\FarseerPhysics.dll</HintPath>
@@ -72,6 +75,9 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

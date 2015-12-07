@@ -19,44 +19,47 @@ namespace Editor
 
         public override void Update()
         {
+            base.Update();
             if (_mouseFollow != null)
             {
-                _mouseFollow.Transform.Position = _controller.GetMouseWorldPosition();
+                _mouseFollow.Transform.Position = Controller.GetMouseWorldPosition();
             }
             if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape) || _input.MousePress(MouseButton.Right))
             {
-                _controller.SetTool(null);
+                Controller.SetTool(null);
             }
             else if (_input.MousePress(MouseButton.Left))
             {
-                EditorEntity entity = _controller.CreateLevelEntity();
-                entity.Entity.Transform.Position = _controller.GetMouseWorldPosition();
+                EditorEntity entity = Controller.CreateLevelEntity();
+                entity.Entity.Transform.Position = Controller.GetMouseWorldPosition();
                 entity.Entity.Models.Add(ModelFactory.CreateCube());
                 entity.Entity.Velocity.Rotation = .1f;
                 
-                _controller.SetSelectedEntity(entity);
+                Controller.SetSelectedEntity(entity);
 
                 if (!(_input.KeyDown(Key.ShiftLeft) || _input.KeyDown(Key.ShiftRight)))
                 {
-                    _controller.SetTool(null);
+                    Controller.SetTool(null);
                 }
             }
         }
 
         public override void Enable()
         {
-            _mouseFollow = new Entity(_controller.Level);
+            base.Enable();
+            _mouseFollow = new Entity(Controller.Level);
             _mouseFollow.Models.Add(ModelFactory.CreateCube());
         }
 
         public override void Disable()
         {
-            _controller.Level.RemoveEntity(_mouseFollow);
+            base.Disable();
+            Controller.Level.RemoveEntity(_mouseFollow);
         }
 
         public override Tool Clone()
         {
-            return new ToolAddEntity(_controller);
+            return new ToolAddEntity(Controller);
         }
     }
 }

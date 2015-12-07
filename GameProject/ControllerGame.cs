@@ -169,7 +169,7 @@ namespace Game
             Vector2 rayEnd = mousePos;
             tempLine.IsPortalable = true;
             tempLine.Models.Clear();
-            tempLine.Models.Add(ModelFactory.CreateLine(new Vector2[2] {
+            tempLine.Models.Add(ModelFactory.CreateLineStrip(new Vector2[2] {
                 rayBegin - player.Transform.Position, 
                 rayEnd - player.Transform.Position
                 }));

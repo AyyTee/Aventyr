@@ -171,8 +171,8 @@ namespace Game
             Vector2[] verts = portalEnter.GetFOV(viewPos, 50, 2);
             if (verts.Length > 0)
             {
-                fovOutline.Models.Add(ModelFactory.CreateLine(new Vector2[] { verts[1], verts[2] }));
-                fovOutline.Models.Add(ModelFactory.CreateLine(new Vector2[] { verts[0], verts[3] }));
+                fovOutline.Models.Add(ModelFactory.CreateLineStrip(new Vector2[] { verts[1], verts[2] }));
+                fovOutline.Models.Add(ModelFactory.CreateLineStrip(new Vector2[] { verts[0], verts[3] }));
                 foreach (Model model in fovOutline.Models)
                 {
                     Vector3 v = model.Transform.Position;

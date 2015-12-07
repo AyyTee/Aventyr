@@ -41,15 +41,15 @@ namespace Editor
         public override void Update()
         {
             base.Update();
-            EditorObject selected = _controller.GetSelectedEntity();
+            EditorObject selected = Controller.GetSelectedEntity();
             if (_dragState == DragState.Neither)
             {
                 if (_input.MousePress(MouseButton.Right))
                 {
-                    _controller.SetSelectedEntity(_controller.GetNearestEntity());
-                    if (_controller.GetSelectedEntity() != null)
+                    Controller.SetSelectedEntity(Controller.GetNearestEntity());
+                    if (Controller.GetSelectedEntity() != null)
                     {
-                        translation.Transform.Position = _controller.GetSelectedEntity().GetTransform().Position;
+                        translation.Transform.Position = Controller.GetSelectedEntity().GetTransform().Position;
                         translation.Visible = true;
                     }
                     else
@@ -61,7 +61,8 @@ namespace Editor
                 {
                     if (_input.KeyPress(Key.Delete))
                     {
-                        _controller.Remove(selected);
+                        translation.Visible = false;
+                        Controller.Remove(selected);
                     }
                     else if (_input.MousePress(MouseButton.Left))
                     {
@@ -69,7 +70,7 @@ namespace Editor
                     }
                     else if (_input.KeyPress(Key.G))
                     {
-                        DragBegin(_controller.GetSelectedEntity(), true);
+                        DragBegin(Controller.GetSelectedEntity(), true);
                     }
                 }
             }
@@ -99,8 +100,8 @@ namespace Editor
         {
             Debug.Assert(this.dragObject == null && _dragState == DragState.Neither);
             Transform2D transform = dragObject.GetTransform();
-            Vector2 mousePos = _controller.GetMouseWorldPosition();
-            Vector2 mouseDiff = (mousePos - transform.Position) / _controller.Level.ActiveCamera.Scale;
+            Vector2 mousePos = Controller.GetMouseWorldPosition();
+            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Level.ActiveCamera.Scale;
             dragToggled = toggleMode;
             dragEntityStart = transform.Position;
             dragMouseStart = mousePos;
@@ -148,7 +149,7 @@ namespace Editor
         private void DragUpdate()
         {
             Transform2D transform = dragObject.GetTransform();
-            Vector2 mousePos = _controller.GetMouseWorldPosition();
+            Vector2 mousePos = Controller.GetMouseWorldPosition();
             Vector2 mouseDiff = mousePos - transform.Position;
             switch (_dragState)
             {
@@ -172,20 +173,20 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            translation = new Entity(_controller.Level);
+            translation = new Entity(Controller.Level);
             translation.Models.Add(translationModel);
             translation.Visible = false;
             _dragState = DragState.Neither;
-            _controller.CamControl.CameraMoved += UpdateTranslation;
-            UpdateTranslation(_controller.CamControl.Camera);
+            Controller.CamControl.CameraMoved += UpdateTranslation;
+            UpdateTranslation(Controller.CamControl.Camera);
         }
 
         public override void Disable()
         {
             base.Disable();
             DragEnd(false);
-            _controller.CamControl.CameraMoved -= UpdateTranslation;
-            _controller.Level.RemoveEntity(translation);
+            Controller.CamControl.CameraMoved -= UpdateTranslation;
+            Controller.Level.RemoveEntity(translation);
         }
 
         private void UpdateTranslation(ControllerCamera controller, Camera camera)
@@ -200,7 +201,7 @@ namespace Editor
 
         public override Tool Clone()
         {
-            return new ToolDefault(_controller);
+            return new ToolDefault(Controller);
         }
     }
 }

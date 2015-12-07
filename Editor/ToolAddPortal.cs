@@ -28,10 +28,11 @@ namespace Editor
 
         public override void Update()
         {
+            base.Update();
             if (_mouseFollow != null)
             {
                 Transform2D transform = _mouseFollow.GetTransform();
-                Vector2 mousePos = _controller.GetMouseWorldPosition();
+                Vector2 mousePos = Controller.GetMouseWorldPosition();
                 if (_stateCurrent == State.Placing)
                 {
                     transform.Position = mousePos;
@@ -49,7 +50,7 @@ namespace Editor
 
             if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape))
             {
-                _controller.SetTool(null);
+                Controller.SetTool(null);
             }
 
             if (_input.MouseRelease(MouseButton.Right) && _stateCurrent == State.Orienting)
@@ -66,14 +67,14 @@ namespace Editor
                 
                 if (_input.MousePress(MouseButton.Left))
                 {
-                    EditorPortal editorPortal = _controller.CreateLevelPortal();
+                    EditorPortal editorPortal = Controller.CreateLevelPortal();
                     FloatPortal portal = (FloatPortal)editorPortal.Portal;
                     Transform2D transform = _mouseFollow.GetTransform();
                     editorPortal.SetTransform(transform);
-                    _controller.SetSelectedEntity(editorPortal);
+                    Controller.SetSelectedEntity(editorPortal);
                     if (!(_input.KeyDown(Key.ShiftLeft) || _input.KeyDown(Key.ShiftRight)))
                     {
-                        _controller.SetTool(null);
+                        Controller.SetTool(null);
                     }
                 }
             }
@@ -101,13 +102,15 @@ namespace Editor
 
         public override void Enable()
         {
-            _mouseFollow = new EditorPortal(_controller.Level);
+            base.Enable();
+            _mouseFollow = new EditorPortal(Controller.Level);
             _stateCurrent = State.Placing;
         }
 
         public override void Disable()
         {
-            _controller.Remove(_mouseFollow);
+            base.Disable();
+            Controller.Remove(_mouseFollow);
         }
 
         public override Tool Clone()
