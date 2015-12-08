@@ -115,45 +115,6 @@ namespace Game
             }
         }
 
-        /*static public Vector2d[] LineCircleIntersection(Vector2d ps0, Vector2d pe0, Vector2d Origin, double Radius)
-        {
-            //private int FindLineCircleIntersections(float cx, float cy, float radius, PointF point1, PointF point2, out PointF intersection1, out PointF intersection2)
-            float dx, dy, A, B, C, det, t;
-
-            dx = point2.X - point1.X;
-            dy = point2.Y - point1.Y;
-
-            A = dx * dx + dy * dy;
-            B = 2 * (dx * (point1.X - cx) + dy * (point1.Y - cy));
-            C = (point1.X - cx) * (point1.X - cx) + (point1.Y - cy) * (point1.Y - cy) - Math.Pow(radius, 2);
-
-            det = B * B - 4 * A * C;
-            if ((A <= 0.0000001) || (det < 0))
-            {
-                // No real solutions.
-                intersection1 = new PointF(float.NaN, float.NaN);
-                intersection2 = new PointF(float.NaN, float.NaN);
-                return 0;
-            }
-            else if (det == 0)
-            {
-                // One solution.
-                t = -B / (2 * A);
-                intersection1 = new PointF(point1.X + t * dx, point1.Y + t * dy);
-                intersection2 = new PointF(float.NaN, float.NaN);
-                return 1;
-            }
-            else
-            {
-                // Two solutions.
-                t = (float)((-B + Math.Sqrt(det)) / (2 * A));
-                intersection1 = new PointF(point1.X + t * dx, point1.Y + t * dy);
-                t = (float)((-B - Math.Sqrt(det)) / (2 * A));
-                intersection2 = new PointF(point1.X + t * dx, point1.Y + t * dy);
-                return 2;
-            }
-        }*/
-
         static public double PointLineDistance(Vector2d ps0, Vector2d pe0, Vector2d Point, bool IsSegment)
         {
             {
@@ -432,6 +393,71 @@ namespace Game
                 }
             }
             return intersections.ToArray();
+        }
+
+        /// <summary>Finds the intersections between a line and a circle.  IntersectPoint contains the T value for the intersecting line.</summary>
+        /// <param name="circle">Origin of circle.</param>
+        /// <param name="radius">Radius of circle.</param>
+        /// <param name="line">Line used to check intersections with circle.</param>
+        /// <returns>Array of intersections. If no intersections exist then an array of length 0 is returned.</returns>
+        /// <remarks>Original code was found here http://csharphelper.com/blog/2014/09/determine-where-a-line-intersects-a-circle-in-c/
+        /// </remarks>
+        public static IntersectPoint[] GetLineCircleIntersections(Vector2 circle, float radius, Line line, bool isSegment)
+        {
+            IntersectPoint intersect0 = new IntersectPoint();
+            IntersectPoint intersect1 = new IntersectPoint();
+            double dx, dy, A, B, C, det, t;
+
+            dx = line[1].X - line[0].X;
+            dy = line[1].Y - line[0].Y;
+
+            A = dx * dx + dy * dy;
+            B = 2 * (dx * (line[0].X - circle.X) + dy * (line[0].Y - circle.Y));
+            C = (line[0].X - circle.X) * (line[0].X - circle.X) +
+                (line[0].Y - circle.Y) * (line[0].Y - circle.Y) -
+                radius * radius;
+
+            det = B * B - 4 * A * C;
+            if ((A <= 0.0000001) || (det < 0))
+            {
+                // No real solutions.
+            }
+            else if (det == 0)
+            {
+                // One solution.
+                t = -B / (2 * A);
+                if (t >= 0 && t < 1 || !isSegment)
+                {
+                    intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
+                    intersect0.Exists = true;
+                    intersect0.T = t;
+                    return new IntersectPoint[] { intersect0 };
+                }
+            }
+            else
+            {
+                // Two solutions.
+                List<IntersectPoint> list = new List<IntersectPoint>();
+                t = (float)((-B + Math.Sqrt(det)) / (2 * A));
+                if (t >= 0 && t < 1 || !isSegment)
+                {
+                    intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
+                    intersect0.Exists = true;
+                    intersect0.T = t;
+                    list.Add(intersect0);
+                }
+                
+                t = (float)((-B - Math.Sqrt(det)) / (2 * A));
+                if (t >= 0 && t < 1 || !isSegment)
+                {
+                    intersect1.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
+                    intersect1.Exists = true;
+                    intersect1.T = t;
+                    list.Add(intersect1);
+                }
+                return list.ToArray();
+            }
+            return new IntersectPoint[0];
         }
     }
 }
