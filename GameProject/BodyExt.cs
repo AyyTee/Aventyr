@@ -13,6 +13,20 @@ namespace Game
 {
     public static class BodyExt
     {
+        public static Body CreateBody(World world)
+        {
+            Body body = new Body(world);
+            world.ProcessChanges();
+            return body;
+        }
+
+        /*public static Transform2D GetTransform(Body body)
+        {
+            var transform = new FarseerPhysics.Common.Transform();
+            body.GetTransform(out transform);
+            return new Transform2D(transform.Position, transform.Angle);
+        }*/
+
         public static BodyUserData SetUserData(Body body, Entity entity)
         {
             //Ugly solution to storing Game classes in a way that still works when deserializing the data.

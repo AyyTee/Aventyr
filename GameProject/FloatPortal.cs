@@ -36,6 +36,11 @@ namespace Game
             return Transform;
         }
 
+        public override void SetTransform(Transform2D transform)
+        {
+            Transform.SetLocal(transform);
+        }
+
         public override Transform2D GetVelocity()
         {
             return Velocity;

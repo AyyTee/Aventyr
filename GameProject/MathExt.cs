@@ -127,7 +127,7 @@ namespace Game
                 else
                 {
                     double t = ((Point.X - ps0.X) * VDelta.X + (Point.Y - ps0.Y) * VDelta.Y) / (Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
-                    if (IsSegment) {t = Math.Min(Math.Max(0, t), 1);}
+                    if (IsSegment) {t = MathHelper.Clamp(t, 0, 1);}
                     V = ps0 + Vector2d.Multiply(VDelta, t);
                 }
                 return (Point - V).Length;

@@ -30,15 +30,19 @@ namespace Editor
             InitializeComponent();
 
             _controller = controller;
-            Tool[] tools = new Tool[3];
-            tools[0] = new ToolAddEntity(_controller);
-            tools[1] = new ToolAddPortal(_controller);
-            tools[2] = new ToolPolygon(_controller);
-            BitmapImage[] bitmaps = new BitmapImage[3];
-            bitmaps[0] = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png")));
-            bitmaps[1] = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "portalIcon.png")));
-            bitmaps[2] = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonIcon.png")));
-            for (int i = 0; i < 3; i++)
+            Tool[] tools = new Tool[] {
+                new ToolAddEntity(_controller),
+                new ToolAddPortal(_controller),
+                new ToolPolygon(_controller),
+                new ToolPortalLinker(_controller)
+            };
+            BitmapImage[] bitmaps = new BitmapImage[] {
+                new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png"))),
+                new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "portalIcon.png"))),
+                new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonIcon.png"))),
+                new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonLinkerIcon.png")))
+            };
+            for (int i = 0; i < tools.Length; i++)
             {
                 AddButton(tools[i], bitmaps[i]);
             }

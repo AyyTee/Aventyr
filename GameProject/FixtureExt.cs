@@ -44,7 +44,7 @@ namespace Game
             return fixture;
         }*/
 
-        public static Fixture[] GetFixtureCircleIntersections(World world, Vector2 point, float radius)
+        public static FixtureEdgeCoord[] GetFixtureCircleIntersections(World world, Vector2 point, float radius)
         {
             List<Fixture> potentials = new List<Fixture>();
             var box = new FarseerPhysics.Collision.AABB(new Xna.Vector2(point.X, point.Y), radius * 2, radius * 2);
@@ -54,19 +54,20 @@ namespace Game
                 return false;
             }, ref box);
 
-            List<Fixture> collisions = new List<Fixture>();
+            List<FixtureEdgeCoord> collisions = new List<FixtureEdgeCoord>();
             foreach (Fixture f in potentials)
             {
                 Xna.Vector2 relativePoint = f.Body.GetLocalPoint(new Xna.Vector2(point.X, point.Y));
                 switch (f.ShapeType)
                 {
-                    case ShapeType.Circle:
+                    /*case ShapeType.Circle:
                         CircleShape circle = (CircleShape)f.Shape;
                         if ((circle.Position - relativePoint).Length() <= radius + circle.Radius)
                         {
-                            collisions.Add(f);
+
+                            //collisions.Add(f);
                         }
-                        break;
+                        break;*/
 
                     case ShapeType.Polygon:
                         PolygonShape polygon = (PolygonShape)f.Shape;
@@ -75,11 +76,15 @@ namespace Game
                             int iNext = (i + 1) % polygon.Vertices.Count;
                             Line edge = new Line(polygon.Vertices[i], polygon.Vertices[iNext]);
                             IntersectPoint[] intersects = MathExt.GetLineCircleIntersections(new Vector2(relativePoint.X, relativePoint.Y), radius, edge, true);
-                            if (intersects.Length > 0)
+                            for (int j = 0; i < intersects.Length; i++)
                             {
-                                collisions.Add(f);
-                                break;
+                                collisions.Add(new FixtureEdgeCoord(f, i, (float)intersects[j].T));
                             }
+                            /*if (intersects.Length > 0)
+                            {
+                                fixtureCollisions.Add(f);
+                                break;
+                            }*/
                         }
                         break;
 
@@ -89,6 +94,58 @@ namespace Game
                 }
             }
             return collisions.ToArray();
+        }
+
+        public static FixtureEdgeCoord GetNearestPortalableEdge(World world, Vector2 point, float maxRadius, float portalSize)
+        {
+            List<Fixture> potentials = new List<Fixture>();
+            var box = new FarseerPhysics.Collision.AABB(new Xna.Vector2(point.X, point.Y), maxRadius * 2, maxRadius * 2);
+            world.QueryAABB(delegate(Fixture fixture)
+            {
+                potentials.Add(fixture);
+                return true;
+            }, ref box);
+
+            FixtureEdgeCoord nearest = null;
+            foreach (Fixture f in potentials)
+            {
+                Vector2 localPoint = Vector2Ext.ConvertTo(f.Body.GetLocalPoint(new Xna.Vector2(point.X, point.Y)));
+                switch (f.ShapeType)
+                {
+                    case ShapeType.Polygon:
+                        PolygonShape polygon = (PolygonShape)f.Shape;
+                        for (int i = 0; i < polygon.Vertices.Count; i++)
+                        {
+                            int iNext = (i + 1) % polygon.Vertices.Count;
+                            Line edge = new Line(polygon.Vertices[i], polygon.Vertices[iNext]);
+                            //check that the line can have a FixturePortal on it
+                            if (!PortalPlacer.EdgeIsValid(f, i, portalSize))
+                            {
+                                continue;
+                            }
+                            Transform2D transform = BodyExt.GetTransform(f.Body);
+                            Vector2 v = edge.Nearest(localPoint, true);
+                            float t = edge.NearestT(localPoint, true);
+                            //FixtureEdgeCoord coord = PortalPlacer.GetValid(new FixtureEdgeCoord(f, i, t), portalSize);
+                            float vDist = (v - localPoint).Length;
+                            if ((nearest == null && vDist <= maxRadius) ||
+                                (nearest != null && vDist < (nearest.GetPosition() - localPoint).Length))
+                            {
+                                nearest = new FixtureEdgeCoord(f, i, t);
+                            }
+                        }
+                        break;
+
+                    default:
+                        Debug.Assert(false, f.ShapeType.ToString() + " has not been implemented.");
+                        break;
+                }
+            }
+            if (nearest != null)
+            {
+                nearest = PortalPlacer.GetValid(nearest, portalSize);
+            }
+            return nearest;
         }
     }
 }

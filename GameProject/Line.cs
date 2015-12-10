@@ -220,7 +220,7 @@ namespace Game
             {
                 float t = ((point.X - Vertices[0].X) * VDelta.X + (point.Y - Vertices[0].Y) * VDelta.Y) / (float)(Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
                 Debug.Assert(float.IsNaN(t) == false);
-                if (isSegment) { t = (float)Math.Min(Math.Max(0, t), 1); }
+                if (isSegment) { t = (float)MathHelper.Clamp(t, 0, 1); }
                 V = Vertices[0] + Vector2.Multiply(VDelta, t);
             }
             float distance = (point - V).Length;
@@ -263,14 +263,33 @@ namespace Game
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public float NearestT(Vector2 v)
+        public float NearestT(Vector2 v, bool isSegment)
         {
-            return Vector2.Dot(v - Vertices[0], Vertices[1] - Vertices[0]);
+            Vector2 VDelta = Vertices[1] - Vertices[0];
+            double t = ((v.X - Vertices[0].X) * VDelta.X + (v.Y - Vertices[0].Y) * VDelta.Y) / (Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
+            if (isSegment)
+            {
+                t = MathHelper.Clamp(t, 0, 1);
+            }
+            return (float)t;        
+            //return Vector2.Dot(v - Vertices[0], Vertices[1] - Vertices[0]);
         }
 
-        public float NearestT(Xna.Vector2 v)
+        public float NearestT(Xna.Vector2 v, bool isSegment)
         {
-            return NearestT(Vector2Ext.ConvertTo(v));
+            return NearestT(Vector2Ext.ConvertTo(v), isSegment);
+        }
+
+        public Vector2 Nearest(Vector2 v, bool isSegment)
+        {
+            float t = NearestT(v, isSegment);
+            return Vertices[0] + (Vertices[1] - Vertices[0]) * t;
+        }
+
+        public Vector2 Nearest(Xna.Vector2 v, bool isSegment)
+        {
+            float t = NearestT(v, isSegment);
+            return Vertices[0] + (Vertices[1] - Vertices[0]) * t;
         }
 
         public float Angle()

@@ -87,7 +87,6 @@
     <Compile Include="EditorObject.cs" />
     <Compile Include="EditorPortal.cs" />
     <Compile Include="ToolAddEntity.cs" />
-    <Compile Include="PropertyGridConverter.cs" />
     <Compile Include="Tool.cs" />
     <Compile Include="ToolAddPortal.cs" />
     <Compile Include="ToolButton.xaml.cs">
@@ -98,6 +97,7 @@
       <DependentUpon>ToolPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="ToolPolygon.cs" />
+    <Compile Include="ToolPortalLinker.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -136,6 +136,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Content Include="editor assets\icons\polygonIcon.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="editor assets\icons\polygonLinkerIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="editor assets\models\coordinateArrowsTex.png">

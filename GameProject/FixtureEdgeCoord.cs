@@ -123,6 +123,14 @@ namespace Game
             }
         }
 
+        public Vector2 GetWorldPosition()
+        {
+            var transform = new FarseerPhysics.Common.Transform();
+            Fixture.Body.GetTransform(out transform);
+            Matrix4 matTransform = Matrix4Ext.ConvertTo(transform);
+            return Vector2Ext.Transform(GetPosition(), matTransform);
+        }
+
         public Transform2D GetTransform()
         {
             Transform2D transform = new Transform2D();

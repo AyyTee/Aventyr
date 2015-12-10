@@ -23,19 +23,33 @@ namespace Game
         public static Entity CreateEntityBox(Scene scene, Transform2D transform)
         {
             Debug.Assert(scene != null);
-            Entity box = new Entity(scene, new Transform2D(transform.Position, transform.Rotation));
-            box.IsPortalable = true;
-            box.Models.Add(ModelFactory.CreatePlane(transform.Scale));
+            Entity entity = new Entity(scene);
+            return CreateEntityBox(entity, transform);
+        }
 
-            Body body = BodyFactory.CreateRectangle(box.Scene.World, transform.Scale.X, transform.Scale.Y, 1);
+        public static Entity CreateEntityBox(Entity entity, Vector2 position)
+        {
+            return CreateEntityBox(entity, new Transform2D(position));
+        }
+
+        public static Entity CreateEntityBox(Entity entity, Transform2D transform)
+        {
+            entity.Transform.Position = transform.Position;
+            entity.Transform.Rotation = transform.Rotation;
+            entity.IsPortalable = true;
+            entity.Models.Add(ModelFactory.CreatePlane(transform.Scale));
+
+            Debug.Assert(entity.Body == null);
+            Body body = BodyFactory.CreateRectangle(entity.Scene.World, transform.Scale.X, transform.Scale.Y, 1);
+            entity.Scene.World.ProcessChanges();
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
-            box.SetBody(body);
+            entity.SetBody(body);
             body.BodyType = BodyType.Dynamic;
 
             FixtureUserData userData = new FixtureUserData(body.FixtureList[0]);
 
             FixtureExt.SetUserData(body.FixtureList[0], userData);
-            return box;
+            return entity;
         }
 
         public static Entity CreateEntityPolygon(Scene scene, Vector2 position, Vector2[] vertices)
@@ -47,6 +61,13 @@ namespace Game
         {
             Debug.Assert(scene != null);
             Entity entity = new Entity(scene, transform);
+            return CreateEntityPolygon(entity, transform, vertices);
+        }
+
+        public static Entity CreateEntityPolygon(Entity entity, Transform2D transform, Vector2[] vertices)
+        {
+            entity.Transform.Position = transform.Position;
+            entity.Transform.Rotation = transform.Rotation;
             vertices = MathExt.SetHandedness(vertices, false);
             Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(vertices);
 
@@ -56,7 +77,8 @@ namespace Game
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 
-            Body body = new Body(scene.World);
+            Debug.Assert(entity.Body == null);
+            Body body = BodyExt.CreateBody(entity.Scene.World);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             for (int i = 0; i < polygon.Triangles.Count; i++)
             {

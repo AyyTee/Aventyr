@@ -46,7 +46,13 @@ namespace Editor
             {
                 if (_input.MousePress(MouseButton.Right))
                 {
-                    Controller.SetSelectedEntity(Controller.GetNearestEntity());
+                    Vector2 mousePos = Controller.GetMouseWorldPosition();
+                    EditorObject nearest = Controller.GetNearestObject(mousePos);
+                    if (nearest != null && (nearest.GetTransform().WorldPosition - mousePos).Length > 1)
+                    {
+                        nearest = null;
+                    }
+                    Controller.SetSelectedEntity(nearest);
                     if (Controller.GetSelectedEntity() != null)
                     {
                         translation.Transform.Position = Controller.GetSelectedEntity().GetTransform().Position;

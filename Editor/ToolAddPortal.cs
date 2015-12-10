@@ -13,6 +13,7 @@ namespace Editor
     class ToolAddPortal : Tool
     {
         EditorPortal _mouseFollow;
+        float snapDistance = 0.2f;
         State _stateCurrent;
         double _rotationSnapSize = 2 * Math.PI / 24;
         enum State
@@ -35,7 +36,7 @@ namespace Editor
                 Vector2 mousePos = Controller.GetMouseWorldPosition();
                 if (_stateCurrent == State.Placing)
                 {
-                    transform.Position = mousePos;
+                    UpdatePortalTransform(_mouseFollow);
                 }
                 else if (_stateCurrent == State.Orienting)
                 {
@@ -55,7 +56,6 @@ namespace Editor
 
             if (_input.MouseRelease(MouseButton.Right) && _stateCurrent == State.Orienting)
             {
-                //_controller.SetCursor(new Vector2());
                 _stateCurrent = State.Placing;
             }
             else if (_input.MouseDown(MouseButton.Right))
@@ -64,13 +64,11 @@ namespace Editor
             }
             else
             {
-                
                 if (_input.MousePress(MouseButton.Left))
                 {
                     EditorPortal editorPortal = Controller.CreateLevelPortal();
-                    FloatPortal portal = (FloatPortal)editorPortal.Portal;
-                    Transform2D transform = _mouseFollow.GetTransform();
-                    editorPortal.SetTransform(transform);
+                    //editorPortal.Marker.IsPortalable = true;
+                    UpdatePortalTransform(editorPortal);
                     Controller.SetSelectedEntity(editorPortal);
                     if (!(_input.KeyDown(Key.ShiftLeft) || _input.KeyDown(Key.ShiftRight)))
                     {
@@ -78,26 +76,25 @@ namespace Editor
                     }
                 }
             }
-            /*else if (_input.MousePress(MouseButton.Left))
+        }
+
+        private void UpdatePortalTransform(EditorPortal portal)
+        {
+            Transform2D transform = portal.GetTransform();
+            FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, portal.GetTransform().Scale.X);
+            if (coord != null)
             {
-                if (_stateCurrent == State.Placing)
-                {
-                    _stateCurrent = State.Orienting;
-                }
-                else if (_stateCurrent == State.Orienting)
-                {
-                    _stateCurrent = State.Placing;
-                    EditorPortal editorPortal = _controller.CreateLevelPortal();
-                    FloatPortal portal = (FloatPortal)editorPortal.Portal;
-                    Transform2D transform;
-                    _mouseFollow.GetTransform(out transform);
-                    editorPortal.SetTransform(transform);
-                    if (!(_input.KeyDown(Key.ShiftLeft) || _input.KeyDown(Key.ShiftRight)))
-                    {
-                        _controller.SetTool(null);
-                    }
-                }
-            }*/
+                transform.Position = coord.GetTransform().WorldPosition;
+                transform.Rotation = coord.GetTransform().WorldRotation;
+                transform.Scale = coord.GetTransform().WorldScale;
+            }
+            else
+            {
+                transform.Position = Controller.GetMouseWorldPosition();
+                transform.Rotation = _mouseFollow.GetTransform().Rotation;
+                transform.Scale = _mouseFollow.GetTransform().Scale;
+            }
+            portal.SetTransform(transform);
         }
 
         public override void Enable()

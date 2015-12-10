@@ -11,16 +11,18 @@ namespace Editor
     public class EditorPortal : EditorObject
     {
         public Portal Portal { get; private set; }
-        Entity _marker;
+        public Entity Marker { get; private set; }
 
         public EditorPortal(Scene scene)
         {
             Portal = new FloatPortal(scene);
-            _marker = new Entity(scene);
+            Marker = new Entity(scene);
+            Marker.Transform.Parent = Portal.GetTransform();
+            Marker.Transform.Position = new Vector2(0.001f, 0);
             //_marker.Models.Add(ModelFactory.CreatePlane(new Vector2(0.1f, 1)));
-            _marker.Models.Add(ModelFactory.CreateArrow(new Vector3(0, -0.5f, 0), new Vector2(0, 1), 0.05f, 0.2f, 0.1f));
-            _marker.Models.Add(ModelFactory.CreateArrow(new Vector3(), new Vector2(0.2f, 0), 0.05f, 0.2f, 0.1f));
-            foreach (Model m in _marker.Models)
+            Marker.Models.Add(ModelFactory.CreateArrow(new Vector3(0, -0.5f, 0), new Vector2(0, 1), 0.05f, 0.2f, 0.1f));
+            Marker.Models.Add(ModelFactory.CreateArrow(new Vector3(), new Vector2(0.2f, 0), 0.05f, 0.2f, 0.1f));
+            foreach (Model m in Marker.Models)
             {
                 m.SetShader("default");
                 m.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
@@ -30,7 +32,7 @@ namespace Editor
         public void Remove()
         {
             Portal.Scene.RemovePortal(Portal);
-            _marker.Scene.RemoveEntity(_marker);
+            Marker.Scene.RemoveEntity(Marker);
         }
 
         public override void SetTransform(Transform2D transform)
@@ -39,7 +41,7 @@ namespace Editor
             {
                 FloatPortal portal = (FloatPortal)Portal;
                 portal.Transform.SetLocal(transform);
-                _marker.Transform.SetLocal(transform);
+                //Marker.Transform.SetLocal(transform);
             }
         }
 

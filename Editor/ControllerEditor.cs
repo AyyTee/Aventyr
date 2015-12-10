@@ -52,12 +52,13 @@ namespace Editor
 
             Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];
-            background.Transform.Position = new Vector3(0, 0, -10f);
-            float size = 100;
+            background.Transform.Position = new Vector3(0, 0, -5f);
+            float size = 5;
             background.Transform.Scale = new Vector3(size, size, size);
             background.TransformUv.Scale = new Vector2(size, size);
             Entity back = new Entity(Level, new Vector2(0f, 0f));
             back.Models.Add(background);
+            back.IsPortalable = true;
 
             
 
@@ -183,9 +184,10 @@ namespace Editor
             }
         }
 
-        public EditorObject GetNearestEntity()
+        public EditorObject GetNearestObject(Vector2 point)
         {
-            Vector2 mouseWorldPos = Level.ActiveCamera.ScreenToWorld(InputExt.MousePos);
+            return GetNearestObject(point, item => true);
+            /*Vector2 mouseWorldPos = Level.ActiveCamera.ScreenToWorld(InputExt.MousePos);
             List<EditorObject> tempList = new List<EditorObject>();
             tempList.AddRange(Entities);
             tempList.AddRange(Portals);
@@ -196,6 +198,22 @@ namespace Editor
                 if ((mouseWorldPos - nearest.GetTransform().Position).Length < 1)
                 {
                     return nearest;
+                }
+            }
+            return null;*/
+        }
+
+        public EditorObject GetNearestObject(Vector2 point, Func<EditorObject, bool> validObject)
+        {
+            List<EditorObject> tempList = new List<EditorObject>();
+            tempList.AddRange(Entities);
+            tempList.AddRange(Portals);
+            var sorted = tempList.OrderBy(item => (point - item.GetTransform().Position).Length).ToList();
+            for (int i = 0; i < sorted.Count; i++)
+            {
+                if (validObject.Invoke(sorted[i]))
+                {
+                    return sorted[i];
                 }
             }
             return null;

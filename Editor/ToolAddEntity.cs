@@ -31,9 +31,11 @@ namespace Editor
             else if (_input.MousePress(MouseButton.Left))
             {
                 EditorEntity entity = Controller.CreateLevelEntity();
-                entity.Entity.Transform.Position = Controller.GetMouseWorldPosition();
-                entity.Entity.Models.Add(ModelFactory.CreateCube());
+                EntityFactory.CreateEntityBox(entity.Entity, Controller.GetMouseWorldPosition());
+                //entity.Entity.Transform.Position = Controller.GetMouseWorldPosition();
+                //entity.Entity.Models.Add(ModelFactory.CreateCube());
                 entity.Entity.Velocity.Rotation = .1f;
+                entity.Entity.IsPortalable = true;
                 
                 Controller.SetSelectedEntity(entity);
 
@@ -49,6 +51,7 @@ namespace Editor
             base.Enable();
             _mouseFollow = new Entity(Controller.Level);
             _mouseFollow.Models.Add(ModelFactory.CreateCube());
+            _mouseFollow.IsPortalable = true;
         }
 
         public override void Disable()

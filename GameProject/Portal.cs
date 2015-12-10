@@ -14,6 +14,16 @@ namespace Game
         public Scene Scene { get; private set; }
         public Portal Linked { get; private set; }
         /// <summary>
+        /// The local size of the portal.
+        /// </summary>
+        public float Size
+        {
+            get
+            {
+                return GetTransform().Scale.X;
+            }
+        }
+        /// <summary>
         /// True if entities can travel through this portal.  Does not affect portal clipping.
         /// </summary>
         //public bool IsPortalable { get; set; }
@@ -28,6 +38,7 @@ namespace Game
         /// Entities can still travel though the portal in both directions however.
         /// </summary>
         public bool OneSided { get; set; }
+        public bool IsMirrored { get; set; }
         private Exception _nullScene = new Exception("Portal must be assigned to a scene.");
         public Portal(Scene scene)
         {
@@ -40,6 +51,7 @@ namespace Game
             Scene.PortalList.Add(this);
         }
         public abstract Transform2D GetTransform();
+        public abstract void SetTransform(Transform2D transform);
         public abstract Transform2D GetVelocity();
 
         public Vector2[] GetFOV(Vector2 origin, float distance)
@@ -161,7 +173,11 @@ namespace Game
 
         public Matrix4 GetPortalMatrix()
         {
-            Debug.Assert(Linked != null, "Portal must be linked to another portal.");
+            if (Linked == null)
+            {
+                return Matrix4.Identity;
+            }
+            //Debug.Assert(Linked != null, "Portal must be linked to another portal.");
             return GetPortalMatrix(this, Linked);
         }
 

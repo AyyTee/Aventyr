@@ -103,34 +103,32 @@ namespace Game
         }
 
         /// <summary>
-        /// Given a intersection point, this returns a valid intersection point (which could be the same position), or null if none exists.
+        /// Returns a valid FixtureEdgeCoord for a portal location (which could be the same position), or null if none exists.
         /// </summary>
-        /// <param name="intersection"></param>
-        /// <param name="portal"></param>
-        /// <returns></returns>
-        public static FixtureEdgeCoord GetValid(FixtureEdgeCoord intersection, FixturePortal portal)
+        public static FixtureEdgeCoord GetValid(FixtureEdgeCoord intersection, float portalSize)
         {
-            Line portalLine = new Line(portal.GetWorldVerts());
-            float portalSize = portalLine.Length;
             Line edge = intersection.GetWorldEdge();
-            float portalSizeT = portalSize / edge.Length + FixturePortal.EdgeMargin * 2;
-            if (portalSizeT > 1)
+            if (!EdgeValidLength(edge.Length, portalSize))
             {
                 return null;
             }
-            float portalT = intersection.EdgeT;
-            portalT = Math.Max(portalT, portalSizeT / 2);
-            portalT = Math.Min(portalT, 1 - portalSizeT / 2);
+            float portalSizeT = (portalSize + FixturePortal.EdgeMargin * 2) / edge.Length;
+            float portalT = MathHelper.Clamp(intersection.EdgeT, portalSizeT / 2, 1 - portalSizeT / 2);
             FixtureEdgeCoord intersectValid = new FixtureEdgeCoord(intersection.Fixture, intersection.EdgeIndex, portalT);
             return intersectValid;
         }
 
         /// <summary>
+        /// Returns a valid FixtureEdgeCoord for a portal location (which could be the same position), or null if none exists.
+        /// </summary>
+        public static FixtureEdgeCoord GetValid(FixtureEdgeCoord intersection, FixturePortal portal)
+        {
+            return GetValid(intersection, portal.Size);
+        }
+
+        /// <summary>
         /// Checks if an edge can have a portal placed on it.  This does not account for size of edge.
         /// </summary>
-        /// <param name="fixture"></param>
-        /// <param name="edgeIndex"></param>
-        /// <returns></returns>
         public static bool EdgeIsValid(Fixture fixture, int edgeIndex)
         {
             Debug.Assert(fixture.UserData != null);
@@ -141,6 +139,32 @@ namespace Game
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Checks if an edge can have a portal placed on it.
+        /// </summary>
+        public static bool EdgeIsValid(Fixture fixture, int edgeIndex, float portalSize)
+        {
+            if (EdgeIsValid(fixture, edgeIndex))
+            {
+                switch (fixture.ShapeType)
+                {
+                    case ShapeType.Polygon:
+                        PolygonShape polygon = (PolygonShape)fixture.Shape;
+                        Line edge = new Line(polygon.Vertices[edgeIndex], polygon.Vertices[(edgeIndex+1) % polygon.Vertices.Count]);
+                        return EdgeValidLength(edge.Length, portalSize);
+                    default:
+                        Debug.Assert(false, fixture.ShapeType.ToString() + " is not supported.");
+                        break;
+                }
+            }
+            return false;
+        }
+
+        private static bool EdgeValidLength(float edgeLength, float portalSize)
+        {
+            return edgeLength > portalSize + FixturePortal.EdgeMargin * 2;
         }
     }
 }

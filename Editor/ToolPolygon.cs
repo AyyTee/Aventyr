@@ -22,6 +22,7 @@ namespace Editor
         {
             base.Enable();
             _entity = new Entity(Controller.Level);
+            _entity.IsPortalable = true;
         }
 
         public override void Disable()
@@ -52,8 +53,16 @@ namespace Editor
                 if (_vertices.Count >= 3 && (mousePos - _vertices[0]).Length < 0.1f)
                 {
                     EditorEntity entity = Controller.CreateLevelEntity();
-                    //EntityFactory.CreateEntityPolygon();
-                    entity.Entity.Models.Add(ModelFactory.CreatePolygon(_vertices.ToArray()));
+                    Vector2 average = new Vector2(_vertices.Average(item => item.X), _vertices.Average(item => item.Y));
+                    for (int i = 0; i < _vertices.Count; i++)
+                    {
+                        _vertices[i] -= average;
+                    }
+                    Transform2D transform = entity.GetTransform();
+                    transform.Position = average;
+                    EntityFactory.CreateEntityPolygon(entity.Entity, transform, _vertices.ToArray());
+                    //entity.Entity.Models.Add(ModelFactory.CreatePolygon(_vertices.ToArray()));
+                    entity.Entity.IsPortalable = true;
                     _vertices.Clear();
                     _entity.Models.Clear();
                     Controller.SetTool(null);
