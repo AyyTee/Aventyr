@@ -42,7 +42,7 @@ namespace Game
         
         public void Step()
         {
-            Step(1/Controller.StepsPerSecond);
+            Step(1/(float)Controller.StepsPerSecond);
         }
 
         public void Step(float stepSize)

@@ -89,8 +89,7 @@ namespace Game
                         break;
 
                     default:
-                        Debug.Assert(false, f.ShapeType.ToString() + " has not been implemented.");
-                        break;
+                        throw new NotImplementedException();
                 }
             }
             return collisions.ToArray();
@@ -99,7 +98,7 @@ namespace Game
         public static FixtureEdgeCoord GetNearestPortalableEdge(World world, Vector2 point, float maxRadius, float portalSize)
         {
             List<Fixture> potentials = new List<Fixture>();
-            var box = new FarseerPhysics.Collision.AABB(new Xna.Vector2(point.X, point.Y), maxRadius * 2, maxRadius * 2);
+            var box = new FarseerPhysics.Collision.AABB(Vector2Ext.ConvertToXna(point), maxRadius * 2, maxRadius * 2);
             world.QueryAABB(delegate(Fixture fixture)
             {
                 potentials.Add(fixture);
@@ -109,7 +108,10 @@ namespace Game
             FixtureEdgeCoord nearest = null;
             foreach (Fixture f in potentials)
             {
+                Debug.Assert(BodyExt.GetUserData(f.Body).LinkedEntity.Transform.Position == Vector2Ext.ConvertTo(f.Body.Position));
                 Vector2 localPoint = Vector2Ext.ConvertTo(f.Body.GetLocalPoint(new Xna.Vector2(point.X, point.Y)));
+                Vector2 localPoint2 = Vector2Ext.Transform(point, FixtureExt.GetUserData(f).Entity.Transform.GetWorldMatrix().Inverted());
+                //Debug.Assert(localPoint == localPoint2);
                 switch (f.ShapeType)
                 {
                     case ShapeType.Polygon:
@@ -117,28 +119,24 @@ namespace Game
                         for (int i = 0; i < polygon.Vertices.Count; i++)
                         {
                             int iNext = (i + 1) % polygon.Vertices.Count;
-                            Line edge = new Line(polygon.Vertices[i], polygon.Vertices[iNext]);
                             //check that the line can have a FixturePortal on it
                             if (!PortalPlacer.EdgeIsValid(f, i, portalSize))
                             {
                                 continue;
                             }
-                            Transform2D transform = BodyExt.GetTransform(f.Body);
+                            Line edge = new Line(polygon.Vertices[i], polygon.Vertices[iNext]);
                             Vector2 v = edge.Nearest(localPoint, true);
-                            float t = edge.NearestT(localPoint, true);
-                            //FixtureEdgeCoord coord = PortalPlacer.GetValid(new FixtureEdgeCoord(f, i, t), portalSize);
                             float vDist = (v - localPoint).Length;
                             if ((nearest == null && vDist <= maxRadius) ||
                                 (nearest != null && vDist < (nearest.GetPosition() - localPoint).Length))
                             {
-                                nearest = new FixtureEdgeCoord(f, i, t);
+                                nearest = new FixtureEdgeCoord(f, i, edge.NearestT(localPoint, true));
                             }
                         }
                         break;
 
                     default:
-                        Debug.Assert(false, f.ShapeType.ToString() + " has not been implemented.");
-                        break;
+                        throw new NotImplementedException();
                 }
             }
             if (nearest != null)

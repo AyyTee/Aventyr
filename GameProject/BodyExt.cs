@@ -48,6 +48,11 @@ namespace Game
             return new Transform2D(Vector2Ext.ConvertTo(body.Position), body.Rotation);
         }
 
+        public static void SetTransform(Body body, Transform2D transform)
+        {
+            body.SetTransform(Vector2Ext.ConvertToXna(transform.Position), transform.Rotation);
+        }
+
         public static Body Clone(Body body)
         {
             Body bodyClone = body.DeepClone();

@@ -171,10 +171,22 @@ namespace Game
             Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
             BodyId = body.BodyId;
 
-            body.Position = Vector2Ext.ConvertToXna(Transform.Position);
-            body.Rotation = Transform.Rotation;
-            //Scene.PhysWorld.ProcessChanges();
+            BodyExt.SetTransform(body, Transform);
             BodyExt.SetUserData(body, this);
+        }
+
+        public void SetTransform(Transform2D transform)
+        {
+            Transform.SetLocal(transform);
+            if (Body != null)
+            {
+                BodyExt.SetTransform(Body, transform);
+            }
+        }
+
+        public Transform2D GetTransform()
+        {
+            return Transform.Copy();
         }
 
         public void _RenderSetTransformMatrix(Model model, Matrix4 viewMatrix)
@@ -267,7 +279,6 @@ namespace Game
             }
             
             ClipModels.Add(new ClipModel(model, clipLines.ToArray(), modelMatrix));
-            
         }
 
         public void RenderClipModels(Matrix4 viewMatrix)
@@ -280,7 +291,7 @@ namespace Game
             Matrix4 ScaleMatrix;
             ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
 
-            Vector2[] mirrorTest = new Vector2[3] {
+            /*Vector2[] mirrorTest = new Vector2[3] {
                 new Vector2(1, 0),
                 new Vector2(0, 1),
                 new Vector2(0, 0)
@@ -288,6 +299,8 @@ namespace Game
             bool isMirrored;
             mirrorTest = Vector2Ext.Transform(mirrorTest, viewMatrix);
             isMirrored = MathExt.AngleDiff(MathExt.AngleVector(mirrorTest[0] - mirrorTest[2]), MathExt.AngleVector(mirrorTest[1] - mirrorTest[2])) > 0;
+            */
+            bool isMirrored = Matrix4Ext.IsMirrored(viewMatrix);
             foreach (ClipModel cm in clipModels)
             {
                 List<float> cutLines = new List<float>();

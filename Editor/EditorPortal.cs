@@ -13,9 +13,9 @@ namespace Editor
         public Portal Portal { get; private set; }
         public Entity Marker { get; private set; }
 
-        public EditorPortal(Scene scene)
+        public EditorPortal(Scene scene, Portal portal)
         {
-            Portal = new FloatPortal(scene);
+            Portal = portal;
             Marker = new Entity(scene);
             Marker.Transform.Parent = Portal.GetTransform();
             Marker.Transform.Position = new Vector2(0.001f, 0);
@@ -27,6 +27,11 @@ namespace Editor
                 m.SetShader("default");
                 m.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
             }
+        }
+
+        public EditorPortal(Scene scene)
+            : this(scene, new FloatPortal(scene))
+        {
         }
 
         public void Remove()

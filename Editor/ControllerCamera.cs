@@ -18,11 +18,12 @@ namespace Editor
         /// </summary>
         public event CameraObjectHandler CameraMoved;
 
+        public ControllerEditor Controller { get; private set; }
         public Camera Camera { get; private set; }
         public InputExt InputExt { get; private set; }
         public float ZoomMin = 0.5f;
         public float ZoomMax = 1000f;
-        public float KeyMoveSpeed = 0.1f;
+        public float KeyMoveSpeed = 0.15f;
 
         private float _zoomScrollFactor;
         /// <summary>
@@ -54,8 +55,9 @@ namespace Editor
 
         Vector2 _mouseDragPos;
         Vector3 _cameraDragPos;
-        public ControllerCamera(Camera camera, InputExt inputExt)
+        public ControllerCamera(ControllerEditor controller, Camera camera, InputExt inputExt)
         {
+            Controller = controller;
             ZoomScrollFactor = 1.2f;
             ZoomFactor = 1.5f;
             Camera = camera;
@@ -96,27 +98,35 @@ namespace Editor
             {
                 Camera.Scale = MathHelper.Clamp(Camera.Scale * ZoomFactor, ZoomMin, ZoomMax);
             }
-            if (InputExt.KeyDown(Key.A))
+            if (InputExt.KeyDown(Key.R))
             {
                 Camera.Transform.Rotation += new Quaternion(0, 0, 0, .01f);
             }
             if (InputExt.KeyPress(Key.Space))
             {
                 Camera.Transform.Rotation = new Quaternion(0, 0, 1, 0);
+                EditorObject selected = Controller.GetSelectedEntity();
+                if (selected != null)
+                {
+                    Vector3 position = Camera.Transform.Position;
+                    position.X = selected.GetTransform().Position.X;
+                    position.Y = selected.GetTransform().Position.Y;
+                    Camera.Transform.Position = position;
+                }
             }
-            if (InputExt.KeyDown(Key.Left))
+            if (InputExt.KeyDown(Key.A))
             {
                 Camera.Transform.Position += new Vector3(-KeyMoveSpeed, 0, 0);
             }
-            if (InputExt.KeyDown(Key.Right))
+            if (InputExt.KeyDown(Key.D))
             {
                 Camera.Transform.Position += new Vector3(KeyMoveSpeed, 0, 0);
             }
-            if (InputExt.KeyDown(Key.Up))
+            if (InputExt.KeyDown(Key.W))
             {
                 Camera.Transform.Position += new Vector3(0, KeyMoveSpeed, 0);
             }
-            if (InputExt.KeyDown(Key.Down))
+            if (InputExt.KeyDown(Key.S))
             {
                 Camera.Transform.Position += new Vector3(0, -KeyMoveSpeed, 0);
             }

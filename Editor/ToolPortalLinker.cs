@@ -33,8 +33,10 @@ namespace Editor
                     else
                     {
                         Portal.ConnectPortals(portal.Portal, _portalPrevious.Portal);
-                        portal.Portal.IsMirrored = true;
+                        portal.Portal.IsMirrored = false;
+                        _portalPrevious.Portal.IsMirrored = true;
                         _portalPrevious = null;
+                        Controller.SetTool(null);
                     }
                 }
             }
@@ -43,6 +45,7 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
+            _portalPrevious = null;
         }
 
         public override void Disable()

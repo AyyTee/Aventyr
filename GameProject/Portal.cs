@@ -16,13 +16,7 @@ namespace Game
         /// <summary>
         /// The local size of the portal.
         /// </summary>
-        public float Size
-        {
-            get
-            {
-                return GetTransform().Scale.X;
-            }
-        }
+        public float Size { get { return GetTransform().Scale.X; } }
         /// <summary>
         /// True if entities can travel through this portal.  Does not affect portal clipping.
         /// </summary>
@@ -173,11 +167,11 @@ namespace Game
 
         public Matrix4 GetPortalMatrix()
         {
-            if (Linked == null)
+            /*if (Linked == null)
             {
                 return Matrix4.Identity;
-            }
-            //Debug.Assert(Linked != null, "Portal must be linked to another portal.");
+            }*/
+            Debug.Assert(Linked != null, "Portal must be linked to another portal.");
             return GetPortalMatrix(this, Linked);
         }
 
@@ -189,7 +183,10 @@ namespace Game
             //The portalExit is temporarily mirrored before getting the transformation matrix
             Transform2D transform = portalExit.GetTransform();
             Vector2 v = transform.Scale;
-            transform.Scale = new Vector2(-v.X, v.Y);
+            //if (portalEnter.IsMirrored != portalExit.IsMirrored)
+            {
+                transform.Scale = new Vector2(-v.X, v.Y);
+            }
             Matrix4 m = portalEnter.GetTransform().GetWorldMatrix().Inverted() * transform.GetWorldMatrix();
             transform.Scale = v;
             return m;

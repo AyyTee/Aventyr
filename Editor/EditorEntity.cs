@@ -32,12 +32,12 @@ namespace Editor
 
         public override void SetTransform(Transform2D transform)
         {
-            Entity.Transform.SetLocal(transform);
+            Entity.SetTransform(transform);
         }
 
         public override Transform2D GetTransform()
         {
-            return Entity.Transform;
+            return Entity.GetTransform();
         }
     }
 }

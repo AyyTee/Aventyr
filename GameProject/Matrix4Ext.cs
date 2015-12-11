@@ -17,6 +17,18 @@ namespace Game
             matrix = matrix * Matrix4.CreateTranslation(new Vector3(transform.Position.X, transform.Position.Y, 1));
             return matrix;
         }
+
+        public static bool IsMirrored(Matrix4 matrix)
+        {
+            Vector2[] mirrorTest = new Vector2[3] {
+                new Vector2(1, 0),
+                new Vector2(0, 1),
+                new Vector2(0, 0)
+            };
+            mirrorTest = Vector2Ext.Transform(mirrorTest, matrix);
+            return MathExt.AngleDiff(MathExt.AngleVector(mirrorTest[0] - mirrorTest[2]), MathExt.AngleVector(mirrorTest[1] - mirrorTest[2])) > 0;
+        }
+
         public static bool Equals(Matrix4 matrix0, Matrix4 matrix1)
         {
             if (Math.Abs(matrix0.M11 - matrix1.M11) > EQUALITY_EPSILON) { return false; }

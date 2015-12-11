@@ -36,6 +36,9 @@ namespace Editor
                 Vector2 mousePos = Controller.GetMouseWorldPosition();
                 if (_stateCurrent == State.Placing)
                 {
+                    if (_input.KeyPress(Key.B))
+                    {
+                    }
                     UpdatePortalTransform(_mouseFollow);
                 }
                 else if (_stateCurrent == State.Orienting)
@@ -60,16 +63,28 @@ namespace Editor
             }
             else if (_input.MouseDown(MouseButton.Right))
             {
-                _stateCurrent = State.Orienting;
+                Controller.SetTool(null);
+                //_stateCurrent = State.Orienting;
             }
             else
             {
                 if (_input.MousePress(MouseButton.Left))
                 {
-                    EditorPortal editorPortal = Controller.CreateLevelPortal();
+                    FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
+                    EditorPortal editorPortal;
+                    if (coord != null)
+                    {
+                        editorPortal = Controller.CreateLevelPortal(new FixturePortal(Controller.Level, coord));
+                    }
+                    else
+                    {
+                        //editorPortal = Controller.CreateLevelPortal();
+                        //UpdatePortalTransform(editorPortal);
+                    }
+                    
                     //editorPortal.Marker.IsPortalable = true;
-                    UpdatePortalTransform(editorPortal);
-                    Controller.SetSelectedEntity(editorPortal);
+                    
+                    //Controller.SetSelectedEntity(editorPortal);
                     if (!(_input.KeyDown(Key.ShiftLeft) || _input.KeyDown(Key.ShiftRight)))
                     {
                         Controller.SetTool(null);
@@ -84,9 +99,10 @@ namespace Editor
             FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, portal.GetTransform().Scale.X);
             if (coord != null)
             {
-                transform.Position = coord.GetTransform().WorldPosition;
+                /*transform.Position = coord.GetTransform().WorldPosition;
                 transform.Rotation = coord.GetTransform().WorldRotation;
-                transform.Scale = coord.GetTransform().WorldScale;
+                transform.Scale = coord.GetTransform().WorldScale;*/
+                transform.SetLocal(coord.GetWorldTransform());
             }
             else
             {

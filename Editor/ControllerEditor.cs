@@ -49,22 +49,18 @@ namespace Editor
             Hud = new Scene();
             Hud.ActiveCamera = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
             renderer.AddScene(Hud);
-
+            #region create background
             Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -5f);
-            float size = 5;
+            float size = 50;
             background.Transform.Scale = new Vector3(size, size, size);
             background.TransformUv.Scale = new Vector2(size, size);
             Entity back = new Entity(Level, new Vector2(0f, 0f));
             back.Models.Add(background);
-            back.IsPortalable = true;
-
-            
-
-            CamControl = new ControllerCamera(Level.ActiveCamera, InputExt);
-
-            
+            //back.IsPortalable = true;
+            #endregion
+            CamControl = new ControllerCamera(this, Level.ActiveCamera, InputExt);
             
             debugText = new Entity(Hud);
             debugText.Transform.Position = new Vector2(0, CanvasSize.Height - 40);
@@ -124,11 +120,18 @@ namespace Editor
             }
         }
 
+        public EditorPortal CreateLevelPortal(Portal portal)
+        {
+            EditorPortal editorPortal = new EditorPortal(Level, portal);
+            Portals.Add(editorPortal);
+            return editorPortal;
+        }
+
         public EditorPortal CreateLevelPortal()
         {
-            EditorPortal portal = new EditorPortal(Level);
-            Portals.Add(portal);
-            return portal;
+            EditorPortal editorPortal = new EditorPortal(Level);
+            Portals.Add(editorPortal);
+            return editorPortal;
         }
 
         public override void OnUpdateFrame(OpenTK.FrameEventArgs e)
@@ -187,20 +190,6 @@ namespace Editor
         public EditorObject GetNearestObject(Vector2 point)
         {
             return GetNearestObject(point, item => true);
-            /*Vector2 mouseWorldPos = Level.ActiveCamera.ScreenToWorld(InputExt.MousePos);
-            List<EditorObject> tempList = new List<EditorObject>();
-            tempList.AddRange(Entities);
-            tempList.AddRange(Portals);
-            var sorted = tempList.OrderBy(item => (mouseWorldPos - item.GetTransform().Position).Length);
-            if (sorted.ToArray().Length > 0)
-            {
-                EditorObject nearest = sorted.ToArray()[0];
-                if ((mouseWorldPos - nearest.GetTransform().Position).Length < 1)
-                {
-                    return nearest;
-                }
-            }
-            return null;*/
         }
 
         public EditorObject GetNearestObject(Vector2 point, Func<EditorObject, bool> validObject)

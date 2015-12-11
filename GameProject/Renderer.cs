@@ -138,7 +138,7 @@ namespace Game
             }
 
             viewMatrix = Matrix4.CreateTranslation(new Vector3(0, 0, sceneDepth)) * viewMatrix;
-
+            UpdateCullFace(viewMatrix);
             //Start using the stencil 
             GL.ColorMask(false, false, false, false);
             GL.DepthMask(false);
@@ -184,15 +184,27 @@ namespace Game
             GL.LineWidth(2f);
             RenderEntity(fovOutline, viewMatrix, timeDelta);
             GL.LineWidth(1f);
-
             DrawPortal(scene, portalEnter, portalMatrix, viewMatrix, Vector2Ext.Transform(viewPos, FixturePortal.GetPortalMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
         }
 
         public void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta)
         {
+            UpdateCullFace(viewMatrix);
             foreach (Entity v in scene.EntityList)
             {
                 RenderEntity(v, viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond));
+            }
+        }
+
+        private void UpdateCullFace(Matrix4 viewMatrix)
+        {
+            if (Matrix4Ext.IsMirrored(viewMatrix))
+            {
+                GL.CullFace(CullFaceMode.Front);
+            }
+            else
+            {
+                GL.CullFace(CullFaceMode.Back);
             }
         }
 

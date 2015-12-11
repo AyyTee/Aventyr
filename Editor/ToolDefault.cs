@@ -55,7 +55,9 @@ namespace Editor
                     Controller.SetSelectedEntity(nearest);
                     if (Controller.GetSelectedEntity() != null)
                     {
-                        translation.Transform.Position = Controller.GetSelectedEntity().GetTransform().Position;
+                        Transform2D transform = translation.GetTransform();
+                        transform.Position = Controller.GetSelectedEntity().GetTransform().Position;
+                        translation.SetTransform(transform);
                         translation.Visible = true;
                     }
                     else
@@ -171,7 +173,8 @@ namespace Editor
                     transform.Position += new Vector2(0, mousePos.Y - dragMouseStart.Y);
                     break;
             }
-            translation.Transform.Position = transform.Position;
+            translation.SetTransform(transform);
+            //translation.Transform.Position = transform.Position;
             dragObject.SetTransform(transform);
             dragMouseStart = mousePos;
         }
@@ -202,7 +205,9 @@ namespace Editor
 
         private void UpdateTranslation(Camera camera)
         {
-            translation.Transform.Scale = new Vector2(camera.Scale, camera.Scale) * translationScaleOffset;
+            Transform2D transform = translation.GetTransform();
+            transform.Scale = new Vector2(camera.Scale, camera.Scale) * translationScaleOffset;
+            translation.SetTransform(transform);
         }
 
         public override Tool Clone()

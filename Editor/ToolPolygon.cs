@@ -63,6 +63,7 @@ namespace Editor
                     EntityFactory.CreateEntityPolygon(entity.Entity, transform, _vertices.ToArray());
                     //entity.Entity.Models.Add(ModelFactory.CreatePolygon(_vertices.ToArray()));
                     entity.Entity.IsPortalable = true;
+                    entity.Entity.Models[0].Wireframe = true;
                     _vertices.Clear();
                     _entity.Models.Clear();
                     Controller.SetTool(null);
