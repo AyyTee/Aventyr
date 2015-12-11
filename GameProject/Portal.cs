@@ -130,24 +130,23 @@ namespace Game
             this.Enter(entity.Transform, entity.Velocity);
         }
 
-        public static void ConnectPortals(Portal portal0, Portal portal1)
+        public static void SetLinked(Portal portal0, Portal portal1)
         {
-            portal0.Linked = portal1;
-            portal1.Linked = portal0;
+            portal0.SetLinked(portal1);
         }
 
-        private void SetPortal(Portal portal)
+        private void SetLinked(Portal portal)
         {
             if (Linked != portal)
             {
                 if (Linked != null)
                 {
-                    Linked.SetPortal(null);
+                    Linked.Linked = null;
                 }
                 Linked = portal;
                 if (Linked != null)
                 {
-                    Linked.SetPortal(this);
+                    Linked.SetLinked(this);
                 }
             }
         }

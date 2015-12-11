@@ -72,7 +72,7 @@ namespace Game
             portal3.Transform.Position = new Vector2(-1f, 1f);
             //portal3.Transform.Scale = new Vector2(-2f, 2f);
 
-            Portal.ConnectPortals(portal2, portal3);
+            Portal.SetLinked(portal2, portal3);
             Entity portalEntity3 = new Entity(scene);
             portalEntity3.Transform.Parent = portal3.Transform;
             portalEntity3.Models.Add(ModelFactory.CreatePlane());
@@ -128,7 +128,7 @@ namespace Game
             portal0 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.6f));
             portal0.IsMirrored = true;
 
-            FixturePortal.ConnectPortals(portal0, portal1);
+            FixturePortal.SetLinked(portal0, portal1);
 
             Entity origin = EntityFactory.CreateEntityBox(scene, new Transform2D(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f)));
             //scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));

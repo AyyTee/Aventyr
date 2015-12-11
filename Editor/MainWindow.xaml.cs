@@ -52,7 +52,7 @@ namespace Editor
 
         public void GLControl_Load(object sender, EventArgs e)
         {
-            ControllerEditor = new ControllerEditor(glControl.ClientSize, new InputExt(glControl, MainGrid));
+            ControllerEditor = new ControllerEditor(glControl.ClientSize, new InputExt(glControl));
             ControllerEditor.EntitySelected += ControllerEditor_EntitySelected;
             ControllerEditor.ScenePlayed += ControllerEditor_ScenePlayed;
             ControllerEditor.ScenePaused += ControllerEditor_ScenePaused;

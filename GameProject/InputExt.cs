@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,7 +20,6 @@ namespace Game
 
         GameWindow Ctx;
         GLControl Control;
-        Grid ParentControl;
         public bool MouseInside { get; private set; }
         public InputExt(GameWindow ctx)
         {
@@ -31,9 +29,8 @@ namespace Game
             Ctx.MouseLeave += delegate { _mouseInside = false; };
         }
 
-        public InputExt(GLControl control, Grid parentControl)
+        public InputExt(GLControl control)
         {
-            ParentControl = parentControl;
             Control = control;
             control.MouseMove += control_MouseMove;
             control.MouseLeave += delegate { _mouseInside = false; };

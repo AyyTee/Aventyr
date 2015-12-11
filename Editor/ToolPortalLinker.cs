@@ -5,11 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Input;
+using OpenTK;
 
 namespace Editor
 {
     public class ToolPortalLinker : Tool
     {
+        Entity line;
         EditorPortal _portalPrevious;
 
         public ToolPortalLinker(ControllerEditor controller)
@@ -32,7 +34,7 @@ namespace Editor
                     }
                     else
                     {
-                        Portal.ConnectPortals(portal.Portal, _portalPrevious.Portal);
+                        Portal.SetLinked(portal.Portal, _portalPrevious.Portal);
                         portal.Portal.IsMirrored = false;
                         _portalPrevious.Portal.IsMirrored = true;
                         _portalPrevious = null;
@@ -40,17 +42,30 @@ namespace Editor
                     }
                 }
             }
+            if (_portalPrevious != null)
+            {
+                line.Models.Clear();
+                Model lineModel = ModelFactory.CreateLineStrip(new Vector2[] {
+                    Controller.GetMouseWorldPosition(),
+                    _portalPrevious.GetTransform().WorldPosition
+                });
+                lineModel.SetColor(new Vector3(0.1f, 0.7f, 0.1f));
+                lineModel.SetShader("default");
+                line.Models.Add(lineModel);
+            }
         }
 
         public override void Enable()
         {
             base.Enable();
             _portalPrevious = null;
+            line = new Entity(Controller.Level);
         }
 
         public override void Disable()
         {
             base.Disable();
+            Controller.Level.RemoveEntity(line);
         }
 
         public override Tool Clone()

@@ -36,9 +36,6 @@ namespace Editor
                 Vector2 mousePos = Controller.GetMouseWorldPosition();
                 if (_stateCurrent == State.Placing)
                 {
-                    if (_input.KeyPress(Key.B))
-                    {
-                    }
                     UpdatePortalTransform(_mouseFollow);
                 }
                 else if (_stateCurrent == State.Orienting)
@@ -78,8 +75,8 @@ namespace Editor
                     }
                     else
                     {
-                        //editorPortal = Controller.CreateLevelPortal();
-                        //UpdatePortalTransform(editorPortal);
+                        editorPortal = Controller.CreateLevelPortal();
+                        UpdatePortalTransform(editorPortal);
                     }
                     
                     //editorPortal.Marker.IsPortalable = true;

@@ -13,7 +13,7 @@ namespace Game
 {
     public class Renderer
     {
-        int sceneDepth = 20;
+        int sceneZDepth = 20;
         List<Scene> _scenes = new List<Scene>();
         Controller _controller;
 
@@ -137,8 +137,7 @@ namespace Game
                 return;
             }
 
-            viewMatrix = Matrix4.CreateTranslation(new Vector3(0, 0, sceneDepth)) * viewMatrix;
-            UpdateCullFace(viewMatrix);
+            viewMatrix = Matrix4.CreateTranslation(new Vector3(0, 0, sceneZDepth)) * viewMatrix;
             //Start using the stencil 
             GL.ColorMask(false, false, false, false);
             GL.DepthMask(false);
@@ -176,7 +175,7 @@ namespace Game
                 foreach (Model model in fovOutline.Models)
                 {
                     Vector3 v = model.Transform.Position;
-                    v.Z = sceneDepth * (depth + count);
+                    v.Z = sceneZDepth * (depth + count);
                     model.Transform.Position = v;
                 }
             }
@@ -189,7 +188,6 @@ namespace Game
 
         public void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta)
         {
-            UpdateCullFace(viewMatrix);
             foreach (Entity v in scene.EntityList)
             {
                 RenderEntity(v, viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond));
@@ -289,8 +287,6 @@ namespace Game
                     }
                 }
                 
-                
-
                 if (v.Wireframe)
                 {
                     GL.Disable(EnableCap.CullFace);
@@ -300,12 +296,12 @@ namespace Game
                 if (entity.IsPortalable)
                 {
                     entity.UpdatePortalClipping(4);
-                    entity.RenderClipModels(viewMatrix);
+                    RenderClipModels(entity, viewMatrix);
                 }
                 else
                 {
                     GL.Uniform1(v.Shader.GetUniform("cutLinesLength"), 0);
-                    entity._RenderSetTransformMatrix(v, viewMatrix);
+                    RenderSetTransformMatrix(entity, v, viewMatrix);
                     GL.DrawElements(BeginMode.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
                 }
 
@@ -315,6 +311,59 @@ namespace Game
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
                 }
             }
+        }
+
+        /*public void RenderClipModels(Entity entity, Matrix4 viewMatrix)
+        {
+            _RenderClipModels(entity, viewMatrix);
+        }*/
+
+        private void RenderClipModels(Entity entity, Matrix4 viewMatrix)
+        {
+            List<Entity.ClipModel> clipModels = entity.ClipModels;
+            Matrix4 ScaleMatrix;
+            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
+
+            /*Vector2[] mirrorTest = new Vector2[3] {
+                new Vector2(1, 0),
+                new Vector2(0, 1),
+                new Vector2(0, 0)
+            };
+            bool isMirrored;
+            mirrorTest = Vector2Ext.Transform(mirrorTest, viewMatrix);
+            isMirrored = MathExt.AngleDiff(MathExt.AngleVector(mirrorTest[0] - mirrorTest[2]), MathExt.AngleVector(mirrorTest[1] - mirrorTest[2])) > 0;
+            */
+            bool isMirrored = Matrix4Ext.IsMirrored(viewMatrix);
+            foreach (Entity.ClipModel cm in clipModels)
+            {
+                List<float> cutLines = new List<float>();
+                foreach (Line l in cm.ClipLines)
+                {
+                    if (isMirrored)
+                    {
+                        l.Reverse();
+                    }
+                    l.Transform(ScaleMatrix);
+                    cutLines.AddRange(new float[4] {
+                        l[0].X,
+                        l[0].Y,
+                        l[1].X,
+                        l[1].Y
+                    });
+                }
+
+                GL.Uniform1(cm.Model.Shader.GetUniform("cutLinesLength"), cutLines.Count);
+                GL.Uniform1(GL.GetUniformLocation(cm.Model.Shader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
+                RenderSetTransformMatrix(entity, cm.Model, cm.Transform * viewMatrix);
+                GL.DrawElements(BeginMode.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
+            }
+        }
+
+        private void RenderSetTransformMatrix(Entity entity, Model model, Matrix4 viewMatrix)
+        {
+            Matrix4 modelMatrix = model.Transform.GetMatrix() * entity.Transform.GetWorldMatrix() * viewMatrix;
+            UpdateCullFace(modelMatrix);
+            GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);
         }
 
         public static Texture LoadImage(Bitmap image)

@@ -18,7 +18,7 @@ namespace Game
     public class Entity : Placeable2D
     {
         List<Model> _models = new List<Model>();
-        List<ClipModel> ClipModels = new List<ClipModel>();
+        public List<ClipModel> ClipModels = new List<ClipModel>();
         bool _isPortalable = false;
 
         /// <summary>
@@ -189,24 +189,18 @@ namespace Game
             return Transform.Copy();
         }
 
-        public void _RenderSetTransformMatrix(Model model, Matrix4 viewMatrix)
-        {
-            Matrix4 modelMatrix = model.Transform.GetMatrix() * Transform.GetWorldMatrix() * viewMatrix;
-            GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);    
-        }
-
         public void UpdatePortalClipping(int depth)
         {
             ClipModels.Clear();
             foreach (Model m in Models)
             {
-                _ModelPortalClipping(m, Transform.WorldPosition, null, Matrix4.Identity, 4, 0, ref ClipModels);
+                ModelPortalClipping(m, Transform.WorldPosition, null, Matrix4.Identity, 4, 0, ref ClipModels);
             }
         }
 
         /// <param name="depth">Number of iterations.</param>
         /// <param name="clipModels">Adds the ClipModel instances to this list.</param>
-        private void _ModelPortalClipping(Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, int count, ref List<ClipModel> clipModels)
+        private void ModelPortalClipping(Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, int count, ref List<ClipModel> clipModels)
         {
             if (depth <= 0)
             {
@@ -274,56 +268,11 @@ namespace Game
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
                     Vector2 centerPointNext = Vector2Ext.Transform(portal.GetTransform().WorldPosition + normal, portal.GetPortalMatrix());
-                    _ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, count + 1, ref clipModels);
+                    ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, count + 1, ref clipModels);
                 }
             }
             
             ClipModels.Add(new ClipModel(model, clipLines.ToArray(), modelMatrix));
-        }
-
-        public void RenderClipModels(Matrix4 viewMatrix)
-        {
-            _RenderClipModels(ClipModels, viewMatrix);
-        }
-
-        private void _RenderClipModels(List<ClipModel> clipModels, Matrix4 viewMatrix)
-        {
-            Matrix4 ScaleMatrix;
-            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
-
-            /*Vector2[] mirrorTest = new Vector2[3] {
-                new Vector2(1, 0),
-                new Vector2(0, 1),
-                new Vector2(0, 0)
-            };
-            bool isMirrored;
-            mirrorTest = Vector2Ext.Transform(mirrorTest, viewMatrix);
-            isMirrored = MathExt.AngleDiff(MathExt.AngleVector(mirrorTest[0] - mirrorTest[2]), MathExt.AngleVector(mirrorTest[1] - mirrorTest[2])) > 0;
-            */
-            bool isMirrored = Matrix4Ext.IsMirrored(viewMatrix);
-            foreach (ClipModel cm in clipModels)
-            {
-                List<float> cutLines = new List<float>();
-                foreach (Line l in cm.ClipLines)
-                {
-                    if (isMirrored)
-                    {
-                        l.Reverse();
-                    }
-                    l.Transform(ScaleMatrix);
-                    cutLines.AddRange(new float[4] {
-                        l[0].X,
-                        l[0].Y,
-                        l[1].X,
-                        l[1].Y
-                    });
-                }
-
-                GL.Uniform1(cm.Model.Shader.GetUniform("cutLinesLength"), cutLines.Count);
-                GL.Uniform1(GL.GetUniformLocation(cm.Model.Shader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
-                _RenderSetTransformMatrix(cm.Model, cm.Transform * viewMatrix);
-                GL.DrawElements(BeginMode.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
-            }
         }
     }
 }
