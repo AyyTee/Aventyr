@@ -41,6 +41,7 @@ namespace Game
             }
             Parent = parent;
             parent._children.Add(this);
+            Debug.Assert(!ParentLoopExists(), "Cannot have cycles in Parent tree.");
         }
 
         public virtual Transform2D GetTransform()
@@ -51,6 +52,36 @@ namespace Game
         public virtual void SetTransform(Transform2D transform)
         {
             _transform = transform.Copy();
+        }
+
+        public virtual Transform2D GetWorldTransform()
+        {
+            if (Parent != null)
+            {
+                return GetTransform().Transform(Parent.GetWorldTransform());
+            }
+            return GetTransform();
+        }
+
+        /// <summary>
+        /// Returns true if there is a loop in the Parent dependencies.
+        /// </summary>
+        /// <returns></returns>
+        private bool ParentLoopExists()
+        {
+            const int DONT_CARE = 0;
+            Dictionary<Placeable2D, int> map = new Dictionary<Placeable2D, int>();
+            Placeable2D child = this;
+            while (child.Parent != null)
+            {
+                child = child.Parent;
+                if (map.ContainsKey(child))
+                {
+                    return true;
+                }
+                map.Add(child, DONT_CARE);
+            }
+            return false;
         }
     }
 }

@@ -15,10 +15,8 @@ namespace Game
         private Vector3 _position = new Vector3();
         private Quaternion _rotation = new Quaternion(0, 0, 1, 0);
         private Vector3 _scale = new Vector3(1, 1, 1);
-        private bool _fixedScale = false;
-        private Transform _parent = null;
 
-        public bool FixedScale { get { return _fixedScale; } set { _fixedScale = value; } }
+        public bool FixedScale { get; private set; }
 
         public Quaternion Rotation { get { return _rotation; } set { _rotation = value; MatrixUpdate = true;  } }
         public Vector3 Scale

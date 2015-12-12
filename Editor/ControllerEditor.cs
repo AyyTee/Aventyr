@@ -47,7 +47,7 @@ namespace Editor
             Level.ActiveCamera = Camera.CameraOrtho(new Vector3(0, 0, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height);
             renderer.AddScene(Level);
             Hud = new Scene();
-            Hud.ActiveCamera = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
+            Hud.ActiveCamera = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Width, CanvasSize.Width / (float)CanvasSize.Height);
             renderer.AddScene(Hud);
             #region create background
             Model background = ModelFactory.CreatePlane();
@@ -256,6 +256,7 @@ namespace Editor
             base.OnResize(e, canvasSize);
             Level.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             Hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
+            Hud.ActiveCamera.Scale = canvasSize.Height;
         }
     }
 }

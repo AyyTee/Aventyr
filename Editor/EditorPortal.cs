@@ -17,9 +17,7 @@ namespace Editor
         {
             Portal = portal;
             Marker = new Entity(scene);
-            Marker.Transform.Parent = Portal.GetTransform();
-            //Marker.Transform.Position = new Vector2(0.001f, 0);
-            //_marker.Models.Add(ModelFactory.CreatePlane(new Vector2(0.1f, 1)));
+            Marker.SetParent(Portal);
             Marker.Models.Add(ModelFactory.CreateArrow(new Vector3(0, -0.5f, 0), new Vector2(0, 1), 0.05f, 0.2f, 0.1f));
             Marker.Models.Add(ModelFactory.CreateArrow(new Vector3(), new Vector2(0.2f, 0), 0.05f, 0.2f, 0.1f));
             foreach (Model m in Marker.Models)
@@ -45,14 +43,18 @@ namespace Editor
             if (Portal.GetType() == typeof(FloatPortal))
             {
                 FloatPortal portal = (FloatPortal)Portal;
-                portal.Transform.SetLocal(transform);
-                //Marker.Transform.SetLocal(transform);
+                portal.SetTransform(transform);
             }
         }
 
         public override Transform2D GetTransform()
         {
             return Portal.GetTransform();
+        }
+
+        public override Transform2D GetWorldTransform()
+        {
+            return Portal.GetWorldTransform();
         }
     }
 }

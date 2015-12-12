@@ -81,7 +81,7 @@ namespace Game
                 transform.Scale = new Vector2(1, -1);
             }
             
-            transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.GetTransform();
+            //transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.GetTransform();
             return transform;
         }
 
@@ -103,7 +103,7 @@ namespace Game
                 return transform;
             }
             
-            transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.GetTransform();
+            //transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.GetTransform();
             return transform;
         }
 
@@ -123,6 +123,7 @@ namespace Game
             Debug.Assert(position.Fixture != null);
             if (Position != null)
             {
+                SetParent(Position.Entity);
                 FixtureExt.GetUserData(Position.Fixture).AddPortal(this);
                 //wake up all the bodies so that they will fall if there is now a portal entrance below them
                 foreach (Body b in Scene.World.BodyList)
@@ -135,13 +136,13 @@ namespace Game
         public Vector2[] GetBounds(float margin)
         {
             float width, height;
-            width = (float)Math.Abs(Math.Cos(GetTransform().Rotation) * GetTransform().WorldScale.X) + margin * 2;
-            height = (float)Math.Abs(Math.Sin(GetTransform().Rotation) * GetTransform().WorldScale.X) + margin * 2;
+            width = (float)Math.Abs(Math.Cos(GetTransform().Rotation) * GetWorldTransform().Scale.X) + margin * 2;
+            height = (float)Math.Abs(Math.Sin(GetTransform().Rotation) * GetWorldTransform().Scale.X) + margin * 2;
             return new Vector2[] {
-                GetTransform().WorldPosition + new Vector2(-width/2f, -height/2f),
-                GetTransform().WorldPosition + new Vector2(-width/2f, height/2f),
-                GetTransform().WorldPosition + new Vector2(width/2f, height/2f),
-                GetTransform().WorldPosition + new Vector2(width/2f, -height/2f)
+                GetWorldTransform().Position + new Vector2(-width/2f, -height/2f),
+                GetWorldTransform().Position + new Vector2(-width/2f, height/2f),
+                GetWorldTransform().Position + new Vector2(width/2f, height/2f),
+                GetWorldTransform().Position + new Vector2(width/2f, -height/2f)
             };
         }
 

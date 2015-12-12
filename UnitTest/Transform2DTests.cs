@@ -285,42 +285,42 @@ namespace UnitTest
         {
             Transform2D transform0 = new Transform2D();
             Transform2D transform1 = null;
-            Assert.IsFalse(transform0.LocalEquals(transform1));
+            Assert.IsFalse(transform0.Compare(transform1));
         }
         [TestMethod]
         public void EqualTest1()
         {
             Transform2D transform0 = new Transform2D(new Vector2(1,-4));
             Transform2D transform1 = new Transform2D();
-            Assert.IsFalse(transform0.LocalEquals(transform1));
+            Assert.IsFalse(transform0.Compare(transform1));
         }
         [TestMethod]
         public void EqualTest2()
         {
             Transform2D transform0 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
             Transform2D transform1 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
-            Assert.IsTrue(transform0.LocalEquals(transform1));
+            Assert.IsTrue(transform0.Compare(transform1));
         }
         [TestMethod]
         public void EqualTest3()
         {
             Transform2D transform0 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
             Transform2D transform1 = new Transform2D(new Vector2(1, -4), new Vector2(50f, 50f), 130f);
-            Assert.IsFalse(transform0.LocalEquals(transform1));
+            Assert.IsFalse(transform0.Compare(transform1));
         }
         [TestMethod]
         public void EqualTest4()
         {
             Transform2D transform0 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
             Transform2D transform1 = new Transform2D(new Vector2(1, -1), new Vector2(0.4f, 50f), 130f);
-            Assert.IsFalse(transform0.LocalEquals(transform1));
+            Assert.IsFalse(transform0.Compare(transform1));
         }
         [TestMethod]
         public void EqualTest5()
         {
             Transform2D transform0 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
             Transform2D transform1 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), -20f);
-            Assert.IsFalse(transform0.LocalEquals(transform1));
+            Assert.IsFalse(transform0.Compare(transform1));
         }
         #endregion
         #region ParentLoop tests

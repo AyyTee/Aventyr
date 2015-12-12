@@ -71,17 +71,11 @@ namespace Editor
             }));
         }
 
-        public void GLControl_Resize(object sender, EventArgs e)
-        {
-        }
-
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             base.OnClosing(e);
             _loop.Stop();
-            lock (_loop)
-            {
-            }
+            lock (_loop) { }
         }
 
         private void Button_Close(object sender, RoutedEventArgs e)

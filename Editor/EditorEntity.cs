@@ -17,7 +17,7 @@ namespace Editor
         {
             Entity = new Entity(scene);
             Marker = new Entity(scene);
-            Marker.Transform.Parent = Entity.Transform;
+            Marker.SetParent(Entity);
             Model circle = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
             circle.SetShader("default");
             circle.SetColor(new Vector3(1f, 0.5f, 0f));
@@ -38,6 +38,11 @@ namespace Editor
         public override Transform2D GetTransform()
         {
             return Entity.GetTransform();
+        }
+
+        public override Transform2D GetWorldTransform()
+        {
+            return Entity.GetWorldTransform();
         }
     }
 }

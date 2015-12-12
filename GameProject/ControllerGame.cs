@@ -55,7 +55,8 @@ namespace Game
             portal2.Transform.Scale = new Vector2(-1f, 1f);
 
             Entity portalEntity2 = new Entity(scene);
-            portalEntity2.Transform.Parent = portal2.Transform;
+            //portalEntity2.Transform.Parent = portal2.Transform;
+            portalEntity2.SetParent(portal2);
             portalEntity2.Models.Add(ModelFactory.CreatePlane());
             portalEntity2.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity2.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
@@ -70,7 +71,8 @@ namespace Game
 
             Portal.SetLinked(portal2, portal3);
             Entity portalEntity3 = new Entity(scene);
-            portalEntity3.Transform.Parent = portal3.Transform;
+            //portalEntity3.Transform.Parent = portal3.Transform;
+            portalEntity3.SetParent(portal3);
             portalEntity3.Models.Add(ModelFactory.CreatePlane());
             portalEntity3.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity3.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
@@ -262,7 +264,7 @@ namespace Game
             IntersectPoint intersect = new IntersectPoint();
             Portal portalEnter = null;
 
-            Vector2 posPrev = player.GetTransform().WorldPosition;
+            Vector2 posPrev = player.GetWorldTransform().Position;
             Transform2D transform = player.GetTransform();
             transform.Position += new Vector2(v.X, v.Y);
             player.SetTransform(transform);
@@ -278,7 +280,7 @@ namespace Game
                 vArray = p.GetWorldVerts();
                 Line line = new Line(vArray);
                 portalEnter = p;
-                Line playerLine = new Line(posPrev, player.GetTransform().WorldPosition);
+                Line playerLine = new Line(posPrev, player.GetWorldTransform().Position);
                 intersect = line.IntersectsParametric(p.GetVelocity().Position, p.GetVelocity().Rotation, playerLine, 5);
                 if (intersect.Exists)
                 {
@@ -307,12 +309,12 @@ namespace Game
             {
                 scene.Step();
             }
-            Transform transformNew = player.GetTransform().GetWorld3D();
+            Transform transformNew = player.GetWorldTransform().Get3D();
             cam = scene.ActiveCamera;
             cam.Transform.Position = transformNew.Position;
             cam.Transform.Rotation = transformNew.Rotation;
             cam.Transform.Scale = transformNew.Scale;
-            cam.Viewpoint = player.GetTransform().WorldPosition;
+            cam.Viewpoint = player.GetWorldTransform().Position;
         }
 
         public override void OnClosing(CancelEventArgs e)
@@ -327,6 +329,7 @@ namespace Game
             base.OnResize(e, canvasSize);
             scene.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
+            hud.ActiveCamera.Scale = canvasSize.Height;
         }
     }
 }

@@ -85,7 +85,7 @@
             </Grid.ColumnDefinitions>
             <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
             <WindowsFormsHost  x:Name="wfContainer" Background="Black" MinWidth="100" MinHeight="100">
-                <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" Resize="GLControl_Resize" />
+                <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" />
             </WindowsFormsHost>
             <Grid Grid.Column="1" Margin="5,0,0,0">
                 <Grid.RowDefinitions>

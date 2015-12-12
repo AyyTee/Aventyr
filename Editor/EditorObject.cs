@@ -16,5 +16,6 @@ namespace Editor
 
         public abstract void SetTransform(Transform2D transform);
         public abstract Transform2D GetTransform();
+        public abstract Transform2D GetWorldTransform();
     }
 }

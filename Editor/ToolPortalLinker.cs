@@ -47,7 +47,7 @@ namespace Editor
                 line.Models.Clear();
                 Model lineModel = ModelFactory.CreateLineStrip(new Vector2[] {
                     Controller.GetMouseWorldPosition(),
-                    _portalPrevious.GetTransform().WorldPosition
+                    _portalPrevious.GetWorldTransform().Position
                 });
                 lineModel.SetColor(new Vector3(0.1f, 0.7f, 0.1f));
                 lineModel.SetShader("default");

@@ -95,10 +95,10 @@ namespace Game
         public void DrawPortal(Scene scene, Portal portalEnter, Matrix4 viewMatrix, Matrix4 viewMatrixPrev, Vector2 viewPos, int depth, float timeDelta, int count)
         {
             Vector2[] pv = portalEnter.Linked.GetVerts();
-            pv = Vector2Ext.Transform(pv, portalEnter.GetTransform().GetWorldMatrix() * viewMatrix);
+            pv = Vector2Ext.Transform(pv, portalEnter.GetWorldTransform().GetMatrix() * viewMatrix);
 
             Vector2[] pv2 = portalEnter.GetVerts();
-            pv2 = Vector2Ext.Transform(pv2, portalEnter.GetTransform().GetWorldMatrix() * viewMatrixPrev);
+            pv2 = Vector2Ext.Transform(pv2, portalEnter.GetWorldTransform().GetMatrix() * viewMatrixPrev);
             Line portalLine = new Line(pv2);
             Vector2 v = Vector2Ext.Transform(viewPos, viewMatrix);
             if (portalLine.IsInsideFOV(v, new Line(pv)))
@@ -123,14 +123,14 @@ namespace Game
                 Vector2[] pv2 = portalEnter.GetWorldVerts();
 
                 Line portalLine = new Line(pv2);
-                if (portalLine.GetSideOf(pv2[0] + portalEnter.GetTransform().GetWorldNormal()) != portalLine.GetSideOf(viewPos))
+                if (portalLine.GetSideOf(pv2[0] + portalEnter.GetWorldTransform().GetNormal()) != portalLine.GetSideOf(viewPos))
                 {
                     return;
                 }
             }
 
             Vector2[] pv = portalEnter.GetVerts();
-            pv = Vector2Ext.Transform(pv, portalEnter.GetTransform().GetWorldMatrix() * viewMatrix);
+            pv = Vector2Ext.Transform(pv, portalEnter.GetWorldTransform().GetMatrix() * viewMatrix);
             //this will not correctly cull portals if the viewPos begins outside of the viewspace
             if (MathExt.LineInRectangle(new Vector2(-1, -1), new Vector2(1, 1), pv[0], pv[1]) == false)
             {
@@ -361,7 +361,7 @@ namespace Game
 
         private void RenderSetTransformMatrix(Entity entity, Model model, Matrix4 viewMatrix)
         {
-            Matrix4 modelMatrix = model.Transform.GetMatrix() * entity.GetTransform().GetWorldMatrix() * viewMatrix;
+            Matrix4 modelMatrix = model.Transform.GetMatrix() * entity.GetWorldTransform().GetMatrix() * viewMatrix;
             UpdateCullFace(modelMatrix);
             GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);
         }

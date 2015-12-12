@@ -48,7 +48,7 @@ namespace Editor
                 {
                     Vector2 mousePos = Controller.GetMouseWorldPosition();
                     EditorObject nearest = Controller.GetNearestObject(mousePos);
-                    if (nearest != null && (nearest.GetTransform().WorldPosition - mousePos).Length > 1)
+                    if (nearest != null && (nearest.GetWorldTransform().Position - mousePos).Length > 1)
                     {
                         nearest = null;
                     }
@@ -182,7 +182,7 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            translation = new Entity(Controller.Level);
+            translation = new Entity(Controller.Hud);
             translation.Models.Add(translationModel);
             translation.Visible = false;
             _dragState = DragState.Neither;
@@ -195,7 +195,7 @@ namespace Editor
             base.Disable();
             DragEnd(false);
             Controller.CamControl.CameraMoved -= UpdateTranslation;
-            Controller.Level.RemoveEntity(translation);
+            Controller.Hud.RemoveEntity(translation);
         }
 
         private void UpdateTranslation(ControllerCamera controller, Camera camera)

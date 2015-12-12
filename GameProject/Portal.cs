@@ -86,15 +86,15 @@ namespace Game
 
             position.Position = new Vector2(v0.X, v0.Y);
 
-            Transform2D tEnter = GetTransform();
-            Transform2D tExit = Linked.GetTransform();
+            Transform2D tEnter = GetWorldTransform();
+            Transform2D tExit = Linked.GetWorldTransform();
             float flipX = 1;
             float flipY = 1;
-            if (Math.Sign(tEnter.WorldScale.X) == Math.Sign(tExit.WorldScale.X))
+            if (Math.Sign(tEnter.Scale.X) == Math.Sign(tExit.Scale.X))
             {
                 flipX = -1;
             }
-            if (Math.Sign(tEnter.WorldScale.Y) != Math.Sign(tExit.WorldScale.Y))
+            if (Math.Sign(tEnter.Scale.Y) != Math.Sign(tExit.Scale.Y))
             {
                 flipY = -1;
             }
@@ -104,11 +104,11 @@ namespace Game
             if (flipX != flipY)
             {
                 position.Rotation = -position.Rotation;
-                position.Rotation += (float)(MathExt.AngleWrap(GetTransform().WorldRotation) + MathExt.AngleWrap(Linked.GetTransform().WorldRotation));
+                position.Rotation += (float)(MathExt.AngleWrap(GetWorldTransform().Rotation) + MathExt.AngleWrap(Linked.GetWorldTransform().Rotation));
             }
             else
             {
-                angle = Linked.GetTransform().WorldRotation - GetTransform().WorldRotation;
+                angle = Linked.GetWorldTransform().Rotation - GetWorldTransform().Rotation;
                 position.Rotation += angle;
             }
         }
@@ -128,7 +128,7 @@ namespace Game
             Enter(position);
             velocity.Position = Vector2Ext.Transform(velocity.Position, Matrix4.CreateRotationZ(position.Rotation - rotationPrev + (float)Math.PI));
             
-            if (GetTransform().IsWorldMirrored() == Linked.GetTransform().IsWorldMirrored())
+            if (GetWorldTransform().IsMirrored() == Linked.GetWorldTransform().IsMirrored())
             {
                 velocity.Rotation = -velocity.Rotation;
             }
@@ -181,7 +181,7 @@ namespace Game
 
         public Vector2[] GetWorldVerts()
         {
-            return Vector2Ext.Transform(GetVerts(), GetTransform().GetWorldMatrix());
+            return Vector2Ext.Transform(GetVerts(), GetWorldTransform().GetMatrix());
         }
 
         public Matrix4 GetPortalMatrix()
@@ -196,13 +196,13 @@ namespace Game
         public static Matrix4 GetPortalMatrix(Portal portalEnter, Portal portalExit)
         {
             //The portalExit is temporarily mirrored before getting the transformation matrix
-            Transform2D transform = portalExit.GetTransform();
+            Transform2D transform = portalExit.GetWorldTransform();
             Vector2 v = transform.Scale;
             //if (portalEnter.IsMirrored != portalExit.IsMirrored)
             {
                 transform.Scale = new Vector2(-v.X, v.Y);
             }
-            Matrix4 m = portalEnter.GetTransform().GetWorldMatrix().Inverted() * transform.GetWorldMatrix();
+            Matrix4 m = portalEnter.GetWorldTransform().GetMatrix().Inverted() * transform.GetMatrix();
             transform.Scale = v;
             return m;
         }
@@ -212,7 +212,7 @@ namespace Game
         /// </summary>
         public Vector2[] GetFOV(Vector2 viewPoint, float distance, int detail)
         {
-            Matrix4 a = GetTransform().GetWorldMatrix();
+            Matrix4 a = GetWorldTransform().GetMatrix();
             Vector2[] verts = new Vector2[detail + 2];
             Vector2[] portal = GetVerts();
             for (int i = 0; i < portal.Length; i++)

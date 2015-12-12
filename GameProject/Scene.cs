@@ -53,8 +53,8 @@ namespace Game
                 e.PositionUpdate();
                 if (e.Body != null)
                 {
-                    Xna.Vector2 v0 = Vector2Ext.ConvertToXna(e.GetTransform().WorldPosition);
-                    e.Body.SetTransform(v0, e.GetTransform().WorldRotation);
+                    Xna.Vector2 v0 = Vector2Ext.ConvertToXna(e.GetWorldTransform().Position);
+                    e.Body.SetTransform(v0, e.GetWorldTransform().Rotation);
                     e.Body.LinearVelocity = Vector2Ext.ConvertToXna(e.Velocity.Position);
                     e.Body.AngularVelocity = e.Velocity.Rotation;
                 }

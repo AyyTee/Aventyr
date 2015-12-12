@@ -191,7 +191,7 @@ namespace Game
             ClipModels.Clear();
             foreach (Model m in Models)
             {
-                ModelPortalClipping(m, GetTransform().WorldPosition, null, Matrix4.Identity, 4, 0, ref ClipModels);
+                ModelPortalClipping(m, GetWorldTransform().Position, null, Matrix4.Identity, 4, 0, ref ClipModels);
             }
         }
 
@@ -213,7 +213,7 @@ namespace Game
                     continue;
                 }
                 Line portalLine = new Line(portal.GetWorldVerts());
-                Vector2[] convexHull = Vector2Ext.Transform(model.GetWorldConvexHull(), this.GetTransform().GetWorldMatrix() * modelMatrix);
+                Vector2[] convexHull = Vector2Ext.Transform(model.GetWorldConvexHull(), this.GetWorldTransform().GetMatrix() * modelMatrix);
 
                 if (portalLine.IsInsideOfPolygon(convexHull) && portal.IsValid())
                 {
@@ -221,7 +221,7 @@ namespace Game
                 }
             }
 
-            collisions = collisions.OrderBy(item => (item.GetTransform().WorldPosition - centerPoint).Length).ToList();
+            collisions = collisions.OrderBy(item => (item.GetWorldTransform().Position - centerPoint).Length).ToList();
             for (int i = 0; i < collisions.Count; i++)
             {
                 Portal portal = collisions[i];
@@ -244,13 +244,13 @@ namespace Game
                 Line clipLine = new Line(pv);
 
                 Line portalLine = new Line(pv);
-                Vector2 normal = portal.GetTransform().GetWorldNormal();
-                if (portal.GetTransform().IsWorldMirrored())
+                Vector2 normal = portal.GetWorldTransform().GetNormal();
+                if (portal.GetWorldTransform().IsMirrored())
                 {
                     normal = -normal;
                 }
 
-                Vector2 portalNormal = portal.GetTransform().WorldPosition + normal;
+                Vector2 portalNormal = portal.GetWorldTransform().Position + normal;
                 if (portalLine.GetSideOf(centerPoint) != portalLine.GetSideOf(portalNormal))
                 {
                     normal *= Portal.EnterMinDistance;
@@ -264,7 +264,7 @@ namespace Game
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = Vector2Ext.Transform(portal.GetTransform().WorldPosition + normal, portal.GetPortalMatrix());
+                    Vector2 centerPointNext = Vector2Ext.Transform(portal.GetWorldTransform().Position + normal, portal.GetPortalMatrix());
                     ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, count + 1, ref clipModels);
                 }
             }
