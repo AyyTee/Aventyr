@@ -93,7 +93,7 @@ namespace Game
             FixtureEdgeCoord nearest = null;
             foreach (Fixture f in potentials)
             {
-                Debug.Assert(BodyExt.GetUserData(f.Body).LinkedEntity.Transform.Position == Vector2Ext.ConvertTo(f.Body.Position));
+                Debug.Assert(BodyExt.GetUserData(f.Body).LinkedEntity.GetTransform().Position == Vector2Ext.ConvertTo(f.Body.Position));
                 Vector2 localPoint = Vector2Ext.ConvertTo(f.Body.GetLocalPoint(new Xna.Vector2(point.X, point.Y)));
                 //Vector2 localPoint2 = Vector2Ext.Transform(point, FixtureExt.GetUserData(f).Entity.Transform.GetWorldMatrix().Inverted());
                 //Debug.Assert(localPoint == localPoint2);

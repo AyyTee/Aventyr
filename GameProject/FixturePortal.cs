@@ -81,7 +81,7 @@ namespace Game
                 transform.Scale = new Vector2(1, -1);
             }
             
-            transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.Transform;
+            transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.GetTransform();
             return transform;
         }
 
@@ -103,7 +103,7 @@ namespace Game
                 return transform;
             }
             
-            transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.Transform;
+            transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.GetTransform();
             return transform;
         }
 

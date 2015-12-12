@@ -34,8 +34,10 @@ namespace Game
 
         public static Entity CreateEntityBox(Entity entity, Transform2D transform)
         {
-            entity.Transform.Position = transform.Position;
-            entity.Transform.Rotation = transform.Rotation;
+            Transform2D t = entity.GetTransform();
+            t.Position = transform.Position;
+            t.Rotation = transform.Rotation;
+            entity.SetTransform(t);
             entity.IsPortalable = true;
             entity.Models.Add(ModelFactory.CreatePlane(transform.Scale));
 
@@ -66,14 +68,16 @@ namespace Game
 
         public static Entity CreateEntityPolygon(Entity entity, Transform2D transform, Vector2[] vertices)
         {
-            entity.Transform.Position = transform.Position;
-            entity.Transform.Rotation = transform.Rotation;
+            Transform2D t = entity.GetTransform();
+            t.Position = transform.Position;
+            t.Rotation = transform.Rotation;
+            entity.SetTransform(t);
             vertices = MathExt.SetHandedness(vertices, false);
             Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(vertices);
 
             entity.Models.Add(ModelFactory.CreatePolygon(polygon));
 
-            Xna.Vector2 vPos = Vector2Ext.ConvertToXna(entity.Transform.Position);
+            Xna.Vector2 vPos = Vector2Ext.ConvertToXna(t.Position);
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 

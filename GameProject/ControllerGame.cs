@@ -93,7 +93,7 @@ namespace Game
             playerModel.SetTexture(Renderer.Textures["default.png"]);
             player.IsPortalable = true;
             //player.Transform.Scale = new Vector2(.5f, .5f);
-            player.Transform.Position = new Vector2(0f, 0f);
+            //player.Transform.Position = new Vector2(0f, 0f);
             player.Models.Add(playerModel);
             playerModel.SetTexture(Renderer.Textures["default.png"]);
             #endregion
@@ -116,8 +116,7 @@ namespace Game
             ground.Name = "ground";
             //ground.IsPortalable = true;
             ground.Models.Add(ModelFactory.CreatePolygon(v));
-            ground.Transform.Rotation = 0.05f;
-            ground.Transform.Position = new Vector2(0, -4f);
+            ground.SetTransform(new Transform2D(new Vector2(0, -4f), 0.05f));
             scene.World.ProcessChanges();
             portal0 = new FixturePortal(scene, null);
             portal1 = new FixturePortal(scene, null);
@@ -132,11 +131,11 @@ namespace Game
             //scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
 
             text = new Entity(hud);
-            text.Transform.Position = new Vector2(0, CanvasSize.Height);
+            text.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height)));
             text2 = new Entity(hud);
-            text2.Transform.Position = new Vector2(0, CanvasSize.Height - 40);
+            text2.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
 
-            Camera cam = Camera.CameraOrtho(new Vector3(player.Transform.Position.X, player.Transform.Position.Y, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            Camera cam = Camera.CameraOrtho(new Vector3(player.GetTransform().Position.X, player.GetTransform().Position.Y, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height);
 
             scene.ActiveCamera = cam;
             hud.ActiveCamera = hudCam;
@@ -159,17 +158,18 @@ namespace Game
             Entity tempLine = scene.GetEntityByName("tempLine");
             Entity ground = scene.GetEntityByName("ground");
             ground.Velocity.Position = new Vector2((float)Math.Sin(TimeFixedStep), 0);
-            tempLine.Transform.Position = player.Transform.Position;
+            //tempLine.Transform.Position = player.Transform.Position;
+            tempLine.SetTransform(new Transform2D(player.GetTransform().Position));
 
             Vector2 mousePos = scene.ActiveCamera.ScreenToWorld(InputExt.MousePos);
 
-            Vector2 rayBegin = player.Transform.Position;
+            Vector2 rayBegin = player.GetTransform().Position;
             Vector2 rayEnd = mousePos;
             tempLine.IsPortalable = true;
             tempLine.Models.Clear();
             tempLine.Models.Add(ModelFactory.CreateLineStrip(new Vector2[2] {
-                rayBegin - player.Transform.Position, 
-                rayEnd - player.Transform.Position
+                rayBegin - player.GetTransform().Position, 
+                rayEnd - player.GetTransform().Position
                 }));
 
 
@@ -227,7 +227,7 @@ namespace Game
                 Quaternion rot = cam.Transform.Rotation;
                 rot.W += .01f;
                 cam.Transform.Rotation = rot;
-                player.Transform.Rotation += .01f;
+                player.GetTransform().Rotation += .01f;
             }
             if (InputExt.KeyDown(Key.W))
             {
@@ -262,8 +262,10 @@ namespace Game
             IntersectPoint intersect = new IntersectPoint();
             Portal portalEnter = null;
 
-            Vector2 posPrev = player.Transform.WorldPosition;
-            player.Transform.Position += new Vector2(v.X, v.Y);
+            Vector2 posPrev = player.GetTransform().WorldPosition;
+            Transform2D transform = player.GetTransform();
+            transform.Position += new Vector2(v.X, v.Y);
+            player.SetTransform(transform);
             player.PositionUpdate();
             portal3.Velocity.Position = new Vector2(-(float)Math.Cos(TimeFixedStep / 5000000) / (float)160, (float)Math.Sin(TimeFixedStep / 5000000) / (float)160);
             //portal2.Velocity.Rotation = -(float)(1 / (32 * Math.PI));
@@ -276,7 +278,7 @@ namespace Game
                 vArray = p.GetWorldVerts();
                 Line line = new Line(vArray);
                 portalEnter = p;
-                Line playerLine = new Line(posPrev, player.Transform.WorldPosition);
+                Line playerLine = new Line(posPrev, player.GetTransform().WorldPosition);
                 intersect = line.IntersectsParametric(p.GetVelocity().Position, p.GetVelocity().Rotation, playerLine, 5);
                 if (intersect.Exists)
                 {
@@ -305,12 +307,12 @@ namespace Game
             {
                 scene.Step();
             }
-            Transform transformNew = player.Transform.GetWorld3D();
+            Transform transformNew = player.GetTransform().GetWorld3D();
             cam = scene.ActiveCamera;
             cam.Transform.Position = transformNew.Position;
             cam.Transform.Rotation = transformNew.Rotation;
             cam.Transform.Scale = transformNew.Scale;
-            cam.Viewpoint = player.Transform.WorldPosition;
+            cam.Viewpoint = player.GetTransform().WorldPosition;
         }
 
         public override void OnClosing(CancelEventArgs e)

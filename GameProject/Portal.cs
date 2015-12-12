@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public abstract class Portal
+    public abstract class Portal : Placeable2D
     {
-        public Scene Scene { get; private set; }
+        //public Scene Scene { get; private set; }
         public Portal Linked { get; private set; }
         /// <summary>
         /// The local size of the portal.
@@ -35,13 +35,13 @@ namespace Game
         public bool IsMirrored { get; set; }
         private Exception _nullScene = new Exception("Portal must be assigned to a scene.");
         public Portal(Scene scene)
+            : base(scene)
         {
             if (scene == null)
             {
                 throw _nullScene;
             }
             OneSided = true;
-            Scene = scene;
             Scene.PortalList.Add(this);
         }
 
@@ -50,8 +50,8 @@ namespace Game
             SetLinked(null);
         }
 
-        public abstract Transform2D GetTransform();
-        public abstract void SetTransform(Transform2D transform);
+        //public abstract Transform2D GetTransform();
+        //public abstract void SetTransform(Transform2D transform);
         public abstract Transform2D GetVelocity();
 
         public Vector2[] GetFOV(Vector2 origin, float distance)

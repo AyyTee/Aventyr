@@ -91,19 +91,19 @@ namespace Game
         public Entity(Vector2 position)
             : this(null)
         {
-            Transform.Position = position;
+            SetTransform(new Transform2D(position));
         }
 
         public Entity(Scene scene, Vector2 position)
             : this(scene)
         {
-            Transform.Position = position;
+            SetTransform(new Transform2D(position));
         }
 
         public Entity(Scene scene, Transform2D transform) 
             : this(scene)
         {
-            Transform.SetLocal(transform);
+            SetTransform(transform);
         }
 
         /*public Entity Clone()
@@ -122,11 +122,11 @@ namespace Game
             {
                 //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
                 Line exitLine = new Line(portal.GetWorldVerts());
-                float distanceToPortal = exitLine.PointDistance(Transform.Position, true);
+                float distanceToPortal = exitLine.PointDistance(GetTransform().Position, true);
                 if (distanceToPortal < Portal.EnterMinDistance)
                 {
                     Vector2 exitNormal = portal.GetTransform().GetNormal();
-                    if (exitLine.GetSideOf(Transform.Position) != exitLine.GetSideOf(exitNormal + portal.GetTransform().Position))
+                    if (exitLine.GetSideOf(GetTransform().Position) != exitLine.GetSideOf(exitNormal + portal.GetTransform().Position))
                     {
                         exitNormal = -exitNormal;
                     }
@@ -136,7 +136,7 @@ namespace Game
                     {
                         pos = Transform.Parent.WorldToLocal(pos);
                     }*/
-                    Transform.Position += pos;
+                    GetTransform().Position += pos;
                     break;
                 }
             }
@@ -144,19 +144,21 @@ namespace Game
 
         public void Step()
         {
+            Transform2D transform = GetTransform();
             if (Body != null)
             {
-                Transform.Position = Vector2Ext.ConvertTo(Body.Position);
-                Transform.Rotation = Body.Rotation;
+                transform.Position = Vector2Ext.ConvertTo(Body.Position);
+                transform.Rotation = Body.Rotation;
                 Velocity.Position = Vector2Ext.ConvertTo(Body.LinearVelocity);
                 Velocity.Rotation = Body.AngularVelocity;
             }
             else
             {
-                Transform.Position += Velocity.Position;
-                Transform.Rotation += Velocity.Rotation;
-                Transform.Scale *= Velocity.Scale;
+                transform.Position += Velocity.Position;
+                transform.Rotation += Velocity.Rotation;
+                transform.Scale *= Velocity.Scale;
             }
+            SetTransform(transform);
         }
 
         public void SetBody(Body body)
@@ -171,22 +173,17 @@ namespace Game
             Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
             BodyId = body.BodyId;
 
-            BodyExt.SetTransform(body, Transform);
+            BodyExt.SetTransform(body, GetTransform());
             BodyExt.SetUserData(body, this);
         }
 
-        public void SetTransform(Transform2D transform)
+        public override void SetTransform(Transform2D transform)
         {
-            Transform.SetLocal(transform);
+            base.SetTransform(transform);
             if (Body != null)
             {
                 BodyExt.SetTransform(Body, transform);
             }
-        }
-
-        public Transform2D GetTransform()
-        {
-            return Transform.Copy();
         }
 
         public void UpdatePortalClipping(int depth)
@@ -194,7 +191,7 @@ namespace Game
             ClipModels.Clear();
             foreach (Model m in Models)
             {
-                ModelPortalClipping(m, Transform.WorldPosition, null, Matrix4.Identity, 4, 0, ref ClipModels);
+                ModelPortalClipping(m, GetTransform().WorldPosition, null, Matrix4.Identity, 4, 0, ref ClipModels);
             }
         }
 
@@ -216,7 +213,7 @@ namespace Game
                     continue;
                 }
                 Line portalLine = new Line(portal.GetWorldVerts());
-                Vector2[] convexHull = Vector2Ext.Transform(model.GetWorldConvexHull(), this.Transform.GetWorldMatrix() * modelMatrix);
+                Vector2[] convexHull = Vector2Ext.Transform(model.GetWorldConvexHull(), this.GetTransform().GetWorldMatrix() * modelMatrix);
 
                 if (portalLine.IsInsideOfPolygon(convexHull) && portal.IsValid())
                 {

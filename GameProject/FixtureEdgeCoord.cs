@@ -133,7 +133,7 @@ namespace Game
 
             transform.Position = GetPosition();//Entity.Transform.WorldToLocal(GetPosition());
             transform.Parent = Entity.Transform;
-            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.Transform.Rotation;
+            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.GetTransform().Rotation;
             return transform;
         }
 
@@ -142,7 +142,7 @@ namespace Game
             Transform2D transform = new Transform2D();
 
             transform.Position = GetWorldPosition();//Entity.Transform.WorldToLocal(GetPosition());
-            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.Transform.Rotation;
+            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.GetTransform().Rotation;
             return transform;
         }
     }

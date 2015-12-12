@@ -361,7 +361,7 @@ namespace Game
 
         private void RenderSetTransformMatrix(Entity entity, Model model, Matrix4 viewMatrix)
         {
-            Matrix4 modelMatrix = model.Transform.GetMatrix() * entity.Transform.GetWorldMatrix() * viewMatrix;
+            Matrix4 modelMatrix = model.Transform.GetMatrix() * entity.GetTransform().GetWorldMatrix() * viewMatrix;
             UpdateCullFace(modelMatrix);
             GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);
         }
