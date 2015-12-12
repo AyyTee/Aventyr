@@ -31,9 +31,11 @@ namespace Game
         {
             foreach (Body body in Scene.World.BodyList)
             {
-                Fixture[] fixtureCopy = new Fixture[body.FixtureList.Count];
-                body.FixtureList.CopyTo(fixtureCopy);
-                foreach (Fixture f in fixtureCopy)
+                //the number of fixtures is going to change so a copy of FixtureList is made
+                List<Fixture> fixtures = new List<Fixture>(body.FixtureList);
+                //don't include fixtures that are used for FixturePortal collisions
+                fixtures.RemoveAll(item => !FixtureExt.GetUserData(item).IsPortalParentless());
+                foreach (Fixture f in fixtures)
                 {
                     FixtureExt.GetUserData(f).ProcessChanges();
                     FixtureExt.GetUserData(f).PortalCollisions.Clear();

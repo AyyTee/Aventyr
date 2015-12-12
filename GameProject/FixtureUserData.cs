@@ -107,6 +107,9 @@ namespace Game
             Update = true;
         }
 
+        /// <summary>
+        /// Updates the Fixtures used for FixturePortal collisions.
+        /// </summary>
         public void ProcessChanges()
         {
             if (Update == false)
@@ -114,10 +117,13 @@ namespace Game
                 return;
             }
             Update = false;
+            int a = Fixture.Body.FixtureList.Count;
             foreach (Fixture f in _fixtureChildList)
             {
                 Fixture.Body.DestroyFixture(f);
             }
+            int b = Fixture.Body.FixtureList.Count;
+            //FixtureExt.GetUserData(Fixture).Entity.Scene.World.ProcessChanges();
             _fixtureChildList.Clear();
             var sortedPortals = _childPortals.ToArray().OrderBy(item => item.Position.EdgeIndexT).ToArray();
 

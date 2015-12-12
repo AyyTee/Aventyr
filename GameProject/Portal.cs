@@ -54,11 +54,25 @@ namespace Game
         }
 
         /// <summary>
+        /// Whether a portal can be entered, rendered, and clip models.
+        /// </summary>
+        public bool IsValid()
+        {
+            return _isValid() && (Linked != null && Linked._isValid());
+        }
+
+        protected virtual bool _isValid()
+        {
+            return Linked != null;
+        }
+
+        /// <summary>
         /// Converts a Transform2D from one portal's coordinate space to the portal it is linked with.  If it isn't linked then the Transform2D is unchanged
         /// </summary>
         /// <param name="position"></param>
         public void Enter(Transform2D position)
         {
+            Debug.Assert(IsValid());
             Matrix4 m = GetPortalMatrix();
             Vector2 v0 = Vector2Ext.Transform(position.Position, m);
             Vector2 v1 = Vector2Ext.Transform(position.Position + new Vector2(1, 0), m);
@@ -166,10 +180,6 @@ namespace Game
 
         public Matrix4 GetPortalMatrix()
         {
-            /*if (Linked == null)
-            {
-                return Matrix4.Identity;
-            }*/
             Debug.Assert(Linked != null, "Portal must be linked to another portal.");
             return GetPortalMatrix(this, Linked);
         }

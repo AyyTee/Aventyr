@@ -15,6 +15,7 @@ namespace Game
     {
         public static void SetUserData(Fixture fixture, FixtureUserData userData)
         {
+            Debug.Assert(userData != null);
             //Ugly solution to storing Game classes in a way that still works when deserializing the data.
             //This list is intended to only store one element.
             var a = new List<FixtureUserData>();
@@ -32,17 +33,10 @@ namespace Game
 
         public static Fixture CreateFixture(Body body, Shape shape)
         {
-            Fixture fixture = new Fixture(body, shape);
+            Fixture fixture = body.CreateFixture(shape);
             SetUserData(fixture, new FixtureUserData(fixture));
             return fixture;
         }
-
-        /*public static Fixture CreatePortalFixture(Body body, Shape shape, FixturePortal portal)
-        {
-            Fixture fixture = CreateFixture(body, shape);
-            GetUserData(fixture).PortalParents = portal;
-            return fixture;
-        }*/
 
         public static FixtureEdgeCoord[] GetFixtureCircleIntersections(World world, Vector2 point, float radius)
         {
@@ -53,22 +47,13 @@ namespace Game
                 potentials.Add(fixture);
                 return false;
             }, ref box);
-
+            
             List<FixtureEdgeCoord> collisions = new List<FixtureEdgeCoord>();
             foreach (Fixture f in potentials)
             {
                 Xna.Vector2 relativePoint = f.Body.GetLocalPoint(new Xna.Vector2(point.X, point.Y));
                 switch (f.ShapeType)
                 {
-                    /*case ShapeType.Circle:
-                        CircleShape circle = (CircleShape)f.Shape;
-                        if ((circle.Position - relativePoint).Length() <= radius + circle.Radius)
-                        {
-
-                            //collisions.Add(f);
-                        }
-                        break;*/
-
                     case ShapeType.Polygon:
                         PolygonShape polygon = (PolygonShape)f.Shape;
                         for (int i = 0; i < polygon.Vertices.Count; i++)
@@ -110,7 +95,7 @@ namespace Game
             {
                 Debug.Assert(BodyExt.GetUserData(f.Body).LinkedEntity.Transform.Position == Vector2Ext.ConvertTo(f.Body.Position));
                 Vector2 localPoint = Vector2Ext.ConvertTo(f.Body.GetLocalPoint(new Xna.Vector2(point.X, point.Y)));
-                Vector2 localPoint2 = Vector2Ext.Transform(point, FixtureExt.GetUserData(f).Entity.Transform.GetWorldMatrix().Inverted());
+                //Vector2 localPoint2 = Vector2Ext.Transform(point, FixtureExt.GetUserData(f).Entity.Transform.GetWorldMatrix().Inverted());
                 //Debug.Assert(localPoint == localPoint2);
                 switch (f.ShapeType)
                 {

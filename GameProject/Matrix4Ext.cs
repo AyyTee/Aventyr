@@ -13,8 +13,8 @@ namespace Game
         private const float EQUALITY_EPSILON = 0.0001f;
         public static Matrix4 ConvertTo(FarseerPhysics.Common.Transform transform)
         {
-            Matrix4 matrix = Matrix4.CreateRotationZ(transform.R.Angle);
-            matrix = matrix * Matrix4.CreateTranslation(new Vector3(transform.Position.X, transform.Position.Y, 1));
+            Matrix4 matrix = Matrix4.CreateRotationZ(transform.q.GetAngle());
+            matrix = matrix * Matrix4.CreateTranslation(new Vector3(transform.p.X, transform.p.Y, 1));
             return matrix;
         }
 

@@ -90,8 +90,9 @@ namespace Game
                         normal = -normal;
                     }
 
-                    Xna.Vector2 v;
-                    area += f.Shape.ComputeSubmergedArea(Vector2Ext.ConvertToXna(normal), line.GetOffset(), bodyTransform, out v);
+                    Xna.Vector2 v, xnaNormal;
+                    xnaNormal = Vector2Ext.ConvertToXna(normal);
+                    area += f.Shape.ComputeSubmergedArea(ref xnaNormal, line.GetOffset(), ref bodyTransform, out v);
                 }
                 totalMass -= f.Shape.Density * area;
             }
@@ -115,11 +116,6 @@ namespace Game
 
                     case ShapeType.Edge:
                         EdgeShape mirrorTemp = (EdgeShape)mirrorShape;
-                        break;
-
-                    case ShapeType.Loop:
-                        //LoopShape mirrorTemp = (LoopShape)mirrorShape;
-                        //mirrorTemp.
                         break;
 
                     case ShapeType.Circle:

@@ -36,14 +36,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="clipper_library">
-      <HintPath>..\packages\Clipper.6.2.10\lib\net40\clipper_library.dll</HintPath>
-    </Reference>
     <Reference Include="FarseerPhysics, Version=3.3.5299.6196, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Farseer Physics Engine 3.3.1 Class\Farseer Physics Engine 3.3.1 Class\bin\Debug\FarseerPhysics.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="Poly2Tri, Version=1.0.0.0, Culture=neutral, PublicKeyToken=db87057254d2bb1c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Poly2Tri.dll.1.0.4\lib\Net35\Poly2Tri.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <Choose>

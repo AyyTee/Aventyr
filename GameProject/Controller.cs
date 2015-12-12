@@ -54,7 +54,6 @@ namespace Game
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
         float TimeRenderDelta = 0.0f;
-        public SoundSystem soundPlayer;
         public Renderer renderer;
         public FontRenderer FontRenderer;
         public Font Default;
@@ -62,8 +61,10 @@ namespace Game
         public virtual void OnLoad(EventArgs e)
         {
             Time.Start();
+
             Renderer.Init();
             renderer = new Renderer(this);
+            SoundSystem.Instance().Init();
 
             // Load textures from file
             Renderer.Textures.Add("default.png", Renderer.LoadImage(Path.Combine(textureFolder, "default.png")));
@@ -115,10 +116,7 @@ namespace Game
 
         public virtual void OnClosing(CancelEventArgs e)
         {
-            if (soundPlayer != null)
-            {
-                soundPlayer.Dispose();
-            }
+            SoundSystem.Instance().Dispose();
         }
 
         public virtual void OnResize(EventArgs e, Size canvasSize)

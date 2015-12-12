@@ -30,19 +30,15 @@ namespace Game
         public override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            if (soundPlayer != null)
-            {
-                soundPlayer.Init();
-                testSound = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
-                //testSound.Play();
-                //testSound.SetLoop(true);
-                //sound.SetPosition(1000, 0, 0);
-            }
+            
+            /*testSound = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
+            testSound.Play();*/
+            //testSound.SetLoop(true);
+            //sound.SetPosition(1000, 0, 0);
 
             scene = new Scene();
             hud = new Scene();
             Camera hudCam = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
-
 
             Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];
@@ -123,14 +119,16 @@ namespace Game
             ground.Transform.Rotation = 0.05f;
             ground.Transform.Position = new Vector2(0, -4f);
             scene.World.ProcessChanges();
-            portal1 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.3f));
+            portal0 = new FixturePortal(scene, null);
+            portal1 = new FixturePortal(scene, null);
+            /*portal1 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.3f));
 
-            portal0 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.6f));
+            portal0 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.6f));*/
             portal0.IsMirrored = true;
 
             FixturePortal.SetLinked(portal0, portal1);
 
-            Entity origin = EntityFactory.CreateEntityBox(scene, new Transform2D(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f)));
+            //Entity origin = EntityFactory.CreateEntityBox(scene, new Transform2D(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f)));
             //scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
 
             text = new Entity(hud);
@@ -271,6 +269,10 @@ namespace Game
             //portal2.Velocity.Rotation = -(float)(1 / (32 * Math.PI));
             foreach (Portal p in scene.PortalList)
             {
+                if (!p.IsValid())
+                {
+                    continue;
+                }
                 vArray = p.GetWorldVerts();
                 Line line = new Line(vArray);
                 portalEnter = p;
@@ -309,7 +311,6 @@ namespace Game
             cam.Transform.Rotation = transformNew.Rotation;
             cam.Transform.Scale = transformNew.Scale;
             cam.Viewpoint = player.Transform.WorldPosition;
-            
         }
 
         public override void OnClosing(CancelEventArgs e)

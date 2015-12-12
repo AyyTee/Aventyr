@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CE5CD75D-8626-4CD8-83FC-B7A4868DAEC0}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Game</RootNamespace>
     <AssemblyName>Game</AssemblyName>
@@ -74,27 +74,28 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cgen.Audio, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Cgen.Audio, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\cgen audio\Cgen.Audio\bin\x86\Debug\Cgen.Audio.dll</HintPath>
+      <HintPath>..\..\..\..\cgen audio\Cgen.Audio\bin\Release\Cgen.Audio.dll</HintPath>
     </Reference>
-    <Reference Include="clipper_library">
+    <Reference Include="clipper_library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Clipper.6.2.10\lib\net40\clipper_library.dll</HintPath>
     </Reference>
-    <Reference Include="FarseerPhysics">
-      <HintPath>..\..\..\..\Farseer Physics Engine 3.3.1 Class\Farseer Physics Engine 3.3.1 Class\bin\Debug\FarseerPhysics.dll</HintPath>
+    <Reference Include="FarseerPhysics, Version=3.5.0.38023, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\FarseerPhysics.3.5.0\lib\NET40\FarseerPhysics.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.JScript" />
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Documents\OpenTK\1.1\Binaries\OpenTK\Release\OpenTK.dll</HintPath>
+      <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="OpenTK.GLControl, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Desktop\Tools\OpenTK\1.1\Binaries\OpenTK\Release\OpenTK.GLControl.dll</HintPath>
+      <HintPath>..\packages\OpenTK.GLControl.1.1.1589.5942\lib\NET40\OpenTK.GLControl.dll</HintPath>
     </Reference>
-    <Reference Include="Poly2Tri">
-      <HintPath>..\..\..\..\cs.poly2tri-1388712a475b\cs.poly2tri-1388712a475b\bin\Debug\Poly2Tri.dll</HintPath>
+    <Reference Include="Poly2Tri, Version=1.0.0.0, Culture=neutral, PublicKeyToken=db87057254d2bb1c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Poly2Tri.dll.1.0.4\lib\Net35\Poly2Tri.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -84,6 +84,11 @@ namespace Game
             throw new NotImplementedException();
         }
 
+        protected override bool _isValid()
+        {
+            return base._isValid() && Position != null;
+        }
+
         public override Transform2D GetVelocity()
         {
             Transform2D transform = new Transform2D();

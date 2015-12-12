@@ -2,7 +2,7 @@
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
 using OpenTK;
-using Poly2Tri.Triangulation.Polygon;
+//using Poly2Tri.Triangulation.Polygon;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

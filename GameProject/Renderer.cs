@@ -109,7 +109,7 @@ namespace Game
 
         public void DrawPortal(Scene scene, Portal portalEnter, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta, int count)
         {
-            if (portalEnter.Linked == null)
+            if (!portalEnter.IsValid())
             {
                 return;
             }
