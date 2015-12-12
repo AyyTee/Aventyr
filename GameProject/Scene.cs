@@ -113,6 +113,7 @@ namespace Game
         /// </summary>
         public bool RemovePortal(Portal portal)
         {
+            portal.Dispose();
             return PortalList.Remove(portal);
         }
 

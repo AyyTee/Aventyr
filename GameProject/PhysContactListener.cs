@@ -186,6 +186,10 @@ namespace Game
 
             foreach (Portal p in Scene.PortalList)
             {
+                if (!p.IsValid())
+                {
+                    continue;
+                }
                 if (p.GetType() == typeof(FixturePortal))
                 {
                     FixturePortal portal = (FixturePortal)p;

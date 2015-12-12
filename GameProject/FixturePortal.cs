@@ -56,6 +56,12 @@ namespace Game
             }
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            Remove();
+        }
+
         /// <summary>
         /// Returns a copy of the Transform local to the Body this is attached to.
         /// </summary>

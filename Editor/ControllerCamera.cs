@@ -23,7 +23,7 @@ namespace Editor
         public InputExt InputExt { get; private set; }
         public float ZoomMin = 0.5f;
         public float ZoomMax = 1000f;
-        public float KeyMoveSpeed = 0.15f;
+        public float KeyMoveSpeed = 0.13f;
 
         private float _zoomScrollFactor;
         /// <summary>
@@ -134,6 +134,7 @@ namespace Editor
             {
                 CameraMoved(this, Camera);
             }
+            Camera.Viewpoint = new Vector2(Camera.Transform.Position.X, Camera.Transform.Position.Y);
         }
     }
 }

@@ -112,10 +112,10 @@ namespace Game
         /// </summary>
         public void ProcessChanges()
         {
-            if (Update == false)
+            /*if (Update == false)
             {
                 return;
-            }
+            }*/
             Update = false;
             int a = Fixture.Body.FixtureList.Count;
             foreach (Fixture f in _fixtureChildList)
@@ -125,8 +125,8 @@ namespace Game
             int b = Fixture.Body.FixtureList.Count;
             //FixtureExt.GetUserData(Fixture).Entity.Scene.World.ProcessChanges();
             _fixtureChildList.Clear();
-            var sortedPortals = _childPortals.ToArray().OrderBy(item => item.Position.EdgeIndexT).ToArray();
-
+            var sortedPortals = _childPortals.ToArray().OrderBy(item => item.Position.EdgeIndexT).ToList();
+            sortedPortals.RemoveAll(item => !item.IsValid());
             for (int i = 0; i < sortedPortals.Count(); i++)
             {
                 if (i == 0 || (i > 0 && sortedPortals[i].Position.EdgeIndex != sortedPortals[i - 1].Position.EdgeIndex))

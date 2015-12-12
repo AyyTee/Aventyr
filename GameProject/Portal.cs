@@ -44,6 +44,12 @@ namespace Game
             Scene = scene;
             Scene.PortalList.Add(this);
         }
+
+        public virtual void Dispose()
+        {
+            SetLinked(null);
+        }
+
         public abstract Transform2D GetTransform();
         public abstract void SetTransform(Transform2D transform);
         public abstract Transform2D GetVelocity();
