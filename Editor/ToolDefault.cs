@@ -147,7 +147,10 @@ namespace Editor
                 Transform2D transform = dragObject.GetTransform();
                 transform.Position = dragEntityStart;
                 dragObject.SetTransform(transform);
-                translation.Transform.Position = dragEntityStart;
+                //translation.Transform.Position = dragEntityStart;
+                transform = translation.GetTransform();
+                transform.Position = dragEntityStart;
+                translation.SetTransform(transform);
             }
             _dragState = DragState.Neither;
             dragObject = null;
@@ -182,7 +185,7 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            translation = new Entity(Controller.Hud);
+            translation = new Entity(Controller.LevelHud);
             translation.Models.Add(translationModel);
             translation.Visible = false;
             _dragState = DragState.Neither;
@@ -195,15 +198,15 @@ namespace Editor
             base.Disable();
             DragEnd(false);
             Controller.CamControl.CameraMoved -= UpdateTranslation;
-            Controller.Hud.RemoveEntity(translation);
+            Controller.LevelHud.RemoveEntity(translation);
         }
 
-        private void UpdateTranslation(ControllerCamera controller, Camera camera)
+        private void UpdateTranslation(ControllerCamera controller, Camera2D camera)
         {
             UpdateTranslation(camera);
         }
 
-        private void UpdateTranslation(Camera camera)
+        private void UpdateTranslation(Camera2D camera)
         {
             Transform2D transform = translation.GetTransform();
             transform.Scale = new Vector2(camera.Scale, camera.Scale) * translationScaleOffset;

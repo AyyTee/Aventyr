@@ -112,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BodyUserData.cs" />
+    <Compile Include="Camera2D.cs" />
     <Compile Include="ModelLoader.cs" />
     <Compile Include="ControllerGame.cs" />
     <Compile Include="EdgeData.cs" />

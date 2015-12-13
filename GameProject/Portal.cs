@@ -52,6 +52,10 @@ namespace Game
 
         //public abstract Transform2D GetTransform();
         //public abstract void SetTransform(Transform2D transform);
+        public virtual void Step()
+        {
+        }
+
         public abstract Transform2D GetVelocity();
 
         public Vector2[] GetFOV(Vector2 origin, float distance)
@@ -138,7 +142,7 @@ namespace Game
         {
             Transform2D transform = new Transform2D(body.Position, body.Rotation);
             Transform2D velocity = new Transform2D(body.LinearVelocity, body.AngularVelocity);
-            this.Enter(transform, velocity);
+            Enter(transform, velocity);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             body.Rotation = transform.Rotation;
             body.LinearVelocity = Vector2Ext.ConvertToXna(velocity.Position);
@@ -147,7 +151,11 @@ namespace Game
 
         public void Enter(Entity entity)
         {
-            this.Enter(entity.Transform, entity.Velocity);
+            Transform2D transform = entity.GetTransform();
+            Transform2D velocity = entity.Velocity;
+            this.Enter(transform, velocity);
+            entity.SetTransform(transform);
+            entity.SetVelocity(velocity);
         }
 
         public static void SetLinked(Portal portal0, Portal portal1)

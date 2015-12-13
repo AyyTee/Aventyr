@@ -26,7 +26,7 @@ namespace Game
         [NonSerialized]
         private PhysContactListener _contactListener;
 
-        public Camera ActiveCamera { get; set; }
+        public Camera2D ActiveCamera { get; set; }
         public List<Portal> PortalList { get; private set; }
         public List<Entity> EntityList { get; private set; }
 

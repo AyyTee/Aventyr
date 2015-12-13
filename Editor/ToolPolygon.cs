@@ -61,9 +61,11 @@ namespace Editor
                     Transform2D transform = entity.GetTransform();
                     transform.Position = average;
                     EntityFactory.CreateEntityPolygon(entity.Entity, transform, _vertices.ToArray());
-                    //entity.Entity.Models.Add(ModelFactory.CreatePolygon(_vertices.ToArray()));
                     entity.Entity.IsPortalable = true;
                     entity.Entity.Models[0].Wireframe = true;
+                    entity.Entity.Models.Add(ModelFactory.CreatePolygon(_vertices.ToArray()));
+                    entity.Entity.Models[1].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
+                    entity.Entity.Models[1].SetShader("default");
                     _vertices.Clear();
                     _entity.Models.Clear();
                     Controller.SetTool(null);

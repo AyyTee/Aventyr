@@ -57,11 +57,19 @@ namespace Editor
             ControllerEditor.ScenePlayed += ControllerEditor_ScenePlayed;
             ControllerEditor.ScenePaused += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopped += ControllerEditor_ScenePaused;
+            glControl.MouseMove += glControl_MouseMove;
             _loop = new GLLoop(glControl, ControllerEditor);
             _loop.Run(60);
 
             ToolPanel ToolPanel = new ToolPanel(ControllerEditor);
             ToolGrid.Children.Add(ToolPanel);
+        }
+
+        private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
+
+            MouseWorldCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
         }
 
         private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, EditorObject entity)

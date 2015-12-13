@@ -78,22 +78,39 @@
                 <Image Source="/editor assets/icons/grid-snap.png" />
             </ToggleButton>
         </ToolBar>
-        <Grid Name="Body" Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="100"/>
-                <ColumnDefinition Width="250" />
-            </Grid.ColumnDefinitions>
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" />
-            <WindowsFormsHost  x:Name="wfContainer" Background="Black" MinWidth="100" MinHeight="100">
-                <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" />
-            </WindowsFormsHost>
-            <Grid Grid.Column="1" Margin="5,0,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid Name="ToolGrid" Margin="0,0,0,5"/>
-                <GridSplitter  Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" />
+        <Grid Grid.Row="2" Background="#293955">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="22" />
+            </Grid.RowDefinitions>
+            <Grid Name="Body">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="100" />
+                    <ColumnDefinition Width="250" />
+                </Grid.ColumnDefinitions>
+                <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch" Background="#293955" />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="22" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="1">
+                        <Label Name="MouseWorldCoordinates" Foreground="#fafafa" VerticalAlignment="Center" HorizontalAlignment="Left" Padding="8,0,8,0"/>
+                    </Grid>
+                    <WindowsFormsHost  x:Name="wfContainer" Background="Black" MinWidth="100" MinHeight="100">
+                        <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" />
+                    </WindowsFormsHost>
+                </Grid>
+                <Grid Grid.Column="1" Margin="4,4,4,4" Background="White">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Name="ToolGrid" Margin="0,0,0,5"/>
+                    <GridSplitter  Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="#293955" />
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="1" Background="#007acc">
             </Grid>
         </Grid>
     </Grid>

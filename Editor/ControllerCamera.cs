@@ -12,14 +12,14 @@ namespace Editor
 {
     public class ControllerCamera
     {
-        public delegate void CameraObjectHandler(ControllerCamera controller, Camera camera);
+        public delegate void CameraObjectHandler(ControllerCamera controller, Camera2D camera);
         /// <summary>
         /// Event is fired if the camera Transform is modified by this controller.
         /// </summary>
         public event CameraObjectHandler CameraMoved;
 
         public ControllerEditor Controller { get; private set; }
-        public Camera Camera { get; private set; }
+        public Camera2D Camera { get; private set; }
         public InputExt InputExt { get; private set; }
         public float ZoomMin = 0.5f;
         public float ZoomMax = 1000f;
@@ -54,8 +54,8 @@ namespace Editor
         }
 
         Vector2 _mouseDragPos;
-        Vector3 _cameraDragPos;
-        public ControllerCamera(ControllerEditor controller, Camera camera, InputExt inputExt)
+        Vector2 _cameraDragPos;
+        public ControllerCamera(ControllerEditor controller, Camera2D camera, InputExt inputExt)
         {
             Controller = controller;
             ZoomScrollFactor = 1.2f;
@@ -66,7 +66,8 @@ namespace Editor
 
         public void Update()
         {
-            Transform copy = new Transform(Camera.Transform);
+            Transform2D previous = Camera.GetTransform();
+            Transform2D transform = Camera.GetTransform();
             if (InputExt.MouseInside)
             {
                 if (InputExt.MouseDown(MouseButton.Middle))
@@ -74,20 +75,20 @@ namespace Editor
                     if (InputExt.MousePress(MouseButton.Middle))
                     {
                         _mouseDragPos = Camera.ScreenToWorld(InputExt.MousePos);
-                        _cameraDragPos = Camera.Transform.Position;
+                        _cameraDragPos = transform.Position;
                     }
-                    Vector3 camPosPrev = Camera.Transform.Position;
-                    Camera.Transform.Position = _cameraDragPos;
+                    Vector2 camPosPrev = transform.Position;
+                    Camera.SetPosition(_cameraDragPos);
                     Vector2 offset = _mouseDragPos - Camera.ScreenToWorld(InputExt.MousePos);
-                    Camera.Transform.Position = camPosPrev;
-                    Camera.Transform.Position = _cameraDragPos + new Vector3(offset.X, offset.Y, 0);
+                    Camera.SetPosition(camPosPrev);
+                    transform.Position = _cameraDragPos + offset;
                 }
                 else
                 {
                     Vector2 mouseZoomPosPrev = Camera.ScreenToWorld(InputExt.MousePos);
                     Camera.Scale = MathHelper.Clamp(Camera.Scale / (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta()), ZoomMin, ZoomMax);
                     Vector2 mouseZoomPos = -Camera.ScreenToWorld(InputExt.MousePos) + mouseZoomPosPrev;
-                    Camera.Transform.Position += new Vector3(mouseZoomPos.X, mouseZoomPos.Y, 0);
+                    transform.Position += mouseZoomPos;
                 }
             }
             if (InputExt.KeyPress(Key.KeypadPlus) || InputExt.KeyPress(Key.Plus))
@@ -100,41 +101,47 @@ namespace Editor
             }
             if (InputExt.KeyDown(Key.R))
             {
-                Camera.Transform.Rotation += new Quaternion(0, 0, 0, .01f);
+                transform.Rotation += 0.01f;
             }
             if (InputExt.KeyPress(Key.Space))
             {
-                Camera.Transform.Rotation = new Quaternion(0, 0, 1, 0);
+                transform.Rotation = 0;
                 EditorObject selected = Controller.GetSelectedEntity();
                 if (selected != null)
                 {
-                    Vector3 position = Camera.Transform.Position;
+                    /*Vector3 position = copy.Position;
                     position.X = selected.GetTransform().Position.X;
                     position.Y = selected.GetTransform().Position.Y;
-                    Camera.Transform.Position = position;
+                    Camera.Transform.Position = position;*/
+                    transform.Position = selected.GetTransform().Position;
                 }
             }
             if (InputExt.KeyDown(Key.A))
             {
-                Camera.Transform.Position += new Vector3(-KeyMoveSpeed, 0, 0);
+                //Camera.Transform.Position += new Vector3(-KeyMoveSpeed, 0, 0);
+                transform.Position += new Vector2(-KeyMoveSpeed, 0);
             }
             if (InputExt.KeyDown(Key.D))
             {
-                Camera.Transform.Position += new Vector3(KeyMoveSpeed, 0, 0);
+                //Camera.Transform.Position += new Vector3(KeyMoveSpeed, 0, 0);
+                transform.Position += new Vector2(KeyMoveSpeed, 0);
             }
             if (InputExt.KeyDown(Key.W))
             {
-                Camera.Transform.Position += new Vector3(0, KeyMoveSpeed, 0);
+                //Camera.Transform.Position += new Vector3(0, KeyMoveSpeed, 0);
+                transform.Position += new Vector2(0, KeyMoveSpeed);
             }
             if (InputExt.KeyDown(Key.S))
             {
-                Camera.Transform.Position += new Vector3(0, -KeyMoveSpeed, 0);
+                //Camera.Transform.Position += new Vector3(0, -KeyMoveSpeed, 0);
+                transform.Position += new Vector2(0, -KeyMoveSpeed);
             }
-            if (!copy.Compare(Camera.Transform) && CameraMoved != null)
+            Camera.SetTransform(transform);
+            if (!transform.Compare(previous) && CameraMoved != null)
             {
                 CameraMoved(this, Camera);
             }
-            Camera.Viewpoint = new Vector2(Camera.Transform.Position.X, Camera.Transform.Position.Y);
+            Camera.Viewpoint = new Vector2(transform.Position.X, transform.Position.Y);
         }
     }
 }

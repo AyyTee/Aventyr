@@ -14,7 +14,7 @@ namespace Editor
 {
     public class ControllerEditor : Controller
     {
-        public Scene Level, Hud;
+        public Scene Level, Hud, LevelHud;
         bool _isPaused;
         public ControllerCamera CamControl { get; private set; }
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
@@ -44,10 +44,13 @@ namespace Editor
         {
             base.OnLoad(e);
             Level = new Scene();
-            Level.ActiveCamera = Camera.CameraOrtho(new Vector3(0, 0, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            Level.ActiveCamera = new Camera2D(new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height);
             renderer.AddScene(Level);
+            LevelHud = new Scene();
+            LevelHud.ActiveCamera = Level.ActiveCamera;
+            renderer.AddScene(LevelHud);
             Hud = new Scene();
-            Hud.ActiveCamera = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Width, CanvasSize.Width / (float)CanvasSize.Height);
+            Hud.ActiveCamera = new Camera2D(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width, CanvasSize.Width / (float)CanvasSize.Height);
             renderer.AddScene(Hud);
             #region create background
             Model background = ModelFactory.CreatePlane();
@@ -62,9 +65,9 @@ namespace Editor
             #endregion
             CamControl = new ControllerCamera(this, Level.ActiveCamera, InputExt);
             
-            debugText = new Entity(Hud);
-            debugText.Transform.Position = new Vector2(0, CanvasSize.Height - 40);
-
+            /*debugText = new Entity(Hud);
+            debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
+            */
             InitTools();
             ScenePause();
         }
@@ -72,14 +75,13 @@ namespace Editor
         public override void OnRenderFrame(OpenTK.FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            debugText.Models.Clear();
-            debugText.Models.Add(FontRenderer.GetModel((Time.ElapsedMilliseconds / RenderCount).ToString()));
+            /*debugText.Models.Clear();
+            debugText.Models.Add(FontRenderer.GetModel((Time.ElapsedMilliseconds / RenderCount).ToString()));*/
         }
 
         public Vector2 GetMouseWorldPosition()
         {
-            Camera cam = Level.ActiveCamera;
-            return cam.ScreenToWorld(InputExt.MousePos);
+            return Level.ActiveCamera.ScreenToWorld(InputExt.MousePos);
         }
 
         /*public void SetMouseWorldPosition(Vector2 mousePosition)

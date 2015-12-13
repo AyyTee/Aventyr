@@ -55,7 +55,7 @@ namespace Game
             for (int i = 0; i < _scenes.Count(); i++)
             {
                 Scene scene = _scenes[i];
-                Camera camera = scene.ActiveCamera;
+                Camera2D camera = scene.ActiveCamera;
                 DrawScene(scene, camera.GetViewMatrix(), 0);
 
                 TextWriter console = Console.Out;

@@ -31,6 +31,16 @@ namespace Game
         {
         }
 
+        public override void Step()
+        {
+            base.Step();
+            Transform2D transform = GetTransform();
+            transform.Position += Velocity.Position;
+            transform.Rotation += Velocity.Rotation;
+            transform.Scale *= Velocity.Scale;
+            SetTransform(transform);
+        }
+
         public override Transform2D GetVelocity()
         {
             return Velocity;

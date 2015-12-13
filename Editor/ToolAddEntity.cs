@@ -22,7 +22,9 @@ namespace Editor
             base.Update();
             if (_mouseFollow != null)
             {
-                _mouseFollow.Transform.Position = Controller.GetMouseWorldPosition();
+                Transform2D transform = _mouseFollow.GetTransform();
+                transform.Position = Controller.GetMouseWorldPosition();
+                _mouseFollow.SetTransform(transform);
             }
             if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape) || _input.MousePress(MouseButton.Right))
             {
@@ -32,9 +34,7 @@ namespace Editor
             {
                 EditorEntity entity = Controller.CreateLevelEntity();
                 EntityFactory.CreateEntityBox(entity.Entity, Controller.GetMouseWorldPosition());
-                //entity.Entity.Transform.Position = Controller.GetMouseWorldPosition();
-                //entity.Entity.Models.Add(ModelFactory.CreateCube());
-                entity.Entity.Velocity.Rotation = .1f;
+
                 entity.Entity.IsPortalable = true;
                 
                 Controller.SetSelectedEntity(entity);

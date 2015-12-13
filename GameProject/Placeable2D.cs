@@ -1,5 +1,6 @@
 ﻿
 using FarseerPhysics.Dynamics;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +17,6 @@ namespace Game
         public List<Placeable2D> ChildList { get { return new List<Placeable2D>(_children); } }
         public Placeable2D Parent { get; private set; }
         Transform2D _transform = new Transform2D();
-        public virtual Transform2D Transform { get { return _transform; } }
 
         public Scene Scene { get; private set; }
 
@@ -52,6 +52,13 @@ namespace Game
         public virtual void SetTransform(Transform2D transform)
         {
             _transform = transform.Copy();
+        }
+
+        public virtual void SetPosition(Vector2 position)
+        {
+            Transform2D transform = GetTransform();
+            transform.Position = position;
+            SetTransform(transform);
         }
 
         public virtual Transform2D GetWorldTransform()

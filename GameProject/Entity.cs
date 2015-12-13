@@ -84,7 +84,9 @@ namespace Game
                 scene.AddEntity(this);
             }
             Velocity = new Transform2D();
-            Transform.UniformScale = true;
+            Transform2D transform = GetTransform();
+            transform.UniformScale = true;
+            SetTransform(transform);
             Visible = true;
         }
 
@@ -168,7 +170,9 @@ namespace Game
                 Scene.World.RemoveBody(Body);
             }
 
-            Transform.UniformScale = true;
+            Transform2D transform = GetTransform();
+            transform.UniformScale = true;
+            SetTransform(transform);
             BodyUserData userData = new BodyUserData(this, body);
             Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
             BodyId = body.BodyId;
@@ -184,6 +188,11 @@ namespace Game
             {
                 BodyExt.SetTransform(Body, transform);
             }
+        }
+
+        public void SetVelocity(Transform2D transform)
+        {
+            Velocity = transform.Copy();
         }
 
         public void UpdatePortalClipping(int depth)

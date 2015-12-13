@@ -38,7 +38,8 @@ namespace Game
 
             scene = new Scene();
             hud = new Scene();
-            Camera hudCam = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
+            //Camera hudCam = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
+            Camera2D hudCam = new Camera2D(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
 
             Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];
@@ -50,9 +51,11 @@ namespace Game
             back.Models.Add(background);
 
             portal2 = new FloatPortal(scene);
-            portal2.Transform.Rotation = 0.1f;
-            portal2.Transform.Position = new Vector2(2.1f, 2f);
-            portal2.Transform.Scale = new Vector2(-1f, 1f);
+            Transform2D transform = portal2.GetTransform();
+            transform.Rotation = 0.1f;
+            transform.Position = new Vector2(2.1f, 2f);
+            transform.Scale = new Vector2(-1f, 1f);
+            portal2.SetTransform(transform);
 
             Entity portalEntity2 = new Entity(scene);
             //portalEntity2.Transform.Parent = portal2.Transform;
@@ -65,9 +68,8 @@ namespace Game
 
 
             portal3 = new FloatPortal(scene);
-            portal3.Transform.Rotation = 0.4f;
-            portal3.Transform.Position = new Vector2(-1f, 1f);
-            //portal3.Transform.Scale = new Vector2(-2f, 2f);
+            portal3.SetTransform(new Transform2D(new Vector2(-1f, 1), 0.4f));
+            //portal3.Transform.Scale = new Vector2(-1.5f, 1.5f);
 
             Portal.SetLinked(portal2, portal3);
             Entity portalEntity3 = new Entity(scene);
@@ -137,7 +139,8 @@ namespace Game
             text2 = new Entity(hud);
             text2.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
 
-            Camera cam = Camera.CameraOrtho(new Vector3(player.GetTransform().Position.X, player.GetTransform().Position.Y, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            //Camera cam = Camera.CameraOrtho(new Vector3(player.GetTransform().Position.X, player.GetTransform().Position.Y, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            Camera2D cam = new Camera2D(player.GetTransform().Position, 10, CanvasSize.Width / (float)CanvasSize.Height);
 
             scene.ActiveCamera = cam;
             hud.ActiveCamera = hudCam;
@@ -181,7 +184,7 @@ namespace Game
             int fixtureCount = WorldExt.GetFixtures(scene.World).Count;
             int bodyCount = scene.World.BodyList.Count;
             //text2.Models.Add(FontRenderer.GetModel(fixtureCount.ToString() + "        " + bodyCount.ToString()));
-            Camera cam = scene.ActiveCamera;
+            Camera2D cam = scene.ActiveCamera;
 
             if (InputExt.MousePress(MouseButton.Left))
             {
@@ -224,28 +227,29 @@ namespace Game
                 camSpeed = .005f;
             }
 
+            Transform2D camTransform = cam.GetTransform();
             if (InputExt.KeyDown(Key.R))
             {
-                Quaternion rot = cam.Transform.Rotation;
-                rot.W += .01f;
-                cam.Transform.Rotation = rot;
+                //Quaternion rot = cam.Transform.Rotation;
+                camTransform.Rotation += 0.01f;
+                //cam.Transform.Rotation = rot;
                 player.GetTransform().Rotation += .01f;
             }
             if (InputExt.KeyDown(Key.W))
             {
-                v += cam.GetUp() * camSpeed * cam.Transform.Scale.Y;
+                v += cam.GetUp() * camSpeed * camTransform.Scale.Y;
             }
             else if (InputExt.KeyDown(Key.S))
             {
-                v -= cam.GetUp() * camSpeed * cam.Transform.Scale.Y;
+                v -= cam.GetUp() * camSpeed * camTransform.Scale.Y;
             }
             if (InputExt.KeyDown(Key.A))
             {
-                v -= cam.GetRight() * camSpeed * cam.Transform.Scale.X;
+                v -= cam.GetRight() * camSpeed * camTransform.Scale.X;
             }
             else if (InputExt.KeyDown(Key.D))
             {
-                v += cam.GetRight() * camSpeed * cam.Transform.Scale.X;
+                v += cam.GetRight() * camSpeed * camTransform.Scale.X;
             }
             if (InputExt.MouseWheelDelta() != 0)
             {
@@ -290,13 +294,7 @@ namespace Game
 
             foreach (Portal p in scene.PortalList)
             {
-                if (p.GetType() == typeof(FloatPortal))
-                {
-                    FloatPortal portal = (FloatPortal)p;
-                    portal.Transform.Position += portal.Velocity.Position;
-                    portal.Transform.Rotation += portal.Velocity.Rotation;
-                    portal.Transform.Scale *= portal.Velocity.Scale;
-                }
+                p.Step();
             }
 
             if (intersect.Exists)
@@ -309,11 +307,12 @@ namespace Game
             {
                 scene.Step();
             }
-            Transform transformNew = player.GetWorldTransform().Get3D();
+            //Transform transformNew = player.GetWorldTransform().Get3D();
             cam = scene.ActiveCamera;
-            cam.Transform.Position = transformNew.Position;
+            cam.SetTransform(player.GetWorldTransform());
+            /*cam.Transform.Position = transformNew.Position;
             cam.Transform.Rotation = transformNew.Rotation;
-            cam.Transform.Scale = transformNew.Scale;
+            cam.Transform.Scale = transformNew.Scale;*/
             cam.Viewpoint = player.GetWorldTransform().Position;
         }
 
