@@ -50,7 +50,6 @@ namespace Editor
                     _portalPrevious.GetWorldTransform().Position
                 });
                 lineModel.SetColor(new Vector3(0.1f, 0.7f, 0.1f));
-                lineModel.SetShader("default");
                 line.Models.Add(lineModel);
             }
         }

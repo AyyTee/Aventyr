@@ -113,6 +113,7 @@
   <ItemGroup>
     <Compile Include="BodyUserData.cs" />
     <Compile Include="Camera2D.cs" />
+    <Compile Include="ClipperExt.cs" />
     <Compile Include="ModelLoader.cs" />
     <Compile Include="ControllerGame.cs" />
     <Compile Include="EdgeData.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="PolygonFactory.cs" />
     <Compile Include="Portal.cs" />
     <Compile Include="PortalPlacer.cs" />
+    <Compile Include="PortalView.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Texture.cs" />
@@ -187,6 +189,9 @@
     <None Include="assets\shaders\fs_text.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\shaders\fs_uber.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="assets\shaders\vs.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -196,6 +201,11 @@
     <None Include="assets\shaders\vs_text.glsl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="assets\shaders\vs_uber.glsl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\textures\Thumbs.db" />
+    <None Include="assets\Thumbs.db" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

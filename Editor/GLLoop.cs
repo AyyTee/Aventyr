@@ -19,10 +19,12 @@ namespace Editor
         public Thread Thread { get; private set; }
         bool _resize = false;
         bool _focused;
-        int millisecondsPerStep;
+        public int UpdatesPerSecond { get; private set; }
+        public int MillisecondsPerStep { get { return 1000 / UpdatesPerSecond; } }
         Stopwatch stopwatch = new Stopwatch();
         GLControl _control;
         Controller _loopControl;
+        RollingAverage _average;
         public bool IsStopping { get; private set; }
         public bool IsRunning { get; private set; }
 
@@ -48,10 +50,19 @@ namespace Editor
         {
             Debug.Assert(updatesPerSecond > 0 && updatesPerSecond <= 200, "Updates per second must be between 0 and 200.");
             Debug.Assert(IsRunning == false);
-            millisecondsPerStep = 1000 / updatesPerSecond;
+            UpdatesPerSecond = updatesPerSecond;
+            _average = new RollingAverage(60, MillisecondsPerStep);
             _control.Context.MakeCurrent(null);
             Thread = new Thread(new ThreadStart(Loop));
             Thread.Start();
+        }
+
+        /// <summary>
+        /// Get the average time between loops in milliseconds
+        /// </summary>
+        public float GetAverage()
+        {
+            return _average.GetAverage();
         }
 
         /// <summary>
@@ -74,6 +85,8 @@ namespace Editor
                 _control.MakeCurrent();
                 while (!IsStopping)
                 {
+                    stopwatch.Stop();
+                    _average.Enqueue(stopwatch.ElapsedMilliseconds);
                     stopwatch.Restart();
                     if (_resize)
                     {
@@ -91,7 +104,8 @@ namespace Editor
                     _control.Invalidate();
 
                     stopwatch.Stop();
-                    int sleepLength = Math.Max(0, millisecondsPerStep - (int)stopwatch.ElapsedMilliseconds);
+                    int sleepLength = Math.Max(0, MillisecondsPerStep - (int)stopwatch.ElapsedMilliseconds);
+                    stopwatch.Start();
                     Thread.Sleep(sleepLength);
                 }
                 _control.Context.MakeCurrent(null);

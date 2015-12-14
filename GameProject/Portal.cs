@@ -58,9 +58,9 @@ namespace Game
 
         public abstract Transform2D GetVelocity();
 
-        public Vector2[] GetFOV(Vector2 origin, float distance)
+        public Vector2[] GetFov(Vector2 origin, float distance)
         {
-            return GetFOV(origin, distance, 10);
+            return GetFov(origin, distance, 10);
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace Game
         /// <summary>
         /// Returns a polygon representing the 2D FOV through the portal.  If the polygon is degenerate then an array of length 0 will be returned.
         /// </summary>
-        public Vector2[] GetFOV(Vector2 viewPoint, float distance, int detail)
+        public Vector2[] GetFov(Vector2 viewPoint, float distance, int detail)
         {
             Matrix4 a = GetWorldTransform().GetMatrix();
             Vector2[] verts = new Vector2[detail + 2];

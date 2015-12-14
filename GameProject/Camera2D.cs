@@ -63,6 +63,16 @@ namespace Game
             return Vector2Ext.Transform(worldCoord, GetWorldToScreenMatrix());
         }
 
+        public Vector2[] ScreenToWorld(Vector2[] screenCoord)
+        {
+            return Vector2Ext.Transform(screenCoord, GetWorldToScreenMatrix().Inverted());
+        }
+
+        public Vector2[] WorldToScreen(Vector2[] worldCoord)
+        {
+            return Vector2Ext.Transform(worldCoord, GetWorldToScreenMatrix());
+        }
+
         public Vector2 ScreenToWorld(Vector2 screenCoord)
         {
             return Vector2Ext.Transform(screenCoord, GetWorldToScreenMatrix().Inverted());
@@ -73,6 +83,28 @@ namespace Game
             Matrix4 scale = Matrix4.CreateScale((float)(Controller.CanvasSize.Width / 2), -(float)(Controller.CanvasSize.Height / 2), 1);
             Matrix4 translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
             return GetViewMatrix() * translation * scale;
+        }
+
+        private Matrix4 GetWorldToClipMatrix()
+        {
+            Matrix4 scale = Matrix4.CreateScale(1, -1, 1);
+            Matrix4 translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
+            return GetViewMatrix() * translation * scale;
+        }
+
+        public Vector2[] GetVerts()
+        {
+            return new Vector2[4] {
+                new Vector2(-1f, -1f),
+                new Vector2(1f, -1f),
+                new Vector2(1f, 1f),
+                new Vector2(-1f, 1f),
+            };
+        }
+
+        public Vector2[] GetWorldVerts()
+        {
+            return Vector2Ext.Transform(GetVerts(), GetWorldToClipMatrix().Inverted());
         }
     }
 }

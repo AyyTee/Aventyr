@@ -34,7 +34,7 @@ namespace Editor
             {
                 EditorEntity entity = Controller.CreateLevelEntity();
                 EntityFactory.CreateEntityBox(entity.Entity, Controller.GetMouseWorldPosition());
-
+                entity.Entity.Models[0].SetTexture(Renderer.Textures["default.png"]);
                 entity.Entity.IsPortalable = true;
                 
                 Controller.SetSelectedEntity(entity);
@@ -51,6 +51,7 @@ namespace Editor
             base.Enable();
             _mouseFollow = new Entity(Controller.Level);
             _mouseFollow.Models.Add(ModelFactory.CreateCube());
+            _mouseFollow.Models[0].SetTexture(Renderer.Textures["default.png"]);
             _mouseFollow.IsPortalable = true;
         }
 

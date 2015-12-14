@@ -116,22 +116,22 @@ namespace Editor
                     transform.Position = selected.GetTransform().Position;
                 }
             }
-            if (InputExt.KeyDown(Key.A))
+            if (InputExt.KeyDown(Key.Left))
             {
                 //Camera.Transform.Position += new Vector3(-KeyMoveSpeed, 0, 0);
                 transform.Position += new Vector2(-KeyMoveSpeed, 0);
             }
-            if (InputExt.KeyDown(Key.D))
+            if (InputExt.KeyDown(Key.Right))
             {
                 //Camera.Transform.Position += new Vector3(KeyMoveSpeed, 0, 0);
                 transform.Position += new Vector2(KeyMoveSpeed, 0);
             }
-            if (InputExt.KeyDown(Key.W))
+            if (InputExt.KeyDown(Key.Up))
             {
                 //Camera.Transform.Position += new Vector3(0, KeyMoveSpeed, 0);
                 transform.Position += new Vector2(0, KeyMoveSpeed);
             }
-            if (InputExt.KeyDown(Key.S))
+            if (InputExt.KeyDown(Key.Down))
             {
                 //Camera.Transform.Position += new Vector3(0, -KeyMoveSpeed, 0);
                 transform.Position += new Vector2(0, -KeyMoveSpeed);

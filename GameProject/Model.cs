@@ -19,7 +19,7 @@ namespace Game
         public int IboElements;
         public bool IboExists = true;
 
-        public string ShaderName = null;
+        public string ShaderName { get; private set; }
         public ShaderProgram Shader
         {
             get
@@ -63,7 +63,7 @@ namespace Game
         #region constructors
         public Model()
         {
-            SetShader("textured");
+            SetShader("uber");
             GL.GenBuffers(1, out IboElements);
         }
 
@@ -105,6 +105,8 @@ namespace Game
 
         public void SetShader(string shaderName)
         {
+            ShaderProgram a;
+            Debug.Assert(Renderer.Shaders.TryGetValue(shaderName, out a));
             ShaderName = shaderName;
         }
 

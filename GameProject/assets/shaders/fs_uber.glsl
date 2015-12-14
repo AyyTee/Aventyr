@@ -1,8 +1,10 @@
-﻿#version 330
+#version 330
 
+in vec4 color;
 in vec2 f_texcoord;
 out vec4 outputColor;
 
+uniform int isTextured;
 uniform sampler2D maintexture;
 uniform float cutLines[16]; //max number of portals that can clip an object is equal to array length/4
 uniform int cutLinesLength;
@@ -27,6 +29,13 @@ main()
 			return;
 		}
 	}
-	vec2 flipped_texcoord = vec2(f_texcoord.x, f_texcoord.y);
-	outputColor = texture(maintexture, flipped_texcoord);
+	if (isTextured == 1)
+	{
+		vec2 flipped_texcoord = vec2(f_texcoord.x, f_texcoord.y);
+		outputColor = texture(maintexture, flipped_texcoord);
+	}
+	else
+	{
+		outputColor = color;
+	}
 }

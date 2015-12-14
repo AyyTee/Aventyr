@@ -137,7 +137,7 @@ namespace Game
         /// <returns></returns>
         public Model GetModel(String text, Vector2 alignment, float charSpacing)
         {
-            Model textModel = new Model("text");
+            Model textModel = new Model();
             textModel.Texture = texture;
             CharData[] charData = GetChar(text);
             Vertex[] vertices = new Vertex[charData.Length * 4];

@@ -63,9 +63,11 @@ namespace Editor
                     EntityFactory.CreateEntityPolygon(entity.Entity, transform, _vertices.ToArray());
                     entity.Entity.IsPortalable = true;
                     entity.Entity.Models[0].Wireframe = true;
+                    //entity.Entity.Models[0].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
+                    //entity.Entity.Models[0].SetShader("default");
                     entity.Entity.Models.Add(ModelFactory.CreatePolygon(_vertices.ToArray()));
                     entity.Entity.Models[1].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
-                    entity.Entity.Models[1].SetShader("default");
+                    //entity.Entity.Models[1].SetShader("default");
                     _vertices.Clear();
                     _entity.Models.Clear();
                     Controller.SetTool(null);
@@ -95,7 +97,7 @@ namespace Editor
                 }
                 Model model = ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
                 model.Transform.Position = new Vector3(0, 0, 6);
-                model.SetShader("default");
+                //model.SetShader("default");
                 _entity.Models.Add(model);
             }
         }

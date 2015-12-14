@@ -14,10 +14,10 @@ namespace Game
         public static Model CreatePlane(Vector2 Scale)
         {
             Vertex[] vertices = new Vertex[] {
-                new Vertex(new Vector3(-0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(0, 1)),
-                new Vertex(new Vector3(0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(1, 1)),
-                new Vertex(new Vector3(0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(1, 0)),
-                new Vertex(new Vector3(-0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(0, 0))
+                new Vertex(new Vector3(-0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(0, 0)),
+                new Vertex(new Vector3(0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(1, 0)),
+                new Vertex(new Vector3(0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(1, 1)),
+                new Vertex(new Vector3(-0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(0, 1))
             };
 
             /*int[] indices = new int[] {
@@ -27,7 +27,6 @@ namespace Game
             Model model = new Model(vertices);
             model.AddTriangle(0, 2, 1);
             model.AddTriangle(0, 3, 2);
-            model.SetTexture(Renderer.Textures["default.png"]);
             return model;
         }
 
@@ -45,35 +44,35 @@ namespace Game
         {
             Vertex[] vertices = new Vertex[] {
                 //left
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(0.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
                 //back
-                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
-                //right
-                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
-                //top
-                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
-                //front
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(0.0f, 0.0f)), 
-                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(1.0f, 1.0f)), 
-                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(0.0f, 1.0f)),
-                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(1.0f, 0.0f)),
-                //bottom
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)), 
                 new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
                 new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
-                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f))
+                //right
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
+                //top
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
+                //front
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(0.0f, 1.0f)), 
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(1.0f, 0.0f)), 
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(1.0f, 1.0f)),
+                //bottom
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 1.0f)), 
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(0.0f, 1.0f))
             };
 
             int[] indices = new int[] {
@@ -93,7 +92,7 @@ namespace Game
             
             Model model = new Model(vertices);
             model.AddTriangles(indices);
-            model.SetTexture(Renderer.Textures["default.png"]);
+            //model.SetTexture(Renderer.Textures["default.png"]);
             return model;
         }
 
@@ -186,9 +185,6 @@ namespace Game
                 {
                     continue;
                 }
-                /*model.Indices.Add(i);
-                model.Indices.Add(i + 1);
-                model.Indices.Add(detail - 1 - i);*/
                 model.AddTriangle(i, i + 1, detail - 1 - i);
             }
             return model;

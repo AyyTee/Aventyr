@@ -6,6 +6,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="80" d:DesignWidth="80">
     <Grid Width="80" Height="80" Margin="1,1,1,1">
-        <RadioButton GroupName="Tools" Name="Button" Style="{StaticResource {x:Type ToggleButton}}"/>
+        <RadioButton GroupName="Tools" Name="Button" Style="{StaticResource {x:Type ToggleButton}}" IsTabStop="False"/>
     </Grid>
 </UserControl>

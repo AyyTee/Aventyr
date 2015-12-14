@@ -22,7 +22,7 @@ namespace Editor
             Marker.Models.Add(ModelFactory.CreateArrow(new Vector3(), new Vector2(0.2f, 0), 0.05f, 0.2f, 0.1f));
             foreach (Model m in Marker.Models)
             {
-                m.SetShader("default");
+                //m.SetShader("default");
                 m.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
             }
         }

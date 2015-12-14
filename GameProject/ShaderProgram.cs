@@ -11,6 +11,7 @@ namespace Game
     {
         public int ProgramID = -1;
         public int VShaderID = -1;
+        public int GShaderID = -1;
         public int FShaderID = -1;
         public int AttributeCount = 0;
         public int UniformCount = 0;

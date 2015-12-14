@@ -82,6 +82,7 @@
     <Compile Include="EditorEntity.cs" />
     <Compile Include="EditorObject.cs" />
     <Compile Include="EditorPortal.cs" />
+    <Compile Include="RollingAverage.cs" />
     <Compile Include="ToolAddEntity.cs" />
     <Compile Include="Tool.cs" />
     <Compile Include="ToolAddPortal.cs" />
@@ -117,7 +118,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PolygonBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

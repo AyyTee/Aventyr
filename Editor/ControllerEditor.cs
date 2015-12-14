@@ -54,7 +54,9 @@ namespace Editor
             renderer.AddScene(Hud);
             #region create background
             Model background = ModelFactory.CreatePlane();
+            background.Texture = null;
             background.Texture = Renderer.Textures["grid.png"];
+            background.SetColor(new Vector3(1, 1, 0.5f));
             background.Transform.Position = new Vector3(0, 0, -5f);
             float size = 50;
             background.Transform.Scale = new Vector3(size, size, size);
@@ -92,7 +94,7 @@ namespace Editor
 
         public EditorEntity CreateLevelEntity()
         {
-            EditorEntity entity = new EditorEntity(Level);
+            EditorEntity entity = new EditorEntity(Level, LevelHud);
             Entities.Add(entity);
             
             if (EntityAdded != null)

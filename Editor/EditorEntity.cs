@@ -13,13 +13,12 @@ namespace Editor
         public Entity Entity { get; private set; }
         public Entity Marker { get; private set; }
 
-        public EditorEntity(Scene scene)
+        public EditorEntity(Scene scene, Scene overlay)
         {
             Entity = new Entity(scene);
-            Marker = new Entity(scene);
+            Marker = new Entity(overlay);
             Marker.SetParent(Entity);
             Model circle = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
-            circle.SetShader("default");
             circle.SetColor(new Vector3(1f, 0.5f, 0f));
             Marker.Models.Add(circle);
         }
