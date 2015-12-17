@@ -1,6 +1,6 @@
 #version 330
 
-in vec4 color;
+in vec4 f_color;
 in vec2 f_texcoord;
 out vec4 outputColor;
 
@@ -8,6 +8,7 @@ uniform int isTextured;
 uniform sampler2D maintexture;
 uniform float cutLines[16]; //max number of portals that can clip an object is equal to array length/4
 uniform int cutLinesLength;
+//flat in int InstanceID;
 
 void
 main()
@@ -36,6 +37,6 @@ main()
 	}
 	else
 	{
-		outputColor = color;
+		outputColor = f_color;
 	}
 }

@@ -31,18 +31,23 @@ namespace Game
             GL.ShaderSource(address, code);
             GL.CompileShader(address);
             GL.AttachShader(ProgramID, address);
+            Console.WriteLine(type.ToString());
             Console.WriteLine(GL.GetShaderInfoLog(address));
         }
 
         public void LoadShaderFromString(String code, ShaderType type)
         {
-            if (type == ShaderType.VertexShader)
+            switch (type)
             {
-                loadShader(code, type, out VShaderID);
-            }
-            else if (type == ShaderType.FragmentShader)
-            {
-                loadShader(code, type, out FShaderID);
+                case ShaderType.VertexShader:
+                    loadShader(code, type, out VShaderID);
+                    break;
+                case ShaderType.GeometryShader:
+                    loadShader(code, type, out GShaderID);
+                    break;
+                case ShaderType.FragmentShader:
+                    loadShader(code, type, out FShaderID);
+                    break;
             }
         }
 
@@ -50,13 +55,17 @@ namespace Game
         {
             using (StreamReader sr = new StreamReader(filename))
             {
-                if (type == ShaderType.VertexShader)
+                switch (type)
                 {
-                    loadShader(sr.ReadToEnd(), type, out VShaderID);
-                }
-                else if (type == ShaderType.FragmentShader)
-                {
-                    loadShader(sr.ReadToEnd(), type, out FShaderID);
+                    case ShaderType.VertexShader:
+                        loadShader(sr.ReadToEnd(), type, out VShaderID);
+                        break;
+                    case ShaderType.GeometryShader:
+                        loadShader(sr.ReadToEnd(), type, out GShaderID);
+                        break;
+                    case ShaderType.FragmentShader:
+                        loadShader(sr.ReadToEnd(), type, out FShaderID);
+                        break;
                 }
             }
         }
@@ -170,8 +179,6 @@ namespace Game
             }
         }
 
-        
-
         public ShaderProgram(String vshader, String fshader, bool fromFile = false)
         {
             ProgramID = GL.CreateProgram();
@@ -184,6 +191,27 @@ namespace Game
             else
             {
                 LoadShaderFromString(vshader, ShaderType.VertexShader);
+                LoadShaderFromString(fshader, ShaderType.FragmentShader);
+            }
+
+            Link();
+            GenBuffers();
+        }
+
+        public ShaderProgram(String vshader, String gshader, String fshader, bool fromFile = false)
+        {
+            ProgramID = GL.CreateProgram();
+
+            if (fromFile)
+            {
+                LoadShaderFromFile(vshader, ShaderType.VertexShader);
+                LoadShaderFromFile(gshader, ShaderType.GeometryShader);
+                LoadShaderFromFile(fshader, ShaderType.FragmentShader);
+            }
+            else
+            {
+                LoadShaderFromString(vshader, ShaderType.VertexShader);
+                LoadShaderFromString(gshader, ShaderType.GeometryShader);
                 LoadShaderFromString(fshader, ShaderType.FragmentShader);
             }
 

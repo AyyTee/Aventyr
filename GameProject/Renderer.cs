@@ -18,6 +18,7 @@ namespace Game
         int sceneZDepth = 20;
         List<Scene> _scenes = new List<Scene>();
         Controller _controller;
+        bool temp = true;
 
         public static Dictionary<string, Texture> Textures = new Dictionary<string, Texture>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
@@ -33,7 +34,7 @@ namespace Game
             GL.CullFace(CullFaceMode.Back);
             GL.Enable(EnableCap.CullFace);
             GL.ClearStencil(0);
-            GL.PointSize(5f);
+            GL.PointSize(15f);
             //GL.LineWidth(2f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Enable(EnableCap.ScissorTest);
@@ -46,6 +47,7 @@ namespace Game
 
         public void Render()
         {
+
             GL.Viewport(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
             GL.Scissor(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit | ClearBufferMask.ColorBufferBit);
@@ -71,7 +73,7 @@ namespace Game
 
                 TextWriter console = Console.Out;
                 Console.SetOut(Controller.Log);
-                //DrawPortalAll(scene, scene.PortalList.ToArray(), camera.GetViewMatrix(), camera.Viewpoint, 6, TimeRenderDelta);
+                DrawPortalAll(scene, scene.PortalList.ToArray(), camera.GetViewMatrix(), camera.Viewpoint, 6, TimeRenderDelta);
                 Console.SetOut(console);
                 GL.Clear(ClearBufferMask.DepthBufferBit);
                 //scene.RemoveEntity(view);
@@ -321,11 +323,24 @@ namespace Game
                 coldata = colors.ToArray();
                 texcoorddata = texcoords.ToArray();
 
-                GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("vPosition"));
+                
 
+                int vao;
+                GL.GenVertexArrays(1, out vao);
+                //GL.BindVertexArray(vao);
+                
+
+                GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("vPosition"));
                 GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
                 GL.VertexAttribPointer(v.Shader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
+                //temp = false;
+                /*if (!temp)
+                {
+                    GL.VertexAttribDivisor(v.Shader.GetAttribute("vPosition"), 1);
+                }*/
+                GL.UseProgram(v.Shader.ProgramID);
 
+                #region
                 // Buffer vertex color if shader supports it
                 if (v.Shader.GetAttribute("vColor") != -1)
                 {
@@ -333,7 +348,7 @@ namespace Game
                     GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
                     GL.VertexAttribPointer(v.Shader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
                 }
-
+                
                 // Buffer texture coordinates if shader supports it
                 if (v.Shader.GetAttribute("texcoord") != -1)
                 {
@@ -342,34 +357,39 @@ namespace Game
                     GL.VertexAttribPointer(v.Shader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
                 }
 
-                GL.UseProgram(v.Shader.ProgramID);
+                float[] offset = new float[10];
+                for (int i = 0; i < 10; i++)
+                {
+                    offset[i] = i / 10f;
+                }
+                
+                GL.Uniform1(v.Shader.GetUniform("offset"), 10, offset);
+                
+                //GL.BindBuffer(BufferTarget.ArrayBuffer, 0); I don't know why this is here so I've commented it out until something breaks.
 
-                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                if (v.Shader.GetUniform("UVMatrix") != -1)
+                {
+                    Matrix4 UVMatrix = v.TransformUv.GetMatrix();
+                    GL.UniformMatrix4(v.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
+                }
 
-                // Buffer index data
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, v.IboElements);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);
-
-                Matrix4 UVMatrix = v.TransformUv.GetMatrix();
-                GL.UniformMatrix4(v.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
                 if (v.Texture != null)
                 {
                     GL.Uniform1(v.Shader.GetUniform("isTextured"), 1);
                     GL.BindTexture(TextureTarget.Texture2D, v.Texture.Id);
-                    if (v.Shader.GetAttribute("maintexture") != -1)
-                    {
-                        GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.Texture.Id);
-                    }
+                    //GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.Texture.Id);
                 }
                 else
                 {
                     GL.Uniform1(v.Shader.GetUniform("isTextured"), 0);
                     GL.BindTexture(TextureTarget.Texture2D, -1);
-                    if (v.Shader.GetAttribute("maintexture") != -1)
-                    {
-                        GL.Uniform1(v.Shader.GetAttribute("maintexture"), -1);
-                    }
+                    //GL.Uniform1(v.Shader.GetAttribute("maintexture"), -1);
                 }
+                #endregion
+                // Buffer index data
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, v.IboElements);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);
+                
                 
                 if (v.Wireframe)
                 {
@@ -384,9 +404,29 @@ namespace Game
                 }
                 else
                 {
-                    GL.Uniform1(v.Shader.GetUniform("cutLinesLength"), 0);
+                    if (v.Shader.GetUniform("cutLinesLength") != -1)
+                    {
+                        GL.Uniform1(v.Shader.GetUniform("cutLinesLength"), 0);
+                    }
                     RenderSetTransformMatrix(entity, v, viewMatrix);
-                    GL.DrawElements(BeginMode.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, indiceat * sizeof(uint));
+                    
+                    //for (int i = 0; i < 4; i++)
+                    {
+                        GL.UniformMatrix4(v.Shader.GetUniform("viewMatrix"), false, ref viewMatrix);
+                        GL.DrawElements(BeginMode.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, indiceat * sizeof(int));
+                    }
+                    /*if (temp)
+                    {
+                        //GL.DrawElements(BeginMode.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, indiceat * sizeof(int));
+                        GL.DrawElements(BeginMode.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, indiceat * sizeof(int));
+                    }
+                    else
+                    {
+                        int indices = indiceat * sizeof(int);
+                        //GL.DrawElementsInstanced(PrimitiveType.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, ref indices, 1);
+                        //GL.BindVertexArray(vao);
+                        //GL.DrawElementsInstanced(PrimitiveType.Points, v.GetIndices().Length, DrawElementsType.UnsignedInt, ref indices, 5);
+                    }*/
                 }
 
                 if (v.Wireframe)
@@ -394,6 +434,8 @@ namespace Game
                     GL.Enable(EnableCap.CullFace);
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
                 }
+
+                GL.DeleteVertexArray(vao);
             }
         }
 
@@ -425,14 +467,24 @@ namespace Game
                 GL.Uniform1(cm.Model.Shader.GetUniform("cutLinesLength"), cutLines.Count);
                 GL.Uniform1(GL.GetUniformLocation(cm.Model.Shader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
                 RenderSetTransformMatrix(entity, cm.Model, cm.Transform * viewMatrix);
-                GL.DrawElements(BeginMode.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
+                Matrix4 view = cm.Transform * viewMatrix;
+                GL.UniformMatrix4(cm.Model.Shader.GetUniform("viewMatrix"), false, ref view);
+                if (temp)
+                {
+                    GL.DrawElements(BeginMode.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
+                }
+                else
+                {
+                    int indices = 0 * sizeof(int);
+                    GL.DrawElementsInstanced(PrimitiveType.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, ref indices, 1);
+                }
             }
         }
 
         private void RenderSetTransformMatrix(Entity entity, Model model, Matrix4 viewMatrix)
         {
-            Matrix4 modelMatrix = model.Transform.GetMatrix() * entity.GetWorldTransform().GetMatrix() * viewMatrix;
-            UpdateCullFace(modelMatrix);
+            Matrix4 modelMatrix = model.Transform.GetMatrix() * entity.GetWorldTransform().GetMatrix();
+            UpdateCullFace(modelMatrix * viewMatrix);
             GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);
         }
 

@@ -54,7 +54,6 @@ namespace Editor
             renderer.AddScene(Hud);
             #region create background
             Model background = ModelFactory.CreatePlane();
-            background.Texture = null;
             background.Texture = Renderer.Textures["grid.png"];
             background.SetColor(new Vector3(1, 1, 0.5f));
             background.Transform.Position = new Vector3(0, 0, -5f);

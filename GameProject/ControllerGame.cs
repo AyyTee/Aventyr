@@ -38,7 +38,6 @@ namespace Game
 
             scene = new Scene();
             hud = new Scene();
-            //Camera hudCam = Camera.CameraOrtho(new Vector3(CanvasSize.Width / 2, CanvasSize.Height / 2, 0), CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
             Camera2D hudCam = new Camera2D(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
 
             Model background = ModelFactory.CreatePlane();
@@ -58,7 +57,6 @@ namespace Game
             portal2.SetTransform(transform);
 
             Entity portalEntity2 = new Entity(scene);
-            //portalEntity2.Transform.Parent = portal2.Transform;
             portalEntity2.SetParent(portal2);
             portalEntity2.Models.Add(ModelFactory.CreatePlane());
             portalEntity2.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
@@ -69,18 +67,16 @@ namespace Game
 
             portal3 = new FloatPortal(scene);
             portal3.SetTransform(new Transform2D(new Vector2(-1f, 1), 0.4f));
-            //portal3.Transform.Scale = new Vector2(-1.5f, 1.5f);
 
             Portal.SetLinked(portal2, portal3);
             Entity portalEntity3 = new Entity(scene);
-            //portalEntity3.Transform.Parent = portal3.Transform;
             portalEntity3.SetParent(portal3);
             portalEntity3.Models.Add(ModelFactory.CreatePlane());
             portalEntity3.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity3.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity3.Models.Add(ModelFactory.CreatePlane());
             portalEntity3.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-
+            
             #region player
             Entity player = new Entity(scene);
             player.Name = "player";
@@ -93,17 +89,13 @@ namespace Game
                 new Vector2(-0.5f, 0), 
                 new Vector2(0, -0.5f)
             });
-            //playerModel.Transform.Scale = new Vector3(-15, .2f, 1);
             playerModel.SetTexture(Renderer.Textures["default.png"]);
             player.IsPortalable = true;
-            //player.Transform.Scale = new Vector2(.5f, .5f);
-            //player.Transform.Position = new Vector2(0f, 0f);
             player.Models.Add(playerModel);
             playerModel.SetTexture(Renderer.Textures["default.png"]);
             #endregion
 
             Entity playerParent = new Entity(scene, new Vector2(1, 0));
-            //player.Transform.Parent = playerParent.Transform;
 
             Entity tempLine = new Entity(scene);
             tempLine.Name = "tempLine";
@@ -124,22 +116,16 @@ namespace Game
             scene.World.ProcessChanges();
             portal0 = new FixturePortal(scene, null);
             portal1 = new FixturePortal(scene, null);
-            /*portal1 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.3f));
 
-            portal0 = new FixturePortal(scene, new FixtureEdgeCoord(ground.Body.FixtureList[0], 1, 0.6f));*/
             portal0.IsMirrored = true;
 
             FixturePortal.SetLinked(portal0, portal1);
-
-            //Entity origin = EntityFactory.CreateEntityBox(scene, new Transform2D(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f)));
-            //scene.CreateEntityBox(new Vector2(0.4f, 0f), new Vector2(1.5f, 1.5f));
 
             text = new Entity(hud);
             text.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height)));
             text2 = new Entity(hud);
             text2.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
-
-            //Camera cam = Camera.CameraOrtho(new Vector3(player.GetTransform().Position.X, player.GetTransform().Position.Y, 10f), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            
             Camera2D cam = new Camera2D(player.GetTransform().Position, 10, CanvasSize.Width / (float)CanvasSize.Height);
 
             scene.ActiveCamera = cam;

@@ -1,29 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Data;
-using System.Drawing;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
-using System.Threading;
 using Game;
-using System.Diagnostics;
 using OpenTK;
-using OpenTK.Input;
-using System.IO;
 using System.Reflection;
-using WPFControls;
 using System.Windows.Forms;
 using System.Timers;
 
@@ -36,7 +15,6 @@ namespace Editor
     {
         GLLoop _loop;
         ControllerEditor ControllerEditor;
-        //public Entity SelectedEntity { get; private set; }
         delegate void SetControllerCallback(Entity entity);
         public static string LocalDirectory { get; private set; }
         public static string AssetsDirectory { get; private set; }
