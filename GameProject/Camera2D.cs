@@ -88,7 +88,7 @@ namespace Game
         private Matrix4 GetWorldToClipMatrix()
         {
             Matrix4 scale = Matrix4.CreateScale(1, -1, 1);
-            Matrix4 translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
+            Matrix4 translation = Matrix4.CreateTranslation(new Vector3(0f, 0f, 0f));
             return GetViewMatrix() * translation * scale;
         }
 

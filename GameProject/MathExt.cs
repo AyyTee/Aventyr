@@ -395,6 +395,23 @@ namespace Game
             return intersections.ToArray();
         }
 
+        /// <summary>
+        /// Find the bounding box for an array of lines.  A mimimum of one line is required.
+        /// </summary>
+        public static void GetBBox(Line[] lines, out Vector2 vMin, out Vector2 vMax)
+        {
+            Debug.Assert(lines.Length > 0, "A minimum of one line is needed for there to be a bounding box.");
+            vMin = lines[0][0];
+            vMax = lines[0][0];
+            for (int i = 0; i < lines.Length; i++)
+            {
+                vMin = Vector2.ComponentMin(vMin, lines[i][0]);
+                vMin = Vector2.ComponentMin(vMin, lines[i][1]);
+                vMax = Vector2.ComponentMax(vMax, lines[i][0]);
+                vMax = Vector2.ComponentMax(vMax, lines[i][1]);
+            }
+        }
+
         /// <summary>Finds the intersections between a line and a circle.  IntersectPoint contains the T value for the intersecting line.</summary>
         /// <param name="circle">Origin of circle.</param>
         /// <param name="radius">Radius of circle.</param>

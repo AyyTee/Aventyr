@@ -58,11 +58,6 @@ namespace Game
 
         public abstract Transform2D GetVelocity();
 
-        public Vector2[] GetFov(Vector2 origin, float distance)
-        {
-            return GetFov(origin, distance, 10);
-        }
-
         /// <summary>
         /// Whether a portal can be entered, rendered, and clip models.
         /// </summary>
@@ -215,8 +210,13 @@ namespace Game
             return m;
         }
 
+        public Vector2[] GetFov(Vector2 origin, float distance)
+        {
+            return GetFov(origin, distance, 10);
+        }
+
         /// <summary>
-        /// Returns a polygon representing the 2D FOV through the portal.  If the polygon is degenerate then an array of length 0 will be returned.
+        /// Returns a polygon in world space representing the 2D FOV through the portal.  If the polygon is degenerate then an array of length 0 will be returned.
         /// </summary>
         public Vector2[] GetFov(Vector2 viewPoint, float distance, int detail)
         {

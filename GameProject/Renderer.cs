@@ -65,20 +65,23 @@ namespace Game
             {
                 Scene scene = _scenes[i];
                 Camera2D camera = scene.ActiveCamera;
-                /*PortalView portalView = CalculatePortalViews(scene, scene.PortalList.ToArray(), camera.GetViewMatrix(), camera.Viewpoint, 20);
-                Entity view = new Entity(scene);*/
-                //GetPortalViewModels(portalView, view);
+                PortalView portalView = CalculatePortalViews(scene, scene.PortalList.ToArray(), camera.GetViewMatrix(), camera.Viewpoint, 3);
+                Entity entity = new Entity(scene);
+                //GetPortalViewModels(portalView, entity);
                 
-                DrawScene(scene, camera.GetViewMatrix(), 0);
+                //DrawScene(scene, camera.GetViewMatrix(), 0, portalView);
+                foreach (Entity v in scene.EntityList)
+                {
+                    RenderEntity(v, camera.GetViewMatrix(), 0, portalView);
+                }
 
                 TextWriter console = Console.Out;
                 Console.SetOut(Controller.Log);
-                DrawPortalAll(scene, scene.PortalList.ToArray(), camera.GetViewMatrix(), camera.Viewpoint, 6, TimeRenderDelta);
+                //DrawPortalAll(scene, scene.PortalList.ToArray(), camera.GetViewMatrix(), camera.Viewpoint, 6, TimeRenderDelta);
                 Console.SetOut(console);
                 GL.Clear(ClearBufferMask.DepthBufferBit);
-                //scene.RemoveEntity(view);
+                scene.RemoveEntity(entity);
             }
-
 
             for (int i = 0; i < Renderer.Shaders.Count; i++)
             {
@@ -100,24 +103,20 @@ namespace Game
                 Model polygon = ModelFactory.CreatePolygon(ClipperExt.ConvertToVector2(p.Path), new Vector3(0, 0, offset));
                 polygon.SetColor(color);
                 entity.Models.Add(polygon);
-                Random r = new Random((int)(color.LengthFast * 1000000));
-                GetPortalViewModels(p, entity, offset + 1, new Vector3((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble()));
+                //Random r = new Random((int)(color.LengthFast * 1000000));
+                GetPortalViewModels(p, entity, offset + 1, color + new Vector3(.1f, .1f, .1f));//new Vector3((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble()));
             }
         }
 
         public PortalView CalculatePortalViews(Scene scene, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth)
         {
-            List<IntPoint> view = ClipperExt.ConvertToIntPoint(scene.ActiveCamera.GetVerts());
+            List<IntPoint> view = ClipperExt.ConvertToIntPoint(scene.ActiveCamera.GetWorldVerts());
             PortalView portalView = new PortalView(null, viewMatrix, view);
-            CalculatePortalViews(scene, null, portals, viewMatrix, viewPos, depth, portalView);
-            if (portalView.Children.Count > 0)
-            {
-
-            }
+            CalculatePortalViews(scene, null, portals, viewMatrix, viewPos, depth, portalView, Matrix4.Identity);
             return portalView;
         }
 
-        private void CalculatePortalViews(Scene scene, Portal portalEnter, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, PortalView portalView)
+        private void CalculatePortalViews(Scene scene, Portal portalEnter, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, PortalView portalView, Matrix4 portalMatrix)
         {
             if (depth <= 0)
             {
@@ -141,7 +140,7 @@ namespace Game
                 }
                 Matrix4 viewMatrixNew = Matrix4.CreateTranslation(new Vector3(0, 0, sceneZDepth)) * viewMatrix;
                 Vector2[] fov = p.GetFov(viewPos, 500);
-                fov = Vector2Ext.Transform(fov, viewMatrixNew);
+                fov = Vector2Ext.Transform(fov, portalMatrix);
                 List<IntPoint> pathFov = ClipperExt.ConvertToIntPoint(fov);
 
                 var viewNew = new List<List<IntPoint>>();
@@ -149,14 +148,14 @@ namespace Game
                 c.AddPath(pathFov, PolyType.ptSubject, true);
                 c.AddPath(portalView.Path, PolyType.ptClip, true);
                 c.Execute(ClipType.ctIntersection, viewNew);
-
+                
                 Debug.Assert(viewNew.Count <= 1, "It isn't possible to get more than one path when intersecting two convex paths.");
                 if (viewNew.Count > 0)
                 {
                     Vector2 viewPosNew = Vector2Ext.Transform(viewPos, FixturePortal.GetPortalMatrix(p, p.Linked));
-                    Matrix4 portalMatrix = FixturePortal.GetPortalMatrix(p.Linked, p) * viewMatrixNew;
-                    PortalView portalViewNew = new PortalView(portalView, portalMatrix, viewNew[0]);
-                    CalculatePortalViews(scene, p, portals, portalMatrix, viewPosNew, depth - 1, portalViewNew);
+                    viewMatrixNew = FixturePortal.GetPortalMatrix(p.Linked, p) * viewMatrixNew;
+                    PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNew[0]);
+                    CalculatePortalViews(scene, p, portals, viewMatrixNew, viewPosNew, depth - 1, portalViewNew, FixturePortal.GetPortalMatrix(p.Linked, p) * portalMatrix);
                 }
             }
         }
@@ -164,7 +163,7 @@ namespace Game
         /// <summary>Draw all of the portals within the scene.</summary>
         /// <param name="depth">Maximum number of recursions.</param>
         /// <param name="sceneMaxDepth">The difference between the nearest and farthest object in the scene.</param>
-        public void DrawPortalAll(Scene scene, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta)
+        /*public void DrawPortalAll(Scene scene, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth, float timeDelta)
         {
             //stopgap solution. portals will only recursively draw themselves, not any other portals
             var portalSort = portals.OrderByDescending(item => new Line(item.GetWorldVerts()).PointDistance(viewPos, true));
@@ -235,7 +234,7 @@ namespace Game
             if (a.Length >= 3)
             {
                 fov.Models.Add(ModelFactory.CreatePolygon(a));
-                RenderEntity(fov, viewMatrix, timeDelta);
+                RenderEntity(fov, viewMatrix, timeDelta, null);
             }
 
             GL.ColorMask(true, true, true, true);
@@ -265,32 +264,33 @@ namespace Game
             }
 
             GL.LineWidth(2f);
-            RenderEntity(fovOutline, viewMatrix, timeDelta);
+            RenderEntity(fovOutline, viewMatrix, timeDelta, null);
             GL.LineWidth(1f);
             DrawPortal(scene, portalEnter, portalMatrix, viewMatrix, Vector2Ext.Transform(viewPos, FixturePortal.GetPortalMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
-        }
+        }*/
 
-        public void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta)
+        /*public void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta, PortalView portalView)
         {
             foreach (Entity v in scene.EntityList)
             {
-                RenderEntity(v, viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond));
+                RenderEntity(v, viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond), portalView);
             }
-        }
+        }*/
 
         private void UpdateCullFace(Matrix4 viewMatrix)
         {
-            if (Matrix4Ext.IsMirrored(viewMatrix))
+            GL.Disable(EnableCap.CullFace);
+            /*if (Matrix4Ext.IsMirrored(viewMatrix))
             {
                 GL.CullFace(CullFaceMode.Front);
             }
             else
             {
                 GL.CullFace(CullFaceMode.Back);
-            }
+            }*/
         }
 
-        public virtual void RenderEntity(Entity entity, Matrix4 viewMatrix, float timeDelta)
+        public virtual void RenderEntity(Entity entity, Matrix4 viewMatrix, float timeDelta, PortalView portalView)
         {
             if (!entity.Visible)
             {
@@ -322,25 +322,14 @@ namespace Game
                 indicedata = inds.ToArray();
                 coldata = colors.ToArray();
                 texcoorddata = texcoords.ToArray();
-
-                
-
-                int vao;
-                GL.GenVertexArrays(1, out vao);
-                //GL.BindVertexArray(vao);
                 
 
                 GL.BindBuffer(BufferTarget.ArrayBuffer, v.Shader.GetBuffer("vPosition"));
                 GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
                 GL.VertexAttribPointer(v.Shader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
-                //temp = false;
-                /*if (!temp)
-                {
-                    GL.VertexAttribDivisor(v.Shader.GetAttribute("vPosition"), 1);
-                }*/
+                
                 GL.UseProgram(v.Shader.ProgramID);
 
-                #region
                 // Buffer vertex color if shader supports it
                 if (v.Shader.GetAttribute("vColor") != -1)
                 {
@@ -356,15 +345,6 @@ namespace Game
                     GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
                     GL.VertexAttribPointer(v.Shader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
                 }
-
-                float[] offset = new float[10];
-                for (int i = 0; i < 10; i++)
-                {
-                    offset[i] = i / 10f;
-                }
-                
-                GL.Uniform1(v.Shader.GetUniform("offset"), 10, offset);
-                
                 //GL.BindBuffer(BufferTarget.ArrayBuffer, 0); I don't know why this is here so I've commented it out until something breaks.
 
                 if (v.Shader.GetUniform("UVMatrix") != -1)
@@ -385,48 +365,32 @@ namespace Game
                     GL.BindTexture(TextureTarget.Texture2D, -1);
                     //GL.Uniform1(v.Shader.GetAttribute("maintexture"), -1);
                 }
-                #endregion
+                
                 // Buffer index data
                 GL.BindBuffer(BufferTarget.ElementArrayBuffer, v.IboElements);
                 GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);
-                
                 
                 if (v.Wireframe)
                 {
                     GL.Disable(EnableCap.CullFace);
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
                 }
-
-                if (entity.IsPortalable)
-                {
-                    entity.UpdatePortalClipping(4);
-                    RenderClipModels(entity, viewMatrix);
-                }
-                else
+ 
+                RenderSetTransformMatrix(entity, v, viewMatrix);
+                List<PortalView> portalViewList = portalView.GetPortalViewList();
+                for (int i = 0; i < portalViewList.Count; i++)
+                //for (int i = 0; i < 1; i++)
                 {
                     if (v.Shader.GetUniform("cutLinesLength") != -1)
                     {
                         GL.Uniform1(v.Shader.GetUniform("cutLinesLength"), 0);
                     }
-                    RenderSetTransformMatrix(entity, v, viewMatrix);
-                    
-                    //for (int i = 0; i < 4; i++)
-                    {
-                        GL.UniformMatrix4(v.Shader.GetUniform("viewMatrix"), false, ref viewMatrix);
-                        GL.DrawElements(BeginMode.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, indiceat * sizeof(int));
-                    }
-                    /*if (temp)
-                    {
-                        //GL.DrawElements(BeginMode.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, indiceat * sizeof(int));
-                        GL.DrawElements(BeginMode.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, indiceat * sizeof(int));
-                    }
-                    else
-                    {
-                        int indices = indiceat * sizeof(int);
-                        //GL.DrawElementsInstanced(PrimitiveType.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, ref indices, 1);
-                        //GL.BindVertexArray(vao);
-                        //GL.DrawElementsInstanced(PrimitiveType.Points, v.GetIndices().Length, DrawElementsType.UnsignedInt, ref indices, 5);
-                    }*/
+                    Matrix4 mat = portalViewList[i].ViewMatrix;
+                    /*List<Line> clipLines = portalViewList[i].GetClipLines();
+                    SetClipLines(v.Shader, clipLines, viewMatrix);*/
+
+                    GL.UniformMatrix4(v.Shader.GetUniform("viewMatrix"), false, ref mat);
+                    GL.DrawElements(BeginMode.Triangles, v.GetIndices().Length, DrawElementsType.UnsignedInt, indiceat * sizeof(int));
                 }
 
                 if (v.Wireframe)
@@ -434,8 +398,6 @@ namespace Game
                     GL.Enable(EnableCap.CullFace);
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
                 }
-
-                GL.DeleteVertexArray(vao);
             }
         }
 
@@ -479,6 +441,30 @@ namespace Game
                     GL.DrawElementsInstanced(PrimitiveType.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, ref indices, 1);
                 }
             }
+        }
+
+        private void SetClipLines(ShaderProgram shader, List<Line> clipLines, Matrix4 viewMatrix)
+        {
+            Matrix4 ScaleMatrix;
+            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1f, 1f, 0)) * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
+            bool isMirrored = Matrix4Ext.IsMirrored(viewMatrix);
+            List<float> cutLines = new List<float>();
+            foreach (Line l in clipLines)
+            {
+                if (isMirrored)
+                {
+                    l.Reverse();
+                }
+                l.Transform(ScaleMatrix);
+                cutLines.AddRange(new float[4] { l[0].X, l[0].Y, l[1].X, l[1].Y });
+            }
+
+            Vector2 vMax, vMin;
+            MathExt.GetBBox(clipLines.ToArray(), out vMin, out vMax);
+            GL.Scissor((int)vMin.X, (int)vMin.Y, (int)vMax.X + 1, (int)vMax.Y + 1);
+
+            GL.Uniform1(shader.GetUniform("cutLinesLength"), cutLines.Count);
+            GL.Uniform1(GL.GetUniformLocation(shader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
         }
 
         private void RenderSetTransformMatrix(Entity entity, Model model, Matrix4 viewMatrix)

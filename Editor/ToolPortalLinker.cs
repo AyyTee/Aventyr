@@ -35,7 +35,7 @@ namespace Editor
                     else
                     {
                         Portal.SetLinked(portal.Portal, _portalPrevious.Portal);
-                        portal.Portal.IsMirrored = false;
+                        portal.Portal.IsMirrored = true;
                         _portalPrevious.Portal.IsMirrored = true;
                         _portalPrevious = null;
                         Controller.SetTool(null);
