@@ -24,11 +24,11 @@ main()
 			return;
 		}*/
 		
-		if (0 < (v1.x - v0.x) * (gl_FragCoord.y - v0.y) - (v1.y - v0.y) * (gl_FragCoord.x - v0.x))
+		/*if (0 < (v1.x - v0.x) * (gl_FragCoord.y - v0.y) - (v1.y - v0.y) * (gl_FragCoord.x - v0.x))
 		{
 			discard;
 			return;
-		}
+		}*/
 	}
 	if (isTextured == 1)
 	{

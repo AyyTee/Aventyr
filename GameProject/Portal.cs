@@ -215,6 +215,16 @@ namespace Game
             return GetFov(origin, distance, 10);
         }
 
+        public Line[] GetFovLines(Vector2 origin, float distance)
+        {
+            Vector2[] vertices = GetFov(origin, distance);
+            Line[] lines = new Line[] {
+                new Line(vertices[1], vertices[2]),
+                new Line(vertices[0], vertices[vertices.Length-1])
+            };
+            return lines;
+        }
+
         /// <summary>
         /// Returns a polygon in world space representing the 2D FOV through the portal.  If the polygon is degenerate then an array of length 0 will be returned.
         /// </summary>

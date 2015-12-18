@@ -140,6 +140,42 @@ namespace Game
             return model;
         }
 
+        public static Model CreateLines(Line[] lines)
+        {
+            Model model = new Model();
+            model.Wireframe = true;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                Vector3 v;
+                v = new Vector3(lines[i][0].X, lines[i][0].Y, 0);
+                int index0 = model.AddVertex(new Vertex(v, new Vector2()));
+                v = new Vector3(lines[i][1].X, lines[i][1].Y, 0);
+                int index1 = model.AddVertex(new Vertex(v, new Vector2()));
+                model.AddTriangle(index0, index1, index1);
+            }
+            return model;
+        }
+
+        public static Model CreateLinesWidth(Line[] lines, float width)
+        {
+            Model model = new Model();
+            for (int i = 0; i < lines.Length; i++)
+            {
+                Vector2 vStart, vEnd;
+                vStart = lines[i][0];
+                vEnd = lines[i][1];
+                Vector2 offset = (vStart - vEnd).PerpendicularLeft.Normalized() * width / 2;
+
+                int index0 = model.AddVertex(new Vertex(new Vector3(vStart + offset), new Vector2()));
+                int index1 = model.AddVertex(new Vertex(new Vector3(vStart - offset), new Vector2()));
+                int index2 = model.AddVertex(new Vertex(new Vector3(vEnd - offset), new Vector2()));
+                int index3 = model.AddVertex(new Vertex(new Vector3(vEnd + offset), new Vector2()));
+                model.AddTriangle(index0, index1, index2);
+                model.AddTriangle(index0, index3, index2);
+            }
+            return model;
+        }
+
         public static Model CreateLineStrip(Vector2[] vertices, Vector3[] colors)
         {
             Debug.Assert(vertices.Length >= 2);

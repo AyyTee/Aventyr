@@ -15,6 +15,7 @@ namespace Game
         public List<Vector2> ClipPolygon { get; private set; }
         public List<PortalView> Children { get; private set; }
         public PortalView Parent { get; private set; }
+        public Line[] FovLines { get; private set; }
         public int Count
         {
             get
@@ -28,8 +29,9 @@ namespace Game
             }
         }
 
-        public PortalView(PortalView parent, Matrix4 viewMatrix, List<IntPoint> path)
+        public PortalView(PortalView parent, Matrix4 viewMatrix, List<IntPoint> path, Line[] fovLines)
         {
+            FovLines = fovLines;
             Children = new List<PortalView>();
             Parent = parent;
             if (Parent != null)
