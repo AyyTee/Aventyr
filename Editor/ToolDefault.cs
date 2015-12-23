@@ -28,6 +28,12 @@ namespace Editor
             Both,
             Neither
         }
+        /*public enum Mode
+        {
+            Position,
+            Rotate,
+            Scale
+        }*/
 
         public ToolDefault(ControllerEditor controller)
             : base(controller)
@@ -107,7 +113,7 @@ namespace Editor
         private void DragBegin(EditorObject dragObject, bool toggleMode)
         {
             Debug.Assert(this.dragObject == null && _dragState == DragState.Neither);
-            Transform2D transform = dragObject.GetTransform();
+            Transform2D transform = dragObject.GetWorldTransform();
             Vector2 mousePos = Controller.GetMouseWorldPosition();
             Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Level.ActiveCamera.Scale;
             dragToggled = toggleMode;
@@ -144,11 +150,8 @@ namespace Editor
         {
             if (reset)
             {
-                Transform2D transform = dragObject.GetTransform();
-                transform.Position = dragEntityStart;
-                dragObject.SetTransform(transform);
-                //translation.Transform.Position = dragEntityStart;
-                transform = translation.GetTransform();
+                dragObject.SetPosition(dragEntityStart);
+                Transform2D transform = translation.GetTransform();
                 transform.Position = dragEntityStart;
                 translation.SetTransform(transform);
             }
@@ -159,7 +162,7 @@ namespace Editor
 
         private void DragUpdate()
         {
-            Transform2D transform = dragObject.GetTransform();
+            Transform2D transform = dragObject.GetWorldTransform();
             Vector2 mousePos = Controller.GetMouseWorldPosition();
             Vector2 mouseDiff = mousePos - transform.Position;
             switch (_dragState)
@@ -176,8 +179,7 @@ namespace Editor
                     transform.Position += new Vector2(0, mousePos.Y - dragMouseStart.Y);
                     break;
             }
-            translation.SetTransform(transform);
-            //translation.Transform.Position = transform.Position;
+            translation.SetPosition(transform.Position);
             dragObject.SetTransform(transform);
             dragMouseStart = mousePos;
         }

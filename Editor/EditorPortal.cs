@@ -46,6 +46,14 @@ namespace Editor
                 portal.SetTransform(transform);
             }
         }
+        public override void SetPosition(Vector2 position)
+        {
+            if (Portal.GetType() == typeof(FloatPortal))
+            {
+                FloatPortal portal = (FloatPortal)Portal;
+                portal.SetPosition(position);
+            }
+        }
 
         public override Transform2D GetTransform()
         {

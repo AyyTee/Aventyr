@@ -10,7 +10,7 @@ namespace Game
 {
     public class ClipperExt
     {
-        const double SCALE_FACTOR = 10000000000;
+        const double SCALE_FACTOR = 1 << 20;
 
         public static IntPoint ConvertToIntPoint(Vector2 v)
         {

@@ -11,10 +11,11 @@ namespace Game
     public class PortalView
     {
         public Matrix4 ViewMatrix { get; private set; }
-        public List<IntPoint> Path { get; private set; }
+        public Vector2[] Path { get; private set; }
         public List<Vector2> ClipPolygon { get; private set; }
         public List<PortalView> Children { get; private set; }
         public PortalView Parent { get; private set; }
+        public Portal Portal { get; private set; }
         public Line[] FovLines { get; private set; }
         public int Count
         {
@@ -29,8 +30,9 @@ namespace Game
             }
         }
 
-        public PortalView(PortalView parent, Matrix4 viewMatrix, List<IntPoint> path, Line[] fovLines)
+        public PortalView(PortalView parent, Matrix4 viewMatrix, Vector2[] path, Line[] fovLines, Portal portal)
         {
+            Portal = portal;
             FovLines = fovLines;
             Children = new List<PortalView>();
             Parent = parent;
@@ -45,12 +47,12 @@ namespace Game
         public List<Line> GetClipLines()
         {
             List<Line> clipLines = new List<Line>();
-            Vector2[] vList = ClipperExt.ConvertToVector2(Path);
-            for (int i = 0; i < Path.Count; i++)
+            Vector2[] vList = Path;//ClipperExt.ConvertToVector2(Path);
+            for (int i = 0; i < Path.Length; i++)
             {
-                int iNext = (i + 1) % Path.Count;
-                Vector2 v0 = ClipperExt.ConvertToVector2(Path[i]);
-                Vector2 v1 = ClipperExt.ConvertToVector2(Path[iNext]);
+                int iNext = (i + 1) % Path.Length;
+                Vector2 v0 = Path[i];
+                Vector2 v1 = Path[iNext];
                 clipLines.Add(new Line(v0, v1));
             }
             if (!MathExt.IsClockwise(vList))

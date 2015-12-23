@@ -34,6 +34,11 @@ namespace Editor
             Entity.SetTransform(transform);
         }
 
+        public override void SetPosition(Vector2 position)
+        {
+            Entity.SetPosition(position);
+        }
+
         public override Transform2D GetTransform()
         {
             return Entity.GetTransform();

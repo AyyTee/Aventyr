@@ -50,8 +50,6 @@ namespace Game
             SetLinked(null);
         }
 
-        //public abstract Transform2D GetTransform();
-        //public abstract void SetTransform(Transform2D transform);
         public virtual void Step()
         {
         }

@@ -476,5 +476,29 @@ namespace Game
             }
             return new IntersectPoint[0];
         }
+
+        /// <summary>Get the area of a polygon.</summary>
+        /// <remarks>Original code was found here http://csharphelper.com/blog/2014/07/calculate-the-area-of-a-polygon-in-c/
+        /// </remarks>
+        public static double GetArea(Vector2[] polygon)
+        {
+            // Add the first point to the end.
+            int num_points = polygon.Length;
+            Vector2[] pts = new Vector2[num_points + 1];
+            polygon.CopyTo(pts, 0);
+            pts[num_points] = polygon[0];
+
+            // Get the areas.
+            float area = 0;
+            for (int i = 0; i < num_points; i++)
+            {
+                area +=
+                    (pts[i + 1].X - pts[i].X) *
+                    (pts[i + 1].Y + pts[i].Y) / 2;
+            }
+
+            // Return the result.
+            return Math.Abs(area);
+        }
     }
 }

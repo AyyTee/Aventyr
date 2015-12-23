@@ -200,7 +200,7 @@ namespace Editor
             List<EditorObject> tempList = new List<EditorObject>();
             tempList.AddRange(Entities);
             tempList.AddRange(Portals);
-            var sorted = tempList.OrderBy(item => (point - item.GetTransform().Position).Length).ToList();
+            var sorted = tempList.OrderBy(item => (point - item.GetWorldTransform().Position).Length).ToList();
             for (int i = 0; i < sorted.Count; i++)
             {
                 if (validObject.Invoke(sorted[i]))

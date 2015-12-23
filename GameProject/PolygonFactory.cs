@@ -2,6 +2,7 @@
 using Poly2Tri;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +19,15 @@ namespace Game
                 polygonPoints[i] = new PolygonPoint(vertices[i].X, vertices[i].Y);
             }
             Polygon polygon = new Polygon(polygonPoints);
-            P2T.Triangulate(polygon);
+            try
+            {
+                P2T.Triangulate(polygon);
+            }
+            catch
+            {
+                Trace.TraceWarning("Polygon failed to triangulate.");
+                return null;
+            }
             return polygon;
         }
     }

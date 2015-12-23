@@ -1,4 +1,5 @@
 ﻿using Game;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace Editor
         }
 
         public abstract void SetTransform(Transform2D transform);
+        public abstract void SetPosition(Vector2 position);
         public abstract Transform2D GetTransform();
         public abstract Transform2D GetWorldTransform();
     }
