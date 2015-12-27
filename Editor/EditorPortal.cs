@@ -13,7 +13,8 @@ namespace Editor
         public Portal Portal { get; private set; }
         public Entity Marker { get; private set; }
 
-        public EditorPortal(Scene scene, Portal portal)
+        public EditorPortal(ControllerEditor controller, Scene scene, Portal portal)
+            : base(controller)
         {
             Portal = portal;
             Marker = new Entity(scene);
@@ -27,8 +28,8 @@ namespace Editor
             }
         }
 
-        public EditorPortal(Scene scene)
-            : this(scene, new FloatPortal(scene))
+        public EditorPortal(ControllerEditor controller, Scene scene)
+            : this(controller, scene, new FloatPortal(scene))
         {
         }
 
@@ -42,6 +43,7 @@ namespace Editor
         {
             if (Portal.GetType() == typeof(FloatPortal))
             {
+                base.SetTransform(transform);
                 FloatPortal portal = (FloatPortal)Portal;
                 portal.SetTransform(transform);
             }
@@ -50,6 +52,7 @@ namespace Editor
         {
             if (Portal.GetType() == typeof(FloatPortal))
             {
+                base.SetPosition(position);
                 FloatPortal portal = (FloatPortal)Portal;
                 portal.SetPosition(position);
             }

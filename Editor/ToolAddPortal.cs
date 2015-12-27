@@ -45,7 +45,7 @@ namespace Editor
                         UpdatePortalTransform(editorPortal);
                     }
                     
-                    if (!(_input.KeyDown(Key.ShiftLeft) || _input.KeyDown(Key.ShiftRight)))
+                    if (!_input.KeyDown(InputExt.KeyBoth.Shift))
                     {
                         Controller.SetTool(null);
                     }
@@ -73,7 +73,7 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            _mouseFollow = new EditorPortal(Controller.Level);
+            _mouseFollow = new EditorPortal(Controller, Controller.Level);
         }
 
         public override void Disable()

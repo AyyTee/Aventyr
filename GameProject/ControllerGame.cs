@@ -208,7 +208,7 @@ namespace Game
 
             Vector3 v = new Vector3();
             float camSpeed = .05f;
-            if (InputExt.KeyDown(Key.ShiftLeft))
+            if (InputExt.KeyDown(InputExt.KeyBoth.Shift))
             {
                 camSpeed = .005f;
             }

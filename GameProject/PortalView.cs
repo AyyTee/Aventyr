@@ -11,7 +11,7 @@ namespace Game
     public class PortalView
     {
         public Matrix4 ViewMatrix { get; private set; }
-        public Vector2[] Path { get; private set; }
+        public List<List<IntPoint>> Path { get; private set; }
         public List<Vector2> ClipPolygon { get; private set; }
         public List<PortalView> Children { get; private set; }
         public PortalView Parent { get; private set; }
@@ -30,7 +30,13 @@ namespace Game
             }
         }
 
-        public PortalView(PortalView parent, Matrix4 viewMatrix, Vector2[] path, Line[] fovLines, Portal portal)
+        public PortalView(PortalView parent, Matrix4 viewMatrix, List<IntPoint> path, Line[] fovLines, Portal portal)
+            : this(parent, viewMatrix, new List<List<IntPoint>>(), fovLines, portal)
+        {
+            Path.Add(path);
+        }
+
+        public PortalView(PortalView parent, Matrix4 viewMatrix, List<List<IntPoint>> path, Line[] fovLines, Portal portal)
         {
             Portal = portal;
             FovLines = fovLines;
@@ -44,7 +50,7 @@ namespace Game
             Path = path;
         }
 
-        public List<Line> GetClipLines()
+        /*public List<Line> GetClipLines()
         {
             List<Line> clipLines = new List<Line>();
             Vector2[] vList = Path;//ClipperExt.ConvertToVector2(Path);
@@ -63,7 +69,7 @@ namespace Game
                 }
             }
             return clipLines;
-        }
+        }*/
 
         public List<PortalView> GetPortalViewList()
         {

@@ -110,10 +110,13 @@ namespace Game
             return (Vertices[1] - Vertices[0]).PerpendicularRight.Normalized();
         }
 
-        public bool IsInsideFOV(Vector2 viewPoint, Vector2 lookPoint)
+        /// <summary>
+        /// Check if a Vector2 is inside the FOV of a line.
+        /// </summary>
+        public bool IsInsideFOV(Vector2 viewPoint, Vector2 v)
         {
             //check if the lookPoint is on the opposite side of the line from the viewPoint
-            if (GetSideOf(viewPoint) == GetSideOf(lookPoint))
+            if (GetSideOf(viewPoint) == GetSideOf(v))
             {
                 return false;
             }
@@ -121,7 +124,7 @@ namespace Game
             double Angle0 = MathExt.AngleVector(Vertices[0] - viewPoint);
             double Angle1 = MathExt.AngleVector(Vertices[1] - viewPoint);
             double AngleDiff = MathExt.AngleDiff(Angle0, Angle1);
-            double AngleLook = MathExt.AngleVector(lookPoint - viewPoint);
+            double AngleLook = MathExt.AngleVector(v - viewPoint);
             double AngleLookDiff = MathExt.AngleDiff(Angle0, AngleLook);
             if (Math.Abs(AngleDiff) >= Math.Abs(AngleLookDiff) && Math.Sign(AngleDiff) == Math.Sign(AngleLookDiff))
             {
@@ -130,10 +133,13 @@ namespace Game
             return false;
         }
 
-        public bool IsInsideFOV(Vector2 viewPoint, Line lookLine)
+        /// <summary>
+        /// Check if a Line is inside the FOV of a line.
+        /// </summary>
+        public bool IsInsideFOV(Vector2 viewPoint, Line line)
         {
             //check if the lookPoint is on the opposite side of the line from the viewPoint
-            if (GetSideOf(viewPoint) == GetSideOf(lookLine[0]) && GetSideOf(viewPoint) == GetSideOf(lookLine[1]))
+            if (GetSideOf(viewPoint) == GetSideOf(line[0]) && GetSideOf(viewPoint) == GetSideOf(line[1]))
             {
                 return false;
             }
@@ -141,9 +147,9 @@ namespace Game
             double Angle0 = MathExt.AngleVector(Vertices[0] - viewPoint);
             double Angle1 = MathExt.AngleVector(Vertices[1] - viewPoint);
             double AngleDiff = MathExt.AngleDiff(Angle0, Angle1);
-            double AngleLook = MathExt.AngleVector(lookLine[0] - viewPoint);
+            double AngleLook = MathExt.AngleVector(line[0] - viewPoint);
             double AngleLookDiff = MathExt.AngleDiff(Angle0, AngleLook);
-            double AngleLook2 = MathExt.AngleVector(lookLine[1] - viewPoint);
+            double AngleLook2 = MathExt.AngleVector(line[1] - viewPoint);
             double AngleLookDiff2 = MathExt.AngleDiff(Angle0, AngleLook2);
             //check if the first point is in the FOV
             if (Math.Abs(AngleDiff) >= Math.Abs(AngleLookDiff) && Math.Sign(AngleDiff) == Math.Sign(AngleLookDiff))

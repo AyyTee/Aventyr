@@ -217,7 +217,7 @@ namespace Game
             foreach (Portal portal in Scene.PortalList)
             {
                 //ignore any portal attached to this entity on the first recursive iteration
-                if (portal.EntityParent == this && count == 0)
+                if (portal.Parent == this && count == 0)
                 {
                     continue;
                 }

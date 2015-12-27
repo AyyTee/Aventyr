@@ -24,8 +24,11 @@ namespace Editor
         public event SceneEventHandler ScenePaused;
         public event SceneEventHandler ScenePlayed;
         public event SceneEventHandler SceneStopped;
+        /// <summary>Called when an EditorObject's public state has been modified.</summary>
+        public event SceneEventHandler SceneModified;
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
         public event ToolEventHandler ToolChanged;
+        bool _editorObjectModified;
         Entity debugText;
         EditorObject _selectedEntity;
         Tool _activeTool;
@@ -93,7 +96,7 @@ namespace Editor
 
         public EditorEntity CreateLevelEntity()
         {
-            EditorEntity entity = new EditorEntity(Level, LevelHud);
+            EditorEntity entity = new EditorEntity(this, Level, LevelHud);
             Entities.Add(entity);
             
             if (EntityAdded != null)
@@ -123,16 +126,21 @@ namespace Editor
             }
         }
 
+        public void SetEditorObjectModified()
+        {
+            _editorObjectModified = true;
+        }
+
         public EditorPortal CreateLevelPortal(Portal portal)
         {
-            EditorPortal editorPortal = new EditorPortal(Level, portal);
+            EditorPortal editorPortal = new EditorPortal(this, Level, portal);
             Portals.Add(editorPortal);
             return editorPortal;
         }
 
         public EditorPortal CreateLevelPortal()
         {
-            EditorPortal editorPortal = new EditorPortal(Level);
+            EditorPortal editorPortal = new EditorPortal(this, Level);
             Portals.Add(editorPortal);
             return editorPortal;
         }
@@ -148,6 +156,11 @@ namespace Editor
             CamControl.Update();
             _setTool(_nextTool);
             _activeTool.Update();
+            if (_editorObjectModified && SceneModified != null)
+            {
+                SceneModified(this, Level);
+                _editorObjectModified = false;
+            }
             if (!_isPaused)
             {
                 Level.Step();

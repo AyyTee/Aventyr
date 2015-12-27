@@ -91,6 +91,11 @@ namespace Game
             return new Vector2((float)v.X, (float)v.Y);
         }
 
+        public static Vector2 ConvertTo(PolygonPoint v)
+        {
+            return new Vector2((float)v.X, (float)v.Y);
+        }
+
         public static Vector2 ConvertTo(Xna.Vector2 v)
         {
             return new Vector2(v.X, v.Y);

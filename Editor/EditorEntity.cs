@@ -13,7 +13,8 @@ namespace Editor
         public Entity Entity { get; private set; }
         public Entity Marker { get; private set; }
 
-        public EditorEntity(Scene scene, Scene overlay)
+        public EditorEntity(ControllerEditor controller, Scene scene, Scene overlay)
+            : base(controller)
         {
             Entity = new Entity(scene);
             Marker = new Entity(overlay);
@@ -31,11 +32,13 @@ namespace Editor
 
         public override void SetTransform(Transform2D transform)
         {
+            base.SetTransform(transform);
             Entity.SetTransform(transform);
         }
 
         public override void SetPosition(Vector2 position)
         {
+            base.SetPosition(position);
             Entity.SetPosition(position);
         }
 

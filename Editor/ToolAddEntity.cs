@@ -39,7 +39,7 @@ namespace Editor
                 
                 Controller.SetSelectedEntity(entity);
 
-                if (!(_input.KeyDown(Key.ShiftLeft) || _input.KeyDown(Key.ShiftRight)))
+                if (!_input.KeyDown(InputExt.KeyBoth.Shift))
                 {
                     Controller.SetTool(null);
                 }

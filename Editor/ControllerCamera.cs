@@ -99,10 +99,6 @@ namespace Editor
             {
                 Camera.Scale = MathHelper.Clamp(Camera.Scale * ZoomFactor, ZoomMin, ZoomMax);
             }
-            if (InputExt.KeyDown(Key.R))
-            {
-                transform.Rotation += 0.01f;
-            }
             if (InputExt.KeyPress(Key.Space))
             {
                 transform.Rotation = 0;

@@ -67,7 +67,7 @@ namespace Game
         /// <summary>
         /// EdgeIndex + EdgeT
         /// </summary>
-        public float EdgeIndexT { get {return (float)EdgeIndex + EdgeT;} }
+        public float EdgeIndexT { get { return (float)EdgeIndex + EdgeT; } }
 
         public FixtureEdgeCoord(Fixture fixture, int edgeIndex = 0, float edgeT = 0)
         {
@@ -130,9 +130,7 @@ namespace Game
         public Transform2D GetTransform()
         {
             Transform2D transform = new Transform2D();
-
-            transform.Position = GetPosition();//Entity.Transform.WorldToLocal(GetPosition());
-            //transform.Parent = Entity.Transform;
+            transform.Position = GetPosition();
             transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.GetTransform().Rotation;
             return transform;
         }
@@ -140,9 +138,8 @@ namespace Game
         public Transform2D GetWorldTransform()
         {
             Transform2D transform = new Transform2D();
-
-            transform.Position = GetWorldPosition();//Entity.Transform.WorldToLocal(GetPosition());
-            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.GetTransform().Rotation;
+            transform.Position = GetWorldPosition();
+            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal());
             return transform;
         }
     }

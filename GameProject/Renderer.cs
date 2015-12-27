@@ -59,27 +59,13 @@ namespace Game
             }
             
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.Blend);
+            //GL.Enable(EnableCap.Blend);
             for (int i = 0; i < _scenes.Count(); i++)
             {
                 Scene scene = _scenes[i];
                 Camera2D camera = scene.ActiveCamera;
-                //PortalView portalView = CalculatePortalViews(scene, scene.PortalList.ToArray(), camera.GetViewMatrix(), camera.Viewpoint, 3);
-                //Entity entity = new Entity(scene);
-                //GetPortalViewModels(portalView, entity);
-                
-                //DrawScene(scene, camera.GetViewMatrix(), 0);
-                /*foreach (Entity v in scene.EntityList)
-                {
-                    RenderEntity(v, camera.GetViewMatrix(), 0, portalView);
-                }*/
-                TextWriter console = Console.Out;
-                Console.SetOut(Controller.Log);
                 DrawPortalAll(scene);
-                //DrawPortalAll(scene, scene.PortalList.ToArray(), camera.GetViewMatrix(), camera.Viewpoint, 6, TimeRenderDelta);
-                Console.SetOut(console);
                 GL.Clear(ClearBufferMask.DepthBufferBit);
-                //scene.RemoveEntity(entity);
             }
 
             for (int i = 0; i < Renderer.Shaders.Count; i++)
@@ -90,7 +76,7 @@ namespace Game
             GL.Flush();
         }
 
-        public void GetPortalViewModels(PortalView portalView, Entity entity)
+        /*public void GetPortalViewModels(PortalView portalView, Entity entity)
         {
             GetPortalViewModels(portalView, entity, 0, new Vector3(0,0,0));
         }
@@ -105,12 +91,12 @@ namespace Game
                 //Random r = new Random((int)(color.LengthFast * 1000000));
                 GetPortalViewModels(p, entity, offset + 1, color + new Vector3(.1f, .1f, .1f));//new Vector3((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble()));
             }
-        }
+        }*/
 
         public PortalView CalculatePortalViews(Scene scene, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, int depth)
         {
             List<IntPoint> view = ClipperExt.ConvertToIntPoint(scene.ActiveCamera.GetWorldVerts());
-            PortalView portalView = new PortalView(null, viewMatrix, ClipperExt.ConvertToVector2(view), new Line[0], null);
+            PortalView portalView = new PortalView(null, viewMatrix, view, new Line[0], null);
             CalculatePortalViews(scene, null, portals, viewMatrix, viewPos, depth, portalView, Matrix4.Identity);
             return portalView;
         }
@@ -122,7 +108,10 @@ namespace Game
                 return;
             }
             //var sorted = portals.ToList().OrderByDescending(item => (item.GetWorldTransform().Position - viewPos).Length);
-            var sorted = portals.OrderByDescending(item => new Line(item.GetWorldVerts()).PointDistance(viewPos, true));
+            var sorted = portals;//portals.OrderByDescending(item => new Line(item.GetWorldVerts()).PointDistance(viewPos, true));
+
+            Clipper c = new Clipper();
+            //var sortedRotation = portals.OrderBy(item => Math.Min(new Line(item.GetWorldVerts())));
             foreach (Portal p in sorted)
             {
                 if (!p.IsValid() || (portalEnter != null && p == portalEnter.Linked))
@@ -140,36 +129,88 @@ namespace Game
                     }
                 }
                 Matrix4 viewMatrixNew = Matrix4.CreateTranslation(new Vector3(0, 0, sceneZDepth)) * viewMatrix;
-                Vector2[] fov = p.GetFov(viewPos, 500);
-                fov = Vector2Ext.Transform(fov, portalMatrix);
+                Vector2[] fov = Vector2Ext.Transform(p.GetFov(viewPos, 500, 3), portalMatrix);
                 List<IntPoint> pathFov = ClipperExt.ConvertToIntPoint(fov);
 
                 var viewNew = new List<List<IntPoint>>();
-                Clipper c = new Clipper();
-                c.AddPath(pathFov, PolyType.ptSubject, true);
-                c.AddPath(ClipperExt.ConvertToIntPoint(portalView.Path), PolyType.ptClip, true);
-                c.Execute(ClipType.ctIntersection, viewNew);
                 
-                Debug.Assert(viewNew.Count <= 1, "It isn't possible to get more than one path when intersecting two convex paths.");
-
-                if (viewNew.Count > 0)
+                c.AddPath(pathFov, PolyType.ptSubject, true);
+                c.AddPaths(portalView.Path, PolyType.ptClip, true);
+                c.Execute(ClipType.ctIntersection, viewNew);
+                c.Clear();
+                foreach (var polygon in viewNew)
                 {
-                    Vector2 viewPosNew = Vector2Ext.Transform(viewPos, FixturePortal.GetPortalMatrix(p, p.Linked));
-                    viewMatrixNew = FixturePortal.GetPortalMatrix(p.Linked, p) * viewMatrixNew;
-
-                    Line[] lines = p.GetFovLines(viewPos, 500);
-                    lines[0].Transform(portalMatrix);
-                    lines[1].Transform(portalMatrix);
-                    PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, ClipperExt.ConvertToVector2(viewNew[0]), lines, p);
-                    CalculatePortalViews(scene, p, portals, viewMatrixNew, viewPosNew, depth - 1, portalViewNew, FixturePortal.GetPortalMatrix(p.Linked, p) * portalMatrix);
+                    for (int i = 0; i < polygon.Count; i++)
+                    {
+                        if (ClipperExt.ConvertToVector2(polygon).Length < 0.001f)
+                        {
+                            Debug.Assert(false);
+                        }
+                    }
                 }
+                if (viewNew.Count <= 0)
+                {
+                    continue;
+                }
+                c.AddPaths(viewNew, PolyType.ptSubject, true);
+                foreach (Portal other in sorted)
+                {
+                    if (other == p)
+                    {
+                        continue;
+                    }
+                    if (!other.IsValid())
+                    {
+                        continue;
+                    }
+                    /*Vector2[] pv2 = other.GetWorldVerts();
+                    Line portalLine = new Line(pv2);
+                    if (other.OneSided)
+                    {
+                        if (portalLine.GetSideOf(pv2[0] + other.GetWorldTransform().GetNormal()) != portalLine.GetSideOf(viewPos))
+                        {
+                            continue;
+                        }
+                    }
+                    if (!portalLine.IsInsideFOV(viewPos, new Line(p.GetWorldVerts())))
+                    {
+                        continue;
+                    }*/
+                    Vector2[] otherFov = Vector2Ext.Transform(other.GetFov(viewPos, 500, 3), portalMatrix);
+                    List<IntPoint> otherPathFov = ClipperExt.ConvertToIntPoint(otherFov);
+                    c.AddPath(otherPathFov, PolyType.ptClip, true);
+                }
+                c.Execute(ClipType.ctDifference, viewNew);
+                c.Clear();
+                if (viewNew.Count <= 0)
+                {
+                    continue;
+                }
+                foreach (var polygon in viewNew)
+                {
+                    for (int i = 0; i < polygon.Count; i++)
+                    {
+                        if (ClipperExt.ConvertToVector2(polygon).Length < 0.001f)
+                        {
+                            Debug.Assert(false);
+                        }
+                    }
+                }
+                Vector2 viewPosNew = Vector2Ext.Transform(viewPos, FixturePortal.GetPortalMatrix(p, p.Linked));
+                viewMatrixNew = FixturePortal.GetPortalMatrix(p.Linked, p) * viewMatrixNew;
+
+                Line[] lines = p.GetFovLines(viewPos, 500);
+                lines[0].Transform(portalMatrix);
+                lines[1].Transform(portalMatrix);
+                PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNew, lines, p);
+                CalculatePortalViews(scene, p, portals, viewMatrixNew, viewPosNew, depth - 1, portalViewNew, FixturePortal.GetPortalMatrix(p.Linked, p) * portalMatrix);
             }
         }
 
         public void DrawPortalAll(Scene scene)
         {
             Camera2D cam = scene.ActiveCamera;
-            PortalView portalView = CalculatePortalViews(scene, scene.PortalList.ToArray(), cam.GetViewMatrix(), cam.Viewpoint, 3);
+            PortalView portalView = CalculatePortalViews(scene, scene.PortalList.ToArray(), cam.GetViewMatrix(), cam.Viewpoint, 2);
             List<PortalView>portalViewList = portalView.GetPortalViewList();
             //portalViewList = portalViewList.OrderByDescending(item => new Line(item.Portal.GetWorldVerts()).PointDistance(cam.Viewpoint, true)).ToList();
             Comparison<PortalView> viewpointDistance = delegate(PortalView p0, PortalView p1) 
@@ -206,10 +247,11 @@ namespace Game
             {
                 GL.StencilFunc(StencilFunction.Always, i, 0xFF);
                 Entity fov = new Entity(new Vector2());
-                Vector2[] a = portalViewList[i].Path;
-
-                fov.Models.Add(ModelFactory.CreatePolygon(a));
-
+                for (int j = 0; j < portalViewList[i].Path.Count; j++)
+                {
+                    Vector2[] a = ClipperExt.ConvertToVector2(portalViewList[i].Path[j]);
+                    fov.Models.Add(ModelFactory.CreatePolygon(a));
+                }
                 RenderEntity(fov, cam.GetViewMatrix(), 0);
             }
 
@@ -223,14 +265,31 @@ namespace Game
                 GL.StencilFunc(StencilFunction.Equal, i, 0xFF);
                 DrawScene(scene, mat, 0);
 
-                GL.StencilFunc(StencilFunction.Gequal, i, 0xFF);
+                //GL.StencilFunc(StencilFunction.Gequal, i, 0xFF);
+                /*GL.StencilFunc(StencilFunction.Always, i, 0xFF);
                 Entity fovLines = new Entity(new Vector2());
                 fovLines.Models.Add(ModelFactory.CreateLinesWidth(portalViewList[i].FovLines, cam.Scale / 100));
                 fovLines.Models[0].Transform.Position += new Vector3(0, 0, 199);
-                RenderEntity(fovLines, Matrix4.CreateTranslation(new Vector3(0, 0, (i) * 100)) * cam.GetViewMatrix(), 0);
+                
+                RenderEntity(fovLines, Matrix4.CreateTranslation(new Vector3(0, 0, (i) * 100)) * cam.GetViewMatrix(), 0);*/
             }
             GL.Disable(EnableCap.StencilTest);
+
+            GL.Clear(ClearBufferMask.DepthBufferBit);
+            for (int i = 1; i < Math.Min(portalViewList.Count, stencilMax); i++)
+            {
+                Entity entity = new Entity(new Vector2());
+                for (int j = 0; j < portalViewList[i].Path.Count; j++)
+                {
+                    entity.Models.Add(ModelFactory.CreateLineStripWidth(ClipperExt.ConvertToVector2(portalViewList[i].Path[j]), 0.05f + 0.04f * (portalViewList.Count - i), true));
+                    entity.Models[j].Transform.Position = new Vector3(0, 0, -j);
+                    Random random = new Random(i);
+                    entity.Models[0].SetColor(new Vector3(i / 3f, i / 3f, i / 3f));
+                }
+                RenderEntity(entity, cam.GetViewMatrix(), 0);
+            }
         }
+
         #region old
         /// <summary>Draw all of the portals within the scene.</summary>
         /// <param name="depth">Maximum number of recursions.</param>
@@ -341,6 +400,7 @@ namespace Game
             DrawPortal(scene, portalEnter, portalMatrix, viewMatrix, Vector2Ext.Transform(viewPos, FixturePortal.GetPortalMatrix(portalEnter, portalEnter.Linked)), depth - 1, timeDelta, count + 1);
         }*/
 #endregion
+
         public void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta)
         {
             foreach (Entity v in scene.EntityList)

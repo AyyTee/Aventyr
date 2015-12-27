@@ -38,6 +38,7 @@ namespace Editor
             ControllerEditor.ScenePlayed += ControllerEditor_ScenePlayed;
             ControllerEditor.ScenePaused += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopped += ControllerEditor_ScenePaused;
+            ControllerEditor.SceneModified += ControllerEditor_SceneModified;
             glControl.MouseMove += glControl_MouseMove;
             _loop = new GLLoop(glControl, ControllerEditor);
             _loop.Run(60);
@@ -45,10 +46,18 @@ namespace Editor
             ToolPanel ToolPanel = new ToolPanel(ControllerEditor);
             ToolGrid.Children.Add(ToolPanel);
 
-            // Create a timer
-            updateTimer = new System.Timers.Timer(1000);
+            updateTimer = new System.Timers.Timer(500);
             updateTimer.Elapsed += new ElapsedEventHandler(UpdateFrameRate);  
             updateTimer.Enabled = true;
+            UpdateTransformLabels(null);
+        }
+
+        private void ControllerEditor_SceneModified(Editor.ControllerEditor controller, Scene scene)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                UpdateTransformLabels(controller.GetSelectedEntity());
+            }));
         }
 
         private void UpdateFrameRate(object sender, ElapsedEventArgs e)
@@ -63,7 +72,6 @@ namespace Editor
         private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
-
             MouseWorldCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
         }
 
@@ -71,7 +79,22 @@ namespace Editor
         {
             this.Dispatcher.Invoke((Action)(() =>
             {
+                UpdateTransformLabels(controller.GetSelectedEntity());
             }));
+        }
+
+        private void UpdateTransformLabels(EditorObject entity)
+        {
+            float angle = 0;
+            Vector2 position = new Vector2();
+            if (entity != null)
+            {
+                Transform2D transform = entity.GetWorldTransform();
+                angle = MathHelper.RadiansToDegrees(transform.Rotation);
+                position = transform.Position;
+            }
+            LabelAngle.Content = angle.ToString("0.00") + "°";
+            LabelPosition.Content = "(" + position.X.ToString("0.00") + ", " + position.Y.ToString("0.00") + ")";
         }
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)

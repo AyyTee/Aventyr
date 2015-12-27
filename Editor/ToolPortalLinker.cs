@@ -36,7 +36,27 @@ namespace Editor
                     {
                         Portal.SetLinked(portal.Portal, _portalPrevious.Portal);
                         portal.Portal.IsMirrored = true;
-                        _portalPrevious.Portal.IsMirrored = true;
+                        _portalPrevious.Portal.IsMirrored = false;
+                        if (_input.KeyDown(InputExt.KeyBoth.Control))
+                        {
+                            Transform2D t = portal.GetTransform();
+                            t.Scale = new Vector2(1, -1);
+                            portal.SetTransform(t);
+                            t = _portalPrevious.GetTransform();
+                            t.Scale = new Vector2(1, 1);
+                            _portalPrevious.SetTransform(t);
+                        }
+                        else
+                        {
+                            Transform2D t = portal.GetTransform();
+                            t.Scale = new Vector2(1, 1);
+                            portal.SetTransform(t);
+                            t = _portalPrevious.GetTransform();
+                            t.Scale = new Vector2(1, 1);
+                            _portalPrevious.SetTransform(t);
+                        }
+                        
+                        
                         _portalPrevious = null;
                         Controller.SetTool(null);
                     }

@@ -98,10 +98,14 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Label Name="MouseWorldCoordinates" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Padding="8,0,8,0"/>
-                        <Label Grid.Column="1" Name="FrameRate" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Padding="8,0,8,0"/>
+                        <Label Grid.Column="1" Name="LabelPosition" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Padding="8,0,8,0"/>
+                        <Label Grid.Column="2" Name="LabelAngle" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Padding="8,0,8,0"/>
+                        <Label Grid.Column="3" Name="FrameRate" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Left" Padding="8,0,8,0"/>
                     </Grid>
                     <WindowsFormsHost  x:Name="wfContainer" Background="Black" MinWidth="100" MinHeight="100">
                         <GL:GLControlExt x:Name="glControl" Load="GLControl_Load" />
@@ -117,6 +121,10 @@
                 </Grid>
             </Grid>
             <Grid Grid.Row="1" Background="#007acc">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="325*"/>
+                    <ColumnDefinition Width="567*"/>
+                </Grid.ColumnDefinitions>
             </Grid>
         </Grid>
     </Grid>

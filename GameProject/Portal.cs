@@ -26,7 +26,6 @@ namespace Game
         /// It is used to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
         /// </summary>
         public const float EnterMinDistance = 0.001f;
-        public abstract Entity EntityParent { get; }
         /// <summary>
         /// If OneSided is true then the portal can only be viewed through it's front side.
         /// Entities can still travel though the portal in both directions however.
@@ -41,7 +40,7 @@ namespace Game
             {
                 throw _nullScene;
             }
-            OneSided = true;
+            OneSided = false;//true;
             Scene.PortalList.Add(this);
         }
 
@@ -208,6 +207,10 @@ namespace Game
             return m;
         }
 
+        /// <summary>
+        /// Returns a polygon in world space representing the 2D FOV through the portal.  
+        /// Polygon is not guaranteed to be non-degenerate which can occur if the viewPoint is edge-on to the portal.
+        /// </summary>
         public Vector2[] GetFov(Vector2 origin, float distance)
         {
             return GetFov(origin, distance, 10);
@@ -224,7 +227,8 @@ namespace Game
         }
 
         /// <summary>
-        /// Returns a polygon in world space representing the 2D FOV through the portal.  If the polygon is degenerate then an array of length 0 will be returned.
+        /// Returns a polygon in world space representing the 2D FOV through the portal.  
+        /// Polygon is not guaranteed to be non-degenerate which can occur if the viewPoint is edge-on to the portal.
         /// </summary>
         public Vector2[] GetFov(Vector2 viewPoint, float distance, int detail)
         {
@@ -249,11 +253,11 @@ namespace Game
             double diff = MathExt.AngleDiff(angle0, angle1);
             Debug.Assert(diff <= Math.PI + double.Epsilon && diff >= -Math.PI);
             //handle case where lines overlap eachother
-            const double angleDiffMin = 0.0001f;
+            /*const double angleDiffMin = 0.0001f;
             if (Math.Abs(diff) < angleDiffMin)
             {
                 return new Vector2[0];
-            }
+            }*/
 
             Matrix2 Rot = Matrix2.CreateRotation((float)diff / (detail - 1));
             for (int i = 3; i < verts.Length - 1; i++)

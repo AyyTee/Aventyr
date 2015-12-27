@@ -12,27 +12,9 @@ namespace Game
     [Serializable]
     public class FixturePortal : Portal, IVertices2D
     {
-        public override Entity EntityParent
-        {
-            get
-            {
-                if (Position != null)
-                {
-                    return FixtureExt.GetUserData(Position.Fixture).Entity;
-                }
-                return null;
-            }
-        }
         public FixtureEdgeCoord Position { get; private set; }
         public Fixture CollisionFixtureNext;
         public Fixture CollisionFixturePrevious;
-        public Body EntityBody
-        {
-            get
-            {
-                return EntityParent.Body;
-            }
-        }
         public Fixture FixtureParent {
             get
             {
@@ -80,8 +62,6 @@ namespace Game
             {
                 transform.Scale = new Vector2(1, -1);
             }
-            
-            //transform.Parent = FixtureExt.GetUserData(Position.Fixture).Entity.GetTransform();
             return transform;
         }
 

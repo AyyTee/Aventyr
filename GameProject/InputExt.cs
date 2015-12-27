@@ -18,6 +18,8 @@ namespace Game
         public Vector2 MousePosPrev { get; private set; }
         bool _mouseInside;
 
+        public enum KeyBoth { Control, Shift, Alt }
+
         GameWindow Ctx;
         GLControl Control;
         public bool MouseInside { get; private set; }
@@ -58,27 +60,72 @@ namespace Game
             }
         }
 
-        public bool KeyDown(Key Input)
+        public bool KeyDown(Key input)
         {
-            return KeyCurrent.IsKeyDown(Input);
+            return KeyCurrent.IsKeyDown(input);
         }
 
-        public bool KeyPress(Key Input)
+        public bool KeyDown(KeyBoth input)
         {
-            if (KeyCurrent.IsKeyDown(Input) && KeyPrevious.IsKeyDown(Input) == false)
+            switch (input)
+            {
+                case KeyBoth.Control:
+                    return KeyDown(Key.ControlLeft) || KeyDown(Key.ControlRight);
+                case KeyBoth.Shift:
+                    return KeyDown(Key.ShiftLeft) || KeyDown(Key.ShiftRight);
+                case KeyBoth.Alt:
+                    return KeyDown(Key.AltLeft) || KeyDown(Key.AltRight);
+                default:
+                    return false;
+            }
+        }
+
+        public bool KeyPress(Key input)
+        {
+            if (KeyCurrent.IsKeyDown(input) && KeyPrevious.IsKeyDown(input) == false)
             {
                 return true;
             }
             return false;
         }
 
-        public bool KeyRelease(Key Input)
+        public bool KeyPress(KeyBoth input)
         {
-            if (KeyCurrent.IsKeyDown(Input) == false && KeyPrevious.IsKeyDown(Input))
+            switch (input)
+            {
+                case KeyBoth.Control:
+                    return KeyPress(Key.ControlLeft) || KeyPress(Key.ControlRight);
+                case KeyBoth.Shift:
+                    return KeyPress(Key.ShiftLeft) || KeyPress(Key.ShiftRight);
+                case KeyBoth.Alt:
+                    return KeyPress(Key.AltLeft) || KeyPress(Key.AltRight);
+                default:
+                    return false;
+            }
+        }
+
+        public bool KeyRelease(Key input)
+        {
+            if (KeyCurrent.IsKeyDown(input) == false && KeyPrevious.IsKeyDown(input))
             {
                 return true;
             }
             return false;
+        }
+
+        public bool KeyRelease(KeyBoth input)
+        {
+            switch (input)
+            {
+                case KeyBoth.Control:
+                    return KeyRelease(Key.ControlLeft) || KeyRelease(Key.ControlRight);
+                case KeyBoth.Shift:
+                    return KeyRelease(Key.ShiftLeft) || KeyRelease(Key.ShiftRight);
+                case KeyBoth.Alt:
+                    return KeyRelease(Key.AltLeft) || KeyRelease(Key.AltRight);
+                default:
+                    return false;
+            }
         }
 
         public bool MouseDown(MouseButton Input)

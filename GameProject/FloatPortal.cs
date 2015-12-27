@@ -11,13 +11,6 @@ namespace Game
     {
         //public Transform2D Transform { get; private set; }
         public Transform2D Velocity { get; private set; }
-        public override Entity EntityParent
-        {
-            get
-            {
-                return null;
-            }
-        }
         public FloatPortal(Scene scene, Vector2 position)
             : base(scene)
         {
