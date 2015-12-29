@@ -162,6 +162,7 @@ namespace Game
             textModel.Vertices.AddRange(vertices);
             //textModel.Indices.AddRange(indices);
             textModel.AddTriangles(indices.ToArray());
+            textModel.IsTransparent = true;
             return textModel;
         }
     }

@@ -61,6 +61,13 @@ namespace Game
             SetTransform(transform);
         }
 
+        public virtual void SetRotation(float rotation)
+        {
+            Transform2D transform = GetTransform();
+            transform.Rotation = rotation;
+            SetTransform(transform);
+        }
+
         public virtual Transform2D GetWorldTransform()
         {
             if (Parent != null)

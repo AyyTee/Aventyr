@@ -144,6 +144,11 @@ namespace Game
                 index0 = polygon.IndexOf(t.Points._0);
                 index1 = polygon.IndexOf(t.Points._1);
                 index2 = polygon.IndexOf(t.Points._2);
+                //Sometimes the index is -1 and I don't know why. Ignore those points.
+                if (index0 < 0 || index1 < 0 || index2 < 0)
+                {
+                    continue;
+                }
                 model.AddTriangle(index0, index1, index2);
             }
 
@@ -274,15 +279,27 @@ namespace Game
         public static Model CreateArrow(Vector3 origin, Vector2 pointAt, float lineThickness, float arrowLength, float arrowThickness)
         {
             float length = pointAt.Length;
-            Vector2[] polygon = new Vector2[] {
-                new Vector2(0, length),
-                new Vector2(-arrowThickness, length - arrowLength),
-                new Vector2(-lineThickness/2, length - arrowLength),
-                new Vector2(-lineThickness/2, 0),
-                new Vector2(lineThickness/2, 0),
-                new Vector2(lineThickness/2, length - arrowLength),
-                new Vector2(arrowThickness, length - arrowLength),
-            };
+            Vector2[] polygon;
+            if (length <= arrowLength)
+            {
+                polygon = new Vector2[] {
+                    new Vector2(0, arrowLength),
+                    new Vector2(-arrowThickness, 0),
+                    new Vector2(arrowThickness, 0),
+                };
+            }
+            else
+            {
+                polygon = new Vector2[] {
+                    new Vector2(0, length),
+                    new Vector2(-arrowThickness, length - arrowLength),
+                    new Vector2(-lineThickness/2, length - arrowLength),
+                    new Vector2(-lineThickness/2, 0),
+                    new Vector2(lineThickness/2, 0),
+                    new Vector2(lineThickness/2, length - arrowLength),
+                    new Vector2(arrowThickness, length - arrowLength),
+                };
+            }
             polygon = Vector2Ext.Transform(polygon, Matrix4.CreateRotationZ((float)-(MathExt.AngleVector(pointAt) + Math.PI / 2)));
             return CreatePolygon(polygon, origin);
         }

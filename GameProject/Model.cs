@@ -18,6 +18,8 @@ namespace Game
         public Transform Transform = new Transform();
         public int IboElements;
         public bool IboExists = true;
+        /// <summary>If true then gl blending is enabled when rendering this model.</summary>
+        public bool IsTransparent { get; set; }
 
         public string ShaderName { get; private set; }
         public ShaderProgram Shader

@@ -14,10 +14,12 @@ namespace Game
     {
         public static Polygon CreatePolygon(Vector2[] vertices)
         {
-            PolygonPoint[] polygonPoints = new PolygonPoint[vertices.Length];
+            HashSet<Vector2> points = new HashSet<Vector2>();
+            List<PolygonPoint> polygonPoints = new List<PolygonPoint>();
             for (int i = 0; i < vertices.Length; i++)
             {
-                polygonPoints[i] = new PolygonPoint(vertices[i].X, vertices[i].Y);
+                polygonPoints.Add(new PolygonPoint(vertices[i].X, vertices[i].Y));
+                Debug.Assert(points.Add(vertices[i]));
             }
             Polygon polygon = new Polygon(polygonPoints);
 
@@ -26,6 +28,8 @@ namespace Game
             try
             {
                 P2T.Triangulate(polygon);
+                Console.SetOut(console);
+                return polygon;
             }
             catch
             {
@@ -33,23 +37,6 @@ namespace Game
                 Trace.TraceWarning("Polygon failed to triangulate.");
                 return null;
             }
-            Console.SetOut(console);
-
-            for (int i = 0; i < polygon.Points.Count; i++)
-            {
-                for (int j = 0; j < vertices.Length; j++)
-                {
-                    if (Vector2Ext.ConvertTo(polygon.Points[i]) == vertices[j])
-                    {
-                        break;
-                    }
-                    if (j == vertices.Length - 1)
-                    {
-                        Debug.Assert(false);
-                    }
-                }
-            }
-            return polygon;
         }
     }
 }
