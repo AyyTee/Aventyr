@@ -111,7 +111,7 @@ namespace Game
         }
 
         /// <summary>
-        /// Check if a Vector2 is inside the FOV of a line.
+        /// Check if a Vector2 is inside the FOV of this line.
         /// </summary>
         public bool IsInsideFOV(Vector2 viewPoint, Vector2 v)
         {
@@ -134,7 +134,7 @@ namespace Game
         }
 
         /// <summary>
-        /// Check if a Line is inside the FOV of a line.
+        /// Check if a Line is inside the FOV of this line.
         /// </summary>
         public bool IsInsideFOV(Vector2 viewPoint, Line line)
         {

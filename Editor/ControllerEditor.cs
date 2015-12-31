@@ -68,7 +68,11 @@ namespace Editor
             //back.IsPortalable = true;
             #endregion
             CamControl = new ControllerCamera(this, Level.ActiveCamera, InputExt);
-            
+
+            Entity viewCenter = new Entity(LevelHud);
+            viewCenter.Models.Add(ModelFactory.CreateCircle(new Vector3(), 0.1f, 10));
+            viewCenter.Models[0].SetColor(new Vector3(1, 0.9f, 0.2f));
+            viewCenter.SetParent(CamControl.Camera);
             /*debugText = new Entity(Hud);
             debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
             */

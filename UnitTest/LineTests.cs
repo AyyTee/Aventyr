@@ -266,15 +266,26 @@ namespace UnitTest
         [TestMethod]
         public void IsInsideFOVTest8()
         {
-            float x = 0;
-            float y = 0;
+            float x = -2;
+            float y = 2;
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
-                Scene scene = new Scene();
-                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
                 Vector2 viewPoint = new Vector2(x - 1, y);
-                Line lookLine = new Line(new Vector2(x + 2, y), (float)i, 1f);
-                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetTransform().GetMatrix()));
+                Line lookLine = new Line(new Vector2(x + 1, y), (float)i, 1f);
+                Line line = new Line(new Vector2(x, y + 0.5f), new Vector2(x, y - 0.5f));
+                Assert.IsTrue(line.IsInsideFOV(viewPoint, lookLine));
+            }
+        }
+        [TestMethod]
+        public void IsInsideFOVTest8()
+        {
+            float x = -2;
+            float y = 2;
+            for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
+            {
+                Vector2 viewPoint = new Vector2(x - 1, y);
+                Line lookLine = new Line(new Vector2(x + 1, y), (float)i, 1f);
+                Line line = new Line(new Vector2(x, y + 0.5f), new Vector2(x, y - 0.5f));
                 Assert.IsTrue(line.IsInsideFOV(viewPoint, lookLine));
             }
         }

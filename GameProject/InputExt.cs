@@ -14,6 +14,8 @@ namespace Game
         KeyboardState KeyCurrent, KeyPrevious;
         MouseState MouseCurrent, MousePrevious;
         public Vector2 _mousePos;
+        float wheelDelta = 0;
+        float wheelDeltaPrev = 0;
         public Vector2 MousePos { get; private set; }
         public Vector2 MousePosPrev { get; private set; }
         bool _mouseInside;
@@ -29,6 +31,12 @@ namespace Game
             Update();
             Ctx.MouseEnter += delegate { _mouseInside = true; };
             Ctx.MouseLeave += delegate { _mouseInside = false; };
+            Ctx.MouseWheel += Ctx_MouseWheel;
+        }
+
+        private void Ctx_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            wheelDelta += e.DeltaPrecise;
         }
 
         public InputExt(GLControl control)
@@ -37,6 +45,15 @@ namespace Game
             control.MouseMove += control_MouseMove;
             control.MouseLeave += delegate { _mouseInside = false; };
             control.MouseEnter += delegate { _mouseInside = true; };
+            control.MouseWheel += control_MouseWheel;
+        }
+
+        private void control_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (((GLControl)sender).Focus())
+            {
+                wheelDelta += (float)e.Delta / 120;
+            }
         }
 
         private void control_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -54,6 +71,8 @@ namespace Game
             MouseInside = _mouseInside;
             MousePosPrev = MousePos;
             MousePos = _mousePos; //new Vector2((float)mousePoint.X, (float)mousePoint.Y);//
+            wheelDeltaPrev = wheelDelta;
+            wheelDelta = 0;
             if (Ctx != null)
             {
                 MousePos = new Vector2(Ctx.Mouse.X, Ctx.Mouse.Y);
@@ -153,7 +172,7 @@ namespace Game
 
         public float MouseWheelDelta()
         {
-            return MouseCurrent.WheelPrecise - MousePrevious.WheelPrecise;
+            return wheelDeltaPrev;
         }
     }
 }
