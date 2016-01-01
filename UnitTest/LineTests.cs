@@ -277,7 +277,7 @@ namespace UnitTest
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest8()
+        public void IsInsideFOVTest9()
         {
             float x = -2;
             float y = 2;
@@ -286,6 +286,32 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2(x - 1, y);
                 Line lookLine = new Line(new Vector2(x + 1, y), (float)i, 1f);
                 Line line = new Line(new Vector2(x, y + 0.5f), new Vector2(x, y - 0.5f));
+                Assert.IsTrue(line.IsInsideFOV(viewPoint, lookLine));
+            }
+        }
+        [TestMethod]
+        public void IsInsideFOVTest10()
+        {
+            float x = -2;
+            float y = 2;
+            for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
+            {
+                Vector2 viewPoint = new Vector2(x - 1, y);
+                Line lookLine = new Line(new Vector2(x + 2, y), (float)i, 1f);
+                Line line = new Line(new Vector2(x, y + 0.5f), new Vector2(x, y - 0.5f));
+                Assert.IsFalse(lookLine.IsInsideFOV(viewPoint, line));
+            }
+        }
+        [TestMethod]
+        public void IsInsideFOVTest11()
+        {
+            float x = -2;
+            float y = 2;
+            for (double i = 0; i < Math.PI * 2; i += Math.PI / 2000)
+            {
+                Vector2 viewPoint = new Vector2(x - 1, y);
+                Line lookLine = new Line(new Vector2(x + 3, y + 0.5f), new Vector2(x + 3, y - 0.5f));
+                Line line = new Line(new Vector2(x + 1, y), (float)i, 1f);
                 Assert.IsTrue(line.IsInsideFOV(viewPoint, lookLine));
             }
         }
@@ -319,7 +345,7 @@ namespace UnitTest
             Vector2 velocity = new Vector2(1, 0);
             IntersectPoint intersect = line.IntersectsParametric(velocity, 0, pointMotion, 1);
             Assert.IsTrue(intersect.Exists);
-            Assert.IsTrue(intersect.T >= 0 && intersect.T <= 1);
+            Assert.IsTrue(intersect.TFirst >= 0 && intersect.TFirst <= 1);
         }
         [TestMethod]
         public void IntersectParametricTest1()
@@ -329,7 +355,7 @@ namespace UnitTest
             Vector2 velocity = new Vector2(1, 0);
             IntersectPoint intersect = line.IntersectsParametric(velocity, 0, pointMotion, 10);
             Assert.IsTrue(intersect.Exists);
-            Assert.IsTrue(intersect.T >= 0 && intersect.T <= 1);
+            Assert.IsTrue(intersect.TFirst >= 0 && intersect.TFirst <= 1);
         }
         [TestMethod]
         public void IntersectParametricTest2()
@@ -339,7 +365,7 @@ namespace UnitTest
             Vector2 velocity = new Vector2(1, 0);
             IntersectPoint intersect = line.IntersectsParametric(velocity, 0, pointMotion, 10);
             Assert.IsTrue(intersect.Exists);
-            Assert.IsTrue(intersect.T >= 0 && intersect.T <= 1);
+            Assert.IsTrue(intersect.TFirst >= 0 && intersect.TFirst <= 1);
         }
         [TestMethod]
         public void IntersectParametricTest3()
@@ -349,7 +375,7 @@ namespace UnitTest
             Vector2 velocity = new Vector2(1, 0);
             IntersectPoint intersect = line.IntersectsParametric(velocity, 0, pointMotion, 1);
             Assert.IsTrue(intersect.Exists);
-            Assert.IsTrue(intersect.T >= 0 && intersect.T <= 1);
+            Assert.IsTrue(intersect.TFirst >= 0 && intersect.TFirst <= 1);
         }
         #endregion
     }

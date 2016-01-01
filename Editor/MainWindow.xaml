@@ -77,6 +77,9 @@
             <ToggleButton Name="toolGridSnap" Height="22" Click="Button_Stop">
                 <Image Source="/editor assets/icons/grid-snap.png" />
             </ToggleButton>
+            <ToggleButton Name="toolPortalsVisible" Height="22" Click="toolPortalsVisible_Click">
+                <Image Source="/editor assets/icons/eye.png" />
+            </ToggleButton>
         </ToolBar>
         <Grid Grid.Row="2" Background="#293955">
             <Grid.RowDefinitions>

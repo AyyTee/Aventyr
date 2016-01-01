@@ -18,6 +18,11 @@ namespace Editor
             Controller = controller;
         }
 
+        public EditorObject(EditorObject editorObject)
+        {
+            Controller = editorObject.Controller;
+        }
+
         public virtual void SetTransform(Transform2D transform)
         {
             Controller.SetEditorObjectModified();

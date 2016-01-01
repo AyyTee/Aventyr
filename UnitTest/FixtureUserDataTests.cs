@@ -45,7 +45,7 @@ namespace UnitTest
             Assert.IsTrue(ground.Body.FixtureList.Count == 3, "There should be three fixtures.  The original fixture and two fixtures that are a part of the FixturePortal.");
         }*/
 
-        [TestMethod]
+        /*[TestMethod]
         public void PortalParentTest1()
         {
             Scene scene = CreateSceneWithPortal();
@@ -60,7 +60,7 @@ namespace UnitTest
                 }
             }
             Assert.IsTrue(parentCount == 2);
-        }
+        }*/
 
         /*[TestMethod]
         public void PortalParentTest2()
@@ -78,7 +78,7 @@ namespace UnitTest
             Assert.IsTrue(userData.IsPortalChild(portal));
         }*/
 
-        [TestMethod]
+        /*[TestMethod]
         public void PortalParentTest3()
         {
             Scene scene = CreateSceneWithPortal();
@@ -99,7 +99,7 @@ namespace UnitTest
                 }
             }
             Assert.IsTrue(parentCount == 3);
-        }
+        }*/
 
         /*[TestMethod]
         public void PortalParentTest4()

@@ -24,6 +24,12 @@ namespace Editor
             Marker.Models.Add(circle);
         }
 
+        public EditorEntity(EditorEntity editorEntity)
+            : base(editorEntity)
+        {
+            //Entity = new Entity(editorEntity);
+        }
+
         public void Remove()
         {
             Entity.Scene.RemoveEntity(Entity);

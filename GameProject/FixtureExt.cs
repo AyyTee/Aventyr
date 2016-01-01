@@ -63,7 +63,7 @@ namespace Game
                             IntersectPoint[] intersects = MathExt.GetLineCircleIntersections(new Vector2(relativePoint.X, relativePoint.Y), radius, edge, true);
                             for (int j = 0; i < intersects.Length; i++)
                             {
-                                collisions.Add(new FixtureEdgeCoord(f, i, (float)intersects[j].T));
+                                collisions.Add(new FixtureEdgeCoord(f, i, (float)intersects[j].TFirst));
                             }
                             /*if (intersects.Length > 0)
                             {

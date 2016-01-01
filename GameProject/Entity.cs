@@ -71,7 +71,7 @@ namespace Game
                 return Scene.World.BodyList.Find(item => (item.BodyId == BodyId));
             }
         }
-
+        #region constructors
         private Entity()
         {
         }
@@ -108,15 +108,12 @@ namespace Game
             SetTransform(transform);
         }
 
-        /*public Entity Clone()
+        /*public Entity(Entity entity)
+            : this(entity.Scene)
         {
-            Entity clone = new Entity(base.Scene);
-            clone._isPortalable = _isPortalable;
-            clone._models = _models;
-            clone.BodyId = Body.DeepClone().BodyId;
-
-            return clone;
+            SetTransform(entity.GetTransform());
         }*/
+        #endregion
         
         public void PositionUpdate()
         {

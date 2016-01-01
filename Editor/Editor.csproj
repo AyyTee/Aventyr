@@ -144,6 +144,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Resource Include="editor assets\icons\eye.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="editor assets\icons\polygonIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

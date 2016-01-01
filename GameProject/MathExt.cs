@@ -13,7 +13,14 @@ namespace Game
     {
         public bool Exists;
         public Vector2d Position;
-        public double T;
+        /// <summary>
+        /// T value for the first line.
+        /// </summary>
+        public double TFirst;
+        /// <summary>
+        /// T value for the second line.
+        /// </summary>
+        public double TLast;
     }
     public static class MathExt
     {
@@ -160,21 +167,19 @@ namespace Game
             return -V0 + 2 * (V0 - VectorProject(V0, V1));
         }
 
-        /// <summary>
-        /// Tests if two lines intersect.
-        /// </summary>
-        /// <returns>Location where the two lines intersect</returns>
+        /// <summary>Tests if two lines intersect.</summary>
+        /// <returns>Location where the two lines intersect. T is relative to the first line.</returns>
         static public IntersectPoint LineIntersection(Vector2d ps0, Vector2d pe0, Vector2d ps1, Vector2d pe1, bool SegmentOnly)
         {
             IntersectPoint v = new IntersectPoint();
-            double ua;
+            double ua, ub;
             double ud = (pe1.Y - ps1.Y) * (pe0.X - ps0.X) - (pe1.X - ps1.X) * (pe0.Y - ps0.Y);
             if (ud != 0)
             {
                 ua = ((pe1.X - ps1.X) * (ps0.Y - ps1.Y) - (pe1.Y - ps1.Y) * (ps0.X - ps1.X)) / ud;
+                ub = ((pe0.X - ps0.X) * (ps0.Y - ps1.Y) - (pe0.Y - ps0.Y) * (ps0.X - ps1.X)) / ud;
                 if (SegmentOnly)
                 {
-                    double ub = ((pe0.X - ps0.X) * (ps0.Y - ps1.Y) - (pe0.Y - ps0.Y) * (ps0.X - ps1.X)) / ud;
                     if (ua < 0 || ua > 1 || ub < 0 || ub > 1)
                     {
                         v.Exists = false;
@@ -189,10 +194,13 @@ namespace Game
             }
             v.Exists = true;
             v.Position = Lerp(ps0, pe0, ua);
-            v.T = ua;
+            v.TFirst = ua;
+            v.TLast = ub;
             return v;
         }
 
+        /// <summary>Tests if two lines intersect.</summary>
+        /// <returns>Location where the two lines intersect. T is relative to the first line.</returns>
         static public IntersectPoint LineIntersection(Vector2 ps0, Vector2 pe0, Vector2 ps1, Vector2 pe1, bool segmentOnly)
         {
             return LineIntersection(new Vector2d(ps0.X, ps0.Y), new Vector2d(pe0.X, pe0.Y), new Vector2d(ps1.X, ps1.Y), new Vector2d(pe1.X, pe1.Y), segmentOnly);
@@ -380,14 +388,14 @@ namespace Game
                 for (int j = i + 2; j < vertices.Length - 1; j++)
                 {
                     IntersectPoint first = LineIntersection(vertices[i], vertices[i + 1], vertices[j], vertices[j + 1], true);
-                    if (first.Exists && first.T < 1)
+                    if (first.Exists && first.TFirst < 1)
                     {
-                        intersections.Add(new PolyCoord(i, (float)first.T));
+                        intersections.Add(new PolyCoord(i, (float)first.TFirst));
                         if (includeTwice)
                         {
                             IntersectPoint second = LineIntersection(vertices[i], vertices[i + 1], vertices[j], vertices[j + 1], true);
                             Debug.Assert(second.Exists);
-                            intersections.Add(new PolyCoord(j, (float)second.T));
+                            intersections.Add(new PolyCoord(j, (float)second.TFirst));
                         }
                     }
                 }
@@ -447,7 +455,7 @@ namespace Game
                 {
                     intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
                     intersect0.Exists = true;
-                    intersect0.T = t;
+                    intersect0.TFirst = t;
                     return new IntersectPoint[] { intersect0 };
                 }
             }
@@ -460,7 +468,7 @@ namespace Game
                 {
                     intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
                     intersect0.Exists = true;
-                    intersect0.T = t;
+                    intersect0.TFirst = t;
                     list.Add(intersect0);
                 }
                 
@@ -469,7 +477,7 @@ namespace Game
                 {
                     intersect1.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
                     intersect1.Exists = true;
-                    intersect1.T = t;
+                    intersect1.TFirst = t;
                     list.Add(intersect1);
                 }
                 return list.ToArray();

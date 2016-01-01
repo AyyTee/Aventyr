@@ -50,6 +50,8 @@ namespace Editor
             updateTimer.Elapsed += new ElapsedEventHandler(UpdateFrameRate);  
             updateTimer.Enabled = true;
             UpdateTransformLabels(null);
+
+            SetPortalRendering(true);
         }
 
         private void ControllerEditor_SceneModified(Editor.ControllerEditor controller, Scene scene)
@@ -177,6 +179,27 @@ namespace Editor
                 default:
                     break;
             }
+        }
+
+        private void toolPortalsVisible_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (System.Windows.Controls.Primitives.ToggleButton)sender;
+            bool enable = (bool)button.IsChecked;
+            /*ControllerEditor.AddAction(() =>
+            {
+                ControllerEditor.renderer.PortalRenderingEnabled = enable;
+            });*/
+            SetPortalRendering(enable);
+        }
+
+        /// <summary>Programatically set whether or not portals are visible.  The ui will be updated to the new value.</summary>
+        private void SetPortalRendering(bool visible)
+        {
+            toolPortalsVisible.IsChecked = visible;
+            ControllerEditor.AddAction(() =>
+            {
+                ControllerEditor.renderer.PortalRenderEnabled = visible;
+            });
         }
     }
 }

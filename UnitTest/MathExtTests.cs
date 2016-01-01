@@ -252,10 +252,10 @@ namespace UnitTest
             IntersectPoint[] intersects = MathExt.GetLineCircleIntersections(new Vector2(1, 1), 0.1f, line, true);
             Assert.IsTrue(intersects[0].Exists == true && intersects[1].Exists == true);
             Assert.IsTrue(
-                ((intersects[0].Position - new Vector2d(1.1, 1)).Length < ErrorMargin && intersects[0].T - 0.7 < ErrorMargin &&
-                (intersects[1].Position - new Vector2d(0.9, 1)).Length < ErrorMargin) && intersects[1].T - 0.63333333333 < ErrorMargin ||
-                ((intersects[0].Position - new Vector2d(0.9, 1)).Length < ErrorMargin && intersects[0].T - 0.63333333333 < ErrorMargin &&
-                (intersects[1].Position - new Vector2d(1.1, 1)).Length < ErrorMargin) && intersects[1].T - 0.7 < ErrorMargin
+                ((intersects[0].Position - new Vector2d(1.1, 1)).Length < ErrorMargin && intersects[0].TFirst - 0.7 < ErrorMargin &&
+                (intersects[1].Position - new Vector2d(0.9, 1)).Length < ErrorMargin) && intersects[1].TFirst - 0.63333333333 < ErrorMargin ||
+                ((intersects[0].Position - new Vector2d(0.9, 1)).Length < ErrorMargin && intersects[0].TFirst - 0.63333333333 < ErrorMargin &&
+                (intersects[1].Position - new Vector2d(1.1, 1)).Length < ErrorMargin) && intersects[1].TFirst - 0.7 < ErrorMargin
                 );
         }
 

@@ -134,15 +134,28 @@ namespace Game
         }
 
         /// <summary>
-        /// Check if a Line is inside the FOV of this line.
+        /// Check if a Line is at least partially inside the FOV of this line.
         /// </summary>
         public bool IsInsideFOV(Vector2 viewPoint, Line line)
         {
-            //check if the lookPoint is on the opposite side of the line from the viewPoint
-            if (GetSideOf(viewPoint) == GetSideOf(line[0]) && GetSideOf(viewPoint) == GetSideOf(line[1]))
+            //Check if there is an intersection between the two lines.
+            if (Intersects(line, true).Exists)
             {
-                return false;
+                return true;
             }
+            //Check if there is an intersection between the first FOV line and line.
+            IntersectPoint intersect0 = new Line(Vertices[0], 2 * Vertices[0] - viewPoint).Intersects(line, false);
+            if (intersect0.TFirst >= 0 && intersect0.TLast >= 0 && intersect0.TLast < 1)
+            {
+                return true;
+            }
+            //Check if there is an intersection between the second FOV line and line.
+            IntersectPoint intersect1 = new Line(Vertices[1], 2 * Vertices[1] - viewPoint).Intersects(line, false);
+            if (intersect1.TFirst >= 0 && intersect1.TLast >= 0 && intersect1.TLast < 1)
+            {
+                return true;
+            }
+
             //check if the lookPoint is within the FOV angles
             double Angle0 = MathExt.AngleVector(Vertices[0] - viewPoint);
             double Angle1 = MathExt.AngleVector(Vertices[1] - viewPoint);
@@ -154,21 +167,23 @@ namespace Game
             //check if the first point is in the FOV
             if (Math.Abs(AngleDiff) >= Math.Abs(AngleLookDiff) && Math.Sign(AngleDiff) == Math.Sign(AngleLookDiff))
             {
-                return true;
+                if (GetSideOf(viewPoint) != GetSideOf(line[0]))
+                {
+                    return true;
+                }
             }
             //check if the second point is in the FOV
             if (Math.Abs(AngleDiff) >= Math.Abs(AngleLookDiff2) && Math.Sign(AngleDiff) == Math.Sign(AngleLookDiff2))
             {
-                return true;
-            }
-            //check if the two points are on opposite sides of the FOV
-            if (Math.Sign(AngleLookDiff) != Math.Sign(AngleLookDiff2))
-            {
-                return true;
+                if (GetSideOf(viewPoint) != GetSideOf(line[1]))
+                {
+                    return true;
+                }
             }
             return false;
         }
 
+        /// <summary>Tests if this line intersects with another line. The T value is relative to this line.</summary>
         public IntersectPoint Intersects(Line line, bool segmentOnly)
         {
             return MathExt.LineIntersection(Vertices[0], Vertices[1], line[0], line[1], segmentOnly);
@@ -337,9 +352,9 @@ namespace Game
                 if (pointLine.IsInsideOfPolygon(verts))
                 {
                     
-                    intersect.T = (i + 0.5f) / detail;
+                    intersect.TFirst = (i + 0.5f) / detail;
                     intersect.Exists = true;
-                    Vector2 pos = pointMotion.Lerp((float)intersect.T);
+                    Vector2 pos = pointMotion.Lerp((float)intersect.TFirst);
                     intersect.Position = new Vector2d(pos.X, pos.Y);
                     return intersect;
                 }

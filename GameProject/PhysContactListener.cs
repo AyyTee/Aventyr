@@ -103,10 +103,10 @@ namespace Game
                 {
                     Line line = new Line(p.GetWorldVerts());
                     IntersectPoint intersect = position.Intersects(line, true);
-                    if (intersect.T <= portalTDistance && intersect.Exists)
+                    if (intersect.TFirst <= portalTDistance && intersect.Exists)
                     {
                         portalNearest = p;
-                        portalTDistance = intersect.T;
+                        portalTDistance = intersect.TFirst;
                     }
                 }
                 if (portalNearest != null)

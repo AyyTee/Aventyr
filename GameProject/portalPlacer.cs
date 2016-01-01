@@ -80,7 +80,7 @@ namespace Game
                                         }
 
                                         intersectLast = intersect;
-                                        intersections.Add(new FixtureEdgeCoord(fixture, i, (float)intersect.T));
+                                        intersections.Add(new FixtureEdgeCoord(fixture, i, (float)intersect.TFirst));
                                         break;
                                     }
                                     Debug.Assert(i + 1 < vertices.Count(), "Intersection edge was not found in shape.");
