@@ -15,7 +15,7 @@ namespace Game
     {
         static object _deleteLock = new object();
         public static object LockDelete { get { return _deleteLock; } }
-        public Transform Transform = new Transform();
+        public Transform3D Transform = new Transform3D();
         public int IboElements;
         public bool IboExists = true;
         /// <summary>If true then gl blending is enabled when rendering this model.</summary>

@@ -29,7 +29,6 @@ namespace Editor
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
         public event ToolEventHandler ToolChanged;
         bool _editorObjectModified;
-        Entity debugText;
         EditorObject _selectedEntity;
         Tool _activeTool;
         Tool _toolDefault;
@@ -64,14 +63,14 @@ namespace Editor
             background.Transform.Scale = new Vector3(size, size, size);
             background.TransformUv.Scale = new Vector2(size, size);
             Entity back = new Entity(Level, new Vector2(0f, 0f));
-            back.Models.Add(background);
+            back.AddModel(background);
             //back.IsPortalable = true;
             #endregion
             CamControl = new ControllerCamera(this, Level.ActiveCamera, InputExt);
 
             Entity viewCenter = new Entity(LevelHud);
-            viewCenter.Models.Add(ModelFactory.CreateCircle(new Vector3(), 0.1f, 10));
-            viewCenter.Models[0].SetColor(new Vector3(1, 0.9f, 0.2f));
+            viewCenter.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.1f, 10));
+            viewCenter.ModelList[0].SetColor(new Vector3(1, 0.9f, 0.2f));
             viewCenter.SetParent(CamControl.Camera);
             /*debugText = new Entity(Hud);
             debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));

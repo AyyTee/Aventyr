@@ -222,7 +222,7 @@ namespace Editor
         {
             base.Enable();
             translation = new Entity(Controller.LevelHud);
-            translation.Models.Add(translationModel);
+            translation.AddModel(translationModel);
             translation.Visible = false;
             _dragState = DragState.Neither;
             dragObject = null;

@@ -21,7 +21,7 @@ namespace Editor
             Marker.SetParent(Entity);
             Model circle = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
             circle.SetColor(new Vector3(1f, 0.5f, 0f));
-            Marker.Models.Add(circle);
+            Marker.AddModel(circle);
         }
 
         public EditorEntity(EditorEntity editorEntity)

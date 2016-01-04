@@ -64,13 +64,13 @@ namespace Editor
             }
             if (_portalPrevious != null)
             {
-                line.Models.Clear();
+                line.RemoveAllModels();
                 Model lineModel = ModelFactory.CreateLineStrip(new Vector2[] {
                     Controller.GetMouseWorldPosition(),
                     _portalPrevious.GetWorldTransform().Position
                 });
                 lineModel.SetColor(new Vector3(0.1f, 0.7f, 0.1f));
-                line.Models.Add(lineModel);
+                line.AddModel(lineModel);
             }
         }
 

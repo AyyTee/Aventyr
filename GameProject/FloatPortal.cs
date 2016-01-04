@@ -24,6 +24,20 @@ namespace Game
         {
         }
 
+        public override Placeable2D DeepClone()
+        {
+            FloatPortal clone = new FloatPortal(base.Scene);
+            DeepClone(this, clone);
+            return clone;
+        }
+
+        public static void DeepClone(FloatPortal source, FloatPortal destination)
+        {
+            Placeable2D.DeepClone(source, destination);
+            destination.SetTransform(source.GetTransform());
+            destination.Velocity = source.Velocity;
+        }
+
         public override void Step()
         {
             base.Step();

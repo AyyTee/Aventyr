@@ -39,7 +39,7 @@ namespace Game
             t.Rotation = transform.Rotation;
             entity.SetTransform(t);
             entity.IsPortalable = true;
-            entity.Models.Add(ModelFactory.CreatePlane(transform.Scale));
+            entity.AddModel(ModelFactory.CreatePlane(transform.Scale));
 
             Debug.Assert(entity.Body == null);
             Body body = BodyFactory.CreateRectangle(entity.Scene.World, transform.Scale.X, transform.Scale.Y, 1);
@@ -75,7 +75,7 @@ namespace Game
             vertices = MathExt.SetHandedness(vertices, false);
             Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(vertices);
 
-            entity.Models.Add(ModelFactory.CreatePolygon(polygon));
+            entity.AddModel(ModelFactory.CreatePolygon(polygon));
 
             Xna.Vector2 vPos = Vector2Ext.ConvertToXna(t.Position);
 

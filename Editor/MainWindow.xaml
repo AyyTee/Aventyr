@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:WF="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     xmlns:GL="clr-namespace:WPFControls;assembly=WPFControls"
-    Title="Avenyr Edityr" Height="250" Width="900">
+    Title="Avenyr Edityr" Height="250" Width="900" Icon="favicon.ico">
     <Grid Name="MainGrid" KeyDown="MainGrid_KeyDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="22" />

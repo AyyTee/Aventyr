@@ -38,7 +38,8 @@ namespace Game
         /// </summary>
         public bool Visible { get; set; }
         public Transform2D Velocity { get; private set; }
-        public List<Model> Models { get { return _models; } set { _models = value; } }
+        //public List<Model> Models { get { return _models; } set { _models = value; } }
+        public List<Model> ModelList { get { return new List<Model>(_models); } }
         [DataContractAttribute]
         public class ClipModel
         {
@@ -71,29 +72,21 @@ namespace Game
                 return Scene.World.BodyList.Find(item => (item.BodyId == BodyId));
             }
         }
-        #region constructors
-        private Entity()
-        {
-        }
 
+        #region constructors
         public Entity(Scene scene)
             : base(scene)
         {
-            if (scene != null)
+            if (scene == null)
             {
-                scene.AddEntity(this);
+                throw new NullReferenceException("Scene cannot be a null reference.");
             }
+            scene.AddEntity(this);
             Velocity = new Transform2D();
             Transform2D transform = GetTransform();
             transform.UniformScale = true;
             SetTransform(transform);
             Visible = true;
-        }
-
-        public Entity(Vector2 position)
-            : this(null)
-        {
-            SetTransform(new Transform2D(position));
         }
 
         public Entity(Scene scene, Vector2 position)
@@ -107,14 +100,44 @@ namespace Game
         {
             SetTransform(transform);
         }
-
-        /*public Entity(Entity entity)
-            : this(entity.Scene)
-        {
-            SetTransform(entity.GetTransform());
-        }*/
         #endregion
         
+        public override Placeable2D DeepClone()
+        {
+            Entity clone = new Entity(Scene);
+            DeepClone(this, clone);
+            return clone;
+        }
+
+        public static void DeepClone(Entity source, Entity destination)
+        {
+            Placeable2D.DeepClone(source, destination);
+            destination.SetTransform(source.GetTransform());
+            destination.IsPortalable = source.IsPortalable;
+            destination._models = source.ModelList;
+            destination.Velocity = new Transform2D(source.Velocity);
+            destination.BodyId = -1;
+            if (source.Body != null)
+            {
+                destination.BodyId = source.Body.DeepClone().BodyId;
+            }
+        }
+
+        public void AddModel(Model model)
+        {
+            _models.Add(model);
+        }
+
+        public void RemoveModel(Model model)
+        {
+            _models.Remove(model);
+        }
+
+        public void RemoveAllModels()
+        {
+            _models.Clear();
+        }
+
         public void PositionUpdate()
         {
             foreach (Portal portal in Scene.PortalList)
@@ -195,7 +218,7 @@ namespace Game
         public void UpdatePortalClipping(int depth)
         {
             ClipModels.Clear();
-            foreach (Model m in Models)
+            foreach (Model m in ModelList)
             {
                 ModelPortalClipping(m, GetWorldTransform().Position, null, Matrix4.Identity, 4, 0, ref ClipModels);
             }

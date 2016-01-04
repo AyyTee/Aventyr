@@ -20,6 +20,7 @@ namespace Game
 
         public Scene Scene { get; private set; }
 
+        #region constructors
         public Placeable2D()
         {
         }
@@ -32,16 +33,40 @@ namespace Game
                 Id = Scene.IdCount;
             }
         }
+        #endregion
+
+        public abstract Placeable2D DeepClone();
+
+        public static void DeepClone(Placeable2D source, Placeable2D destination)
+        {
+            destination.Name = source.Name; 
+            destination.RemoveChildren();
+            foreach (Placeable2D p in source.ChildList)
+            {
+                destination._children.Add(p.DeepClone());
+            }
+        }
 
         public virtual void SetParent(Placeable2D parent)
         {
-            if (parent != null)
+            if (Parent != null)
             {
-                parent._children.Remove(this);
+                Parent._children.Remove(this);
             }
             Parent = parent;
-            parent._children.Add(this);
+            if (Parent != null)
+            {
+                parent._children.Add(this);
+            }
             Debug.Assert(!ParentLoopExists(), "Cannot have cycles in Parent tree.");
+        }
+
+        public void RemoveChildren()
+        {
+            for (int i = 0; i < ChildList.Count; i++)
+            {
+                ChildList[i].SetParent(null);
+            }
         }
 
         public virtual Transform2D GetTransform()

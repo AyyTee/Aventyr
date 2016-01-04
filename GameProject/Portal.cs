@@ -32,13 +32,12 @@ namespace Game
         /// </summary>
         public bool OneSided { get; set; }
         public bool IsMirrored { get; set; }
-        private Exception _nullScene = new Exception("Portal must be assigned to a scene.");
         public Portal(Scene scene)
             : base(scene)
         {
             if (scene == null)
             {
-                throw _nullScene;
+                throw new NullReferenceException("Scene cannot be a null reference.");
             }
             OneSided = false;//true;
             Scene.PortalList.Add(this);
@@ -109,7 +108,7 @@ namespace Game
             }
         }
 
-        public void Enter(Transform position)
+        public void Enter(Transform3D position)
         {
             Transform2D entity2D = position.GetTransform2D();
             Enter(entity2D);

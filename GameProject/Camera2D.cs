@@ -18,6 +18,7 @@ namespace Game
         public float ZNear { get; set; }
         public float ZFar { get; set; }
 
+        #region constructors
         public Camera2D(Vector2 position, float scale, float aspectRatio)
             : this(new Transform2D(position), scale, aspectRatio)
         {
@@ -30,6 +31,12 @@ namespace Game
             Scale = scale;
             ZNear = -10000f;
             ZFar = 10000f;
+        }
+        #endregion
+
+        public override Placeable2D DeepClone()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

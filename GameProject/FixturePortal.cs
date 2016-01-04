@@ -38,6 +38,11 @@ namespace Game
             }
         }
 
+        public override Placeable2D DeepClone()
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Dispose()
         {
             base.Dispose();

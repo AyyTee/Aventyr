@@ -4,9 +4,11 @@ using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Game
@@ -16,6 +18,7 @@ namespace Game
         public readonly static GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
         ControllerGame controller;
         public InputExt InputExt;
+        Stopwatch loopTimer = new Stopwatch();
         public Window()
             : base((int)800, (int)600, DefaultGraphics, "Game", GameWindowFlags.FixedWindow)
         {
@@ -35,10 +38,18 @@ namespace Game
             base.OnRenderFrame(e);
             controller.OnRenderFrame(e);
             SwapBuffers();
+            /*loopTimer.Stop();
+            int sleepLength = (int)(TargetUpdatePeriod * 1000) - (int)loopTimer.ElapsedMilliseconds;
+            if (sleepLength > 1)
+            {
+                Thread.Sleep(sleepLength);
+            }
+            Console.Out.WriteLine(sleepLength);*/
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
+            //loopTimer.Restart();
             base.OnUpdateFrame(e);
             if (Focused)
             {
@@ -54,6 +65,7 @@ namespace Game
                 Exit();
             }
             controller.OnUpdateFrame(e);
+            //Console.Out.WriteLine("Update");
         }
 
         protected override void OnClosing(CancelEventArgs e)

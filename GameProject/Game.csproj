@@ -93,10 +93,13 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cgen.Audio, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Cgen.Audio, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\cgen audio\Cgen.Audio\bin\Release\Cgen.Audio.dll</HintPath>
+      <HintPath>..\packages\Cgen.Audio.0.8.5.0\lib\net20\Cgen.Audio.dll</HintPath>
     </Reference>
     <Reference Include="clipper_library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -154,7 +157,6 @@
     <Compile Include="BodyExt.cs" />
     <Compile Include="ModelFactory.cs" />
     <Compile Include="PhysContactListener.cs" />
-    <Compile Include="PhysDataContractResolver.cs" />
     <Compile Include="Placeable2D.cs" />
     <Compile Include="PolyCoord.cs" />
     <Compile Include="PolygonFactory.cs" />
@@ -164,7 +166,7 @@
     <Compile Include="Renderer.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Texture.cs" />
-    <Compile Include="Transform.cs" />
+    <Compile Include="Transform3D.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="FixturePortal.cs" />
     <Compile Include="Program.cs" />
@@ -191,6 +193,7 @@
     <Content Include="assets\textures\grid.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -5,6 +5,7 @@ using OpenTK;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Timers;
+using System.Windows.Input;
 
 namespace Editor
 {
@@ -161,7 +162,7 @@ namespace Editor
                 ModelLoader loader = new ModelLoader();
                 Model model = loader.LoadObj(fileName);
                 EditorEntity entity = ControllerEditor.CreateLevelEntity();
-                entity.Entity.Models.Add(model);
+                entity.Entity.AddModel(model);
             });
         }
 
@@ -179,16 +180,19 @@ namespace Editor
                 default:
                     break;
             }
+
+            if (e.Key == System.Windows.Input.Key.D && 
+                (Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
+                Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl)))
+            {
+                SetPortalRendering(!ControllerEditor.renderer.PortalRenderEnabled);
+            }
         }
 
         private void toolPortalsVisible_Click(object sender, RoutedEventArgs e)
         {
             var button = (System.Windows.Controls.Primitives.ToggleButton)sender;
             bool enable = (bool)button.IsChecked;
-            /*ControllerEditor.AddAction(() =>
-            {
-                ControllerEditor.renderer.PortalRenderingEnabled = enable;
-            });*/
             SetPortalRendering(enable);
         }
 

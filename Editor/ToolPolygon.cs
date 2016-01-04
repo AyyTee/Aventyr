@@ -62,14 +62,14 @@ namespace Editor
                     transform.Position = average;
                     EntityFactory.CreateEntityPolygon(entity.Entity, transform, _vertices.ToArray());
                     entity.Entity.IsPortalable = true;
-                    entity.Entity.Models[0].Wireframe = true;
+                    entity.Entity.ModelList[0].Wireframe = true;
                     //entity.Entity.Models[0].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
                     //entity.Entity.Models[0].SetShader("default");
-                    entity.Entity.Models.Add(ModelFactory.CreatePolygon(_vertices.ToArray()));
-                    entity.Entity.Models[1].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
+                    entity.Entity.AddModel(ModelFactory.CreatePolygon(_vertices.ToArray()));
+                    entity.Entity.ModelList[1].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
                     //entity.Entity.Models[1].SetShader("default");
                     _vertices.Clear();
-                    _entity.Models.Clear();
+                    _entity.RemoveAllModels();
                     Controller.SetTool(null);
                 }
                 else
@@ -82,7 +82,7 @@ namespace Editor
 
         public void UpdatePolygon()
         {
-            _entity.Models.Clear();
+            _entity.RemoveAllModels();
             if (_vertices.Count() >= 2)
             {
                 PolyCoord[] intersects = MathExt.GetLineStripIntersections(_vertices.ToArray(), true);
@@ -98,7 +98,7 @@ namespace Editor
                 Model model = ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
                 model.Transform.Position = new Vector3(0, 0, 6);
                 //model.SetShader("default");
-                _entity.Models.Add(model);
+                _entity.AddModel(model);
             }
         }
 

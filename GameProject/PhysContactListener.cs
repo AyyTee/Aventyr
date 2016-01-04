@@ -142,14 +142,14 @@ namespace Game
                         {
                             Model model = ModelFactory.CreateCube();
                             model.Transform.Scale = new Vector3(0.2f, 0.2f, 0.2f);
-                            DebugEntity.Models.Add(model);
+                            DebugEntity.AddModel(model);
                             model.Transform.Position = new Vector3(userData[i].Fixture.Body.Position.X, userData[i].Fixture.Body.Position.Y, 0);
 
                             BodyUserData bodyUserData = BodyExt.GetUserData(userData[i].Fixture.Body);
                             model = ModelFactory.CreateCube();
                             model.Transform.Scale = new Vector3(0.15f, 0.15f, 0.15f);
                             model.Transform.Rotation = new Quaternion(0, 1, 1, (float)Math.PI/2);
-                            DebugEntity.Models.Add(model);
+                            DebugEntity.AddModel(model);
                             model.Transform.Position = new Vector3(bodyUserData.PreviousPosition.X, bodyUserData.PreviousPosition.Y, 1);
                         
                         }
@@ -157,7 +157,7 @@ namespace Game
                         {
                             Model model = ModelFactory.CreateCube();
                             model.Transform.Scale = new Vector3(0.1f, 0.1f, 0.1f);
-                            DebugEntity.Models.Add(model);
+                            DebugEntity.AddModel(model);
                             if (contact.Enabled)
                             {
                                 model.Texture = Renderer.Textures["grid.png"];

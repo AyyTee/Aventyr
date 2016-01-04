@@ -107,20 +107,19 @@ namespace Game
             MatrixUpdate = true;
         }
 
-        /// <summary>
-        /// Copy constructor
-        /// </summary>
+        /// <summary>Copy constructor</summary>
         public Transform2D(Transform2D transform)
         {
-            Position = new Vector2(transform.Position.X, transform.Position.Y);
-            Scale = new Vector2(transform.Scale.X, transform.Scale.Y);
+            Position = transform.Position;
+            Scale = transform.Scale;
             Rotation = transform.Rotation;
+            _uniformScale = transform._uniformScale;
         }
         #endregion
 
-        public Transform Get3D()
+        public Transform3D Get3D()
         {
-            return new Transform(new Vector3(Position.X, Position.Y, 0), new Vector3(Scale.X, Scale.Y, 1), new Quaternion(0, 0, 1, Rotation));
+            return new Transform3D(new Vector3(Position), new Vector3(Scale.X, Scale.Y, 1), new Quaternion(0, 0, 1, Rotation));
         }
         
         public Matrix4 GetMatrix()

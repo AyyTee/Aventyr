@@ -57,6 +57,7 @@ namespace Game
         public Renderer renderer;
         public FontRenderer FontRenderer;
         public Font Default;
+        public bool SoundEnabled { get; private set; }
 
         public virtual void OnLoad(EventArgs e)
         {
@@ -64,7 +65,13 @@ namespace Game
 
             Renderer.Init();
             renderer = new Renderer(this);
-            SoundSystem.Instance().Init();
+
+            SoundEnabled = false;
+            if (SoundEnabled)
+            {
+                SoundSystem.Instance.Initialize();
+                SoundSystem.Instance.Start();
+            }
 
             // Load textures from file
             Renderer.Textures.Add("default.png", Renderer.LoadImage(Path.Combine(textureFolder, "default.png")));
@@ -126,7 +133,10 @@ namespace Game
 
         public virtual void OnClosing(CancelEventArgs e)
         {
-            SoundSystem.Instance().Dispose();
+            if (SoundEnabled)
+            {
+                SoundSystem.Instance.Stop();
+            }
         }
 
         public virtual void OnResize(EventArgs e, Size canvasSize)

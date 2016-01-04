@@ -30,11 +30,12 @@ namespace Game
         public override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            
-            /*testSound = new Sound("My Sound", Path.Combine(Controller.soundFolder, "test_sound.ogg"));
-            testSound.Play();*/
-            //testSound.SetLoop(true);
-            //sound.SetPosition(1000, 0, 0);
+
+            if (SoundEnabled)
+            {
+                testSound = new Sound(Path.Combine(Controller.soundFolder, "test_sound.ogg"));
+                testSound.Play();
+            }
 
             scene = new Scene();
             hud = new Scene();
@@ -47,7 +48,7 @@ namespace Game
             background.Transform.Scale = new Vector3(size, size, size);
             background.TransformUv.Scale = new Vector2(size, size);
             Entity back = new Entity(scene, new Vector2(0f, 0f));
-            back.Models.Add(background);
+            back.AddModel(background);
 
             portal2 = new FloatPortal(scene);
             Transform2D transform = portal2.GetTransform();
@@ -58,11 +59,11 @@ namespace Game
 
             Entity portalEntity2 = new Entity(scene);
             portalEntity2.SetParent(portal2);
-            portalEntity2.Models.Add(ModelFactory.CreatePlane());
-            portalEntity2.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
-            portalEntity2.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
-            portalEntity2.Models.Add(ModelFactory.CreatePlane());
-            portalEntity2.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            portalEntity2.AddModel(ModelFactory.CreatePlane());
+            portalEntity2.ModelList[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
+            portalEntity2.ModelList[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
+            portalEntity2.AddModel(ModelFactory.CreatePlane());
+            portalEntity2.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
 
 
             portal3 = new FloatPortal(scene);
@@ -71,11 +72,11 @@ namespace Game
             Portal.SetLinked(portal2, portal3);
             Entity portalEntity3 = new Entity(scene);
             portalEntity3.SetParent(portal3);
-            portalEntity3.Models.Add(ModelFactory.CreatePlane());
-            portalEntity3.Models[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
-            portalEntity3.Models[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
-            portalEntity3.Models.Add(ModelFactory.CreatePlane());
-            portalEntity3.Models[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            portalEntity3.AddModel(ModelFactory.CreatePlane());
+            portalEntity3.ModelList[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
+            portalEntity3.ModelList[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
+            portalEntity3.AddModel(ModelFactory.CreatePlane());
+            portalEntity3.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
             
             #region player
             Entity player = new Entity(scene);
@@ -91,9 +92,17 @@ namespace Game
             });
             playerModel.SetTexture(Renderer.Textures["default.png"]);
             player.IsPortalable = true;
-            player.Models.Add(playerModel);
+            player.AddModel(playerModel);
             playerModel.SetTexture(Renderer.Textures["default.png"]);
             #endregion
+
+            Entity temp = new Entity(scene);
+            temp.SetParent(player);
+            temp.AddModel(ModelFactory.CreateArrow(new Vector3(), new Vector2(0, 2), 0.1f, 0.5f, 0.5f));
+
+            Entity playerNew = (Entity)player.DeepClone();
+
+            temp.SetParent(null);
 
             Entity playerParent = new Entity(scene, new Vector2(1, 0));
 
@@ -111,7 +120,7 @@ namespace Game
             Entity ground = EntityFactory.CreateEntityPolygon(scene, new Transform2D(), v);
             ground.Name = "ground";
             //ground.IsPortalable = true;
-            ground.Models.Add(ModelFactory.CreatePolygon(v));
+            ground.AddModel(ModelFactory.CreatePolygon(v));
             ground.SetTransform(new Transform2D(new Vector2(0, -4f), 0.05f));
             scene.World.ProcessChanges();
             portal0 = new FixturePortal(scene, null);
@@ -136,10 +145,10 @@ namespace Game
 
         public override void OnRenderFrame(FrameEventArgs e)
         {
-            text.Models.Clear();
-            text.Models.Add(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
+            text.RemoveAllModels();
+            text.AddModel(FontRenderer.GetModel(((float)e.Time).ToString(), new Vector2(0f, 0f), 0));
             base.OnRenderFrame(e);
-            text2.Models.Add(FontRenderer.GetModel((Time.ElapsedMilliseconds / RenderCount).ToString()));
+            text2.AddModel(FontRenderer.GetModel((Time.ElapsedMilliseconds / RenderCount).ToString()));
         }
 
         public override void OnUpdateFrame(FrameEventArgs e)
@@ -157,14 +166,14 @@ namespace Game
             Vector2 rayBegin = player.GetTransform().Position;
             Vector2 rayEnd = mousePos;
             tempLine.IsPortalable = true;
-            tempLine.Models.Clear();
-            tempLine.Models.Add(ModelFactory.CreateLineStrip(new Vector2[2] {
+            tempLine.RemoveAllModels();
+            tempLine.AddModel(ModelFactory.CreateLineStrip(new Vector2[2] {
                 rayBegin - player.GetTransform().Position, 
                 rayEnd - player.GetTransform().Position
                 }));
 
 
-            text2.Models.Clear();
+            text2.RemoveAllModels();
             //text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
             //text2.Models.Add(FontRenderer.GetModel(scene.PhysWorld.BodyList.Count.ToString()));
             int fixtureCount = WorldExt.GetFixtures(scene.World).Count;
