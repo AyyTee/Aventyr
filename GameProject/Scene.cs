@@ -136,6 +136,27 @@ namespace Game
             }
         }
 
+        public Scene DeepClone()
+        {
+            return DeepClone(new Scene());
+        }
+
+        public Scene DeepClone(Scene scene)
+        {
+            foreach (Entity p in EntityList)
+            {
+                p.DeepClone(scene);   
+            }
+            foreach (Portal p in PortalList)
+            {
+                if (p.GetType() == typeof(FloatPortal))
+                {
+                    p.DeepClone(scene);
+                }
+            }
+            return scene;
+        }
+
         public void Save()
         {
             FileStream physicsFile = File.Create("savePhys.xml");

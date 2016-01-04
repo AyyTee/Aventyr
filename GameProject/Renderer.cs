@@ -543,7 +543,7 @@ namespace Game
                 texture.SetFilepath(filename);
                 return texture;
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 return null;
             }

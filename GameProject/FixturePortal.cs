@@ -43,6 +43,11 @@ namespace Game
             throw new NotImplementedException();
         }
 
+        public override Placeable2D DeepClone(Scene scene)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Dispose()
         {
             base.Dispose();

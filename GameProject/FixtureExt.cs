@@ -38,6 +38,13 @@ namespace Game
             return fixture;
         }
 
+        public static void DeepCopy(Fixture source, Body body)
+        {
+            //Fixture clone = CreateFixture(body, source.Shape.Clone());
+            
+            //clone.UserData
+        }
+
         public static FixtureEdgeCoord[] GetFixtureCircleIntersections(World world, Vector2 point, float radius)
         {
             List<Fixture> potentials = new List<Fixture>();

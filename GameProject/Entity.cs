@@ -104,7 +104,12 @@ namespace Game
         
         public override Placeable2D DeepClone()
         {
-            Entity clone = new Entity(Scene);
+            return DeepClone(Scene);
+        }
+
+        public override Placeable2D DeepClone(Scene scene)
+        {
+            Entity clone = new Entity(scene);
             DeepClone(this, clone);
             return clone;
         }

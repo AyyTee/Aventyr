@@ -20,6 +20,21 @@ namespace Game
             return body;
         }
 
+        public static void DeepClone(Body source, World world)
+        {
+            Body body = CreateBody(world);
+            body.SetTransform(source.Position, source.Rotation);
+            body.FixedRotation = source.FixedRotation;
+            body.Friction = source.Friction;
+            body.AngularDamping = source.AngularDamping;
+            body.AngularVelocity = source.AngularVelocity;
+            body.LinearVelocity = source.LinearVelocity;
+            for (int i = 0; i < source.FixtureList.Count; i++)
+            {
+                //FixtureExt.CreateFixture(body, )
+            }
+        }
+
         /*public static Transform2D GetTransform(Body body)
         {
             var transform = new FarseerPhysics.Common.Transform();

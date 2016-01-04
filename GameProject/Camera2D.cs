@@ -39,6 +39,11 @@ namespace Game
             throw new NotImplementedException();
         }
 
+        public override Placeable2D DeepClone(Scene scene)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Create a view matrix for this Camera
         /// </summary>

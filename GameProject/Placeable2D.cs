@@ -37,6 +37,8 @@ namespace Game
 
         public abstract Placeable2D DeepClone();
 
+        public abstract Placeable2D DeepClone(Scene scene);
+
         public static void DeepClone(Placeable2D source, Placeable2D destination)
         {
             destination.Name = source.Name; 
@@ -78,6 +80,9 @@ namespace Game
         {
             _transform = transform.Copy();
         }
+
+        /*public abstract Transform2D GetTransform();
+        public abstract void SetTransform(Transform2D transform);*/
 
         public virtual void SetPosition(Vector2 position)
         {
