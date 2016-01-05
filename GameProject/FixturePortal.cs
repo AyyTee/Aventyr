@@ -69,11 +69,6 @@ namespace Game
             return transform;
         }
 
-        public override void SetTransform(Transform2D transform)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override bool _isValid()
         {
             return base._isValid() && Position != null;

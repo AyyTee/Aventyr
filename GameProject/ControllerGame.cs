@@ -49,34 +49,36 @@ namespace Game
             Entity back = new Entity(scene, new Vector2(0f, 0f));
             back.AddModel(background);
 
-            portal2 = new FloatPortal(scene);
-            Transform2D transform = portal2.GetTransform();
-            transform.Rotation = 0.1f;
-            transform.Position = new Vector2(2.1f, 2f);
-            transform.Scale = new Vector2(-1f, 1f);
-            portal2.SetTransform(transform);
 
             Entity portalEntity2 = new Entity(scene);
-            portalEntity2.SetParent(portal2);
             portalEntity2.AddModel(ModelFactory.CreatePlane());
             portalEntity2.ModelList[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity2.ModelList[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity2.AddModel(ModelFactory.CreatePlane());
             portalEntity2.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
+            Transform2D transform = portalEntity2.GetTransform();
+            transform.Rotation = 0.1f;
+            transform.Position = new Vector2(2.1f, 2f);
+            transform.Scale = new Vector2(-1f, 1f);
+            portalEntity2.SetTransform(transform);
 
-
-            portal3 = new FloatPortal(scene);
-            portal3.SetTransform(new Transform2D(new Vector2(-1f, 1), 0.4f));
+            portal2 = new FloatPortal(scene);
+            portal2.SetParent(portalEntity2);
 
             Portal.SetLinked(portal2, portal3);
             Entity portalEntity3 = new Entity(scene);
-            portalEntity3.SetParent(portal3);
             portalEntity3.AddModel(ModelFactory.CreatePlane());
             portalEntity3.ModelList[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity3.ModelList[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity3.AddModel(ModelFactory.CreatePlane());
             portalEntity3.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-            
+            portalEntity3.SetTransform(new Transform2D(new Vector2(-1f, 1), 0.4f));
+
+            portal3 = new FloatPortal(scene);
+            portal3.SetParent(portalEntity3);
+
+            Portal.SetLinked(portal2, portal3);
+
             #region player
             Entity player = new Entity(scene);
             player.Name = "player";
@@ -255,7 +257,7 @@ namespace Game
             transform.Position += new Vector2(v.X, v.Y);
             player.SetTransform(transform);
             player.PositionUpdate();
-            portal3.Velocity.Position = new Vector2(-(float)Math.Cos(TimeFixedStep / 5000000) / (float)160, (float)Math.Sin(TimeFixedStep / 5000000) / (float)160);
+            //portal3.Velocity.Position = new Vector2(-(float)Math.Cos(TimeFixedStep / 5000000) / (float)160, (float)Math.Sin(TimeFixedStep / 5000000) / (float)160);
             //portal2.Velocity.Rotation = -(float)(1 / (32 * Math.PI));
             foreach (Portal p in scene.PortalList)
             {

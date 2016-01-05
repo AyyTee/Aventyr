@@ -14,7 +14,7 @@ namespace Editor
 {
     public class ControllerEditor : Controller
     {
-        public Scene Level, Hud, LevelHud;
+        public Scene Level, Hud;
         bool _isPaused;
         public ControllerCamera CamControl { get; private set; }
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
@@ -97,7 +97,7 @@ namespace Editor
 
         public EditorEntity CreateLevelEntity()
         {
-            EditorEntity entity = new EditorEntity(this, Level, LevelHud);
+            EditorEntity entity = new EditorEntity(this, Level);
             Entities.Add(entity);
             
             if (EntityAdded != null)

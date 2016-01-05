@@ -13,7 +13,7 @@ namespace Editor
         public Entity Entity { get; private set; }
         public Entity Marker { get; private set; }
 
-        public EditorEntity(ControllerEditor controller, Scene scene, Scene overlay)
+        public EditorEntity(ControllerEditor controller, Scene scene)
             : base(controller)
         {
             Entity = new Entity(scene);

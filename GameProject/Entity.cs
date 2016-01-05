@@ -15,7 +15,7 @@ namespace Game
     /// An object that exists within the world space and can be drawn
     /// </summary>
     [Serializable]
-    public class Entity : SceneNode
+    public class Entity : SceneNodePlaceable
     {
         List<Model> _models = new List<Model>();
         public List<ClipModel> ClipModels = new List<ClipModel>();
@@ -126,6 +126,15 @@ namespace Game
             }
         }
 
+        public override void SetTransform(Transform2D transform)
+        {
+            base.SetTransform(transform);
+            if (Body != null)
+            {
+                BodyExt.SetTransform(Body, transform);
+            }
+        }
+
         public void AddModel(Model model)
         {
             _models.Add(model);
@@ -211,15 +220,6 @@ namespace Game
 
             BodyExt.SetTransform(body, GetTransform());
             BodyExt.SetUserData(body, this);
-        }
-
-        public override void SetTransform(Transform2D transform)
-        {
-            base.SetTransform(transform);
-            if (Body != null)
-            {
-                BodyExt.SetTransform(Body, transform);
-            }
         }
 
         public void SetVelocity(Transform2D transform)

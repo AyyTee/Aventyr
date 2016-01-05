@@ -1,0 +1,329 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Game.BodyExt" Collapsed="true">
+    <Position X="10" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgBAAAAAgIAAAAAABAAAAAQgAAE=</HashCode>
+      <FileName>BodyExt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.BodyUserData" Collapsed="true">
+    <Position X="11.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABgAAAAAAhAABAAAACAAAAAAIAABAAAQACAA=</HashCode>
+      <FileName>BodyUserData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Camera" Collapsed="true">
+    <Position X="13.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAQAAAIBggAMAAAAIACAQAACCAAAAAIEAAAIAAAQA=</HashCode>
+      <FileName>Camera.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Camera2D" Collapsed="true">
+    <Position X="7.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAABgAAMAAAAIQCAAAAKCAAAAAAEAAAIAAAQA=</HashCode>
+      <FileName>Camera2D.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.ClipperExt" Collapsed="true">
+    <Position X="15.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAgAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ClipperExt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Controller" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAATAAABAAAAFAAARIAAoAADIAgAACAABABACAAggwA=</HashCode>
+      <FileName>Controller.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.ControllerGame" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAgAAAAAAAAAQAAAwIACAAAAAOCLAAAAAAAAAIA=</HashCode>
+      <FileName>ControllerGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.EdgeData&lt;T&gt;" Collapsed="true">
+    <Position X="17" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAQAAAA=</HashCode>
+      <FileName>EdgeData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Entity" Collapsed="true">
+    <Position X="5.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAgQAkCAAAAAQAABABBgAQQIgAAAAIIBABAEQEAAA=</HashCode>
+      <FileName>Entity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.EntityFactory" Collapsed="true">
+    <Position X="18.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>EntityFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.FixtureEdgeCoord" Collapsed="true">
+    <Position X="10" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EIACAAQAACABAAACAgBAAAAAAQIAAAAAAABAAABEAAA=</HashCode>
+      <FileName>FixtureEdgeCoord.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.FixtureExt" Collapsed="true">
+    <Position X="11.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAgAAAAAAAAAAAAAAAAQAAAAgIAA=</HashCode>
+      <FileName>FixtureExt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.FixturePortal" Collapsed="true">
+    <Position X="3" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAEgAAAkgAABABAAAAIAAAEAACFAAAAIAAAA=</HashCode>
+      <FileName>FixturePortal.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Game.FixtureUserData" Collapsed="true">
+    <Position X="13.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MAQGIAAAAACFAAgAQAAAAQAAAAAgEGAABAAAAAQAAAA=</HashCode>
+      <FileName>FixtureUserData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.FloatPortal" Collapsed="true">
+    <Position X="0.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAIAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>FloatPortal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.FontRenderer" Collapsed="true">
+    <Position X="15.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAASAiAAAAAAAAAAAAAgAgAAggAAAAAAAACAAA=</HashCode>
+      <FileName>FontRenderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.InputExt" Collapsed="true">
+    <Position X="17" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACQGEAAMQAAIgAAAIAAAAACQERggEAQAAQAAAAAIACA=</HashCode>
+      <FileName>InputExt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Line" Collapsed="true">
+    <Position X="18.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQABAAABAAAgACAAAAARCAgIAAAAAsEACAAAIAIA=</HashCode>
+      <FileName>Line.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.MathExt" Collapsed="true">
+    <Position X="10" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAggAAAAkAAIAAAgkAAQECEgDEQEgIBAAA=</HashCode>
+      <FileName>MathExt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Matrix4Ext" Collapsed="true">
+    <Position X="11.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAgAAAAAAAAAAAASAAAAAAAAAAAAA=</HashCode>
+      <FileName>Matrix4Ext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Model" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAACkYAACAAAAABIQgQEAYAACAAgCQQFEogAAAAAAA=</HashCode>
+      <FileName>Model.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Game.ModelFactory" Collapsed="true">
+    <Position X="15.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACgAAAAAAAAAAAAABiQAAAAAAABAAAAIAAAAgCAAAA=</HashCode>
+      <FileName>ModelFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.ModelLoader" Collapsed="true">
+    <Position X="17" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAAAAAAAAAAQAABABAAAQAAAAAAiAAAA=</HashCode>
+      <FileName>ModelLoader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.PhysContactListener" Collapsed="true">
+    <Position X="18.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAEAAAAAAAAgAAAAAAAAAAAQAAAAQAAAAAACCA=</HashCode>
+      <FileName>PhysContactListener.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.PolygonFactory" Collapsed="true">
+    <Position X="10" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PolygonFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Portal" Collapsed="true">
+    <Position X="1.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAkAABAgAAAACgSBAACAgAEAEAAIEAAAAAAAAA=</HashCode>
+      <FileName>Portal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.PortalPlacer" Collapsed="true">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACBAAAAAAAAAAAgAAAAAgAEAAAAAAAAAAAAI=</HashCode>
+      <FileName>PortalPlacer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.PortalView" Collapsed="true">
+    <Position X="13.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAIAAAAEQAQAAAoAAAAAAIAAAAABAAA=</HashCode>
+      <FileName>PortalView.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Program" Collapsed="true">
+    <Position X="15.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Renderer" Collapsed="true">
+    <Position X="17" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAVAAAAAAgAABAAACAgBAAAAAwAAGAARACEkAEAAA=</HashCode>
+      <FileName>Renderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Scene" Collapsed="true">
+    <Position X="18.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAARAACCAAAAQAAAgAQIAAAAQEIAAAgAICQAA=</HashCode>
+      <FileName>Scene.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.SceneNode" Collapsed="true">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIASAAAAAAAAAAAAgABARAQAAIAAAAAAAEhAACAAAAA=</HashCode>
+      <FileName>SceneNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.SceneNodePlaceable" Collapsed="true">
+    <Position X="6.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAQBAAAAAAAAAAggAAAAAAgQAAAA=</HashCode>
+      <FileName>SceneNodePlaceable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.ShaderProgram" Collapsed="true">
+    <Position X="10" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYIAgCAAAAAAQCAAAAAACAQBAAgAAKMAAAAQCAAAAQ=</HashCode>
+      <FileName>ShaderProgram.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Texture" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="11.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABCAAQAACAAAAAAAAAAAAIAAAAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>Texture.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Game.Transform2D" Collapsed="true">
+    <Position X="13.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAECAAAAAAAICwAAIACAQAAgIgAQAAIABAwAAAACA=</HashCode>
+      <FileName>Transform2D.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Transform3D" Collapsed="true">
+    <Position X="15.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAAAIAwAAIACAAAAAAgAAAAoABAgAABACA=</HashCode>
+      <FileName>Transform3D.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Vector2Ext" Collapsed="true">
+    <Position X="17" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAQAAAAAACAIAACAAAAAAAA=</HashCode>
+      <FileName>Vector2Ext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Vector3Ext" Collapsed="true">
+    <Position X="18.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAAAQAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Vector3Ext.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Vertex" Collapsed="true">
+    <Position X="10" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAgAAAAAAAAAAAIAAAAAABAgAAAAAA=</HashCode>
+      <FileName>Vertex.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.Window" Collapsed="true">
+    <Position X="11.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAABAAIAAAEIQAAAgAACAIAAACAAAAAAAAAAAAA=</HashCode>
+      <FileName>Window.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.WorldExt" Collapsed="true">
+    <Position X="13.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>WorldExt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Game.IntersectPoint" Collapsed="true">
+    <Position X="10" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAggAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>MathExt.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="Game.PolyCoord" Collapsed="true">
+    <Position X="11.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAQAAAAABAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PolyCoord.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="Game.IVertices" Collapsed="true">
+    <Position X="10" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>IVertices.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Game.IVertices2D" Collapsed="true">
+    <Position X="11.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>IVertices2D.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

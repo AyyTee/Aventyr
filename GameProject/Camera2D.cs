@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public class Camera2D : SceneNode
+    public class Camera2D : SceneNodePlaceable
     {
         public float Aspect = 1;
         public float Scale = 1;

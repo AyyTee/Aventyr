@@ -15,7 +15,6 @@ namespace Game
         List<SceneNode> _children = new List<SceneNode>();
         public List<SceneNode> ChildList { get { return new List<SceneNode>(_children); } }
         public SceneNode Parent { get; private set; }
-        Transform2D _transform = new Transform2D();
 
         public Scene Scene { get; private set; }
 
@@ -85,26 +84,7 @@ namespace Game
 
         public virtual Transform2D GetTransform()
         {
-            return _transform.Copy();
-        }
-
-        public virtual void SetTransform(Transform2D transform)
-        {
-            _transform = transform.Copy();
-        }
-
-        public virtual void SetPosition(Vector2 position)
-        {
-            Transform2D transform = GetTransform();
-            transform.Position = position;
-            SetTransform(transform);
-        }
-
-        public virtual void SetRotation(float rotation)
-        {
-            Transform2D transform = GetTransform();
-            transform.Rotation = rotation;
-            SetTransform(transform);
+            return new Transform2D();
         }
 
         public virtual Transform2D GetWorldTransform()

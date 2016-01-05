@@ -41,21 +41,9 @@ namespace Editor
 
         public override void SetTransform(Transform2D transform)
         {
-            if (Portal.GetType() == typeof(FloatPortal))
-            {
-                base.SetTransform(transform);
-                FloatPortal portal = (FloatPortal)Portal;
-                portal.SetTransform(transform);
-            }
         }
         public override void SetPosition(Vector2 position)
         {
-            if (Portal.GetType() == typeof(FloatPortal))
-            {
-                base.SetPosition(position);
-                FloatPortal portal = (FloatPortal)Portal;
-                portal.SetPosition(position);
-            }
         }
 
         public override Transform2D GetTransform()

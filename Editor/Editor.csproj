@@ -99,6 +99,7 @@
     <Compile Include="EditorEntity.cs" />
     <Compile Include="EditorObject.cs" />
     <Compile Include="EditorPortal.cs" />
+    <Compile Include="IEditorObject.cs" />
     <Compile Include="RollingAverage.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="ToolAddEntity.cs" />

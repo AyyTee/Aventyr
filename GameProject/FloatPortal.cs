@@ -9,14 +9,9 @@ namespace Game
 {
     public class FloatPortal : Portal
     {
-        //public Transform2D Transform { get; private set; }
-        public Transform2D Velocity { get; private set; }
         public FloatPortal(Scene scene, Vector2 position)
             : base(scene)
         {
-            SetTransform(new Transform2D(position));
-            Velocity = new Transform2D();
-            Velocity.UniformScale = true;
         }
 
         public FloatPortal(Scene scene)
@@ -39,23 +34,11 @@ namespace Game
         protected static void DeepClone(FloatPortal source, FloatPortal destination)
         {
             SceneNode.DeepClone(source, destination);
-            destination.SetTransform(source.GetTransform());
-            destination.Velocity = source.Velocity;
-        }
-
-        public override void Step()
-        {
-            base.Step();
-            Transform2D transform = GetTransform();
-            transform.Position += Velocity.Position;
-            transform.Rotation += Velocity.Rotation;
-            transform.Scale *= Velocity.Scale;
-            SetTransform(transform);
         }
 
         public override Transform2D GetVelocity()
         {
-            return Velocity;
+            return new Transform2D();
         }
     }
 }

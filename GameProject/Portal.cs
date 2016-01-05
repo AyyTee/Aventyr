@@ -11,12 +11,11 @@ namespace Game
 {
     public abstract class Portal : SceneNode
     {
-        //public Scene Scene { get; private set; }
         public Portal Linked { get; private set; }
         /// <summary>
         /// The local size of the portal.
         /// </summary>
-        public float Size { get { return GetTransform().Scale.X; } }
+        public float Size { get; private set; }
         /// <summary>
         /// True if entities can travel through this portal.  Does not affect portal clipping.
         /// </summary>
@@ -39,6 +38,7 @@ namespace Game
             {
                 throw new NullReferenceException("Scene cannot be a null reference.");
             }
+            Size = 1f;
             OneSided = false;//true;
         }
 
@@ -70,7 +70,6 @@ namespace Game
         /// <summary>
         /// Converts a Transform2D from one portal's coordinate space to the portal it is linked with.  If it isn't linked then the Transform2D is unchanged
         /// </summary>
-        /// <param name="position"></param>
         public void Enter(Transform2D position)
         {
             Debug.Assert(IsValid());
