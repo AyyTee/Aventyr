@@ -22,7 +22,11 @@ namespace Editor
         public override void Update()
         {
             base.Update();
-            if (_input.MousePress(MouseButton.Left))
+            if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape) || _input.MousePress(MouseButton.Right))
+            {
+                Controller.SetTool(null);
+            }
+            else if (_input.MousePress(MouseButton.Left))
             {
                 EditorPortal portal = (EditorPortal)Controller.GetNearestObject(Controller.GetMouseWorldPosition(), 
                     item => item.GetType() == typeof(EditorPortal));

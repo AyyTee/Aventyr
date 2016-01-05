@@ -47,7 +47,7 @@ namespace Game
             destination.RemoveChildren();
             foreach (SceneNode p in source.ChildList)
             {
-                destination._children.Add(p.DeepClone());
+                p.DeepClone().SetParent(destination);
             }
         }
 

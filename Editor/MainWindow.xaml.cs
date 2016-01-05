@@ -35,7 +35,7 @@ namespace Editor
         public void GLControl_Load(object sender, EventArgs e)
         {
             ControllerEditor = new ControllerEditor(glControl.ClientSize, new InputExt(glControl));
-            ControllerEditor.EntitySelected += ControllerEditor_EntitySelected;
+            //ControllerEditor.EntitySelected += ControllerEditor_EntitySelected;
             ControllerEditor.ScenePlayed += ControllerEditor_ScenePlayed;
             ControllerEditor.ScenePaused += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopped += ControllerEditor_ScenePaused;
@@ -59,7 +59,7 @@ namespace Editor
         {
             this.Dispatcher.Invoke((Action)(() =>
             {
-                UpdateTransformLabels(controller.GetSelectedEntity());
+                UpdateTransformLabels(controller.selection.GetFirst());
             }));
         }
 
@@ -78,13 +78,13 @@ namespace Editor
             MouseWorldCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
         }
 
-        private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, EditorObject entity)
+        /*private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, EditorObject entity)
         {
             this.Dispatcher.Invoke((Action)(() =>
             {
-                UpdateTransformLabels(controller.GetSelectedEntity());
+                UpdateTransformLabels(controller.GetSelectedObject());
             }));
-        }
+        }*/
 
         private void UpdateTransformLabels(EditorObject entity)
         {

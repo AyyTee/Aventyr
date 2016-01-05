@@ -19,7 +19,6 @@ namespace Editor
         public ControllerCamera CamControl { get; private set; }
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
         public event EditorObjectHandler EntityAdded;
-        public event EditorObjectHandler EntitySelected;
         public delegate void SceneEventHandler(ControllerEditor controller, Scene scene);
         public event SceneEventHandler ScenePaused;
         public event SceneEventHandler ScenePlayed;
@@ -29,15 +28,13 @@ namespace Editor
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
         public event ToolEventHandler ToolChanged;
         bool _editorObjectModified;
-        EditorObject _selectedEntity;
-        List<EditorObject> _selectedList;
-        public List<EditorObject> SelectedList { get { return new List<EditorObject>(_selectedList); } }
         Tool _activeTool;
         Tool _toolDefault;
         Tool _nextTool;
         List<EditorEntity> Entities = new List<EditorEntity>();
         List<EditorPortal> Portals = new List<EditorPortal>();
         Queue<Action> Actions = new Queue<Action>();
+        public Selection selection { get; private set; }
 
         public ControllerEditor(Size canvasSize, InputExt input)
             : base(canvasSize, input)
@@ -47,6 +44,7 @@ namespace Editor
         public override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            selection = new Selection();
             Level = new Scene();
             Level.SetActiveCamera(new Camera2D(Level, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height));
             renderer.AddScene(Level);
@@ -123,9 +121,9 @@ namespace Editor
                 Portals.Remove(portal);
                 portal.Remove();
             }
-            if (GetSelectedEntity() == editorObject)
+            if (selection.GetFirst() == editorObject)
             {
-                SetSelectedEntity(null);
+                selection.Set(null);
             }
         }
 
@@ -225,23 +223,6 @@ namespace Editor
                 }
             }
             return null;
-        }
-
-        public void SetSelectedEntity(EditorObject selected)
-        {
-            _selectedEntity = selected;
-            if (EntitySelected != null)
-                EntitySelected(this, selected);
-        }
-
-        /*public void AddSelectedEntity(EditorObject selected)
-        {
-
-        }*/
-
-        public EditorObject GetSelectedEntity()
-        {
-            return _selectedEntity;
         }
 
         public void ScenePlay()

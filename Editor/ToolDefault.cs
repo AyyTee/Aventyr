@@ -50,9 +50,13 @@ namespace Editor
         public override void Update()
         {
             base.Update();
-            EditorObject selected = Controller.GetSelectedEntity();
+            EditorObject selected = Controller.selection.GetFirst();
             if (_dragState == DragState.Neither)
             {
+                if (_input.KeyDown(InputExt.KeyBoth.Control) && _input.KeyPress(Key.P))
+                {
+                    
+                }
                 if (_input.MousePress(MouseButton.Right))
                 {
                     Vector2 mousePos = Controller.GetMouseWorldPosition();
@@ -61,11 +65,11 @@ namespace Editor
                     {
                         nearest = null;
                     }
-                    Controller.SetSelectedEntity(nearest);
-                    if (Controller.GetSelectedEntity() != null)
+                    Controller.selection.Set(nearest);
+                    if (Controller.selection.GetFirst() != null)
                     {
                         Transform2D transform = translation.GetTransform();
-                        transform.Position = Controller.GetSelectedEntity().GetWorldTransform().Position;
+                        transform.Position = Controller.selection.GetFirst().GetWorldTransform().Position;
                         translation.SetTransform(transform);
                         translation.Visible = true;
                     }
@@ -87,11 +91,11 @@ namespace Editor
                     }
                     else if (_input.KeyPress(Key.G))
                     {
-                        DragBegin(Controller.GetSelectedEntity(), true, Mode.Position);
+                        DragBegin(Controller.selection.GetFirst(), true, Mode.Position);
                     }
                     else if (_input.KeyPress(Key.R))
                     {
-                        DragBegin(Controller.GetSelectedEntity(), true, Mode.Rotate);
+                        DragBegin(Controller.selection.GetFirst(), true, Mode.Rotate);
                     }
                 }
             }

@@ -36,8 +36,8 @@ namespace Editor
                 EntityFactory.CreateEntityBox(entity.Entity, Controller.GetMouseWorldPosition());
                 entity.Entity.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
                 entity.Entity.IsPortalable = true;
-                
-                Controller.SetSelectedEntity(entity);
+
+                Controller.selection.Set(entity);
 
                 if (!_input.KeyDown(InputExt.KeyBoth.Shift))
                 {
