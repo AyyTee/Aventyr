@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public class Camera2D : Placeable2D
+    public class Camera2D : SceneNode
     {
         public float Aspect = 1;
         public float Scale = 1;
@@ -19,12 +19,13 @@ namespace Game
         public float ZFar { get; set; }
 
         #region constructors
-        public Camera2D(Vector2 position, float scale, float aspectRatio)
-            : this(new Transform2D(position), scale, aspectRatio)
+        public Camera2D(Scene scene, Vector2 position, float scale, float aspectRatio)
+            : this(scene, new Transform2D(position), scale, aspectRatio)
         {
         }
 
-        public Camera2D(Transform2D transform, float scale, float aspectRatio)
+        public Camera2D(Scene scene, Transform2D transform, float scale, float aspectRatio)
+            : base(scene)
         {
             SetTransform(transform);
             Aspect = aspectRatio;
@@ -34,12 +35,12 @@ namespace Game
         }
         #endregion
 
-        public override Placeable2D DeepClone()
+        public override SceneNode DeepClone()
         {
             throw new NotImplementedException();
         }
 
-        public override Placeable2D DeepClone(Scene scene)
+        public override SceneNode DeepClone(Scene scene)
         {
             throw new NotImplementedException();
         }

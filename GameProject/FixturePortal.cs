@@ -38,20 +38,14 @@ namespace Game
             }
         }
 
-        public override Placeable2D DeepClone()
+        public override SceneNode DeepClone()
         {
             throw new NotImplementedException();
         }
 
-        public override Placeable2D DeepClone(Scene scene)
+        public override SceneNode DeepClone(Scene scene)
         {
             throw new NotImplementedException();
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
-            Remove();
         }
 
         /// <summary>
@@ -97,7 +91,13 @@ namespace Game
             return transform;
         }
 
-        private void Remove()
+        public override void Remove()
+        {
+            RemoveFixture();
+            base.Remove();
+        }
+
+        private void RemoveFixture()
         {
             if (Position != null)
             {
@@ -107,7 +107,7 @@ namespace Game
 
         public void SetFixtureParent(FixtureEdgeCoord position)
         {
-            Remove();
+            RemoveFixture();
             Position = position;
             Debug.Assert(position.Entity != null);
             Debug.Assert(position.Fixture != null);

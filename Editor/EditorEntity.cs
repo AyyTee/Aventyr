@@ -17,8 +17,9 @@ namespace Editor
             : base(controller)
         {
             Entity = new Entity(scene);
-            Marker = new Entity(overlay);
+            Marker = new Entity(scene);
             Marker.SetParent(Entity);
+            Marker.DrawOverPortals = true;
             Model circle = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
             circle.SetColor(new Vector3(1f, 0.5f, 0f));
             Marker.AddModel(circle);
@@ -32,8 +33,8 @@ namespace Editor
 
         public void Remove()
         {
-            Entity.Scene.RemoveEntity(Entity);
-            Marker.Scene.RemoveEntity(Marker);
+            Entity.Remove();
+            Marker.Remove();
         }
 
         public override void SetTransform(Transform2D transform)

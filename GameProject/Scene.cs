@@ -22,20 +22,20 @@ namespace Game
         /// <summary>
         /// Number of unique ids that have been used for objects in the scene
         /// </summary>
-        public int IdCount { get; private set; }
+        int _idCount = 0;
         [NonSerialized]
         private PhysContactListener _contactListener;
 
-        public Camera2D ActiveCamera { get; set; }
-        public List<Portal> PortalList { get; private set; }
-        public List<Entity> EntityList { get; private set; }
+        public Camera2D ActiveCamera { get; private set; }
+        public List<SceneNode> SceneNodeList { get { return GetNodes<SceneNode>(Root); } }
+        public List<Portal> PortalList { get { return GetNodes<Portal>(Root); } }
+        public List<Entity> EntityList { get { return GetNodes<Entity>(Root); } }
+        public SceneNode Root { get; private set; }
 
         #region constructors
         public Scene()
         {
-            IdCount = 0;
-            PortalList = new List<Portal>();
-            EntityList = new List<Entity>();
+            Root = new SceneNode(this);
             SetPhysicsWorld(new World(new Xna.Vector2(0f, 0f)));
         }
         #endregion
@@ -72,49 +72,39 @@ namespace Game
             }
         }
 
-        public void AddEntity(Entity entity)
+        private List<T> GetNodes<T>(SceneNode node) where T : SceneNode
         {
-            Debug.Assert(!EntityList.Exists(item => item.Equals(entity)), "This entity has already been added to this scene.");
-            EntityList.Add(entity);
-            IdCount++;
-        }
-
-        public Entity GetEntityById(int id)
-        {
-            return EntityList.Find(item => item.Id == id);
-        }
-
-        public Entity GetEntityByName(string name)
-        {
-            return EntityList.Find(item => (item.Name == name));
-        }
-
-        /// <summary>
-        /// Remove entity and the entity's linked physics body from the scene.
-        /// </summary>
-        /// <param name="entity">Entity to remove.</param>
-        /// <returns>If the entity existed within the scene.</returns>
-        public bool RemoveEntity(Entity entity)
-        {
-            if (EntityList.Remove(entity))
+            List<T> list = new List<T>();
+            foreach (SceneNode p in node.ChildList)
             {
-                if (entity.Body != null)
+                T nodeCast = p as T;
+                if (nodeCast != null)
                 {
-                    World.RemoveBody(entity.Body);
+                    list.Add(nodeCast);
                 }
-                //Entity.IDMap.Remove(entity.ID);
-                return true;
+                list.AddRange(GetNodes<T>(p));
             }
-            return false;
+            return list;
+        }
+
+        public SceneNode FindByName(string name)
+        {
+            return SceneNodeList.Find(item => (item.Name == name));
         }
 
         /// <summary>
-        /// Remove portal from the scene.
+        /// Get a unique SceneNode id.
         /// </summary>
-        public bool RemovePortal(Portal portal)
+        public int GetId()
         {
-            portal.Dispose();
-            return PortalList.Remove(portal);
+            _idCount++;
+            return _idCount - 1;
+        }
+
+        public void SetActiveCamera(Camera2D camera)
+        {
+            Debug.Assert(camera.Scene == this);
+            ActiveCamera = camera;
         }
 
         /// <summary>
@@ -141,23 +131,18 @@ namespace Game
             return DeepClone(new Scene());
         }
 
+        /// <summary>
+        /// Clones everything into a new scene.
+        /// </summary>
+        /// <param name="scene">Scene to clone into.</param>
+        /// <returns></returns>
         public Scene DeepClone(Scene scene)
         {
-            foreach (Entity p in EntityList)
-            {
-                p.DeepClone(scene);   
-            }
-            foreach (Portal p in PortalList)
-            {
-                if (p.GetType() == typeof(FloatPortal))
-                {
-                    p.DeepClone(scene);
-                }
-            }
+            Root.DeepClone(scene);
             return scene;
         }
 
-        public void Save()
+        /*public void Save()
         {
             FileStream physicsFile = File.Create("savePhys.xml");
             FileStream sceneFile = File.Create("save.xml");
@@ -197,7 +182,7 @@ namespace Game
             scene.SetPhysicsWorld(physWorld);
 
             return scene;
-        }
+        }*/
 
         private static DataContractSerializer GetSceneSerializer()
         {

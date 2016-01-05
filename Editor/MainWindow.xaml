@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:WF="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     xmlns:GL="clr-namespace:WPFControls;assembly=WPFControls"
-    Title="Avenyr Edityr" Height="250" Width="900" Icon="favicon.ico">
+    Title="Aventyr Edityr" Height="250" Width="900" Icon="favicon.ico">
     <Grid Name="MainGrid" KeyDown="MainGrid_KeyDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="22" />
@@ -74,9 +74,6 @@
             <Slider Margin="6,0,6,0" Width="100" IsSnapToTickEnabled="True" TickFrequency="0.2" Minimum="0" Maximum="2" />
             <Label Width="30" Content="x2" Padding="5,1" FontSize="14" FontWeight="Bold"/>
             <Separator VerticalAlignment="Stretch" Margin="0,0,5,0"/>
-            <ToggleButton Name="toolGridSnap" Height="22" Click="Button_Stop">
-                <Image Source="/editor assets/icons/grid-snap.png" />
-            </ToggleButton>
             <ToggleButton Name="toolPortalsVisible" Height="22" Click="toolPortalsVisible_Click">
                 <Image Source="/editor assets/icons/eye.png" />
             </ToggleButton>

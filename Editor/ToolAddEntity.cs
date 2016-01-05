@@ -58,7 +58,7 @@ namespace Editor
         public override void Disable()
         {
             base.Disable();
-            Controller.Level.RemoveEntity(_mouseFollow);
+            _mouseFollow.Remove();
         }
 
         public override Tool Clone()

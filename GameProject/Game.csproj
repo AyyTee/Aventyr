@@ -105,9 +105,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Clipper.6.2.10\lib\net40\clipper_library.dll</HintPath>
     </Reference>
-    <Reference Include="FarseerPhysics, Version=3.5.0.38023, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="FarseerPhysics, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FarseerPhysics.3.5.0\lib\NET40\FarseerPhysics.dll</HintPath>
+      <HintPath>..\packages\Farseer-Physics.3.5.0.1\lib\net35\FarseerPhysics.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.JScript" />
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
@@ -157,7 +157,7 @@
     <Compile Include="BodyExt.cs" />
     <Compile Include="ModelFactory.cs" />
     <Compile Include="PhysContactListener.cs" />
-    <Compile Include="Placeable2D.cs" />
+    <Compile Include="SceneNode.cs" />
     <Compile Include="PolyCoord.cs" />
     <Compile Include="PolygonFactory.cs" />
     <Compile Include="Portal.cs" />

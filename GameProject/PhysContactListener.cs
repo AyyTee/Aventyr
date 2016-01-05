@@ -77,7 +77,10 @@ namespace Game
                 Scene.World.RemoveBody(b);
             }*/
 
-            Scene.RemoveEntity(DebugEntity);
+            if (DebugEntity != null)
+            {
+                DebugEntity.Remove();
+            }
             DebugEntity = new Entity(Scene);
         }
 

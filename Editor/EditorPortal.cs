@@ -35,8 +35,8 @@ namespace Editor
 
         public void Remove()
         {
-            Portal.Scene.RemovePortal(Portal);
-            Marker.Scene.RemoveEntity(Marker);
+            Portal.Remove();
+            Marker.Remove();
         }
 
         public override void SetTransform(Transform2D transform)

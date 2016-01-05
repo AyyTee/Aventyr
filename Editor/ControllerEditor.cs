@@ -30,6 +30,8 @@ namespace Editor
         public event ToolEventHandler ToolChanged;
         bool _editorObjectModified;
         EditorObject _selectedEntity;
+        List<EditorObject> _selectedList;
+        public List<EditorObject> SelectedList { get { return new List<EditorObject>(_selectedList); } }
         Tool _activeTool;
         Tool _toolDefault;
         Tool _nextTool;
@@ -46,13 +48,10 @@ namespace Editor
         {
             base.OnLoad(e);
             Level = new Scene();
-            Level.ActiveCamera = new Camera2D(new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            Level.SetActiveCamera(new Camera2D(Level, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height));
             renderer.AddScene(Level);
-            LevelHud = new Scene();
-            LevelHud.ActiveCamera = Level.ActiveCamera;
-            renderer.AddScene(LevelHud);
             Hud = new Scene();
-            Hud.ActiveCamera = new Camera2D(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width, CanvasSize.Width / (float)CanvasSize.Height);
+            Hud.SetActiveCamera(new Camera2D(Hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width, CanvasSize.Width / (float)CanvasSize.Height));
             renderer.AddScene(Hud);
             #region create background
             Model background = ModelFactory.CreatePlane();
@@ -68,10 +67,11 @@ namespace Editor
             #endregion
             CamControl = new ControllerCamera(this, Level.ActiveCamera, InputExt);
 
-            Entity viewCenter = new Entity(LevelHud);
+            Entity viewCenter = new Entity(Level);
             viewCenter.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.1f, 10));
+            viewCenter.DrawOverPortals = true;
             viewCenter.ModelList[0].SetColor(new Vector3(1, 0.9f, 0.2f));
-            viewCenter.SetParent(CamControl.Camera);
+            viewCenter.SetParent(Level.ActiveCamera);
             /*debugText = new Entity(Hud);
             debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
             */
@@ -233,6 +233,11 @@ namespace Editor
             if (EntitySelected != null)
                 EntitySelected(this, selected);
         }
+
+        /*public void AddSelectedEntity(EditorObject selected)
+        {
+
+        }*/
 
         public EditorObject GetSelectedEntity()
         {

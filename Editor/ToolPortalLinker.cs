@@ -84,7 +84,7 @@ namespace Editor
         public override void Disable()
         {
             base.Disable();
-            Controller.Level.RemoveEntity(line);
+            line.Remove();
         }
 
         public override Tool Clone()

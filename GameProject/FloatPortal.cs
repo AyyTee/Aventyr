@@ -24,21 +24,21 @@ namespace Game
         {
         }
 
-        public override Placeable2D DeepClone()
+        public override SceneNode DeepClone()
         {
             return DeepClone(Scene);
         }
 
-        public override Placeable2D DeepClone(Scene scene)
+        public override SceneNode DeepClone(Scene scene)
         {
             FloatPortal clone = new FloatPortal(scene);
             DeepClone(this, clone);
             return clone;
         }
 
-        public static void DeepClone(FloatPortal source, FloatPortal destination)
+        protected static void DeepClone(FloatPortal source, FloatPortal destination)
         {
-            Placeable2D.DeepClone(source, destination);
+            SceneNode.DeepClone(source, destination);
             destination.SetTransform(source.GetTransform());
             destination.Velocity = source.Velocity;
         }

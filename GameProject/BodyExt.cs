@@ -68,11 +68,15 @@ namespace Game
             body.SetTransform(Vector2Ext.ConvertToXna(transform.Position), transform.Rotation);
         }
 
-        public static Body Clone(Body body)
+        public static Body DeepClone(Body body, Entity entity)
         {
-            Body bodyClone = body.DeepClone();
+            Body bodyClone = body.DeepClone(entity.Scene.World);
+            SetUserData(bodyClone, entity);
 
-            BodyUserData clone = new BodyUserData();
+            /*clone.PreviousPosition = BodyExt.GetUserData(body).PreviousPosition;
+            clone.PortalCollisions
+            clone.BodyChildren
+            clone.BodyParent*/
             return bodyClone;
         }
 
@@ -124,7 +128,7 @@ namespace Game
             foreach (Fixture f in body.FixtureList)
             {
                 Shape mirrorShape = null;
-                switch (f.ShapeType)
+                switch (f.Shape.ShapeType)
                 {
                     case ShapeType.Polygon:
                         break;

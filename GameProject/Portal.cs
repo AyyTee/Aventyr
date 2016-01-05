@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public abstract class Portal : Placeable2D
+    public abstract class Portal : SceneNode
     {
         //public Scene Scene { get; private set; }
         public Portal Linked { get; private set; }
@@ -40,12 +40,12 @@ namespace Game
                 throw new NullReferenceException("Scene cannot be a null reference.");
             }
             OneSided = false;//true;
-            Scene.PortalList.Add(this);
         }
 
-        public virtual void Dispose()
+        public override void Remove()
         {
             SetLinked(null);
+            base.Remove();
         }
 
         public virtual void Step()

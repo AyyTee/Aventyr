@@ -24,7 +24,6 @@ namespace Game
         public ControllerGame(Window window)
             :base(window)
         {
-
         }
 
         public override void OnLoad(EventArgs e)
@@ -39,7 +38,7 @@ namespace Game
 
             scene = new Scene();
             hud = new Scene();
-            Camera2D hudCam = new Camera2D(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
+            Camera2D hudCam = new Camera2D(hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
 
             Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];
@@ -135,10 +134,10 @@ namespace Game
             text2 = new Entity(hud);
             text2.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
             
-            Camera2D cam = new Camera2D(player.GetTransform().Position, 10, CanvasSize.Width / (float)CanvasSize.Height);
+            Camera2D cam = new Camera2D(scene, player.GetTransform().Position, 10, CanvasSize.Width / (float)CanvasSize.Height);
 
-            scene.ActiveCamera = cam;
-            hud.ActiveCamera = hudCam;
+            scene.SetActiveCamera(cam);
+            hud.SetActiveCamera(hudCam);
             renderer.AddScene(scene);
             renderer.AddScene(hud);
         }
@@ -154,11 +153,10 @@ namespace Game
         public override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-            Entity player = scene.GetEntityByName("player");
-            Entity tempLine = scene.GetEntityByName("tempLine");
-            Entity ground = scene.GetEntityByName("ground");
+            Entity player = scene.FindByName("player") as Entity;
+            Entity tempLine = scene.FindByName("tempLine") as Entity;
+            Entity ground = scene.FindByName("ground") as Entity;
             ground.Velocity.Position = new Vector2((float)Math.Sin(TimeFixedStep), 0);
-            //tempLine.Transform.Position = player.Transform.Position;
             tempLine.SetTransform(new Transform2D(player.GetTransform().Position));
 
             Vector2 mousePos = scene.ActiveCamera.ScreenToWorld(InputExt.MousePos);
@@ -198,17 +196,6 @@ namespace Game
             {
                 EntityFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(2.4f, 0.4f)));
             }
-
-            /*if (InputExt.KeyPress(Key.X))
-            {
-                scene.Save();
-            }
-            if (InputExt.KeyPress(Key.C))
-            {
-                renderer._scenes.Remove(scene);
-                scene = Scene.Load();
-                renderer._scenes.Insert(0, scene);
-            }*/
             if (InputExt.KeyPress(Key.M))
             {
                 SingleStepMode = !SingleStepMode;
@@ -302,12 +289,8 @@ namespace Game
             {
                 scene.Step();
             }
-            //Transform transformNew = player.GetWorldTransform().Get3D();
             cam = scene.ActiveCamera;
             cam.SetTransform(player.GetWorldTransform());
-            /*cam.Transform.Position = transformNew.Position;
-            cam.Transform.Rotation = transformNew.Rotation;
-            cam.Transform.Scale = transformNew.Scale;*/
             cam.Viewpoint = player.GetWorldTransform().Position;
         }
 

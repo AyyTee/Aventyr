@@ -35,7 +35,7 @@ namespace Game
             get { return _edgeIndex; }
             set
             {
-                switch (Fixture.ShapeType)
+                switch (Fixture.Shape.ShapeType)
                 {
                     case ShapeType.Polygon:
                         PolygonShape shape = (PolygonShape)Fixture.Shape;
@@ -108,7 +108,7 @@ namespace Game
 
         public Vector2 GetPosition()
         {
-            switch (Fixture.ShapeType)
+            switch (Fixture.Shape.ShapeType)
             {
                 case ShapeType.Polygon:
                     Line line = GetEdge();

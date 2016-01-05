@@ -38,13 +38,6 @@ namespace Game
             return fixture;
         }
 
-        public static void DeepCopy(Fixture source, Body body)
-        {
-            //Fixture clone = CreateFixture(body, source.Shape.Clone());
-            
-            //clone.UserData
-        }
-
         public static FixtureEdgeCoord[] GetFixtureCircleIntersections(World world, Vector2 point, float radius)
         {
             List<Fixture> potentials = new List<Fixture>();
@@ -59,7 +52,7 @@ namespace Game
             foreach (Fixture f in potentials)
             {
                 Xna.Vector2 relativePoint = f.Body.GetLocalPoint(new Xna.Vector2(point.X, point.Y));
-                switch (f.ShapeType)
+                switch (f.Shape.ShapeType)
                 {
                     case ShapeType.Polygon:
                         PolygonShape polygon = (PolygonShape)f.Shape;
@@ -104,7 +97,7 @@ namespace Game
                 Vector2 localPoint = Vector2Ext.ConvertTo(f.Body.GetLocalPoint(new Xna.Vector2(point.X, point.Y)));
                 //Vector2 localPoint2 = Vector2Ext.Transform(point, FixtureExt.GetUserData(f).Entity.Transform.GetWorldMatrix().Inverted());
                 //Debug.Assert(localPoint == localPoint2);
-                switch (f.ShapeType)
+                switch (f.Shape.ShapeType)
                 {
                     case ShapeType.Polygon:
                         PolygonShape polygon = (PolygonShape)f.Shape;

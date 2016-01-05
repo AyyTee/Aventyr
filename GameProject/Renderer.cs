@@ -15,7 +15,6 @@ namespace Game
 {
     public class Renderer
     {
-        int sceneZDepth = 20;
         List<Scene> _scenes = new List<Scene>();
         Controller _controller;
         bool temp = true;
@@ -150,7 +149,6 @@ namespace Game
                     }
                 }
                 
-                Matrix4 viewMatrixNew = Matrix4.CreateTranslation(new Vector3(0, 0, sceneZDepth)) * viewMatrix;
                 Vector2[] fov = Vector2Ext.Transform(p.GetFov(viewPos, 500, 3), portalMatrix);
                 List<IntPoint> pathFov = ClipperExt.ConvertToIntPoint(fov);
 
@@ -204,7 +202,7 @@ namespace Game
                 }
 
                 Vector2 viewPosNew = Vector2Ext.Transform(viewPos, FixturePortal.GetPortalMatrix(p, p.Linked));
-                viewMatrixNew = FixturePortal.GetPortalMatrix(p.Linked, p) * viewMatrixNew;
+                Matrix4 viewMatrixNew = FixturePortal.GetPortalMatrix(p.Linked, p) * viewMatrix;
 
                 Line[] lines = p.GetFovLines(viewPos, 500);
                 lines[0].Transform(portalMatrix);
@@ -229,17 +227,19 @@ namespace Game
             }
             PortalView portalView = CalculatePortalViews(scene, scene.PortalList.ToArray(), cam.GetViewMatrix(), cam.Viewpoint, depth);
             List<PortalView>portalViewList = portalView.GetPortalViewList();
-            GL.Enable(EnableCap.StencilTest);
-            int stencilMax = 1 << GL.GetInteger(GetPName.StencilBits);
+            
+            int stencilValueMax = 1 << GL.GetInteger(GetPName.StencilBits);
+            int stencilMask = stencilValueMax - 1;
             GL.ColorMask(false, false, false, false);
             GL.DepthMask(false);
             GL.Disable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.StencilTest);
             
             GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
-            for (int i = 1; i < Math.Min(portalViewList.Count, stencilMax); i++)
-            //for (int i = Math.Min(portalViewList.Count, stencilMax) - 1; i >= 0; i--)
+            //Draw portal FOVs to the stencil buffer.
+            for (int i = 1; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
             {
-                GL.StencilFunc(StencilFunction.Always, i, 0xFF);
+                GL.StencilFunc(StencilFunction.Always, i, stencilMask);
                 for (int j = 0; j < portalViewList[i].Path.Count; j++)
                 {
                     Vector2[] a = ClipperExt.ConvertToVector2(portalViewList[i].Path[j]);
@@ -251,22 +251,21 @@ namespace Game
             GL.DepthMask(true);
             GL.Enable(EnableCap.DepthTest);
             GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
-            for (int i = 0; i < Math.Min(portalViewList.Count, stencilMax); i++)
+            for (int i = 0; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
             {
-                Matrix4 mat = Matrix4.CreateTranslation(new Vector3(0, 0, i * 100)) * portalViewList[i].ViewMatrix;
-                GL.StencilFunc(StencilFunction.Equal, i, 0xFF);
-                DrawScene(scene, mat, 0);
+                GL.StencilFunc(StencilFunction.Equal, i, stencilMask);
+                DrawScene(scene, portalViewList[i].ViewMatrix, 0, i > 0);
 
-                //GL.StencilFunc(StencilFunction.Gequal, i, 0xFF);
-                GL.StencilFunc(StencilFunction.Always, i, 0xFF);
+                /*GL.StencilFunc(StencilFunction.Gequal, i, stencilMask);
+                GL.StencilFunc(StencilFunction.Always, i, stencilMask);
                 Model fovLines = ModelFactory.CreateLinesWidth(portalViewList[i].FovLines, cam.Scale / 100);
                 fovLines.Transform.Position += new Vector3(0, 0, 199);
-                //RenderModel(fovLines, Matrix4.CreateTranslation(new Vector3(0, 0, (i) * 100)) * cam.GetViewMatrix(), 0, Matrix4.Identity);
+                RenderModel(fovLines, Matrix4.CreateTranslation(new Vector3(0, 0, (i) * 100)) * cam.GetViewMatrix(), 0, Matrix4.Identity);*/
             }
             GL.Disable(EnableCap.StencilTest);
 
             GL.Clear(ClearBufferMask.DepthBufferBit);
-            for (int i = 1; i < Math.Min(portalViewList.Count, stencilMax); i++)
+            for (int i = 1; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
             {
                 for (int j = 0; j < portalViewList[i].Path.Count; j++)
                 {
@@ -292,11 +291,11 @@ namespace Game
             GL.Clear(ClearBufferMask.StencilBufferBit);
         }
 
-        public void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta)
+        public void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)
         {
             foreach (Entity v in scene.EntityList)
             {
-                RenderEntity(v, viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond));
+                RenderEntity(v, viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond), isPortalRender);
             }
         }
 
@@ -313,15 +312,28 @@ namespace Game
             }*/
         }
 
-        public virtual void RenderEntity(Entity entity, Matrix4 viewMatrix, float timeDelta)
+        public virtual void RenderEntity(Entity entity, Matrix4 viewMatrix, float timeDelta, bool isPortalRender)
         {
             if (!entity.Visible)
             {
                 return;
             }
+            if (entity.DrawOverPortals)
+            {
+                if (isPortalRender)
+                {
+                    return;
+                }
+                GL.Disable(EnableCap.StencilTest);
+            }
+            
             foreach (Model v in entity.ModelList)
             {
                 RenderModel(v, viewMatrix, timeDelta, entity.GetWorldTransform().GetMatrix());
+            }
+            if (entity.DrawOverPortals)
+            {
+                GL.Enable(EnableCap.StencilTest);
             }
         }
 

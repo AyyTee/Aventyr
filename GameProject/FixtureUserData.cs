@@ -69,7 +69,7 @@ namespace Game
             _fixtureId = fixture.FixtureId;
             Debug.Assert(Fixture.UserData == null, "UserData has already been assigned for this fixture.");
             Fixture.UserData = this;
-            switch (Fixture.ShapeType)
+            switch (Fixture.Shape.ShapeType)
             {
                 case ShapeType.Polygon:
                     PolygonShape shape = (PolygonShape) Fixture.Shape;

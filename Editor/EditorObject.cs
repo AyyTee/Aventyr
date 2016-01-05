@@ -12,6 +12,9 @@ namespace Editor
     public abstract class EditorObject
     {
         public ControllerEditor Controller { get; private set; }
+        //public SceneNode Object { get; protected set; }
+        //public Entity Marker { get; protected set; }
+
         public EditorObject(ControllerEditor controller)
         {
             Debug.Assert(controller != null);

@@ -221,9 +221,10 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            translation = new Entity(Controller.LevelHud);
+            translation = new Entity(Controller.Level);
             translation.AddModel(translationModel);
             translation.Visible = false;
+            translation.DrawOverPortals = true;
             _dragState = DragState.Neither;
             dragObject = null;
             Controller.CamControl.CameraMoved += UpdateTranslation;
@@ -236,7 +237,7 @@ namespace Editor
             base.Disable();
             DragEnd(false);
             Controller.CamControl.CameraMoved -= UpdateTranslation;
-            Controller.LevelHud.RemoveEntity(translation);
+            translation.Remove();
         }
 
         private void UpdateTranslation(ControllerCamera controller, Camera2D camera)

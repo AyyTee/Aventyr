@@ -15,11 +15,15 @@ namespace Game
     /// An object that exists within the world space and can be drawn
     /// </summary>
     [Serializable]
-    public class Entity : Placeable2D
+    public class Entity : SceneNode
     {
         List<Model> _models = new List<Model>();
         public List<ClipModel> ClipModels = new List<ClipModel>();
         bool _isPortalable = false;
+        /// <summary>
+        /// If true then this model will not be drawn during portal rendering and will appear in front of any portal FOV.
+        /// </summary>
+        public bool DrawOverPortals = false;
 
         /// <summary>
         /// Represents the size of the cutLines array within the fragment shader
@@ -67,7 +71,6 @@ namespace Game
                 {
                     return null;
                 }
-                Debug.Assert(Scene != null, "Entity must be assigned to a scene.");
                 Debug.Assert(Scene.World.BodyList.Exists(item => (item.BodyId == BodyId)), "Body id does not exist.");
                 return Scene.World.BodyList.Find(item => (item.BodyId == BodyId));
             }
@@ -77,11 +80,6 @@ namespace Game
         public Entity(Scene scene)
             : base(scene)
         {
-            if (scene == null)
-            {
-                throw new NullReferenceException("Scene cannot be a null reference.");
-            }
-            scene.AddEntity(this);
             Velocity = new Transform2D();
             Transform2D transform = GetTransform();
             transform.UniformScale = true;
@@ -102,21 +100,21 @@ namespace Game
         }
         #endregion
         
-        public override Placeable2D DeepClone()
+        public override SceneNode DeepClone()
         {
             return DeepClone(Scene);
         }
 
-        public override Placeable2D DeepClone(Scene scene)
+        public override SceneNode DeepClone(Scene scene)
         {
             Entity clone = new Entity(scene);
             DeepClone(this, clone);
             return clone;
         }
 
-        public static void DeepClone(Entity source, Entity destination)
+        protected static void DeepClone(Entity source, Entity destination)
         {
-            Placeable2D.DeepClone(source, destination);
+            SceneNode.DeepClone(source, destination);
             destination.SetTransform(source.GetTransform());
             destination.IsPortalable = source.IsPortalable;
             destination._models = source.ModelList;
@@ -141,6 +139,15 @@ namespace Game
         public void RemoveAllModels()
         {
             _models.Clear();
+        }
+
+        public override void Remove()
+        {
+            if (Body != null)
+            {
+                Scene.World.RemoveBody(Body);
+            }
+            base.Remove();
         }
 
         public void PositionUpdate()

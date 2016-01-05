@@ -148,14 +148,14 @@ namespace Game
         {
             if (EdgeIsValid(fixture, edgeIndex))
             {
-                switch (fixture.ShapeType)
+                switch (fixture.Shape.ShapeType)
                 {
                     case ShapeType.Polygon:
                         PolygonShape polygon = (PolygonShape)fixture.Shape;
                         Line edge = new Line(polygon.Vertices[edgeIndex], polygon.Vertices[(edgeIndex+1) % polygon.Vertices.Count]);
                         return EdgeValidLength(edge.Length, portalSize);
                     default:
-                        Debug.Assert(false, fixture.ShapeType.ToString() + " is not supported.");
+                        Debug.Assert(false, fixture.Shape.ShapeType.ToString() + " is not supported.");
                         break;
                 }
             }
