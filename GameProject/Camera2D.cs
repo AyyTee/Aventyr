@@ -19,6 +19,11 @@ namespace Game
         public float ZFar { get; set; }
 
         #region constructors
+        public Camera2D(Scene scene)
+            : this(scene, new Transform2D(), 1, 1)
+        {
+        }
+
         public Camera2D(Scene scene, Vector2 position, float scale, float aspectRatio)
             : this(scene, new Transform2D(position), scale, aspectRatio)
         {
@@ -35,14 +40,22 @@ namespace Game
         }
         #endregion
 
-        public override SceneNode DeepClone()
+        public override SceneNode Clone(Scene scene)
         {
-            throw new NotImplementedException();
+            Camera2D clone = new Camera2D(scene);
+            Clone(clone);
+            return clone;
         }
 
-        public override SceneNode DeepClone(Scene scene)
+        protected override void Clone(SceneNode destination)
         {
-            throw new NotImplementedException();
+            base.Clone(destination);
+            Camera2D destinationCast = (Camera2D)destination;
+            destinationCast.Aspect = Aspect;
+            destinationCast.Scale = Scale;
+            destinationCast.ZNear = ZNear;
+            destinationCast.ZFar = ZFar;
+            destinationCast.Viewpoint = Viewpoint;
         }
 
         /// <summary>

@@ -11,52 +11,12 @@ namespace Editor
     public class EditorEntity : EditorObject
     {
         public Entity Entity { get; private set; }
-        public Entity Marker { get; private set; }
 
-        public EditorEntity(ControllerEditor controller, Scene scene)
+        public EditorEntity(ControllerEditor controller)
             : base(controller)
         {
-            Entity = new Entity(scene);
-            Marker = new Entity(scene);
-            Marker.SetParent(Entity);
-            Marker.DrawOverPortals = true;
-            Model circle = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
-            circle.SetColor(new Vector3(1f, 0.5f, 0f));
-            Marker.AddModel(circle);
-        }
-
-        public EditorEntity(EditorEntity editorEntity)
-            : base(editorEntity)
-        {
-            //Entity = new Entity(editorEntity);
-        }
-
-        public void Remove()
-        {
-            Entity.Remove();
-            Marker.Remove();
-        }
-
-        public override void SetTransform(Transform2D transform)
-        {
-            base.SetTransform(transform);
-            Entity.SetTransform(transform);
-        }
-
-        public override void SetPosition(Vector2 position)
-        {
-            base.SetPosition(position);
-            Entity.SetPosition(position);
-        }
-
-        public override Transform2D GetTransform()
-        {
-            return Entity.GetTransform();
-        }
-
-        public override Transform2D GetWorldTransform()
-        {
-            return Entity.GetWorldTransform();
+            Entity = new Entity(Scene);
+            Entity.SetParent(this);
         }
     }
 }

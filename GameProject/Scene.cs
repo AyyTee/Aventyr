@@ -19,17 +19,16 @@ namespace Game
     public class Scene
     {
         public World World { get; private set; }
-        /// <summary>
-        /// Number of unique ids that have been used for objects in the scene
-        /// </summary>
+        /// <summary>Number of unique ids that have been used for SceneNodes within this scene.</summary>
         int _idCount = 0;
         [NonSerialized]
         private PhysContactListener _contactListener;
 
         public Camera2D ActiveCamera { get; private set; }
-        public List<SceneNode> SceneNodeList { get { return GetNodes<SceneNode>(Root); } }
-        public List<Portal> PortalList { get { return GetNodes<Portal>(Root); } }
-        public List<Entity> EntityList { get { return GetNodes<Entity>(Root); } }
+        public List<SceneNode> SceneNodeList { get { return FindByType<SceneNode>(Root); } }
+        public List<Portal> PortalList { get { return FindByType<Portal>(Root); } }
+        public List<Entity> EntityList { get { return FindByType<Entity>(Root); } }
+        /// <summary>Root node to the scene graph.</summary>
         public SceneNode Root { get; private set; }
 
         #region constructors
@@ -72,7 +71,12 @@ namespace Game
             }
         }
 
-        private List<T> GetNodes<T>(SceneNode node) where T : SceneNode
+        public List<T> FindByType<T>() where T : SceneNode
+        {
+            return FindByType<T>(Root);
+        }
+
+        public List<T> FindByType<T>(SceneNode node) where T : SceneNode
         {
             List<T> list = new List<T>();
             foreach (SceneNode p in node.ChildList)
@@ -82,7 +86,7 @@ namespace Game
                 {
                     list.Add(nodeCast);
                 }
-                list.AddRange(GetNodes<T>(p));
+                list.AddRange(FindByType<T>(p));
             }
             return list;
         }

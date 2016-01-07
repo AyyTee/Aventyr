@@ -35,11 +35,11 @@ namespace Editor
                 {
                     FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
                     EditorPortal editorPortal;
-                    if (coord != null)
+                    /*if (coord != null)
                     {
                         editorPortal = Controller.CreateLevelPortal(new FixturePortal(Controller.Level, coord));
                     }
-                    else
+                    else*/
                     {
                         editorPortal = Controller.CreateLevelPortal();
                         UpdatePortalTransform(editorPortal);
@@ -73,7 +73,7 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            _mouseFollow = new EditorPortal(Controller, Controller.Level);
+            _mouseFollow = new EditorPortal(Controller);
         }
 
         public override void Disable()

@@ -12,8 +12,9 @@ namespace Editor
     {
         protected InputExt _input { get { return Controller.InputExt; } }
         public bool Enabled { get; private set; }
+        public bool Active { get; protected set; }
 
-        public ControllerEditor Controller { get; private set; }
+        public readonly ControllerEditor Controller;
 
         #region constructors
         public Tool()

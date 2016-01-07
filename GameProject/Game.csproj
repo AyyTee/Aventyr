@@ -137,6 +137,7 @@
     <Compile Include="BodyUserData.cs" />
     <Compile Include="Camera2D.cs" />
     <Compile Include="ClipperExt.cs" />
+    <Compile Include="ITransform2D.cs" />
     <Compile Include="ModelLoader.cs" />
     <Compile Include="ControllerGame.cs" />
     <Compile Include="EdgeData.cs" />
@@ -239,7 +240,6 @@
     </None>
     <None Include="assets\textures\Thumbs.db" />
     <None Include="assets\Thumbs.db" />
-    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

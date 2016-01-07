@@ -31,10 +31,10 @@ namespace Editor
         Tool _activeTool;
         Tool _toolDefault;
         Tool _nextTool;
-        List<EditorEntity> Entities = new List<EditorEntity>();
-        List<EditorPortal> Portals = new List<EditorPortal>();
         Queue<Action> Actions = new Queue<Action>();
         public Selection selection { get; private set; }
+        public StateList StateList { get; private set; }
+        object _lockAction = new object();
 
         public ControllerEditor(Size canvasSize, InputExt input)
             : base(canvasSize, input)
@@ -44,8 +44,10 @@ namespace Editor
         public override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            selection = new Selection();
+
             Level = new Scene();
+            selection = new Selection(Level);
+            StateList = new StateList();
             Level.SetActiveCamera(new Camera2D(Level, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height));
             renderer.AddScene(Level);
             Hud = new Scene();
@@ -97,9 +99,8 @@ namespace Editor
 
         public EditorEntity CreateLevelEntity()
         {
-            EditorEntity entity = new EditorEntity(this, Level);
-            Entities.Add(entity);
-            
+            EditorEntity entity = new EditorEntity(this);
+
             if (EntityAdded != null)
             {
                 EntityAdded(this, entity);
@@ -109,21 +110,16 @@ namespace Editor
 
         public void Remove(EditorObject editorObject)
         {
-            if (editorObject.GetType() == typeof(EditorEntity))
+            editorObject.Remove();
+            selection.Remove(editorObject);
+        }
+
+        public void RemoveRange(List<EditorObject> editorObjects)
+        {
+            foreach (EditorObject e in editorObjects)
             {
-                EditorEntity entity = (EditorEntity)editorObject;
-                Entities.Remove(entity);
-                entity.Remove();
-            }
-            else if (editorObject.GetType() == typeof(EditorPortal))
-            {
-                EditorPortal portal = (EditorPortal)editorObject;
-                Portals.Remove(portal);
-                portal.Remove();
-            }
-            if (selection.GetFirst() == editorObject)
-            {
-                selection.Set(null);
+                e.Remove();
+                selection.Remove(e);
             }
         }
 
@@ -132,31 +128,37 @@ namespace Editor
             _editorObjectModified = true;
         }
 
-        public EditorPortal CreateLevelPortal(Portal portal)
-        {
-            EditorPortal editorPortal = new EditorPortal(this, Level, portal);
-            Portals.Add(editorPortal);
-            return editorPortal;
-        }
-
         public EditorPortal CreateLevelPortal()
         {
-            EditorPortal editorPortal = new EditorPortal(this, Level);
-            Portals.Add(editorPortal);
+            EditorPortal editorPortal = new EditorPortal(this);
             return editorPortal;
         }
 
         public override void OnUpdateFrame(OpenTK.FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-            foreach (Action item in Actions)
+            lock (_lockAction)
             {
-                item();
+                foreach (Action item in Actions)
+                {
+                    item();
+                }
             }
             Actions.Clear();
             CamControl.Update();
             _setTool(_nextTool);
             _activeTool.Update();
+            if (InputExt.KeyDown(InputExt.KeyBoth.Control) && !_activeTool.Active)
+            {
+                if (InputExt.KeyPress(Key.Y) || (InputExt.KeyDown(InputExt.KeyBoth.Shift) && InputExt.KeyPress(Key.Z)))
+                {
+                    StateList.Redo();
+                }
+                else if (InputExt.KeyPress(Key.Z))
+                {
+                    StateList.Undo();
+                }
+            }
             if (_editorObjectModified && SceneModified != null)
             {
                 SceneModified(this, Level);
@@ -212,8 +214,7 @@ namespace Editor
         public EditorObject GetNearestObject(Vector2 point, Func<EditorObject, bool> validObject)
         {
             List<EditorObject> tempList = new List<EditorObject>();
-            tempList.AddRange(Entities);
-            tempList.AddRange(Portals);
+            tempList.AddRange(Level.FindByType<EditorObject>());
             var sorted = tempList.OrderBy(item => (point - item.GetWorldTransform().Position).Length).ToList();
             for (int i = 0; i < sorted.Count; i++)
             {
@@ -248,7 +249,10 @@ namespace Editor
 
         public void AddAction(Action action)
         {
-            Actions.Enqueue(action);
+            lock (_lockAction)
+            {
+                Actions.Enqueue(action);
+            }
         }
 
         public override void OnClosing(System.ComponentModel.CancelEventArgs e)

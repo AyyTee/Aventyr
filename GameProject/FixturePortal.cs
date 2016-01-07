@@ -38,14 +38,14 @@ namespace Game
             }
         }
 
-        public override SceneNode DeepClone()
+        public override SceneNode Clone(Scene scene)
         {
             throw new NotImplementedException();
         }
 
-        public override SceneNode DeepClone(Scene scene)
+        protected override void Clone(SceneNode destination)
         {
-            throw new NotImplementedException();
+            base.Clone(destination);
         }
 
         /// <summary>

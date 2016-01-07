@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public class SceneNodePlaceable : SceneNode
+    public class SceneNodePlaceable : SceneNode, ITransform2D
     {
         Transform2D _transform = new Transform2D();
 
@@ -16,9 +16,23 @@ namespace Game
         {
         }
 
+        public override SceneNode Clone(Scene scene)
+        {
+            SceneNodePlaceable clone = new SceneNodePlaceable(scene);
+            Clone(clone);
+            return clone;
+        }
+
+        protected override void Clone(SceneNode destination)
+        {
+            base.Clone(destination);
+            SceneNodePlaceable destinationCast = (SceneNodePlaceable)destination;
+            destinationCast.SetTransform(GetTransform());
+        }
+
         public virtual void SetTransform(Transform2D transform)
         {
-            _transform = transform.Copy();
+            _transform = transform.Clone();
         }
 
         public virtual void SetPosition(Vector2 position)
@@ -44,7 +58,7 @@ namespace Game
 
         public override Transform2D GetTransform()
         {
-            return _transform.Copy();
+            return _transform.Clone();
         }
     }
 }

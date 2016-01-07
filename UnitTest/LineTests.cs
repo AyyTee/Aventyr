@@ -143,11 +143,13 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
                 Scene scene = new Scene();
+                SceneNodePlaceable node = new SceneNodePlaceable(scene);
                 FloatPortal p0 = new FloatPortal(scene);
-                p0.SetRotation((float)(i + Math.PI / 4));
+                p0.SetParent(node);
+                node.SetRotation((float)(i + Math.PI / 4));
                 Vector2 viewPoint = new Vector2((float)Math.Cos(i + Math.PI), (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2((float)Math.Cos(i), (float)Math.Sin(i));
-                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetTransform().GetMatrix()));
+                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
             }
         }
@@ -159,11 +161,15 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
                 Scene scene = new Scene();
-                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
-                p0.SetRotation((float)(i + Math.PI / 4));
+                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
+                FloatPortal p0 = new FloatPortal(scene);
+                p0.SetParent(node);
+                
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
-                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetTransform().GetMatrix()));
+                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
             }
         }
@@ -175,11 +181,14 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
                 Scene scene = new Scene();
-                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
-                p0.SetRotation((float)(i + Math.PI / 4));
+                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
+                FloatPortal p0 = new FloatPortal(scene);
+                p0.SetParent(node);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI)/100000, y + (float)Math.Sin(i + Math.PI)/100000);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i)/100000, y + (float)Math.Sin(i)/100000);
-                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetTransform().GetMatrix()));
+                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
             }
         }
@@ -191,11 +200,14 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 10)
             {
                 Scene scene = new Scene();
-                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
-                p0.SetRotation((float)(i + Math.PI / 4));
+                FloatPortal p0 = new FloatPortal(scene);
+                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
+                p0.SetParent(node);
                 Vector2 viewPoint = new Vector2(x, y);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
-                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetTransform().GetMatrix()));
+                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsFalse(line.IsInsideFOV(viewPoint, lookPoint));
             }
         }
@@ -207,11 +219,14 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
                 Scene scene = new Scene();
-                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
-                p0.SetRotation((float)(i + Math.PI / 4));
+                FloatPortal p0 = new FloatPortal(scene);
+                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
+                p0.SetParent(node);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2(x, y);
-                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetTransform().GetMatrix()));
+                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsFalse(line.IsInsideFOV(viewPoint, lookPoint));
             }
         }
@@ -223,11 +238,14 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
                 Scene scene = new Scene();
-                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
-                p0.SetRotation((float)(i + Math.PI / 4));
+                FloatPortal p0 = new FloatPortal(scene);
+                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
+                p0.SetParent(node);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
                 Vector2 lookPoint = new Vector2(x, y);
-                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetTransform().GetMatrix()));
+                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
             }
         }
@@ -239,11 +257,14 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
                 Scene scene = new Scene();
-                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
-                p0.SetRotation((float)(i + Math.PI / 4));
+                FloatPortal p0 = new FloatPortal(scene);
+                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
+                p0.SetParent(node);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i) * 2, y + (float)Math.Sin(i) * 2);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
-                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetTransform().GetMatrix()));
+                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsFalse(line.IsInsideFOV(viewPoint, lookPoint));
             }
         }
@@ -255,11 +276,14 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
                 Scene scene = new Scene();
-                FloatPortal p0 = new FloatPortal(scene, new Vector2(x, y));
-                p0.SetRotation((float)(i + Math.PI / 4));
+                FloatPortal p0 = new FloatPortal(scene);
+                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
+                p0.SetParent(node);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i) * 2, y + (float)Math.Sin(i) * 2);
-                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetTransform().GetMatrix()));
+                Line line = new Line(Vector2Ext.Transform(p0.GetVerts(), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsFalse(line.IsInsideFOV(viewPoint, lookPoint));
             }
         }

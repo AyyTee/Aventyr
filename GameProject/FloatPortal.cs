@@ -9,31 +9,16 @@ namespace Game
 {
     public class FloatPortal : Portal
     {
-        public FloatPortal(Scene scene, Vector2 position)
+        public FloatPortal(Scene scene)
             : base(scene)
         {
         }
 
-        public FloatPortal(Scene scene)
-            :this(scene, new Vector2())
-        {
-        }
-
-        public override SceneNode DeepClone()
-        {
-            return DeepClone(Scene);
-        }
-
-        public override SceneNode DeepClone(Scene scene)
+        public override SceneNode Clone(Scene scene)
         {
             FloatPortal clone = new FloatPortal(scene);
-            DeepClone(this, clone);
+            Clone(clone);
             return clone;
-        }
-
-        protected static void DeepClone(FloatPortal source, FloatPortal destination)
-        {
-            SceneNode.DeepClone(source, destination);
         }
 
         public override Transform2D GetVelocity()

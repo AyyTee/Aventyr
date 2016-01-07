@@ -100,10 +100,13 @@ namespace Game
             Entity temp = new Entity(scene);
             temp.SetParent(player);
             temp.AddModel(ModelFactory.CreateArrow(new Vector3(), new Vector2(0, 2), 0.1f, 0.5f, 0.5f));
+            portalEntity2.SetParent(temp);
+            //portalEntity3.SetParent(temp);
 
             Entity playerNew = (Entity)player.DeepClone();
 
-            temp.SetParent(null);
+            //temp.SetParent(null);
+            
 
             Entity playerParent = new Entity(scene, new Vector2(1, 0));
 

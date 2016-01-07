@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Game;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,49 +12,91 @@ namespace Editor
     {
         public delegate void EditorObjectHandler(Selection selection);
         public event EditorObjectHandler SelectionChanged;
-        /// <summary>
-        /// Lock used for preventing the EditorObject selection from being both copied and modified at the same time.
-        /// </summary>
-        object _lockSelection = new object();
-        List<EditorObject> _selectedList = new List<EditorObject>();
+        public readonly Scene Scene;
+        EditorObject _first;
 
-        public Selection()
+        public Selection(Scene scene)
         {
+            Scene = scene;
         }
 
         public void Set(EditorObject selected)
         {
-            List<EditorObject> list = new List<EditorObject>();
-            list.Add(selected);
-            SetRange(list);
+            Reset();
+            _first = selected;
+            if (selected != null)
+            {
+                selected.SetSelected(true);
+            }
         }
 
         public void SetRange(List<EditorObject> selected)
         {
-            lock (_lockSelection)
+            foreach (EditorObject e in selected)
             {
-                _selectedList.Clear();
-                _selectedList.AddRange(selected);
+                Debug.Assert(e != null);
+            }
+            Reset();
+            if (selected.Count > 0)
+            {
+                _first = selected[0];
+            }
+            foreach (EditorObject e in selected)
+            {
+                e.SetSelected(true);
             }
             if (SelectionChanged != null)
                 SelectionChanged(this);
         }
 
+        public void Reset()
+        {
+            _first = null;
+            foreach (EditorObject e in GetAll())
+            {
+                e.SetSelected(false);
+            }
+        }
+
+        public void Toggle(EditorObject selected)
+        {
+            if (selected == null)
+            {
+                return;
+            }
+
+            if (selected.IsSelected)
+            {
+                Remove(selected);
+            }
+            else
+            {
+                Add(selected);
+            }
+        }
+
         public void Add(EditorObject selected)
         {
-            lock (_lockSelection)
+            if (selected == null)
             {
-                _selectedList.Add(selected);
+                return;
             }
+            _first = selected;
+            selected.SetSelected(true);
             if (SelectionChanged != null)
                 SelectionChanged(this);
         }
 
         public void AddRange(List<EditorObject> selected)
         {
-            lock (_lockSelection)
+            foreach (EditorObject e in selected)
             {
-                _selectedList.AddRange(selected);
+                Debug.Assert(e != null);
+            }
+            _first = selected[selected.Count];
+            foreach (EditorObject e in selected)
+            {
+                e.SetSelected(true);
             }
             if (SelectionChanged != null)
                 SelectionChanged(this);
@@ -60,22 +104,27 @@ namespace Editor
 
         public EditorObject GetFirst()
         {
-            lock (_lockSelection)
+            return _first;
+        }
+
+        public bool Remove(EditorObject deselect)
+        {
+            if (deselect == null)
             {
-                if (_selectedList.Count > 0)
-                {
-                    return _selectedList[0];
-                }
-                return null;
+                return false;
             }
+            if (_first == deselect)
+            {
+                _first = null;
+            }
+            bool wasSelected = deselect.IsSelected;
+            deselect.SetSelected(false);
+            return wasSelected;
         }
 
         public List<EditorObject> GetAll()
         {
-            lock (_lockSelection)
-            {
-                return new List<EditorObject>(_selectedList);
-            }
+            return Scene.FindByType<EditorObject>().FindAll(item => item.IsSelected);
         }
     }
 }

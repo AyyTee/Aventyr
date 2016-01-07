@@ -94,6 +94,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommandAddEntity.cs" />
+    <Compile Include="CommandDrag.cs" />
     <Compile Include="ControllerCamera.cs" />
     <Compile Include="ControllerEditor.cs" />
     <Compile Include="EditorEntity.cs" />
@@ -102,6 +104,8 @@
     <Compile Include="IEditorObject.cs" />
     <Compile Include="RollingAverage.cs" />
     <Compile Include="Selection.cs" />
+    <Compile Include="ICommand.cs" />
+    <Compile Include="StateList.cs" />
     <Compile Include="ToolAddEntity.cs" />
     <Compile Include="Tool.cs" />
     <Compile Include="ToolAddPortal.cs" />
@@ -114,6 +118,7 @@
     </Compile>
     <Compile Include="ToolPolygon.cs" />
     <Compile Include="ToolPortalLinker.cs" />
+    <Compile Include="MementoTransform2D.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -73,37 +73,36 @@ namespace Game
         }
 
         public Transform2D(Vector2 position)
-            : this(position, new Vector2(1,1), 0f, null, false)
+            : this(position, new Vector2(1,1), 0f, false)
         {
         }
 
         public Transform2D(Vector2 position, Vector2 scale)
-            : this(position, scale, 0f, null, false)
+            : this(position, scale, 0f, false)
         {
         }
 
         public Transform2D(Vector2 position, float rotation)
-            : this(position, new Vector2(1, 1), rotation, null, false)
+            : this(position, new Vector2(1, 1), rotation, false)
         {
         }
 
         public Transform2D(Vector2 position, Vector2 scale, float rotation)
-            :this(position, scale, rotation, null, false)
+            :this(position, scale, rotation, false)
         {
         }
 
         public Transform2D(Xna.Vector2 position, float rotation)
-            : this(Vector2Ext.ConvertTo(position), new Vector2(1, 1), rotation, null, false)
+            : this(Vector2Ext.ConvertTo(position), new Vector2(1, 1), rotation, false)
         {
         }
 
-        public Transform2D(Vector2 position, Vector2 scale, float rotation, Transform2D parent, bool fixedScale)
+        public Transform2D(Vector2 position, Vector2 scale, float rotation, bool fixedScale)
         {
             UniformScale = fixedScale;
             Position = position;
             Scale = scale;
             Rotation = rotation;
-            //Parent = parent;
             MatrixUpdate = true;
         }
 
@@ -154,17 +153,25 @@ namespace Game
 
         public Transform2D Transform(Transform2D transform)
         {
-            Transform2D output = Copy();
+            Transform2D output = Clone();
             output.Rotation += transform.Rotation;
             output.Scale *= transform.Scale;
             output.Position = Vector2Ext.Transform(output.Position, transform.GetMatrix());
             return output;
         }
 
-        public Transform2D Copy()
+        public Transform2D Add(Transform2D transform)
         {
-            Transform2D transform = new Transform2D(Position, Scale, Rotation);
-            transform.UniformScale = UniformScale;
+            Transform2D output = Clone();
+            output.Rotation += transform.Rotation;
+            output.Scale *= transform.Scale;
+            output.Position += transform.Position;
+            return output;
+        }
+
+        public Transform2D Clone()
+        {
+            Transform2D transform = new Transform2D(Position, Scale, Rotation, UniformScale);
             return transform;
         }
 

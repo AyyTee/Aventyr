@@ -8,46 +8,95 @@ using System.Runtime.Serialization;
 
 namespace Game
 {
+    /// <summary>
+    /// Scene graph node.  All derived classes MUST override Clone(Scene) and return an instance of the derived class.
+    /// </summary>
     public class SceneNode
     {
-        public int Id { get; private set; }
+        /// <summary>Unique identifier within the scene.</summary>
+        public readonly int Id;
         public string Name { get; set; }
         List<SceneNode> _children = new List<SceneNode>();
         public List<SceneNode> ChildList { get { return new List<SceneNode>(_children); } }
         public SceneNode Parent { get; private set; }
 
-        public Scene Scene { get; private set; }
+        public readonly Scene Scene;
 
         #region constructors
         public SceneNode(Scene scene)
         {
             Debug.Assert(scene != null, "Must be assigned to a scene.");
             Scene = scene;
-            SetParent(Scene.Root);
             Id = Scene.GetId();
+            SetParent(Scene.Root);
         }
         #endregion
 
-        public virtual SceneNode DeepClone()
+        /// <summary>
+        /// Clones a SceneNode and recursively clones all of it's children.
+        /// </summary>
+        public SceneNode DeepClone()
         {
             return DeepClone(Scene);
         }
 
-        public virtual SceneNode DeepClone(Scene scene)
+        /// <summary>
+        /// Clones a SceneNode and recursively clones all of it's children.
+        /// </summary>
+        /// <param name="scene">Scene to clone into.</param>
+        /// <param name="mask"></param>
+        public SceneNode DeepClone(Scene scene, HashSet<SceneNode> mask = null)
         {
-            SceneNode clone = new SceneNode(scene);
-            DeepClone(this, clone);
+            Dictionary<SceneNode, SceneNode> cloneMap = new Dictionary<SceneNode, SceneNode>();
+            SceneNode clone = Clone(scene);
+            cloneMap.Add(this, clone);
+            List<SceneNode> cloneList = new List<SceneNode>();
+            CloneChildren(cloneMap, cloneList, mask);
+            foreach (SceneNode s in cloneList)
+            {
+                DeepCloneFinalize(cloneMap);
+            }
             return clone;
         }
 
-        protected static void DeepClone(SceneNode source, SceneNode destination)
+        /// <summary>
+        /// This method is called by DeepClone after all SceneNodes have been cloned and parented. Useful for updating references.
+        /// </summary>
+        /// <param name="cloneMap">Map of source SceneNodes to destination SceneNodes.</param>
+        protected virtual void DeepCloneFinalize(Dictionary<SceneNode, SceneNode>  cloneMap)
         {
-            destination.Name = source.Name; 
-            destination.RemoveChildren();
-            foreach (SceneNode p in source.ChildList)
+        }
+
+        private void CloneChildren(Dictionary<SceneNode, SceneNode> cloneMap, List<SceneNode> cloneList, HashSet<SceneNode> mask)
+        {
+            foreach (SceneNode p in ChildList)
             {
-                p.DeepClone().SetParent(destination);
+                if (mask == null || mask.Contains(p))
+                {
+                    SceneNode clone = p.Clone();
+                    cloneMap.Add(p, clone);
+                    clone.SetParent(cloneMap[p.Parent]);
+                    cloneList.Add(p);
+                }
+                p.CloneChildren(cloneMap, cloneList, mask);
             }
+        }
+
+        public SceneNode Clone()
+        {
+            return Clone(Scene);
+        }
+
+        public virtual SceneNode Clone(Scene scene)
+        {
+            SceneNode clone = new SceneNode(scene);
+            Clone(clone);
+            return clone;
+        }
+
+        protected virtual void Clone(SceneNode destination)
+        {
+            destination.Name = Name;
         }
 
         public virtual void SetParent(SceneNode parent)
@@ -69,17 +118,17 @@ namespace Game
         {
             for (int i = 0; i < ChildList.Count; i++)
             {
-                ChildList[i].SetParent(null);
+                ChildList[i].SetParent(Scene.Root);
             }
         }
 
         /// <summary>
-        /// Remove from scene.
+        /// Remove from scene graph.
         /// </summary>
         public virtual void Remove()
         {
             SetParent(null);
-            Scene = null;
+            //RemoveChildren();
         }
 
         public virtual Transform2D GetTransform()

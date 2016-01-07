@@ -18,11 +18,11 @@ namespace Editor
         const float translationScaleOffset = 0.1f;
         DragState _dragState;
         Mode _mode;
-        EditorObject dragObject;
+        EditorObject dragObject { get { return Controller.selection.GetFirst(); } }
         bool dragToggled = false;
         Vector2 mousePosPrev;
-        Vector2 dragMouseStart;
-        Transform2D dragEntityStartTransform;
+        List<MementoTransform2D> _transformPrev = new List<MementoTransform2D>();
+        Transform2D _totalDrag;
         double _rotateIncrementSize = Math.PI / 8;
         public enum DragState
         {
@@ -50,40 +50,26 @@ namespace Editor
         public override void Update()
         {
             base.Update();
-            EditorObject selected = Controller.selection.GetFirst();
+            List<EditorObject> selected = Controller.selection.GetAll();
             if (_dragState == DragState.Neither)
             {
                 if (_input.KeyDown(InputExt.KeyBoth.Control) && _input.KeyPress(Key.P))
                 {
-                    
+                    foreach (EditorObject e in Controller.selection.GetAll())
+                    {
+
+                    }
                 }
                 if (_input.MousePress(MouseButton.Right))
                 {
-                    Vector2 mousePos = Controller.GetMouseWorldPosition();
-                    EditorObject nearest = Controller.GetNearestObject(mousePos);
-                    if (nearest != null && (nearest.GetWorldTransform().Position - mousePos).Length > 1)
-                    {
-                        nearest = null;
-                    }
-                    Controller.selection.Set(nearest);
-                    if (Controller.selection.GetFirst() != null)
-                    {
-                        Transform2D transform = translation.GetTransform();
-                        transform.Position = Controller.selection.GetFirst().GetWorldTransform().Position;
-                        translation.SetTransform(transform);
-                        translation.Visible = true;
-                    }
-                    else
-                    {
-                        translation.Visible = false;
-                    }
+                    Select();
                 }
                 if (selected != null)
                 {
                     if (_input.KeyPress(Key.Delete))
                     {
                         translation.Visible = false;
-                        Controller.Remove(selected);
+                        Controller.RemoveRange(selected);
                     }
                     else if (_input.MousePress(MouseButton.Left))
                     {
@@ -91,11 +77,11 @@ namespace Editor
                     }
                     else if (_input.KeyPress(Key.G))
                     {
-                        DragBegin(Controller.selection.GetFirst(), true, Mode.Position);
+                        DragBegin(Controller.selection.GetAll(), true, Mode.Position);
                     }
                     else if (_input.KeyPress(Key.R))
                     {
-                        DragBegin(Controller.selection.GetFirst(), true, Mode.Rotate);
+                        DragBegin(Controller.selection.GetAll(), true, Mode.Rotate);
                     }
                 }
             }
@@ -121,25 +107,63 @@ namespace Editor
             }
         }
 
-        private void SetDragObject(EditorObject dragObject, DragState dragState, Mode mode)
+        private void Select()
         {
-            _dragState = dragState;
-            _mode = mode;
-            this.dragObject = dragObject;
+            Vector2 mousePos = Controller.GetMouseWorldPosition();
+            EditorObject nearest = Controller.GetNearestObject(mousePos);
+            if (nearest != null && (nearest.GetWorldTransform().Position - mousePos).Length > 1)
+            {
+                nearest = null;
+            }
+            if (_input.KeyDown(InputExt.KeyBoth.Shift))
+            {
+                Controller.selection.Toggle(nearest);
+            }
+            else
+            {
+                Controller.selection.Set(nearest);
+            }
+
+            if (Controller.selection.GetFirst() != null)
+            {
+                Transform2D transform = translation.GetTransform();
+                transform.Position = Controller.selection.GetFirst().GetWorldTransform().Position;
+                translation.SetTransform(transform);
+                translation.Visible = true;
+            }
+            else
+            {
+                translation.Visible = false;
+            }
         }
 
-        private void DragBegin(EditorObject dragObject, bool toggleMode, Mode mode)
+        private void DragSet(Mode mode, DragState state)
         {
-            Debug.Assert(this.dragObject == null && _dragState == DragState.Neither);
-            Transform2D transform = dragObject.GetWorldTransform();
+            _dragState = state;
+            _mode = mode;
+            _totalDrag = new Transform2D();
+            _transformPrev.Clear();
+            foreach (EditorObject e in Controller.selection.GetAll())
+            {
+                _transformPrev.Add(new MementoTransform2D(e));
+            }
+            Active = true;
+        }
+
+        private void DragBegin(List<EditorObject> dragObjects, bool toggleMode, Mode mode)
+        {
+            Debug.Assert(dragObjects != null);
+            if (dragObjects.Count <= 0)
+            {
+                return;
+            }
+            Transform2D transform = dragObjects[0].GetWorldTransform();
             Vector2 mousePos = Controller.GetMouseWorldPosition();
             dragToggled = toggleMode;
-            dragEntityStartTransform = transform;
-            dragMouseStart = mousePos;
             mousePosPrev = mousePos;
             if (toggleMode)
             {
-                SetDragObject(dragObject, DragState.Both, mode);
+                DragSet(mode, DragState.Both);
                 return;
             }
             Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Level.ActiveCamera.Scale;
@@ -148,15 +172,15 @@ namespace Editor
                 float margin = 0.2f * translationScaleOffset;
                 if (Math.Abs(mouseDiff.X) < margin && Math.Abs(mouseDiff.Y) < margin)
                 {
-                    SetDragObject(dragObject, DragState.Both, mode);
+                    DragSet(mode, DragState.Both);
                 }
                 else if (Math.Abs(mouseDiff.X) < margin && mouseDiff.Y > 0)
                 {
-                    SetDragObject(dragObject, DragState.Vertical, mode);
+                    DragSet(mode, DragState.Vertical);
                 }
                 else if (Math.Abs(mouseDiff.Y) < margin && mouseDiff.X > 0)
                 {
-                    SetDragObject(dragObject, DragState.Horizontal, mode);
+                    DragSet(mode, DragState.Horizontal);
                 }
             }
         }
@@ -165,35 +189,38 @@ namespace Editor
         {
             if (reset)
             {
-                dragObject.SetTransform(dragEntityStartTransform);
-                Transform2D transform = translation.GetTransform();
-                transform.Position = dragEntityStartTransform.Position;
-                translation.SetTransform(transform);
+                foreach (MementoTransform2D t in _transformPrev)
+                {
+                    t.ResetTransform();
+                }
+            }
+            else
+            {
+                Controller.StateList.Add(new CommandDrag(_transformPrev, _totalDrag), false);
             }
             _dragState = DragState.Neither;
-            dragObject = null;
             dragToggled = false;
+            Active = false;
         }
 
         private void DragUpdate()
         {
-            Transform2D transform = dragObject.GetWorldTransform();
+            Transform2D transform = _totalDrag;
             Vector2 mousePos = Controller.GetMouseWorldPosition();
-            Vector2 mouseDiff = mousePos - transform.Position;
             if (_mode == Mode.Position)
             {
                 switch (_dragState)
                 {
                     case DragState.Both:
-                        transform.Position += mousePos - dragMouseStart;
+                        transform.Position += mousePos - mousePosPrev;
                         break;
 
                     case DragState.Horizontal:
-                        transform.Position += new Vector2(mousePos.X - dragMouseStart.X, 0);
+                        transform.Position += new Vector2(mousePos.X - mousePosPrev.X, 0);
                         break;
 
                     case DragState.Vertical:
-                        transform.Position += new Vector2(0, mousePos.Y - dragMouseStart.Y);
+                        transform.Position += new Vector2(0, mousePos.Y - mousePosPrev.Y);
                         break;
                 }
                 mousePosPrev = mousePos;
@@ -216,10 +243,13 @@ namespace Editor
                     mousePosPrev = mousePos;
                 }
             }
-            dragObject.SetTransform(transform);
+            foreach (MementoTransform2D e in _transformPrev)
+            {
+                Transform2D t = e.Transformable.GetTransform();
+                e.Transformable.SetTransform(e.Transform.Add(_totalDrag));
+            }
             transform = dragObject.GetWorldTransform();
             translation.SetPosition(transform.Position);
-            dragMouseStart = mousePos;
         }
 
         public override void Enable()
@@ -230,7 +260,6 @@ namespace Editor
             translation.Visible = false;
             translation.DrawOverPortals = true;
             _dragState = DragState.Neither;
-            dragObject = null;
             Controller.CamControl.CameraMoved += UpdateTranslation;
             UpdateTranslation(Controller.CamControl.Camera);
             _mode = Mode.Position;
@@ -239,7 +268,10 @@ namespace Editor
         public override void Disable()
         {
             base.Disable();
-            DragEnd(false);
+            if (DragState.Neither != _dragState)
+            {
+                DragEnd(false);
+            }
             Controller.CamControl.CameraMoved -= UpdateTranslation;
             translation.Remove();
         }

@@ -58,9 +58,8 @@ namespace Editor
                     {
                         _vertices[i] -= average;
                     }
-                    Transform2D transform = entity.GetTransform();
-                    transform.Position = average;
-                    EntityFactory.CreateEntityPolygon(entity.Entity, transform, _vertices.ToArray());
+                    entity.SetPosition(average);
+                    EntityFactory.CreateEntityPolygon(entity.Entity, new Transform2D(), _vertices.ToArray());
                     entity.Entity.IsPortalable = true;
                     entity.Entity.ModelList[0].Wireframe = true;
                     //entity.Entity.Models[0].SetColor(new Vector3(0.5f, 0.5f, 0.5f));

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Input;
+using OpenTK;
 
 namespace Editor
 {
@@ -32,12 +33,12 @@ namespace Editor
             }
             else if (_input.MousePress(MouseButton.Left))
             {
-                EditorEntity entity = Controller.CreateLevelEntity();
-                EntityFactory.CreateEntityBox(entity.Entity, Controller.GetMouseWorldPosition());
-                entity.Entity.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
-                entity.Entity.IsPortalable = true;
-
-                Controller.selection.Set(entity);
+                /*EditorEntity entity = Controller.CreateLevelEntity();
+                entity.SetPosition(Controller.GetMouseWorldPosition());
+                EntityFactory.CreateEntityBox(entity.Entity, new Vector2());*/
+                
+                CommandAddEntity command = new CommandAddEntity(Controller, new Transform2D(Controller.GetMouseWorldPosition()));
+                Controller.StateList.Add(command, true);
 
                 if (!_input.KeyDown(InputExt.KeyBoth.Shift))
                 {

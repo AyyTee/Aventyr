@@ -42,6 +42,25 @@ namespace Game
             OneSided = false;//true;
         }
 
+        protected override void Clone(SceneNode destination)
+        {
+            base.Clone(destination);
+            Portal destinationCast = (Portal)destination;
+            destinationCast.Size = Size;
+            destinationCast.OneSided = OneSided;
+            destinationCast.IsMirrored = IsMirrored;
+        }
+
+        protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
+        {
+            base.DeepCloneFinalize(cloneMap);
+            Portal clone = (Portal)cloneMap[this];
+            if (Linked != null && cloneMap.ContainsKey(Linked))
+            {
+                clone.SetLinked((Portal)cloneMap[Linked]);
+            }
+        }
+
         public override void Remove()
         {
             SetLinked(null);

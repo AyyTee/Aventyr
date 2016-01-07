@@ -16,8 +16,7 @@ namespace Game
     public class Renderer
     {
         List<Scene> _scenes = new List<Scene>();
-        Controller _controller;
-        bool temp = true;
+        readonly Controller _controller;
         public bool PortalRenderEnabled { get; set; }
         public int PortalRenderDepth { get; set; }
 
@@ -484,15 +483,8 @@ namespace Game
                 RenderSetTransformMatrix(entity.GetWorldTransform().GetMatrix(), cm.Model, cm.Transform * viewMatrix);
                 Matrix4 view = cm.Transform * viewMatrix;
                 GL.UniformMatrix4(cm.Model.Shader.GetUniform("viewMatrix"), false, ref view);
-                if (temp)
-                {
-                    GL.DrawElements(BeginMode.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
-                }
-                else
-                {
-                    int indices = 0 * sizeof(int);
-                    GL.DrawElementsInstanced(PrimitiveType.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, ref indices, 1);
-                }
+
+                GL.DrawElements(BeginMode.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
             }
         }
 

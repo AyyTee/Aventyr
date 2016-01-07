@@ -17,8 +17,8 @@ namespace Editor
         public int UpdatesPerSecond { get; private set; }
         public int MillisecondsPerStep { get { return 1000 / UpdatesPerSecond; } }
         Stopwatch stopwatch = new Stopwatch();
-        GLControl _control;
-        Controller _loopControl;
+        readonly GLControl _control;
+        readonly Controller _loopControl;
         RollingAverage _average;
         public bool IsStopping { get; private set; }
         public bool IsRunning { get; private set; }

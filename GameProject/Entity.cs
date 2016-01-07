@@ -99,30 +99,25 @@ namespace Game
             SetTransform(transform);
         }
         #endregion
-        
-        public override SceneNode DeepClone()
-        {
-            return DeepClone(Scene);
-        }
 
-        public override SceneNode DeepClone(Scene scene)
+        public override SceneNode Clone(Scene scene)
         {
             Entity clone = new Entity(scene);
-            DeepClone(this, clone);
+            Clone(clone);
             return clone;
         }
 
-        protected static void DeepClone(Entity source, Entity destination)
+        protected override void Clone(SceneNode destination)
         {
-            SceneNode.DeepClone(source, destination);
-            destination.SetTransform(source.GetTransform());
-            destination.IsPortalable = source.IsPortalable;
-            destination._models = source.ModelList;
-            destination.Velocity = new Transform2D(source.Velocity);
-            destination.BodyId = -1;
-            if (source.Body != null)
+            base.Clone(destination);
+            Entity destinationCast = (Entity)destination;
+            destinationCast.IsPortalable = IsPortalable;
+            destinationCast._models = ModelList;
+            destinationCast.Velocity = new Transform2D(Velocity);
+            destinationCast.BodyId = -1;
+            if (Body != null)
             {
-                destination.BodyId = source.Body.DeepClone().BodyId;
+                destinationCast.BodyId = Body.DeepClone().BodyId;
             }
         }
 
@@ -224,7 +219,7 @@ namespace Game
 
         public void SetVelocity(Transform2D transform)
         {
-            Velocity = transform.Copy();
+            Velocity = transform.Clone();
         }
 
         public void UpdatePortalClipping(int depth)
