@@ -158,6 +158,7 @@
     <Compile Include="BodyExt.cs" />
     <Compile Include="ModelFactory.cs" />
     <Compile Include="PhysContactListener.cs" />
+    <Compile Include="Actor.cs" />
     <Compile Include="SceneNode.cs" />
     <Compile Include="PolyCoord.cs" />
     <Compile Include="PolygonFactory.cs" />

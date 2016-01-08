@@ -161,7 +161,7 @@ namespace Game
             Entity player = scene.FindByName("player") as Entity;
             Entity tempLine = scene.FindByName("tempLine") as Entity;
             Entity ground = scene.FindByName("ground") as Entity;
-            ground.Velocity.Position = new Vector2((float)Math.Sin(TimeFixedStep), 0);
+            //ground.Velocity.Position = new Vector2((float)Math.Sin(TimeFixedStep), 0);
             tempLine.SetTransform(new Transform2D(player.GetTransform().Position));
 
             Vector2 mousePos = scene.ActiveCamera.ScreenToWorld(InputExt.MousePos);
@@ -286,7 +286,7 @@ namespace Game
 
             if (intersect.Exists)
             {
-                portalEnter.Enter(player);
+                //portalEnter.Enter(player);
             }
             #endregion
 

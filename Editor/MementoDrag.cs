@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Editor
 {
-    public struct MementoTransform2D
+    public struct MementoDrag
     {
         public readonly ITransform2D Transformable;
         readonly Transform2D _transform;
 
-        public MementoTransform2D(ITransform2D transformable)
+        public MementoDrag(ITransform2D transformable)
         {
             Transformable = transformable;
             _transform = Transformable.GetTransform();

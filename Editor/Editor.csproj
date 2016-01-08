@@ -122,7 +122,7 @@
     </Compile>
     <Compile Include="ToolPolygon.cs" />
     <Compile Include="ToolPortalLinker.cs" />
-    <Compile Include="MementoTransform2D.cs" />
+    <Compile Include="MementoDrag.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -41,7 +41,7 @@ namespace Game
             entity.IsPortalable = true;
             entity.AddModel(ModelFactory.CreatePlane(transform.Scale));
 
-            Debug.Assert(entity.Body == null);
+            /*Debug.Assert(entity.Body == null);
             Body body = BodyFactory.CreateRectangle(entity.Scene.World, transform.Scale.X, transform.Scale.Y, 1);
             entity.Scene.World.ProcessChanges();
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
@@ -50,7 +50,7 @@ namespace Game
 
             FixtureUserData userData = new FixtureUserData(body.FixtureList[0]);
 
-            FixtureExt.SetUserData(body.FixtureList[0], userData);
+            FixtureExt.SetUserData(body.FixtureList[0], userData);*/
             return entity;
         }
 
@@ -81,7 +81,7 @@ namespace Game
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 
-            Debug.Assert(entity.Body == null);
+            /*Debug.Assert(entity.Body == null);
             Body body = BodyExt.CreateBody(entity.Scene.World);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             for (int i = 0; i < polygon.Triangles.Count; i++)
@@ -104,7 +104,7 @@ namespace Game
                 }
             }
 
-            entity.SetBody(body);
+            entity.SetBody(body);*/
 
             return entity;
         }

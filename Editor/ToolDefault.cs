@@ -21,7 +21,7 @@ namespace Editor
         EditorObject dragObject { get { return Controller.selection.First; } }
         bool dragToggled = false;
         Vector2 mousePosPrev;
-        List<MementoTransform2D> _transformPrev = new List<MementoTransform2D>();
+        List<MementoDrag> _transformPrev = new List<MementoDrag>();
         Transform2D _totalDrag;
         double _rotateIncrementSize = Math.PI / 8;
         public enum DragState
@@ -156,7 +156,7 @@ namespace Editor
             _transformPrev.Clear();
             foreach (EditorObject e in Controller.selection.GetAll())
             {
-                _transformPrev.Add(new MementoTransform2D(e));
+                _transformPrev.Add(new MementoDrag(e));
             }
             Active = true;
         }
@@ -200,7 +200,7 @@ namespace Editor
         {
             if (reset)
             {
-                foreach (MementoTransform2D t in _transformPrev)
+                foreach (MementoDrag t in _transformPrev)
                 {
                     t.ResetTransform();
                 }
@@ -254,7 +254,7 @@ namespace Editor
                     mousePosPrev = mousePos;
                 }
             }
-            foreach (MementoTransform2D e in _transformPrev)
+            foreach (MementoDrag e in _transformPrev)
             {
                 Transform2D t = e.Transformable.GetTransform();
                 e.Transformable.SetTransform(e.GetTransform().Add(_totalDrag));

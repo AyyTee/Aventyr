@@ -41,7 +41,6 @@ namespace Game
         /// Gets or sets whether this Entity can be rendered.
         /// </summary>
         public bool Visible { get; set; }
-        public Transform2D Velocity { get; private set; }
         //public List<Model> Models { get { return _models; } set { _models = value; } }
         public List<Model> ModelList { get { return new List<Model>(_models); } }
         [DataContractAttribute]
@@ -62,25 +61,10 @@ namespace Game
             }
         }
 
-        public int BodyId = -1;
-        public Body Body
-        {
-            get
-            {
-                if (BodyId == -1)
-                {
-                    return null;
-                }
-                Debug.Assert(Scene.World.BodyList.Exists(item => (item.BodyId == BodyId)), "Body id does not exist.");
-                return Scene.World.BodyList.Find(item => (item.BodyId == BodyId));
-            }
-        }
-
         #region constructors
         public Entity(Scene scene)
             : base(scene)
         {
-            Velocity = new Transform2D();
             Transform2D transform = GetTransform();
             transform.UniformScale = true;
             SetTransform(transform);
@@ -113,21 +97,6 @@ namespace Game
             Entity destinationCast = (Entity)destination;
             destinationCast.IsPortalable = IsPortalable;
             destinationCast._models = ModelList;
-            destinationCast.Velocity = new Transform2D(Velocity);
-            destinationCast.BodyId = -1;
-            if (Body != null)
-            {
-                destinationCast.BodyId = Body.DeepClone().BodyId;
-            }
-        }
-
-        public override void SetTransform(Transform2D transform)
-        {
-            base.SetTransform(transform);
-            if (Body != null)
-            {
-                BodyExt.SetTransform(Body, transform);
-            }
         }
 
         public void AddModel(Model model)
@@ -143,15 +112,6 @@ namespace Game
         public void RemoveAllModels()
         {
             _models.Clear();
-        }
-
-        public override void Remove()
-        {
-            if (Body != null)
-            {
-                Scene.World.RemoveBody(Body);
-            }
-            base.Remove();
         }
 
         public void PositionUpdate()
@@ -180,7 +140,7 @@ namespace Game
             }
         }
 
-        public void Step()
+        /*public void Step()
         {
             Transform2D transform = GetTransform();
             if (Body != null)
@@ -197,30 +157,7 @@ namespace Game
                 transform.Scale *= Velocity.Scale;
             }
             SetTransform(transform);
-        }
-
-        public void SetBody(Body body)
-        {
-            if (Body != null)
-            {
-                Scene.World.RemoveBody(Body);
-            }
-
-            Transform2D transform = GetTransform();
-            transform.UniformScale = true;
-            SetTransform(transform);
-            BodyUserData userData = new BodyUserData(this, body);
-            Debug.Assert(body.UserData == null, "This body has UserData already assigned to it.");
-            BodyId = body.BodyId;
-
-            BodyExt.SetTransform(body, GetTransform());
-            BodyExt.SetUserData(body, this);
-        }
-
-        public void SetVelocity(Transform2D transform)
-        {
-            Velocity = transform.Clone();
-        }
+        }*/
 
         public void UpdatePortalClipping(int depth)
         {

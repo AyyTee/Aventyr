@@ -158,13 +158,13 @@ namespace Game
             body.AngularVelocity = velocity.Rotation;
         }
 
-        public void Enter(Entity entity)
+        public void Enter(Actor actor)
         {
-            Transform2D transform = entity.GetTransform();
-            Transform2D velocity = entity.Velocity;
+            Transform2D transform = actor.GetTransform();
+            Transform2D velocity = actor.Velocity;
             this.Enter(transform, velocity);
-            entity.SetTransform(transform);
-            entity.SetVelocity(velocity);
+            actor.SetTransform(transform);
+            actor.SetVelocity(velocity);
         }
 
         public static void SetLinked(Portal portal0, Portal portal1)

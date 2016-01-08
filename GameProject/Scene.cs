@@ -47,9 +47,9 @@ namespace Game
         public void Step(float stepSize)
         {
             World.ProcessChanges();
-            foreach (Entity e in EntityList)
+            foreach (Actor e in FindByType<Actor>())
             {
-                e.PositionUpdate();
+                //e.PositionUpdate();
                 if (e.Body != null)
                 {
                     Xna.Vector2 v0 = Vector2Ext.ConvertToXna(e.GetWorldTransform().Position);
@@ -65,7 +65,7 @@ namespace Game
                 _contactListener.StepEnd();
             }
 
-            foreach (Entity e in EntityList)
+            foreach (Actor e in FindByType<Actor>())
             {
                 e.Step();
             }
@@ -121,13 +121,13 @@ namespace Game
             World.ProcessChanges();
             _contactListener = new PhysContactListener(this);
             
-            foreach (Body body in World.BodyList)
+            /*foreach (Body body in World.BodyList)
             {
                 var userData = ((List<BodyUserData>)body.UserData)[0];
                 Entity entity = EntityList.Find(item => (item.Id == userData.EntityID));
                 BodyExt.SetUserData(body, entity);
                 entity.BodyId = body.BodyId;
-            }
+            }*/
         }
 
         public Scene DeepClone()
