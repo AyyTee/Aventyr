@@ -59,7 +59,7 @@ namespace Editor
         {
             this.Dispatcher.Invoke((Action)(() =>
             {
-                UpdateTransformLabels(controller.selection.GetFirst());
+                UpdateTransformLabels(controller.selection.First);
             }));
         }
 

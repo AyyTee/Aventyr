@@ -23,7 +23,7 @@ namespace Editor
         public override void Update()
         {
             base.Update();
-            UpdatePortalTransform(_mouseFollow);
+            _mouseFollow.SetTransform(GetPortalTransform());
 
             if (_input.MouseDown(MouseButton.Right) || _input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape))
             {
@@ -33,16 +33,14 @@ namespace Editor
             {
                 if (_input.MousePress(MouseButton.Left))
                 {
-                    FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
-                    EditorPortal editorPortal;
+                    //FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
                     /*if (coord != null)
                     {
                         editorPortal = Controller.CreateLevelPortal(new FixturePortal(Controller.Level, coord));
                     }
                     else*/
                     {
-                        editorPortal = Controller.CreateLevelPortal();
-                        UpdatePortalTransform(editorPortal);
+                        Controller.StateList.Add(new CommandAddPortal(Controller, GetPortalTransform()), true);
                     }
                     
                     if (!_input.KeyDown(InputExt.KeyBoth.Shift))
@@ -53,20 +51,20 @@ namespace Editor
             }
         }
 
-        private void UpdatePortalTransform(EditorPortal portal)
+        private Transform2D GetPortalTransform()
         {
-            FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, portal.GetTransform().Scale.X);
+            /*FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, 1);
             if (coord != null)
             {
-                portal.SetTransform(coord.GetWorldTransform());
+                return coord.GetWorldTransform();
             }
-            else
+            else*/
             {
-                Transform2D transform = portal.GetTransform();
+                Transform2D transform = new Transform2D();
                 transform.Position = Controller.GetMouseWorldPosition();
                 transform.Rotation = _mouseFollow.GetTransform().Rotation;
                 transform.Scale = _mouseFollow.GetTransform().Scale;
-                portal.SetTransform(transform);
+                return transform;
             }
         }
 

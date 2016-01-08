@@ -94,7 +94,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CommandAdd.cs" />
     <Compile Include="CommandAddEntity.cs" />
+    <Compile Include="CommandAddPortal.cs" />
+    <Compile Include="CommandDelete.cs" />
     <Compile Include="CommandDrag.cs" />
     <Compile Include="ControllerCamera.cs" />
     <Compile Include="ControllerEditor.cs" />
@@ -102,6 +105,7 @@
     <Compile Include="EditorObject.cs" />
     <Compile Include="EditorPortal.cs" />
     <Compile Include="IEditorObject.cs" />
+    <Compile Include="MementoSelection.cs" />
     <Compile Include="RollingAverage.cs" />
     <Compile Include="Selection.cs" />
     <Compile Include="ICommand.cs" />

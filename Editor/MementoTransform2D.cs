@@ -9,17 +9,23 @@ namespace Editor
 {
     public struct MementoTransform2D
     {
-        public ITransform2D Transformable;
-        public Transform2D Transform;
+        public readonly ITransform2D Transformable;
+        readonly Transform2D _transform;
+
         public MementoTransform2D(ITransform2D transformable)
         {
             Transformable = transformable;
-            Transform = Transformable.GetTransform();
+            _transform = Transformable.GetTransform();
         }
 
         public void ResetTransform()
         {
-            Transformable.SetTransform(Transform);
+            Transformable.SetTransform(_transform);
+        }
+
+        public Transform2D GetTransform()
+        {
+            return new Transform2D(_transform);
         }
     }
 }

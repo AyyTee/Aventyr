@@ -9,16 +9,14 @@ namespace Editor
 {
     public class StateList
     {
-        /// <summary>
-        /// Used as a placeholder to avoid edge cases in the linked list.
-        /// </summary>
+        /// <summary>Used as a placeholder to avoid edge cases in the linked list.</summary>
         class FirstNode : ICommand
         {
             public FirstNode() {}
             public void Do() { throw new NotSupportedException(); }
             public void Redo() { throw new NotSupportedException(); }
             public void Undo() { throw new NotSupportedException(); }
-            public ICommand DeepClone() { throw new NotSupportedException(); }
+            public ICommand Clone() { throw new NotSupportedException(); }
         }
 
         LinkedList<ICommand> _list = new LinkedList<ICommand>();
@@ -29,7 +27,7 @@ namespace Editor
         {
             _list.AddFirst(new FirstNode());
             _currentState = _list.First;
-            UndoSteps = 100;
+            UndoSteps = 1000;
         }
 
         public bool Undo()
@@ -54,13 +52,13 @@ namespace Editor
             return true;
         }
 
-        public void Add(ICommand state, bool callExecute)
+        public void Add(ICommand state, bool callDo)
         {
             while (_list.Last != _currentState)
             {
                 _list.RemoveLast();
             }
-            ICommand clonedState = state.DeepClone();
+            ICommand clonedState = state.Clone();
             if (_currentState == null)
             {
                 _list.AddFirst(clonedState);
@@ -70,7 +68,7 @@ namespace Editor
                 _list.AddAfter(_currentState, clonedState);
             }
 
-            if (callExecute)
+            if (callDo)
             {
                 clonedState.Do();
             }

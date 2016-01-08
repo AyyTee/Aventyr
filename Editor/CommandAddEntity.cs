@@ -8,45 +8,29 @@ using System.Threading.Tasks;
 
 namespace Editor
 {
-    public class CommandAddEntity : ICommand
+    public class CommandAddEntity : CommandAdd
     {
-        readonly Transform2D _transform;
-        readonly ControllerEditor _controller;
-        EditorEntity _editorEntity;
-
-        HashSet<EditorObject> _modified = new HashSet<EditorObject>();
-
         public CommandAddEntity(ControllerEditor controller, Transform2D transform)
+            : base(controller, transform)
         {
-            _transform = transform;
-            _controller = controller;
         }
 
-        public void Do()
+        public override void Do()
         {
-            _editorEntity = new EditorEntity(_controller);
-            _editorEntity.SetTransform(_transform);
-            _editorEntity.Entity.AddModel(ModelFactory.CreateCube());
-            _editorEntity.Entity.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
-            _editorEntity.Entity.IsPortalable = true;
-            _controller.selection.Set(_editorEntity);
+            base.Do();
+            EditorEntity editorEntity = _controller.CreateLevelEntity();
+            _editorObject = editorEntity;
+            editorEntity.Entity.AddModel(ModelFactory.CreateCube());
+            editorEntity.Entity.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
+            editorEntity.Entity.IsPortalable = true;
+            editorEntity.SetTransform(_transform);
+            _controller.selection.Set(editorEntity);
         }
 
-        public void Redo()
-        {
-            _editorEntity.SetParent(_editorEntity.Scene.Root);
-            _controller.selection.Set(_editorEntity);
-        }
-
-        public void Undo()
-        {
-            _editorEntity.Remove();
-        }
-
-        public ICommand DeepClone()
+        public override ICommand Clone()
         {
             CommandAddEntity clone = new CommandAddEntity(_controller, _transform);
-            clone._editorEntity = _editorEntity;
+            clone._editorObject = _editorObject;
             return clone;
         }
     }

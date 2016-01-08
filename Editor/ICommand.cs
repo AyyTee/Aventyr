@@ -11,6 +11,6 @@ namespace Editor
         void Do();
         void Redo();
         void Undo();
-        ICommand DeepClone();
+        ICommand Clone();
     }
 }

@@ -37,7 +37,7 @@ namespace Editor
         {
             foreach (MementoTransform2D t in _modified)
             {
-                Transform2D transform = t.Transform.Add(_transform);
+                Transform2D transform = t.GetTransform().Add(_transform);
                 t.Transformable.SetTransform(transform);
             }
         }
@@ -55,7 +55,7 @@ namespace Editor
             }
         }
 
-        public ICommand DeepClone()
+        public ICommand Clone()
         {
             return new CommandDrag(_modified, _transform);
         }

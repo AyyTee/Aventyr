@@ -13,12 +13,12 @@ namespace Editor
 {
     public class ToolDefault : Tool
     {
-        Entity translation;
+        Entity _translator;
         Model translationModel;
         const float translationScaleOffset = 0.1f;
         DragState _dragState;
         Mode _mode;
-        EditorObject dragObject { get { return Controller.selection.GetFirst(); } }
+        EditorObject dragObject { get { return Controller.selection.First; } }
         bool dragToggled = false;
         Vector2 mousePosPrev;
         List<MementoTransform2D> _transformPrev = new List<MementoTransform2D>();
@@ -55,9 +55,13 @@ namespace Editor
             {
                 if (_input.KeyDown(InputExt.KeyBoth.Control) && _input.KeyPress(Key.P))
                 {
+                    EditorObject first = Controller.selection.First;
                     foreach (EditorObject e in Controller.selection.GetAll())
                     {
-
+                        if (e != first)
+                        {
+                            e.SetParent(first);
+                        }
                     }
                 }
                 if (_input.MousePress(MouseButton.Right))
@@ -68,7 +72,7 @@ namespace Editor
                 {
                     if (_input.KeyPress(Key.Delete))
                     {
-                        translation.Visible = false;
+                        _translator.Visible = false;
                         Controller.RemoveRange(selected);
                     }
                     else if (_input.MousePress(MouseButton.Left))
@@ -105,6 +109,7 @@ namespace Editor
                     DragUpdate();
                 }
             }
+            TranslatorUpdate();
         }
 
         private void Select()
@@ -123,17 +128,23 @@ namespace Editor
             {
                 Controller.selection.Set(nearest);
             }
+        }
 
-            if (Controller.selection.GetFirst() != null)
+        private void TranslatorUpdate()
+        {
+            List<EditorObject> selection = Controller.selection.GetAll();
+            if (selection.Count > 0)
             {
-                Transform2D transform = translation.GetTransform();
-                transform.Position = Controller.selection.GetFirst().GetWorldTransform().Position;
-                translation.SetTransform(transform);
-                translation.Visible = true;
+                float avgX, avgY;
+                avgX = selection.Average(item => item.GetWorldTransform().Position.X);
+                avgY = selection.Average(item => item.GetWorldTransform().Position.Y);
+                Vector2 average = new Vector2(avgX, avgY);
+                _translator.SetPosition(average);
+                _translator.Visible = true;
             }
             else
             {
-                translation.Visible = false;
+                _translator.Visible = false;
             }
         }
 
@@ -157,7 +168,7 @@ namespace Editor
             {
                 return;
             }
-            Transform2D transform = dragObjects[0].GetWorldTransform();
+            Transform2D transform = _translator.GetTransform();// dragObjects[0].GetWorldTransform();
             Vector2 mousePos = Controller.GetMouseWorldPosition();
             dragToggled = toggleMode;
             mousePosPrev = mousePos;
@@ -228,14 +239,14 @@ namespace Editor
             else if (_mode == Mode.Rotate)
             {
                 double angle, anglePrev;
-                angle = MathExt.AngleVector(mousePos - transform.Position);
-                anglePrev = MathExt.AngleVector(mousePosPrev - transform.Position);
+                angle = MathExt.AngleVector(mousePos - _translator.GetTransform().Position);
+                anglePrev = MathExt.AngleVector(mousePosPrev - _translator.GetTransform().Position);
                 
                 if (_input.KeyDown(InputExt.KeyBoth.Control))
                 {
                     angle = MathExt.Round(angle, _rotateIncrementSize);
                     transform.Rotation = (float)MathExt.Round(transform.Rotation + MathExt.AngleDiff(angle, anglePrev), _rotateIncrementSize);
-                    mousePosPrev = new Vector2((float)Math.Cos(-angle), (float)Math.Sin(-angle)) + transform.Position;
+                    mousePosPrev = new Vector2((float)Math.Cos(-angle), (float)Math.Sin(-angle)) + _translator.GetTransform().Position;
                 }
                 else
                 {
@@ -246,19 +257,17 @@ namespace Editor
             foreach (MementoTransform2D e in _transformPrev)
             {
                 Transform2D t = e.Transformable.GetTransform();
-                e.Transformable.SetTransform(e.Transform.Add(_totalDrag));
+                e.Transformable.SetTransform(e.GetTransform().Add(_totalDrag));
             }
-            transform = dragObject.GetWorldTransform();
-            translation.SetPosition(transform.Position);
         }
 
         public override void Enable()
         {
             base.Enable();
-            translation = new Entity(Controller.Level);
-            translation.AddModel(translationModel);
-            translation.Visible = false;
-            translation.DrawOverPortals = true;
+            _translator = new Entity(Controller.Level);
+            _translator.AddModel(translationModel);
+            _translator.Visible = false;
+            _translator.DrawOverPortals = true;
             _dragState = DragState.Neither;
             Controller.CamControl.CameraMoved += UpdateTranslation;
             UpdateTranslation(Controller.CamControl.Camera);
@@ -273,7 +282,7 @@ namespace Editor
                 DragEnd(false);
             }
             Controller.CamControl.CameraMoved -= UpdateTranslation;
-            translation.Remove();
+            _translator.Remove();
         }
 
         private void UpdateTranslation(ControllerCamera controller, Camera2D camera)
@@ -283,9 +292,9 @@ namespace Editor
 
         private void UpdateTranslation(Camera2D camera)
         {
-            Transform2D transform = translation.GetTransform();
+            Transform2D transform = _translator.GetTransform();
             transform.Scale = new Vector2(camera.Scale, camera.Scale) * translationScaleOffset;
-            translation.SetTransform(transform);
+            _translator.SetTransform(transform);
         }
 
         public override Tool Clone()

@@ -102,7 +102,7 @@ namespace Editor
             if (InputExt.KeyPress(Key.Space))
             {
                 transform.Rotation = 0;
-                EditorObject selected = Controller.selection.GetFirst();
+                EditorObject selected = Controller.selection.First;
                 if (selected != null)
                 {
                     /*Vector3 position = copy.Position;
