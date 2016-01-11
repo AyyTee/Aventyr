@@ -190,7 +190,7 @@ namespace Game
             }
         }
 
-        public Texture LoadMtl(string file)
+        public TextureFile LoadMtl(string file)
         {
             using (FileStream s = File.Open(file, FileMode.Open))
             {
@@ -198,7 +198,7 @@ namespace Game
             }
         }
 
-        public Texture LoadMtl(FileStream stream)
+        public TextureFile LoadMtl(FileStream stream)
         {
             StreamReader reader = new StreamReader(stream);
             string line;
@@ -212,7 +212,7 @@ namespace Game
                 {
                     textureFile = string.Join(splitChar.ToString(), parameters, 1, parameters.Length - 1);
                     string textureFilePath = Path.Combine(Path.GetDirectoryName(stream.Name), textureFile);
-                    return Renderer.LoadImage(textureFilePath);
+                    return new TextureFile(textureFilePath);//Renderer.LoadImage(textureFilePath);
                 }
             }
             return null;

@@ -16,7 +16,7 @@ namespace Editor
 
         public readonly ControllerEditor Controller;
 
-        #region constructors
+        #region Constructors
         public Tool()
             : this(null)
         {

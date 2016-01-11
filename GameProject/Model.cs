@@ -5,22 +5,26 @@ using Poly2Tri;
 using System.Diagnostics;
 using System;
 using System.Xml.Serialization;
+using System.Runtime.Serialization;
 
 namespace Game
 {
     /// <summary>
     /// An object made up of vertices
     /// </summary>
+    [DataContract]
     public class Model : IDisposable, IVertices
     {
-        static object _deleteLock = new object();
-        public static object LockDelete { get { return _deleteLock; } }
+        static object _lockDelete = new object();
+        public static object LockDelete { get { return _lockDelete; } }
+        [DataMember]
         public Transform3D Transform = new Transform3D();
-        public int IboElements;
-        public bool IboExists = true;
+        int _iboElements;
+        public bool IboExists = false;
         /// <summary>If true then gl blending is enabled when rendering this model.</summary>
+        [DataMember]
         public bool IsTransparent { get; set; }
-
+        [DataMember]
         public string ShaderName { get; private set; }
         public ShaderProgram Shader
         {
@@ -30,15 +34,18 @@ namespace Game
                 return Renderer.Shaders[ShaderName]; 
             }
         }
-
-        public bool IsTextured = false;
-        public Texture Texture;
+        [DataMember]
+        public ITexture Texture;
+        [DataMember]
         public Transform2D TransformUv = new Transform2D();
+        [DataMember]
         public bool Wireframe = false;
 
+        [DataContract]
         public class Triangle
         {
             public const int NUMBER_OF_VERTICES = 3;
+            [DataMember]
             public int[] Indices = new int[NUMBER_OF_VERTICES];
 
             private Triangle()
@@ -59,14 +66,15 @@ namespace Game
             }
         }
 
-        //public List<int> Indices = new List<int>();
+        [DataMember]
         public List<Vertex> Vertices = new List<Vertex>();
+        [DataMember]
         List<Triangle> Triangles = new List<Triangle>();
-        #region constructors
+        #region Constructors
         public Model()
         {
             SetShader("uber");
-            GL.GenBuffers(1, out IboElements);
+            InitIbo();
         }
 
         public Model(Vertex[] vertices)
@@ -84,7 +92,6 @@ namespace Game
         public Model(string shaderName)
         {
             SetShader(shaderName);
-            GL.GenBuffers(1, out IboElements);
         }
 
         #endregion
@@ -93,14 +100,33 @@ namespace Game
             Dispose();
         }
 
+        private void InitIbo()
+        {
+            Debug.Assert(IboExists == false, "Model has already been initialized.");
+            GL.GenBuffers(1, out _iboElements);
+            IboExists = true;
+        }
+
+        public int GetIbo()
+        {
+            if (!IboExists)
+            {
+                InitIbo();
+            }
+            return _iboElements;
+        }
+
         public void Dispose()
         {
             if (IboExists)
             {
                 lock (LockDelete)
                 {
-                    Controller.iboGarbage.Add(IboElements);
-                    IboExists = false;
+                    if (IboExists)
+                    {
+                        Controller.iboGarbage.Add(_iboElements);
+                        IboExists = false;
+                    }
                 }
             }
         }
@@ -112,10 +138,9 @@ namespace Game
             ShaderName = shaderName;
         }
 
-        public void SetTexture(Texture texture)
+        public void SetTexture(ITexture texture)
         {
             Texture = texture;
-            IsTextured = true;
         }
 
         /// <summary>

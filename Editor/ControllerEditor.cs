@@ -45,14 +45,24 @@ namespace Editor
         {
             base.OnLoad(e);
 
-            Level = new Scene();
-            selection = new Selection(Level);
-            StateList = new StateList();
-            Level.SetActiveCamera(new Camera2D(Level, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height));
-            renderer.AddScene(Level);
+            NewLevel();
+            
             Hud = new Scene();
             Hud.SetActiveCamera(new Camera2D(Hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width, CanvasSize.Width / (float)CanvasSize.Height));
             renderer.AddScene(Hud);
+            /*debugText = new Entity(Hud);
+            debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
+            */
+            InitTools();
+            ScenePause();
+        }
+
+        public void NewLevel()
+        {
+            renderer.RemoveScene(Level);
+            Level = new Scene();
+            renderer.AddScene(Level);
+
             #region create background
             Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];
@@ -65,18 +75,18 @@ namespace Editor
             back.AddModel(background);
             //back.IsPortalable = true;
             #endregion
-            CamControl = new ControllerCamera(this, Level.ActiveCamera, InputExt);
 
             Entity viewCenter = new Entity(Level);
             viewCenter.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.1f, 10));
             viewCenter.DrawOverPortals = true;
             viewCenter.ModelList[0].SetColor(new Vector3(1, 0.9f, 0.2f));
             viewCenter.SetParent(Level.ActiveCamera);
-            /*debugText = new Entity(Hud);
-            debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
-            */
-            InitTools();
-            ScenePause();
+
+            selection = new Selection(Level);
+            StateList = new StateList();
+
+            Level.SetActiveCamera(new Camera2D(Level, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height));
+            CamControl = new ControllerCamera(this, Level.ActiveCamera, InputExt);
         }
 
         public override void OnRenderFrame(OpenTK.FrameEventArgs e)
@@ -99,7 +109,7 @@ namespace Editor
 
         public EditorEntity CreateLevelEntity()
         {
-            EditorEntity entity = new EditorEntity(this);
+            EditorEntity entity = new EditorEntity(this.Level);
 
             if (EntityAdded != null)
             {
@@ -126,12 +136,6 @@ namespace Editor
         public void SetEditorObjectModified()
         {
             _editorObjectModified = true;
-        }
-
-        public EditorPortal CreateLevelPortal()
-        {
-            EditorPortal editorPortal = new EditorPortal(this);
-            return editorPortal;
         }
 
         public override void OnUpdateFrame(OpenTK.FrameEventArgs e)

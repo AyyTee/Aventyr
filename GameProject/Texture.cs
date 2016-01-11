@@ -2,30 +2,26 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Game
 {
-    public class Texture : IDisposable
+    [DataContract]
+    public class Texture : IDisposable, ITexture
     {
-        static object _deleteLock = new object();
-        public static object LockDelete { get { return _deleteLock; } }
-        public string Filepath { get; private set; }
-        /// <summary>
-        /// GL texture id
-        /// </summary>
-        public int Id { get; private set; }
+        static object _lockDelete = new object();
+        public static object LockDelete { get { return _lockDelete; } }
+        /// <summary>GL texture id.</summary>
+        readonly int _id;
 
+        #region Constructors
         public Texture(int id)
         {
-            Id = id;
+            _id = id;
         }
-
-        public void SetFilepath(string filepath)
-        {
-            Filepath = filepath;
-        }
+        #endregion
 
         ~Texture()
         {
@@ -34,14 +30,18 @@ namespace Game
 
         public void Dispose()
         {
-            if (Id != -1)
+            if (_id != -1)
             {
                 lock (LockDelete)
                 {
-                    Controller.textureGarbage.Add(Id);
-                    Id = -1;
+                    Controller.textureGarbage.Add(_id);
                 }
             }
+        }
+
+        public int GetId()
+        {
+            return _id;
         }
     }
 }

@@ -17,12 +17,12 @@
                         <Image Source="/editor assets/icons/document.png" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Open">
+                <MenuItem Header="Open" Click="Button_Load">
                     <MenuItem.Icon>
                         <Image Source="/editor assets/icons/folder-open.png" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Header="Save">
+                <MenuItem Header="Save" Click="Button_Save">
                     <MenuItem.Icon>
                         <Image Source="/editor assets/icons/disk.png" />
                     </MenuItem.Icon>

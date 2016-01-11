@@ -7,12 +7,14 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
 using OpenTK;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace Game
 {
     /// <summary>
     /// A coordinate defined it's position on a edge in a Fixture
     /// </summary>
+    [DataContract]
     public class FixtureEdgeCoord
     {
         public Fixture Fixture { get; private set; }

@@ -13,7 +13,7 @@ namespace Game
     
     public class BodyUserData
     {
-        public int EntityID;
+        public long EntityID;
         [XmlIgnore]
         public Entity LinkedEntity { get; private set; }
         public Body Body { get; private set; }
@@ -33,7 +33,7 @@ namespace Game
             }
         }
 
-        #region constructors
+        #region Constructors
         public BodyUserData()
         {
         }

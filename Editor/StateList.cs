@@ -25,8 +25,7 @@ namespace Editor
 
         public StateList()
         {
-            _list.AddFirst(new FirstNode());
-            _currentState = _list.First;
+            Reset();
             UndoSteps = 1000;
         }
 
@@ -50,6 +49,13 @@ namespace Editor
             _currentState = _currentState.Next;
             _currentState.Value.Redo();
             return true;
+        }
+
+        public void Reset()
+        {
+            _list.Clear();
+            _list.AddFirst(new FirstNode());
+            _currentState = _list.First;
         }
 
         public void Add(ICommand state, bool callDo)

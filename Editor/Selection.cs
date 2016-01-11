@@ -49,7 +49,7 @@ namespace Editor
 
         public void SetRange(MementoSelection selected)
         {
-            SetRange(selected.Selected);
+            SetRange(selected.Selected.ToList());
             First = selected.First;
         }
 

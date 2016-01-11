@@ -27,7 +27,7 @@ namespace Game
         public Vector2[] Vertices = new Vector2[2];
         public Vector2 Center { get { return (Vertices[0] + Vertices[1]) / 2; } }
 
-        #region constructors
+        #region Constructors
         public Line()
         {
         }

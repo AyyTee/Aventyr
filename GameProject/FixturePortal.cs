@@ -5,13 +5,15 @@ using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
-    [Serializable]
+    [DataContract]
     public class FixturePortal : Portal, IVertices2D
     {
+        [DataMember]
         public FixtureEdgeCoord Position { get; private set; }
         public Fixture CollisionFixtureNext;
         public Fixture CollisionFixturePrevious;
@@ -40,7 +42,7 @@ namespace Game
 
         public override SceneNode Clone(Scene scene)
         {
-            throw new NotImplementedException();
+            return new FixturePortal(scene, null);
         }
 
         protected override void Clone(SceneNode destination)

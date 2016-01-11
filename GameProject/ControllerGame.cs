@@ -8,6 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Game
@@ -35,12 +36,13 @@ namespace Game
                 testSound = new Sound(Path.Combine(Controller.soundFolder, "test_sound.ogg"));
                 testSound.Play();
             }
-
+            
             scene = new Scene();
+            
             hud = new Scene();
             Camera2D hudCam = new Camera2D(hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
 
-            Model background = ModelFactory.CreatePlane();
+            /*Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
@@ -48,7 +50,6 @@ namespace Game
             background.TransformUv.Scale = new Vector2(size, size);
             Entity back = new Entity(scene, new Vector2(0f, 0f));
             back.AddModel(background);
-
 
             Entity portalEntity2 = new Entity(scene);
             portalEntity2.AddModel(ModelFactory.CreatePlane());
@@ -64,8 +65,8 @@ namespace Game
 
             portal2 = new FloatPortal(scene);
             portal2.SetParent(portalEntity2);
+            portal2.IsMirrored = true;
 
-            Portal.SetLinked(portal2, portal3);
             Entity portalEntity3 = new Entity(scene);
             portalEntity3.AddModel(ModelFactory.CreatePlane());
             portalEntity3.ModelList[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
@@ -77,7 +78,9 @@ namespace Game
             portal3 = new FloatPortal(scene);
             portal3.SetParent(portalEntity3);
 
+
             Portal.SetLinked(portal2, portal3);
+
 
             #region player
             Entity player = new Entity(scene);
@@ -103,9 +106,10 @@ namespace Game
             portalEntity2.SetParent(temp);
             //portalEntity3.SetParent(temp);
 
-            Entity playerNew = (Entity)player.DeepClone();
+            //Entity playerNew = (Entity)player.DeepClone();
 
             //temp.SetParent(null);
+
             
 
             Entity playerParent = new Entity(scene, new Vector2(1, 0));
@@ -121,6 +125,7 @@ namespace Game
                 new Vector2(-10, -2)
             };
 
+
             Entity ground = EntityFactory.CreateEntityPolygon(scene, new Transform2D(), v);
             ground.Name = "ground";
             //ground.IsPortalable = true;
@@ -132,19 +137,24 @@ namespace Game
 
             portal0.IsMirrored = true;
 
-            FixturePortal.SetLinked(portal0, portal1);
+            FixturePortal.SetLinked(portal0, portal1);//*/
 
             text = new Entity(hud);
             text.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height)));
             text2 = new Entity(hud);
             text2.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
-            
-            Camera2D cam = new Camera2D(scene, player.GetTransform().Position, 10, CanvasSize.Width / (float)CanvasSize.Height);
 
+            new Serializer().Deserialize(scene, "blah.save");
+            Camera2D cam = new Camera2D(scene, scene.FindByName("player").GetTransform().Position, 10, CanvasSize.Width / (float)CanvasSize.Height);
+            
             scene.SetActiveCamera(cam);
             hud.SetActiveCamera(hudCam);
             renderer.AddScene(scene);
             renderer.AddScene(hud);
+
+            /*new Serializer().Serialize(Scene.Root, "blah");
+            Thread.Sleep(500);*/
+            
         }
 
         public override void OnRenderFrame(FrameEventArgs e)

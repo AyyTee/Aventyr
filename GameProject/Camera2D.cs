@@ -2,23 +2,30 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Game
 {
+    [DataContract]
     public class Camera2D : SceneNodePlaceable
     {
+        [DataMember]
         public float Aspect = 1;
+        [DataMember]
         public float Scale = 1;
         /// <summary>
         /// Position used for casting line of sight rays for portals
         /// </summary>
+        [DataMember]
         public Vector2 Viewpoint = new Vector2();
+        [DataMember]
         public float ZNear { get; set; }
+        [DataMember]
         public float ZFar { get; set; }
 
-        #region constructors
+        #region Constructors
         public Camera2D(Scene scene)
             : this(scene, new Transform2D(), 1, 1)
         {

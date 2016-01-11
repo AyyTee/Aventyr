@@ -17,7 +17,7 @@ namespace Editor
         public override void Do()
         {
             base.Do();
-            EditorPortal editorPortal = _controller.CreateLevelPortal();
+            EditorPortal editorPortal = new EditorPortal(_controller.Level);
             _editorObject = editorPortal;
             editorPortal.SetTransform(_transform);
             _controller.selection.Set(editorPortal);

@@ -3,11 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Game
 {
+    [DataContract]
     public class Actor : SceneNodePlaceable
     {
         public Transform2D Velocity { get; private set; }

@@ -3,18 +3,22 @@ using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Editor
 {
+    [DataContract]
     public class EditorPortal : EditorObject
     {
+        [DataMember]
         public FloatPortal Portal { get; private set; }
+        [DataMember]
         public Entity PortalEntity { get; private set; }
 
-        public EditorPortal(ControllerEditor controller)
-            : base(controller)
+        public EditorPortal(Scene scene)
+            : base(scene)
         {
             PortalEntity = new Entity(Scene);
             PortalEntity.SetParent(this);
@@ -28,6 +32,21 @@ namespace Editor
 
             Portal = new FloatPortal(Scene);
             Portal.SetParent(this);
+        }
+
+        protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
+        {
+            base.DeepCloneFinalize(cloneMap);
+            EditorPortal clone = (EditorPortal)cloneMap[this];
+            clone.Portal = (FloatPortal)cloneMap[Portal];
+            clone.PortalEntity = (Entity)cloneMap[PortalEntity];
+        }
+
+        public override SceneNode Clone(Scene scene)
+        {
+            EditorPortal clone = new EditorPortal(scene);
+            Clone(clone);
+            return clone;
         }
     }
 }

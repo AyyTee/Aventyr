@@ -15,14 +15,12 @@ using FarseerPhysics.Dynamics.Contacts;
 
 namespace Game
 {
-    [Serializable]
     public class Scene
     {
         public World World { get; private set; }
         /// <summary>Number of unique ids that have been used for SceneNodes within this scene.</summary>
         int _idCount = 0;
-        [NonSerialized]
-        private PhysContactListener _contactListener;
+        PhysContactListener _contactListener;
 
         public Camera2D ActiveCamera { get; private set; }
         public List<SceneNode> SceneNodeList { get { return FindByType<SceneNode>(Root); } }
@@ -31,7 +29,7 @@ namespace Game
         /// <summary>Root node to the scene graph.</summary>
         public SceneNode Root { get; private set; }
 
-        #region constructors
+        #region Constructors
         public Scene()
         {
             Root = new SceneNode(this);
@@ -96,9 +94,7 @@ namespace Game
             return SceneNodeList.Find(item => (item.Name == name));
         }
 
-        /// <summary>
-        /// Get a unique SceneNode id.
-        /// </summary>
+        /// <summary>Get a unique SceneNode id.</summary>
         public int GetId()
         {
             _idCount++;
@@ -144,63 +140,6 @@ namespace Game
         {
             Root.DeepClone(scene);
             return scene;
-        }
-
-        /*public void Save()
-        {
-            FileStream physicsFile = File.Create("savePhys.xml");
-            FileStream sceneFile = File.Create("save.xml");
-            Save(sceneFile, physicsFile);
-            physicsFile.Close();
-            sceneFile.Close();
-        }
-
-        public void Save(FileStream sceneFile, FileStream physicsFile)
-        {
-            var physicsSerializer = new FarseerPhysics.Common.WorldXmlSerializer();
-            physicsSerializer.Serialize(World, physicsFile);
-
-            DataContractSerializer serializer = GetSceneSerializer();
-
-            serializer.WriteObject(sceneFile, this);
-        }
-
-        public static Scene Load()
-        {
-            FileStream physicsFile = File.OpenRead("savePhys.xml");
-            FileStream sceneFile = File.OpenRead("save.xml");
-            Scene scene = Load(sceneFile, physicsFile);
-            physicsFile.Close();
-            sceneFile.Close();
-            return scene;
-        }
-
-        public static Scene Load(FileStream sceneFile, FileStream physicsFile)
-        {
-            DataContractSerializer serializer = GetSceneSerializer();
-            Scene scene = (Scene)serializer.ReadObject(sceneFile);
-
-            var physicsDeserializer = new FarseerPhysics.Common.WorldXmlDeserializer();
-            World physWorld = physicsDeserializer.Deserialize(physicsFile);
-            
-            scene.SetPhysicsWorld(physWorld);
-
-            return scene;
-        }*/
-
-        private static DataContractSerializer GetSceneSerializer()
-        {
-            Assembly assembly = Assembly.GetAssembly(typeof(Scene));
-            var types = from t in Assembly.GetExecutingAssembly().GetTypes()
-                        where t.IsSubclassOf(typeof(Scene))
-                        select t;
-            DataContractSerializer serializer = new DataContractSerializer(typeof(Scene), "Game", "Game", types,
-            0x7FFFF /*maxObjectsInGraph*/,
-            false/*ignoreExtensionDataObject*/,
-            true/*preserveObjectReferences*/,
-            null/*dataContractSurrogate*/,
-            null);//new PhysDataContractResolver(assembly));
-            return serializer;
         }
     }
 }

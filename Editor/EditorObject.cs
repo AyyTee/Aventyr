@@ -4,36 +4,29 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Editor
 {
+    [DataContract]
     public abstract class EditorObject : SceneNodePlaceable
     {
-        public readonly ControllerEditor Controller;
+        [DataMember]
         public Entity Marker { get; private set; }
         bool _isSelected = false;
         public bool IsSelected { get { return _isSelected; } }
 
-        public EditorObject(ControllerEditor controller)
-            : base (controller.Level)
+        public EditorObject(Scene scene)
+            : base(scene)
         {
-            Debug.Assert(controller != null);
-            Controller = controller;
-
             Marker = new Entity(Scene);
             Marker.SetParent(this);
             Marker.DrawOverPortals = true;
             Model circle = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
             circle.SetColor(new Vector3(1f, 0.5f, 0f));
             Marker.AddModel(circle);
-        }
-
-        public EditorObject(EditorObject editorObject)
-            : base(editorObject.Controller.Level)
-        {
-            Controller = editorObject.Controller;
         }
 
         protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
@@ -46,13 +39,11 @@ namespace Editor
         public override void SetTransform(Transform2D transform)
         {
             base.SetTransform(transform);
-            Controller.SetEditorObjectModified();
         }
 
         public override void SetPosition(Vector2 position)
         {
             base.SetPosition(position);
-            Controller.SetEditorObjectModified();
         }
 
         public virtual void SetSelected(bool isSelected)

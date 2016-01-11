@@ -4,17 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Game
 {
+    [DataContract]
     public abstract class Portal : SceneNode
     {
+        [DataMember]
         public Portal Linked { get; private set; }
-        /// <summary>
-        /// The local size of the portal.
-        /// </summary>
+        /// <summary>Size of the portal.</summary>
+        [DataMember]
         public float Size { get; private set; }
         /// <summary>
         /// True if entities can travel through this portal.  Does not affect portal clipping.
@@ -29,7 +31,9 @@ namespace Game
         /// If OneSided is true then the portal can only be viewed through it's front side.
         /// Entities can still travel though the portal in both directions however.
         /// </summary>
+        [DataMember]
         public bool OneSided { get; set; }
+        [DataMember]
         public bool IsMirrored { get; set; }
         public Portal(Scene scene)
             : base(scene)

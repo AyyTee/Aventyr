@@ -20,7 +20,7 @@ namespace Game
         public bool PortalRenderEnabled { get; set; }
         public int PortalRenderDepth { get; set; }
 
-        public static Dictionary<string, Texture> Textures = new Dictionary<string, Texture>();
+        public static Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
         
         public Renderer(Controller controller)
@@ -45,6 +45,13 @@ namespace Game
         public void AddScene(Scene scene)
         {
             _scenes.Add(scene);
+        }
+
+        /// <summary>Remove a Scene from the Renderer.</summary>
+        /// <returns>True if the Scene was in the Renderer, otherwise false.</returns>
+        public bool RemoveScene(Scene scene)
+        {
+            return _scenes.Remove(scene);
         }
 
         public void Render()
@@ -401,7 +408,7 @@ namespace Game
             if (model.Texture != null)
             {
                 GL.Uniform1(model.Shader.GetUniform("isTextured"), 1);
-                GL.BindTexture(TextureTarget.Texture2D, model.Texture.Id);
+                GL.BindTexture(TextureTarget.Texture2D, model.Texture.GetId());
                 //GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.Texture.Id);
             }
             else
@@ -412,7 +419,7 @@ namespace Game
             }
 
             // Buffer index data
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, model.IboElements);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, model.GetIbo());
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);
 
             if (model.Wireframe)
@@ -519,7 +526,7 @@ namespace Game
             GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);
         }
 
-        public static Texture LoadImage(Bitmap image)
+        /*public static Texture LoadImage(Bitmap image)
         {
             int texID = GL.GenTexture();
 
@@ -551,6 +558,6 @@ namespace Game
             {
                 return null;
             }
-        }
+        }*/
     }
 }

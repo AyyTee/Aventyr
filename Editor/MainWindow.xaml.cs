@@ -16,10 +16,11 @@ namespace Editor
     {
         GLLoop _loop;
         ControllerEditor ControllerEditor;
-        delegate void SetControllerCallback(Entity entity);
         public static string LocalDirectory { get; private set; }
         public static string AssetsDirectory { get; private set; }
-        OpenFileDialog _openFileDialog = new OpenFileDialog();
+        OpenFileDialog _loadModelDialog = new OpenFileDialog();
+        SaveFileDialog _saveFileDialog = new SaveFileDialog();
+        OpenFileDialog _loadFileDialog = new OpenFileDialog();
         System.Timers.Timer updateTimer;
         public MainWindow()
         {
@@ -29,7 +30,33 @@ namespace Editor
             //Set the application window size here.  That way it can be super small in the editor!
             Width = 1000;
             Height = 650;
-            _openFileDialog.FileOk += _openFileDialog_FileOk;
+            _loadModelDialog.FileOk += _openFileDialog_FileOk;
+            _saveFileDialog.FileOk += _saveFileDialog_FileOk;
+            _loadFileDialog.FileOk += _loadFileDialog_FileOk;
+            _saveFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension;
+            _loadFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension;
+        }
+
+        private void _openFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            ControllerEditor.AddAction(() =>
+            {
+                string fileName = ((OpenFileDialog)sender).FileName;
+                ModelLoader loader = new ModelLoader();
+                Model model = loader.LoadObj(fileName);
+                EditorEntity entity = ControllerEditor.CreateLevelEntity();
+                entity.Entity.AddModel(model);
+            });
+        }
+
+        private void _loadFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Load(((OpenFileDialog)sender).FileName);
+        }
+
+        private void _saveFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            Save(((SaveFileDialog)sender).FileName);
         }
 
         public void GLControl_Load(object sender, EventArgs e)
@@ -76,6 +103,23 @@ namespace Editor
         {
             Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
             MouseWorldCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
+        }
+
+        private void Save(string filename)
+        {
+            ControllerEditor.AddAction(() =>
+                {
+                    new EditorSerializer().Serialize(ControllerEditor.Level.Root, filename);
+                });
+        }
+
+        private void Load(string filename)
+        {
+            ControllerEditor.AddAction(() =>
+                {
+                    ControllerEditor.NewLevel();
+                    new EditorSerializer().Deserialize(ControllerEditor.Level, filename);
+                });
         }
 
         /*private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, EditorObject entity)
@@ -150,20 +194,8 @@ namespace Editor
 
         private void LoadModel(object sender, RoutedEventArgs e)
         {
-            _openFileDialog.Filter = "Wavefront (*.obj)|*.obj";
-            _openFileDialog.ShowDialog();
-        }
-
-        private void _openFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            ControllerEditor.AddAction(() =>
-            {
-                string fileName = ((OpenFileDialog)sender).FileName;
-                ModelLoader loader = new ModelLoader();
-                Model model = loader.LoadObj(fileName);
-                EditorEntity entity = ControllerEditor.CreateLevelEntity();
-                entity.Entity.AddModel(model);
-            });
+            _loadModelDialog.Filter = "Wavefront (*.obj)|*.obj";
+            _loadModelDialog.ShowDialog();
         }
 
         private void MainGrid_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -204,6 +236,16 @@ namespace Editor
             {
                 ControllerEditor.renderer.PortalRenderEnabled = visible;
             });
+        }
+
+        private void Button_Save(object sender, RoutedEventArgs e)
+        {
+            _saveFileDialog.ShowDialog();
+        }
+
+        private void Button_Load(object sender, RoutedEventArgs e)
+        {
+            _loadFileDialog.ShowDialog();
         }
     }
 }

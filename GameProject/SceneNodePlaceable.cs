@@ -2,13 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Game
 {
+    [DataContract]
     public class SceneNodePlaceable : SceneNode, ITransform2D
     {
+        [DataMember]
         Transform2D _transform = new Transform2D();
 
         public SceneNodePlaceable(Scene scene)

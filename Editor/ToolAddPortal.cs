@@ -71,7 +71,7 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            _mouseFollow = new EditorPortal(Controller);
+            _mouseFollow = new EditorPortal(Controller.Level);
         }
 
         public override void Disable()

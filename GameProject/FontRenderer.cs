@@ -55,7 +55,7 @@ namespace Game
             GlyphBitmap = new Bitmap(TextureSize.Width, TextureSize.Height);
             
             texture = new Texture(GL.GenTexture());
-            GL.BindTexture(TextureTarget.Texture2D, texture.Id);
+            GL.BindTexture(TextureTarget.Texture2D, texture.GetId());
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
             

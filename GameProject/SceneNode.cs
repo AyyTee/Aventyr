@@ -5,32 +5,62 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using System.Xml;
 
 namespace Game
 {
     /// <summary>
     /// Scene graph node.  All derived classes MUST override Clone(Scene) and return an instance of the derived class.
     /// </summary>
+    [DataContract]
     public class SceneNode
     {
         /// <summary>Unique identifier within the scene.</summary>
-        public readonly int Id;
+        [DataMember]
+        public long Id { get; private set; }
+        [DataMember]
         public string Name { get; set; }
+        [DataMember]
         List<SceneNode> _children = new List<SceneNode>();
         public List<SceneNode> ChildList { get { return new List<SceneNode>(_children); } }
+        [DataMember]
         public SceneNode Parent { get; private set; }
 
-        public readonly Scene Scene;
+        public Scene Scene { get; private set; }
 
-        #region constructors
+        #region Constructors
         public SceneNode(Scene scene)
         {
             Debug.Assert(scene != null, "Must be assigned to a scene.");
             Scene = scene;
-            Id = Scene.GetId();
-            SetParent(Scene.Root);
+            if (Scene != null)
+            {
+                Id = Scene.GetId();
+                SetParent(Scene.Root);
+            }
         }
         #endregion
+
+        /// <summary>
+        /// Assigns SceneNode and all it's descendents to a Scene.  
+        /// Cannot be done if SceneNode is already part of a Scene.  Method must be called by the root node.
+        /// </summary>
+        public void SetScene(Scene scene)
+        {
+            Debug.Assert(Parent == null, "Must not have a parent.");
+            _setScene(scene);
+            SetParent(Scene.Root);
+        }
+
+        private void _setScene(Scene scene)
+        {
+            Debug.Assert(Scene == null, "SceneNode is already a part of a Scene.");
+            Scene = scene;
+            foreach (SceneNode s in ChildList)
+            {
+                s._setScene(Scene);
+            }
+        }
 
         /// <summary>
         /// Clones a SceneNode and recursively clones all of it's children.
@@ -48,14 +78,17 @@ namespace Game
         public SceneNode DeepClone(Scene scene, HashSet<SceneNode> mask = null)
         {
             Dictionary<SceneNode, SceneNode> cloneMap = new Dictionary<SceneNode, SceneNode>();
-            SceneNode clone = Clone(scene);
-            cloneMap.Add(this, clone);
             List<SceneNode> cloneList = new List<SceneNode>();
-            CloneChildren(cloneMap, cloneList, mask);
+            SceneNode clone = Clone(scene);
+            clone.SetParent(null);
+            cloneMap.Add(this, clone);
+            cloneList.Add(this);
+            CloneChildren(scene, cloneMap, cloneList, mask);
             foreach (SceneNode s in cloneList)
             {
-                DeepCloneFinalize(cloneMap);
+                s.DeepCloneFinalize(cloneMap);
             }
+            clone.SetParent(scene.Root);
             return clone;
         }
 
@@ -63,22 +96,22 @@ namespace Game
         /// This method is called by DeepClone after all SceneNodes have been cloned and parented. Useful for updating references.
         /// </summary>
         /// <param name="cloneMap">Map of source SceneNodes to destination SceneNodes.</param>
-        protected virtual void DeepCloneFinalize(Dictionary<SceneNode, SceneNode>  cloneMap)
+        protected virtual void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
         {
         }
 
-        private void CloneChildren(Dictionary<SceneNode, SceneNode> cloneMap, List<SceneNode> cloneList, HashSet<SceneNode> mask)
+        private void CloneChildren(Scene scene, Dictionary<SceneNode, SceneNode> cloneMap, List<SceneNode> cloneList, HashSet<SceneNode> mask)
         {
             foreach (SceneNode p in ChildList)
             {
                 if (mask == null || mask.Contains(p))
                 {
-                    SceneNode clone = p.Clone();
+                    SceneNode clone = p.Clone(scene);
                     cloneMap.Add(p, clone);
                     clone.SetParent(cloneMap[p.Parent]);
                     cloneList.Add(p);
                 }
-                p.CloneChildren(cloneMap, cloneList, mask);
+                p.CloneChildren(scene, cloneMap, cloneList, mask);
             }
         }
 
@@ -151,17 +184,15 @@ namespace Game
         /// <returns></returns>
         private bool ParentLoopExists()
         {
-            const int DONT_CARE = 0;
-            Dictionary<SceneNode, int> map = new Dictionary<SceneNode, int>();
+            HashSet<SceneNode> map = new HashSet<SceneNode>();
             SceneNode child = this;
             while (child.Parent != null)
             {
                 child = child.Parent;
-                if (map.ContainsKey(child))
+                if (!map.Add(child))
                 {
                     return true;
                 }
-                map.Add(child, DONT_CARE);
             }
             return false;
         }

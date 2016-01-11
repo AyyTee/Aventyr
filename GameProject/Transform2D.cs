@@ -4,17 +4,21 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using Xna = Microsoft.Xna.Framework;
 using System.ComponentModel;
+using System.Xml;
+using System.Runtime.Serialization;
 
 namespace Game
 {
-    [Serializable]
+    [DataContract]
     public class Transform2D
     {
-        Matrix4 Matrix;
-        public bool MatrixUpdate { get; private set; }
+        [DataMember]
         Vector2 _position = new Vector2();
+        [DataMember]
         float _rotation = 0;
+        [DataMember]
         Vector2 _scale = new Vector2(1, 1);
+        [DataMember]
         bool _uniformScale = false;
         const float UNIFORM_SCALE_EPSILON = 0.0001f;
         const float EQUALITY_EPSILON = 0.0001f;
@@ -32,7 +36,6 @@ namespace Game
             {
                 Debug.Assert(!Double.IsNaN(value));
                 _rotation = value; 
-                MatrixUpdate = true; 
             }
         }
 
@@ -50,7 +53,6 @@ namespace Game
                         "Transforms with fixed scale cannot have non-uniform scale.");
                     value.Y = Math.Sign(value.Y) * Math.Abs(value.X);
                 }
-                MatrixUpdate = true;
                 _scale = value; 
             } 
         }
@@ -62,14 +64,12 @@ namespace Game
             {
                 Debug.Assert(!Vector2Ext.IsNaN(value));
                 _position = value; 
-                MatrixUpdate = true; 
             }
         }
 
-        #region constructors
+        #region Constructors
         public Transform2D()
         {
-            MatrixUpdate = true;
         }
 
         public Transform2D(Vector2 position)
@@ -103,7 +103,6 @@ namespace Game
             Position = position;
             Scale = scale;
             Rotation = rotation;
-            MatrixUpdate = true;
         }
 
         /// <summary>Copy constructor</summary>
@@ -123,12 +122,7 @@ namespace Game
         
         public Matrix4 GetMatrix()
         {
-            if (MatrixUpdate)
-            {
-                Matrix = Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position.X, Position.Y, 0));
-                MatrixUpdate = false;
-            }
-            return Matrix;
+            return Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position));
         }
         
         public bool IsMirrored()

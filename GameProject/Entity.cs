@@ -14,15 +14,18 @@ namespace Game
     /// <summary>
     /// An object that exists within the world space and can be drawn
     /// </summary>
-    [Serializable]
+    [DataContract]
     public class Entity : SceneNodePlaceable
     {
+        [DataMember]
         List<Model> _models = new List<Model>();
         public List<ClipModel> ClipModels = new List<ClipModel>();
+        [DataMember]
         bool _isPortalable = false;
         /// <summary>
         /// If true then this model will not be drawn during portal rendering and will appear in front of any portal FOV.
         /// </summary>
+        [DataMember]
         public bool DrawOverPortals = false;
 
         /// <summary>
@@ -40,10 +43,10 @@ namespace Game
         /// <summary>
         /// Gets or sets whether this Entity can be rendered.
         /// </summary>
+        [DataMember]
         public bool Visible { get; set; }
         //public List<Model> Models { get { return _models; } set { _models = value; } }
         public List<Model> ModelList { get { return new List<Model>(_models); } }
-        [DataContractAttribute]
         public class ClipModel
         {
             private Line[] _clipLines;
@@ -61,7 +64,7 @@ namespace Game
             }
         }
 
-        #region constructors
+        #region Constructors
         public Entity(Scene scene)
             : base(scene)
         {

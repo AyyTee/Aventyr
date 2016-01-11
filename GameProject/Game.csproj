@@ -137,6 +137,7 @@
     <Compile Include="BodyUserData.cs" />
     <Compile Include="Camera2D.cs" />
     <Compile Include="ClipperExt.cs" />
+    <Compile Include="ITexture.cs" />
     <Compile Include="ITransform2D.cs" />
     <Compile Include="ModelLoader.cs" />
     <Compile Include="ControllerGame.cs" />
@@ -168,7 +169,9 @@
     <Compile Include="Renderer.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="SceneNodePlaceable.cs" />
+    <Compile Include="Serializer.cs" />
     <Compile Include="Texture.cs" />
+    <Compile Include="TextureFile.cs" />
     <Compile Include="Transform3D.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="FixturePortal.cs" />

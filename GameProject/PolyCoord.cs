@@ -24,7 +24,7 @@ namespace Game
             }
         }
 
-        #region constructors
+        #region Constructors
         public PolyCoord(int lineIndex, float lineT)
         {
             LineIndex = lineIndex;
