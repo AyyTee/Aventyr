@@ -19,13 +19,13 @@ namespace Game
     {
         public Fixture Fixture { get; private set; }
         /// <summary>
-        /// Return the Entity linked to the Body that is linked to the Fixture being intersected.
+        /// Return the Actor linked to the Body that is linked to the Fixture being intersected.
         /// </summary>
-        public Entity Entity
+        public Actor Actor
         {
             get 
             {
-                return BodyExt.GetUserData(Fixture.Body).LinkedEntity;
+                return BodyExt.GetUserData(Fixture.Body).Actor;
             }
         }
         private int _edgeIndex;
@@ -133,7 +133,7 @@ namespace Game
         {
             Transform2D transform = new Transform2D();
             transform.Position = GetPosition();
-            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Entity.GetTransform().Rotation;
+            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Actor.GetTransform().Rotation;
             return transform;
         }
 

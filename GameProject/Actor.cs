@@ -12,9 +12,11 @@ namespace Game
     [DataContract]
     public class Actor : SceneNodePlaceable
     {
+        [DataMember]
         public Transform2D Velocity { get; private set; }
-        public readonly int BodyId = -1;
-        public Body Body
+        [DataMember]
+        public readonly int BodyId;
+        /*public Body Body
         {
             get
             {
@@ -25,13 +27,17 @@ namespace Game
                 Debug.Assert(Scene.World.BodyList.Exists(item => (item.BodyId == BodyId)), "Body id does not exist.");
                 return Scene.World.BodyList.Find(item => (item.BodyId == BodyId));
             }
-        }
+        }*/
+        public readonly Body Body;
 
         public Actor(Scene scene, Body body)
             : base(scene)
         {
             Velocity = new Transform2D();
+            Debug.Assert(body != null, "Actor must be assigned a Body.");
             BodyId = body.BodyId;
+            Body = body;
+            BodyExt.SetUserData(Body, this);
         }
 
         public override void Remove()
@@ -46,19 +52,10 @@ namespace Game
         public void Step()
         {
             Transform2D transform = GetTransform();
-            if (Body != null)
-            {
-                transform.Position = Vector2Ext.ConvertTo(Body.Position);
-                transform.Rotation = Body.Rotation;
-                Velocity.Position = Vector2Ext.ConvertTo(Body.LinearVelocity);
-                Velocity.Rotation = Body.AngularVelocity;
-            }
-            else
-            {
-                transform.Position += Velocity.Position;
-                transform.Rotation += Velocity.Rotation;
-                transform.Scale *= Velocity.Scale;
-            }
+            transform.Position = Vector2Ext.ConvertTo(Body.Position);
+            transform.Rotation = Body.Rotation;
+            Velocity.Position = Vector2Ext.ConvertTo(Body.LinearVelocity);
+            Velocity.Rotation = Body.AngularVelocity;
             SetTransform(transform);
         }
 

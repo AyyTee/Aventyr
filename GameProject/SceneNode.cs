@@ -31,7 +31,6 @@ namespace Game
         #region Constructors
         public SceneNode(Scene scene)
         {
-            Debug.Assert(scene != null, "Must be assigned to a scene.");
             Scene = scene;
             if (Scene != null)
             {
@@ -176,6 +175,26 @@ namespace Game
                 return GetTransform().Transform(Parent.GetWorldTransform());
             }
             return GetTransform();
+        }
+
+        public List<T> FindByType<T>() where T : SceneNode
+        {
+            List<T> list = new List<T>();
+            foreach (SceneNode p in ChildList)
+            {
+                T nodeCast = p as T;
+                if (nodeCast != null)
+                {
+                    list.Add(nodeCast);
+                }
+                list.AddRange(p.FindByType<T>());
+            }
+            return list;
+        }
+
+        public SceneNode FindByName(string name)
+        {
+            return FindByType<SceneNode>().Find(item => (item.Name == name));
         }
 
         /// <summary>

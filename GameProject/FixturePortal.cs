@@ -106,11 +106,11 @@ namespace Game
         {
             RemoveFixture();
             Position = position;
-            Debug.Assert(position.Entity != null);
+            Debug.Assert(position.Actor != null);
             Debug.Assert(position.Fixture != null);
             if (Position != null)
             {
-                SetParent(Position.Entity);
+                SetParent(Position.Actor);
                 FixtureExt.GetUserData(Position.Fixture).AddPortal(this);
                 //wake up all the bodies so that they will fall if there is now a portal entrance below them
                 foreach (Body b in Scene.World.BodyList)

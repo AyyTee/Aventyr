@@ -12,7 +12,7 @@
         </Grid.RowDefinitions>
         <Menu>
             <MenuItem Header="FILE">
-                <MenuItem Header="New">
+                <MenuItem Header="New" Click="Button_New">
                     <MenuItem.Icon>
                         <Image Source="/editor assets/icons/document.png" />
                     </MenuItem.Icon>

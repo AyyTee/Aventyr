@@ -35,13 +35,13 @@ namespace Game
         /// </summary>
         private List<FixturePortal> _childPortals = new List<FixturePortal>();
         private List<Fixture> _fixtureChildList = new List<Fixture>();
-        public Entity Entity
+        public Actor Entity
         {
             get
             {
                 Debug.Assert(Fixture.Body.UserData != null, "Body UserData does not exist.");
                 BodyUserData userData = (BodyUserData)BodyExt.GetUserData(Fixture.Body);
-                return userData.LinkedEntity;
+                return userData.Actor;
             }
         }
 

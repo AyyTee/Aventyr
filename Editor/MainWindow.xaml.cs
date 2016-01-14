@@ -109,7 +109,7 @@ namespace Editor
         {
             ControllerEditor.AddAction(() =>
                 {
-                    new EditorSerializer().Serialize(ControllerEditor.Level.Root, filename);
+                    new Serializer().Serialize(ControllerEditor.Level.Root, filename);
                 });
         }
 
@@ -118,7 +118,7 @@ namespace Editor
             ControllerEditor.AddAction(() =>
                 {
                     ControllerEditor.NewLevel();
-                    new EditorSerializer().Deserialize(ControllerEditor.Level, filename);
+                    new Serializer().Deserialize(ControllerEditor.Level, filename);
                 });
         }
 
@@ -246,6 +246,14 @@ namespace Editor
         private void Button_Load(object sender, RoutedEventArgs e)
         {
             _loadFileDialog.ShowDialog();
+        }
+
+        private void Button_New(object sender, RoutedEventArgs e)
+        {
+            ControllerEditor.AddAction(() =>
+            {
+                ControllerEditor.NewLevel();
+            });
         }
     }
 }

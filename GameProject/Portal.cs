@@ -171,6 +171,13 @@ namespace Game
             actor.SetVelocity(velocity);
         }
 
+        public void Enter(SceneNodePlaceable placeable)
+        {
+            Transform2D transform = placeable.GetTransform();
+            this.Enter(transform);
+            placeable.SetTransform(transform);
+        }
+
         public static void SetLinked(Portal portal0, Portal portal1)
         {
             portal0.SetLinked(portal1);

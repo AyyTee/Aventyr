@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Editor
 {
-    public class EditorSerializer : Serializer
+    public class Serializer : Game.Serializer
     {
-        public EditorSerializer()
+        public Serializer()
         {
         }
 

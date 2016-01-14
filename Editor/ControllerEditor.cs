@@ -73,8 +73,12 @@ namespace Editor
             background.TransformUv.Scale = new Vector2(size, size);
             Entity back = new Entity(Level, new Vector2(0f, 0f));
             back.AddModel(background);
-            //back.IsPortalable = true;
             #endregion
+
+            selection = new Selection(Level);
+            StateList = new StateList();
+
+            Level.SetActiveCamera(new Camera2D(Level, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height));
 
             Entity viewCenter = new Entity(Level);
             viewCenter.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.1f, 10));
@@ -82,10 +86,6 @@ namespace Editor
             viewCenter.ModelList[0].SetColor(new Vector3(1, 0.9f, 0.2f));
             viewCenter.SetParent(Level.ActiveCamera);
 
-            selection = new Selection(Level);
-            StateList = new StateList();
-
-            Level.SetActiveCamera(new Camera2D(Level, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height));
             CamControl = new ControllerCamera(this, Level.ActiveCamera, InputExt);
         }
 

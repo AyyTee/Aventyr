@@ -71,13 +71,28 @@ namespace Game
             return clipLines;
         }*/
 
-        public List<PortalView> GetPortalViewList()
+        public List<PortalView> GetPortalViewList(Vector2 position)
         {
             List<PortalView> list = new List<PortalView>();
             list.Add(this);
-            foreach (PortalView p in Children)
+            List<PortalView> childList = Children.OrderBy(item => (item.Portal.GetTransform().Position - position).Length).ToList();
+            foreach (PortalView p in childList)
             {
-                list.AddRange(p.GetPortalViewList());
+                list.AddRange(p.GetPortalViewList(position));
+            }
+            //list.AddRange(childList);
+            //list.AddRange(_getPortalViewList(position));
+            return list;
+        }
+
+        private List<PortalView> _getPortalViewList(Vector2 position)
+        {
+            List<PortalView> list = new List<PortalView>();
+            List<PortalView> childList = Children.OrderBy(item => (item.Portal.GetTransform().Position - position).Length).ToList();
+            list.AddRange(childList);
+            foreach (PortalView p in childList)
+            {
+                list.AddRange(p.GetPortalViewList(position));
             }
             return list;
         }

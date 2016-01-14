@@ -13,7 +13,6 @@ namespace Editor
     [DataContract]
     public abstract class EditorObject : SceneNodePlaceable
     {
-        [DataMember]
         public Entity Marker { get; private set; }
         bool _isSelected = false;
         public bool IsSelected { get { return _isSelected; } }
@@ -21,12 +20,23 @@ namespace Editor
         public EditorObject(Scene scene)
             : base(scene)
         {
+            SetMarker();
+        }
+
+        private void SetMarker()
+        {
             Marker = new Entity(Scene);
             Marker.SetParent(this);
             Marker.DrawOverPortals = true;
             Model circle = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
             circle.SetColor(new Vector3(1f, 0.5f, 0f));
             Marker.AddModel(circle);
+        }
+
+        [OnDeserialized]
+        private void Deserialize(StreamingContext stream)
+        {
+            SetMarker();
         }
 
         protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)

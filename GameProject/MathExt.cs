@@ -60,8 +60,6 @@ namespace Game
 
         static public double AngleDiff(double angle0, double angle1)
         {
-
-            //return Math.PI - Math.Abs(Math.Abs(angle0 - angle1) - Math.PI);
             return ((angle1 - angle0) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
         }
 

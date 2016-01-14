@@ -1,4 +1,5 @@
 ﻿using Cgen.Audio;
+using FarseerPhysics.Dynamics;
 using OpenTK;
 using OpenTK.Input;
 using System;
@@ -42,7 +43,7 @@ namespace Game
             hud = new Scene();
             Camera2D hudCam = new Camera2D(hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
 
-            /*Model background = ModelFactory.CreatePlane();
+            Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
@@ -78,9 +79,7 @@ namespace Game
             portal3 = new FloatPortal(scene);
             portal3.SetParent(portalEntity3);
 
-
             Portal.SetLinked(portal2, portal3);
-
 
             #region player
             Entity player = new Entity(scene);
@@ -126,10 +125,10 @@ namespace Game
             };
 
 
-            Entity ground = EntityFactory.CreateEntityPolygon(scene, new Transform2D(), v);
+            Actor ground = ActorFactory.CreateEntityPolygon(scene, new Transform2D(), v);
             ground.Name = "ground";
             //ground.IsPortalable = true;
-            ground.AddModel(ModelFactory.CreatePolygon(v));
+            //ground.AddModel(ModelFactory.CreatePolygon(v));
             ground.SetTransform(new Transform2D(new Vector2(0, -4f), 0.05f));
             scene.World.ProcessChanges();
             portal0 = new FixturePortal(scene, null);
@@ -144,7 +143,7 @@ namespace Game
             text2 = new Entity(hud);
             text2.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
 
-            new Serializer().Deserialize(scene, "blah.save");
+            //new Serializer().Deserialize(scene, "blah.save");
             Camera2D cam = new Camera2D(scene, scene.FindByName("player").GetTransform().Position, 10, CanvasSize.Width / (float)CanvasSize.Height);
             
             scene.SetActiveCamera(cam);
@@ -152,8 +151,8 @@ namespace Game
             renderer.AddScene(scene);
             renderer.AddScene(hud);
 
-            /*new Serializer().Serialize(Scene.Root, "blah");
-            Thread.Sleep(500);*/
+            new Serializer().Serialize(scene.Root, "blah");
+            //Thread.Sleep(500);*/
             
         }
 
@@ -204,12 +203,12 @@ namespace Game
             }
             if (InputExt.KeyPress(Key.Space))
             {
-                Entity box = EntityFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(0.2f, 4.4f)));
+                Actor box = ActorFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(0.2f, 4.4f)));
                 //box.Transform.Rotation = 2.5f * (float)Math.PI / 4;
             }
             if (InputExt.KeyPress(Key.ControlLeft))
             {
-                EntityFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(2.4f, 0.4f)));
+                ActorFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(2.4f, 0.4f)));
             }
             if (InputExt.KeyPress(Key.M))
             {
@@ -296,7 +295,7 @@ namespace Game
 
             if (intersect.Exists)
             {
-                //portalEnter.Enter(player);
+                portalEnter.Enter(player);
             }
             #endregion
 

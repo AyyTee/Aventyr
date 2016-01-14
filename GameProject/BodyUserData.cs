@@ -13,10 +13,10 @@ namespace Game
     
     public class BodyUserData
     {
-        public long EntityID;
+        public readonly int BodyId;
         [XmlIgnore]
-        public Entity LinkedEntity { get; private set; }
-        public Body Body { get; private set; }
+        public readonly Actor Actor;
+        public readonly Body Body;
         public Xna.Vector2 PreviousPosition { get; set; }
         public HashSet<FixturePortal> PortalCollisions = new HashSet<FixturePortal>();
         public List<ChildBody> BodyChildren = new List<ChildBody>();
@@ -34,24 +34,13 @@ namespace Game
         }
 
         #region Constructors
-        public BodyUserData()
+        public BodyUserData(Actor actor, Body body)
         {
-        }
-
-        public BodyUserData(Entity linked, Body body)
-        {
-            LinkedEntity = linked;
-            if (LinkedEntity != null)
-            {
-                EntityID = linked.Id;
-            }
+            Debug.Assert(body != null);
+            Debug.Assert(actor != null);
+            Actor = actor;
+            BodyId = body.BodyId;
             Body = body;
-        }
-
-        public BodyUserData(Body body)
-        {
-            Body = body;
-            LinkedEntity = null;
         }
         #endregion
 
@@ -106,7 +95,7 @@ namespace Game
         private void AddChildBody(FixturePortal portal)
         {
             BodyUserData userData = BodyExt.GetUserData(Body);
-            if (userData.LinkedEntity == null)
+            if (userData.Actor == null)
             {
                 return;
             }

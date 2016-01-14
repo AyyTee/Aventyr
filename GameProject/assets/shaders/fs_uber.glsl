@@ -1,4 +1,4 @@
-#version 330
+#version 130
 
 in vec4 f_color;
 in vec2 f_texcoord;
@@ -22,9 +22,9 @@ main()
 		{
 			outputColor = vec4(1, 1, 0, 1);
 			return;
-		}*/
+		}
 		
-		/*if (0 < (v1.x - v0.x) * (gl_FragCoord.y - v0.y) - (v1.y - v0.y) * (gl_FragCoord.x - v0.x))
+		if (0 < (v1.x - v0.x) * (gl_FragCoord.y - v0.y) - (v1.y - v0.y) * (gl_FragCoord.x - v0.x))
 		{
 			discard;
 			return;

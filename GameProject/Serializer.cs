@@ -24,16 +24,28 @@ namespace Game
 
         public void Serialize(SceneNode rootNode, string filename)
         {
+            SceneNode clone = CopyData(rootNode);
+            _serialize(clone, filename);
+        }
+
+        private SceneNode CopyData(SceneNode rootNode)
+        {
             SceneNode clone = rootNode.DeepClone(new Scene());
             clone.SetParent(null);
+            return clone;
+        }
+
+        public void SerializeAsync(SceneNode rootNode, string filename)
+        {
+            SceneNode clone = CopyData(rootNode);
             ThreadPool.QueueUserWorkItem(
                 new WaitCallback(delegate(object state)
                 {
-                    SerializeAsync(clone, filename);
+                    _serialize(clone, filename);
                 }), null);
         }
 
-        private void SerializeAsync(SceneNode rootNode, string filename)
+        private void _serialize(SceneNode rootNode, string filename)
         {
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
@@ -51,8 +63,8 @@ namespace Game
             XmlReaderSettings settings = new XmlReaderSettings();
             using (XmlReader reader = XmlReader.Create(filename, settings))
             {
-                SceneNode s = (SceneNode)GetSerializer().ReadObject(reader);
-                s.SetScene(scene);
+                SceneNode root = (SceneNode)GetSerializer().ReadObject(reader);
+                root.SetScene(scene);
             }
         }
 

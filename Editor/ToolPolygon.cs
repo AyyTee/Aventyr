@@ -59,8 +59,9 @@ namespace Editor
                         _vertices[i] -= average;
                     }
                     entity.SetPosition(average);
-                    EntityFactory.CreateEntityPolygon(entity.Entity, new Transform2D(), _vertices.ToArray());
+                    //Actor actor = ActorFactory.CreateEntityPolygon(Controller.Level, new Transform2D(average), _vertices.ToArray());
                     entity.Entity.IsPortalable = true;
+                    entity.Entity.AddModel(ModelFactory.CreatePolygon(_vertices.ToArray()));
                     entity.Entity.ModelList[0].Wireframe = true;
                     //entity.Entity.Models[0].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
                     //entity.Entity.Models[0].SetShader("default");

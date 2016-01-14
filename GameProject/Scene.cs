@@ -23,9 +23,9 @@ namespace Game
         PhysContactListener _contactListener;
 
         public Camera2D ActiveCamera { get; private set; }
-        public List<SceneNode> SceneNodeList { get { return FindByType<SceneNode>(Root); } }
-        public List<Portal> PortalList { get { return FindByType<Portal>(Root); } }
-        public List<Entity> EntityList { get { return FindByType<Entity>(Root); } }
+        public List<SceneNode> SceneNodeList { get { return Root.FindByType<SceneNode>(); } }
+        public List<Portal> PortalList { get { return Root.FindByType<Portal>(); } }
+        public List<Entity> EntityList { get { return Root.FindByType<Entity>(); } }
         /// <summary>Root node to the scene graph.</summary>
         public SceneNode Root { get; private set; }
 
@@ -71,27 +71,12 @@ namespace Game
 
         public List<T> FindByType<T>() where T : SceneNode
         {
-            return FindByType<T>(Root);
-        }
-
-        public List<T> FindByType<T>(SceneNode node) where T : SceneNode
-        {
-            List<T> list = new List<T>();
-            foreach (SceneNode p in node.ChildList)
-            {
-                T nodeCast = p as T;
-                if (nodeCast != null)
-                {
-                    list.Add(nodeCast);
-                }
-                list.AddRange(FindByType<T>(p));
-            }
-            return list;
+            return Root.FindByType<T>();
         }
 
         public SceneNode FindByName(string name)
         {
-            return SceneNodeList.Find(item => (item.Name == name));
+            return Root.FindByName(name);
         }
 
         /// <summary>Get a unique SceneNode id.</summary>

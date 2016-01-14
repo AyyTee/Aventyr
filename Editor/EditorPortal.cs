@@ -29,7 +29,6 @@ namespace Editor
             arrow1 = ModelFactory.CreateArrow(new Vector3(), new Vector2(0.2f, 0), 0.05f, 0.2f, 0.1f);
             arrow1.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
             PortalEntity.AddModel(arrow1);
-
             Portal = new FloatPortal(Scene);
             Portal.SetParent(this);
         }

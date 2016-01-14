@@ -27,7 +27,7 @@ namespace Game
             return new Transform2D(transform.Position, transform.Angle);
         }*/
 
-        public static BodyUserData SetUserData(Body body, Entity entity)
+        public static BodyUserData SetUserData(Body body, Actor entity)
         {
             //Ugly solution to storing Game classes in a way that still works when deserializing the data.
             //This list is intended to only store one element.
@@ -53,24 +53,10 @@ namespace Game
             body.SetTransform(Vector2Ext.ConvertToXna(transform.Position), transform.Rotation);
         }
 
-        public static Body DeepClone(Body body, Entity entity)
-        {
-            Body bodyClone = body.DeepClone(entity.Scene.World);
-            SetUserData(bodyClone, entity);
-
-            /*clone.PreviousPosition = BodyExt.GetUserData(body).PreviousPosition;
-            clone.PortalCollisions
-            clone.BodyChildren
-            clone.BodyParent*/
-            return bodyClone;
-        }
-
         /// <summary>
         /// Returns the area of non-portal fixtures that are in the same coordinate space as localPoint. 
         /// In other words, find the area not on other other side of a portal relative to localPoint.
         /// </summary>
-        /// <param name="body"></param>
-        /// <returns></returns>
         public static float GetLocalMass(Body body, Vector2 localPoint)
         {
             //Transform2D bodyTransform = GetTransform(body);
