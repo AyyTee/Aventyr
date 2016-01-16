@@ -19,7 +19,7 @@ namespace Game
         /// Position used for casting line of sight rays for portals
         /// </summary>
         [DataMember]
-        public Vector2 Viewpoint = new Vector2();
+        public Vector2 Viewpos { get; set; }
         [DataMember]
         public float ZNear { get; set; }
         [DataMember]
@@ -44,6 +44,7 @@ namespace Game
             Scale = scale;
             ZNear = -10000f;
             ZFar = 10000f;
+            Viewpos = new Vector2();
         }
         #endregion
 
@@ -62,7 +63,13 @@ namespace Game
             destinationCast.Scale = Scale;
             destinationCast.ZNear = ZNear;
             destinationCast.ZFar = ZFar;
-            destinationCast.Viewpoint = Viewpoint;
+            destinationCast.Viewpos = Viewpos;
+        }
+
+        public Vector2 GetWorldViewpos()
+        {
+            Transform2D transform = GetWorldTransform();
+            return transform.Position + Viewpos;
         }
 
         /// <summary>
@@ -76,19 +83,19 @@ namespace Game
             Vector3 lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
             Matrix4 perspective = Matrix4.CreateOrthographic(transform.Scale.X * Scale * Aspect, transform.Scale.Y * Scale, ZNear, ZFar);
             Vector3 eye = new Vector3(transform.Position) + new Vector3(0, 0, 5000);
-            return Matrix4.LookAt(eye, new Vector3(transform.Position) + lookat, GetUp()) * perspective;
+            return Matrix4.LookAt(eye, new Vector3(transform.Position) + lookat, new Vector3(GetUp())) * perspective;
         }
 
-        public Vector3 GetUp()
+        public Vector2 GetUp()
         {
             Matrix4 m = Matrix4.CreateRotationZ(GetWorldTransform().Rotation);
-            return Vector3.Transform(new Vector3(0, 1, 0), m);
+            return Vector2Ext.Transform(new Vector2(0, 1), m);
         }
 
-        public Vector3 GetRight()
+        public Vector2 GetRight()
         {
             Matrix4 m = Matrix4.CreateRotationZ(GetWorldTransform().Rotation);
-            return Vector3.Transform(new Vector3(1, 0, 0), m);
+            return Vector2Ext.Transform(new Vector2(1, 0), m);
         }
 
         public Vector2 WorldToScreen(Vector2 worldCoord)

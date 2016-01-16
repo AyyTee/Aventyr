@@ -103,7 +103,7 @@
     </Reference>
     <Reference Include="clipper_library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Clipper.6.2.10\lib\net40\clipper_library.dll</HintPath>
+      <HintPath>..\packages\clipper_library.6.2.1\lib\net40\clipper_library.dll</HintPath>
     </Reference>
     <Reference Include="FarseerPhysics, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -136,7 +136,9 @@
   <ItemGroup>
     <Compile Include="BodyUserData.cs" />
     <Compile Include="Camera2D.cs" />
+    <Compile Include="ClipperConvert.cs" />
     <Compile Include="ClipperExt.cs" />
+    <Compile Include="ILerp.cs" />
     <Compile Include="ITexture.cs" />
     <Compile Include="ITransform2D.cs" />
     <Compile Include="ModelLoader.cs" />

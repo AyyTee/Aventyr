@@ -78,6 +78,16 @@ namespace Game
             return Vector0 * (1 - T) + Vector1 * T;
         }
 
+        static public Vector3d Lerp(Vector3d Vector0, Vector3d Vector1, double T)
+        {
+            return Vector0 * (1 - T) + Vector1 * T;
+        }
+
+        static public Vector3 Lerp(Vector3 Vector0, Vector3 Vector1, float T)
+        {
+            return Vector0 * (1 - T) + Vector1 * T;
+        }
+
         static public double ValueWrap(double Value, double mod)
         {
             Value = Value % mod;
@@ -345,6 +355,19 @@ namespace Game
         public static bool IsClockwise(List<Vector2> polygon)
         {
             return IsClockwise(polygon.ToArray());
+        }
+
+        public static bool IsClockwise(List<IntPoint> polygon)
+        {
+            Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
+            double signedArea = 0;
+            for (int i0 = 0; i0 < polygon.Count; i0++)
+            {
+                int i1 = (i0 + 1) % polygon.Count;
+                signedArea += (polygon[i0].X * polygon[i1].Y - polygon[i1].X * polygon[i0].Y);
+            }
+            Debug.Assert(signedArea != 0, "Polygon has 0 area.");
+            return Math.Sign(signedArea) == -1;
         }
 
         /// <summary>

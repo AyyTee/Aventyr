@@ -235,16 +235,12 @@ namespace Game
             return m;
         }
 
-        /// <summary>
-        /// Returns a polygon in world space representing the 2D FOV through the portal.  
-        /// Polygon is not guaranteed to be non-degenerate which can occur if the viewPoint is edge-on to the portal.
-        /// </summary>
-        public Vector2[] GetFov(Vector2 origin, float distance)
+        public Line[] GetFovLines(Vector2 origin, float distance)
         {
-            return GetFov(origin, distance, 10);
+            return GetFovLines(origin, distance, GetWorldTransform());
         }
 
-        public Line[] GetFovLines(Vector2 origin, float distance)
+        public Line[] GetFovLines(Vector2 origin, float distance, Transform2D transform)
         {
             Vector2[] vertices = GetFov(origin, distance);
             Line[] lines = new Line[] {
@@ -258,9 +254,23 @@ namespace Game
         /// Returns a polygon in world space representing the 2D FOV through the portal.  
         /// Polygon is not guaranteed to be non-degenerate which can occur if the viewPoint is edge-on to the portal.
         /// </summary>
-        public Vector2[] GetFov(Vector2 viewPoint, float distance, int detail)
+        public Vector2[] GetFov(Vector2 origin, float distance)
         {
-            Matrix4 a = GetWorldTransform().GetMatrix();
+            return GetFov(origin, distance, 10);
+        }
+
+        public Vector2[] GetFov(Vector2 origin, float distance, int detail)
+        {
+            return GetFov(origin, distance, detail, GetWorldTransform());
+        }
+
+        /// <summary>
+        /// Returns a polygon in world space representing the 2D FOV through the portal.  
+        /// Polygon is not guaranteed to be non-degenerate which can occur if the viewPoint is edge-on to the portal.
+        /// </summary>
+        public Vector2[] GetFov(Vector2 viewPoint, float distance, int detail, Transform2D transform)
+        {
+            Matrix4 a = transform.GetMatrix();
             Vector2[] verts = new Vector2[detail + 2];
             Vector2[] portal = GetVerts();
             for (int i = 0; i < portal.Length; i++)

@@ -45,6 +45,10 @@ namespace Game
         public void Step(float stepSize)
         {
             World.ProcessChanges();
+            foreach (SceneNode s in FindByType<SceneNode>())
+            {
+                s.Update();
+            }
             foreach (Actor e in FindByType<Actor>())
             {
                 //e.PositionUpdate();
@@ -62,7 +66,6 @@ namespace Game
                 World.Step(stepSize);
                 _contactListener.StepEnd();
             }
-
             foreach (Actor e in FindByType<Actor>())
             {
                 e.Step();

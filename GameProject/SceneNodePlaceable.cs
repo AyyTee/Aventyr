@@ -13,6 +13,8 @@ namespace Game
     {
         [DataMember]
         Transform2D _transform = new Transform2D();
+        [DataMember]
+        Transform2D _velocity = new Transform2D();
 
         public SceneNodePlaceable(Scene scene)
             : base (scene)
@@ -59,9 +61,25 @@ namespace Game
             SetTransform(transform);
         }
 
+        public override Transform2D GetVelocity()
+        {
+            return _velocity.Clone();
+        }
+
+        public void SetVelocity(Transform2D transform)
+        {
+            _velocity = transform.Clone();
+        }
+
         public override Transform2D GetTransform()
         {
             return _transform.Clone();
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            SetTransform(GetTransform().Add(GetVelocity()));
         }
     }
 }

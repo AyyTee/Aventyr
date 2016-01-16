@@ -163,6 +163,10 @@ namespace Game
             //RemoveChildren();
         }
 
+        public virtual void Update()
+        {
+        }
+
         public virtual Transform2D GetTransform()
         {
             return new Transform2D();
@@ -175,6 +179,20 @@ namespace Game
                 return GetTransform().Transform(Parent.GetWorldTransform());
             }
             return GetTransform();
+        }
+
+        public virtual Transform2D GetVelocity()
+        {
+            return new Transform2D();
+        }
+
+        public virtual Transform2D GetWorldVelocity()
+        {
+            if (Parent != null)
+            {
+                return GetVelocity().Transform(Parent.GetWorldVelocity());
+            }
+            return GetVelocity();
         }
 
         public List<T> FindByType<T>() where T : SceneNode

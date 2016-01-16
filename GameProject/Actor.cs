@@ -68,11 +68,6 @@ namespace Game
             }
         }
 
-        public void SetVelocity(Transform2D transform)
-        {
-            Velocity = transform.Clone();
-        }
-
         public override SceneNode Clone(Scene scene)
         {
             Actor clone = new Actor(scene, Body);

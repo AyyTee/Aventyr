@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using ClipperLib;
+using OpenTK;
 using Poly2Tri;
 using System;
 using System.Collections.Generic;
@@ -99,31 +100,45 @@ namespace Game
         /// <summary>
         /// Create a polygon model from an array of vertices. If the polygon is degenerate or non-simple then the model will be empty.
         /// </summary>
-        public static Model CreatePolygon(Vector2[] vertices)
-        {
-            return CreatePolygon(PolygonFactory.CreatePolygon(vertices), new Vector3());
-        }
-
-        /// <summary>
-        /// Create a polygon model from an array of vertices. If the polygon is degenerate or non-simple then the model will be empty.
-        /// </summary>
-        public static Model CreatePolygon(Vector2[] vertices, Vector3 offset)
+        public static Model CreatePolygon(Vector2[] vertices, Vector3 offset = new Vector3())
         {
             return CreatePolygon(PolygonFactory.CreatePolygon(vertices), offset);
         }
 
-        public static Model CreatePolygon(Polygon polygon)
-        {
-            return CreatePolygon(polygon, new Vector3());
-        }
-
-        public static Model CreatePolygon(Polygon polygon, Vector3 offset)
+        public static Model CreatePolygon(Polygon polygon, Vector3 offset = new Vector3())
         {
             Model model = new Model();
+            AddPolygon(model, polygon, offset);
+            return model;
+        }
+
+        public static Model CreatePolygon(PolyTree polygon)
+        {
+            Model model = new Model();
+            AddPolygon(model, polygon);
+            return model;
+        }
+
+        public static void AddPolygon(Model model, PolyTree polyTree, Vector3 offset = new Vector3())
+        {
+            AddPolygon(model, PolygonFactory.CreatePolygon(polyTree).ToArray(), offset);
+        }
+
+        public static void AddPolygon(Model model, Polygon[] polygon, Vector3 offset = new Vector3())
+        {
+            for (int i = 0; i < polygon.Length; i++)
+            {
+                AddPolygon(model, polygon[i], new Vector3());
+            }
+        }
+
+        public static void AddPolygon(Model model, Polygon polygon, Vector3 offset = new Vector3())
+        {
             if (polygon == null)
             {
-                return model;
+                return;
             }
+            int vertCountPrev = model.Vertices.Count;
             Vertex[] verts = new Vertex[polygon.Points.Count];
             List<int> indices = new List<int>();
 
@@ -149,10 +164,8 @@ namespace Game
                 {
                     continue;
                 }
-                model.AddTriangle(index0, index1, index2);
+                model.AddTriangle(index0 + vertCountPrev, index1 + vertCountPrev, index2 + vertCountPrev);
             }
-
-            return model;
         }
 
         public static Model CreateLines(Line[] lines)
@@ -180,14 +193,6 @@ namespace Game
                 vStart = lines[i][0];
                 vEnd = lines[i][1];
                 CreateLineWidth(model, vStart, vEnd, width);
-                /*Vector2 offset = (vStart - vEnd).PerpendicularLeft.Normalized() * width / 2;
-
-                int index0 = model.AddVertex(new Vertex(new Vector3(vStart + offset), new Vector2()));
-                int index1 = model.AddVertex(new Vertex(new Vector3(vStart - offset), new Vector2()));
-                int index2 = model.AddVertex(new Vertex(new Vector3(vEnd - offset), new Vector2()));
-                int index3 = model.AddVertex(new Vertex(new Vector3(vEnd + offset), new Vector2()));
-                model.AddTriangle(index0, index1, index2);
-                model.AddTriangle(index0, index3, index2);*/
             }
             return model;
         }

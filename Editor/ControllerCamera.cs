@@ -137,7 +137,6 @@ namespace Editor
             {
                 CameraMoved(this, Camera);
             }
-            Camera.Viewpoint = new Vector2(transform.Position.X, transform.Position.Y);
         }
     }
 }

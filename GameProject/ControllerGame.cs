@@ -144,8 +144,8 @@ namespace Game
             text2.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
 
             //new Serializer().Deserialize(scene, "blah.save");
-            Camera2D cam = new Camera2D(scene, scene.FindByName("player").GetTransform().Position, 10, CanvasSize.Width / (float)CanvasSize.Height);
-            
+            Camera2D cam = new Camera2D(scene, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            cam.SetParent(scene.FindByName("player"));
             scene.SetActiveCamera(cam);
             hud.SetActiveCamera(hudCam);
             renderer.AddScene(scene);
@@ -216,7 +216,7 @@ namespace Game
             }
             #region camera movement
 
-            Vector3 v = new Vector3();
+            Vector2 v = new Vector2();
             float camSpeed = .05f;
             if (InputExt.KeyDown(InputExt.KeyBoth.Shift))
             {
@@ -259,14 +259,16 @@ namespace Game
             {
                 cam.Scale /= (float)Math.Pow(1.04, -1);
             }
-
+            player.SetVelocity(new Transform2D(v));
             Vector2[] vArray = new Vector2[2];
-            IntersectPoint intersect = new IntersectPoint();
+
+            /*IntersectPoint intersect = new IntersectPoint();
             Portal portalEnter = null;
 
             Vector2 posPrev = player.GetWorldTransform().Position;
             Transform2D transform = player.GetTransform();
             transform.Position += new Vector2(v.X, v.Y);
+            
             player.SetTransform(transform);
             player.PositionUpdate();
             //portal3.Velocity.Position = new Vector2(-(float)Math.Cos(TimeFixedStep / 5000000) / (float)160, (float)Math.Sin(TimeFixedStep / 5000000) / (float)160);
@@ -296,16 +298,13 @@ namespace Game
             if (intersect.Exists)
             {
                 portalEnter.Enter(player);
-            }
+            }*/
             #endregion
 
             if (SingleStepMode == false || InputExt.KeyPress(Key.Enter))
             {
                 scene.Step();
             }
-            cam = scene.ActiveCamera;
-            cam.SetTransform(player.GetWorldTransform());
-            cam.Viewpoint = player.GetWorldTransform().Position;
         }
 
         public override void OnClosing(CancelEventArgs e)

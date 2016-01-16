@@ -9,18 +9,24 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class Vertex
+    public class Vertex : ILerp<Vertex>
     {
         [DataMember]
-        public Vector3 Position = new Vector3();
+        public Vector3 Position;
         [DataMember]
-        public Vector3 Color = new Vector3();
+        public Vector3 Color;
         [DataMember]
-        public Vector2 TextureCoord = new Vector2();
+        public Vector2 TextureCoord;
         [DataMember]
-        public Vector3 Normal = new Vector3();
+        public Vector3 Normal;
 
         public Vertex()
+            : this(new Vector3())
+        {
+        }
+
+        public Vertex(Vector2 position)
+            : this(new Vector3(position))
         {
         }
 
@@ -45,6 +51,21 @@ namespace Game
             TextureCoord = textureCoord;
             Color = color;
             Normal = normal;
+        }
+
+        public Vertex Lerp(Vertex v1, float t)
+        {
+            return Lerp(this, v1, t);
+        }
+
+        public static Vertex Lerp(Vertex v0, Vertex v1, float t)
+        {
+            Vertex vNew = new Vertex();
+            vNew.Position = MathExt.Lerp(v0.Position, v1.Position, t);
+            vNew.Normal = MathExt.Lerp(v0.Normal, v1.Normal, t);
+            vNew.TextureCoord = MathExt.Lerp(v0.TextureCoord, v1.TextureCoord, t);
+            vNew.Color = MathExt.Lerp(v0.Color, v1.Color, t);
+            return vNew;
         }
 
         /// <summary>
