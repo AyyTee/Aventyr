@@ -15,16 +15,7 @@ namespace Game
     {
         public static Polygon CreatePolygon(Vector2[] vertices)
         {
-            HashSet<Vector2> points = new HashSet<Vector2>();
-            List<PolygonPoint> polygonPoints = new List<PolygonPoint>();
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                polygonPoints.Add(new PolygonPoint(vertices[i].X, vertices[i].Y));
-                Debug.Assert(points.Add(vertices[i]));
-            }
-            Polygon polygon = new Polygon(polygonPoints);
-
-            TextWriter console = Console.Out;
+            Polygon polygon = GetPolygon(vertices);
             if (Triangulate(polygon))
             {
                 return polygon;
@@ -32,7 +23,7 @@ namespace Game
             return null;
         }
 
-        public static List<Polygon> CreatePolygon(List<List<IntPoint>> paths)
+        /*public static List<Polygon> CreatePolygon(List<List<IntPoint>> paths)
         {
             List<List<IntPoint>> holes = new List<List<IntPoint>>(paths);
             List<Polygon> polygons = new List<Polygon>();
@@ -53,7 +44,7 @@ namespace Game
                 Triangulate(p);
             }
             return polygons;
-        }
+        }*/
 
         public static List<Polygon> CreatePolygon(PolyTree polyTree)
         {
@@ -96,10 +87,20 @@ namespace Game
             for (int i = 0; i < vertices.Count(); i++)
             {
                 Vector2 v = ClipperConvert.ToVector2(vertices[i]);
-                //if (points.Add(v))
-                {
-                    polygonPoints.Add(new PolygonPoint(v.X, v.Y));
-                }
+                polygonPoints.Add(new PolygonPoint(v.X, v.Y));
+                Debug.Assert(points.Add(v));
+            }
+            return new Polygon(polygonPoints);
+        }
+
+        private static Polygon GetPolygon(Vector2[] vertices)
+        {
+            HashSet<Vector2> points = new HashSet<Vector2>();
+            List<PolygonPoint> polygonPoints = new List<PolygonPoint>();
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                Vector2 v = vertices[i];
+                polygonPoints.Add(new PolygonPoint(v.X, v.Y));
                 Debug.Assert(points.Add(v));
             }
             return new Polygon(polygonPoints);

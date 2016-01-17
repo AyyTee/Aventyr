@@ -192,15 +192,18 @@ namespace Game
             }
         }
 
-        /// <summary>
-        /// Adds a Vertex and returns its Id.
-        /// </summary>
-        /// <param name="vertex"></param>
-        /// <returns></returns>
+        /// <summary>Adds a Vertex and returns its index.</summary>
         public int AddVertex(Vertex vertex)
         {
             Vertices.Add(vertex);
             return Vertices.Count - 1;
+        }
+
+        /// <summary>Adds an array of vertices and returns the index of the first vertex.</summary>
+        public int AddVertexRange(Vertex[] vertices)
+        {
+            Vertices.AddRange(vertices);
+            return Vertices.Count - vertices.Length;
         }
         
         /// <summary>

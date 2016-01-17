@@ -102,17 +102,17 @@ namespace Game
             }
         }*/
         #endregion
-        public PortalView CalculatePortalViews(Scene scene, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, int depth)
+        public PortalView CalculatePortalViews(Portal[] portals, Camera2D camera, int depth)
         {
-            List<IntPoint> view = ClipperConvert.ToIntPoint(scene.ActiveCamera.GetWorldVerts());
+            List<IntPoint> view = ClipperConvert.ToIntPoint(camera.GetWorldVerts());
             List<List<IntPoint>> paths = new List<List<IntPoint>>();
             paths.Add(view);
-            PortalView portalView = new PortalView(null, viewMatrix, view, new Line[0], new Line[0]);
-            CalculatePortalViews(scene, null, portals, viewMatrix, viewPos, viewPosPrevious, depth, portalView, Matrix4.Identity, paths);
+            PortalView portalView = new PortalView(null, camera.GetViewMatrix(), view, new Line[0], new Line[0]);
+            CalculatePortalViews(null, portals, camera.GetViewMatrix(), camera.GetWorldViewpos(), camera.GetWorldViewpos() - camera.GetWorldVelocity().Position, depth, portalView, Matrix4.Identity);
             return portalView;
         }
 
-        private void CalculatePortalViews(Scene scene, Portal portalEnter, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, int depth, PortalView portalView, Matrix4 portalMatrix, List<List<IntPoint>> paths)
+        private void CalculatePortalViews(Portal portalEnter, Portal[] portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, int depth, PortalView portalView, Matrix4 portalMatrix)
         {
             if (depth <= 0)
             {
@@ -161,7 +161,6 @@ namespace Game
                 
                 c.AddPath(pathFov, PolyType.ptSubject, true);
                 c.AddPaths(portalView.Paths, PolyType.ptClip, true);
-                //c.AddPaths(paths, PolyType.ptClip, true);
                 c.Execute(ClipType.ctIntersection, viewNew);
                 c.Clear();
 
@@ -219,7 +218,6 @@ namespace Game
                 Vector2 viewPosPreviousNew = Vector2Ext.Transform(viewPosPrevious, FixturePortal.GetPortalMatrix(p, p.Linked));
 
                 Matrix4 portalMatrixNew = FixturePortal.GetPortalMatrix(p.Linked, p) * portalMatrix;
-                //Matrix4 viewMatrixNew = FixturePortal.GetPortalMatrix(p.Linked, p) * viewMatrix;
                 Matrix4 viewMatrixNew = portalMatrixNew * viewMatrix;
 
                 Line[] lines = p.GetFovLines(viewPos, 500);
@@ -231,10 +229,9 @@ namespace Game
 
                 Line portalWorldLine = new Line(p.GetWorldVerts());
                 portalWorldLine.Transform(portalMatrix);
-                PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, new List<List<IntPoint>>(viewNewer), lines, linesPrevious, portalWorldLine);
+                PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNewer, lines, linesPrevious, portalWorldLine);
 
-                
-                CalculatePortalViews(scene, p, portals, viewMatrix, viewPosNew, viewPosPreviousNew, depth - 1, portalViewNew, portalMatrixNew, viewNewer);
+                CalculatePortalViews(p, portals, viewMatrix, viewPosNew, viewPosPreviousNew, depth - 1, portalViewNew, portalMatrixNew);
             }
         }
 
@@ -248,7 +245,7 @@ namespace Game
             }
             Vector2 viewPos = cam.GetWorldViewpos();
             Vector2 viewPosPrevious = cam.GetWorldViewpos() - cam.GetWorldVelocity().Position;
-            PortalView portalView = CalculatePortalViews(scene, scene.PortalList.ToArray(), cam.GetViewMatrix(), viewPos, viewPosPrevious, depth);
+            PortalView portalView = CalculatePortalViews(scene.PortalList.ToArray(), cam, depth);
             List<PortalView> portalViewList = portalView.GetPortalViewList(cam.Viewpos);
             
             int stencilValueMax = 1 << GL.GetInteger(GetPName.StencilBits);
@@ -287,49 +284,50 @@ namespace Game
 
             Clipper c = new Clipper();
             c.StrictlySimple = true;
-            Model portalLines = new Model();
-            portalLines.SetTexture(Textures["default.png"]);
+            Model portalEdges = new Model();
+            //portalEdges.SetTexture(Textures["default.png"]);
             for (int i = 1; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
             {
-                Vector2[] line0 = GetPortalEdge(portalViewList[i].FovLines[0], portalViewList[i].FovLinesPrevious[0], cam);
-                c.AddPath(ClipperConvert.ToIntPoint(line0), PolyType.ptSubject, true);
-                /*Vector2[] line1 = GetPortalEdge(portalViewList[i].FovLines[1], portalViewList[i].FovLinesPrevious[1], cam);
-                c.AddPath(ClipperConvert.ToIntPoint(line1), PolyType.ptSubject, true);*/
-                c.AddPaths(portalViewList[i].Parent.Paths, PolyType.ptClip, true);
-                List<List<IntPoint>> solution = new List<List<IntPoint>>();
-                //PolyTree solution = new PolyTree();
-                c.Execute(ClipType.ctIntersection, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
-                c.Clear();
-                //PolyTree solutionNew = solution;
-                c.AddPaths(solution, PolyType.ptSubject, true);
-                foreach (PortalView p in portalViewList[i].Parent.Children)
+                //ModelFactory.AddLinesWidth(portalEdges, new Line[] { portalViewList[i].PortalLine }, 0.2f);
+                for (int j = 0; j < 2; j++)
                 {
-                    if (p == portalViewList[i])
+                    Vector2[] line0 = GetPortalEdge(portalViewList[i].FovLines[j], portalViewList[i].FovLinesPrevious[j], cam);
+                    c.AddPath(ClipperConvert.ToIntPoint(line0), PolyType.ptSubject, true);
+                    c.AddPaths(portalViewList[i].Parent.Paths, PolyType.ptClip, true);
+                    List<List<IntPoint>> solution = new List<List<IntPoint>>();
+                    c.Execute(ClipType.ctIntersection, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+                    c.Clear();
+
+                    c.AddPaths(solution, PolyType.ptSubject, true);
+                    foreach (PortalView p in portalViewList[i].Parent.Children)
                     {
-                        continue;
+                        if (p == portalViewList[i])
+                        {
+                            continue;
+                        }
+                        if (p.PortalLine.IsInsideFOV(cam.GetWorldViewpos(), portalViewList[i].PortalLine))
+                        {
+                            c.AddPaths(p.Paths, PolyType.ptClip, true);
+                        }
                     }
-                    if (p.PortalLine.IsInsideFOV(cam.Viewpos, portalViewList[i].PortalLine))
-                    {
-                        //c.AddPaths(p.Paths, PolyType.ptClip, true);
-                    }
-                    
-                    //if (portalViewList[i].Portal)
+                    PolyTree solutionNew = new PolyTree();
+                    c.Execute(ClipType.ctDifference, solutionNew, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+                    c.Clear();
+                    ModelFactory.AddPolygon(portalEdges, solutionNew);
                 }
-                PolyTree solutionNew = new PolyTree();
-                c.Execute(ClipType.ctDifference, solutionNew, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
-                c.Clear();
-                ModelFactory.AddPolygon(portalLines, solutionNew);
             }
-            RenderModel(portalLines, cam.GetViewMatrix(), 0, Matrix4.Identity);
+            portalEdges.SetColor(new Vector3(0.1f, 0.1f, 0.1f));
+            RenderModel(portalEdges, cam.GetViewMatrix(), 0, Matrix4.Identity);
 
             GL.Enable(EnableCap.DepthTest);
         }
 
         private Vector2[] GetPortalEdge(Line line, Line linePrevious, Camera2D camera)
         {
-            const double maxAngle = Math.PI / 6;
-            float minWidth = camera.Scale / 30;// 200;
-            double angleDiff0 = 0;// Math.Abs(MathExt.AngleDiff(line.Angle(), linePrevious.Angle()));
+            const double maxAngle = 0.9f * Math.PI / 4;
+            float angleScale = 0.5f;
+            float minWidth = camera.Scale / 400;
+            double angleDiff0 = Math.Abs(MathExt.AngleDiff(line.Angle(), linePrevious.Angle()) * angleScale);
             float widthEnd0 = (float)(Math.Tan(Math.Min(angleDiff0, maxAngle)) * line.Length + minWidth);
             return PolygonFactory.CreateLineWidth(line, minWidth, widthEnd0);
         }

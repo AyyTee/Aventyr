@@ -187,14 +187,19 @@ namespace Game
         public static Model CreateLinesWidth(Line[] lines, float width)
         {
             Model model = new Model();
+            AddLinesWidth(model, lines, width);
+            return model;
+        }
+
+        public static void AddLinesWidth(Model model, Line[] lines, float width)
+        {
             for (int i = 0; i < lines.Length; i++)
             {
                 Vector2 vStart, vEnd;
                 vStart = lines[i][0];
                 vEnd = lines[i][1];
-                CreateLineWidth(model, vStart, vEnd, width);
+                AddLineWidth(model, vStart, vEnd, width);
             }
-            return model;
         }
 
         public static Model CreateLineStripWidth(Vector2[] vertices, float width, bool closed)
@@ -202,24 +207,26 @@ namespace Game
             Model model = new Model();
             for (int i = 0; i < vertices.Length - 1; i++)
             {
-                CreateLineWidth(model, vertices[i], vertices[i + 1], width);
+                AddLineWidth(model, vertices[i], vertices[i + 1], width);
             }
             if (closed)
             {
-                CreateLineWidth(model, vertices[vertices.Length - 1], vertices[0], width);
+                AddLineWidth(model, vertices[vertices.Length - 1], vertices[0], width);
             }
             return model;
         }
 
-        private static void CreateLineWidth(Model model, Vector2 v0, Vector2 v1, float width)
+        private static void AddLineWidth(Model model, Vector2 v0, Vector2 v1, float width)
         {
-            Vector2 offset = (v0 - v1).PerpendicularLeft.Normalized() * width / 2;
-            int index0 = model.AddVertex(new Vertex(new Vector3(v0 + offset), new Vector2()));
-            int index1 = model.AddVertex(new Vertex(new Vector3(v0 - offset), new Vector2()));
-            int index2 = model.AddVertex(new Vertex(new Vector3(v1 - offset), new Vector2()));
-            int index3 = model.AddVertex(new Vertex(new Vector3(v1 + offset), new Vector2()));
-            model.AddTriangle(index0, index1, index2);
-            model.AddTriangle(index0, index3, index2);
+            Vector2[] vectors = PolygonFactory.CreateLineWidth(new Line(v0, v1), width);
+            Vertex[] vertices = new Vertex[vectors.Length];
+            for (int i = 0; i < vectors.Length; i++)
+            {
+                vertices[i] = new Vertex(vectors[i]);
+            }
+            int index = model.AddVertexRange(vertices);
+            model.AddTriangle(index + 2, index + 1, index);
+            model.AddTriangle(index, index + 3, index + 2);
         }
 
         public static Model CreateLineStrip(Vector2[] vertices, Vector3[] colors)
