@@ -19,7 +19,8 @@ namespace Game
     {
         [DataMember]
         List<Model> _models = new List<Model>();
-        public List<ClipModel> ClipModels = new List<ClipModel>();
+        List<ClipModel> _clipModels = new List<ClipModel>();
+        public List<ClipModel> ClipModels { get { return new List<ClipModel>(_clipModels); } }
         [DataMember]
         bool _isPortalable = false;
         /// <summary>
@@ -45,7 +46,6 @@ namespace Game
         /// </summary>
         [DataMember]
         public bool Visible { get; set; }
-        //public List<Model> Models { get { return _models; } set { _models = value; } }
         public List<Model> ModelList { get { return new List<Model>(_models); } }
         public class ClipModel
         {
@@ -117,63 +117,18 @@ namespace Game
             _models.Clear();
         }
 
-        public void PositionUpdate()
-        {
-            foreach (Portal portal in Scene.PortalList)
-            {
-                //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
-                Line exitLine = new Line(portal.GetWorldVerts());
-                float distanceToPortal = exitLine.PointDistance(GetTransform().Position, true);
-                if (distanceToPortal < Portal.EnterMinDistance)
-                {
-                    Vector2 exitNormal = portal.GetTransform().GetNormal();
-                    if (exitLine.GetSideOf(GetTransform().Position) != exitLine.GetSideOf(exitNormal + portal.GetTransform().Position))
-                    {
-                        exitNormal = -exitNormal;
-                    }
-
-                    Vector2 pos = exitNormal * (Portal.EnterMinDistance - distanceToPortal);
-                    /*if (Transform.Parent != null)
-                    {
-                        pos = Transform.Parent.WorldToLocal(pos);
-                    }*/
-                    GetTransform().Position += pos;
-                    break;
-                }
-            }
-        }
-
-        /*public void Step()
-        {
-            Transform2D transform = GetTransform();
-            if (Body != null)
-            {
-                transform.Position = Vector2Ext.ConvertTo(Body.Position);
-                transform.Rotation = Body.Rotation;
-                Velocity.Position = Vector2Ext.ConvertTo(Body.LinearVelocity);
-                Velocity.Rotation = Body.AngularVelocity;
-            }
-            else
-            {
-                transform.Position += Velocity.Position;
-                transform.Rotation += Velocity.Rotation;
-                transform.Scale *= Velocity.Scale;
-            }
-            SetTransform(transform);
-        }*/
-
         public void UpdatePortalClipping(int depth)
         {
-            ClipModels.Clear();
+            _clipModels.Clear();
             foreach (Model m in ModelList)
             {
-                ModelPortalClipping(m, GetWorldTransform().Position, null, Matrix4.Identity, 4, 0, ref ClipModels);
+                ModelPortalClipping(m, GetWorldTransform().Position, null, Matrix4.Identity, 4, 0);
             }
         }
 
         /// <param name="depth">Number of iterations.</param>
         /// <param name="clipModels">Adds the ClipModel instances to this list.</param>
-        private void ModelPortalClipping(Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, int count, ref List<ClipModel> clipModels)
+        private void ModelPortalClipping(Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, int count)
         {
             if (depth <= 0)
             {
@@ -220,7 +175,7 @@ namespace Game
                 Line clipLine = new Line(pv);
 
                 Line portalLine = new Line(pv);
-                Vector2 normal = portal.GetWorldTransform().GetNormal();
+                Vector2 normal = portal.GetWorldTransform().GetRight();
                 if (portal.GetWorldTransform().IsMirrored())
                 {
                     normal = -normal;
@@ -241,11 +196,11 @@ namespace Game
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
                     Vector2 centerPointNext = Vector2Ext.Transform(portal.GetWorldTransform().Position + normal, portal.GetPortalMatrix());
-                    ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, count + 1, ref clipModels);
+                    ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, count + 1);
                 }
             }
-            
-            ClipModels.Add(new ClipModel(model, clipLines.ToArray(), modelMatrix));
+
+            _clipModels.Add(new ClipModel(model, clipLines.ToArray(), modelMatrix));
         }
     }
 }

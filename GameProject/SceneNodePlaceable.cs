@@ -76,10 +76,30 @@ namespace Game
             return _transform.Clone();
         }
 
-        public override void Update()
+        public void PositionUpdate()
         {
-            base.Update();
-            SetTransform(GetTransform().Add(GetVelocity()));
+            foreach (Portal portal in Scene.PortalList)
+            {
+                //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
+                Line exitLine = new Line(portal.GetWorldVerts());
+                float distanceToPortal = exitLine.PointDistance(GetTransform().Position, true);
+                if (distanceToPortal < Portal.EnterMinDistance)
+                {
+                    Vector2 exitNormal = portal.GetTransform().GetRight();
+                    if (exitLine.GetSideOf(GetTransform().Position) != exitLine.GetSideOf(exitNormal + portal.GetTransform().Position))
+                    {
+                        exitNormal = -exitNormal;
+                    }
+
+                    Vector2 pos = exitNormal * (Portal.EnterMinDistance - distanceToPortal);
+                    /*if (Transform.Parent != null)
+                    {
+                        pos = Transform.Parent.WorldToLocal(pos);
+                    }*/
+                    GetTransform().Position += pos;
+                    break;
+                }
+            }
         }
     }
 }

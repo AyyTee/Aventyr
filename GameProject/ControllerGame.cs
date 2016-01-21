@@ -59,14 +59,14 @@ namespace Game
             portalEntity2.AddModel(ModelFactory.CreatePlane());
             portalEntity2.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
             Transform2D transform = portalEntity2.GetTransform();
-            transform.Rotation = 0.1f;
+            //transform.Rotation = 0.1f;
             transform.Position = new Vector2(2.1f, 2f);
             transform.Scale = new Vector2(-1f, 1f);
             portalEntity2.SetTransform(transform);
 
             portal2 = new FloatPortal(scene);
             portal2.SetParent(portalEntity2);
-            portal2.IsMirrored = true;
+            //portal2.IsMirrored = true;
 
             Entity portalEntity3 = new Entity(scene);
             portalEntity3.AddModel(ModelFactory.CreatePlane());
@@ -75,10 +75,12 @@ namespace Game
             portalEntity3.AddModel(ModelFactory.CreatePlane());
             portalEntity3.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
             portalEntity3.SetTransform(new Transform2D(new Vector2(-1f, 1), 0.4f));
+            //portalEntity3.SetVelocity(new Transform2D(new Vector2(), 0.005f));
 
             portal3 = new FloatPortal(scene);
             portal3.SetParent(portalEntity3);
-
+            
+            //portal3.IsMirrored = true;
             Portal.SetLinked(portal2, portal3);
 
             #region player
@@ -100,16 +102,14 @@ namespace Game
             #endregion
 
             Entity temp = new Entity(scene);
-            temp.SetParent(player);
+            //temp.SetParent(player);
             temp.AddModel(ModelFactory.CreateArrow(new Vector3(), new Vector2(0, 2), 0.1f, 0.5f, 0.5f));
-            portalEntity2.SetParent(temp);
-            //portalEntity3.SetParent(temp);
+            //portalEntity2.SetParent(temp);
+            portalEntity3.SetParent(temp);
 
             //Entity playerNew = (Entity)player.DeepClone();
 
             //temp.SetParent(null);
-
-            
 
             Entity playerParent = new Entity(scene, new Vector2(1, 0));
 
@@ -145,13 +145,14 @@ namespace Game
 
             //new Serializer().Deserialize(scene, "blah.save");
             Camera2D cam = new Camera2D(scene, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            //cam.SetRotation((float)Math.PI / 2);
             cam.SetParent(scene.FindByName("player"));
             scene.SetActiveCamera(cam);
             hud.SetActiveCamera(hudCam);
             renderer.AddScene(scene);
             renderer.AddScene(hud);
 
-            new Serializer().Serialize(scene.Root, "blah");
+            //new Serializer().Serialize(scene.Root, "blah");
             //Thread.Sleep(500);*/
             
         }
@@ -215,37 +216,48 @@ namespace Game
                 SingleStepMode = !SingleStepMode;
             }
             #region camera movement
-
-            Vector2 v = new Vector2();
             float camSpeed = .05f;
             if (InputExt.KeyDown(InputExt.KeyBoth.Shift))
             {
                 camSpeed = .005f;
             }
 
-            Transform2D camTransform = cam.GetTransform();
+            Vector2 v = new Vector2();
+            Transform2D transform = player.GetTransform();
+            Vector2 up = transform.GetUp();
+            Vector2 right = transform.GetRight();
             if (InputExt.KeyDown(Key.R))
             {
-                //Quaternion rot = cam.Transform.Rotation;
-                camTransform.Rotation += 0.01f;
-                //cam.Transform.Rotation = rot;
-                player.GetTransform().Rotation += .01f;
+                player.SetRotation(player.GetTransform().Rotation + .01f);
             }
             if (InputExt.KeyDown(Key.W))
             {
-                v += cam.GetUp() * camSpeed * camTransform.Scale.Y;
+                v += up * camSpeed;// *transform.Scale.Y;
             }
             else if (InputExt.KeyDown(Key.S))
             {
-                v -= cam.GetUp() * camSpeed * camTransform.Scale.Y;
+                v += -up * camSpeed;// *transform.Scale.Y;
             }
             if (InputExt.KeyDown(Key.A))
             {
-                v -= cam.GetRight() * camSpeed * camTransform.Scale.X;
+                v += -right * camSpeed;// *transform.Scale.X;
             }
             else if (InputExt.KeyDown(Key.D))
             {
-                v += cam.GetRight() * camSpeed * camTransform.Scale.X;
+                v += right * camSpeed;// *transform.Scale.X;
+            }
+            /*if (InputExt.MousePress(MouseButton.Left))
+            {
+                Entity bullet = new Entity(scene, new Transform2D(player.GetTransform().Position));
+                bullet.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.1f, 10));
+                Transform2D velocity = new Transform2D();
+                velocity.Position = (rayEnd - rayBegin).Normalized() * 5;
+                bullet.SetVelocity(velocity);
+            }*/
+            if (InputExt.KeyPress(Key.F))
+            {
+                portal0.IsMirrored = !portal0.IsMirrored;
+                portal2.IsMirrored = !portal2.IsMirrored;
             }
             if (InputExt.MouseWheelDelta() != 0)
             {
@@ -260,47 +272,11 @@ namespace Game
                 cam.Scale /= (float)Math.Pow(1.04, -1);
             }
             player.SetVelocity(new Transform2D(v));
-            Vector2[] vArray = new Vector2[2];
-
-            /*IntersectPoint intersect = new IntersectPoint();
-            Portal portalEnter = null;
-
-            Vector2 posPrev = player.GetWorldTransform().Position;
-            Transform2D transform = player.GetTransform();
-            transform.Position += new Vector2(v.X, v.Y);
-            
-            player.SetTransform(transform);
-            player.PositionUpdate();
-            //portal3.Velocity.Position = new Vector2(-(float)Math.Cos(TimeFixedStep / 5000000) / (float)160, (float)Math.Sin(TimeFixedStep / 5000000) / (float)160);
-            //portal2.Velocity.Rotation = -(float)(1 / (32 * Math.PI));
-            foreach (Portal p in scene.PortalList)
-            {
-                if (!p.IsValid())
-                {
-                    continue;
-                }
-                vArray = p.GetWorldVerts();
-                Line line = new Line(vArray);
-                portalEnter = p;
-                Line playerLine = new Line(posPrev, player.GetWorldTransform().Position);
-                intersect = line.IntersectsParametric(p.GetVelocity().Position, p.GetVelocity().Rotation, playerLine, 5);
-                if (intersect.Exists)
-                {
-                    break;
-                }
-            }
-
-            foreach (Portal p in scene.PortalList)
-            {
-                p.Step();
-            }
-
-            if (intersect.Exists)
-            {
-                portalEnter.Enter(player);
-            }*/
             #endregion
-
+            if (InputExt.KeyPress(Key.G))
+            {
+                portal0.Enter(player);
+            }
             if (SingleStepMode == false || InputExt.KeyPress(Key.Enter))
             {
                 scene.Step();

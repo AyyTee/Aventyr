@@ -13,6 +13,7 @@ namespace Game
 {
     public static class PolygonFactory
     {
+
         public static Polygon CreatePolygon(Vector2[] vertices)
         {
             Polygon polygon = GetPolygon(vertices);
@@ -23,28 +24,61 @@ namespace Game
             return null;
         }
 
-        /*public static List<Polygon> CreatePolygon(List<List<IntPoint>> paths)
+        public static List<Polygon> CreatePolygon(List<List<IntPoint>> paths)
         {
             List<List<IntPoint>> holes = new List<List<IntPoint>>(paths);
+            Dictionary<List<IntPoint>, Polygon> contourMap = new Dictionary<List<IntPoint>,Polygon>();
             List<Polygon> polygons = new List<Polygon>();
             foreach (List<IntPoint> p in paths)
             {
-                if (MathExt.IsClockwise(p))
+                if (p.Count == 0)
                 {
-                    polygons.Add(GetPolygon(p));
                     holes.Remove(p);
+                    continue;
+                }
+                Debug.Assert(p.Count != 1 && p.Count != 2, "Polygon is degenerate.");
+                if (!MathExt.IsClockwise(p))
+                {
+                    Polygon polygon = GetPolygon(p);
+                    polygons.Add(polygon);
+                    holes.Remove(p);
+                    contourMap.Add(p, polygon);
                 }
             }
             foreach (List<IntPoint> p in holes)
             {
-                //todo
+                List<List<IntPoint>> contours = contourMap.Keys.ToList();
+                for (int i = 0; i < contours.Count; i++)
+                {
+                    if (IsHole(p, contours[i]))
+                    {
+                        Polygon polygon = contourMap[contours[i]];
+                        polygon.AddHole(GetPolygon(contours[i]));
+                        break;
+                    }
+                }
             }
             foreach (Polygon p in polygons)
             {
                 Triangulate(p);
             }
             return polygons;
-        }*/
+        }
+
+        private static bool IsHole(List<IntPoint> hole, List<IntPoint> polygon)
+        {
+            for (int i = 0; i < hole.Count; i++)
+            {
+                int result = Clipper.PointInPolygon(hole[i], polygon);
+                //if the point is on the edge then try another point
+                if (result == -1)
+                {
+                    continue;
+                }
+                return result == 1;
+            }
+            throw new Exception("Invalid polygon, all vertices are collinear to another polygon.");
+        }
 
         public static List<Polygon> CreatePolygon(PolyTree polyTree)
         {
@@ -117,10 +151,13 @@ namespace Game
                 Console.SetOut(console);
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
-                Console.SetOut(console);
-                Trace.TraceWarning("Polygon failed to triangulate.");
+                if (ex.Message != "Error marking neighbors -- t doesn't contain edge p1-p2!")
+                {
+                    Console.SetOut(console);
+                    Trace.TraceWarning("Polygon failed to triangulate.");
+                }
                 return false;
             }
         }

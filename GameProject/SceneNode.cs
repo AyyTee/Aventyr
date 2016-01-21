@@ -154,6 +154,20 @@ namespace Game
             }
         }
 
+        /// <summary>Returns true if this sceneNode is a descendent of another sceneNode.</summary>
+        public bool IsDescendent(SceneNode node)
+        {
+            if (Parent == null)
+            {
+                return false;
+            }
+            if (Parent == node)
+            {
+                return true;
+            }
+            return Parent.IsDescendent(node);
+        }
+
         /// <summary>
         /// Remove from scene graph.
         /// </summary>
@@ -163,7 +177,11 @@ namespace Game
             //RemoveChildren();
         }
 
-        public virtual void Update()
+        public virtual void StepBegin()
+        {
+        }
+
+        public virtual void StepEnd()
         {
         }
 

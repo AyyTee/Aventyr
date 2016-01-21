@@ -27,5 +27,14 @@ namespace Game
         {
             return new Transform2D();
         }
+
+        public override Transform2D GetTransform()
+        {
+            if (IsMirrored)
+            {
+                return new Transform2D(new Vector2(), new Vector2(1, -1), 0);
+            }
+            return new Transform2D();
+        }
     }
 }

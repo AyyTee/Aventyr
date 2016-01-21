@@ -89,16 +89,14 @@ namespace Game
             //Renderer.Shaders.Add("default", new ShaderProgram(Path.Combine(shaderFolder, "vs.glsl"), Path.Combine(shaderFolder, "fs.glsl"), true));
             //Renderer.Shaders.Add("textured", new ShaderProgram(Path.Combine(shaderFolder, "vs_tex.glsl"), Path.Combine(shaderFolder, "fs_tex.glsl"), true));
             //Renderer.Shaders.Add("text", new ShaderProgram(Path.Combine(shaderFolder, "vs_text.glsl"), Path.Combine(shaderFolder, "fs_text.glsl"), true));
-            ShaderProgram shader = new ShaderProgram(
+            Renderer.Shaders.Add("uber", new ShaderProgram(
                 Path.Combine(shaderFolder, "vs_uber.glsl"),
                 Path.Combine(shaderFolder, "fs_uber.glsl"),
-                true);
-            Renderer.Shaders.Add("uber", shader);//*/
-            /*ShaderProgram shaderSimple = new ShaderProgram(
-                Path.Combine(shaderFolder, "vs_simple.glsl"),
-                Path.Combine(shaderFolder, "fs_simple.glsl"),
-                true);
-            Renderer.Shaders.Add("uber", shaderSimple);//*/
+                true));
+            Renderer.Shaders.Add("uberClip", new ShaderProgram(
+                Path.Combine(shaderFolder, "vs_uber.glsl"),
+                Path.Combine(shaderFolder, "fs_uber_clip.glsl"),
+                true));
         }
 
         public virtual void OnRenderFrame(FrameEventArgs e)

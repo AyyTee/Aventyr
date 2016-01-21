@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -12,9 +13,33 @@ namespace Game
     public class Camera2D : SceneNodePlaceable
     {
         [DataMember]
-        public float Aspect = 1;
+        public float _aspect = 1;
+        public float Aspect
+        {
+            get
+            {
+                return _aspect;
+            }
+            set
+            {
+                Debug.Assert(value >= 0);
+                _aspect = value;
+            }
+        }
         [DataMember]
-        public float Scale = 1;
+        float _scale;
+        public float Scale 
+        {
+            get
+            {
+                return _scale;
+            }
+            set
+            {
+                Debug.Assert(value >= 0);
+                _scale = value;
+            }
+        }
         /// <summary>
         /// Position used for casting line of sight rays for portals
         /// </summary>

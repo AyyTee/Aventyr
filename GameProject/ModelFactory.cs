@@ -124,6 +124,11 @@ namespace Game
             AddPolygon(model, PolygonFactory.CreatePolygon(polyTree).ToArray(), offset);
         }
 
+        public static void AddPolygon(Model model, List<List<IntPoint>> paths, Vector3 offset = new Vector3())
+        {
+            AddPolygon(model, PolygonFactory.CreatePolygon(paths).ToArray(), offset);
+        }
+
         public static void AddPolygon(Model model, Polygon[] polygon, Vector3 offset = new Vector3())
         {
             for (int i = 0; i < polygon.Length; i++)

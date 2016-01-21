@@ -15,7 +15,7 @@ namespace UnitTest
             Transform2D t = new Transform2D();
             t.Position = new Vector2(100, -200);
 
-            Vector2 normal = t.GetNormal();
+            Vector2 normal = t.GetRight();
             Assert.IsTrue(normal == new Vector2(1, 0));
         }
         [TestMethod]
@@ -25,7 +25,7 @@ namespace UnitTest
             t.Rotation = (float)Math.PI;
             t.Position = new Vector2(100, -200);
 
-            Vector2 normal = t.GetNormal();
+            Vector2 normal = t.GetRight();
             Vector2 reference = new Vector2(-1, 0);
             Assert.IsTrue(Math.Abs(normal.X - reference.X) < 0.00001 && Math.Abs(normal.Y - reference.Y) < 0.00001);
         }
@@ -36,7 +36,7 @@ namespace UnitTest
             t.Rotation = (float)Math.PI/4;
             t.Position = new Vector2(100, -200);
 
-            Vector2 normal = t.GetNormal();
+            Vector2 normal = t.GetRight();
             Vector2 reference = new Vector2((float)Math.Cos(Math.PI/4), (float)Math.Sin(Math.PI/4));
             Assert.IsTrue(Math.Abs(normal.X - reference.X) < 0.00001 && Math.Abs(normal.Y - reference.Y) < 0.00001);
         }
@@ -47,7 +47,7 @@ namespace UnitTest
             t.Scale = new Vector2(-1, 1);
             t.Position = new Vector2(100, -200);
 
-            Vector2 normal = t.GetNormal();
+            Vector2 normal = t.GetRight();
             Vector2 reference = new Vector2(-1, 0);
             Assert.IsTrue(Math.Abs(normal.X - reference.X) < 0.00001 && Math.Abs(normal.Y - reference.Y) < 0.00001);
         }
@@ -58,7 +58,7 @@ namespace UnitTest
             t.Scale = new Vector2(1, -1);
             t.Position = new Vector2(100, -200);
 
-            Vector2 normal = t.GetNormal();
+            Vector2 normal = t.GetRight();
             Vector2 reference = new Vector2(1, 0);
             Assert.IsTrue(Math.Abs(normal.X - reference.X) < 0.00001 && Math.Abs(normal.Y - reference.Y) < 0.00001);
         }
@@ -69,7 +69,7 @@ namespace UnitTest
             t.Scale = new Vector2(-1, -1);
             t.Position = new Vector2(100, -200);
 
-            Vector2 normal = t.GetNormal();
+            Vector2 normal = t.GetRight();
             Vector2 reference = new Vector2(-1, 0);
             Assert.IsTrue(Math.Abs(normal.X - reference.X) < 0.00001 && Math.Abs(normal.Y - reference.Y) < 0.00001);
         }
@@ -81,7 +81,7 @@ namespace UnitTest
             t.Position = new Vector2(100, -200);
             t.Rotation = (float)Math.PI / 4;
 
-            Vector2 normal = t.GetNormal();
+            Vector2 normal = t.GetRight();
             Vector2 reference = new Vector2((float)Math.Cos(Math.PI / 4), (float)Math.Sin(Math.PI / 4));
             Assert.IsTrue(Math.Abs(normal.X - reference.X) < 0.00001 && Math.Abs(normal.Y - reference.Y) < 0.00001);
         }
@@ -93,7 +93,7 @@ namespace UnitTest
             t.Position = new Vector2(100, -200);
             t.Rotation = (float)Math.PI / 4;
 
-            Vector2 normal = t.GetNormal();
+            Vector2 normal = t.GetRight();
             Vector2 reference = -new Vector2((float)Math.Cos(Math.PI / 4), (float)Math.Sin(Math.PI / 4));
             Assert.IsTrue(Math.Abs(normal.X - reference.X) < 0.0001 && Math.Abs(normal.Y - reference.Y) < 0.0001);
         }

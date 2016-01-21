@@ -360,8 +360,141 @@ namespace UnitTest
             Assert.IsTrue(Math.Abs(line.NearestT(new Vector2(-4, 2), false) - 54.5) < 0.0001f);
         }
         #endregion
-        #region IntersectParametric test
+        #region Intersect tests
         [TestMethod]
+        public void IntersectTest0()
+        {
+            Line line0 = new Line(new Vector2(), new Vector2(0, 1f));
+            Line line1 = new Line(new Vector2(-0.5f, 0.6f), new Vector2(0.5f, 0.6f));
+            IntersectPoint intersect = line0.Intersects(line1, false);
+
+            IntersectPoint comparison = new IntersectPoint();
+            comparison.Exists = true;
+            comparison.Position = new Vector2d(0, 0.6);
+            comparison.TFirst = 0.6;
+            comparison.TLast = 0.5;
+            Assert.IsTrue(intersect.Equals(comparison));
+        }
+
+        [TestMethod]
+        public void IntersectTest1()
+        {
+            Line line0 = new Line(new Vector2(), new Vector2(0, 1f));
+            Line line1 = new Line(new Vector2(-0.5f, 1f), new Vector2(0.5f, 1f));
+            IntersectPoint intersect = line0.Intersects(line1, false);
+
+            IntersectPoint comparison = new IntersectPoint();
+            comparison.Exists = true;
+            comparison.Position = new Vector2d(0, 1);
+            comparison.TFirst = 1;
+            comparison.TLast = 0.5;
+            Assert.IsTrue(intersect.Equals(comparison));
+        }
+
+        [TestMethod]
+        public void IntersectTest2()
+        {
+            Line line0 = new Line(new Vector2(), new Vector2(0, -1f));
+            Line line1 = new Line(new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f));
+            IntersectPoint intersect = line0.Intersects(line1, false);
+
+            IntersectPoint comparison = new IntersectPoint();
+            comparison.Exists = true;
+            comparison.Position = new Vector2d(0, -1);
+            comparison.TFirst = 1;
+            comparison.TLast = 0.5;
+            Assert.IsTrue(intersect.Equals(comparison));
+        }
+
+        [TestMethod]
+        public void IntersectTest3()
+        {
+            Line line0 = new Line(new Vector2(), new Vector2(0, -1000000f));
+            Line line1 = new Line(new Vector2(-0.5f, -1000000), new Vector2(0.5f, -1000000f));
+            IntersectPoint intersect = line0.Intersects(line1, false);
+
+            IntersectPoint comparison = new IntersectPoint();
+            comparison.Exists = true;
+            comparison.Position = new Vector2d(0, -1000000);
+            comparison.TFirst = 1;
+            comparison.TLast = 0.5;
+            Assert.IsTrue(intersect.Equals(comparison));
+        }
+
+        [TestMethod]
+        public void IntersectTest4()
+        {
+            Line line0 = new Line(new Vector2(), new Vector2(0, -1f));
+            Line line1 = new Line(new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f));
+            IntersectPoint intersect = line0.Intersects(line1, true);
+
+            IntersectPoint comparison = new IntersectPoint();
+            comparison.Exists = true;
+            comparison.Position = new Vector2d(0, -1);
+            comparison.TFirst = 1;
+            comparison.TLast = 0.5;
+            Assert.IsTrue(intersect.Equals(comparison));
+        }
+
+        [TestMethod]
+        public void IntersectTest5()
+        {
+            Line line0 = new Line(new Vector2(), new Vector2(0, -1000000f));
+            Line line1 = new Line(new Vector2(-0.5f, -1000000), new Vector2(0.5f, -1000000f));
+            IntersectPoint intersect = line0.Intersects(line1, true);
+
+            IntersectPoint comparison = new IntersectPoint();
+            comparison.Exists = true;
+            comparison.Position = new Vector2d(0, -1000000);
+            comparison.TFirst = 1;
+            comparison.TLast = 0.5;
+            Assert.IsTrue(intersect.Equals(comparison));
+        }
+
+        [TestMethod]
+        public void IntersectTest6()
+        {
+            Line line0 = new Line(new Vector2(1f, 1f), new Vector2(2f, 2f));
+            Line line1 = new Line(new Vector2(1.5f, 3f), new Vector2(1.5f, -1.5f));
+            IntersectPoint intersect = line0.Intersects(line1, false);
+
+            IntersectPoint comparison = new IntersectPoint();
+            comparison.Exists = true;
+            comparison.Position = new Vector2d(1.5, 1.5);
+            comparison.TFirst = 0.5;
+            comparison.TLast = 1/(double)3;
+            Assert.IsTrue(intersect.Equals(comparison));
+        }
+
+        [TestMethod]
+        public void IntersectTest7()
+        {
+            Line line0 = new Line(new Vector2(1f, 1f), new Vector2(2f, 2f));
+            Line line1 = new Line(new Vector2(3f, 9f), new Vector2(12f, -6f));
+            IntersectPoint intersect = line0.Intersects(line1, true);
+
+            IntersectPoint comparison = new IntersectPoint();
+            comparison.Exists = false;
+            Assert.IsTrue(intersect.Equals(comparison));
+        }
+
+        [TestMethod]
+        public void IntersectTest8()
+        {
+            Line line0 = new Line(new Vector2(1f, 1f), new Vector2(2f, 2f));
+            Line line1 = new Line(new Vector2(3f, 9f), new Vector2(12f, -6f));
+            IntersectPoint intersect = line0.Intersects(line1, false);
+
+            IntersectPoint comparison = new IntersectPoint();
+            comparison.Exists = true;
+            comparison.Position = new Vector2d(5.25, 5.25);
+            comparison.TFirst = 4.25;
+            comparison.TLast = 0.25;
+            Assert.IsTrue(intersect.Equals(comparison));
+        }
+        #endregion
+        #region IntersectParametric tests
+        /*[TestMethod]
         public void IntersectParametricTest0()
         {
             Line line = new Line(new Vector2(), new Vector2(0, 1));
@@ -400,7 +533,7 @@ namespace UnitTest
             IntersectPoint intersect = line.IntersectsParametric(velocity, 0, pointMotion, 1);
             Assert.IsTrue(intersect.Exists);
             Assert.IsTrue(intersect.TFirst >= 0 && intersect.TFirst <= 1);
-        }
+        }*/
         #endregion
     }
 }

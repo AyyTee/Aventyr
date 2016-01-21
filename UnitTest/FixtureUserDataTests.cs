@@ -10,7 +10,7 @@ namespace UnitTest
     [TestClass]
     public class FixtureUserDataTests
     {
-        public Entity CreateGround(Scene scene)
+        public Actor CreateGround(Scene scene)
         {
             Vector2[] verts = new Vector2[] {
                 new Vector2(),
@@ -19,7 +19,7 @@ namespace UnitTest
                 new Vector2(2.5f, 4),
                 new Vector2(0, 3),
             };
-            Entity ground = ActorFactory.CreateEntityPolygon(scene, new Transform2D(new Vector2(), new Vector2(1, 1)), verts);
+            Actor ground = ActorFactory.CreateEntityPolygon(scene, new Transform2D(new Vector2(), new Vector2(1, 1)), verts);
             ground.Name = "ground";
             return ground;
         }
@@ -27,7 +27,7 @@ namespace UnitTest
         public Scene CreateSceneWithPortal()
         {
             Scene scene = new Scene();
-            Entity ground = CreateGround(scene);
+            Actor ground = CreateGround(scene);
             scene.World.ProcessChanges();
             Fixture fixture = ground.Body.FixtureList[0];
             FixturePortal portal = new FixturePortal(scene, new FixtureEdgeCoord(fixture, 0, 0.3f));

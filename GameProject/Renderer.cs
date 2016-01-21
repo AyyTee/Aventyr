@@ -20,6 +20,7 @@ namespace Game
         readonly Controller _controller;
         public bool PortalRenderEnabled { get; set; }
         public int PortalRenderDepth { get; set; }
+        private ShaderProgram _activeShader;
 
         public static Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
@@ -55,6 +56,15 @@ namespace Game
             return _scenes.Remove(scene);
         }
 
+        private void SetShader(ShaderProgram shader)
+        {
+            if (shader != _activeShader)
+            {
+                GL.UseProgram(shader.ProgramID);
+                _activeShader = shader;
+            }
+        }
+
         public void Render()
         {
             GL.Viewport(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
@@ -66,7 +76,7 @@ namespace Game
             {
                 shaderList[i].Value.EnableVertexAttribArrays();
             }
-            
+            SetShader(Shaders["uber"]);
             GL.Enable(EnableCap.DepthTest);
             //GL.Enable(EnableCap.Blend);
             for (int i = 0; i < _scenes.Count(); i++)
@@ -84,24 +94,7 @@ namespace Game
 
             GL.Flush();
         }
-        #region temp
-        /*public void GetPortalViewModels(PortalView portalView, Entity entity)
-        {
-            GetPortalViewModels(portalView, entity, 0, new Vector3(0,0,0));
-        }
 
-        public void GetPortalViewModels(PortalView portalView, Entity entity, float offset, Vector3 color)
-        {
-            foreach (PortalView p in portalView.Children)
-            {
-                Model polygon = ModelFactory.CreatePolygon(p.Path, new Vector3(0, 0, offset));
-                polygon.SetColor(color);
-                entity.Models.Add(polygon);
-                //Random r = new Random((int)(color.LengthFast * 1000000));
-                GetPortalViewModels(p, entity, offset + 1, color + new Vector3(.1f, .1f, .1f));//new Vector3((float)r.NextDouble(), (float)r.NextDouble(), (float)r.NextDouble()));
-            }
-        }*/
-        #endregion
         public PortalView CalculatePortalViews(Portal[] portals, Camera2D camera, int depth)
         {
             List<IntPoint> view = ClipperConvert.ToIntPoint(camera.GetWorldVerts());
@@ -118,7 +111,7 @@ namespace Game
             {
                 return;
             }
-
+            const float AREA_EPSILON = 0.0001f;
             Clipper c = new Clipper();
             //The clipper must be set to strictly simple. Otherwise polygons might have duplicate vertices which causes poly2tri to generate incorrect results.
             c.StrictlySimple = true;
@@ -139,7 +132,7 @@ namespace Game
                 Line portalLine = new Line(pv2);
                 if (p.OneSided)
                 {
-                    if (portalLine.GetSideOf(pv2[0] + p.GetWorldTransform().GetNormal()) != portalLine.GetSideOf(viewPos))
+                    if (portalLine.GetSideOf(pv2[0] + p.GetWorldTransform().GetRight()) != portalLine.GetSideOf(viewPos))
                     {
                         continue;
                     }
@@ -155,8 +148,12 @@ namespace Game
                 }
                 
                 Vector2[] fov = Vector2Ext.Transform(p.GetFov(viewPos, 500, 3), portalMatrix);
+                if (MathExt.GetArea(fov) < AREA_EPSILON)
+                {
+                    continue;
+                }
                 List<IntPoint> pathFov = ClipperConvert.ToIntPoint(fov);
-
+                
                 var viewNew = new List<List<IntPoint>>();
                 
                 c.AddPath(pathFov, PolyType.ptSubject, true);
@@ -183,7 +180,7 @@ namespace Game
                     Line portalOtherLine = new Line(pOther);
                     if (other.OneSided)
                     {
-                        if (portalOtherLine.GetSideOf(pOther[0] + other.GetWorldTransform().GetNormal()) != portalOtherLine.GetSideOf(viewPos))
+                        if (portalOtherLine.GetSideOf(pOther[0] + other.GetWorldTransform().GetRight()) != portalOtherLine.GetSideOf(viewPos))
                         {
                             continue;
                         }
@@ -202,6 +199,10 @@ namespace Game
                         continue;
                     }
                     Vector2[] otherFov = Vector2Ext.Transform(other.GetFov(viewPos, 500, 3), portalMatrix);
+                    if (MathExt.GetArea(otherFov) < AREA_EPSILON)
+                    {
+                        continue;
+                    }
                     otherFov = MathExt.SetHandedness(otherFov, true);
                     List<IntPoint> otherPathFov = ClipperConvert.ToIntPoint(otherFov);
                     c.AddPath(otherPathFov, PolyType.ptClip, true);
@@ -288,7 +289,6 @@ namespace Game
             //portalEdges.SetTexture(Textures["default.png"]);
             for (int i = 1; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
             {
-                //ModelFactory.AddLinesWidth(portalEdges, new Line[] { portalViewList[i].PortalLine }, 0.2f);
                 for (int j = 0; j < 2; j++)
                 {
                     Vector2[] line0 = GetPortalEdge(portalViewList[i].FovLines[j], portalViewList[i].FovLinesPrevious[j], cam);
@@ -310,9 +310,11 @@ namespace Game
                             c.AddPaths(p.Paths, PolyType.ptClip, true);
                         }
                     }
-                    PolyTree solutionNew = new PolyTree();
+                    //PolyTree solutionNew = new PolyTree();
+                    List<List<IntPoint>> solutionNew = new List<List<IntPoint>>();
                     c.Execute(ClipType.ctDifference, solutionNew, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
                     c.Clear();
+                    solutionNew = Clipper.CleanPolygons(solutionNew);
                     ModelFactory.AddPolygon(portalEdges, solutionNew);
                 }
             }
@@ -366,11 +368,13 @@ namespace Game
                 }
                 GL.Disable(EnableCap.StencilTest);
             }
-            
+            entity.UpdatePortalClipping(3);
             foreach (Model v in entity.ModelList)
             {
                 RenderModel(v, viewMatrix, timeDelta, entity.GetWorldTransform().GetMatrix());
             }
+            
+            RenderClipModels(entity, viewMatrix);
             if (entity.DrawOverPortals)
             {
                 GL.Enable(EnableCap.StencilTest);
@@ -410,44 +414,44 @@ namespace Game
             }
             Debug.Assert(coldata.Length == vertdata.Length);
             Debug.Assert(texcoorddata.Length == vertdata.Length);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, model.Shader.GetBuffer("vPosition"));
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vPosition"));
             GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
-            GL.VertexAttribPointer(model.Shader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
+            GL.VertexAttribPointer(_activeShader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
 
-            GL.UseProgram(model.Shader.ProgramID);
+            //GL.UseProgram(_activeShader.ProgramID);
 
             // Buffer vertex color if shader supports it
-            if (model.Shader.GetAttribute("vColor") != -1)
+            if (_activeShader.GetAttribute("vColor") != -1)
             {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, model.Shader.GetBuffer("vColor"));
+                GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vColor"));
                 GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
-                GL.VertexAttribPointer(model.Shader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
+                GL.VertexAttribPointer(_activeShader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
             }
 
             // Buffer texture coordinates if shader supports it
-            if (model.Shader.GetAttribute("texcoord") != -1)
+            if (_activeShader.GetAttribute("texcoord") != -1)
             {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, model.Shader.GetBuffer("texcoord"));
+                GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("texcoord"));
                 GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
-                GL.VertexAttribPointer(model.Shader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
+                GL.VertexAttribPointer(_activeShader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
             }
             //GL.BindBuffer(BufferTarget.ArrayBuffer, 0); I don't know why this is here so I've commented it out until something breaks.
 
-            if (model.Shader.GetUniform("UVMatrix") != -1)
+            if (_activeShader.GetUniform("UVMatrix") != -1)
             {
                 Matrix4 UVMatrix = model.TransformUv.GetMatrix();
-                GL.UniformMatrix4(model.Shader.GetUniform("UVMatrix"), false, ref UVMatrix);
+                GL.UniformMatrix4(_activeShader.GetUniform("UVMatrix"), false, ref UVMatrix);
             }
 
             if (model.Texture != null)
             {
-                GL.Uniform1(model.Shader.GetUniform("isTextured"), 1);
+                GL.Uniform1(_activeShader.GetUniform("isTextured"), 1);
                 GL.BindTexture(TextureTarget.Texture2D, model.Texture.GetId());
                 //GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.Texture.Id);
             }
             else
             {
-                GL.Uniform1(model.Shader.GetUniform("isTextured"), 0);
+                GL.Uniform1(_activeShader.GetUniform("isTextured"), 0);
                 GL.BindTexture(TextureTarget.Texture2D, -1);
                 //GL.Uniform1(v.Shader.GetAttribute("maintexture"), -1);
             }
@@ -467,21 +471,7 @@ namespace Game
             }
 
             RenderSetTransformMatrix(offset, model, viewMatrix);
-            /*List<PortalView> portalViewList = portalView.GetPortalViewList();
-            for (int i = 0; i < portalViewList.Count; i++)*/
-            //for (int i = 0; i < 1; i++)
-            {
-                if (model.Shader.GetUniform("cutLinesLength") != -1)
-                {
-                    GL.Uniform1(model.Shader.GetUniform("cutLinesLength"), 0);
-                }
-                Matrix4 mat = viewMatrix;//portalViewList[i].ViewMatrix;
-                /*List<Line> clipLines = portalViewList[i].GetClipLines();
-                SetClipLines(v.Shader, clipLines, viewMatrix);*/
-
-                GL.UniformMatrix4(model.Shader.GetUniform("viewMatrix"), false, ref mat);
-                GL.DrawElements(BeginMode.Triangles, model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
-            }
+            GL.DrawElements(BeginMode.Triangles, model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
 
             if (model.Wireframe)
             {
@@ -498,9 +488,13 @@ namespace Game
         {
             List<Entity.ClipModel> clipModels = entity.ClipModels;
             Matrix4 ScaleMatrix;
-            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0)) * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
-
+            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
+            ScaleMatrix = ScaleMatrix * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
             bool isMirrored = Matrix4Ext.IsMirrored(viewMatrix);
+            if (clipModels.Count > 0)
+            {
+                SetShader(Shaders["uberClip"]);
+            }
             foreach (Entity.ClipModel cm in clipModels)
             {
                 List<float> cutLines = new List<float>();
@@ -519,14 +513,15 @@ namespace Game
                     });
                 }
 
-                GL.Uniform1(cm.Model.Shader.GetUniform("cutLinesLength"), cutLines.Count);
-                GL.Uniform1(GL.GetUniformLocation(cm.Model.Shader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
+                GL.Uniform1(_activeShader.GetUniform("cutLinesLength"), cutLines.Count);
+                GL.Uniform1(GL.GetUniformLocation(_activeShader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
                 RenderSetTransformMatrix(entity.GetWorldTransform().GetMatrix(), cm.Model, cm.Transform * viewMatrix);
-                Matrix4 view = cm.Transform * viewMatrix;
-                GL.UniformMatrix4(cm.Model.Shader.GetUniform("viewMatrix"), false, ref view);
+                /*Matrix4 view = cm.Transform * viewMatrix;
+                GL.UniformMatrix4(_activeShader.GetUniform("viewMatrix"), false, ref view);*/
 
                 GL.DrawElements(BeginMode.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
             }
+            SetShader(Shaders["uber"]);
         }
 
         private void SetClipLines(ShaderProgram shader, List<Line> clipLines, Matrix4 viewMatrix)
@@ -557,41 +552,8 @@ namespace Game
         {
             Matrix4 modelMatrix = model.Transform.GetMatrix() * offset;
             UpdateCullFace(modelMatrix * viewMatrix);
-            GL.UniformMatrix4(model.Shader.GetUniform("modelMatrix"), false, ref modelMatrix);
+            GL.UniformMatrix4(_activeShader.GetUniform("modelMatrix"), false, ref modelMatrix);
+            GL.UniformMatrix4(_activeShader.GetUniform("viewMatrix"), false, ref viewMatrix);
         }
-
-        /*public static Texture LoadImage(Bitmap image)
-        {
-            int texID = GL.GenTexture();
-
-            GL.BindTexture(TextureTarget.Texture2D, texID);
-            BitmapData data = image.LockBits(new System.Drawing.Rectangle(0, 0, image.Width, image.Height),
-                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0,
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-
-            image.UnlockBits(data);
-
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-
-            Texture texture = new Texture(texID);
-            return texture;
-        }
-
-        public static Texture LoadImage(string filename)
-        {
-            try
-            {
-                Bitmap file = new Bitmap(filename);
-                Texture texture = LoadImage(file);
-                texture.SetFilepath(filename);
-                return texture;
-            }
-            catch (FileNotFoundException)
-            {
-                return null;
-            }
-        }*/
     }
 }

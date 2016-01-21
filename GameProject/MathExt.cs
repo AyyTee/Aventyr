@@ -13,14 +13,24 @@ namespace Game
     {
         public bool Exists;
         public Vector2d Position;
-        /// <summary>
-        /// T value for the first line.
-        /// </summary>
+        /// <summary>T value for the first line.</summary>
         public double TFirst;
-        /// <summary>
-        /// T value for the second line.
-        /// </summary>
+        /// <summary>T value for the second line.</summary>
         public double TLast;
+
+        const float EQUALITY_EPSILON = 0.0000001f;
+
+        public bool Equals(IntersectPoint intersect)
+        {
+            if (Exists == intersect.Exists && Exists == false)
+            {
+                return true;
+            }
+            return Exists == intersect.Exists &&
+                (Position - intersect.Position).Length < EQUALITY_EPSILON &&
+                Math.Abs(TFirst - intersect.TFirst) < EQUALITY_EPSILON &&
+                Math.Abs(TLast - intersect.TLast) < EQUALITY_EPSILON;
+        }
     }
     public static class MathExt
     {

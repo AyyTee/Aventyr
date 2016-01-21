@@ -42,7 +42,7 @@ namespace Game
             {
                 throw new NullReferenceException("Scene cannot be a null reference.");
             }
-            Size = 1f;
+            SetSize(1f);
             OneSided = false;//true;
         }
 
@@ -71,12 +71,6 @@ namespace Game
             base.Remove();
         }
 
-        public virtual void Step()
-        {
-        }
-
-        public abstract Transform2D GetVelocity();
-
         /// <summary>
         /// Whether a portal can be entered, rendered, and clip models.
         /// </summary>
@@ -88,6 +82,15 @@ namespace Game
         protected virtual bool _isValid()
         {
             return Linked != null;
+        }
+
+        public void SetSize(float size)
+        {
+            if (size <= 0)
+            {
+                throw new Exception("Size must be greater than 0.");
+            }
+            Size = size;
         }
 
         /// <summary>
@@ -132,7 +135,7 @@ namespace Game
 
         public void Enter(Transform3D position)
         {
-            Transform2D entity2D = position.GetTransform2D();
+            Transform2D entity2D = position.Get2D();
             Enter(entity2D);
             position.Rotation = new Quaternion(position.Rotation.X, position.Rotation.Y, position.Rotation.Z, entity2D.Rotation);
             position.Position = new Vector3(entity2D.Position.X, entity2D.Position.Y, position.Position.Z);
@@ -143,11 +146,18 @@ namespace Game
         {
             float rotationPrev = position.Rotation;
             Enter(position);
-            velocity.Position = Vector2Ext.Transform(velocity.Position, Matrix4.CreateRotationZ(position.Rotation - rotationPrev + (float)Math.PI));
-            
-            if (GetWorldTransform().IsMirrored() == Linked.GetWorldTransform().IsMirrored())
+            /*velocity.Position *= new Vector2(-1f, 1f);
+            velocity.Position = Vector2Ext.Transform(velocity.Position, Matrix4.CreateRotationZ(position.Rotation - rotationPrev));// + (float)Math.PI));
+            velocity.Position *= Linked.Size/Size;*/
+            Matrix4 matrix = GetPortalMatrix(this, Linked);
+            Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
+            velocity.Position = Vector2Ext.Transform(velocity.Position, matrix);
+            velocity.Position -= origin;
+            //if (GetWorldTransform().IsMirrored() == Linked.GetWorldTransform().IsMirrored())
+            if (IsMirrored == Linked.IsMirrored)
             {
                 velocity.Rotation = -velocity.Rotation;
+                //velocity.Position = new Vector2(velocity.Position.X, -velocity.Position.Y);
             }
         }
 
@@ -162,20 +172,13 @@ namespace Game
             body.AngularVelocity = velocity.Rotation;
         }
 
-        public void Enter(Actor actor)
-        {
-            Transform2D transform = actor.GetTransform();
-            Transform2D velocity = actor.Velocity;
-            this.Enter(transform, velocity);
-            actor.SetTransform(transform);
-            actor.SetVelocity(velocity);
-        }
-
         public void Enter(SceneNodePlaceable placeable)
         {
             Transform2D transform = placeable.GetTransform();
-            this.Enter(transform);
+            Transform2D velocity = placeable.GetVelocity();
+            this.Enter(transform, velocity);
             placeable.SetTransform(transform);
+            placeable.SetVelocity(velocity);
         }
 
         public static void SetLinked(Portal portal0, Portal portal1)
@@ -223,16 +226,10 @@ namespace Game
         /// </summary>
         public static Matrix4 GetPortalMatrix(Portal portalEnter, Portal portalExit)
         {
-            //The portalExit is temporarily mirrored before getting the transformation matrix
             Transform2D transform = portalExit.GetWorldTransform();
-            Vector2 v = transform.Scale;
-            //if (portalEnter.IsMirrored != portalExit.IsMirrored)
-            {
-                transform.Scale = new Vector2(-v.X, v.Y);
-            }
-            Matrix4 m = portalEnter.GetWorldTransform().GetMatrix().Inverted() * transform.GetMatrix();
-            transform.Scale = v;
-            return m;
+            transform.Scale = new Vector2(-transform.Scale.X, transform.Scale.Y);
+            Matrix4 m = portalEnter.GetWorldTransform().GetMatrix();
+            return m.Inverted() * transform.GetMatrix();
         }
 
         public Line[] GetFovLines(Vector2 origin, float distance)

@@ -130,11 +130,21 @@ namespace Game
             return Math.Sign(Scale.X) != Math.Sign(Scale.Y);
         }
 
-        public Vector2 GetNormal(bool normalizeValue = true)
+        public Vector2 GetUp(bool normalizeValue = true)
+        {
+            return GetVector(new Vector2(0, 1), normalizeValue);
+        }
+
+        public Vector2 GetRight(bool normalizeValue = true)
+        {
+            return GetVector(new Vector2(1, 0), normalizeValue);
+        }
+
+        private Vector2 GetVector(Vector2 vector, bool normalizeValue)
         {
             Vector2[] v = new Vector2[2] {
                 new Vector2(0, 0),
-                new Vector2(1, 0)
+                vector
             };
             v = Vector2Ext.Transform(v, GetMatrix());
             if (normalizeValue)

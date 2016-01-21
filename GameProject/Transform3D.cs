@@ -97,8 +97,7 @@ namespace Game
         /// <summary>
         /// Projects a copy of Transform projected onto the XY-plane, the rotation simply uses the Quaternion's W (theta) value
         /// </summary>
-        /// <returns></returns>
-        public Transform2D GetTransform2D()
+        public Transform2D Get2D()
         {
             return new Transform2D(new Vector2(Position.X, Position.Y), new Vector2(Scale.X, Scale.Y), Rotation.W);
         }

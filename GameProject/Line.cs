@@ -323,17 +323,10 @@ namespace Game
             return new Line(Vertices);
         }
 
-        /// <summary>
-        /// Approximates the time at which a moving line and a moving point intersect or if they don't intersect at all.
-        /// </summary>
-        /// <param name="velocity"></param>
-        /// <param name="rotVelocity"></param>
-        /// <param name="pointMotion"></param>
-        /// <returns></returns>
-        public IntersectPoint IntersectsParametric(Vector2 velocity, float rotVelocity, Line pointMotion, int detail)
+        public IntersectPoint IntersectsParametric(Transform2D velocity, Line pointMotion, int detail)
         {
-            Matrix4 transform = Matrix4.CreateTranslation(new Vector3(velocity.X, velocity.Y, 0) / detail);
-            transform = Matrix4.CreateRotationZ(rotVelocity / detail) * transform;
+            Matrix4 transform = Matrix4.CreateTranslation(new Vector3(velocity.Position) / detail);
+            transform = Matrix4.CreateRotationZ(velocity.Rotation / detail) * transform;
             Line line = Copy();
             IntersectPoint intersect = new IntersectPoint();
             for (int i = 0; i < detail; i++ )
@@ -351,7 +344,6 @@ namespace Game
                 Line pointLine = new Line(pointMotion.Lerp(i/detail), pointMotion.Lerp((i+1)/detail));
                 if (pointLine.IsInsideOfPolygon(verts))
                 {
-                    
                     intersect.TFirst = (i + 0.5f) / detail;
                     intersect.Exists = true;
                     Vector2 pos = pointMotion.Lerp((float)intersect.TFirst);

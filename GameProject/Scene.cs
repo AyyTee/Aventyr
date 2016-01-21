@@ -47,17 +47,23 @@ namespace Game
             World.ProcessChanges();
             foreach (SceneNode s in FindByType<SceneNode>())
             {
-                s.Update();
+                s.StepBegin();
             }
-            foreach (Actor e in FindByType<Actor>())
+            foreach (SceneNodePlaceable s in FindByType<SceneNodePlaceable>())
             {
-                //e.PositionUpdate();
-                if (e.Body != null)
+                //Skip Actors, they handle movement using rigid body physics.
+                if (s.GetType() == typeof(Actor))
                 {
-                    Xna.Vector2 v0 = Vector2Ext.ConvertToXna(e.GetWorldTransform().Position);
-                    e.Body.SetTransform(v0, e.GetWorldTransform().Rotation);
-                    e.Body.LinearVelocity = Vector2Ext.ConvertToXna(e.Velocity.Position);
-                    e.Body.AngularVelocity = e.Velocity.Rotation;
+                    continue;
+                }
+                //SceneNodes parented to a SceneNodePlaceable instance can't perform portal teleportation directly.
+                if (s.Parent.GetType() != typeof(ITransform2D))
+                {
+                    RayCast(s);
+                }
+                else
+                {
+                    s.SetTransform(s.GetTransform().Add(s.GetVelocity()));
                 }
             }
             if (World != null)
@@ -66,9 +72,69 @@ namespace Game
                 World.Step(stepSize);
                 _contactListener.StepEnd();
             }
-            foreach (Actor e in FindByType<Actor>())
+            foreach (SceneNode s in FindByType<SceneNode>())
             {
-                e.Step();
+                s.StepEnd();
+            }
+        }
+
+        public void RayCast(SceneNodePlaceable placeable)
+        {
+            Transform2D transform = placeable.GetTransform();
+            Transform2D velocity = placeable.GetVelocity();
+            RayCast(transform, velocity);
+            placeable.SetTransform(transform);
+            placeable.SetVelocity(velocity);
+        }
+
+        public void RayCast(Transform2D begin, Transform2D velocity)
+        {
+            _rayCast(begin, velocity, velocity.Position.Length, null);
+            begin.Rotation += velocity.Rotation;
+            begin.Scale *= velocity.Scale;
+        }
+
+        private void _rayCast(Transform2D begin, Transform2D velocity, double movementLeft, Portal portalPrevious)
+        {
+            if (velocity.Position.Length == 0)
+            {
+                return;
+            }
+            double distanceMin = movementLeft;
+            Portal portalNearest = null;
+            IntersectPoint intersectNearest = new IntersectPoint();
+            foreach (Portal p in FindByType<Portal>())
+            {
+                if (!p.IsValid())
+                {
+                    continue;
+                }
+                if (portalPrevious == p)
+                {
+                    continue;
+                }
+                Line portalLine = new Line(p.GetWorldVerts());
+                Line ray = new Line(begin.Position, begin.Position + velocity.Position);
+                IntersectPoint intersect = portalLine.Intersects(ray, true);
+                //IntersectPoint intersect2 = portalLine.IntersectsParametric(p.GetVelocity(), ray, 5);
+                double distance = ((Vector2d)begin.Position - intersect.Position).Length;
+                if (intersect.Exists && distance < distanceMin)
+                {
+                    distanceMin = distance;
+                    portalNearest = p;
+                    intersectNearest = intersect;
+                }
+            }
+            if (portalNearest != null)
+            {
+                movementLeft -= distanceMin;
+                begin.Position = (Vector2)intersectNearest.Position;
+                portalNearest.Enter(begin, velocity);
+                _rayCast(begin, velocity, movementLeft, portalNearest.Linked);
+            }
+            else
+            {
+                begin.Position += velocity.Position.Normalized() * (float)movementLeft;
             }
         }
 
