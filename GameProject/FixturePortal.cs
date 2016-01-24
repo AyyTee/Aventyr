@@ -31,6 +31,11 @@ namespace Game
         public const float EdgeMargin = 0.02f;
         public const float CollisionMargin = 0.1f;
 
+        public FixturePortal(Scene scene)
+            : this(scene, null)
+        {
+        }
+
         public FixturePortal(Scene scene, FixtureEdgeCoord position)
             : base(scene)
         {
@@ -42,12 +47,9 @@ namespace Game
 
         public override SceneNode Clone(Scene scene)
         {
-            return new FixturePortal(scene, null);
-        }
-
-        protected override void Clone(SceneNode destination)
-        {
-            base.Clone(destination);
+            FixturePortal clone = new FixturePortal(scene);
+            Clone(clone);
+            return clone;
         }
 
         /// <summary>

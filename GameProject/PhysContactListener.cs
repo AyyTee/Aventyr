@@ -104,6 +104,10 @@ namespace Game
                 //portalNearest = Scene.PortalList.Min(item => new Line(item.GetWorldVerts()).);
                 foreach (Portal p in Scene.PortalList)
                 {
+                    if (!p.IsValid())
+                    {
+                        continue;
+                    }
                     Line line = new Line(p.GetWorldVerts());
                     IntersectPoint intersect = position.Intersects(line, true);
                     if (intersect.TFirst <= portalTDistance && intersect.Exists)

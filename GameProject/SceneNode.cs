@@ -26,11 +26,12 @@ namespace Game
         [DataMember]
         public SceneNode Parent { get; private set; }
 
-        public Scene Scene { get; private set; }
+        public readonly Scene Scene;
 
         #region Constructors
         public SceneNode(Scene scene)
         {
+            Debug.Assert(scene != null);
             Scene = scene;
             if (Scene != null)
             {
@@ -39,27 +40,6 @@ namespace Game
             }
         }
         #endregion
-
-        /// <summary>
-        /// Assigns SceneNode and all it's descendents to a Scene.  
-        /// Cannot be done if SceneNode is already part of a Scene.  Method must be called by the root node.
-        /// </summary>
-        public void SetScene(Scene scene)
-        {
-            Debug.Assert(Parent == null, "Must not have a parent.");
-            _setScene(scene);
-            SetParent(Scene.Root);
-        }
-
-        private void _setScene(Scene scene)
-        {
-            Debug.Assert(Scene == null, "SceneNode is already a part of a Scene.");
-            Scene = scene;
-            foreach (SceneNode s in ChildList)
-            {
-                s._setScene(Scene);
-            }
-        }
 
         /// <summary>
         /// Clones a SceneNode and recursively clones all of it's children.
@@ -73,7 +53,7 @@ namespace Game
         /// Clones a SceneNode and recursively clones all of it's children.
         /// </summary>
         /// <param name="scene">Scene to clone into.</param>
-        /// <param name="mask"></param>
+        /// <param name="mask">If not null, Scene nodes will only be cloned if they are in the mask.</param>
         public SceneNode DeepClone(Scene scene, HashSet<SceneNode> mask = null)
         {
             Dictionary<SceneNode, SceneNode> cloneMap = new Dictionary<SceneNode, SceneNode>();
@@ -112,11 +92,6 @@ namespace Game
                 }
                 p.CloneChildren(scene, cloneMap, cloneList, mask);
             }
-        }
-
-        public SceneNode Clone()
-        {
-            return Clone(Scene);
         }
 
         public virtual SceneNode Clone(Scene scene)
@@ -168,9 +143,7 @@ namespace Game
             return Parent.IsDescendent(node);
         }
 
-        /// <summary>
-        /// Remove from scene graph.
-        /// </summary>
+        /// <summary>Remove from scene graph.</summary>
         public virtual void Remove()
         {
             SetParent(null);

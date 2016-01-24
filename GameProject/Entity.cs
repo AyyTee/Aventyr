@@ -19,50 +19,17 @@ namespace Game
     {
         [DataMember]
         List<Model> _models = new List<Model>();
-        List<ClipModel> _clipModels = new List<ClipModel>();
-        public List<ClipModel> ClipModels { get { return new List<ClipModel>(_clipModels); } }
-        [DataMember]
-        bool _isPortalable = false;
         /// <summary>
         /// If true then this model will not be drawn during portal rendering and will appear in front of any portal FOV.
         /// </summary>
         [DataMember]
-        public bool DrawOverPortals = false;
-
-        /// <summary>
-        /// Represents the size of the cutLines array within the fragment shader
-        /// </summary>
-        const int CUT_LINE_ARRAY_MAX_LENGTH = 16;
-        /// <summary>
-        /// Whether or not this entity will interact with portals when intersecting them
-        /// </summary>
-        public bool IsPortalable
-        {
-            get { return _isPortalable; }
-            set { _isPortalable = value; }
-        }
+        public bool DrawOverPortals { get; set; }
         /// <summary>
         /// Gets or sets whether this Entity can be rendered.
         /// </summary>
         [DataMember]
         public bool Visible { get; set; }
         public List<Model> ModelList { get { return new List<Model>(_models); } }
-        public class ClipModel
-        {
-            private Line[] _clipLines;
-            public Line[] ClipLines { get { return _clipLines; } }
-            private Model _model;
-            public Model Model { get { return _model; } }
-            private Matrix4 _transform;
-            public Matrix4 Transform { get { return _transform; } }
-
-            public ClipModel (Model model, Line[] clipLines, Matrix4 transform)
-            {
-                _model = model;
-                _clipLines = clipLines;
-                _transform = transform;
-            }
-        }
 
         #region Constructors
         public Entity(Scene scene)
@@ -117,22 +84,34 @@ namespace Game
             _models.Clear();
         }
 
-        public void UpdatePortalClipping(int depth)
+        public List<ClipModel> GetClipModels(int depth)
         {
-            _clipModels.Clear();
-            foreach (Model m in ModelList)
+            List<ClipModel> clipModels = new List<ClipModel>();
+            if (IsPortalable && !DrawOverPortals)
             {
-                ModelPortalClipping(m, GetWorldTransform().Position, null, Matrix4.Identity, 4, 0);
+                foreach (Model m in ModelList)
+                {
+                    clipModels.AddRange(_getClipModels(m, GetWorldTransform().Position, null, Matrix4.Identity, depth, 0));
+                }
             }
+            else
+            {
+                foreach (Model m in ModelList)
+                {
+                    clipModels.Add(new ClipModel(this, m, new Line[0], Matrix4.Identity));
+                }
+            }
+            return clipModels;
         }
 
         /// <param name="depth">Number of iterations.</param>
         /// <param name="clipModels">Adds the ClipModel instances to this list.</param>
-        private void ModelPortalClipping(Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, int count)
+        private List<ClipModel> _getClipModels(Model model, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, int count)
         {
+            List<ClipModel> clipModels = new List<ClipModel>();
             if (depth <= 0)
             {
-                return;
+                return clipModels;
             }
             List<float> cutLines = new List<float>();
             List<Portal> collisions = new List<Portal>();
@@ -196,11 +175,11 @@ namespace Game
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
                     Vector2 centerPointNext = Vector2Ext.Transform(portal.GetWorldTransform().Position + normal, portal.GetPortalMatrix());
-                    ModelPortalClipping(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, count + 1);
+                    clipModels.AddRange(_getClipModels(model, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, count + 1));
                 }
             }
-
-            _clipModels.Add(new ClipModel(model, clipLines.ToArray(), modelMatrix));
+            clipModels.Add(new ClipModel(this, model, clipLines.ToArray(), modelMatrix));
+            return clipModels;
         }
     }
 }

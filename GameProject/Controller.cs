@@ -141,7 +141,10 @@ namespace Game
 
         public virtual void OnResize(EventArgs e, Size canvasSize)
         {
-            CanvasSize = canvasSize;
+            if (canvasSize.Width > 0 && canvasSize.Height > 0)
+            {
+                CanvasSize = canvasSize;
+            }
         }
     }
 }

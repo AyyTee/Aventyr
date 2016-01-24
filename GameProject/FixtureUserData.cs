@@ -4,6 +4,7 @@ using OpenTK;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace Game
 {
@@ -14,10 +15,13 @@ namespace Game
         /// <summary>
         /// All FixturePortals that this fixture is colliding with.
         /// </summary>
+        [XmlIgnore]
         public List<FixturePortal> PortalCollisions = new List<FixturePortal>();
+        [XmlIgnore]
         public bool Update { get; private set; }
         //Portal this fixture belongs to.
         private FixturePortal[] _portalParents = new FixturePortal[2];
+        [XmlIgnore]
         public FixturePortal[] PortalParents 
         { 
             get
@@ -67,8 +71,6 @@ namespace Game
         {
             _fixture = fixture;
             _fixtureId = fixture.FixtureId;
-            Debug.Assert(Fixture.UserData == null, "UserData has already been assigned for this fixture.");
-            Fixture.UserData = this;
             switch (Fixture.Shape.ShapeType)
             {
                 case ShapeType.Polygon:

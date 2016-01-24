@@ -43,7 +43,6 @@ namespace Game
                 throw new NullReferenceException("Scene cannot be a null reference.");
             }
             SetSize(1f);
-            OneSided = false;//true;
         }
 
         protected override void Clone(SceneNode destination)

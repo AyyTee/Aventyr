@@ -8,7 +8,6 @@ uniform int isTextured;
 uniform sampler2D maintexture;
 uniform float cutLines[32]; //max number of portals that can clip an object is equal to array length/4
 uniform int cutLinesLength;
-//flat in int InstanceID;
 
 void
 main()

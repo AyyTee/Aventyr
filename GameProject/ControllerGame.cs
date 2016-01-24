@@ -19,8 +19,6 @@ namespace Game
         Entity text, text2;
         Sound testSound;
         Scene scene, hud;
-        FloatPortal portal2, portal3;
-        FixturePortal portal0, portal1;
         private bool SingleStepMode = false;
 
         public ControllerGame(Window window)
@@ -39,10 +37,10 @@ namespace Game
             }
             
             scene = new Scene();
-            
             hud = new Scene();
             Camera2D hudCam = new Camera2D(hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
-
+            #region create scene
+            ///*
             Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];
             background.Transform.Position = new Vector3(0, 0, -10f);
@@ -59,26 +57,29 @@ namespace Game
             portalEntity2.AddModel(ModelFactory.CreatePlane());
             portalEntity2.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
             Transform2D transform = portalEntity2.GetTransform();
-            //transform.Rotation = 0.1f;
+            transform.Rotation = 1f;
             transform.Position = new Vector2(2.1f, 2f);
-            transform.Scale = new Vector2(-1f, 1f);
+            //transform.Scale = new Vector2(-1f, 1f);
             portalEntity2.SetTransform(transform);
 
-            portal2 = new FloatPortal(scene);
+            Portal portal2 = new FloatPortal(scene);
             portal2.SetParent(portalEntity2);
+            portal2.OneSided = true;
             //portal2.IsMirrored = true;
 
             Entity portalEntity3 = new Entity(scene);
+            portalEntity3.IsPortalable = false;
             portalEntity3.AddModel(ModelFactory.CreatePlane());
             portalEntity3.ModelList[0].Transform.Scale = new Vector3(0.1f, 0.05f, 1);
             portalEntity3.ModelList[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity3.AddModel(ModelFactory.CreatePlane());
             portalEntity3.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-            portalEntity3.SetTransform(new Transform2D(new Vector2(-1f, 1), 0.4f));
+            portalEntity3.SetTransform(new Transform2D(new Vector2(-1f, 1), 0.0f));
             //portalEntity3.SetVelocity(new Transform2D(new Vector2(), 0.005f));
 
-            portal3 = new FloatPortal(scene);
+            Portal portal3 = new FloatPortal(scene);
             portal3.SetParent(portalEntity3);
+            portal3.OneSided = true;
             
             //portal3.IsMirrored = true;
             Portal.SetLinked(portal2, portal3);
@@ -94,7 +95,7 @@ namespace Game
                 new Vector2(0, 0.5f), 
                 new Vector2(-0.5f, 0), 
                 new Vector2(0, -0.5f)
-            });
+            }, new Vector3(0, 0, 1));
             playerModel.SetTexture(Renderer.Textures["default.png"]);
             player.IsPortalable = true;
             player.AddModel(playerModel);
@@ -131,8 +132,10 @@ namespace Game
             //ground.AddModel(ModelFactory.CreatePolygon(v));
             ground.SetTransform(new Transform2D(new Vector2(0, -4f), 0.05f));
             scene.World.ProcessChanges();
-            portal0 = new FixturePortal(scene, null);
-            portal1 = new FixturePortal(scene, null);
+            Portal portal0 = new FixturePortal(scene, null);
+            portal0.Name = "portalLeft";
+            Portal portal1 = new FixturePortal(scene, null);
+            portal1.Name = "portalRight";
 
             portal0.IsMirrored = true;
 
@@ -142,8 +145,8 @@ namespace Game
             text.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height)));
             text2 = new Entity(hud);
             text2.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
-
-            //new Serializer().Deserialize(scene, "blah.save");
+            #endregion
+            //new Serializer().Deserialize(scene, "blah.save", "blah_phys.save");
             Camera2D cam = new Camera2D(scene, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height);
             //cam.SetRotation((float)Math.PI / 2);
             cam.SetParent(scene.FindByName("player"));
@@ -152,9 +155,7 @@ namespace Game
             renderer.AddScene(scene);
             renderer.AddScene(hud);
 
-            //new Serializer().Serialize(scene.Root, "blah");
-            //Thread.Sleep(500);*/
-            
+            new Serializer().Serialize(scene.Root, "blah.save", "blah_phys.save");
         }
 
         public override void OnRenderFrame(FrameEventArgs e)
@@ -184,7 +185,7 @@ namespace Game
                 rayBegin - player.GetTransform().Position, 
                 rayEnd - player.GetTransform().Position
                 }));
-
+            
 
             text2.RemoveAllModels();
             //text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));
@@ -196,11 +197,11 @@ namespace Game
 
             if (InputExt.MousePress(MouseButton.Left))
             {
-                PortalPlacer.PortalPlace(portal1, new Line(rayBegin, rayEnd));
+                PortalPlacer.PortalPlace((FixturePortal)scene.FindByName("portalLeft"), new Line(rayBegin, rayEnd));
             }
             else if (InputExt.MousePress(MouseButton.Right))
             {
-                PortalPlacer.PortalPlace(portal0, new Line(rayBegin, rayEnd));
+                PortalPlacer.PortalPlace((FixturePortal)scene.FindByName("portalRight"), new Line(rayBegin, rayEnd));
             }
             if (InputExt.KeyPress(Key.Space))
             {
@@ -232,19 +233,19 @@ namespace Game
             }
             if (InputExt.KeyDown(Key.W))
             {
-                v += up * camSpeed;// *transform.Scale.Y;
+                v += up * camSpeed;
             }
             else if (InputExt.KeyDown(Key.S))
             {
-                v += -up * camSpeed;// *transform.Scale.Y;
+                v += -up * camSpeed;
             }
             if (InputExt.KeyDown(Key.A))
             {
-                v += -right * camSpeed;// *transform.Scale.X;
+                v += -right * camSpeed;
             }
             else if (InputExt.KeyDown(Key.D))
             {
-                v += right * camSpeed;// *transform.Scale.X;
+                v += right * camSpeed;
             }
             /*if (InputExt.MousePress(MouseButton.Left))
             {
@@ -254,11 +255,7 @@ namespace Game
                 velocity.Position = (rayEnd - rayBegin).Normalized() * 5;
                 bullet.SetVelocity(velocity);
             }*/
-            if (InputExt.KeyPress(Key.F))
-            {
-                portal0.IsMirrored = !portal0.IsMirrored;
-                portal2.IsMirrored = !portal2.IsMirrored;
-            }
+
             if (InputExt.MouseWheelDelta() != 0)
             {
                 cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
@@ -273,10 +270,7 @@ namespace Game
             }
             player.SetVelocity(new Transform2D(v));
             #endregion
-            if (InputExt.KeyPress(Key.G))
-            {
-                portal0.Enter(player);
-            }
+
             if (SingleStepMode == false || InputExt.KeyPress(Key.Enter))
             {
                 scene.Step();
@@ -295,7 +289,7 @@ namespace Game
             base.OnResize(e, canvasSize);
             scene.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            hud.ActiveCamera.Scale = canvasSize.Height;
+            hud.ActiveCamera.Scale = CanvasSize.Height;
         }
     }
 }

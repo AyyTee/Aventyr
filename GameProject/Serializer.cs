@@ -1,5 +1,8 @@
-﻿using System;
+﻿using FarseerPhysics.Common;
+using FarseerPhysics.Dynamics;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,49 +25,65 @@ namespace Game
         {
         }
 
-        public void Serialize(SceneNode rootNode, string filename)
+        public void Serialize(SceneNode rootNode, string filename, string filenamePhysics)
         {
             SceneNode clone = CopyData(rootNode);
-            _serialize(clone, filename);
+            _serialize(clone.Scene, filename, filenamePhysics);
         }
 
         private SceneNode CopyData(SceneNode rootNode)
         {
             SceneNode clone = rootNode.DeepClone(new Scene());
-            clone.SetParent(null);
+            clone.Scene.World.ProcessChanges();
             return clone;
         }
 
-        public void SerializeAsync(SceneNode rootNode, string filename)
+        public void SerializeAsync(SceneNode rootNode, string filename, string filenamePhysics)
         {
             SceneNode clone = CopyData(rootNode);
             ThreadPool.QueueUserWorkItem(
                 new WaitCallback(delegate(object state)
                 {
-                    _serialize(clone, filename);
+                    _serialize(clone.Scene, filename, filenamePhysics);
                 }), null);
         }
 
-        private void _serialize(SceneNode rootNode, string filename)
+        private void _serialize(Scene scene, string filename, string filenamePhysics)
         {
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.NewLineOnAttributes = false;
             settings.OmitXmlDeclaration = true;
-            //FarseerPhysics.Common.WorldSerializer.Serialize(scene.World, filename + fileSuffixPhysics);
+            WorldSerializer.Serialize(scene.World, filenamePhysics);
             using (XmlWriter writer = XmlWriter.Create(filename, settings))
             {
-                GetSerializer().WriteObject(writer, rootNode);
+                GetSerializer().WriteObject(writer, scene);
             }
         }
 
-        public void Deserialize(Scene scene, string filename)
+        public void Deserialize(Scene scene, string filename, string filenamePhysics)
         {
             XmlReaderSettings settings = new XmlReaderSettings();
             using (XmlReader reader = XmlReader.Create(filename, settings))
             {
-                SceneNode root = (SceneNode)GetSerializer().ReadObject(reader);
-                root.SetScene(scene);
+                Scene sceneNew = (Scene)GetSerializer().ReadObject(reader);
+                World world = WorldSerializer.Deserialize(filenamePhysics);
+                sceneNew.SetWorld(world);
+
+                List<Actor> actorList = sceneNew.FindByType<Actor>();
+                foreach (Body body in sceneNew.World.BodyList)
+                {
+                    BodyUserData userData = BodyExt.GetUserData(body);
+                    Actor actor = actorList.Find(item => (item.BodyId == userData.BodyId));
+                    Debug.Assert(actor != null, "Actor is missing.");
+                    BodyExt.SetUserData(body, actor);
+                    actor.SetBody(body);
+                    actorList.Remove(actor);
+                }
+
+                Debug.Assert(actorList.Count == 0);
+                Debug.Assert(sceneNew.Root.ChildList.Count == 1);
+                sceneNew.Root.ChildList[0].DeepClone(scene);
             }
         }
 

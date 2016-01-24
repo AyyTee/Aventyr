@@ -13,14 +13,16 @@ namespace Game
 {
     public static class FixtureExt
     {
-        public static void SetUserData(Fixture fixture, FixtureUserData userData)
+        public static FixtureUserData SetUserData(Fixture fixture)
         {
-            Debug.Assert(userData != null);
+            //Debug.Assert(userData != null);
             //Ugly solution to storing Game classes in a way that still works when deserializing the data.
             //This list is intended to only store one element.
+            FixtureUserData data = new FixtureUserData(fixture);
             var a = new List<FixtureUserData>();
             fixture.UserData = a;
-            a.Add(userData);
+            a.Add(data);
+            return data;
         }
 
         public static FixtureUserData GetUserData(Fixture fixture)
@@ -34,7 +36,7 @@ namespace Game
         public static Fixture CreateFixture(Body body, Shape shape)
         {
             Fixture fixture = body.CreateFixture(shape);
-            SetUserData(fixture, new FixtureUserData(fixture));
+            SetUserData(fixture);
             return fixture;
         }
 

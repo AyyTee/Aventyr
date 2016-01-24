@@ -25,16 +25,6 @@ namespace Game
         [DataMember]
         public bool IsTransparent { get; set; }
         [DataMember]
-        public string ShaderName { get; private set; }
-        public ShaderProgram Shader
-        {
-            get
-            {
-                Debug.Assert(Renderer.Shaders.ContainsKey(ShaderName), "Shader doesn't exist.");
-                return Renderer.Shaders[ShaderName]; 
-            }
-        }
-        [DataMember]
         public ITexture Texture;
         [DataMember]
         public Transform2D TransformUv = new Transform2D();
@@ -73,7 +63,6 @@ namespace Game
         #region Constructors
         public Model()
         {
-            SetShader("uber");
             InitIbo();
         }
 
@@ -87,11 +76,6 @@ namespace Game
         {
             Vertices.AddRange(vertices);
             Triangles.AddRange(triangles);
-        }
-
-        public Model(string shaderName)
-        {
-            SetShader(shaderName);
         }
 
         #endregion
@@ -129,13 +113,6 @@ namespace Game
                     }
                 }
             }
-        }
-
-        public void SetShader(string shaderName)
-        {
-            ShaderProgram a;
-            Debug.Assert(Renderer.Shaders.TryGetValue(shaderName, out a));
-            ShaderName = shaderName;
         }
 
         public void SetTexture(ITexture texture)

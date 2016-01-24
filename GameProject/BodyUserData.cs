@@ -10,16 +10,19 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
-    
     public class BodyUserData
     {
-        public readonly int BodyId;
+        public int BodyId;
         [XmlIgnore]
         public readonly Actor Actor;
+        [XmlIgnore]
         public readonly Body Body;
         public Xna.Vector2 PreviousPosition { get; set; }
+        [XmlIgnore]
         public HashSet<FixturePortal> PortalCollisions = new HashSet<FixturePortal>();
+        [XmlIgnore]
         public List<ChildBody> BodyChildren = new List<ChildBody>();
+        [XmlIgnore]
         public ChildBody BodyParent = new ChildBody(null, null);
 
         public class ChildBody
@@ -34,6 +37,10 @@ namespace Game
         }
 
         #region Constructors
+        public BodyUserData()
+        {
+        }
+
         public BodyUserData(Actor actor, Body body)
         {
             Debug.Assert(body != null);
@@ -62,7 +69,7 @@ namespace Game
 
             foreach (FixturePortal portal in collisionsAdded)
             {
-                AddChildBody(portal);   
+                AddChildBody(portal);
             }
 
             foreach (FixturePortal portal in collisionsRemoved)

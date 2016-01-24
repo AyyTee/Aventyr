@@ -20,16 +20,30 @@ namespace Game
         readonly Controller _controller;
         public bool PortalRenderEnabled { get; set; }
         public int PortalRenderDepth { get; set; }
-        private ShaderProgram _activeShader;
+        public int PortalClipDepth { get; set; }
+        public Vector3 PortalEdgeColor { get; set; }
+        ShaderProgram _activeShader;
+        Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
 
         public static Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
+
+        /// <summary>
+        /// Represents the size of the cutLines array within the fragment shader
+        /// </summary>
+        const int PORTAL_CLIP_MAX = 8;
         
         public Renderer(Controller controller)
         {
+            foreach (EnableCap e in Enum.GetValues(typeof(EnableCap)))
+            {
+                _enableCap[e] = null;
+            }
             _controller = controller;
             PortalRenderEnabled = true;
             PortalRenderDepth = 3;
+            PortalClipDepth = 4;
+            PortalEdgeColor = new Vector3(0.1f, 0.1f, 0.1f);
         }
 
         public static void Init()
@@ -39,7 +53,6 @@ namespace Game
             GL.Enable(EnableCap.CullFace);
             GL.ClearStencil(0);
             GL.PointSize(15f);
-            //GL.LineWidth(2f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Enable(EnableCap.ScissorTest);
         }
@@ -65,6 +78,23 @@ namespace Game
             }
         }
 
+        private void SetEnable(EnableCap enableCap, bool enable)
+        {
+            if (_enableCap[enableCap] == enable)
+            {
+                return;
+            }
+            _enableCap[enableCap] = enable;
+            if (enable)
+            {
+                GL.Enable(enableCap);
+            }
+            else
+            {
+                GL.Disable(enableCap);
+            }
+        }
+
         public void Render()
         {
             GL.Viewport(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
@@ -78,7 +108,6 @@ namespace Game
             }
             SetShader(Shaders["uber"]);
             GL.Enable(EnableCap.DepthTest);
-            //GL.Enable(EnableCap.Blend);
             for (int i = 0; i < _scenes.Count(); i++)
             {
                 Scene scene = _scenes[i];
@@ -117,36 +146,11 @@ namespace Game
             c.StrictlySimple = true;
             foreach (Portal p in portals)
             {
-                //skip this portal if it isn't linked 
-                if (!p.IsValid())
+                if (!_isPortalValid(portalEnter, p, viewPos))
                 {
                     continue;
                 }
-                //or it's the exit portal
-                if (portalEnter != null && p == portalEnter.Linked)
-                {
-                    continue;
-                }
-                //or if the portal is one sided and the view point is on the wrong side
-                Vector2[] pv2 = p.GetWorldVerts();
-                Line portalLine = new Line(pv2);
-                if (p.OneSided)
-                {
-                    if (portalLine.GetSideOf(pv2[0] + p.GetWorldTransform().GetRight()) != portalLine.GetSideOf(viewPos))
-                    {
-                        continue;
-                    }
-                }
-                //or if this portal isn't inside the fov of the exit portal
-                if (portalEnter != null)
-                {
-                    Line portalEnterLine = new Line(portalEnter.Linked.GetWorldVerts());
-                    if (!portalEnterLine.IsInsideFOV(viewPos, portalLine))
-                    {
-                        continue;
-                    }
-                }
-                
+
                 Vector2[] fov = Vector2Ext.Transform(p.GetFov(viewPos, 500, 3), portalMatrix);
                 if (MathExt.GetArea(fov) < AREA_EPSILON)
                 {
@@ -168,32 +172,17 @@ namespace Game
                 c.AddPaths(viewNew, PolyType.ptSubject, true);
                 foreach (Portal other in portals)
                 {
-                    if (other == p || !other.IsValid())
+                    if (other == p)
                     {
                         continue;
                     }
-                    if (portalEnter != null && other == portalEnter.Linked)
+                    if (!_isPortalValid(portalEnter, other, viewPos))
                     {
                         continue;
-                    }
-                    Vector2[] pOther = other.GetWorldVerts();
-                    Line portalOtherLine = new Line(pOther);
-                    if (other.OneSided)
-                    {
-                        if (portalOtherLine.GetSideOf(pOther[0] + other.GetWorldTransform().GetRight()) != portalOtherLine.GetSideOf(viewPos))
-                        {
-                            continue;
-                        }
-                    }
-                    if (portalEnter != null)
-                    {
-                        Line portalEnterLine = new Line(portalEnter.Linked.GetWorldVerts());
-                        if (!portalEnterLine.IsInsideFOV(viewPos, portalOtherLine))
-                        {
-                            continue;
-                        }
                     }
                     //Skip this portal if it's inside the current portal's FOV.
+                    Line portalLine = new Line(p.GetWorldVerts());
+                    Line portalOtherLine = new Line(other.GetWorldVerts());
                     if (portalLine.IsInsideFOV(viewPos, portalOtherLine))
                     {
                         continue;
@@ -236,6 +225,40 @@ namespace Game
             }
         }
 
+        private bool _isPortalValid(Portal previous, Portal next, Vector2 viewPos)
+        {
+            //skip this portal if it isn't linked 
+            if (!next.IsValid())
+            {
+                return false;
+            }
+            //or it's the exit portal
+            if (previous != null && next == previous.Linked)
+            {
+                return false;
+            }
+            //or if the portal is one sided and the view point is on the wrong side
+            Vector2[] pv2 = next.GetWorldVerts();
+            Line portalLine = new Line(pv2);
+            if (next.OneSided)
+            {
+                if (portalLine.GetSideOf(pv2[0] + next.GetWorldTransform().GetRight()) != portalLine.GetSideOf(viewPos))
+                {
+                    return false;
+                }
+            }
+            //or if this portal isn't inside the fov of the exit portal
+            if (previous != null)
+            {
+                Line portalEnterLine = new Line(previous.Linked.GetWorldVerts());
+                if (!portalEnterLine.IsInsideFOV(viewPos, portalLine))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public void DrawPortalAll(Scene scene)
         {
             Camera2D cam = scene.ActiveCamera;
@@ -248,80 +271,84 @@ namespace Game
             Vector2 viewPosPrevious = cam.GetWorldViewpos() - cam.GetWorldVelocity().Position;
             PortalView portalView = CalculatePortalViews(scene.PortalList.ToArray(), cam, depth);
             List<PortalView> portalViewList = portalView.GetPortalViewList(cam.Viewpos);
-            
+
             int stencilValueMax = 1 << GL.GetInteger(GetPName.StencilBits);
             int stencilMask = stencilValueMax - 1;
-            GL.ColorMask(false, false, false, false);
-            GL.DepthMask(false);
-            GL.Disable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.StencilTest);
-            
-            GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
             //Draw portal FOVs to the stencil buffer.
-            for (int i = 1; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
             {
-                GL.StencilFunc(StencilFunction.Always, i, stencilMask);
-                for (int j = 0; j < portalViewList[i].Paths.Count; j++)
+                GL.ColorMask(false, false, false, false);
+                GL.DepthMask(false);
+                GL.Disable(EnableCap.DepthTest);
+                SetEnable(EnableCap.StencilTest, true);
+                GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
+                for (int i = 1; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
                 {
-                    Vector2[] a = ClipperConvert.ToVector2(portalViewList[i].Paths[j]);
-                    RenderModel(ModelFactory.CreatePolygon(a), cam.GetViewMatrix(), 0, Matrix4.Identity);
-                }
-            }
-
-            GL.ColorMask(true, true, true, true);
-            GL.DepthMask(true);
-            GL.Enable(EnableCap.DepthTest);
-            GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
-            for (int i = 0; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
-            {
-                GL.StencilFunc(StencilFunction.Equal, i, stencilMask);
-                DrawScene(scene, portalViewList[i].ViewMatrix, 0, i > 0);
-            }
-
-            GL.Clear(ClearBufferMask.DepthBufferBit);
-            GL.Disable(EnableCap.StencilTest);
-            GL.Disable(EnableCap.DepthTest);
-            GL.Clear(ClearBufferMask.StencilBufferBit);
-
-            Clipper c = new Clipper();
-            c.StrictlySimple = true;
-            Model portalEdges = new Model();
-            //portalEdges.SetTexture(Textures["default.png"]);
-            for (int i = 1; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
-            {
-                for (int j = 0; j < 2; j++)
-                {
-                    Vector2[] line0 = GetPortalEdge(portalViewList[i].FovLines[j], portalViewList[i].FovLinesPrevious[j], cam);
-                    c.AddPath(ClipperConvert.ToIntPoint(line0), PolyType.ptSubject, true);
-                    c.AddPaths(portalViewList[i].Parent.Paths, PolyType.ptClip, true);
-                    List<List<IntPoint>> solution = new List<List<IntPoint>>();
-                    c.Execute(ClipType.ctIntersection, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
-                    c.Clear();
-
-                    c.AddPaths(solution, PolyType.ptSubject, true);
-                    foreach (PortalView p in portalViewList[i].Parent.Children)
+                    GL.StencilFunc(StencilFunction.Always, i, stencilMask);
+                    for (int j = 0; j < portalViewList[i].Paths.Count; j++)
                     {
-                        if (p == portalViewList[i])
-                        {
-                            continue;
-                        }
-                        if (p.PortalLine.IsInsideFOV(cam.GetWorldViewpos(), portalViewList[i].PortalLine))
-                        {
-                            c.AddPaths(p.Paths, PolyType.ptClip, true);
-                        }
+                        Vector2[] a = ClipperConvert.ToVector2(portalViewList[i].Paths[j]);
+                        RenderModel(ModelFactory.CreatePolygon(a), cam.GetViewMatrix(), Matrix4.Identity);
                     }
-                    //PolyTree solutionNew = new PolyTree();
-                    List<List<IntPoint>> solutionNew = new List<List<IntPoint>>();
-                    c.Execute(ClipType.ctDifference, solutionNew, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
-                    c.Clear();
-                    solutionNew = Clipper.CleanPolygons(solutionNew);
-                    ModelFactory.AddPolygon(portalEdges, solutionNew);
                 }
             }
-            portalEdges.SetColor(new Vector3(0.1f, 0.1f, 0.1f));
-            RenderModel(portalEdges, cam.GetViewMatrix(), 0, Matrix4.Identity);
+            
+            //Draw the scenes within each portal's FOV.
+            {
+                GL.ColorMask(true, true, true, true);
+                GL.DepthMask(true);
+                GL.Enable(EnableCap.DepthTest);
+                GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
+                for (int i = 0; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
+                {
+                    GL.StencilFunc(StencilFunction.Equal, i, stencilMask);
+                    DrawScene(scene, portalViewList[i].ViewMatrix, 0, i > 0);
+                }
+            }
+            
+            //Draw the portal edges.
+            {
+                GL.Clear(ClearBufferMask.DepthBufferBit);
+                SetEnable(EnableCap.StencilTest, false);
+                GL.Disable(EnableCap.DepthTest);
+                GL.Clear(ClearBufferMask.StencilBufferBit);
+                Clipper c = new Clipper();
+                c.StrictlySimple = true;
+                Model portalEdges = new Model();
+                for (int i = 1; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        Vector2[] line0 = GetPortalEdge(portalViewList[i].FovLines[j], portalViewList[i].FovLinesPrevious[j], cam);
+                        c.AddPath(ClipperConvert.ToIntPoint(line0), PolyType.ptSubject, true);
+                        c.AddPaths(portalViewList[i].Parent.Paths, PolyType.ptClip, true);
+                        List<List<IntPoint>> solution = new List<List<IntPoint>>();
+                        c.Execute(ClipType.ctIntersection, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+                        c.Clear();
 
-            GL.Enable(EnableCap.DepthTest);
+                        c.AddPaths(solution, PolyType.ptSubject, true);
+                        foreach (PortalView p in portalViewList[i].Parent.Children)
+                        {
+                            if (p == portalViewList[i])
+                            {
+                                continue;
+                            }
+                            if (p.PortalLine.IsInsideFOV(cam.GetWorldViewpos(), portalViewList[i].PortalLine))
+                            {
+                                c.AddPaths(p.Paths, PolyType.ptClip, true);
+                            }
+                        }
+
+                        List<List<IntPoint>> solutionNew = new List<List<IntPoint>>();
+                        c.Execute(ClipType.ctDifference, solutionNew, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+                        c.Clear();
+                        solutionNew = Clipper.CleanPolygons(solutionNew);
+                        ModelFactory.AddPolygon(portalEdges, solutionNew);
+                    }
+                }
+                portalEdges.SetColor(PortalEdgeColor);
+                RenderModel(portalEdges, cam.GetViewMatrix(), Matrix4.Identity);
+                GL.Enable(EnableCap.DepthTest);
+            }
         }
 
         private Vector2[] GetPortalEdge(Line line, Line linePrevious, Camera2D camera)
@@ -334,12 +361,73 @@ namespace Game
             return PolygonFactory.CreateLineWidth(line, minWidth, widthEnd0);
         }
 
-        public void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)
+        private void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)
         {
-            foreach (Entity v in scene.EntityList)
+            List<ClipModel> defaultShader = new List<ClipModel>();
+            List<ClipModel> clipShader = new List<ClipModel>();
+            foreach (Entity e in scene.EntityList)
             {
-                RenderEntity(v, viewMatrix, (float)Math.Min(timeRenderDelta, 1 / Controller.DrawsPerSecond), isPortalRender);
+                if (!e.Visible)
+                {
+                    continue;
+                }
+                if (isPortalRender && e.DrawOverPortals)
+                {
+                    continue;
+                }
+                foreach (ClipModel clip in e.GetClipModels(PortalClipDepth))
+                {
+                    if (clip.ClipLines.Length == 0)
+                    {
+                        defaultShader.Add(clip);
+                    }
+                    else
+                    {
+                        clipShader.Add(clip);
+                    }
+                }
             }
+            SetShader(Shaders["uber"]);
+            foreach (ClipModel clip in defaultShader)
+            {
+                if (isPortalRender && clip.Entity.DrawOverPortals)
+                {
+                    SetEnable(EnableCap.StencilTest, false);
+                }
+                RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix());
+                SetEnable(EnableCap.StencilTest, true);
+            }
+            SetShader(Shaders["uberClip"]);
+            foreach (ClipModel clip in clipShader)
+            {
+                Matrix4 ScaleMatrix;
+                ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
+                ScaleMatrix = ScaleMatrix * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
+                bool isMirrored = Matrix4Ext.IsMirrored(viewMatrix);
+                List<float> cutLines = new List<float>();
+                foreach (Line l in clip.ClipLines)
+                {
+                    if (isMirrored)
+                    {
+                        l.Reverse();
+                    }
+                    l.Transform(ScaleMatrix);
+                    cutLines.AddRange(new float[4] {
+                        l[0].X,
+                        l[0].Y,
+                        l[1].X,
+                        l[1].Y
+                    });
+                }
+                /*Vector2 vMax, vMin;
+                MathExt.GetBBox(clip.ClipLines, out vMin, out vMax);
+                GL.Scissor((int)vMin.X, (int)vMin.Y, (int)vMax.X + 1, (int)vMax.Y + 1);*/
+
+                GL.Uniform1(_activeShader.GetUniform("cutLinesLength"), cutLines.Count);
+                GL.Uniform1(GL.GetUniformLocation(_activeShader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
+                RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform);
+            }
+            SetShader(Shaders["uber"]);
         }
 
         private void UpdateCullFace(Matrix4 viewMatrix)
@@ -354,34 +442,7 @@ namespace Game
             }
         }
 
-        public virtual void RenderEntity(Entity entity, Matrix4 viewMatrix, float timeDelta, bool isPortalRender)
-        {
-            if (!entity.Visible)
-            {
-                return;
-            }
-            if (entity.DrawOverPortals)
-            {
-                if (isPortalRender)
-                {
-                    return;
-                }
-                GL.Disable(EnableCap.StencilTest);
-            }
-            entity.UpdatePortalClipping(3);
-            foreach (Model v in entity.ModelList)
-            {
-                RenderModel(v, viewMatrix, timeDelta, entity.GetWorldTransform().GetMatrix());
-            }
-            
-            RenderClipModels(entity, viewMatrix);
-            if (entity.DrawOverPortals)
-            {
-                GL.Enable(EnableCap.StencilTest);
-            }
-        }
-
-        public void RenderModel(Model model, Matrix4 viewMatrix, float timeDelta, Matrix4 offset)
+        public void RenderModel(Model model, Matrix4 viewMatrix, Matrix4 offset)
         {
             List<Vector3> verts = new List<Vector3>();
             List<int> inds = new List<int>();
@@ -417,8 +478,6 @@ namespace Game
             GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vPosition"));
             GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
             GL.VertexAttribPointer(_activeShader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
-
-            //GL.UseProgram(_activeShader.ProgramID);
 
             // Buffer vertex color if shader supports it
             if (_activeShader.GetAttribute("vColor") != -1)
@@ -462,12 +521,12 @@ namespace Game
 
             if (model.Wireframe)
             {
-                GL.Disable(EnableCap.CullFace);
+                SetEnable(EnableCap.CullFace, false);
                 GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             }
             if (model.IsTransparent)
             {
-                GL.Enable(EnableCap.Blend);
+                SetEnable(EnableCap.Blend, true);
             }
 
             RenderSetTransformMatrix(offset, model, viewMatrix);
@@ -475,77 +534,13 @@ namespace Game
 
             if (model.Wireframe)
             {
-                GL.Enable(EnableCap.CullFace);
+                SetEnable(EnableCap.CullFace, true);
                 GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             }
             if (model.IsTransparent)
             {
-                GL.Disable(EnableCap.Blend);
+                SetEnable(EnableCap.Blend, false);
             }
-        }
-
-        private void RenderClipModels(Entity entity, Matrix4 viewMatrix)
-        {
-            List<Entity.ClipModel> clipModels = entity.ClipModels;
-            Matrix4 ScaleMatrix;
-            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
-            ScaleMatrix = ScaleMatrix * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
-            bool isMirrored = Matrix4Ext.IsMirrored(viewMatrix);
-            if (clipModels.Count > 0)
-            {
-                SetShader(Shaders["uberClip"]);
-            }
-            foreach (Entity.ClipModel cm in clipModels)
-            {
-                List<float> cutLines = new List<float>();
-                foreach (Line l in cm.ClipLines)
-                {
-                    if (isMirrored)
-                    {
-                        l.Reverse();
-                    }
-                    l.Transform(ScaleMatrix);
-                    cutLines.AddRange(new float[4] {
-                        l[0].X,
-                        l[0].Y,
-                        l[1].X,
-                        l[1].Y
-                    });
-                }
-
-                GL.Uniform1(_activeShader.GetUniform("cutLinesLength"), cutLines.Count);
-                GL.Uniform1(GL.GetUniformLocation(_activeShader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
-                RenderSetTransformMatrix(entity.GetWorldTransform().GetMatrix(), cm.Model, cm.Transform * viewMatrix);
-                /*Matrix4 view = cm.Transform * viewMatrix;
-                GL.UniformMatrix4(_activeShader.GetUniform("viewMatrix"), false, ref view);*/
-
-                GL.DrawElements(BeginMode.Triangles, cm.Model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
-            }
-            SetShader(Shaders["uber"]);
-        }
-
-        private void SetClipLines(ShaderProgram shader, List<Line> clipLines, Matrix4 viewMatrix)
-        {
-            Matrix4 ScaleMatrix;
-            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1f, 1f, 0)) * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
-            bool isMirrored = Matrix4Ext.IsMirrored(viewMatrix);
-            List<float> cutLines = new List<float>();
-            foreach (Line l in clipLines)
-            {
-                if (isMirrored)
-                {
-                    l.Reverse();
-                }
-                l.Transform(ScaleMatrix);
-                cutLines.AddRange(new float[4] { l[0].X, l[0].Y, l[1].X, l[1].Y });
-            }
-
-            Vector2 vMax, vMin;
-            MathExt.GetBBox(clipLines.ToArray(), out vMin, out vMax);
-            GL.Scissor((int)vMin.X, (int)vMin.Y, (int)vMax.X + 1, (int)vMax.Y + 1);
-
-            GL.Uniform1(shader.GetUniform("cutLinesLength"), cutLines.Count);
-            GL.Uniform1(GL.GetUniformLocation(shader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
         }
 
         private void RenderSetTransformMatrix(Matrix4 offset, Model model, Matrix4 viewMatrix)

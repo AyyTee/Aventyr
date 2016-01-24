@@ -136,6 +136,7 @@
   <ItemGroup>
     <Compile Include="BodyUserData.cs" />
     <Compile Include="Camera2D.cs" />
+    <Compile Include="ClipModel.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="ClipperExt.cs" />
     <Compile Include="ILerp.cs" />

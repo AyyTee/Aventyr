@@ -11,6 +11,9 @@ namespace Game
     [DataContract]
     public class FloatPortal : Portal
     {
+        public const float EdgeMargin = 0.02f;
+        public const float CollisionMargin = 0.1f;
+
         public FloatPortal(Scene scene)
             : base(scene)
         {

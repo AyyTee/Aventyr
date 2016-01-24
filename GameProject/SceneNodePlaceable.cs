@@ -15,6 +15,11 @@ namespace Game
         Transform2D _transform = new Transform2D();
         [DataMember]
         Transform2D _velocity = new Transform2D();
+        /// <summary>
+        /// Whether or not this entity will interact with portals when intersecting them
+        /// </summary>
+        [DataMember]
+        public bool IsPortalable { get; set; }
 
         public SceneNodePlaceable(Scene scene)
             : base (scene)
@@ -74,32 +79,6 @@ namespace Game
         public override Transform2D GetTransform()
         {
             return _transform.Clone();
-        }
-
-        public void PositionUpdate()
-        {
-            foreach (Portal portal in Scene.PortalList)
-            {
-                //position the entity slightly outside of the exit portal to avoid precision issues with portal collision checking
-                Line exitLine = new Line(portal.GetWorldVerts());
-                float distanceToPortal = exitLine.PointDistance(GetTransform().Position, true);
-                if (distanceToPortal < Portal.EnterMinDistance)
-                {
-                    Vector2 exitNormal = portal.GetTransform().GetRight();
-                    if (exitLine.GetSideOf(GetTransform().Position) != exitLine.GetSideOf(exitNormal + portal.GetTransform().Position))
-                    {
-                        exitNormal = -exitNormal;
-                    }
-
-                    Vector2 pos = exitNormal * (Portal.EnterMinDistance - distanceToPortal);
-                    /*if (Transform.Parent != null)
-                    {
-                        pos = Transform.Parent.WorldToLocal(pos);
-                    }*/
-                    GetTransform().Position += pos;
-                    break;
-                }
-            }
         }
     }
 }

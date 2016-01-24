@@ -61,10 +61,7 @@ namespace Game
             body.BodyType = BodyType.Dynamic;
             entity.SetParent(actor);
 
-            //BodyExt.SetUserData(body, actor);
-            FixtureUserData userData = new FixtureUserData(body.FixtureList[0]);
-
-            FixtureExt.SetUserData(body.FixtureList[0], userData);
+            FixtureUserData userData = FixtureExt.SetUserData(body.FixtureList[0]);
 
             Transform2D t = new Transform2D();
             t.Position = transform.Position;
@@ -111,8 +108,7 @@ namespace Game
                 vList.Add(v1);
                 PolygonShape shape = new PolygonShape(v1, 1);
                 Fixture fixture = body.CreateFixture(shape);
-                FixtureUserData userData = new FixtureUserData(fixture);
-                FixtureExt.SetUserData(fixture, userData);
+                FixtureUserData userData = FixtureExt.SetUserData(fixture);
                 for (int j = 0; j < polygon.Triangles[i].Neighbors.Count(); j++)
                 {
                     userData.EdgeIsExterior[j] = polygon.Triangles[i].EdgeIsConstrained[(j + 2) % 3];

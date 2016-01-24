@@ -15,6 +15,7 @@ using FarseerPhysics.Dynamics.Contacts;
 
 namespace Game
 {
+    [DataContract]
     public class Scene
     {
         public World World { get; private set; }
@@ -27,13 +28,14 @@ namespace Game
         public List<Portal> PortalList { get { return Root.FindByType<Portal>(); } }
         public List<Entity> EntityList { get { return Root.FindByType<Entity>(); } }
         /// <summary>Root node to the scene graph.</summary>
+        [DataMember]
         public SceneNode Root { get; private set; }
 
         #region Constructors
         public Scene()
         {
             Root = new SceneNode(this);
-            SetPhysicsWorld(new World(new Xna.Vector2(0f, 0f)));
+            SetWorld(new World(new Xna.Vector2(0f, 0f)));
         }
         #endregion
         
@@ -135,6 +137,39 @@ namespace Game
             else
             {
                 begin.Position += velocity.Position.Normalized() * (float)movementLeft;
+                /*After the end position of the ray has been determined, adjust it's position so that it isn't too close to any portal.  
+                Otherwise there is a risk of ambiguity as to which side of a portal the end point is on.*/
+                foreach (Portal p in FindByType<Portal>())
+                {
+                    if (!p.IsValid())
+                    {
+                        continue;
+                    }
+                    Line exitLine = new Line(p.GetWorldVerts());
+                    Vector2 position = begin.Position;
+                    float distanceToPortal = exitLine.PointDistance(position, true);
+                    if (distanceToPortal < Portal.EnterMinDistance)
+                    {
+                        Vector2 exitNormal = p.GetWorldTransform().GetRight();
+                        Line.Side sideOf;
+                        if (p == portalPrevious)
+                        {
+                            sideOf = exitLine.GetSideOf(position + velocity.Position);
+                        }
+                        else
+                        {
+                            sideOf = exitLine.GetSideOf(position - velocity.Position);
+                        }
+                        if (sideOf != exitLine.GetSideOf(exitNormal + p.GetWorldTransform().Position))
+                        {
+                            exitNormal = -exitNormal;
+                        }
+
+                        Vector2 pos = exitNormal * (Portal.EnterMinDistance - distanceToPortal);
+                        begin.Position += pos;
+                        break;
+                    }
+                }
             }
         }
 
@@ -164,20 +199,12 @@ namespace Game
         /// <summary>
         /// Assigns a physics world to this scene. Can only be done if there isn't already a physics world assigned.
         /// </summary>
-        public void SetPhysicsWorld(World world)
+        public void SetWorld(World world)
         {
-            Debug.Assert(World == null, "A physics world has already been assigned to this scene.");
+            //Debug.Assert(World == null, "A physics world has already been assigned to this scene.");
             World = world;
             World.ProcessChanges();
             _contactListener = new PhysContactListener(this);
-            
-            /*foreach (Body body in World.BodyList)
-            {
-                var userData = ((List<BodyUserData>)body.UserData)[0];
-                Entity entity = EntityList.Find(item => (item.Id == userData.EntityID));
-                BodyExt.SetUserData(body, entity);
-                entity.BodyId = body.BodyId;
-            }*/
         }
 
         public Scene DeepClone()

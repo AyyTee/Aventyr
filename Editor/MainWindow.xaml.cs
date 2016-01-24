@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Timers;
 using System.Windows.Input;
+using System.IO;
 
 namespace Editor
 {
@@ -109,7 +110,8 @@ namespace Editor
         {
             ControllerEditor.AddAction(() =>
                 {
-                    new Serializer().Serialize(ControllerEditor.Level.Root, filename);
+                    string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
+                    new Serializer().Serialize(ControllerEditor.Level.Root, filename, physFilename);
                 });
         }
 
@@ -118,7 +120,8 @@ namespace Editor
             ControllerEditor.AddAction(() =>
                 {
                     ControllerEditor.NewLevel();
-                    new Serializer().Deserialize(ControllerEditor.Level, filename);
+                    string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
+                    new Serializer().Deserialize(ControllerEditor.Level, filename, physFilename);
                 });
         }
 

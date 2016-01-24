@@ -14,23 +14,39 @@ namespace Game
     public class Actor : SceneNodePlaceable
     {
         [DataMember]
-        public readonly int BodyId;
-        public readonly Body Body;
+        public int BodyId { get; private set; }
+        public Body Body { get; private set; }
 
         public Actor(Scene scene, Body body)
             : base(scene)
         {
-            Debug.Assert(body != null, "Actor must be assigned a Body.");
-            BodyId = body.BodyId;
-            Body = body;
+            SetBody(body);
             BodyExt.SetUserData(Body, this);
+        }
+
+        public void SetBody(Body body)
+        {
+            Debug.Assert(body != null, "Actor must be assigned a Body.");
+            Body = body;
+            BodyId = body.BodyId;
         }
 
         public override SceneNode Clone(Scene scene)
         {
-            Actor clone = new Actor(scene, Body);
+            Actor clone = new Actor(scene, Body.DeepClone(scene.World));
             Clone(clone);
             return clone;
+        }
+
+        protected override void Clone(SceneNode destination)
+        {
+            base.Clone(destination);
+            Actor destinationCast = (Actor)destination;
+            BodyUserData bodyData = BodyExt.SetUserData(destinationCast.Body, destinationCast);
+            foreach (Fixture f in destinationCast.Body.FixtureList)
+            {
+                FixtureUserData fixtureData = FixtureExt.SetUserData(f);
+            }
         }
 
         public override void Remove()
@@ -62,15 +78,6 @@ namespace Game
             velocity.Position = Vector2Ext.ConvertTo(Body.LinearVelocity);
             velocity.Rotation = Body.AngularVelocity;
             SetVelocity(velocity);
-        }
-
-        public override void SetTransform(Transform2D transform)
-        {
-            base.SetTransform(transform);
-            if (Body != null)
-            {
-                BodyExt.SetTransform(Body, transform);
-            }
         }
     }
 }
