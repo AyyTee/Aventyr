@@ -23,10 +23,10 @@ namespace Game
         int _idCount = 0;
         PhysContactListener _contactListener;
 
-        public Camera2D ActiveCamera { get; private set; }
-        public List<SceneNode> SceneNodeList { get { return Root.FindByType<SceneNode>(); } }
-        public List<Portal> PortalList { get { return Root.FindByType<Portal>(); } }
-        public List<Entity> EntityList { get { return Root.FindByType<Entity>(); } }
+        public Camera2 ActiveCamera { get; private set; }
+        public List<SceneNode> SceneNodeList { get { return Tree<SceneNode>.ToList(Root); } }
+        public List<Portal> PortalList { get { return Tree<SceneNode>.FindByType<Portal>(Root); } }
+        public List<Entity> EntityList { get { return Tree<SceneNode>.FindByType<Entity>(Root); } }
         /// <summary>Root node to the scene graph.</summary>
         [DataMember]
         public SceneNode Root { get; private set; }
@@ -59,7 +59,7 @@ namespace Game
                     continue;
                 }
                 //SceneNodes parented to a SceneNodePlaceable instance can't perform portal teleportation directly.
-                if (s.Parent.GetType() != typeof(ITransform2D))
+                if (s.Parent.GetType() != typeof(ITransform2))
                 {
                     RayCast(s);
                 }
@@ -82,21 +82,21 @@ namespace Game
 
         public void RayCast(SceneNodePlaceable placeable)
         {
-            Transform2D transform = placeable.GetTransform();
-            Transform2D velocity = placeable.GetVelocity();
+            Transform2 transform = placeable.GetTransform();
+            Transform2 velocity = placeable.GetVelocity();
             RayCast(transform, velocity);
             placeable.SetTransform(transform);
             placeable.SetVelocity(velocity);
         }
 
-        public void RayCast(Transform2D begin, Transform2D velocity)
+        public void RayCast(Transform2 begin, Transform2 velocity)
         {
             _rayCast(begin, velocity, velocity.Position.Length, null);
             begin.Rotation += velocity.Rotation;
             begin.Scale *= velocity.Scale;
         }
 
-        private void _rayCast(Transform2D begin, Transform2D velocity, double movementLeft, Portal portalPrevious)
+        private void _rayCast(Transform2 begin, Transform2 velocity, double movementLeft, Portal portalPrevious)
         {
             if (velocity.Position.Length == 0)
             {
@@ -175,7 +175,7 @@ namespace Game
 
         public List<T> FindByType<T>() where T : SceneNode
         {
-            return Root.FindByType<T>();
+            return Tree<SceneNode>.FindByType<T>(Root);
         }
 
         public SceneNode FindByName(string name)
@@ -190,7 +190,7 @@ namespace Game
             return _idCount - 1;
         }
 
-        public void SetActiveCamera(Camera2D camera)
+        public void SetActiveCamera(Camera2 camera)
         {
             Debug.Assert(camera.Scene == this);
             ActiveCamera = camera;

@@ -1,5 +1,4 @@
-﻿using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    interface IVertices2D
+    public interface ITreeNode<T> where T : ITreeNode<T>
     {
-        Vector2[] GetVerts();
-        Vector2[] GetWorldVerts();
+        T Parent { get; }
+        List<T> Children { get; }
     }
 }

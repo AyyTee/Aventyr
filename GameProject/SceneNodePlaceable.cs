@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class SceneNodePlaceable : SceneNode, ITransform2D
+    public class SceneNodePlaceable : SceneNode, ITransform2
     {
         [DataMember]
-        Transform2D _transform = new Transform2D();
+        Transform2 _transform = new Transform2();
         [DataMember]
-        Transform2D _velocity = new Transform2D();
+        Transform2 _velocity = new Transform2();
         /// <summary>
         /// Whether or not this entity will interact with portals when intersecting them
         /// </summary>
@@ -40,12 +40,12 @@ namespace Game
             destinationCast.SetTransform(GetTransform());
         }
 
-        public virtual void SetTransform(Transform2D transform)
+        public virtual void SetTransform(Transform2 transform)
         {
             _transform = transform.Clone();
         }
 
-        public virtual void SetPosition(Vector2 position)
+        /*public virtual void SetPosition(Vector2 position)
         {
             Transform2D transform = GetTransform();
             transform.Position = position;
@@ -64,19 +64,19 @@ namespace Game
             Transform2D transform = GetTransform();
             transform.Scale = scale;
             SetTransform(transform);
-        }
+        }*/
 
-        public override Transform2D GetVelocity()
+        public override Transform2 GetVelocity()
         {
             return _velocity.Clone();
         }
 
-        public void SetVelocity(Transform2D transform)
+        public void SetVelocity(Transform2 transform)
         {
             _velocity = transform.Clone();
         }
 
-        public override Transform2D GetTransform()
+        public override Transform2 GetTransform()
         {
             return _transform.Clone();
         }

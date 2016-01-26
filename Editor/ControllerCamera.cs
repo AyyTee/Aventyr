@@ -12,14 +12,14 @@ namespace Editor
 {
     public class ControllerCamera
     {
-        public delegate void CameraObjectHandler(ControllerCamera controller, Camera2D camera);
+        public delegate void CameraObjectHandler(ControllerCamera controller, Camera2 camera);
         /// <summary>
         /// Event is fired if the camera Transform is modified by this controller.
         /// </summary>
         public event CameraObjectHandler CameraMoved;
 
         public ControllerEditor Controller { get; private set; }
-        public Camera2D Camera { get; private set; }
+        public Camera2 Camera { get; private set; }
         public InputExt InputExt { get; private set; }
         public float ZoomMin = 0.5f;
         public float ZoomMax = 1000f;
@@ -55,7 +55,7 @@ namespace Editor
 
         Vector2 _mouseDragPos;
         Vector2 _cameraDragPos;
-        public ControllerCamera(ControllerEditor controller, Camera2D camera, InputExt inputExt)
+        public ControllerCamera(ControllerEditor controller, Camera2 camera, InputExt inputExt)
         {
             Controller = controller;
             ZoomScrollFactor = 1.2f;
@@ -66,8 +66,8 @@ namespace Editor
 
         public void Update()
         {
-            Transform2D previous = Camera.GetTransform();
-            Transform2D transform = Camera.GetTransform();
+            Transform2 previous = Camera.GetTransform();
+            Transform2 transform = Camera.GetTransform();
             if (InputExt.MouseInside)
             {
                 if (InputExt.MouseDown(MouseButton.Middle))
@@ -78,9 +78,9 @@ namespace Editor
                         _cameraDragPos = transform.Position;
                     }
                     Vector2 camPosPrev = transform.Position;
-                    Camera.SetPosition(_cameraDragPos);
+                    Transform2.SetPosition(Camera, _cameraDragPos);
                     Vector2 offset = _mouseDragPos - Camera.ScreenToWorld(InputExt.MousePos);
-                    Camera.SetPosition(camPosPrev);
+                    Transform2.SetPosition(Camera, camPosPrev);
                     transform.Position = _cameraDragPos + offset;
                 }
                 else

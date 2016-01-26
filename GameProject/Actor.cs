@@ -70,11 +70,11 @@ namespace Game
         public override void StepEnd()
         {
             base.StepEnd();
-            Transform2D transform = GetTransform();
+            Transform2 transform = GetTransform();
             transform.Position = Vector2Ext.ConvertTo(Body.Position);
             transform.Rotation = Body.Rotation;
             SetTransform(transform);
-            Transform2D velocity = GetVelocity();
+            Transform2 velocity = GetVelocity();
             velocity.Position = Vector2Ext.ConvertTo(Body.LinearVelocity);
             velocity.Rotation = Body.AngularVelocity;
             SetVelocity(velocity);

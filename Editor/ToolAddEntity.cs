@@ -23,7 +23,7 @@ namespace Editor
             base.Update();
             if (_mouseFollow != null)
             {
-                Transform2D transform = _mouseFollow.GetTransform();
+                Transform2 transform = _mouseFollow.GetTransform();
                 transform.Position = Controller.GetMouseWorldPosition();
                 _mouseFollow.SetTransform(transform);
             }
@@ -37,7 +37,7 @@ namespace Editor
                 entity.SetPosition(Controller.GetMouseWorldPosition());
                 EntityFactory.CreateEntityBox(entity.Entity, new Vector2());*/
                 
-                CommandAddEntity command = new CommandAddEntity(Controller, new Transform2D(Controller.GetMouseWorldPosition()));
+                CommandAddEntity command = new CommandAddEntity(Controller, new Transform2(Controller.GetMouseWorldPosition()));
                 Controller.StateList.Add(command, true);
 
                 if (!_input.KeyDown(InputExt.KeyBoth.Shift))
@@ -50,7 +50,7 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            _mouseFollow = new Entity(Controller.Level);
+            _mouseFollow = new Entity(Controller.Back);
             _mouseFollow.AddModel(ModelFactory.CreateCube());
             _mouseFollow.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
             _mouseFollow.IsPortalable = true;

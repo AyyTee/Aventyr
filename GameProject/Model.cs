@@ -18,7 +18,7 @@ namespace Game
         static object _lockDelete = new object();
         public static object LockDelete { get { return _lockDelete; } }
         [DataMember]
-        public Transform3D Transform = new Transform3D();
+        public Transform3 Transform = new Transform3();
         int _iboElements;
         public bool IboExists = false;
         /// <summary>If true then gl blending is enabled when rendering this model.</summary>
@@ -27,7 +27,7 @@ namespace Game
         [DataMember]
         public ITexture Texture;
         [DataMember]
-        public Transform2D TransformUv = new Transform2D();
+        public Transform2 TransformUv = new Transform2();
         [DataMember]
         public bool Wireframe = false;
 

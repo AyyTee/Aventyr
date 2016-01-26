@@ -43,7 +43,7 @@ namespace Editor
                         _portalPrevious.Portal.IsMirrored = false;
                         if (_input.KeyDown(InputExt.KeyBoth.Control))
                         {
-                            Transform2D t = portal.GetTransform();
+                            Transform2 t = portal.GetTransform();
                             t.Scale = new Vector2(1, -1);
                             portal.SetTransform(t);
                             t = _portalPrevious.GetTransform();
@@ -52,7 +52,7 @@ namespace Editor
                         }
                         else
                         {
-                            Transform2D t = portal.GetTransform();
+                            Transform2 t = portal.GetTransform();
                             t.Scale = new Vector2(1, 1);
                             portal.SetTransform(t);
                             t = _portalPrevious.GetTransform();
@@ -82,7 +82,7 @@ namespace Editor
         {
             base.Enable();
             _portalPrevious = null;
-            line = new Entity(Controller.Level);
+            line = new Entity(Controller.Back);
         }
 
         public override void Disable()

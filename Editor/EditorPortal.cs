@@ -17,11 +17,11 @@ namespace Editor
         [DataMember]
         public Entity PortalEntity { get; private set; }
 
-        public EditorPortal(Scene scene)
-            : base(scene)
+        public EditorPortal(EditorScene editorScene)
+            : base(editorScene)
         {
-            PortalEntity = new Entity(Scene);
-            PortalEntity.SetParent(this);
+            PortalEntity = new Entity(EditorScene.Scene);
+            PortalEntity.SetParent(Marker);
             Model arrow0, arrow1;
             arrow0 = ModelFactory.CreateArrow(new Vector3(0, -0.5f, 0), new Vector2(0, 1), 0.05f, 0.2f, 0.1f);
             arrow0.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
@@ -29,11 +29,11 @@ namespace Editor
             arrow1 = ModelFactory.CreateArrow(new Vector3(), new Vector2(0.2f, 0), 0.05f, 0.2f, 0.1f);
             arrow1.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
             PortalEntity.AddModel(arrow1);
-            Portal = new FloatPortal(Scene);
-            Portal.SetParent(this);
+            Portal = new FloatPortal(EditorScene.Scene);
+            Portal.SetParent(Marker);
         }
 
-        protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
+        /*protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
         {
             base.DeepCloneFinalize(cloneMap);
             EditorPortal clone = (EditorPortal)cloneMap[this];
@@ -46,6 +46,6 @@ namespace Editor
             EditorPortal clone = new EditorPortal(scene);
             Clone(clone);
             return clone;
-        }
+        }*/
     }
 }

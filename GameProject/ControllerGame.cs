@@ -38,7 +38,7 @@ namespace Game
             
             scene = new Scene();
             hud = new Scene();
-            Camera2D hudCam = new Camera2D(hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
+            Camera2 hudCam = new Camera2(hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
             #region create scene
             ///*
             Model background = ModelFactory.CreatePlane();
@@ -56,7 +56,7 @@ namespace Game
             portalEntity2.ModelList[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity2.AddModel(ModelFactory.CreatePlane());
             portalEntity2.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-            Transform2D transform = portalEntity2.GetTransform();
+            Transform2 transform = portalEntity2.GetTransform();
             transform.Rotation = 1f;
             transform.Position = new Vector2(2.1f, 2f);
             //transform.Scale = new Vector2(-1f, 1f);
@@ -74,7 +74,7 @@ namespace Game
             portalEntity3.ModelList[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity3.AddModel(ModelFactory.CreatePlane());
             portalEntity3.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-            portalEntity3.SetTransform(new Transform2D(new Vector2(-1f, 1), 0.0f));
+            portalEntity3.SetTransform(new Transform2(new Vector2(-1f, 1), 0.0f));
             //portalEntity3.SetVelocity(new Transform2D(new Vector2(), 0.005f));
 
             Portal portal3 = new FloatPortal(scene);
@@ -126,11 +126,11 @@ namespace Game
             };
 
 
-            Actor ground = ActorFactory.CreateEntityPolygon(scene, new Transform2D(), v);
+            Actor ground = ActorFactory.CreateEntityPolygon(scene, new Transform2(), v);
             ground.Name = "ground";
             //ground.IsPortalable = true;
             //ground.AddModel(ModelFactory.CreatePolygon(v));
-            ground.SetTransform(new Transform2D(new Vector2(0, -4f), 0.05f));
+            ground.SetTransform(new Transform2(new Vector2(0, -4f), 0.05f));
             scene.World.ProcessChanges();
             Portal portal0 = new FixturePortal(scene, null);
             portal0.Name = "portalLeft";
@@ -142,12 +142,12 @@ namespace Game
             FixturePortal.SetLinked(portal0, portal1);//*/
 
             text = new Entity(hud);
-            text.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height)));
+            text.SetTransform(new Transform2(new Vector2(0, CanvasSize.Height)));
             text2 = new Entity(hud);
-            text2.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
+            text2.SetTransform(new Transform2(new Vector2(0, CanvasSize.Height - 40)));
             #endregion
             //new Serializer().Deserialize(scene, "blah.save", "blah_phys.save");
-            Camera2D cam = new Camera2D(scene, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            Camera2 cam = new Camera2(scene, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height);
             //cam.SetRotation((float)Math.PI / 2);
             cam.SetParent(scene.FindByName("player"));
             scene.SetActiveCamera(cam);
@@ -173,7 +173,7 @@ namespace Game
             Entity tempLine = scene.FindByName("tempLine") as Entity;
             Entity ground = scene.FindByName("ground") as Entity;
             //ground.Velocity.Position = new Vector2((float)Math.Sin(TimeFixedStep), 0);
-            tempLine.SetTransform(new Transform2D(player.GetTransform().Position));
+            tempLine.SetTransform(new Transform2(player.GetTransform().Position));
 
             Vector2 mousePos = scene.ActiveCamera.ScreenToWorld(InputExt.MousePos);
 
@@ -193,7 +193,7 @@ namespace Game
             int fixtureCount = WorldExt.GetFixtures(scene.World).Count;
             int bodyCount = scene.World.BodyList.Count;
             //text2.Models.Add(FontRenderer.GetModel(fixtureCount.ToString() + "        " + bodyCount.ToString()));
-            Camera2D cam = scene.ActiveCamera;
+            Camera2 cam = scene.ActiveCamera;
 
             if (InputExt.MousePress(MouseButton.Left))
             {
@@ -205,12 +205,12 @@ namespace Game
             }
             if (InputExt.KeyPress(Key.Space))
             {
-                Actor box = ActorFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(0.2f, 4.4f)));
+                Actor box = ActorFactory.CreateEntityBox(scene, new Transform2(mousePos, new Vector2(0.2f, 4.4f)));
                 //box.Transform.Rotation = 2.5f * (float)Math.PI / 4;
             }
             if (InputExt.KeyPress(Key.ControlLeft))
             {
-                ActorFactory.CreateEntityBox(scene, new Transform2D(mousePos, new Vector2(2.4f, 0.4f)));
+                ActorFactory.CreateEntityBox(scene, new Transform2(mousePos, new Vector2(2.4f, 0.4f)));
             }
             if (InputExt.KeyPress(Key.M))
             {
@@ -224,12 +224,12 @@ namespace Game
             }
 
             Vector2 v = new Vector2();
-            Transform2D transform = player.GetTransform();
+            Transform2 transform = player.GetTransform();
             Vector2 up = transform.GetUp();
             Vector2 right = transform.GetRight();
             if (InputExt.KeyDown(Key.R))
             {
-                player.SetRotation(player.GetTransform().Rotation + .01f);
+                Transform2.SetRotation(player, Transform2.GetRotation(player) + 0.1f);
             }
             if (InputExt.KeyDown(Key.W))
             {
@@ -268,7 +268,7 @@ namespace Game
             {
                 cam.Scale /= (float)Math.Pow(1.04, -1);
             }
-            player.SetVelocity(new Transform2D(v));
+            player.SetVelocity(new Transform2(v));
             #endregion
 
             if (SingleStepMode == false || InputExt.KeyPress(Key.Enter))

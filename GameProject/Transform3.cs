@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public class Transform3D
+    public class Transform3
     {
         private Matrix4 Matrix;
         private bool MatrixUpdate = true;
@@ -34,29 +34,29 @@ namespace Game
         }
         public Vector3 Position { get { return _position; } set { _position = value; MatrixUpdate = true; } }
 
-        public Transform3D()
+        public Transform3()
         {
         }
 
-        public Transform3D(Vector3 position)
+        public Transform3(Vector3 position)
         {
             Position = position;
         }
 
-        public Transform3D(Vector3 position, Vector3 scale)
+        public Transform3(Vector3 position, Vector3 scale)
         {
             Position = position;
             Scale = scale;
         }
 
-        public Transform3D(Vector3 position, Vector3 scale, Quaternion rotation)
+        public Transform3(Vector3 position, Vector3 scale, Quaternion rotation)
         {
             Position = position;
             Scale = scale;
             Rotation = rotation;
         }
 
-        public Transform3D(Vector3 position, Vector3 scale, Quaternion rotation, bool fixedScale)
+        public Transform3(Vector3 position, Vector3 scale, Quaternion rotation, bool fixedScale)
         {
             Position = position;
             Scale = scale;
@@ -67,7 +67,7 @@ namespace Game
         /// <summary>
         /// Copy constructor
         /// </summary>
-        public Transform3D(Transform3D transform)
+        public Transform3(Transform3 transform)
         {
             Rotation = new Quaternion(transform.Rotation.X, transform.Rotation.Y, transform.Rotation.Z, transform.Rotation.W);
             Position = new Vector3(transform.Position);
@@ -85,9 +85,9 @@ namespace Game
             return Matrix;
         }
 
-        public static Transform3D Lerp(Transform3D a, Transform3D b, float t)
+        public static Transform3 Lerp(Transform3 a, Transform3 b, float t)
         {
-            Transform3D c = new Transform3D();
+            Transform3 c = new Transform3();
             c.Position = Vector3.Lerp(a.Position, b.Position, t);
             c.Scale = Vector3.Lerp(a.Scale, b.Scale, t);
             c.Rotation = Quaternion.Slerp(a.Rotation, b.Rotation, t);
@@ -97,9 +97,9 @@ namespace Game
         /// <summary>
         /// Projects a copy of Transform projected onto the XY-plane, the rotation simply uses the Quaternion's W (theta) value
         /// </summary>
-        public Transform2D Get2D()
+        public Transform2 Get2D()
         {
-            return new Transform2D(new Vector2(Position.X, Position.Y), new Vector2(Scale.X, Scale.Y), Rotation.W);
+            return new Transform2(new Vector2(Position.X, Position.Y), new Vector2(Scale.X, Scale.Y), Rotation.W);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Game
         /// </summary>
         /// <param name="transform"></param>
         /// <returns></returns>
-        public bool Compare(Transform3D transform)
+        public bool Compare(Transform3 transform)
         {
             return Position == transform.Position && Scale == transform.Scale && Rotation == transform.Rotation;
         }

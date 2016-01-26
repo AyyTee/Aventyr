@@ -135,13 +135,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BodyUserData.cs" />
-    <Compile Include="Camera2D.cs" />
+    <Compile Include="Camera2.cs" />
     <Compile Include="ClipModel.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="ClipperExt.cs" />
     <Compile Include="ILerp.cs" />
     <Compile Include="ITexture.cs" />
-    <Compile Include="ITransform2D.cs" />
+    <Compile Include="ITransform2.cs" />
+    <Compile Include="ITreeNode.cs" />
     <Compile Include="ModelLoader.cs" />
     <Compile Include="ControllerGame.cs" />
     <Compile Include="EdgeData.cs" />
@@ -155,7 +156,7 @@
     <Compile Include="InputExt.cs" />
     <Compile Include="FixtureEdgeCoord.cs" />
     <Compile Include="IVertices.cs" />
-    <Compile Include="IVertices2D.cs" />
+    <Compile Include="IVertices2.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="MathExt.cs" />
     <Compile Include="Matrix4Ext.cs" />
@@ -175,14 +176,15 @@
     <Compile Include="Serializer.cs" />
     <Compile Include="Texture.cs" />
     <Compile Include="TextureFile.cs" />
-    <Compile Include="Transform3D.cs" />
+    <Compile Include="Transform3.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="FixturePortal.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShaderProgram.cs" />
     <Compile Include="Model.cs" />
-    <Compile Include="Transform2D.cs" />
+    <Compile Include="Transform2.cs" />
+    <Compile Include="Tree.cs" />
     <Compile Include="Vector2Ext.cs" />
     <Compile Include="Vector3Ext.cs" />
     <Compile Include="Vertex.cs" />

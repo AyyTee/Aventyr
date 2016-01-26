@@ -51,7 +51,7 @@ namespace Editor
             }
         }
 
-        private Transform2D GetPortalTransform()
+        private Transform2 GetPortalTransform()
         {
             /*FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, 1);
             if (coord != null)
@@ -60,7 +60,7 @@ namespace Editor
             }
             else*/
             {
-                Transform2D transform = new Transform2D();
+                Transform2 transform = new Transform2();
                 transform.Position = Controller.GetMouseWorldPosition();
                 transform.Rotation = _mouseFollow.GetTransform().Rotation;
                 transform.Scale = _mouseFollow.GetTransform().Scale;

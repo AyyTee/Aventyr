@@ -15,25 +15,25 @@ namespace Editor
         [DataMember]
         public Entity Entity { get; private set; }
 
-        public EditorEntity(Scene scene)
-            : base(scene)
+        public EditorEntity(EditorScene editorScene)
+            : base(editorScene)
         {
-            Entity = new Entity(Scene);
-            Entity.SetParent(this);
+            Entity = new Entity(EditorScene.Scene);
+            Entity.SetParent(Marker);
         }
 
-        protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
+        /*protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
         {
             base.DeepCloneFinalize(cloneMap);
             EditorEntity clone = (EditorEntity)cloneMap[this];
             clone.Entity = (Entity)cloneMap[Entity];
-        }
+        }*/
 
-        public override SceneNode Clone(Scene scene)
+        /*public override SceneNode Clone(Scene scene)
         {
             EditorEntity clone = new EditorEntity(scene);
             Clone(clone);
             return clone;
-        }
+        }*/
     }
 }

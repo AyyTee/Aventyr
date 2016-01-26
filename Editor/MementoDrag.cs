@@ -9,10 +9,10 @@ namespace Editor
 {
     public struct MementoDrag
     {
-        public readonly ITransform2D Transformable;
-        readonly Transform2D _transform;
+        public readonly ITransform2 Transformable;
+        readonly Transform2 _transform;
 
-        public MementoDrag(ITransform2D transformable)
+        public MementoDrag(ITransform2 transformable)
         {
             Transformable = transformable;
             _transform = Transformable.GetTransform();
@@ -23,9 +23,9 @@ namespace Editor
             Transformable.SetTransform(_transform);
         }
 
-        public Transform2D GetTransform()
+        public Transform2 GetTransform()
         {
-            return new Transform2D(_transform);
+            return new Transform2(_transform);
         }
     }
 }

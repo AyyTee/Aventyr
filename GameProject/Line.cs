@@ -323,7 +323,7 @@ namespace Game
             return new Line(Vertices);
         }
 
-        public IntersectPoint IntersectsParametric(Transform2D velocity, Line pointMotion, int detail)
+        public IntersectPoint IntersectsParametric(Transform2 velocity, Line pointMotion, int detail)
         {
             Matrix4 transform = Matrix4.CreateTranslation(new Vector3(velocity.Position) / detail);
             transform = Matrix4.CreateRotationZ(velocity.Rotation / detail) * transform;

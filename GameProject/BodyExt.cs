@@ -43,12 +43,12 @@ namespace Game
             return ((List<BodyUserData>)body.UserData)[0];
         }
 
-        public static Transform2D GetTransform(Body body)
+        public static Transform2 GetTransform(Body body)
         {
-            return new Transform2D(Vector2Ext.ConvertTo(body.Position), body.Rotation);
+            return new Transform2(Vector2Ext.ConvertTo(body.Position), body.Rotation);
         }
 
-        public static void SetTransform(Body body, Transform2D transform)
+        public static void SetTransform(Body body, Transform2 transform)
         {
             body.SetTransform(Vector2Ext.ConvertToXna(transform.Position), transform.Rotation);
         }

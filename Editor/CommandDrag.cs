@@ -10,24 +10,24 @@ namespace Editor
     public class CommandDrag : ICommand
     {
         HashSet<MementoDrag> _modified = new HashSet<MementoDrag>();
-        Transform2D _transform;
+        Transform2 _transform;
 
-        public CommandDrag(List<ITransform2D> modified, Transform2D transform)
+        public CommandDrag(List<ITransform2> modified, Transform2 transform)
         {
-            foreach (ITransform2D e in modified)
+            foreach (ITransform2 e in modified)
             {
                 _modified.Add(new MementoDrag(e));
             }
             _transform = transform.Clone();
         }
 
-        public CommandDrag(List<MementoDrag> modified, Transform2D transform)
+        public CommandDrag(List<MementoDrag> modified, Transform2 transform)
         {
             _modified.UnionWith(modified);
             _transform = transform.Clone();
         }
 
-        public CommandDrag(HashSet<MementoDrag> modified, Transform2D transform)
+        public CommandDrag(HashSet<MementoDrag> modified, Transform2 transform)
         {
             _modified.UnionWith(modified);
             _transform = transform.Clone();
@@ -37,7 +37,7 @@ namespace Editor
         {
             foreach (MementoDrag t in _modified)
             {
-                Transform2D transform = t.GetTransform().Add(_transform);
+                Transform2 transform = t.GetTransform().Add(_transform);
                 t.Transformable.SetTransform(transform);
             }
         }

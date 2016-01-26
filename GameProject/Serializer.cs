@@ -82,8 +82,8 @@ namespace Game
                 }
 
                 Debug.Assert(actorList.Count == 0);
-                Debug.Assert(sceneNew.Root.ChildList.Count == 1);
-                sceneNew.Root.ChildList[0].DeepClone(scene);
+                Debug.Assert(sceneNew.Root.Children.Count == 1);
+                sceneNew.Root.Children[0].DeepClone(scene);
             }
         }
 

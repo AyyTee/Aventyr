@@ -13,7 +13,7 @@ namespace Game
     /// Scene graph node.  All derived classes MUST override Clone(Scene) and return an instance of the derived class.
     /// </summary>
     [DataContract]
-    public class SceneNode
+    public class SceneNode : ITreeNode<SceneNode>
     {
         /// <summary>Unique identifier within the scene.</summary>
         [DataMember]
@@ -22,7 +22,7 @@ namespace Game
         public string Name { get; set; }
         [DataMember]
         List<SceneNode> _children = new List<SceneNode>();
-        public List<SceneNode> ChildList { get { return new List<SceneNode>(_children); } }
+        public List<SceneNode> Children { get { return new List<SceneNode>(_children); } }
         [DataMember]
         public SceneNode Parent { get; private set; }
 
@@ -81,7 +81,7 @@ namespace Game
 
         private void CloneChildren(Scene scene, Dictionary<SceneNode, SceneNode> cloneMap, List<SceneNode> cloneList, HashSet<SceneNode> mask)
         {
-            foreach (SceneNode p in ChildList)
+            foreach (SceneNode p in Children)
             {
                 if (mask == null || mask.Contains(p))
                 {
@@ -118,29 +118,15 @@ namespace Game
                 Debug.Assert(parent.Scene == Scene, "Parent cannot be in a different scene.");
                 parent._children.Add(this);
             }
-            Debug.Assert(!ParentLoopExists(), "Cannot have cycles in Parent tree.");
+            Debug.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
         }
 
         public void RemoveChildren()
         {
-            for (int i = 0; i < ChildList.Count; i++)
+            for (int i = 0; i < Children.Count; i++)
             {
-                ChildList[i].SetParent(Scene.Root);
+                Children[i].SetParent(Scene.Root);
             }
-        }
-
-        /// <summary>Returns true if this sceneNode is a descendent of another sceneNode.</summary>
-        public bool IsDescendent(SceneNode node)
-        {
-            if (Parent == null)
-            {
-                return false;
-            }
-            if (Parent == node)
-            {
-                return true;
-            }
-            return Parent.IsDescendent(node);
         }
 
         /// <summary>Remove from scene graph.</summary>
@@ -158,12 +144,12 @@ namespace Game
         {
         }
 
-        public virtual Transform2D GetTransform()
+        public virtual Transform2 GetTransform()
         {
-            return new Transform2D();
+            return new Transform2();
         }
 
-        public virtual Transform2D GetWorldTransform()
+        public virtual Transform2 GetWorldTransform()
         {
             if (Parent != null)
             {
@@ -172,12 +158,12 @@ namespace Game
             return GetTransform();
         }
 
-        public virtual Transform2D GetVelocity()
+        public virtual Transform2 GetVelocity()
         {
-            return new Transform2D();
+            return new Transform2();
         }
 
-        public virtual Transform2D GetWorldVelocity()
+        public virtual Transform2 GetWorldVelocity()
         {
             if (Parent != null)
             {
@@ -186,43 +172,9 @@ namespace Game
             return GetVelocity();
         }
 
-        public List<T> FindByType<T>() where T : SceneNode
-        {
-            List<T> list = new List<T>();
-            foreach (SceneNode p in ChildList)
-            {
-                T nodeCast = p as T;
-                if (nodeCast != null)
-                {
-                    list.Add(nodeCast);
-                }
-                list.AddRange(p.FindByType<T>());
-            }
-            return list;
-        }
-
         public SceneNode FindByName(string name)
         {
-            return FindByType<SceneNode>().Find(item => (item.Name == name));
-        }
-
-        /// <summary>
-        /// Returns true if there is a loop in the Parent dependencies.
-        /// </summary>
-        /// <returns></returns>
-        private bool ParentLoopExists()
-        {
-            HashSet<SceneNode> map = new HashSet<SceneNode>();
-            SceneNode child = this;
-            while (child.Parent != null)
-            {
-                child = child.Parent;
-                if (!map.Add(child))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return Tree<SceneNode>.FindByType<SceneNode>(this).Find(item => (item.Name == name));
         }
     }
 }

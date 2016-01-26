@@ -11,7 +11,7 @@ using Xna = Microsoft.Xna.Framework;
 namespace Game
 {
     [DataContract]
-    public class FixturePortal : Portal, IVertices2D
+    public class FixturePortal : Portal, IVertices2
     {
         [DataMember]
         public FixtureEdgeCoord Position { get; private set; }
@@ -56,9 +56,9 @@ namespace Game
         /// Returns a copy of the Transform local to the Body this is attached to.
         /// </summary>
         /// <returns></returns>
-        public override Transform2D GetTransform()
+        public override Transform2 GetTransform()
         {
-            Transform2D transform = new Transform2D();
+            Transform2 transform = new Transform2();
             if (Position == null)
             {
                 return transform;

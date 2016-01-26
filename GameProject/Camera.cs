@@ -12,7 +12,7 @@ namespace Game
         /// Position used for casting line of sight rays for portals
         /// </summary>
         public Vector2 Viewpoint = new Vector2();
-        public Transform3D Transform { get; set; }
+        public Transform3 Transform { get; set; }
         private float _fov = 35;
         public float FOV 
         {
@@ -28,7 +28,7 @@ namespace Game
 
         public Camera()
         {
-            Transform = new Transform3D();
+            Transform = new Transform3();
         }
 
         public static Camera CameraOrtho(Vector3 position, float scale, float aspect)

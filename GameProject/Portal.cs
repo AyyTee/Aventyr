@@ -95,7 +95,7 @@ namespace Game
         /// <summary>
         /// Converts a Transform2D from one portal's coordinate space to the portal it is linked with.  If it isn't linked then the Transform2D is unchanged
         /// </summary>
-        public void Enter(Transform2D position)
+        public void Enter(Transform2 position)
         {
             Debug.Assert(IsValid());
             Matrix4 m = GetPortalMatrix();
@@ -105,8 +105,8 @@ namespace Game
 
             position.Position = new Vector2(v0.X, v0.Y);
 
-            Transform2D tEnter = GetWorldTransform();
-            Transform2D tExit = Linked.GetWorldTransform();
+            Transform2 tEnter = GetWorldTransform();
+            Transform2 tExit = Linked.GetWorldTransform();
             float flipX = 1;
             float flipY = 1;
             if (Math.Sign(tEnter.Scale.X) == Math.Sign(tExit.Scale.X))
@@ -132,16 +132,16 @@ namespace Game
             }
         }
 
-        public void Enter(Transform3D position)
+        public void Enter(Transform3 position)
         {
-            Transform2D entity2D = position.Get2D();
+            Transform2 entity2D = position.Get2D();
             Enter(entity2D);
             position.Rotation = new Quaternion(position.Rotation.X, position.Rotation.Y, position.Rotation.Z, entity2D.Rotation);
             position.Position = new Vector3(entity2D.Position.X, entity2D.Position.Y, position.Position.Z);
             position.Scale = new Vector3(entity2D.Scale.X, entity2D.Scale.Y, position.Scale.Z);
         }
 
-        public void Enter(Transform2D position, Transform2D velocity)
+        public void Enter(Transform2 position, Transform2 velocity)
         {
             float rotationPrev = position.Rotation;
             Enter(position);
@@ -162,8 +162,8 @@ namespace Game
 
         public void Enter(Body body)
         {
-            Transform2D transform = new Transform2D(body.Position, body.Rotation);
-            Transform2D velocity = new Transform2D(body.LinearVelocity, body.AngularVelocity);
+            Transform2 transform = new Transform2(body.Position, body.Rotation);
+            Transform2 velocity = new Transform2(body.LinearVelocity, body.AngularVelocity);
             Enter(transform, velocity);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             body.Rotation = transform.Rotation;
@@ -173,8 +173,8 @@ namespace Game
 
         public void Enter(SceneNodePlaceable placeable)
         {
-            Transform2D transform = placeable.GetTransform();
-            Transform2D velocity = placeable.GetVelocity();
+            Transform2 transform = placeable.GetTransform();
+            Transform2 velocity = placeable.GetVelocity();
             this.Enter(transform, velocity);
             placeable.SetTransform(transform);
             placeable.SetVelocity(velocity);
@@ -225,7 +225,7 @@ namespace Game
         /// </summary>
         public static Matrix4 GetPortalMatrix(Portal portalEnter, Portal portalExit)
         {
-            Transform2D transform = portalExit.GetWorldTransform();
+            Transform2 transform = portalExit.GetWorldTransform();
             transform.Scale = new Vector2(-transform.Scale.X, transform.Scale.Y);
             Matrix4 m = portalEnter.GetWorldTransform().GetMatrix();
             return m.Inverted() * transform.GetMatrix();
@@ -236,7 +236,7 @@ namespace Game
             return GetFovLines(origin, distance, GetWorldTransform());
         }
 
-        public Line[] GetFovLines(Vector2 origin, float distance, Transform2D transform)
+        public Line[] GetFovLines(Vector2 origin, float distance, Transform2 transform)
         {
             Vector2[] vertices = GetFov(origin, distance);
             Line[] lines = new Line[] {
@@ -264,7 +264,7 @@ namespace Game
         /// Returns a polygon in world space representing the 2D FOV through the portal.  
         /// Polygon is not guaranteed to be non-degenerate which can occur if the viewPoint is edge-on to the portal.
         /// </summary>
-        public Vector2[] GetFov(Vector2 viewPoint, float distance, int detail, Transform2D transform)
+        public Vector2[] GetFov(Vector2 viewPoint, float distance, int detail, Transform2 transform)
         {
             Matrix4 a = transform.GetMatrix();
             Vector2[] verts = new Vector2[detail + 2];

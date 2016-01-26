@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 namespace Game
 {
     [DataContract]
-    public class Transform2D
+    public class Transform2
     {
         [DataMember]
         Vector2 _position = new Vector2();
@@ -68,36 +68,36 @@ namespace Game
         }
 
         #region Constructors
-        public Transform2D()
+        public Transform2()
         {
         }
 
-        public Transform2D(Vector2 position)
+        public Transform2(Vector2 position)
             : this(position, new Vector2(1,1), 0f, false)
         {
         }
 
-        public Transform2D(Vector2 position, Vector2 scale)
+        public Transform2(Vector2 position, Vector2 scale)
             : this(position, scale, 0f, false)
         {
         }
 
-        public Transform2D(Vector2 position, float rotation)
+        public Transform2(Vector2 position, float rotation)
             : this(position, new Vector2(1, 1), rotation, false)
         {
         }
 
-        public Transform2D(Vector2 position, Vector2 scale, float rotation)
+        public Transform2(Vector2 position, Vector2 scale, float rotation)
             :this(position, scale, rotation, false)
         {
         }
 
-        public Transform2D(Xna.Vector2 position, float rotation)
+        public Transform2(Xna.Vector2 position, float rotation)
             : this(Vector2Ext.ConvertTo(position), new Vector2(1, 1), rotation, false)
         {
         }
 
-        public Transform2D(Vector2 position, Vector2 scale, float rotation, bool fixedScale)
+        public Transform2(Vector2 position, Vector2 scale, float rotation, bool fixedScale)
         {
             UniformScale = fixedScale;
             Position = position;
@@ -106,7 +106,7 @@ namespace Game
         }
 
         /// <summary>Copy constructor</summary>
-        public Transform2D(Transform2D transform)
+        public Transform2(Transform2 transform)
         {
             Position = transform.Position;
             Scale = transform.Scale;
@@ -115,9 +115,9 @@ namespace Game
         }
         #endregion
 
-        public Transform3D Get3D()
+        public Transform3 Get3D()
         {
-            return new Transform3D(new Vector3(Position), new Vector3(Scale.X, Scale.Y, 1), new Quaternion(0, 0, 1, Rotation));
+            return new Transform3(new Vector3(Position), new Vector3(Scale.X, Scale.Y, 1), new Quaternion(0, 0, 1, Rotation));
         }
         
         public Matrix4 GetMatrix()
@@ -155,31 +155,31 @@ namespace Game
             return v[1] - v[0];
         }
 
-        public Transform2D Transform(Transform2D transform)
+        public Transform2 Transform(Transform2 transform)
         {
-            Transform2D output = Clone();
+            Transform2 output = Clone();
             output.Rotation += transform.Rotation;
             output.Scale *= transform.Scale;
             output.Position = Vector2Ext.Transform(output.Position, transform.GetMatrix());
             return output;
         }
 
-        public Transform2D Add(Transform2D transform)
+        public Transform2 Add(Transform2 transform)
         {
-            Transform2D output = Clone();
+            Transform2 output = Clone();
             output.Rotation += transform.Rotation;
             output.Scale *= transform.Scale;
             output.Position += transform.Position;
             return output;
         }
 
-        public Transform2D Clone()
+        public Transform2 Clone()
         {
-            Transform2D transform = new Transform2D(Position, Scale, Rotation, UniformScale);
+            Transform2 transform = new Transform2(Position, Scale, Rotation, UniformScale);
             return transform;
         }
 
-        public bool Compare(Transform2D transform)
+        public bool Compare(Transform2 transform)
         {
             if (transform != null)
             {
@@ -193,6 +193,42 @@ namespace Game
                 }
             }
             return false;
+        }
+
+        public static void SetPosition(ITransform2 transformable, Vector2 position)
+        {
+            Transform2 transform = transformable.GetTransform();
+            transform.Position = position;
+            transformable.SetTransform(transform);
+        }
+
+        public static void SetRotation(ITransform2 transformable, float rotation)
+        {
+            Transform2 transform = transformable.GetTransform();
+            transform.Rotation = rotation;
+            transformable.SetTransform(transform);
+        }
+
+        public static void SetScale(ITransform2 transformable, Vector2 scale)
+        {
+            Transform2 transform = transformable.GetTransform();
+            transform.Scale = scale;
+            transformable.SetTransform(transform);
+        }
+
+        public static Vector2 GetPosition(ITransform2 transformable)
+        {
+            return transformable.GetTransform().Position;
+        }
+
+        public static float GetRotation(ITransform2 transformable)
+        {
+            return transformable.GetTransform().Rotation;
+        }
+
+        public static Vector2 GetScale(ITransform2 transformable)
+        {
+            return transformable.GetTransform().Scale;
         }
     }
 }

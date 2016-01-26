@@ -14,7 +14,8 @@ namespace Editor
 {
     public class ControllerEditor : Controller
     {
-        public Scene Level, Hud;
+        public Scene Hud, Back;
+        public EditorScene Level;
         bool _isPaused;
         public ControllerCamera CamControl { get; private set; }
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
@@ -44,11 +45,12 @@ namespace Editor
         public override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
+            Back = new Scene();
+            renderer.AddScene(Back);
             NewLevel();
             
             Hud = new Scene();
-            Hud.SetActiveCamera(new Camera2D(Hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width, CanvasSize.Width / (float)CanvasSize.Height));
+            Hud.SetActiveCamera(new Camera2(Hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width, CanvasSize.Width / (float)CanvasSize.Height));
             renderer.AddScene(Hud);
             /*debugText = new Entity(Hud);
             debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
@@ -59,9 +61,12 @@ namespace Editor
 
         public void NewLevel()
         {
-            renderer.RemoveScene(Level);
-            Level = new Scene();
-            renderer.AddScene(Level);
+            /*if (Level != null)
+            {
+                renderer.RemoveScene(Level.Scene);
+            }*/
+            Level = new EditorScene(Back);
+            //renderer.AddScene(Level.Scene);
 
             #region create background
             Model background = ModelFactory.CreatePlane();
@@ -71,22 +76,22 @@ namespace Editor
             float size = 50;
             background.Transform.Scale = new Vector3(size, size, size);
             background.TransformUv.Scale = new Vector2(size, size);
-            Entity back = new Entity(Level, new Vector2(0f, 0f));
+            Entity back = new Entity(Back, new Vector2(0f, 0f));
             back.AddModel(background);
             #endregion
 
             selection = new Selection(Level);
             StateList = new StateList();
 
-            Level.SetActiveCamera(new Camera2D(Level, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height));
+            Back.SetActiveCamera(new Camera2(Back, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height));
 
-            Entity viewCenter = new Entity(Level);
+            Entity viewCenter = new Entity(Back);
             viewCenter.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.1f, 10));
             viewCenter.DrawOverPortals = true;
             viewCenter.ModelList[0].SetColor(new Vector3(1, 0.9f, 0.2f));
-            viewCenter.SetParent(Level.ActiveCamera);
+            viewCenter.SetParent(Back.ActiveCamera);
 
-            CamControl = new ControllerCamera(this, Level.ActiveCamera, InputExt);
+            CamControl = new ControllerCamera(this, Back.ActiveCamera, InputExt);
         }
 
         public override void OnRenderFrame(OpenTK.FrameEventArgs e)
@@ -98,7 +103,7 @@ namespace Editor
 
         public Vector2 GetMouseWorldPosition()
         {
-            return Level.ActiveCamera.ScreenToWorld(InputExt.MousePos);
+            return Back.ActiveCamera.ScreenToWorld(InputExt.MousePos);
         }
 
         /*public void SetMouseWorldPosition(Vector2 mousePosition)
@@ -165,12 +170,12 @@ namespace Editor
             }
             if (_editorObjectModified && SceneModified != null)
             {
-                SceneModified(this, Level);
+                //SceneModified(this, Level);
                 _editorObjectModified = false;
             }
             if (!_isPaused)
             {
-                Level.Step();
+                Back.Step();
             }
         }
 
@@ -234,21 +239,21 @@ namespace Editor
         {
             _isPaused = false;
             if (ScenePlayed != null)
-                ScenePlayed(this, Level);
+                ScenePlayed(this, Back);
         }
 
         public void ScenePause()
         {
             _isPaused = true;
             if (ScenePaused != null)
-                ScenePaused(this, Level);
+                ScenePaused(this, Back);
         }
 
         public void SceneStop()
         {
             _isPaused = true;
             if (SceneStopped != null)
-                SceneStopped(this, Level);
+                SceneStopped(this, Back);
         }
 
         public void AddAction(Action action)
@@ -267,7 +272,7 @@ namespace Editor
         public override void OnResize(EventArgs e, System.Drawing.Size canvasSize)
         {
             base.OnResize(e, canvasSize);
-            Level.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
+            Back.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             Hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             Hud.ActiveCamera.Scale = canvasSize.Height;
         }

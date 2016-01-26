@@ -9,12 +9,12 @@ namespace Editor
 {
     public abstract class CommandAdd : ICommand
     {
-        protected readonly Transform2D _transform;
+        protected readonly Transform2 _transform;
         protected readonly ControllerEditor _controller;
         protected EditorObject _editorObject;
         MementoSelection _selection;
 
-        public CommandAdd(ControllerEditor controller, Transform2D transform)
+        public CommandAdd(ControllerEditor controller, Transform2 transform)
         {
             _transform = transform;
             _controller = controller;
@@ -27,13 +27,14 @@ namespace Editor
 
         public virtual void Redo()
         {
-            _editorObject.SetParent(_editorObject.Scene.Root);
+            _editorObject.SetParent(_editorObject.EditorScene.Root);
+            _editorObject.Marker.SetParent(_editorObject.EditorScene.Scene.Root);
             _controller.selection.Set(_editorObject);
         }
 
         public virtual void Undo()
         {
-            _editorObject.SetParent(null);
+            _editorObject.Remove();
             _controller.selection.SetRange(_selection);
         }
 

@@ -21,7 +21,7 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            _entity = new Entity(Controller.Level);
+            _entity = new Entity(Controller.Back);
             _entity.IsPortalable = true;
         }
 
@@ -58,7 +58,7 @@ namespace Editor
                     {
                         _vertices[i] -= average;
                     }
-                    entity.SetPosition(average);
+                    Transform2.SetPosition(entity, average);
                     //Actor actor = ActorFactory.CreateEntityPolygon(Controller.Level, new Transform2D(average), _vertices.ToArray());
                     entity.Entity.IsPortalable = true;
                     entity.Entity.AddModel(ModelFactory.CreatePolygon(_vertices.ToArray()));

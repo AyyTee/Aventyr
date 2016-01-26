@@ -111,7 +111,7 @@ namespace Game
             for (int i = 0; i < _scenes.Count(); i++)
             {
                 Scene scene = _scenes[i];
-                Camera2D camera = scene.ActiveCamera;
+                Camera2 camera = scene.ActiveCamera;
                 DrawPortalAll(scene);
                 GL.Clear(ClearBufferMask.DepthBufferBit);
             }
@@ -124,7 +124,7 @@ namespace Game
             GL.Flush();
         }
 
-        public PortalView CalculatePortalViews(Portal[] portals, Camera2D camera, int depth)
+        public PortalView CalculatePortalViews(Portal[] portals, Camera2 camera, int depth)
         {
             List<IntPoint> view = ClipperConvert.ToIntPoint(camera.GetWorldVerts());
             List<List<IntPoint>> paths = new List<List<IntPoint>>();
@@ -261,7 +261,7 @@ namespace Game
 
         public void DrawPortalAll(Scene scene)
         {
-            Camera2D cam = scene.ActiveCamera;
+            Camera2 cam = scene.ActiveCamera;
             int depth = 0;
             if (PortalRenderEnabled)
             {
@@ -351,7 +351,7 @@ namespace Game
             }
         }
 
-        private Vector2[] GetPortalEdge(Line line, Line linePrevious, Camera2D camera)
+        private Vector2[] GetPortalEdge(Line line, Line linePrevious, Camera2 camera)
         {
             const double maxAngle = 0.9f * Math.PI / 4;
             float angleScale = 0.5f;

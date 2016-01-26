@@ -129,17 +129,17 @@ namespace Game
             return Vector2Ext.Transform(GetPosition(), matTransform);
         }
 
-        public Transform2D GetTransform()
+        public Transform2 GetTransform()
         {
-            Transform2D transform = new Transform2D();
+            Transform2 transform = new Transform2();
             transform.Position = GetPosition();
             transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Actor.GetTransform().Rotation;
             return transform;
         }
 
-        public Transform2D GetWorldTransform()
+        public Transform2 GetWorldTransform()
         {
-            Transform2D transform = new Transform2D();
+            Transform2 transform = new Transform2();
             transform.Position = GetWorldPosition();
             transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal());
             return transform;

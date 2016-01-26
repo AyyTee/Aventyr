@@ -13,24 +13,14 @@ namespace Editor
     {
         public delegate void EditorObjectHandler(Selection selection);
         public event EditorObjectHandler SelectionChanged;
-        public readonly Scene Scene;
-        EditorObject _first;
-        public EditorObject First {
-            get
-            {
-                return _first;
-            }
-            private set {
-                _first = value;
-                _firstMarker.SetParent(_first);
-            }
-        }
+        public readonly EditorScene Scene;
+        public EditorObject First { get; private set; }
         Entity _firstMarker;
 
-        public Selection(Scene scene)
+        public Selection(EditorScene scene)
         {
             Scene = scene;
-            _firstMarker = new Entity(Scene);
+            _firstMarker = new Entity(Scene.Scene);
             _firstMarker.AddModel(ModelFactory.CreateCircle(new Vector3(0f, 0f, 50f), 0.08f, 10));
             _firstMarker.ModelList[0].SetColor(new Vector3(0f, 1f, 0f));
             _firstMarker.DrawOverPortals = true;
@@ -40,7 +30,7 @@ namespace Editor
         public void Set(EditorObject selected)
         {
             Reset();
-            First = selected;
+            SetFirst(selected);
             if (selected != null)
             {
                 selected.SetSelected(true);
@@ -50,7 +40,7 @@ namespace Editor
         public void SetRange(MementoSelection selected)
         {
             SetRange(selected.Selected.ToList());
-            First = selected.First;
+            SetFirst(selected.First);
         }
 
         public void SetRange(List<EditorObject> selected)
@@ -62,7 +52,7 @@ namespace Editor
             Reset();
             if (selected.Count > 0)
             {
-                First = selected[0];
+                SetFirst(selected[0]);
             }
             foreach (EditorObject e in selected)
             {
@@ -72,9 +62,24 @@ namespace Editor
                 SelectionChanged(this);
         }
 
+        public void SetFirst(EditorObject first)
+        {
+            First = first;
+            if (First != null)
+            {
+                _firstMarker.Visible = true;
+                _firstMarker.SetParent(First.Marker);
+            }
+            else
+            {
+                _firstMarker.Visible = false;
+                _firstMarker.SetParent(null);
+            }
+        }
+
         public void Reset()
         {
-            First = null;
+            SetFirst(null);
             foreach (EditorObject e in GetAll())
             {
                 e.SetSelected(false);
@@ -103,7 +108,7 @@ namespace Editor
             {
                 return;
             }
-            First = selected;
+            SetFirst(selected);
             selected.SetSelected(true);
             if (SelectionChanged != null)
                 SelectionChanged(this);
@@ -115,7 +120,7 @@ namespace Editor
             {
                 Debug.Assert(e != null);
             }
-            First = selected[0];
+            SetFirst(selected[0]);
             foreach (EditorObject e in selected)
             {
                 e.SetSelected(true);
@@ -134,7 +139,7 @@ namespace Editor
             {
                 if (GetAll().Count > 0)
                 {
-                    First = GetAll()[0];
+                    SetFirst(GetAll()[0]);
                 }
             }
             bool wasSelected = deselect.IsSelected;

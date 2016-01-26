@@ -19,7 +19,7 @@ namespace UnitTest
                 new Vector2(2.5f, 4),
                 new Vector2(0, 3),
             };
-            Actor ground = ActorFactory.CreateEntityPolygon(scene, new Transform2D(new Vector2(), new Vector2(1, 1)), verts);
+            Actor ground = ActorFactory.CreateEntityPolygon(scene, new Transform2(new Vector2(), new Vector2(1, 1)), verts);
             ground.Name = "ground";
             return ground;
         }

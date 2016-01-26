@@ -12,7 +12,7 @@ namespace UnitTest
         [TestMethod]
         public void GetNormalTest0()
         {
-            Transform2D t = new Transform2D();
+            Transform2 t = new Transform2();
             t.Position = new Vector2(100, -200);
 
             Vector2 normal = t.GetRight();
@@ -21,7 +21,7 @@ namespace UnitTest
         [TestMethod]
         public void GetNormalTest1()
         {
-            Transform2D t = new Transform2D();
+            Transform2 t = new Transform2();
             t.Rotation = (float)Math.PI;
             t.Position = new Vector2(100, -200);
 
@@ -32,7 +32,7 @@ namespace UnitTest
         [TestMethod]
         public void GetNormalTest2()
         {
-            Transform2D t = new Transform2D();
+            Transform2 t = new Transform2();
             t.Rotation = (float)Math.PI/4;
             t.Position = new Vector2(100, -200);
 
@@ -43,7 +43,7 @@ namespace UnitTest
         [TestMethod]
         public void GetNormalTest3()
         {
-            Transform2D t = new Transform2D();
+            Transform2 t = new Transform2();
             t.Scale = new Vector2(-1, 1);
             t.Position = new Vector2(100, -200);
 
@@ -54,7 +54,7 @@ namespace UnitTest
         [TestMethod]
         public void GetNormalTest4()
         {
-            Transform2D t = new Transform2D();
+            Transform2 t = new Transform2();
             t.Scale = new Vector2(1, -1);
             t.Position = new Vector2(100, -200);
 
@@ -65,7 +65,7 @@ namespace UnitTest
         [TestMethod]
         public void GetNormalTest5()
         {
-            Transform2D t = new Transform2D();
+            Transform2 t = new Transform2();
             t.Scale = new Vector2(-1, -1);
             t.Position = new Vector2(100, -200);
 
@@ -76,7 +76,7 @@ namespace UnitTest
         [TestMethod]
         public void GetNormalTest6()
         {
-            Transform2D t = new Transform2D();
+            Transform2 t = new Transform2();
             t.Scale = new Vector2(1, -1);
             t.Position = new Vector2(100, -200);
             t.Rotation = (float)Math.PI / 4;
@@ -88,7 +88,7 @@ namespace UnitTest
         [TestMethod]
         public void GetNormalTest7()
         {
-            Transform2D t = new Transform2D();
+            Transform2 t = new Transform2();
             t.Scale = new Vector2(-1, 1);
             t.Position = new Vector2(100, -200);
             t.Rotation = (float)Math.PI / 4;
@@ -102,43 +102,43 @@ namespace UnitTest
         [TestMethod]
         public void EqualTest0()
         {
-            Transform2D transform0 = new Transform2D();
-            Transform2D transform1 = null;
+            Transform2 transform0 = new Transform2();
+            Transform2 transform1 = null;
             Assert.IsFalse(transform0.Compare(transform1));
         }
         [TestMethod]
         public void EqualTest1()
         {
-            Transform2D transform0 = new Transform2D(new Vector2(1,-4));
-            Transform2D transform1 = new Transform2D();
+            Transform2 transform0 = new Transform2(new Vector2(1,-4));
+            Transform2 transform1 = new Transform2();
             Assert.IsFalse(transform0.Compare(transform1));
         }
         [TestMethod]
         public void EqualTest2()
         {
-            Transform2D transform0 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
-            Transform2D transform1 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
+            Transform2 transform0 = new Transform2(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
+            Transform2 transform1 = new Transform2(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
             Assert.IsTrue(transform0.Compare(transform1));
         }
         [TestMethod]
         public void EqualTest3()
         {
-            Transform2D transform0 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
-            Transform2D transform1 = new Transform2D(new Vector2(1, -4), new Vector2(50f, 50f), 130f);
+            Transform2 transform0 = new Transform2(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
+            Transform2 transform1 = new Transform2(new Vector2(1, -4), new Vector2(50f, 50f), 130f);
             Assert.IsFalse(transform0.Compare(transform1));
         }
         [TestMethod]
         public void EqualTest4()
         {
-            Transform2D transform0 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
-            Transform2D transform1 = new Transform2D(new Vector2(1, -1), new Vector2(0.4f, 50f), 130f);
+            Transform2 transform0 = new Transform2(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
+            Transform2 transform1 = new Transform2(new Vector2(1, -1), new Vector2(0.4f, 50f), 130f);
             Assert.IsFalse(transform0.Compare(transform1));
         }
         [TestMethod]
         public void EqualTest5()
         {
-            Transform2D transform0 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
-            Transform2D transform1 = new Transform2D(new Vector2(1, -4), new Vector2(0.4f, 50f), -20f);
+            Transform2 transform0 = new Transform2(new Vector2(1, -4), new Vector2(0.4f, 50f), 130f);
+            Transform2 transform1 = new Transform2(new Vector2(1, -4), new Vector2(0.4f, 50f), -20f);
             Assert.IsFalse(transform0.Compare(transform1));
         }
         #endregion

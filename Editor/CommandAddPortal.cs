@@ -9,7 +9,7 @@ namespace Editor
 {
     public class CommandAddPortal : CommandAdd
     {
-        public CommandAddPortal(ControllerEditor controller, Transform2D transform)
+        public CommandAddPortal(ControllerEditor controller, Transform2 transform)
             : base(controller, transform)
         {
         }

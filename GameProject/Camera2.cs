@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class Camera2D : SceneNodePlaceable
+    public class Camera2 : SceneNodePlaceable
     {
         [DataMember]
         public float _aspect = 1;
@@ -51,17 +51,17 @@ namespace Game
         public float ZFar { get; set; }
 
         #region Constructors
-        public Camera2D(Scene scene)
-            : this(scene, new Transform2D(), 1, 1)
+        public Camera2(Scene scene)
+            : this(scene, new Transform2(), 1, 1)
         {
         }
 
-        public Camera2D(Scene scene, Vector2 position, float scale, float aspectRatio)
-            : this(scene, new Transform2D(position), scale, aspectRatio)
+        public Camera2(Scene scene, Vector2 position, float scale, float aspectRatio)
+            : this(scene, new Transform2(position), scale, aspectRatio)
         {
         }
 
-        public Camera2D(Scene scene, Transform2D transform, float scale, float aspectRatio)
+        public Camera2(Scene scene, Transform2 transform, float scale, float aspectRatio)
             : base(scene)
         {
             SetTransform(transform);
@@ -75,7 +75,7 @@ namespace Game
 
         public override SceneNode Clone(Scene scene)
         {
-            Camera2D clone = new Camera2D(scene);
+            Camera2 clone = new Camera2(scene);
             Clone(clone);
             return clone;
         }
@@ -83,7 +83,7 @@ namespace Game
         protected override void Clone(SceneNode destination)
         {
             base.Clone(destination);
-            Camera2D destinationCast = (Camera2D)destination;
+            Camera2 destinationCast = (Camera2)destination;
             destinationCast.Aspect = Aspect;
             destinationCast.Scale = Scale;
             destinationCast.ZNear = ZNear;
@@ -93,7 +93,7 @@ namespace Game
 
         public Vector2 GetWorldViewpos()
         {
-            Transform2D transform = GetWorldTransform();
+            Transform2 transform = GetWorldTransform();
             return transform.Position + Viewpos;
         }
 
@@ -103,7 +103,7 @@ namespace Game
         /// <returns>A view matrix to look in the camera's direction</returns>
         public Matrix4 GetViewMatrix()
         {
-            Transform2D transform = GetWorldTransform();
+            Transform2 transform = GetWorldTransform();
             Matrix4 m = Matrix4.CreateRotationZ(transform.Rotation);
             Vector3 lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
             Matrix4 perspective = Matrix4.CreateOrthographic(transform.Scale.X * Scale * Aspect, transform.Scale.Y * Scale, ZNear, ZFar);

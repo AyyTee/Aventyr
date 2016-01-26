@@ -22,7 +22,7 @@ namespace Editor
         bool dragToggled = false;
         Vector2 mousePosPrev;
         List<MementoDrag> _transformPrev = new List<MementoDrag>();
-        Transform2D _totalDrag;
+        Transform2 _totalDrag;
         double _rotateIncrementSize = Math.PI / 8;
         public enum DragState
         {
@@ -139,7 +139,7 @@ namespace Editor
                 avgX = selection.Average(item => item.GetWorldTransform().Position.X);
                 avgY = selection.Average(item => item.GetWorldTransform().Position.Y);
                 Vector2 average = new Vector2(avgX, avgY);
-                _translator.SetPosition(average);
+                Transform2.SetPosition(_translator, average);
                 _translator.Visible = true;
             }
             else
@@ -152,7 +152,7 @@ namespace Editor
         {
             _dragState = state;
             _mode = mode;
-            _totalDrag = new Transform2D();
+            _totalDrag = new Transform2();
             _transformPrev.Clear();
             foreach (EditorObject e in Controller.selection.GetAll())
             {
@@ -168,7 +168,7 @@ namespace Editor
             {
                 return;
             }
-            Transform2D transform = _translator.GetTransform();// dragObjects[0].GetWorldTransform();
+            Transform2 transform = _translator.GetTransform();// dragObjects[0].GetWorldTransform();
             Vector2 mousePos = Controller.GetMouseWorldPosition();
             dragToggled = toggleMode;
             mousePosPrev = mousePos;
@@ -177,7 +177,7 @@ namespace Editor
                 DragSet(mode, DragState.Both);
                 return;
             }
-            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Level.ActiveCamera.Scale;
+            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Back.ActiveCamera.Scale;
             if (mouseDiff.Length < 1.3f * translationScaleOffset)
             {
                 float margin = 0.2f * translationScaleOffset;
@@ -216,7 +216,7 @@ namespace Editor
 
         private void DragUpdate()
         {
-            Transform2D transform = _totalDrag;
+            Transform2 transform = _totalDrag;
             Vector2 mousePos = Controller.GetMouseWorldPosition();
             if (_mode == Mode.Position)
             {
@@ -256,7 +256,7 @@ namespace Editor
             }
             foreach (MementoDrag e in _transformPrev)
             {
-                Transform2D t = e.Transformable.GetTransform();
+                Transform2 t = e.Transformable.GetTransform();
                 e.Transformable.SetTransform(e.GetTransform().Add(_totalDrag));
             }
         }
@@ -264,7 +264,7 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            _translator = new Entity(Controller.Level);
+            _translator = new Entity(Controller.Back);
             _translator.AddModel(translationModel);
             _translator.Visible = false;
             _translator.DrawOverPortals = true;
@@ -285,14 +285,14 @@ namespace Editor
             _translator.Remove();
         }
 
-        private void UpdateTranslation(ControllerCamera controller, Camera2D camera)
+        private void UpdateTranslation(ControllerCamera controller, Camera2 camera)
         {
             UpdateTranslation(camera);
         }
 
-        private void UpdateTranslation(Camera2D camera)
+        private void UpdateTranslation(Camera2 camera)
         {
-            Transform2D transform = _translator.GetTransform();
+            Transform2 transform = _translator.GetTransform();
             transform.Scale = new Vector2(camera.Scale, camera.Scale) * translationScaleOffset;
             _translator.SetTransform(transform);
         }

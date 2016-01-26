@@ -26,18 +26,18 @@ namespace Game
             return clone;
         }
 
-        public override Transform2D GetVelocity()
+        public override Transform2 GetVelocity()
         {
-            return new Transform2D();
+            return new Transform2();
         }
 
-        public override Transform2D GetTransform()
+        public override Transform2 GetTransform()
         {
             if (IsMirrored)
             {
-                return new Transform2D(new Vector2(), new Vector2(1, -1), 0);
+                return new Transform2(new Vector2(), new Vector2(1, -1), 0);
             }
-            return new Transform2D();
+            return new Transform2();
         }
     }
 }

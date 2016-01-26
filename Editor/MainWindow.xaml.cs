@@ -111,7 +111,7 @@ namespace Editor
             ControllerEditor.AddAction(() =>
                 {
                     string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
-                    new Serializer().Serialize(ControllerEditor.Level.Root, filename, physFilename);
+                    new Serializer().Serialize(ControllerEditor.Back.Root, filename, physFilename);
                 });
         }
 
@@ -121,7 +121,7 @@ namespace Editor
                 {
                     ControllerEditor.NewLevel();
                     string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
-                    new Serializer().Deserialize(ControllerEditor.Level, filename, physFilename);
+                    new Serializer().Deserialize(ControllerEditor.Back, filename, physFilename);
                 });
         }
 
@@ -139,7 +139,7 @@ namespace Editor
             Vector2 position = new Vector2();
             if (entity != null)
             {
-                Transform2D transform = entity.GetWorldTransform();
+                Transform2 transform = entity.GetWorldTransform();
                 angle = MathHelper.RadiansToDegrees(transform.Rotation);
                 position = transform.Position;
             }

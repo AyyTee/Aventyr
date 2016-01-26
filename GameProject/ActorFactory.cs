@@ -17,10 +17,10 @@ namespace Game
     {
         public static Actor CreateEntityBox(Scene scene, Vector2 position)
         {
-            return CreateEntityBox(scene, new Transform2D(position));
+            return CreateEntityBox(scene, new Transform2(position));
         }
 
-        public static Actor CreateEntityBox(Scene scene, Transform2D transform)
+        public static Actor CreateEntityBox(Scene scene, Transform2 transform)
         {
             Debug.Assert(scene != null);
             Entity entity = new Entity(scene);
@@ -29,10 +29,10 @@ namespace Game
 
         public static Actor CreateEntityBox(Entity entity, Vector2 position)
         {
-            return CreateEntityBox(entity, new Transform2D(position));
+            return CreateEntityBox(entity, new Transform2(position));
         }
 
-        private static Actor CreateEntityBox(Entity entity, Transform2D transform)
+        private static Actor CreateEntityBox(Entity entity, Transform2 transform)
         {
             /*Transform2D t = entity.GetTransform();
             t.Position = transform.Position;
@@ -63,7 +63,7 @@ namespace Game
 
             FixtureUserData userData = FixtureExt.SetUserData(body.FixtureList[0]);
 
-            Transform2D t = new Transform2D();
+            Transform2 t = new Transform2();
             t.Position = transform.Position;
             t.Rotation = transform.Rotation;
             actor.SetTransform(t);
@@ -72,17 +72,17 @@ namespace Game
 
         public static Actor CreateEntityPolygon(Scene scene, Vector2 position, Vector2[] vertices)
         {
-            return CreateEntityPolygon(scene, new Transform2D(position), vertices);
+            return CreateEntityPolygon(scene, new Transform2(position), vertices);
         }
 
-        public static Actor CreateEntityPolygon(Scene scene, Transform2D transform, Vector2[] vertices)
+        public static Actor CreateEntityPolygon(Scene scene, Transform2 transform, Vector2[] vertices)
         {
             Debug.Assert(scene != null);
             Entity entity = new Entity(scene, transform);
             return CreateEntityPolygon(entity, transform, vertices);
         }
 
-        private static Actor CreateEntityPolygon(Entity entity, Transform2D transform, Vector2[] vertices)
+        private static Actor CreateEntityPolygon(Entity entity, Transform2 transform, Vector2[] vertices)
         {
             vertices = MathExt.SetHandedness(vertices, false);
             Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(vertices);
@@ -116,7 +116,7 @@ namespace Game
             }
 
             Actor actor = new Actor(entity.Scene, body);
-            Transform2D t = new Transform2D();
+            Transform2 t = new Transform2();
             t.Position = transform.Position;
             t.Rotation = transform.Rotation;
             actor.SetTransform(t);

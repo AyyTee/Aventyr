@@ -10,7 +10,7 @@ namespace Editor
 {
     public class CommandAddEntity : CommandAdd
     {
-        public CommandAddEntity(ControllerEditor controller, Transform2D transform)
+        public CommandAddEntity(ControllerEditor controller, Transform2 transform)
             : base(controller, transform)
         {
         }

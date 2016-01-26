@@ -35,7 +35,7 @@ namespace Game
         public Entity(Scene scene)
             : base(scene)
         {
-            Transform2D transform = GetTransform();
+            Transform2 transform = GetTransform();
             transform.UniformScale = true;
             SetTransform(transform);
             Visible = true;
@@ -44,10 +44,10 @@ namespace Game
         public Entity(Scene scene, Vector2 position)
             : this(scene)
         {
-            SetTransform(new Transform2D(position));
+            SetTransform(new Transform2(position));
         }
 
-        public Entity(Scene scene, Transform2D transform) 
+        public Entity(Scene scene, Transform2 transform) 
             : this(scene)
         {
             SetTransform(transform);
