@@ -93,7 +93,8 @@ namespace Game
         }
 
         /// <summary>
-        /// Converts a Transform2D from one portal's coordinate space to the portal it is linked with.  If it isn't linked then the Transform2D is unchanged
+        /// Converts a Transform2D from one portal's coordinate space to the portal it is linked with.
+        /// If it isn't linked then the Transform2D is unchanged.
         /// </summary>
         public void Enter(Transform2 position)
         {
@@ -143,20 +144,37 @@ namespace Game
 
         public void Enter(Transform2 position, Transform2 velocity)
         {
-            float rotationPrev = position.Rotation;
             Enter(position);
-            /*velocity.Position *= new Vector2(-1f, 1f);
-            velocity.Position = Vector2Ext.Transform(velocity.Position, Matrix4.CreateRotationZ(position.Rotation - rotationPrev));// + (float)Math.PI));
-            velocity.Position *= Linked.Size/Size;*/
+            EnterVelocity(velocity);
+        }
+
+        public void EnterVelocity(Transform2 velocity)
+        {
             Matrix4 matrix = GetPortalMatrix(this, Linked);
             Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
             velocity.Position = Vector2Ext.Transform(velocity.Position, matrix);
             velocity.Position -= origin;
-            //if (GetWorldTransform().IsMirrored() == Linked.GetWorldTransform().IsMirrored())
             if (IsMirrored == Linked.IsMirrored)
             {
                 velocity.Rotation = -velocity.Rotation;
-                //velocity.Position = new Vector2(velocity.Position.X, -velocity.Position.Y);
+            }
+        }
+
+        public void EnterVelocity(ref Vector2 velocity)
+        {
+            Matrix4 matrix = GetPortalMatrix(this, Linked);
+            Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
+            velocity = Vector2Ext.Transform(velocity, matrix);
+            velocity -= origin;
+        }
+
+        public void EnterVelocity(Vector2[] velocity)
+        {
+            Matrix4 matrix = GetPortalMatrix(this, Linked);
+            Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
+            for (int i = 0; i < velocity.Length; i++)
+            {
+                velocity[i] = Vector2Ext.Transform(velocity[i], matrix) - origin;
             }
         }
 
@@ -178,6 +196,7 @@ namespace Game
             this.Enter(transform, velocity);
             placeable.SetTransform(transform);
             placeable.SetVelocity(velocity);
+            placeable.PortalEnterInvoke(this);
         }
 
         public static void SetLinked(Portal portal0, Portal portal1)

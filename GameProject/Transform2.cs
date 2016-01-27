@@ -173,6 +173,16 @@ namespace Game
             return output;
         }
 
+        /// <summary>Subtracts transfrom from this.</summary>
+        public Transform2 Subtract(Transform2 transform)
+        {
+            Transform2 output = Clone();
+            output.Rotation -= transform.Rotation;
+            output.Scale = Vector2.Divide(output.Scale, transform.Scale);
+            output.Position -= transform.Position;
+            return output;
+        }
+
         public Transform2 Clone()
         {
             Transform2 transform = new Transform2(Position, Scale, Rotation, UniformScale);

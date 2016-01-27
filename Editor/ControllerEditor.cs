@@ -16,7 +16,6 @@ namespace Editor
     {
         public Scene Hud, Back;
         public EditorScene Level;
-        bool _isPaused;
         public ControllerCamera CamControl { get; private set; }
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
         public event EditorObjectHandler EntityAdded;
@@ -173,7 +172,7 @@ namespace Editor
                 //SceneModified(this, Level);
                 _editorObjectModified = false;
             }
-            if (!_isPaused)
+            //if (!_isPaused)
             {
                 Back.Step();
             }
@@ -237,21 +236,21 @@ namespace Editor
 
         public void ScenePlay()
         {
-            _isPaused = false;
+            //_isPaused = false;
             if (ScenePlayed != null)
                 ScenePlayed(this, Back);
         }
 
         public void ScenePause()
         {
-            _isPaused = true;
+            //_isPaused = true;
             if (ScenePaused != null)
                 ScenePaused(this, Back);
         }
 
         public void SceneStop()
         {
-            _isPaused = true;
+            //_isPaused = true;
             if (SceneStopped != null)
                 SceneStopped(this, Back);
         }

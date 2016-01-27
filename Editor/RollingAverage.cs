@@ -11,11 +11,11 @@ namespace Editor
     {
         Queue<float> _queue = new Queue<float>();
 
-        public RollingAverage(int size, float value)
+        public RollingAverage(int size, float startValue)
         {
             for (int i = 0; i < size; i++)
             {
-                _queue.Enqueue(value);
+                _queue.Enqueue(startValue);
             }
         }
 

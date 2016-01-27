@@ -11,6 +11,8 @@ namespace Game
     [DataContract]
     public class SceneNodePlaceable : SceneNode, ITransform2
     {
+        public delegate void _portalEnter(SceneNodePlaceable placeable, Portal portalEnter);
+        public event _portalEnter PortalEnter;
         [DataMember]
         Transform2 _transform = new Transform2();
         [DataMember]
@@ -45,26 +47,13 @@ namespace Game
             _transform = transform.Clone();
         }
 
-        /*public virtual void SetPosition(Vector2 position)
+        public void PortalEnterInvoke(Portal portalEnter)
         {
-            Transform2D transform = GetTransform();
-            transform.Position = position;
-            SetTransform(transform);
+            if (PortalEnter != null)
+            {
+                PortalEnter(this, portalEnter);
+            }
         }
-
-        public virtual void SetRotation(float rotation)
-        {
-            Transform2D transform = GetTransform();
-            transform.Rotation = rotation;
-            SetTransform(transform);
-        }
-
-        public virtual void SetScale(Vector2 scale)
-        {
-            Transform2D transform = GetTransform();
-            transform.Scale = scale;
-            SetTransform(transform);
-        }*/
 
         public override Transform2 GetVelocity()
         {

@@ -20,6 +20,7 @@ namespace Game
         readonly Controller _controller;
         public bool PortalRenderEnabled { get; set; }
         public int PortalRenderDepth { get; set; }
+        public int PortalRenderMax { get; set; }
         public int PortalClipDepth { get; set; }
         public Vector3 PortalEdgeColor { get; set; }
         ShaderProgram _activeShader;
@@ -41,7 +42,8 @@ namespace Game
             }
             _controller = controller;
             PortalRenderEnabled = true;
-            PortalRenderDepth = 3;
+            PortalRenderDepth = 10;
+            PortalRenderMax = 50;
             PortalClipDepth = 4;
             PortalEdgeColor = new Vector3(0.1f, 0.1f, 0.1f);
         }

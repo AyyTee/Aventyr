@@ -13,9 +13,7 @@ namespace Editor
     public class ControllerCamera
     {
         public delegate void CameraObjectHandler(ControllerCamera controller, Camera2 camera);
-        /// <summary>
-        /// Event is fired if the camera Transform is modified by this controller.
-        /// </summary>
+        /// <summary>Event is fired if the camera Transform is modified by this controller.</summary>
         public event CameraObjectHandler CameraMoved;
 
         public ControllerEditor Controller { get; private set; }
@@ -24,11 +22,10 @@ namespace Editor
         public float ZoomMin = 0.5f;
         public float ZoomMax = 1000f;
         public float KeyMoveSpeed = 0.13f;
+        Queue<Vector2> lazyPan = new Queue<Vector2>();
 
         private float _zoomScrollFactor;
-        /// <summary>
-        /// How much the camera zooms in/out with mouse scrolling. Value must be greater than 1.
-        /// </summary>
+        /// <summary>How much the camera zooms in/out with mouse scrolling. Value must be greater than 1.</summary>
         public float ZoomScrollFactor 
         { 
             get { return _zoomScrollFactor; }
@@ -40,9 +37,7 @@ namespace Editor
         }
 
         private float _zoomFactor;
-        /// <summary>
-        /// How much the camera zooms in/out with key input. Value must be greater than 1.
-        /// </summary>
+        /// <summary>How much the camera zooms in/out with key input. Value must be greater than 1.</summary>
         public float ZoomFactor
         {
             get { return _zoomFactor; }
@@ -53,87 +48,112 @@ namespace Editor
             }
         }
 
-        Vector2 _mouseDragPos;
-        Vector2 _cameraDragPos;
         public ControllerCamera(ControllerEditor controller, Camera2 camera, InputExt inputExt)
         {
             Controller = controller;
             ZoomScrollFactor = 1.2f;
             ZoomFactor = 1.5f;
             Camera = camera;
+            camera.PortalEnter += portalEnterCallback;
             InputExt = inputExt;
+            for (int i = 0; i < 3; i++)
+            {
+                lazyPan.Enqueue(new Vector2());
+            }
+        }
+
+        private void portalEnterCallback(SceneNodePlaceable placeable, Portal portalEnter)
+        {
+            Vector2[] list = lazyPan.ToArray();
+            portalEnter.EnterVelocity(list);
+            lazyPan = new Queue<Vector2>(list);
         }
 
         public void Update()
         {
-            Transform2 previous = Camera.GetTransform();
-            Transform2 transform = Camera.GetTransform();
-            if (InputExt.MouseInside)
+            bool isMoved = false;
+
+            //Handle user input for zooming the camera.
             {
-                if (InputExt.MouseDown(MouseButton.Middle))
+                if (InputExt.MouseInside)
                 {
-                    if (InputExt.MousePress(MouseButton.Middle))
-                    {
-                        _mouseDragPos = Camera.ScreenToWorld(InputExt.MousePos);
-                        _cameraDragPos = transform.Position;
-                    }
-                    Vector2 camPosPrev = transform.Position;
-                    Transform2.SetPosition(Camera, _cameraDragPos);
-                    Vector2 offset = _mouseDragPos - Camera.ScreenToWorld(InputExt.MousePos);
-                    Transform2.SetPosition(Camera, camPosPrev);
-                    transform.Position = _cameraDragPos + offset;
-                }
-                else
-                {
-                    Vector2 mouseZoomPosPrev = Camera.ScreenToWorld(InputExt.MousePos);
+                    /*Vector2 mouseZoomPosPrev = Camera.ScreenToWorld(InputExt.MousePos);
                     Camera.Scale = MathHelper.Clamp(Camera.Scale / (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta()), ZoomMin, ZoomMax);
                     Vector2 mouseZoomPos = -Camera.ScreenToWorld(InputExt.MousePos) + mouseZoomPosPrev;
-                    transform.Position += mouseZoomPos;
+                    transform.Position += mouseZoomPos;*/
+                    if (InputExt.MouseWheelDelta() != 0)
+                    {
+                        Camera.Scale = MathHelper.Clamp(Camera.Scale / (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta()), ZoomMin, ZoomMax);
+                        isMoved = true;
+                    }
+                }
+                if (InputExt.KeyPress(Key.KeypadPlus) || InputExt.KeyPress(Key.Plus))
+                {
+                    Camera.Scale = MathHelper.Clamp(Camera.Scale / ZoomFactor, ZoomMin, ZoomMax);
+                    isMoved = true;
+                }
+                if (InputExt.KeyPress(Key.KeypadMinus) || InputExt.KeyPress(Key.Minus))
+                {
+                    Camera.Scale = MathHelper.Clamp(Camera.Scale * ZoomFactor, ZoomMin, ZoomMax);
+                    isMoved = true;
                 }
             }
-            if (InputExt.KeyPress(Key.KeypadPlus) || InputExt.KeyPress(Key.Plus))
-            {
-                Camera.Scale = MathHelper.Clamp(Camera.Scale / ZoomFactor, ZoomMin, ZoomMax);
-            }
-            if (InputExt.KeyPress(Key.KeypadMinus) || InputExt.KeyPress(Key.Minus))
-            {
-                Camera.Scale = MathHelper.Clamp(Camera.Scale * ZoomFactor, ZoomMin, ZoomMax);
-            }
+
+            //Handle user input to reset the camera's orientation and center it on the current selected object if it exists.
             if (InputExt.KeyPress(Key.Space))
             {
+                Transform2 transform = Camera.GetTransform();
                 transform.Rotation = 0;
+                transform.Scale = new Vector2(Math.Abs(transform.Scale.X), Math.Abs(transform.Scale.Y));
                 EditorObject selected = Controller.selection.First;
                 if (selected != null)
                 {
-                    /*Vector3 position = copy.Position;
-                    position.X = selected.GetTransform().Position.X;
-                    position.Y = selected.GetTransform().Position.Y;
-                    Camera.Transform.Position = position;*/
                     transform.Position = selected.GetTransform().Position;
+                    if (selected.GetType() == typeof(EditorPortal))
+                    {
+                        transform.Position += selected.GetWorldTransform().GetRight() * Portal.EnterMinDistance;
+                    }
                 }
+                Camera.SetTransform(transform);
+                isMoved = true;
             }
-            if (InputExt.KeyDown(Key.Left))
+
+            //Handle user input to pan the camera.
             {
-                //Camera.Transform.Position += new Vector3(-KeyMoveSpeed, 0, 0);
-                transform.Position += new Vector2(-KeyMoveSpeed, 0);
+                Vector2 v = new Vector2();
+                if (InputExt.KeyDown(Key.Left))
+                {
+                    v += Camera.GetTransform().GetRight() * -KeyMoveSpeed;
+                }
+                if (InputExt.KeyDown(Key.Right))
+                {
+                    v += Camera.GetTransform().GetRight() * KeyMoveSpeed;
+                }
+                if (InputExt.KeyDown(Key.Up))
+                {
+                    v += Camera.GetTransform().GetUp() * KeyMoveSpeed;
+                }
+                if (InputExt.KeyDown(Key.Down))
+                {
+                    v += Camera.GetTransform().GetUp() * -KeyMoveSpeed;
+                }
+                if (InputExt.MouseInside && InputExt.MouseDown(MouseButton.Middle))
+                {
+                    lazyPan.Enqueue(Camera.ScreenToWorld(InputExt.MousePosPrev - InputExt.MousePos) - Camera.ScreenToWorld(new Vector2()));
+                }
+                else
+                {
+                    lazyPan.Enqueue(v);
+                }
+                lazyPan.Dequeue();
             }
-            if (InputExt.KeyDown(Key.Right))
-            {
-                //Camera.Transform.Position += new Vector3(KeyMoveSpeed, 0, 0);
-                transform.Position += new Vector2(KeyMoveSpeed, 0);
-            }
-            if (InputExt.KeyDown(Key.Up))
-            {
-                //Camera.Transform.Position += new Vector3(0, KeyMoveSpeed, 0);
-                transform.Position += new Vector2(0, KeyMoveSpeed);
-            }
-            if (InputExt.KeyDown(Key.Down))
-            {
-                //Camera.Transform.Position += new Vector3(0, -KeyMoveSpeed, 0);
-                transform.Position += new Vector2(0, -KeyMoveSpeed);
-            }
-            Camera.SetTransform(transform);
-            if (!transform.Compare(previous) && CameraMoved != null)
+            
+            //Update the camera's velocity.
+            Vector2 velocity = lazyPan.Aggregate((item, acc) => item + acc) / lazyPan.Count;
+            Camera.SetVelocity(new Transform2(velocity));
+
+            //If the camera has been moved then call events.
+            if ((isMoved || velocity != new Vector2()) && CameraMoved != null)
             {
                 CameraMoved(this, Camera);
             }

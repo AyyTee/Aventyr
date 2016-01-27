@@ -26,6 +26,11 @@ namespace Editor
             return list;
         }
 
+        public void Step()
+        {
+            Scene.Step();
+        }
+
         /*public SceneNode FindByName(string name)
         {
             return Root.FindByName(name);

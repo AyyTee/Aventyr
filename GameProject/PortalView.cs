@@ -62,5 +62,17 @@ namespace Game
             }
             return list;
         }
+
+        /*public List<PortalView> GetPortalViewList(Vector2 position, int maxCount)
+        {
+            List<PortalView> list = new List<PortalView>();
+            Queue<PortalView> queue = new Queue<PortalView>();
+            queue.Enqueue(this);
+            foreach (PortalView p in queue)
+            {
+                queue.Enqueue(p);
+                list.Add(p);
+            }
+        }*/
     }
 }
