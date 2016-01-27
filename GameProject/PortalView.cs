@@ -52,27 +52,37 @@ namespace Game
             Paths = path;
         }
 
-        public List<PortalView> GetPortalViewList(Vector2 position)
+        public List<PortalView> GetPortalViewList()
         {
             List<PortalView> list = new List<PortalView>();
             list.Add(this);
             foreach (PortalView p in Children)
             {
-                list.AddRange(p.GetPortalViewList(position));
+                list.AddRange(p.GetPortalViewList());
             }
             return list;
         }
 
-        /*public List<PortalView> GetPortalViewList(Vector2 position, int maxCount)
+        public List<PortalView> GetPortalViewList(int maxCount)
         {
             List<PortalView> list = new List<PortalView>();
             Queue<PortalView> queue = new Queue<PortalView>();
             queue.Enqueue(this);
-            foreach (PortalView p in queue)
+            while (queue.Count != 0)
             {
-                queue.Enqueue(p);
+                if (maxCount <= 0)
+                {
+                    break;
+                }
+                PortalView p = queue.Dequeue();
+                foreach (PortalView child in p.Children)
+                {
+                    queue.Enqueue(child);
+                }
                 list.Add(p);
+                maxCount -= 1;
             }
-        }*/
+            return list;
+        }
     }
 }

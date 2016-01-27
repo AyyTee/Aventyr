@@ -42,7 +42,7 @@ namespace Game
             }
             _controller = controller;
             PortalRenderEnabled = true;
-            PortalRenderDepth = 10;
+            PortalRenderDepth = 5;
             PortalRenderMax = 50;
             PortalClipDepth = 4;
             PortalEdgeColor = new Vector3(0.1f, 0.1f, 0.1f);
@@ -272,7 +272,7 @@ namespace Game
             Vector2 viewPos = cam.GetWorldViewpos();
             Vector2 viewPosPrevious = cam.GetWorldViewpos() - cam.GetWorldVelocity().Position;
             PortalView portalView = CalculatePortalViews(scene.PortalList.ToArray(), cam, depth);
-            List<PortalView> portalViewList = portalView.GetPortalViewList(cam.Viewpos);
+            List<PortalView> portalViewList = portalView.GetPortalViewList(PortalRenderMax);
 
             int stencilValueMax = 1 << GL.GetInteger(GetPName.StencilBits);
             int stencilMask = stencilValueMax - 1;
@@ -357,7 +357,7 @@ namespace Game
         {
             const double maxAngle = 0.9f * Math.PI / 4;
             float angleScale = 0.5f;
-            float minWidth = camera.Scale / 400;
+            float minWidth = Math.Abs(Transform2.GetScale(camera).X) / 40;
             double angleDiff0 = Math.Abs(MathExt.AngleDiff(line.Angle(), linePrevious.Angle()) * angleScale);
             float widthEnd0 = (float)(Math.Tan(Math.Min(angleDiff0, maxAngle)) * line.Length + minWidth);
             return PolygonFactory.CreateLineWidth(line, minWidth, widthEnd0);

@@ -258,15 +258,15 @@ namespace Game
 
             if (InputExt.MouseWheelDelta() != 0)
             {
-                cam.Scale /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
+                cam.Zoom /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
             }
             else if (InputExt.KeyDown(Key.Q))
             {
-                cam.Scale /= (float)Math.Pow(1.04, 1);
+                cam.Zoom /= (float)Math.Pow(1.04, 1);
             }
             else if (InputExt.KeyDown(Key.E))
             {
-                cam.Scale /= (float)Math.Pow(1.04, -1);
+                cam.Zoom /= (float)Math.Pow(1.04, -1);
             }
             player.SetVelocity(new Transform2(v));
             #endregion
@@ -289,7 +289,7 @@ namespace Game
             base.OnResize(e, canvasSize);
             scene.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            hud.ActiveCamera.Scale = CanvasSize.Height;
+            hud.ActiveCamera.Zoom = CanvasSize.Height;
         }
     }
 }

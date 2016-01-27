@@ -87,6 +87,10 @@ namespace Editor
                     {
                         DragBegin(Controller.selection.GetAll(), true, Mode.Rotate);
                     }
+                    else if (_input.KeyPress(Key.S))
+                    {
+                        DragBegin(Controller.selection.GetAll(), true, Mode.Scale);
+                    }
                 }
             }
             else
@@ -177,7 +181,7 @@ namespace Editor
                 DragSet(mode, DragState.Both);
                 return;
             }
-            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Back.ActiveCamera.Scale;
+            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Back.ActiveCamera.Zoom;
             if (mouseDiff.Length < 1.3f * translationScaleOffset)
             {
                 float margin = 0.2f * translationScaleOffset;
@@ -216,22 +220,21 @@ namespace Editor
 
         private void DragUpdate()
         {
-            Transform2 transform = _totalDrag;
             Vector2 mousePos = Controller.GetMouseWorldPosition();
             if (_mode == Mode.Position)
             {
                 switch (_dragState)
                 {
                     case DragState.Both:
-                        transform.Position += mousePos - mousePosPrev;
+                        _totalDrag.Position += mousePos - mousePosPrev;
                         break;
 
                     case DragState.Horizontal:
-                        transform.Position += new Vector2(mousePos.X - mousePosPrev.X, 0);
+                        _totalDrag.Position += new Vector2(mousePos.X - mousePosPrev.X, 0);
                         break;
 
                     case DragState.Vertical:
-                        transform.Position += new Vector2(0, mousePos.Y - mousePosPrev.Y);
+                        _totalDrag.Position += new Vector2(0, mousePos.Y - mousePosPrev.Y);
                         break;
                 }
                 mousePosPrev = mousePos;
@@ -245,13 +248,26 @@ namespace Editor
                 if (_input.KeyDown(InputExt.KeyBoth.Control))
                 {
                     angle = MathExt.Round(angle, _rotateIncrementSize);
-                    transform.Rotation = (float)MathExt.Round(transform.Rotation + MathExt.AngleDiff(angle, anglePrev), _rotateIncrementSize);
+                    _totalDrag.Rotation = (float)MathExt.Round(_totalDrag.Rotation + MathExt.AngleDiff(angle, anglePrev), _rotateIncrementSize);
                     mousePosPrev = new Vector2((float)Math.Cos(-angle), (float)Math.Sin(-angle)) + _translator.GetTransform().Position;
                 }
                 else
                 {
-                    transform.Rotation += (float)MathExt.AngleDiff(angle, anglePrev);
+                    _totalDrag.Rotation += (float)MathExt.AngleDiff(angle, anglePrev);
                     mousePosPrev = mousePos;
+                }
+            }
+            else if (_mode == Mode.Scale)
+            {
+                Vector2 v = mousePos - Transform2.GetPosition(_translator);
+                Vector2 vPrev = mousePosPrev - Transform2.GetPosition(_translator);
+                const float minDist = 0.01f;
+                float lengthPrev = Math.Max(vPrev.Length, Controller.Back.ActiveCamera.Zoom * minDist);
+                float length = Math.Max(v.Length, Controller.Back.ActiveCamera.Zoom * minDist);
+                Vector2 scale = new Vector2(length / lengthPrev, length / lengthPrev);
+                if (Vector2Ext.IsReal(scale))
+                {
+                    _totalDrag.Scale = scale;
                 }
             }
             foreach (MementoDrag e in _transformPrev)
@@ -293,7 +309,7 @@ namespace Editor
         private void UpdateTranslation(Camera2 camera)
         {
             Transform2 transform = _translator.GetTransform();
-            transform.Scale = new Vector2(camera.Scale, camera.Scale) * translationScaleOffset;
+            transform.Scale = new Vector2(camera.Zoom, camera.Zoom) * translationScaleOffset;
             _translator.SetTransform(transform);
         }
 

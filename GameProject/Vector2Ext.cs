@@ -135,5 +135,13 @@ namespace Game
         {
             return Double.IsNaN(v.X) || Double.IsNaN(v.Y);
         }
+
+        public static bool IsReal(Vector2 v)
+        {
+            return !IsNaN(v) && !float.IsPositiveInfinity(v.X) && 
+                !float.IsNegativeInfinity(v.X) && 
+                !float.IsPositiveInfinity(v.Y) && 
+                !float.IsNegativeInfinity(v.Y);
+        }
     }
 }

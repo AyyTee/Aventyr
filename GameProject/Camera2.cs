@@ -27,17 +27,17 @@ namespace Game
             }
         }
         [DataMember]
-        float _scale;
-        public float Scale 
+        float _zoom;
+        public float Zoom 
         {
             get
             {
-                return _scale;
+                return _zoom;
             }
             set
             {
                 Debug.Assert(value >= 0);
-                _scale = value;
+                _zoom = value;
             }
         }
         /// <summary>
@@ -66,7 +66,7 @@ namespace Game
         {
             SetTransform(transform);
             Aspect = aspectRatio;
-            Scale = scale;
+            Zoom = scale;
             ZNear = -10000f;
             ZFar = 10000f;
             Viewpos = new Vector2();
@@ -85,7 +85,7 @@ namespace Game
             base.Clone(destination);
             Camera2 destinationCast = (Camera2)destination;
             destinationCast.Aspect = Aspect;
-            destinationCast.Scale = Scale;
+            destinationCast.Zoom = Zoom;
             destinationCast.ZNear = ZNear;
             destinationCast.ZFar = ZFar;
             destinationCast.Viewpos = Viewpos;
@@ -106,7 +106,7 @@ namespace Game
             Transform2 transform = GetWorldTransform();
             Matrix4 m = Matrix4.CreateRotationZ(transform.Rotation);
             Vector3 lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
-            Matrix4 perspective = Matrix4.CreateOrthographic(transform.Scale.X * Scale * Aspect, transform.Scale.Y * Scale, ZNear, ZFar);
+            Matrix4 perspective = Matrix4.CreateOrthographic(transform.Scale.X * Zoom * Aspect, transform.Scale.Y * Zoom, ZNear, ZFar);
             Vector3 eye = new Vector3(transform.Position) + new Vector3(0, 0, 5000);
             return Matrix4.LookAt(eye, new Vector3(transform.Position) + lookat, new Vector3(GetUp())) * perspective;
         }

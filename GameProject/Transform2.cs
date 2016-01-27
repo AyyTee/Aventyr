@@ -44,7 +44,7 @@ namespace Game
             get { return _scale; }
             set 
             {
-                Debug.Assert(!Vector2Ext.IsNaN(value));
+                Debug.Assert(Vector2Ext.IsReal(value));
                 Debug.Assert(value.X != 0 && value.Y != 0, "Scale vector must have non-zero components");
                 if (UniformScale)
                 {
