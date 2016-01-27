@@ -105,7 +105,8 @@ namespace Editor
             {
                 Transform2 transform = Camera.GetTransform();
                 transform.Rotation = 0;
-                transform.Scale = new Vector2(Math.Abs(transform.Scale.X), Math.Abs(transform.Scale.Y));
+                //transform.Scale = new Vector2(Math.Abs(transform.Scale.X), Math.Abs(transform.Scale.Y));
+                transform.IsMirrored = false;
                 EditorObject selected = Controller.selection.First;
                 if (selected != null)
                 {

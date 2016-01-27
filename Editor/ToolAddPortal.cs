@@ -63,7 +63,9 @@ namespace Editor
                 Transform2 transform = new Transform2();
                 transform.Position = Controller.GetMouseWorldPosition();
                 transform.Rotation = _mouseFollow.GetTransform().Rotation;
-                transform.Scale = _mouseFollow.GetTransform().Scale;
+                //transform.Scale = _mouseFollow.GetTransform().Scale;
+                transform._scale = _mouseFollow.GetTransform()._scale;
+                transform.IsMirrored = _mouseFollow.GetTransform().IsMirrored;
                 return transform;
             }
         }

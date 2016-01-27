@@ -16,8 +16,10 @@ namespace Game
         Vector2 _position = new Vector2();
         [DataMember]
         float _rotation = 0;
+        //[DataMember]
+        //Vector2 _scale = new Vector2(1, 1);
         [DataMember]
-        Vector2 _scale = new Vector2(1, 1);
+        public bool IsMirrored { get; set; }
         [DataMember]
         bool _uniformScale = false;
         const float UNIFORM_SCALE_EPSILON = 0.0001f;
@@ -39,7 +41,7 @@ namespace Game
             }
         }
 
-        public Vector2 Scale 
+        /*public Vector2 Scale 
         { 
             get { return _scale; }
             set 
@@ -55,6 +57,43 @@ namespace Game
                 }
                 _scale = value; 
             } 
+        }
+        */
+        public float __scale = 1;
+        public float _scale { get { return __scale; } 
+            set 
+            {
+                Debug.Assert(value != 0);
+                Debug.Assert(!float.IsNaN(value) && !float.IsPositiveInfinity(value) && !float.IsNegativeInfinity(value));
+                __scale = value; 
+            } }
+        public Vector2 Scale
+        {
+            get 
+            { 
+                if (IsMirrored)
+                {
+                    return new Vector2(-_scale, _scale); 
+                }
+                return new Vector2(_scale, _scale); 
+            }
+            /*set
+            {
+                Debug.Assert(Vector2Ext.IsReal(value));
+                Debug.Assert(value.X != 0 && value.Y != 0, "Scale vector must have non-zero components");
+                Debug.Assert(
+                    Math.Abs(value.X) - Math.Abs(value.Y) <= UNIFORM_SCALE_EPSILON,
+                    "Transforms with fixed scale cannot have non-uniform scale.");
+                value.Y = Math.Sign(value.Y) * Math.Abs(value.X);
+                IsMirrored = false;
+                if (Math.Sign(value.X) != Math.Sign(value.Y))
+                {
+                    IsMirrored = true;
+                }
+                _scale = value.Y;
+
+                Debug.Assert(Scale == value);
+            }*/
         }
 
         public Vector2 Position 
@@ -73,43 +112,41 @@ namespace Game
         }
 
         public Transform2(Vector2 position)
-            : this(position, new Vector2(1,1), 0f, false)
+            : this(position, 1, 0f, false, false)
         {
         }
 
-        public Transform2(Vector2 position, Vector2 scale)
-            : this(position, scale, 0f, false)
+        public Transform2(Vector2 position, float scale)
+            : this(position, scale, 0f, false, false)
         {
         }
 
-        public Transform2(Vector2 position, float rotation)
-            : this(position, new Vector2(1, 1), rotation, false)
-        {
-        }
-
-        public Transform2(Vector2 position, Vector2 scale, float rotation)
-            :this(position, scale, rotation, false)
+        public Transform2(Vector2 position, float scale, float rotation)
+            : this(position, scale, rotation, false, false)
         {
         }
 
         public Transform2(Xna.Vector2 position, float rotation)
-            : this(Vector2Ext.ConvertTo(position), new Vector2(1, 1), rotation, false)
+            : this(Vector2Ext.ConvertTo(position), 1, rotation, false, false)
         {
         }
 
-        public Transform2(Vector2 position, Vector2 scale, float rotation, bool fixedScale)
+        public Transform2(Vector2 position, float scale, float rotation, bool fixedScale, bool isMirrored)
         {
             UniformScale = fixedScale;
             Position = position;
-            Scale = scale;
+            _scale = scale;
             Rotation = rotation;
+            IsMirrored = isMirrored;
         }
 
         /// <summary>Copy constructor</summary>
         public Transform2(Transform2 transform)
         {
             Position = transform.Position;
-            Scale = transform.Scale;
+            //Scale = transform.Scale;
+            _scale = transform._scale;
+            IsMirrored = transform.IsMirrored;
             Rotation = transform.Rotation;
             _uniformScale = transform._uniformScale;
         }
@@ -123,11 +160,6 @@ namespace Game
         public Matrix4 GetMatrix()
         {
             return Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position));
-        }
-        
-        public bool IsMirrored()
-        {
-            return Math.Sign(Scale.X) != Math.Sign(Scale.Y);
         }
 
         public Vector2 GetUp(bool normalizeValue = true)
@@ -159,7 +191,9 @@ namespace Game
         {
             Transform2 output = Clone();
             output.Rotation += transform.Rotation;
-            output.Scale *= transform.Scale;
+            //output.Scale *= transform.Scale;
+            output._scale *= transform._scale;
+            output.IsMirrored = output.IsMirrored != transform.IsMirrored;
             output.Position = Vector2Ext.Transform(output.Position, transform.GetMatrix());
             return output;
         }
@@ -168,7 +202,9 @@ namespace Game
         {
             Transform2 output = Clone();
             output.Rotation += transform.Rotation;
-            output.Scale *= transform.Scale;
+            //output.Scale *= transform.Scale;
+            output._scale *= transform._scale;
+            output.IsMirrored = output.IsMirrored != transform.IsMirrored;
             output.Position += transform.Position;
             return output;
         }
@@ -178,14 +214,16 @@ namespace Game
         {
             Transform2 output = Clone();
             output.Rotation -= transform.Rotation;
-            output.Scale = Vector2.Divide(output.Scale, transform.Scale);
+            //output.Scale = Vector2.Divide(output.Scale, transform.Scale);
+            output._scale /= transform._scale;
+            output.IsMirrored = output.IsMirrored != transform.IsMirrored;
             output.Position -= transform.Position;
             return output;
         }
 
         public Transform2 Clone()
         {
-            Transform2 transform = new Transform2(Position, Scale, Rotation, UniformScale);
+            Transform2 transform = new Transform2(Position, _scale, Rotation, UniformScale, IsMirrored);
             return transform;
         }
 
@@ -219,10 +257,19 @@ namespace Game
             transformable.SetTransform(transform);
         }
 
-        public static void SetScale(ITransform2 transformable, Vector2 scale)
+        public static void SetScale(ITransform2 transformable, float scale, bool mirrorX, bool mirrorY)
         {
             Transform2 transform = transformable.GetTransform();
-            transform.Scale = scale;
+            //transform.Scale = scale;
+            transform._scale = scale;
+            if (mirrorX != mirrorY)
+            {
+                transform.IsMirrored = true;
+            }
+            if (mirrorY)
+            {
+                transform._scale *= -1;
+            }
             transformable.SetTransform(transform);
         }
 

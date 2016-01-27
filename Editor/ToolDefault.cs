@@ -264,10 +264,9 @@ namespace Editor
                 const float minDist = 0.01f;
                 float lengthPrev = Math.Max(vPrev.Length, Controller.Back.ActiveCamera.Zoom * minDist);
                 float length = Math.Max(v.Length, Controller.Back.ActiveCamera.Zoom * minDist);
-                Vector2 scale = new Vector2(length / lengthPrev, length / lengthPrev);
-                if (Vector2Ext.IsReal(scale))
+                if (!float.IsPositiveInfinity(length / lengthPrev))
                 {
-                    _totalDrag.Scale = scale;
+                    _totalDrag._scale = length / lengthPrev;
                 }
             }
             foreach (MementoDrag e in _transformPrev)
@@ -309,7 +308,8 @@ namespace Editor
         private void UpdateTranslation(Camera2 camera)
         {
             Transform2 transform = _translator.GetTransform();
-            transform.Scale = new Vector2(camera.Zoom, camera.Zoom) * translationScaleOffset;
+            //transform.Scale = new Vector2(camera.Zoom, camera.Zoom) * translationScaleOffset;
+            transform._scale = camera.Zoom * translationScaleOffset;
             _translator.SetTransform(transform);
         }
 

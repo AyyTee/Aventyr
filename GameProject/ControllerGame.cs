@@ -46,7 +46,8 @@ namespace Game
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
             background.Transform.Scale = new Vector3(size, size, size);
-            background.TransformUv.Scale = new Vector2(size, size);
+            //background.TransformUv.Scale = new Vector2(size, size);
+            background.TransformUv._scale = size;
             Entity back = new Entity(scene, new Vector2(0f, 0f));
             back.AddModel(background);
 
@@ -59,12 +60,15 @@ namespace Game
             Transform2 transform = portalEntity2.GetTransform();
             transform.Rotation = 1f;
             transform.Position = new Vector2(2.1f, 2f);
-            //transform.Scale = new Vector2(-1f, 1f);
+            //transform.Scale = new Vector2(-1.5f, 1.5f);
+            transform._scale = 1.5f;
+            transform.IsMirrored = true;
             portalEntity2.SetTransform(transform);
 
             Portal portal2 = new FloatPortal(scene);
             portal2.SetParent(portalEntity2);
             portal2.OneSided = true;
+            portal2.Name = "portal2";
             //portal2.IsMirrored = true;
 
             Entity portalEntity3 = new Entity(scene);
@@ -74,7 +78,7 @@ namespace Game
             portalEntity3.ModelList[0].Transform.Position = new Vector3(0.05f, 0.4f, 0.5f);
             portalEntity3.AddModel(ModelFactory.CreatePlane());
             portalEntity3.ModelList[1].Transform.Scale = new Vector3(0.05f, 1, 0.5f);
-            portalEntity3.SetTransform(new Transform2(new Vector2(-1f, 1), 0.0f));
+            portalEntity3.SetTransform(new Transform2(new Vector2(-1f, 1)));
             //portalEntity3.SetVelocity(new Transform2D(new Vector2(), 0.005f));
 
             Portal portal3 = new FloatPortal(scene);
@@ -130,7 +134,7 @@ namespace Game
             ground.Name = "ground";
             //ground.IsPortalable = true;
             //ground.AddModel(ModelFactory.CreatePolygon(v));
-            ground.SetTransform(new Transform2(new Vector2(0, -4f), 0.05f));
+            ground.SetTransform(new Transform2(new Vector2(0, -4f), 1f, 0.05f));
             scene.World.ProcessChanges();
             Portal portal0 = new FixturePortal(scene, null);
             portal0.Name = "portalLeft";
@@ -205,12 +209,12 @@ namespace Game
             }
             if (InputExt.KeyPress(Key.Space))
             {
-                Actor box = ActorFactory.CreateEntityBox(scene, new Transform2(mousePos, new Vector2(0.2f, 4.4f)));
+                Actor box = ActorFactory.CreateEntityBox(scene, new Transform2(mousePos, 1));
                 //box.Transform.Rotation = 2.5f * (float)Math.PI / 4;
             }
             if (InputExt.KeyPress(Key.ControlLeft))
             {
-                ActorFactory.CreateEntityBox(scene, new Transform2(mousePos, new Vector2(2.4f, 0.4f)));
+                ActorFactory.CreateEntityBox(scene, new Transform2(mousePos, 1));
             }
             if (InputExt.KeyPress(Key.M))
             {
@@ -267,6 +271,11 @@ namespace Game
             else if (InputExt.KeyDown(Key.E))
             {
                 cam.Zoom /= (float)Math.Pow(1.04, -1);
+            }
+            if (InputExt.KeyPress(Key.F))
+            {
+                Portal portal2 = (Portal)scene.FindByName("portal2");
+                portal2.IsMirrored = !portal2.IsMirrored;
             }
             player.SetVelocity(new Transform2(v));
             #endregion

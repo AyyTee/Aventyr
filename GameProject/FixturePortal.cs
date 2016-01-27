@@ -68,7 +68,9 @@ namespace Game
             transform.Rotation = -edge.Angle() + (float)Math.PI/2;
             if (IsMirrored)
             {
-                transform.Scale = new Vector2(1, -1);
+                //transform.Scale = new Vector2(1, -1);
+                transform._scale = -1;
+                transform.IsMirrored = true;
             }
             return transform;
         }

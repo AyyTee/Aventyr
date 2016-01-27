@@ -155,7 +155,7 @@ namespace Game
 
                 Line portalLine = new Line(pv);
                 Vector2 normal = portal.GetWorldTransform().GetRight();
-                if (portal.GetWorldTransform().IsMirrored())
+                if (portal.GetWorldTransform().IsMirrored)
                 {
                     normal = -normal;
                 }

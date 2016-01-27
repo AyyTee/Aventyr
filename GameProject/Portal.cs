@@ -118,7 +118,9 @@ namespace Game
             {
                 flipY = -1;
             }
-            position.Scale *= new Vector2(flipX * (v1 - v0).Length, flipY * (v2 - v0).Length);
+            //position.Scale *= new Vector2(flipX * (v1 - v0).Length, flipY * (v2 - v0).Length);
+            position._scale *= flipY * (v2 - v0).Length;
+            position.IsMirrored = Math.Sign(position.Scale.X * flipX) != Math.Sign(position.Scale.Y * flipY);
 
             float angle;
             if (flipX != flipY)
@@ -131,15 +133,6 @@ namespace Game
                 angle = Linked.GetWorldTransform().Rotation - GetWorldTransform().Rotation;
                 position.Rotation += angle;
             }
-        }
-
-        public void Enter(Transform3 position)
-        {
-            Transform2 entity2D = position.Get2D();
-            Enter(entity2D);
-            position.Rotation = new Quaternion(position.Rotation.X, position.Rotation.Y, position.Rotation.Z, entity2D.Rotation);
-            position.Position = new Vector3(entity2D.Position.X, entity2D.Position.Y, position.Position.Z);
-            position.Scale = new Vector3(entity2D.Scale.X, entity2D.Scale.Y, position.Scale.Z);
         }
 
         public void Enter(Transform2 position, Transform2 velocity)
@@ -239,13 +232,11 @@ namespace Game
             return GetPortalMatrix(this, Linked);
         }
 
-        /// <summary>
-        /// Returns matrix to transform between one portals coordinate space to another
-        /// </summary>
+        /// <summary>Returns matrix to transform between one portals coordinate space to another.</summary>
         public static Matrix4 GetPortalMatrix(Portal portalEnter, Portal portalExit)
         {
             Transform2 transform = portalExit.GetWorldTransform();
-            transform.Scale = new Vector2(-transform.Scale.X, transform.Scale.Y);
+            transform.IsMirrored = !transform.IsMirrored;
             Matrix4 m = portalEnter.GetWorldTransform().GetMatrix();
             return m.Inverted() * transform.GetMatrix();
         }
