@@ -29,6 +29,7 @@ namespace Editor
         public event ToolEventHandler ToolChanged;
         bool _editorObjectModified;
         Tool _activeTool;
+        public Tool ActiveTool { get { return _activeTool; } }
         Tool _toolDefault;
         Tool _nextTool;
         Queue<Action> Actions = new Queue<Action>();
@@ -49,7 +50,7 @@ namespace Editor
             NewLevel();
             
             Hud = new Scene();
-            Hud.SetActiveCamera(new Camera2(Hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width, CanvasSize.Width / (float)CanvasSize.Height));
+            Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
             renderer.AddScene(Hud);
             /*debugText = new Entity(Hud);
             debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
@@ -75,7 +76,7 @@ namespace Editor
             float size = 50;
             background.Transform.Scale = new Vector3(size, size, size);
             //background.TransformUv.Scale = new Vector2(size, size);
-            background.TransformUv._scale = size;
+            background.TransformUv.Size = size;
             Entity back = new Entity(Back, new Vector2(0f, 0f));
             back.AddModel(background);
             #endregion
@@ -83,13 +84,7 @@ namespace Editor
             selection = new Selection(Level);
             StateList = new StateList();
 
-            Back.SetActiveCamera(new Camera2(Back, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height));
-
-            Entity viewCenter = new Entity(Back);
-            viewCenter.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.1f, 10));
-            viewCenter.DrawOverPortals = true;
-            viewCenter.ModelList[0].SetColor(new Vector3(1, 0.9f, 0.2f));
-            viewCenter.SetParent(Back.ActiveCamera);
+            Back.SetActiveCamera(new Camera2(Back, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height));
 
             CamControl = new ControllerCamera(this, Back.ActiveCamera, InputExt);
         }
@@ -112,7 +107,7 @@ namespace Editor
             //System.Windows.Forms.Cursor.Position = mousePosition;
         }*/
 
-        public EditorEntity CreateLevelEntity()
+        /*public EditorEntity CreateLevelEntity()
         {
             EditorEntity entity = new EditorEntity(this.Level);
 
@@ -121,7 +116,7 @@ namespace Editor
                 EntityAdded(this, entity);
             }
             return entity;
-        }
+        }*/
 
         public void Remove(EditorObject editorObject)
         {
@@ -274,7 +269,8 @@ namespace Editor
             base.OnResize(e, canvasSize);
             Back.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             Hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            Hud.ActiveCamera.Zoom = canvasSize.Height;
+            //Hud.ActiveCamera.Zoom = canvasSize.Height;
+            Transform2.SetSize(Hud.ActiveCamera, canvasSize.Height);
         }
     }
 }

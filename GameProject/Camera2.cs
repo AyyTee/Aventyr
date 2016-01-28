@@ -26,7 +26,7 @@ namespace Game
                 _aspect = value;
             }
         }
-        [DataMember]
+        /*[DataMember]
         float _zoom;
         public float Zoom 
         {
@@ -39,7 +39,7 @@ namespace Game
                 Debug.Assert(value >= 0);
                 _zoom = value;
             }
-        }
+        }*/
         /// <summary>
         /// Position used for casting line of sight rays for portals
         /// </summary>
@@ -52,21 +52,21 @@ namespace Game
 
         #region Constructors
         public Camera2(Scene scene)
-            : this(scene, new Transform2(), 1, 1)
+            : this(scene, new Transform2(), 1)
         {
         }
 
-        public Camera2(Scene scene, Vector2 position, float scale, float aspectRatio)
-            : this(scene, new Transform2(position), scale, aspectRatio)
+        public Camera2(Scene scene, Vector2 position, float aspectRatio)
+            : this(scene, new Transform2(position), aspectRatio)
         {
         }
 
-        public Camera2(Scene scene, Transform2 transform, float scale, float aspectRatio)
+        public Camera2(Scene scene, Transform2 transform, float aspectRatio)
             : base(scene)
         {
             SetTransform(transform);
             Aspect = aspectRatio;
-            Zoom = scale;
+            //Zoom = scale;
             ZNear = -10000f;
             ZFar = 10000f;
             Viewpos = new Vector2();
@@ -85,7 +85,7 @@ namespace Game
             base.Clone(destination);
             Camera2 destinationCast = (Camera2)destination;
             destinationCast.Aspect = Aspect;
-            destinationCast.Zoom = Zoom;
+            //destinationCast.Zoom = Zoom;
             destinationCast.ZNear = ZNear;
             destinationCast.ZFar = ZFar;
             destinationCast.Viewpos = Viewpos;
@@ -106,31 +106,21 @@ namespace Game
             Transform2 transform = GetWorldTransform();
             Matrix4 m = Matrix4.CreateRotationZ(transform.Rotation);
             Vector3 lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
-            Matrix4 perspective = Matrix4.CreateOrthographic(transform.Scale.X * Zoom * Aspect, transform.Scale.Y * Zoom, ZNear, ZFar);
+            Matrix4 perspective = Matrix4.CreateOrthographic(transform.Scale.X * Aspect, transform.Scale.Y, ZNear, ZFar);
             Vector3 eye = new Vector3(transform.Position) + new Vector3(0, 0, 5000);
+            //return Matrix4.LookAt(eye, new Vector3(transform.Position) + lookat, new Vector3(GetUp())) * perspective;
             return Matrix4.LookAt(eye, new Vector3(transform.Position) + lookat, new Vector3(GetUp())) * perspective;
         }
 
-        public Vector2 GetUp()
+        private Vector2 GetUp()
         {
             Matrix4 m = Matrix4.CreateRotationZ(GetWorldTransform().Rotation);
             return Vector2Ext.Transform(new Vector2(0, 1), m);
         }
 
-        public Vector2 GetRight()
-        {
-            Matrix4 m = Matrix4.CreateRotationZ(GetWorldTransform().Rotation);
-            return Vector2Ext.Transform(new Vector2(1, 0), m);
-        }
-
         public Vector2 WorldToScreen(Vector2 worldCoord)
         {
             return Vector2Ext.Transform(worldCoord, GetWorldToScreenMatrix());
-        }
-
-        public Vector2[] ScreenToWorld(Vector2[] screenCoord)
-        {
-            return Vector2Ext.Transform(screenCoord, GetWorldToScreenMatrix().Inverted());
         }
 
         public Vector2[] WorldToScreen(Vector2[] worldCoord)
@@ -139,6 +129,11 @@ namespace Game
         }
 
         public Vector2 ScreenToWorld(Vector2 screenCoord)
+        {
+            return Vector2Ext.Transform(screenCoord, GetWorldToScreenMatrix().Inverted());
+        }
+
+        public Vector2[] ScreenToWorld(Vector2[] screenCoord)
         {
             return Vector2Ext.Transform(screenCoord, GetWorldToScreenMatrix().Inverted());
         }

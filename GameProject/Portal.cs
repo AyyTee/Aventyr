@@ -119,7 +119,7 @@ namespace Game
                 flipY = -1;
             }
             //position.Scale *= new Vector2(flipX * (v1 - v0).Length, flipY * (v2 - v0).Length);
-            position._scale *= flipY * (v2 - v0).Length;
+            position.Size *= flipY * (v2 - v0).Length;
             position.IsMirrored = Math.Sign(position.Scale.X * flipX) != Math.Sign(position.Scale.Y * flipY);
 
             float angle;
@@ -192,12 +192,7 @@ namespace Game
             placeable.PortalEnterInvoke(this);
         }
 
-        public static void SetLinked(Portal portal0, Portal portal1)
-        {
-            portal0.SetLinked(portal1);
-        }
-
-        private void SetLinked(Portal portal)
+        public void SetLinked(Portal portal)
         {
             if (Linked != portal)
             {

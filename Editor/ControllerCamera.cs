@@ -60,6 +60,13 @@ namespace Editor
             {
                 lazyPan.Enqueue(new Vector2());
             }
+
+            Entity viewCenter = new Entity(Camera.Scene);
+            viewCenter.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.005f, 10));
+            viewCenter.DrawOverPortals = true;
+            viewCenter.ModelList[0].SetColor(new Vector3(1, 0.9f, 0.2f));
+            viewCenter.ModelList[0].Transform.Position = new Vector3(0, 0, DrawDepth.CameraMarker);
+            viewCenter.SetParent(Camera);
         }
 
         private void portalEnterCallback(SceneNodePlaceable placeable, Portal portalEnter)
@@ -69,22 +76,28 @@ namespace Editor
             lazyPan = new Queue<Vector2>(list);
         }
 
+        public bool IsLocked()
+        {
+            return Controller.ActiveTool.LockCamera();
+        }
+
         public void Update()
         {
+            if (IsLocked())
+            {
+                return;
+            }
             bool isMoved = false;
 
             //Handle user input for zooming the camera.
             {
                 if (InputExt.MouseInside)
                 {
-                    /*Vector2 mouseZoomPosPrev = Camera.ScreenToWorld(InputExt.MousePos);
-                    Camera.Scale = MathHelper.Clamp(Camera.Scale / (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta()), ZoomMin, ZoomMax);
-                    Vector2 mouseZoomPos = -Camera.ScreenToWorld(InputExt.MousePos) + mouseZoomPosPrev;
-                    transform.Position += mouseZoomPos;*/
                     if (InputExt.MouseWheelDelta() != 0)
                     {
-                        Camera.Zoom = MathHelper.Clamp(Camera.Zoom / (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta()), ZoomMin, ZoomMax);
-                        //Transform2.SetScale(Camera, MathHelper.Clamp(Transform2.GetScale(Camera) / (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta()), ZoomMin, ZoomMax);
+                        float scale = Transform2.GetSize(Camera) / (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta());
+                        scale = MathHelper.Clamp(Math.Abs(scale), ZoomMin, ZoomMax) * Math.Sign(Transform2.GetSize(Camera));
+                        Transform2.SetSize(Camera, scale);
                         isMoved = true;
                     }
                 }
@@ -107,6 +120,7 @@ namespace Editor
                 transform.Rotation = 0;
                 //transform.Scale = new Vector2(Math.Abs(transform.Scale.X), Math.Abs(transform.Scale.Y));
                 transform.IsMirrored = false;
+                transform.Size = Math.Abs(transform.Size);
                 EditorObject selected = Controller.selection.First;
                 if (selected != null)
                 {

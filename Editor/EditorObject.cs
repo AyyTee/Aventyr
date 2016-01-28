@@ -24,6 +24,7 @@ namespace Editor
 
         public EditorObject(EditorScene editorScene)
         {
+            Debug.Assert(editorScene != null);
             EditorScene = editorScene;
             SetParent(EditorScene.Root);
             SetMarker();
@@ -34,7 +35,8 @@ namespace Editor
             Marker = new Entity(EditorScene.Scene);
             //Marker.SetParent(this);
             Marker.DrawOverPortals = true;
-            Model circle = ModelFactory.CreateCircle(new Vector3(0, 0, 10), 0.05f, 10);
+            Model circle = ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
+            circle.Transform.Position = new Vector3(0, 0, DrawDepth.EntityMarker);
             circle.SetColor(new Vector3(1f, 0.5f, 0f));
             Marker.AddModel(circle);
         }

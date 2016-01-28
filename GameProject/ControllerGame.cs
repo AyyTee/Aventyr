@@ -38,7 +38,7 @@ namespace Game
             
             scene = new Scene();
             hud = new Scene();
-            Camera2 hudCam = new Camera2(hud, new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height, CanvasSize.Width / (float)CanvasSize.Height);
+            Camera2 hudCam = new Camera2(hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), (float)CanvasSize.Height), CanvasSize.Width / (float)CanvasSize.Height);
             #region create scene
             ///*
             Model background = ModelFactory.CreatePlane();
@@ -47,7 +47,7 @@ namespace Game
             float size = 100;
             background.Transform.Scale = new Vector3(size, size, size);
             //background.TransformUv.Scale = new Vector2(size, size);
-            background.TransformUv._scale = size;
+            background.TransformUv.Size = size;
             Entity back = new Entity(scene, new Vector2(0f, 0f));
             back.AddModel(background);
 
@@ -61,8 +61,8 @@ namespace Game
             transform.Rotation = 1f;
             transform.Position = new Vector2(2.1f, 2f);
             //transform.Scale = new Vector2(-1.5f, 1.5f);
-            transform._scale = 1.5f;
-            transform.IsMirrored = true;
+            transform.Size = 1.5f;
+            //transform.IsMirrored = true;
             portalEntity2.SetTransform(transform);
 
             Portal portal2 = new FloatPortal(scene);
@@ -86,7 +86,7 @@ namespace Game
             portal3.OneSided = true;
             
             //portal3.IsMirrored = true;
-            Portal.SetLinked(portal2, portal3);
+            portal2.SetLinked(portal3);
 
             #region player
             Entity player = new Entity(scene);
@@ -143,7 +143,7 @@ namespace Game
 
             portal0.IsMirrored = true;
 
-            FixturePortal.SetLinked(portal0, portal1);//*/
+            portal0.SetLinked(portal1);
 
             text = new Entity(hud);
             text.SetTransform(new Transform2(new Vector2(0, CanvasSize.Height)));
@@ -151,7 +151,7 @@ namespace Game
             text2.SetTransform(new Transform2(new Vector2(0, CanvasSize.Height - 40)));
             #endregion
             //new Serializer().Deserialize(scene, "blah.save", "blah_phys.save");
-            Camera2 cam = new Camera2(scene, new Vector2(), 10, CanvasSize.Width / (float)CanvasSize.Height);
+            Camera2 cam = new Camera2(scene, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height);
             //cam.SetRotation((float)Math.PI / 2);
             cam.SetParent(scene.FindByName("player"));
             scene.SetActiveCamera(cam);
@@ -226,9 +226,9 @@ namespace Game
             {
                 camSpeed = .005f;
             }
-
             Vector2 v = new Vector2();
             Transform2 transform = player.GetTransform();
+            camSpeed *= Math.Abs(transform.Size);
             Vector2 up = transform.GetUp();
             Vector2 right = transform.GetRight();
             if (InputExt.KeyDown(Key.R))
@@ -262,15 +262,17 @@ namespace Game
 
             if (InputExt.MouseWheelDelta() != 0)
             {
-                cam.Zoom /= (float)Math.Pow(1.2, InputExt.MouseWheelDelta());
+                Transform2.SetScale(cam, Transform2.GetScale(cam) / (float)Math.Pow(1.2, InputExt.MouseWheelDelta()));
             }
             else if (InputExt.KeyDown(Key.Q))
             {
-                cam.Zoom /= (float)Math.Pow(1.04, 1);
+                Transform2.SetScale(cam, Transform2.GetScale(cam) / (float)Math.Pow(1.04, 1));
+                //cam.Zoom /= (float)Math.Pow(1.04, 1);
             }
             else if (InputExt.KeyDown(Key.E))
             {
-                cam.Zoom /= (float)Math.Pow(1.04, -1);
+                Transform2.SetScale(cam, Transform2.GetScale(cam) / (float)Math.Pow(1.04, -1));
+                //cam.Zoom /= (float)Math.Pow(1.04, -1);
             }
             if (InputExt.KeyPress(Key.F))
             {
@@ -298,7 +300,7 @@ namespace Game
             base.OnResize(e, canvasSize);
             scene.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            hud.ActiveCamera.Zoom = CanvasSize.Height;
+            Transform2.SetSize(hud.ActiveCamera, CanvasSize.Height);
         }
     }
 }

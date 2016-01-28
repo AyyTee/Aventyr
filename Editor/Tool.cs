@@ -41,6 +41,10 @@ namespace Editor
         {
             Enabled = false;
         }
+        public virtual bool LockCamera()
+        {
+            return false;
+        }
         public abstract Tool Clone();
     }
 }

@@ -52,7 +52,7 @@ namespace Editor
                 Vector2 mousePos = Controller.GetMouseWorldPosition();
                 if (_vertices.Count >= 3 && (mousePos - _vertices[0]).Length < 0.1f)
                 {
-                    EditorEntity entity = Controller.CreateLevelEntity();
+                    EditorEntity entity = new EditorEntity(Controller.Level);// Controller.CreateLevelEntity();
                     Vector2 average = new Vector2(_vertices.Average(item => item.X), _vertices.Average(item => item.Y));
                     for (int i = 0; i < _vertices.Count; i++)
                     {

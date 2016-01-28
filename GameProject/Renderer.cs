@@ -357,7 +357,7 @@ namespace Game
         {
             const double maxAngle = 0.9f * Math.PI / 4;
             float angleScale = 0.5f;
-            float minWidth = Math.Abs(Transform2.GetScale(camera).X) / 40;
+            float minWidth = Math.Abs(Transform2.GetSize(camera)) / 400;
             double angleDiff0 = Math.Abs(MathExt.AngleDiff(line.Angle(), linePrevious.Angle()) * angleScale);
             float widthEnd0 = (float)(Math.Tan(Math.Min(angleDiff0, maxAngle)) * line.Length + minWidth);
             return PolygonFactory.CreateLineWidth(line, minWidth, widthEnd0);
@@ -379,7 +379,7 @@ namespace Game
                 }
                 foreach (ClipModel clip in e.GetClipModels(PortalClipDepth))
                 {
-                    if (clip.ClipLines.Length == 0)
+                    if (clip.ClipLines.Length == 0 || e.DrawOverPortals)
                     {
                         defaultShader.Add(clip);
                     }
@@ -392,7 +392,7 @@ namespace Game
             SetShader(Shaders["uber"]);
             foreach (ClipModel clip in defaultShader)
             {
-                if (isPortalRender && clip.Entity.DrawOverPortals)
+                if (clip.Entity.DrawOverPortals)
                 {
                     SetEnable(EnableCap.StencilTest, false);
                 }

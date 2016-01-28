@@ -45,7 +45,7 @@ namespace Editor
                 string fileName = ((OpenFileDialog)sender).FileName;
                 ModelLoader loader = new ModelLoader();
                 Model model = loader.LoadObj(fileName);
-                EditorEntity entity = ControllerEditor.CreateLevelEntity();
+                EditorEntity entity = new EditorEntity(ControllerEditor.Level);// ControllerEditor.CreateLevelEntity();
                 entity.Entity.AddModel(model);
             });
         }

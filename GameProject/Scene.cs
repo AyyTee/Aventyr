@@ -58,8 +58,8 @@ namespace Game
                 {
                     continue;
                 }
-                //SceneNodes parented to a SceneNodePlaceable instance can't perform portal teleportation directly.
-                if (s.Parent.GetType() != typeof(ITransform2))
+                //Parented SceneNodes can't perform portal teleportation directly.
+                if (s.Parent == s.Scene.Root)
                 {
                     RayCast(s);
                 }

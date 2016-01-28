@@ -9,14 +9,13 @@ namespace Editor
 {
     public abstract class CommandAdd : ICommand
     {
-        protected readonly Transform2 _transform;
         protected readonly ControllerEditor _controller;
-        protected EditorObject _editorObject;
+        protected readonly EditorObject _editorObject;
         MementoSelection _selection;
 
-        public CommandAdd(ControllerEditor controller, Transform2 transform)
+        public CommandAdd(ControllerEditor controller, EditorObject editorObject)
         {
-            _transform = transform;
+            _editorObject = editorObject;
             _controller = controller;
         }
 

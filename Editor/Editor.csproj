@@ -102,6 +102,7 @@
     <Compile Include="CommandDrag.cs" />
     <Compile Include="ControllerCamera.cs" />
     <Compile Include="ControllerEditor.cs" />
+    <Compile Include="DrawDepths.cs" />
     <Compile Include="EditorEntity.cs" />
     <Compile Include="EditorObject.cs" />
     <Compile Include="EditorPortal.cs" />

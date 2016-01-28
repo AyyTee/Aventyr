@@ -9,24 +9,41 @@ namespace Editor
 {
     public class CommandAddPortal : CommandAdd
     {
-        public CommandAddPortal(ControllerEditor controller, Transform2 transform)
-            : base(controller, transform)
+        readonly EditorPortal _linked;
+
+        public CommandAddPortal(ControllerEditor controller, EditorPortal portal, EditorPortal linked = null)
+            : base(controller, portal)
         {
+            _linked = linked;
         }
 
         public override void Do()
         {
             base.Do();
-            EditorPortal editorPortal = new EditorPortal(_controller.Level);
-            _editorObject = editorPortal;
-            editorPortal.SetTransform(_transform);
-            _controller.selection.Set(editorPortal);
+            if (_linked != null)
+            {
+                ((EditorPortal)_editorObject).Portal.SetLinked(_linked.Portal);
+            }
+        }
+
+        public override void Undo()
+        {
+            base.Undo();
+            ((EditorPortal)_editorObject).Portal.SetLinked(null);
+        }
+
+        public override void Redo()
+        {
+            base.Redo();
+            if (_linked != null)
+            {
+                ((EditorPortal)_editorObject).Portal.SetLinked(_linked.Portal);
+            }
         }
 
         public override ICommand Clone()
         {
-            CommandAddPortal clone = new CommandAddPortal(_controller, _transform);
-            clone._editorObject = _editorObject;
+            CommandAddPortal clone = new CommandAddPortal(_controller, (EditorPortal)_editorObject, _linked);
             return clone;
         }
     }

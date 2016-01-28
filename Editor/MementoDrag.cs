@@ -25,7 +25,7 @@ namespace Editor
 
         public Transform2 GetTransform()
         {
-            return new Transform2(_transform);
+            return _transform.Clone();
         }
     }
 }

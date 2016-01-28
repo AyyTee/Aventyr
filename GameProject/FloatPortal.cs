@@ -35,7 +35,7 @@ namespace Game
         {
             if (IsMirrored)
             {
-                return new Transform2(new Vector2(), -1, 0, true, true);
+                return new Transform2(new Vector2(), -1, 0, true);
             }
             return new Transform2();
         }

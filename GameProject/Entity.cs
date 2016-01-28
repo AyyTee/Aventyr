@@ -36,7 +36,6 @@ namespace Game
             : base(scene)
         {
             Transform2 transform = GetTransform();
-            transform.UniformScale = true;
             SetTransform(transform);
             Visible = true;
         }

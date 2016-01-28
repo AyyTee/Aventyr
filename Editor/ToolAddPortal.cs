@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using OpenTK.Input;
 using OpenTK;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace Editor
 {
@@ -14,6 +15,8 @@ namespace Editor
     {
         EditorPortal _mouseFollow;
         float snapDistance = 0.2f;
+        bool isSecondPortal = false;
+        EditorPortal portalPrevious = null;
 
         public ToolAddPortal(ControllerEditor controller)
             : base(controller)
@@ -33,20 +36,35 @@ namespace Editor
             {
                 if (_input.MousePress(MouseButton.Left))
                 {
-                    //FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
-                    /*if (coord != null)
+                    EditorPortal portal = new EditorPortal(Controller.Level);
+                    /*FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
+                    if (coord != null)
                     {
                         editorPortal = Controller.CreateLevelPortal(new FixturePortal(Controller.Level, coord));
                     }
                     else*/
                     {
-                        Controller.StateList.Add(new CommandAddPortal(Controller, GetPortalTransform()), true);
+                        portal.SetTransform(_mouseFollow.GetTransform());
                     }
+
+                    CommandAddPortal command;
+                    if (isSecondPortal)
+                    {
+                        Debug.Assert(portalPrevious != null);
+                        command = new CommandAddPortal(Controller, portal, portalPrevious);
+                    }
+                    else
+                    {
+                        command = new CommandAddPortal(Controller, portal);
+                    }
+                    Controller.StateList.Add(command, true);
                     
                     if (!_input.KeyDown(InputExt.KeyBoth.Shift))
                     {
                         Controller.SetTool(null);
                     }
+                    portalPrevious = portal;
+                    isSecondPortal = !isSecondPortal;
                 }
             }
         }
@@ -64,7 +82,7 @@ namespace Editor
                 transform.Position = Controller.GetMouseWorldPosition();
                 transform.Rotation = _mouseFollow.GetTransform().Rotation;
                 //transform.Scale = _mouseFollow.GetTransform().Scale;
-                transform._scale = _mouseFollow.GetTransform()._scale;
+                transform.Size = _mouseFollow.GetTransform().Size;
                 transform.IsMirrored = _mouseFollow.GetTransform().IsMirrored;
                 return transform;
             }
@@ -73,6 +91,8 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
+            isSecondPortal = false;
+            portalPrevious = null;
             _mouseFollow = new EditorPortal(Controller.Level);
         }
 

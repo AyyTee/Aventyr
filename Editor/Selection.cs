@@ -21,8 +21,9 @@ namespace Editor
         {
             Scene = scene;
             _firstMarker = new Entity(Scene.Scene);
-            _firstMarker.AddModel(ModelFactory.CreateCircle(new Vector3(0f, 0f, 50f), 0.08f, 10));
+            _firstMarker.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.08f, 10));
             _firstMarker.ModelList[0].SetColor(new Vector3(0f, 1f, 0f));
+            _firstMarker.ModelList[0].Transform.Position = new Vector3(0, 0, DrawDepth.EntityActive);
             _firstMarker.DrawOverPortals = true;
             _firstMarker.SetParent(null);
         }

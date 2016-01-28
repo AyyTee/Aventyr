@@ -38,14 +38,14 @@ namespace Editor
                     }
                     else
                     {
-                        Portal.SetLinked(portal.Portal, _portalPrevious.Portal);
+                        portal.Portal.SetLinked(_portalPrevious.Portal);
                         portal.Portal.IsMirrored = true;
                         _portalPrevious.Portal.IsMirrored = false;
                         if (_input.KeyDown(InputExt.KeyBoth.Control))
                         {
                             Transform2 t = portal.GetTransform();
                             //t.Scale = new Vector2(1, -1);
-                            t._scale *= -1;
+                            t.Size *= -1;
                             t.IsMirrored = true;
                             portal.SetTransform(t);
                             t = _portalPrevious.GetTransform();

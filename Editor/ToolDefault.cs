@@ -165,6 +165,11 @@ namespace Editor
             Active = true;
         }
 
+        public override bool LockCamera()
+        {
+            return _dragState != DragState.Neither;
+        }
+
         private void DragBegin(List<EditorObject> dragObjects, bool toggleMode, Mode mode)
         {
             Debug.Assert(dragObjects != null);
@@ -172,7 +177,7 @@ namespace Editor
             {
                 return;
             }
-            Transform2 transform = _translator.GetTransform();// dragObjects[0].GetWorldTransform();
+            Transform2 transform = _translator.GetTransform();
             Vector2 mousePos = Controller.GetMouseWorldPosition();
             dragToggled = toggleMode;
             mousePosPrev = mousePos;
@@ -181,7 +186,7 @@ namespace Editor
                 DragSet(mode, DragState.Both);
                 return;
             }
-            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Back.ActiveCamera.Zoom;
+            Vector2 mouseDiff = (mousePos - transform.Position) / Transform2.GetSize(Controller.Back.ActiveCamera);
             if (mouseDiff.Length < 1.3f * translationScaleOffset)
             {
                 float margin = 0.2f * translationScaleOffset;
@@ -262,11 +267,11 @@ namespace Editor
                 Vector2 v = mousePos - Transform2.GetPosition(_translator);
                 Vector2 vPrev = mousePosPrev - Transform2.GetPosition(_translator);
                 const float minDist = 0.01f;
-                float lengthPrev = Math.Max(vPrev.Length, Controller.Back.ActiveCamera.Zoom * minDist);
-                float length = Math.Max(v.Length, Controller.Back.ActiveCamera.Zoom * minDist);
+                float lengthPrev = Math.Max(vPrev.Length, Transform2.GetSize(Controller.Back.ActiveCamera) * minDist);
+                float length = Math.Max(v.Length, Transform2.GetSize(Controller.Back.ActiveCamera) * minDist);
                 if (!float.IsPositiveInfinity(length / lengthPrev))
                 {
-                    _totalDrag._scale = length / lengthPrev;
+                    _totalDrag.Size = length / lengthPrev;
                 }
             }
             foreach (MementoDrag e in _transformPrev)
@@ -309,7 +314,7 @@ namespace Editor
         {
             Transform2 transform = _translator.GetTransform();
             //transform.Scale = new Vector2(camera.Zoom, camera.Zoom) * translationScaleOffset;
-            transform._scale = camera.Zoom * translationScaleOffset;
+            transform.Size = Transform2.GetSize(camera) * translationScaleOffset;
             _translator.SetTransform(transform);
         }
 

@@ -36,8 +36,14 @@ namespace Editor
                 /*EditorEntity entity = Controller.CreateLevelEntity();
                 entity.SetPosition(Controller.GetMouseWorldPosition());
                 EntityFactory.CreateEntityBox(entity.Entity, new Vector2());*/
-                
-                CommandAddEntity command = new CommandAddEntity(Controller, new Transform2(Controller.GetMouseWorldPosition()));
+                EditorEntity editorEntity = new EditorEntity(Controller.Level);//_controller.CreateLevelEntity();
+                editorEntity.Entity.AddModel(ModelFactory.CreateCube());
+                editorEntity.Entity.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
+                editorEntity.Entity.IsPortalable = true;
+                Transform2.SetPosition(editorEntity, Controller.GetMouseWorldPosition());
+                Controller.selection.Set(editorEntity);
+
+                CommandAddEntity command = new CommandAddEntity(Controller, editorEntity);
                 Controller.StateList.Add(command, true);
 
                 if (!_input.KeyDown(InputExt.KeyBoth.Shift))
