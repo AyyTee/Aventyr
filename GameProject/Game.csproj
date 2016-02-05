@@ -139,6 +139,7 @@
     <Compile Include="ClipModel.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="ClipperExt.cs" />
+    <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="ILerp.cs" />
     <Compile Include="ITexture.cs" />
     <Compile Include="ITransform2.cs" />
@@ -204,6 +205,9 @@
     <Content Include="assets\textures\grid.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="assets\textures\lineBlur.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -248,6 +252,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EmguWrapper\EmguWrapper.csproj">
+      <Project>{f4c3d0ae-b7a1-491f-9f8c-2d9bf9d1f1a1}</Project>
+      <Name>EmguWrapper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

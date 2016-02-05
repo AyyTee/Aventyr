@@ -102,7 +102,10 @@ namespace Game
         /// </summary>
         public static Model CreatePolygon(Vector2[] vertices, Vector3 offset = new Vector3())
         {
-            return CreatePolygon(PolygonFactory.CreatePolygon(vertices), offset);
+            Model model = new Model();
+            AddPolygon(model, vertices, offset);
+            return model;
+            //return CreatePolygon(PolygonFactory.CreatePolygon(vertices), offset);
         }
 
         public static Model CreatePolygon(Polygon polygon, Vector3 offset = new Vector3())
@@ -119,29 +122,37 @@ namespace Game
             return model;
         }
 
-        public static void AddPolygon(Model model, PolyTree polyTree, Vector3 offset = new Vector3())
+        public static int AddPolygon(Model model, Vector2[] v, Vector3 offset = new Vector3())
         {
-            AddPolygon(model, PolygonFactory.CreatePolygon(polyTree).ToArray(), offset);
+            return AddPolygon(model, PolygonFactory.CreatePolygon(v), offset);
         }
 
-        public static void AddPolygon(Model model, List<List<IntPoint>> paths, Vector3 offset = new Vector3())
+        public static int AddPolygon(Model model, PolyTree polyTree, Vector3 offset = new Vector3())
         {
-            AddPolygon(model, PolygonFactory.CreatePolygon(paths).ToArray(), offset);
+            return AddPolygon(model, PolygonFactory.CreatePolygon(polyTree).ToArray(), offset);
         }
 
-        public static void AddPolygon(Model model, Polygon[] polygon, Vector3 offset = new Vector3())
+        public static int AddPolygon(Model model, List<List<IntPoint>> paths, Vector3 offset = new Vector3())
         {
+            return AddPolygon(model, PolygonFactory.CreatePolygon(paths).ToArray(), offset);
+        }
+
+        public static int AddPolygon(Model model, Polygon[] polygon, Vector3 offset = new Vector3())
+        {
+            int indexFirst = model.Vertices.Count;
             for (int i = 0; i < polygon.Length; i++)
             {
-                AddPolygon(model, polygon[i], new Vector3());
+                int index = AddPolygon(model, polygon[i], new Vector3());
             }
+            return indexFirst;
         }
 
-        public static void AddPolygon(Model model, Polygon polygon, Vector3 offset = new Vector3())
+        public static int AddPolygon(Model model, Polygon polygon, Vector3 offset = new Vector3())
         {
+            int indexFirst = model.Vertices.Count;
             if (polygon == null)
             {
-                return;
+                return indexFirst;
             }
             int vertCountPrev = model.Vertices.Count;
             Vertex[] verts = new Vertex[polygon.Points.Count];
@@ -171,6 +182,7 @@ namespace Game
                 }
                 model.AddTriangle(index0 + vertCountPrev, index1 + vertCountPrev, index2 + vertCountPrev);
             }
+            return indexFirst;
         }
 
         public static Model CreateLines(Line[] lines)
@@ -210,6 +222,12 @@ namespace Game
         public static Model CreateLineStripWidth(Vector2[] vertices, float width, bool closed)
         {
             Model model = new Model();
+            AddLineStripWidth(model, vertices, width, closed);
+            return model;
+        }
+
+        public static void AddLineStripWidth(Model model, Vector2[] vertices, float width, bool closed)
+        {
             for (int i = 0; i < vertices.Length - 1; i++)
             {
                 AddLineWidth(model, vertices[i], vertices[i + 1], width);
@@ -218,7 +236,6 @@ namespace Game
             {
                 AddLineWidth(model, vertices[vertices.Length - 1], vertices[0], width);
             }
-            return model;
         }
 
         private static void AddLineWidth(Model model, Vector2 v0, Vector2 v1, float width)

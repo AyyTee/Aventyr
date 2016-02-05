@@ -78,6 +78,7 @@ namespace Game
             Renderer.Textures.Add("grid.png", Renderer.LoadImage(Path.Combine(textureFolder, "grid.png")));*/
             Renderer.Textures.Add("default.png", new TextureFile(Path.Combine(textureFolder, "default.png")));
             Renderer.Textures.Add("grid.png", new TextureFile(Path.Combine(textureFolder, "grid.png")));
+            Renderer.Textures.Add("lineBlur.png", new TextureFile(Path.Combine(textureFolder, "lineBlur.png")));
 
             //Create the default font
             System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();

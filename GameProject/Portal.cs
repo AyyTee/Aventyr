@@ -194,6 +194,7 @@ namespace Game
 
         public void SetLinked(Portal portal)
         {
+            Debug.Assert(Scene == portal.Scene, "Linked portals must be in the same Scene.");
             if (Linked != portal)
             {
                 if (Linked != null)

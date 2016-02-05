@@ -46,7 +46,6 @@ namespace Game
             background.Transform.Position = new Vector3(0, 0, -10f);
             float size = 100;
             background.Transform.Scale = new Vector3(size, size, size);
-            //background.TransformUv.Scale = new Vector2(size, size);
             background.TransformUv.Size = size;
             Entity back = new Entity(scene, new Vector2(0f, 0f));
             back.AddModel(background);
@@ -152,6 +151,7 @@ namespace Game
             #endregion
             //new Serializer().Deserialize(scene, "blah.save", "blah_phys.save");
             Camera2 cam = new Camera2(scene, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height);
+            //Camera2 cam = new Camera2(scene, new Transform2(new Vector2(), 1), 1);
             //cam.SetRotation((float)Math.PI / 2);
             cam.SetParent(scene.FindByName("player"));
             scene.SetActiveCamera(cam);
@@ -189,7 +189,6 @@ namespace Game
                 rayBegin - player.GetTransform().Position, 
                 rayEnd - player.GetTransform().Position
                 }));
-            
 
             text2.RemoveAllModels();
             //text2.Models.Add(FontRenderer.GetModel(GC.GetTotalMemory(false).ToString()));

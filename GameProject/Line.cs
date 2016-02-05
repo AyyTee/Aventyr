@@ -34,14 +34,14 @@ namespace Game
 
         public Line(Vector2 lineStart, Vector2 lineEnd)
         {
-            Vertices[0] = lineStart;
-            Vertices[1] = lineEnd;
+            this[0] = lineStart;
+            this[1] = lineEnd;
         }
 
         public Line(Xna.Vector2 lineStart, Xna.Vector2 lineEnd)
         {
-            Vertices[0] = Vector2Ext.ConvertTo(lineStart);
-            Vertices[1] = Vector2Ext.ConvertTo(lineEnd);
+            this[0] = Vector2Ext.ConvertTo(lineStart);
+            this[1] = Vector2Ext.ConvertTo(lineEnd);
         }
 
         public Line(Vector2[] line)
@@ -52,8 +52,8 @@ namespace Game
         public Line(Vector2 center, float rotation, float length)
         {
             Vector2 offset = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * length;
-            Vertices[0] = center + offset;
-            Vertices[1] = center - offset;
+            this[0] = center + offset;
+            this[1] = center - offset;
         }
         #endregion
 
@@ -65,6 +65,7 @@ namespace Game
             }
             set
             {
+                Debug.Assert(Vector2Ext.IsReal(value));
                 Vertices[index] = value;
             }
         }
@@ -229,6 +230,11 @@ namespace Game
             return Intersects(polygon).Exists;
         }
 
+        public Line Translate(Vector2 offset)
+        {
+            return new Line(this[0] + offset, this[1] + offset);
+        }
+
         public float PointDistance(Vector2 point, bool isSegment)
         {
             Vector2 V;
@@ -354,6 +360,34 @@ namespace Game
             }
             intersect.Exists = false;
             return intersect;
+        }
+
+        public Line GetPerpendicularLeft(bool normalize = true)
+        {
+            Line p = new Line(Vertices[0], (Vertices[1] - Vertices[0]).PerpendicularLeft + Vertices[0]);
+            if (normalize)
+            {
+                p.Normalize();
+            }
+            return p;
+        }
+
+        public Line GetPerpendicularRight(bool normalize = true)
+        {
+            Line p = new Line(Vertices[0], (Vertices[1] - Vertices[0]).PerpendicularRight + Vertices[0]);
+            if (normalize)
+            {
+                p.Normalize();
+            }
+            return p;
+        }
+
+        /// <summary>Normalize this Line by moving its end point.</summary>
+        public void Normalize()
+        {
+            Vector2 normal = (Vertices[1] - Vertices[0]).Normalized();
+            Debug.Assert(Vector2Ext.IsReal(normal), "Unable to normalize 0 length vector.");
+            this[1] = normal + Vertices[0];
         }
     }
 }

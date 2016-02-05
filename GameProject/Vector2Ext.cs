@@ -15,6 +15,7 @@ namespace Game
         {
             return v0.X * v1.Y - v0.Y * v1.X;
         }
+
         public static Vector2 Transform(Vector2 vector, Matrix4 matrix)
         {
             Vector3 v = Vector3.Transform(new Vector3(vector.X, vector.Y, 1), matrix);
@@ -57,6 +58,22 @@ namespace Game
             foreach (Vector2 v in vectors)
             {
                 vList.Add(Vector2Ext.Transform(v, matrix));
+            }
+            return vList;
+        }
+
+        public static Vector2 Transform(Vector2 vector, Matrix4d matrix)
+        {
+            Vector3d v = Vector3d.Transform(new Vector3d(vector.X, vector.Y, 1), matrix);
+            return new Vector2((float)v.X, (float)v.Y);
+        }
+
+        public static Vector2[] Transform(Vector2[] vectors, Matrix4d matrix)
+        {
+            Vector2[] vList = new Vector2[vectors.Length];
+            for (int i = 0; i < vectors.Length; i++)
+            {
+                vList[i] = Vector2Ext.Transform(vectors[i], matrix);
             }
             return vList;
         }

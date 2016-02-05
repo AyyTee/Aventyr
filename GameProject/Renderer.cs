@@ -11,6 +11,7 @@ using System.Drawing.Imaging;
 using ClipperLib;
 using System.Diagnostics;
 using OpenTK.Input;
+using EmguWrapper;
 
 namespace Game
 {
@@ -212,10 +213,10 @@ namespace Game
                 Matrix4 portalMatrixNew = FixturePortal.GetPortalMatrix(p.Linked, p) * portalMatrix;
                 Matrix4 viewMatrixNew = portalMatrixNew * viewMatrix;
 
-                Line[] lines = p.GetFovLines(viewPos, 500);
+                Line[] lines = p.GetFovLines(viewPos, 6);
                 lines[0].Transform(portalMatrix);
                 lines[1].Transform(portalMatrix);
-                Line[] linesPrevious = p.GetFovLines(viewPosPrevious, 500);
+                Line[] linesPrevious = p.GetFovLines(viewPosPrevious, 6);
                 linesPrevious[0].Transform(portalMatrix);
                 linesPrevious[1].Transform(portalMatrix);
 
@@ -315,16 +316,46 @@ namespace Game
                 GL.Clear(ClearBufferMask.StencilBufferBit);
                 Clipper c = new Clipper();
                 c.StrictlySimple = true;
+
                 Model portalEdges = new Model();
+                Model portalEdgesFlat = new Model();
+                portalEdges.SetTexture(Textures["lineBlur.png"]);
+                SetEnable(EnableCap.Blend, true);
                 for (int i = 1; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        Vector2[] line0 = GetPortalEdge(portalViewList[i].FovLines[j], portalViewList[i].FovLinesPrevious[j], cam);
-                        c.AddPath(ClipperConvert.ToIntPoint(line0), PolyType.ptSubject, true);
-                        c.AddPaths(portalViewList[i].Parent.Paths, PolyType.ptClip, true);
+                        Line line = portalViewList[i].FovLines[j];
+                        const double maxAngle = 1f * Math.PI / 4;
+                        float angleScale = 0.5f;
+                        float minWidth = Math.Abs(cam.GetWorldTransform().Size) / 300;
+                        double angleDiff = Math.Abs(MathExt.AngleDiff(line.Angle(), portalViewList[i].FovLinesPrevious[j].Angle()) * angleScale);
+                        float widthEnd = (float)Math.Tan(/*Math.Min(angleDiff, maxAngle*/Math.PI/8) * line.Length;
+                        Vector2 vEnd0 = line[1] + line.GetNormal() * widthEnd / 2;
+                        Vector2 vEnd1 = line[1] - line.GetNormal() * widthEnd / 2;
+
+                        Vector2 camPos = cam.GetWorldTransform().Position;
+                        Vector2[] lineWidth = PolygonFactory.CreateLineWidth(line.Translate(-camPos), minWidth);
+                        Vector2[] lineTarget = PolygonFactory.CreateLineWidth(line.Translate(-camPos), minWidth, widthEnd);
+                        Matrix4d homography = MathExt.GetHomography(lineWidth, lineTarget);
+                        homography *= Matrix4d.CreateTranslation(new Vector3d((Vector2d)camPos));
+                        //Matrix4d homographyFlat = MathExt.GetHomography(lineWidth, lineTarget, true);
+                        Vector2[] lineWidthOffset = Vector2Ext.Transform(lineWidth, Matrix4.CreateTranslation(new Vector3(camPos)));
+                        ModelFactory.AddPolygon(portalEdgesFlat, lineWidthOffset);
+                        //Vector2[] lineTargetFlat = Vector2Ext.Transform(lineWidth, homographyFlat);
+                        c.AddPath(ClipperConvert.ToIntPoint(lineWidth), PolyType.ptSubject, true);
+                        /*for (int k = 0; k < portalViewList[i].Parent.Paths.Count; k++)
+                        {
+                            Vector2[] path = ClipperConvert.ToVector2(portalViewList[i].Parent.Paths[k]);
+                            //path = Vector2Ext.Transform(path, Matrix4.CreateScale(0.8f));
+                            path = Vector2Ext.Transform(path, MathExt.GetHomography(lineWidth, lineTarget, true));
+                            ModelFactory.AddLineStripWidth(portalEdgesFlat, path, 0.1f, true);
+                            c.AddPath(ClipperConvert.ToIntPoint(path), PolyType.ptClip, true);
+                        }*/
+
+                        //c.AddPaths(portalViewList[i].Parent.Paths, PolyType.ptClip, true);
                         List<List<IntPoint>> solution = new List<List<IntPoint>>();
-                        c.Execute(ClipType.ctIntersection, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+                        c.Execute(ClipType.ctUnion, solution, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
                         c.Clear();
 
                         c.AddPaths(solution, PolyType.ptSubject, true);
@@ -336,7 +367,13 @@ namespace Game
                             }
                             if (p.PortalLine.IsInsideFOV(cam.GetWorldViewpos(), portalViewList[i].PortalLine))
                             {
-                                c.AddPaths(p.Paths, PolyType.ptClip, true);
+                                /*for (int k = 0; k < p.Paths.Count; k++)
+                                {
+                                    Vector2[] path = ClipperConvert.ToVector2(p.Paths[k]);
+                                    path = Vector2Ext.Transform(path, homography.Inverted());
+                                    c.AddPath(ClipperConvert.ToIntPoint(path), PolyType.ptClip, true);
+                                }*/
+                                //c.AddPaths(p.Paths, PolyType.ptClip, true);
                             }
                         }
 
@@ -344,23 +381,35 @@ namespace Game
                         c.Execute(ClipType.ctDifference, solutionNew, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
                         c.Clear();
                         solutionNew = Clipper.CleanPolygons(solutionNew);
-                        ModelFactory.AddPolygon(portalEdges, solutionNew);
+
+                        int index = ModelFactory.AddPolygon(portalEdges, solutionNew);
+                        for (int k = index; k < portalEdges.Vertices.Count; k++)
+                        {
+                            Vertex vertex = portalEdges.Vertices[k];
+                            
+                            //vertex.Position = Vector3Ext.Transform(vertex.Position, homographyFlat);
+                            vertex.Position = Vector3Ext.Transform(vertex.Position, homography);
+                            vertex.Position.Z = cam.UnitZToWorld(vertex.Position.Z);
+                            //vertex.Position += new Vector3(Transform2.GetPosition(cam));
+
+                            Vector2 v = new Vector2(vertex.Position.X, vertex.Position.Y);
+                            double distance = line.GetPerpendicularLeft().PointDistance(v, false);
+                            double texCoordX = line.PointDistance(v, false) / minWidth;
+                            if (line.GetSideOf(v) == Line.Side.IsLeftOf)
+                            {
+                                texCoordX *= -1;
+                            }
+                            texCoordX += 0.5;
+                            vertex.TextureCoord = new Vector2((float)texCoordX, (float)(distance / line.Length));
+                        }
                     }
                 }
                 portalEdges.SetColor(PortalEdgeColor);
-                RenderModel(portalEdges, cam.GetViewMatrix(), Matrix4.Identity);
+                RenderModel(portalEdges, cam.GetViewMatrix(false), Matrix4.Identity);
+                //RenderModel(portalEdgesFlat, cam.GetViewMatrix(true), Matrix4.Identity);
+                SetEnable(EnableCap.Blend, false);
                 GL.Enable(EnableCap.DepthTest);
             }
-        }
-
-        private Vector2[] GetPortalEdge(Line line, Line linePrevious, Camera2 camera)
-        {
-            const double maxAngle = 0.9f * Math.PI / 4;
-            float angleScale = 0.5f;
-            float minWidth = Math.Abs(Transform2.GetSize(camera)) / 400;
-            double angleDiff0 = Math.Abs(MathExt.AngleDiff(line.Angle(), linePrevious.Angle()) * angleScale);
-            float widthEnd0 = (float)(Math.Tan(Math.Min(angleDiff0, maxAngle)) * line.Length + minWidth);
-            return PolygonFactory.CreateLineWidth(line, minWidth, widthEnd0);
         }
 
         private void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)

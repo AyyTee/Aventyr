@@ -82,17 +82,21 @@ namespace Game
 
         public void RayCast(SceneNodePlaceable placeable)
         {
-            _rayCast(placeable, placeable.GetVelocity().Position.Length, null);
-        }
-
-        private void _rayCast(SceneNodePlaceable placeable, double movementLeft, Portal portalPrevious)
-        {
-            Transform2 begin = placeable.GetTransform();
-            Transform2 velocity = placeable.GetVelocity();
-            if (velocity.Position.Length == 0)
+            if (placeable.GetVelocity().Position.Length == 0)
             {
                 return;
             }
+            _rayCast(placeable, placeable.GetVelocity().Position.Length, null, 50);
+        }
+
+        private void _rayCast(SceneNodePlaceable placeable, double movementLeft, Portal portalPrevious, int depthMax)
+        {
+            if (depthMax <= 0)
+            {
+                return;
+            }
+            Transform2 begin = placeable.GetTransform();
+            Transform2 velocity = placeable.GetVelocity();
             double distanceMin = movementLeft;
             Portal portalNearest = null;
             IntersectPoint intersectNearest = new IntersectPoint();
@@ -124,7 +128,7 @@ namespace Game
                 begin.Position = (Vector2)intersectNearest.Position;
                 placeable.SetTransform(begin);
                 portalNearest.Enter(placeable);
-                _rayCast(placeable, movementLeft, portalNearest.Linked);
+                _rayCast(placeable, movementLeft, portalNearest.Linked, depthMax - 1);
             }
             else
             {

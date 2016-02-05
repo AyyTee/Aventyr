@@ -21,7 +21,7 @@ namespace Editor
         public InputExt InputExt { get; private set; }
         public float ZoomMin = 0.5f;
         public float ZoomMax = 1000f;
-        public float KeyMoveSpeed = 0.13f;
+        public float KeyMoveSpeed = 0.013f;
         Queue<Vector2> lazyPan = new Queue<Vector2>();
 
         private float _zoomScrollFactor;
@@ -139,19 +139,19 @@ namespace Editor
                 Vector2 v = new Vector2();
                 if (InputExt.KeyDown(Key.Left))
                 {
-                    v += Camera.GetTransform().GetRight() * -KeyMoveSpeed * Transform2.GetScale(Camera).Length;
+                    v += Camera.GetTransform().GetRight() * -KeyMoveSpeed * Transform2.GetSize(Camera);
                 }
                 if (InputExt.KeyDown(Key.Right))
                 {
-                    v += Camera.GetTransform().GetRight() * KeyMoveSpeed * Transform2.GetScale(Camera).Length;
+                    v += Camera.GetTransform().GetRight() * KeyMoveSpeed * Transform2.GetSize(Camera);
                 }
                 if (InputExt.KeyDown(Key.Up))
                 {
-                    v += Camera.GetTransform().GetUp() * KeyMoveSpeed * Transform2.GetScale(Camera).Length;
+                    v += Camera.GetTransform().GetUp() * KeyMoveSpeed * Transform2.GetSize(Camera);
                 }
                 if (InputExt.KeyDown(Key.Down))
                 {
-                    v += Camera.GetTransform().GetUp() * -KeyMoveSpeed * Transform2.GetScale(Camera).Length;
+                    v += Camera.GetTransform().GetUp() * -KeyMoveSpeed * Transform2.GetSize(Camera);
                 }
                 if (InputExt.MouseInside && InputExt.MouseDown(MouseButton.Middle))
                 {

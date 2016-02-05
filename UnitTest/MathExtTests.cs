@@ -275,5 +275,134 @@ namespace UnitTest
             Assert.IsTrue(intersections.Length == 0);
         }
         #endregion
+
+        #region GetHomography tests
+        public Camera2 GetCamera()
+        {
+            return new Camera2(new Scene(), new Transform2(), 1.3333f);
+        }
+
+        [TestMethod]
+        public void GetHomographyTest0()
+        {
+            Vector2[] source = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(1, 1),
+                new Vector2(0, 1)
+            };
+            Vector2[] destination = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(1, 1),
+                new Vector2(0, 1)
+            };
+            Matrix4d homography = MathExt.GetHomography(source, destination);
+            Assert.IsTrue(homography.Equals(Matrix4d.Identity));
+        }
+
+        [TestMethod]
+        public void GetHomographyTest1()
+        {
+            Vector2[] source = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(1, 1),
+                new Vector2(0, 1)
+            };
+            Vector2[] destination = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(1, -1),
+                new Vector2(1, 2),
+                new Vector2(0, 1)
+            };
+            Matrix4d homography = MathExt.GetHomography(source, destination);
+            Vector3[] vectors = new Vector3[] {
+                new Vector3(source[0]),
+                new Vector3(source[1]),
+                new Vector3(source[2]),
+                new Vector3(source[3])
+            };
+            Vector3[] vectorsDestination = Vector3Ext.Transform(vectors, homography);
+
+            Camera2 camera = GetCamera();
+            for (int i = 0; i < vectorsDestination.Length; i++)
+            {
+                vectorsDestination[i].Z = camera.UnitZToWorld(vectorsDestination[i].Z);
+            }
+
+            for (int i = 0; i < vectors.Length; i++)
+            {
+                Vector2 offset = camera.GetOverlapOffset(vectorsDestination[i], new Vector3(destination[i]));
+                Assert.IsTrue(offset.Length < 0.001f);
+            }
+        }
+
+        /// <summary>
+        /// Correctly throw ExceptionInvalidPolygon if source and destination quads aren't both convex or concave.
+        /// </summary>
+        [TestMethod]
+        public void GetHomographyTest2()
+        {
+            Vector2[] source = new Vector2[] {
+                new Vector2(12, 50),
+                new Vector2(11, 0.01f),
+                new Vector2(-15, 11),
+                new Vector2(0, 100.5f)
+            };
+            Vector2[] destination = new Vector2[] {
+                new Vector2(10, -10),
+                new Vector2(41, -41),
+                new Vector2(0, 0),
+                new Vector2(0, 24)
+            };
+            try
+            {
+                Matrix4d homography = MathExt.GetHomography(source, destination);
+            }
+            catch (ExceptionInvalidPolygon)
+            {
+                return;
+            }
+            Assert.Fail();
+        }
+
+        [TestMethod]
+        public void GetHomographyTest3()
+        {
+            Vector2[] source = new Vector2[] {
+                new Vector2(15, -10),
+                new Vector2(10, 100),
+                new Vector2(-50, 95),
+                new Vector2(-50, -40)
+            };
+            Vector2[] destination = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(1, -1),
+                new Vector2(1, 2),
+                new Vector2(0, 1)
+            };
+            Matrix4d homography = MathExt.GetHomography(source, destination);
+            Vector3[] vectors = new Vector3[] {
+                new Vector3(source[0]),
+                new Vector3(source[1]),
+                new Vector3(source[2]),
+                new Vector3(source[3])
+            };
+            Vector3[] vectorsDestination = Vector3Ext.Transform(vectors, homography);
+
+            Camera2 camera = GetCamera();
+            for (int i = 0; i < vectorsDestination.Length; i++)
+            {
+                vectorsDestination[i].Z = camera.UnitZToWorld(vectorsDestination[i].Z);
+            }
+
+            for (int i = 0; i < vectors.Length; i++)
+            {
+                Vector2 offset = camera.GetOverlapOffset(vectorsDestination[i], new Vector3(destination[i]));
+                Assert.IsTrue(offset.Length < 0.001f);
+            }
+        }
+        #endregion
     }
 }

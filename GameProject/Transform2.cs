@@ -123,24 +123,24 @@ namespace Game
             return Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position));
         }
 
-        public Vector2 GetUp(bool normalizeValue = true)
+        public Vector2 GetUp(bool normalize = true)
         {
-            return GetVector(new Vector2(0, 1), normalizeValue);
+            return GetVector(new Vector2(0, 1), normalize);
         }
 
-        public Vector2 GetRight(bool normalizeValue = true)
+        public Vector2 GetRight(bool normalize = true)
         {
-            return GetVector(new Vector2(1, 0), normalizeValue);
+            return GetVector(new Vector2(1, 0), normalize);
         }
 
-        private Vector2 GetVector(Vector2 vector, bool normalizeValue)
+        private Vector2 GetVector(Vector2 vector, bool normalize)
         {
             Vector2[] v = new Vector2[2] {
                 new Vector2(0, 0),
                 vector
             };
             v = Vector2Ext.Transform(v, GetMatrix());
-            if (normalizeValue)
+            if (normalize)
             {
                 Debug.Assert(!Vector2Ext.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
                 return (v[1] - v[0]).Normalized();

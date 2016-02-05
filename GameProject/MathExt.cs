@@ -539,5 +539,124 @@ namespace Game
             // Return the result.
             return Math.Abs(area);
         }
+
+        /// <summary>
+        /// Check if a simple polygon is convex.
+        /// </summary>
+        /// <param name="polygon"></param>
+        /// <remarks>Original code was found here http://stackoverflow.com/questions/471962/how-do-determine-if-a-polygon-is-complex-convex-nonconvex </remarks>
+        public static bool IsConvex(Vector2[] polygon)
+        {
+            if (polygon.Length < 4)
+            {
+                return true;
+            }
+            bool sign = false;
+            int n = polygon.Length;
+            for (int i = 0; i < n; i++)
+            {
+                double dx1 = polygon[(i + 2) % n].X - polygon[(i + 1) % n].X;
+                double dy1 = polygon[(i + 2) % n].Y - polygon[(i + 1) % n].Y;
+                double dx2 = polygon[i].X - polygon[(i + 1) % n].X;
+                double dy2 = polygon[i].Y - polygon[(i + 1) % n].Y;
+                double zcrossproduct = dx1 * dy2 - dy1 * dx2;
+                if (i == 0)
+                {
+                    sign = zcrossproduct > 0;
+                }
+                else
+                {
+                    if (sign != (zcrossproduct > 0))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        public static Matrix4d GetHomography(Vector2[] src, Vector2[] dest)
+        {
+            Debug.Assert(src.Length == 4 && dest.Length == 4, "Source and destination quads must have 4 vertices each.");
+            if (IsConvex(src) != IsConvex(dest))
+            {
+                throw new ExceptionInvalidPolygon();
+            }
+            Matrix4d mat = QuadToSquare(src[0].X, src[0].Y, src[1].X, src[1].Y, src[2].X, src[2].Y, src[3].X, src[3].Y);
+            mat *= SquareToQuad(dest[0].X, dest[0].Y, dest[1].X, dest[1].Y, dest[2].X, dest[2].Y, dest[3].X, dest[3].Y);
+            
+            mat.Column2 = mat.Column3;
+            mat.Column3 = Matrix4d.Identity.Column3;
+            //mat.M34 = 1 - mat.M34;
+            /*mat.M43 = 0;
+            mat.M44 = 1;*/
+
+            return mat;
+        }
+
+        private static Matrix4d SquareToQuad(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3)
+        {
+            double dx1 = x1 - x2, dy1 = y1 - y2;
+            double dx2 = x3 - x2, dy2 = y3 - y2;
+            double sx = x0 - x1 + x2 - x3;
+            double sy = y0 - y1 + y2 - y3;
+            double g = (sx * dy2 - dx2 * sy) / (dx1 * dy2 - dx2 * dy1);
+            double h = (dx1 * sy - sx * dy1) / (dx1 * dy2 - dx2 * dy1);
+            double a = x1 - x0 + g * x1;
+            double b = x3 - x0 + h * x3;
+            double c = x0;
+            double d = y1 - y0 + g * y1;
+            double e = y3 - y0 + h * y3;
+            double f = y0;
+
+            Matrix4d mat = new Matrix4d();
+            mat.M11 = a; mat.M12 = d; mat.M13 = 0; mat.M14 = g;
+            mat.M21 = b; mat.M22 = e; mat.M23 = 0; mat.M24 = h;
+            mat.M31 = 0; mat.M32 = 0; mat.M33 = 1; mat.M34 = 0;
+            mat.M41 = c; mat.M42 = f; mat.M43 = 0; mat.M44 = 1;
+            /*mat.M11 = a; mat.M12 = d; mat.M13 = 0; mat.M14 = g;
+            mat.M21 = b; mat.M22 = e; mat.M23 = 0; mat.M24 = h;
+            mat.M31 = c; mat.M32 = f; mat.M33 = 1; mat.M34 = 0;
+            mat.M41 = 0; mat.M42 = 0; mat.M43 = 0; mat.M44 = 1;*/
+            return mat;
+        }
+
+        private static Matrix4d QuadToSquare(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3)
+        {
+             Matrix4d mat = SquareToQuad(x0, y0, x1, y1, x2, y2, x3, y3);
+
+            //invert through adjoint
+            double a = mat.M11, d = mat.M12,	/*ignore*/ 	g = mat.M14;
+            double b = mat.M21, e = mat.M22, /*3rd col*/	h = mat.M24;
+            /*ignore 3rd row*/
+            double c = mat.M41, f = mat.M42;
+
+            //double a = mat.M11, d = mat.M12,	/*ignore*/ 	g = mat.M14;
+            //double b = mat.M21, e = mat.M22, /*3rd col*/	h = mat.M24;
+            //double c = mat.M31, f = mat.M32;
+            /*ignore 4th row*/
+            
+            double a1 = e - f * h;
+            double b1 = c * h - b;
+            double c1 = b * f - c * e;
+            double d1 = f * g - d;
+            double e1 = a - c * g;
+            double f1 = c * d - a * f;
+            double g1 = d * h - e * g;
+            double h1 = b * g - a * h;
+            double i1 = a * e - b * d;
+
+            double idet = 1.0f / (a * a1 + b * d1 + c * g1);
+
+            mat.M11 = a1 * idet;    mat.M12 = d1 * idet;    mat.M13 = 0; mat.M14 = g1 * idet;
+            mat.M21 = b1 * idet;    mat.M22 = e1 * idet;    mat.M23 = 0; mat.M24 = h1 * idet;
+            mat.M31 = 0;            mat.M32 = 0;            mat.M33 = 1; mat.M34 = 0;
+            mat.M41 = c1 * idet;    mat.M42 = f1 * idet;    mat.M43 = 0; mat.M44 = i1 * idet;
+            /*mat.M11 = a1 * idet;    mat.M12 = d1 * idet;    mat.M13 = 0; mat.M14 = g1 * idet;
+            mat.M21 = b1 * idet;    mat.M22 = e1 * idet;    mat.M23 = 0; mat.M24 = h1 * idet;
+            mat.M31 = c1 * idet;    mat.M32 = f1 * idet;    mat.M33 = 1; mat.M34 = i1 * idet;
+            mat.M41 = 0;            mat.M42 = 0;            mat.M43 = 0; mat.M44 = 1;*/
+            return mat;
+        }
     }
 }
