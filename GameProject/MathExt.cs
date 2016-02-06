@@ -582,8 +582,8 @@ namespace Game
             {
                 throw new ExceptionInvalidPolygon();
             }
-            Matrix4d mat = QuadToSquare(src[0].X, src[0].Y, src[1].X, src[1].Y, src[2].X, src[2].Y, src[3].X, src[3].Y);
-            mat *= SquareToQuad(dest[0].X, dest[0].Y, dest[1].X, dest[1].Y, dest[2].X, dest[2].Y, dest[3].X, dest[3].Y);
+            Matrix4d mat = QuadToSquare(src[0], src[1], src[2], src[3]);
+            mat *= SquareToQuad(dest[0], dest[1], dest[2], dest[3]);
             
             mat.Column2 = mat.Column3;
             mat.Column3 = Matrix4d.Identity.Column3;
@@ -594,36 +594,32 @@ namespace Game
             return mat;
         }
 
-        private static Matrix4d SquareToQuad(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3)
+        private static Matrix4d SquareToQuad(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3)
         {
-            double dx1 = x1 - x2, dy1 = y1 - y2;
-            double dx2 = x3 - x2, dy2 = y3 - y2;
-            double sx = x0 - x1 + x2 - x3;
-            double sy = y0 - y1 + y2 - y3;
+            double dx1 = v1.X - v2.X, dy1 = v1.Y - v2.Y;
+            double dx2 = v3.X - v2.X, dy2 = v3.Y - v2.Y;
+            double sx = v0.X - v1.X + v2.X - v3.X;
+            double sy = v0.Y - v1.Y + v2.Y - v3.Y;
             double g = (sx * dy2 - dx2 * sy) / (dx1 * dy2 - dx2 * dy1);
             double h = (dx1 * sy - sx * dy1) / (dx1 * dy2 - dx2 * dy1);
-            double a = x1 - x0 + g * x1;
-            double b = x3 - x0 + h * x3;
-            double c = x0;
-            double d = y1 - y0 + g * y1;
-            double e = y3 - y0 + h * y3;
-            double f = y0;
+            double a = v1.X - v0.X + g * v1.X;
+            double b = v3.X - v0.X + h * v3.X;
+            double c = v0.X;
+            double d = v1.Y - v0.Y + g * v1.Y;
+            double e = v3.Y - v0.Y + h * v3.Y;
+            double f = v0.Y;
 
             Matrix4d mat = new Matrix4d();
             mat.M11 = a; mat.M12 = d; mat.M13 = 0; mat.M14 = g;
             mat.M21 = b; mat.M22 = e; mat.M23 = 0; mat.M24 = h;
             mat.M31 = 0; mat.M32 = 0; mat.M33 = 1; mat.M34 = 0;
             mat.M41 = c; mat.M42 = f; mat.M43 = 0; mat.M44 = 1;
-            /*mat.M11 = a; mat.M12 = d; mat.M13 = 0; mat.M14 = g;
-            mat.M21 = b; mat.M22 = e; mat.M23 = 0; mat.M24 = h;
-            mat.M31 = c; mat.M32 = f; mat.M33 = 1; mat.M34 = 0;
-            mat.M41 = 0; mat.M42 = 0; mat.M43 = 0; mat.M44 = 1;*/
             return mat;
         }
 
-        private static Matrix4d QuadToSquare(double x0, double y0, double x1, double y1, double x2, double y2, double x3, double y3)
+        private static Matrix4d QuadToSquare(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3)
         {
-             Matrix4d mat = SquareToQuad(x0, y0, x1, y1, x2, y2, x3, y3);
+            Matrix4d mat = SquareToQuad(v0, v1, v2, v3);
 
             //invert through adjoint
             double a = mat.M11, d = mat.M12,	/*ignore*/ 	g = mat.M14;
@@ -631,11 +627,6 @@ namespace Game
             /*ignore 3rd row*/
             double c = mat.M41, f = mat.M42;
 
-            //double a = mat.M11, d = mat.M12,	/*ignore*/ 	g = mat.M14;
-            //double b = mat.M21, e = mat.M22, /*3rd col*/	h = mat.M24;
-            //double c = mat.M31, f = mat.M32;
-            /*ignore 4th row*/
-            
             double a1 = e - f * h;
             double b1 = c * h - b;
             double c1 = b * f - c * e;
@@ -652,11 +643,37 @@ namespace Game
             mat.M21 = b1 * idet;    mat.M22 = e1 * idet;    mat.M23 = 0; mat.M24 = h1 * idet;
             mat.M31 = 0;            mat.M32 = 0;            mat.M33 = 1; mat.M34 = 0;
             mat.M41 = c1 * idet;    mat.M42 = f1 * idet;    mat.M43 = 0; mat.M44 = i1 * idet;
-            /*mat.M11 = a1 * idet;    mat.M12 = d1 * idet;    mat.M13 = 0; mat.M14 = g1 * idet;
-            mat.M21 = b1 * idet;    mat.M22 = e1 * idet;    mat.M23 = 0; mat.M24 = h1 * idet;
-            mat.M31 = c1 * idet;    mat.M32 = f1 * idet;    mat.M33 = 1; mat.M34 = i1 * idet;
-            mat.M41 = 0;            mat.M42 = 0;            mat.M43 = 0; mat.M44 = 1;*/
             return mat;
         }
+
+        /*public static Vector2 QuadToUV(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3, Vector2 p)
+        {
+            return QuadToUV(new Vector2[] {v0, v1, v2, v3}, p);
+        }
+
+        public static Vector2 QuadToUV(Vector2[] quad, Vector2 p)
+        {
+            Debug.Assert(quad.Length == 4);
+            quad = SetHandedness(quad, true);
+            Vector2 v0, v1, v2, v3;
+            v0 = quad[0];
+            v1 = quad[1];
+            v2 = quad[2];
+            v3 = quad[3];
+            double C = (double)(v0.Y - p.Y) * (v3.X - p.X) - (double)(v0.X - p.X) * (v3.Y - p.Y);
+            double B = (double)(v0.Y - p.Y) * (v2.X - v3.X) + (double)(v1.Y - v0.Y) * (v3.X - p.X) - (double)(v0.X - p.X) * (v2.Y - v3.Y) - (double)(v1.X - v0.X) * (v3.Y - p.Y);
+            double A = (double)(v1.Y - v0.Y) * (v2.X - v3.X) - (double)(v1.X - v0.X) * (v2.Y - v3.Y);
+
+            double D = B * B - 4 * A * C;
+
+            double u = (-B - Math.Sqrt(D)) / (2 * A);
+
+            double p1x = v0.X + (v1.X - v0.X) * u;
+            double p2x = v3.X + (v2.X - v3.X) * u;
+            double px = p.X;
+
+            double v = (px - p1x) / (p2x - p1x);
+            return new Vector2((float)u, (float)v);
+        }*/
     }
 }

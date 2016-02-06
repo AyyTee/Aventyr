@@ -253,12 +253,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EmguWrapper\EmguWrapper.csproj">
-      <Project>{f4c3d0ae-b7a1-491f-9f8c-2d9bf9d1f1a1}</Project>
-      <Name>EmguWrapper</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
