@@ -41,6 +41,17 @@ namespace Editor
             Marker.AddModel(circle);
         }
 
+        public virtual EditorObject Clone(EditorScene scene)
+        {
+            EditorObject clone = new EditorObject(scene);
+            Clone(clone);
+            return clone;
+        }
+
+        protected virtual void Clone(EditorObject destination)
+        {
+        }
+
         [OnDeserialized]
         private void Deserialize(StreamingContext stream)
         {

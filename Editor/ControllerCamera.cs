@@ -91,26 +91,27 @@ namespace Editor
 
             //Handle user input for zooming the camera.
             {
+                float scale = Transform2.GetSize(Camera);
                 if (InputExt.MouseInside)
                 {
                     if (InputExt.MouseWheelDelta() != 0)
                     {
-                        float scale = Transform2.GetSize(Camera) / (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta());
-                        scale = MathHelper.Clamp(Math.Abs(scale), ZoomMin, ZoomMax) * Math.Sign(Transform2.GetSize(Camera));
-                        Transform2.SetSize(Camera, scale);
+                        scale /= (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta());
                         isMoved = true;
                     }
                 }
                 if (InputExt.KeyPress(Key.KeypadPlus) || InputExt.KeyPress(Key.Plus))
                 {
-                    //Camera.Zoom = MathHelper.Clamp(Camera.Zoom / ZoomFactor, ZoomMin, ZoomMax);
+                    scale /= ZoomFactor;
                     isMoved = true;
                 }
                 if (InputExt.KeyPress(Key.KeypadMinus) || InputExt.KeyPress(Key.Minus))
                 {
-                    //Camera.Zoom = MathHelper.Clamp(Camera.Zoom * ZoomFactor, ZoomMin, ZoomMax);
+                    scale *= ZoomFactor;
                     isMoved = true;
                 }
+                scale = MathHelper.Clamp(Math.Abs(scale), ZoomMin, ZoomMax) * Math.Sign(Transform2.GetSize(Camera));
+                Transform2.SetSize(Camera, scale);
             }
 
             //Handle user input to reset the camera's orientation and center it on the current selected object if it exists.
@@ -139,19 +140,19 @@ namespace Editor
                 Vector2 v = new Vector2();
                 if (InputExt.KeyDown(Key.Left))
                 {
-                    v += Camera.GetTransform().GetRight() * -KeyMoveSpeed * Transform2.GetSize(Camera);
+                    v += Camera.GetTransform().GetRight() * -KeyMoveSpeed * Math.Abs(Transform2.GetSize(Camera));
                 }
                 if (InputExt.KeyDown(Key.Right))
                 {
-                    v += Camera.GetTransform().GetRight() * KeyMoveSpeed * Transform2.GetSize(Camera);
+                    v += Camera.GetTransform().GetRight() * KeyMoveSpeed * Math.Abs(Transform2.GetSize(Camera));
                 }
                 if (InputExt.KeyDown(Key.Up))
                 {
-                    v += Camera.GetTransform().GetUp() * KeyMoveSpeed * Transform2.GetSize(Camera);
+                    v += Camera.GetTransform().GetUp() * KeyMoveSpeed * Math.Abs(Transform2.GetSize(Camera));
                 }
                 if (InputExt.KeyDown(Key.Down))
                 {
-                    v += Camera.GetTransform().GetUp() * -KeyMoveSpeed * Transform2.GetSize(Camera);
+                    v += Camera.GetTransform().GetUp() * -KeyMoveSpeed * Math.Abs(Transform2.GetSize(Camera));
                 }
                 if (InputExt.MouseInside && InputExt.MouseDown(MouseButton.Middle))
                 {

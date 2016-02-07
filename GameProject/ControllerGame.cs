@@ -59,16 +59,15 @@ namespace Game
             Transform2 transform = portalEntity2.GetTransform();
             transform.Rotation = 1f;
             transform.Position = new Vector2(2.1f, 2f);
-            //transform.Scale = new Vector2(-1.5f, 1.5f);
             transform.Size = 1.5f;
-            //transform.IsMirrored = true;
+            transform.IsMirrored = true;
             portalEntity2.SetTransform(transform);
 
             Portal portal2 = new FloatPortal(scene);
             portal2.SetParent(portalEntity2);
             portal2.OneSided = true;
             portal2.Name = "portal2";
-            //portal2.IsMirrored = true;
+            portal2.IsMirrored = true;
 
             Entity portalEntity3 = new Entity(scene);
             portalEntity3.IsPortalable = false;

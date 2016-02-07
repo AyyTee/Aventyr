@@ -132,7 +132,8 @@ namespace Game
             List<List<IntPoint>> paths = new List<List<IntPoint>>();
             paths.Add(view);
             PortalView portalView = new PortalView(null, camera.GetViewMatrix(), view, new Line[0], new Line[0]);
-            CalculatePortalViews(null, portals, camera.GetViewMatrix(), camera.GetWorldViewpos(), camera.GetWorldViewpos() - camera.GetWorldVelocity().Position, depth, portalView, Matrix4.Identity);
+            Vector2 camPos = camera.GetWorldTransform().Position;
+            CalculatePortalViews(null, portals, camera.GetViewMatrix(), camPos, camPos - camera.GetWorldVelocity().Position, depth, portalView, Matrix4.Identity);
             return portalView;
         }
 
@@ -269,8 +270,6 @@ namespace Game
             {
                 depth = PortalRenderDepth;
             }
-            Vector2 viewPos = cam.GetWorldViewpos();
-            Vector2 viewPosPrevious = cam.GetWorldViewpos() - cam.GetWorldVelocity().Position;
             PortalView portalView = CalculatePortalViews(scene.PortalList.ToArray(), cam, depth);
             List<PortalView> portalViewList = portalView.GetPortalViewList(PortalRenderMax);
 

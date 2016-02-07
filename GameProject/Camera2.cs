@@ -26,9 +26,9 @@ namespace Game
                 _aspect = value;
             }
         }
-        /// <summary>Position used for casting line of sight rays for portals</summary>
+        /// <summary>View offset in clip space coordinates [-1,1].</summary>
         [DataMember]
-        public Vector2 Viewpos { get; set; }
+        public Vector2 ViewOffset { get; set; }
         [DataMember]
         public float ZNear { get; set; }
         [DataMember]
@@ -54,7 +54,7 @@ namespace Game
             Aspect = aspectRatio;
             ZNear = -10000f;
             ZFar = 10000f;
-            Viewpos = new Vector2();
+            ViewOffset = new Vector2();
         }
         #endregion
 
@@ -70,16 +70,9 @@ namespace Game
             base.Clone(destination);
             Camera2 destinationCast = (Camera2)destination;
             destinationCast.Aspect = Aspect;
-            //destinationCast.Zoom = Zoom;
             destinationCast.ZNear = ZNear;
             destinationCast.ZFar = ZFar;
-            destinationCast.Viewpos = Viewpos;
-        }
-
-        public Vector2 GetWorldViewpos()
-        {
-            Transform2 transform = GetWorldTransform();
-            return transform.Position + Viewpos;
+            destinationCast.ViewOffset = ViewOffset;
         }
 
         /// <summary>
@@ -93,14 +86,26 @@ namespace Game
             Vector3 lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
             Vector3 eye;
             Matrix4 perspective;
+
+            float x, y;
+            x = ViewOffset.X / 2;
+            y = ViewOffset.Y / 2;
             if (isOrtho)
             {
-                perspective = Matrix4.CreateOrthographic(transform.Scale.X * Aspect, transform.Scale.Y, ZNear, ZFar);
+                float width, height;
+                width = transform.Scale.X * Aspect;
+                height = transform.Scale.Y;
+                x *= transform.Scale.X * Aspect;
+                y *= transform.Scale.Y;
+                perspective = Matrix4.CreateOrthographicOffCenter(x - width / 2, x + width / 2, y - height / 2, y + height / 2, ZNear, ZFar);
                 eye = new Vector3(transform.Position) + new Vector3(0, 0, 5000);
             }
             else
             {
-                perspective = Matrix4.CreatePerspectiveFieldOfView((float)fov, Aspect, 0.01f, ZFar);
+                //For some reason things don't line up unless we scale things by this value.
+                const float a = 1/50f;
+                x *= Aspect / a;
+                perspective = Matrix4.CreatePerspectiveOffCenter(-Aspect * a / 2 + x, Aspect * a / 2 + x, -a / 2 + y, a / 2 + y, 0.01f, ZFar);
                 perspective = Matrix4.CreateScale(transform.Scale.X, transform.Scale.Y, Math.Abs(transform.Size)) * perspective;
                 eye = new Vector3(transform.Position) + new Vector3(0, 0, (float)GetWorldZ());
             }
@@ -169,7 +174,7 @@ namespace Game
 
         public float UnitZToWorld(float z)
         {
-            return (1 - z) * (float)GetWorldZ(); //(float)(z * GetWorldZ());//
+            return (1 - z) * (float)GetWorldZ();
         }
 
         //get xy world offset needed to make v appear to overlap target in screen space.
