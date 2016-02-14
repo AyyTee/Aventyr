@@ -15,7 +15,7 @@ namespace Editor
     public class ControllerEditor : Controller
     {
         public Scene Hud, Back;
-        public EditorScene Level;
+        public EditorScene Level, Clipboard;
         public ControllerCamera CamControl { get; private set; }
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
         public event EditorObjectHandler EntityAdded;
@@ -52,6 +52,7 @@ namespace Editor
             Hud = new Scene();
             Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
             renderer.AddScene(Hud);
+            Clipboard = new EditorScene(new Scene());
             /*debugText = new Entity(Hud);
             debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
             */

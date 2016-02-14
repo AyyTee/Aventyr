@@ -63,6 +63,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <OutputPath>bin\Release\</OutputPath>
@@ -140,10 +141,12 @@
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="ClipperExt.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
+    <Compile Include="IDeepClone.cs" />
     <Compile Include="ILerp.cs" />
     <Compile Include="ITexture.cs" />
     <Compile Include="ITransform2.cs" />
     <Compile Include="ITreeNode.cs" />
+    <Compile Include="ReadOnlyMesh.cs" />
     <Compile Include="ModelLoader.cs" />
     <Compile Include="ControllerGame.cs" />
     <Compile Include="EdgeData.cs" />
@@ -186,6 +189,7 @@
     <Compile Include="Model.cs" />
     <Compile Include="Transform2.cs" />
     <Compile Include="Tree.cs" />
+    <Compile Include="Triangle.cs" />
     <Compile Include="Vector2Ext.cs" />
     <Compile Include="Vector3Ext.cs" />
     <Compile Include="Vertex.cs" />

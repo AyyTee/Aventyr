@@ -15,7 +15,7 @@ namespace Editor
         {
         }
 
-        protected override IEnumerable<Type> GetKnownTypes()
+        /*protected override IEnumerable<Type> GetKnownTypes()
         {
             var types = base.GetKnownTypes();
             var editorTypes = from t in Assembly.GetExecutingAssembly().GetTypes()
@@ -24,6 +24,6 @@ namespace Editor
             List<Type> typeList = types.ToList();
             typeList.AddRange(editorTypes);
             return typeList;
-        }
+        }*/
     }
 }

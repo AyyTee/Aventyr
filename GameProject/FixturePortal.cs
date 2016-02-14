@@ -45,10 +45,10 @@ namespace Game
             }
         }
 
-        public override SceneNode Clone(Scene scene)
+        public override IDeepClone ShallowClone()
         {
-            FixturePortal clone = new FixturePortal(scene);
-            Clone(clone);
+            FixturePortal clone = new FixturePortal(Scene);
+            ShallowClone(clone);
             return clone;
         }
 

@@ -21,7 +21,7 @@ namespace Game
         public const string fileExtension = "save";
         public const string fileExtensionName = "Save File";
 
-        public Serializer()
+        /*public Serializer()
         {
         }
 
@@ -101,6 +101,6 @@ namespace Game
             return from t in Assembly.GetExecutingAssembly().GetTypes()
                    where Attribute.IsDefined(t, typeof(DataContractAttribute))
                    select t;
-        }
+        }*/
     }
 }

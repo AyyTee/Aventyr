@@ -20,7 +20,7 @@ namespace Editor
         public EditorPortal(EditorScene editorScene)
             : base(editorScene)
         {
-            PortalEntity = new Entity(EditorScene.Scene);
+            PortalEntity = new Entity(Scene.Scene);
             PortalEntity.SetParent(Marker);
             Model arrow0, arrow1;
             arrow0 = ModelFactory.CreateArrow(new Vector3(0, -0.5f, 0), new Vector2(0, 1), 0.05f, 0.2f, 0.1f);
@@ -29,23 +29,37 @@ namespace Editor
             arrow1 = ModelFactory.CreateArrow(new Vector3(), new Vector2(0.2f, 0), 0.05f, 0.2f, 0.1f);
             arrow1.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
             PortalEntity.AddModel(arrow1);
-            Portal = new FloatPortal(EditorScene.Scene);
+            Portal = new FloatPortal(Scene.Scene);
             Portal.SetParent(Marker);
         }
 
-        /*protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
+        public override IDeepClone ShallowClone()
         {
-            base.DeepCloneFinalize(cloneMap);
-            EditorPortal clone = (EditorPortal)cloneMap[this];
-            clone.Portal = (FloatPortal)cloneMap[Portal];
-            clone.PortalEntity = (Entity)cloneMap[PortalEntity];
+            EditorPortal clone = new EditorPortal(Scene);
+            ShallowClone(clone);
+            return clone;
         }
 
-        public override SceneNode Clone(Scene scene)
+        protected override void ShallowClone(EditorObject destination)
         {
-            EditorPortal clone = new EditorPortal(scene);
-            Clone(clone);
-            return clone;
-        }*/
+            base.ShallowClone(destination);
+            EditorPortal destinationCast = (EditorPortal)destination;
+            destinationCast.Portal = Portal;
+            destinationCast.PortalEntity = PortalEntity;
+        }
+
+        public override List<IDeepClone> GetCloneableRefs()
+        {
+            List<IDeepClone> list = base.GetCloneableRefs();
+            list.Add((IDeepClone)Portal);
+            list.Add((IDeepClone)PortalEntity);
+            return list;
+        }
+
+        public override void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
+        {
+            Portal = (FloatPortal)cloneMap[(IDeepClone)Portal];
+            PortalEntity = (Entity)cloneMap[(IDeepClone)PortalEntity];
+        }
     }
 }

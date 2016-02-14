@@ -53,6 +53,11 @@ namespace Game
             Normal = normal;
         }
 
+        public Vertex ShallowClone()
+        {
+            return new Vertex(Position, TextureCoord, Color, Normal);
+        }
+
         public Vertex Lerp(Vertex v1, float t)
         {
             return Lerp(this, v1, t);
@@ -69,18 +74,32 @@ namespace Game
         }
 
         /// <summary>
-        /// Returns true if a vertex has the same position, normal, color, and texture coordinate as this.
+        /// Returns true if a pair of vertices have the same position, normal, color, and texture coordinate.
         /// </summary>
-        public bool Compare(Vertex vertex)
+        public bool Equals(Vertex vertex)
         {
-            if (vertex.Position == Position && 
-                vertex.Normal == Normal && 
-                vertex.TextureCoord == TextureCoord && 
+            if (vertex.Position == Position &&
+                vertex.Normal == Normal &&
+                vertex.TextureCoord == TextureCoord &&
                 vertex.Color == Color)
             {
                 return true;
             }
             return false;
+        }
+
+        public override bool Equals(object vertex)
+        {
+            if (vertex is Vertex)
+            {
+                return Equals((Vertex)vertex);
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

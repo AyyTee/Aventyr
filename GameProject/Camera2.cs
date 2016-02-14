@@ -34,7 +34,7 @@ namespace Game
         [DataMember]
         public float ZFar { get; set; }
 
-        public const double fov = Math.PI/2;
+        public const double fov = Math.PI/4;
 
         #region Constructors
         public Camera2(Scene scene)
@@ -58,16 +58,16 @@ namespace Game
         }
         #endregion
 
-        public override SceneNode Clone(Scene scene)
+        public override IDeepClone ShallowClone()
         {
-            Camera2 clone = new Camera2(scene);
-            Clone(clone);
+            Camera2 clone = new Camera2(Scene);
+            ShallowClone(clone);
             return clone;
         }
 
-        protected override void Clone(SceneNode destination)
+        protected override void ShallowClone(SceneNode destination)
         {
-            base.Clone(destination);
+            base.ShallowClone(destination);
             Camera2 destinationCast = (Camera2)destination;
             destinationCast.Aspect = Aspect;
             destinationCast.ZNear = ZNear;
@@ -102,8 +102,8 @@ namespace Game
             }
             else
             {
-                //For some reason things don't line up unless we scale things by this value.
-                const float a = 1/50f;
+                //For some reason things don't line up unless we scale by this value.
+                float a = (float)(Math.Tan(fov / 2) / 50);
                 x *= Aspect / a;
                 perspective = Matrix4.CreatePerspectiveOffCenter(-Aspect * a / 2 + x, Aspect * a / 2 + x, -a / 2 + y, a / 2 + y, 0.01f, ZFar);
                 perspective = Matrix4.CreateScale(transform.Scale.X, transform.Scale.Y, Math.Abs(transform.Size)) * perspective;

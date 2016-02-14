@@ -18,22 +18,29 @@ namespace Editor
         public EditorEntity(EditorScene editorScene)
             : base(editorScene)
         {
-            Entity = new Entity(EditorScene.Scene);
+            Entity = new Entity(Scene.Scene);
             Entity.SetParent(Marker);
         }
 
-        /*protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
+        public override IDeepClone ShallowClone()
         {
-            base.DeepCloneFinalize(cloneMap);
-            EditorEntity clone = (EditorEntity)cloneMap[this];
-            clone.Entity = (Entity)cloneMap[Entity];
-        }*/
-
-        /*public override SceneNode Clone(Scene scene)
-        {
-            EditorEntity clone = new EditorEntity(scene);
-            Clone(clone);
+            EditorEntity clone = new EditorEntity(Scene);
+            ShallowClone(clone);
             return clone;
-        }*/
+        }
+
+        protected override void ShallowClone(EditorObject destination)
+        {
+            base.ShallowClone(destination);
+            EditorEntity destinationCast = (EditorEntity)destination;
+            destinationCast.Entity = Entity;
+        }
+
+        public override List<IDeepClone> GetCloneableRefs()
+        {
+            List<IDeepClone> list = base.GetCloneableRefs();
+            list.Add((IDeepClone)Entity);
+            return list;
+        }
     }
 }

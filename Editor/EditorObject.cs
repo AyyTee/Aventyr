@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 namespace Editor
 {
     [DataContract]
-    public class EditorObject : ITreeNode<EditorObject>, ITransform2
+    public class EditorObject : ITreeNode<EditorObject>, ITransform2, IDeepClone
     {
-        public readonly EditorScene EditorScene;
+        public EditorScene Scene { get; private set; }
 
         public Entity Marker { get; private set; }
         public bool IsSelected { get; private set; }
@@ -25,14 +25,14 @@ namespace Editor
         public EditorObject(EditorScene editorScene)
         {
             Debug.Assert(editorScene != null);
-            EditorScene = editorScene;
-            SetParent(EditorScene.Root);
+            Scene = editorScene;
+            SetParent(Scene.Root);
             SetMarker();
         }
 
         private void SetMarker()
         {
-            Marker = new Entity(EditorScene.Scene);
+            Marker = new Entity(Scene.Scene);
             //Marker.SetParent(this);
             Marker.DrawOverPortals = true;
             Model circle = ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
@@ -41,21 +41,38 @@ namespace Editor
             Marker.AddModel(circle);
         }
 
-        public virtual EditorObject Clone(EditorScene scene)
+        public virtual void SetScene(EditorScene scene)
         {
-            EditorObject clone = new EditorObject(scene);
-            Clone(clone);
+            Scene = scene;
+        }
+
+        public virtual List<IDeepClone> GetCloneableRefs()
+        {
+            return new List<IDeepClone>(Children);
+        }
+
+        public virtual void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
+        {
+            List<EditorObject> children = Children;
+            _children.Clear();
+            foreach (EditorObject e in children)
+            {
+                _children.Add((EditorObject)cloneMap[e]);
+            }
+        }
+
+        public virtual IDeepClone ShallowClone()
+        {
+            EditorObject clone = new EditorObject(Scene);
+            ShallowClone(clone);
             return clone;
         }
 
-        protected virtual void Clone(EditorObject destination)
+        protected virtual void ShallowClone(EditorObject destination)
         {
-        }
-
-        [OnDeserialized]
-        private void Deserialize(StreamingContext stream)
-        {
-            SetMarker();
+            destination._children = Children;
+            destination.IsSelected = IsSelected;
+            destination.SetTransform(GetTransform());
         }
 
         public virtual void SetParent(EditorObject parent)
@@ -67,18 +84,11 @@ namespace Editor
             Parent = parent;
             if (Parent != null)
             {
-                Debug.Assert(parent.EditorScene == EditorScene, "Parent cannot be in a different scene.");
+                Debug.Assert(parent.Scene == Scene, "Parent cannot be in a different scene.");
                 parent._children.Add(this);
             }
             Debug.Assert(!Tree<EditorObject>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
         }
-
-        /*protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
-        {
-            base.DeepCloneFinalize(cloneMap);
-            EditorObject clone = (EditorObject)cloneMap[this];
-            clone.Marker = (Entity)cloneMap[Marker];
-        }*/
 
         public virtual void SetTransform(Transform2 transform)
         {

@@ -53,16 +53,16 @@ namespace Game
         }
         #endregion
 
-        public override SceneNode Clone(Scene scene)
+        public override IDeepClone ShallowClone()
         {
-            Entity clone = new Entity(scene);
-            Clone(clone);
+            Entity clone = new Entity(Scene);
+            ShallowClone(clone);
             return clone;
         }
 
-        protected override void Clone(SceneNode destination)
+        protected override void ShallowClone(SceneNode destination)
         {
-            base.Clone(destination);
+            base.ShallowClone(destination);
             Entity destinationCast = (Entity)destination;
             destinationCast.IsPortalable = IsPortalable;
             destinationCast._models = ModelList;

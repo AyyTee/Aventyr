@@ -298,15 +298,6 @@ namespace UnitTest
             Vector2[] source = GetSquare();
             Vector2[] destination = GetSquare();
             Matrix4d homography = MathExt.GetHomography(source, destination);
-            Assert.IsTrue(homography.Equals(Matrix4d.Identity));
-        }
-
-        [TestMethod]
-        public void GetHomographyTest1()
-        {
-            Vector2[] source = GetSquare();
-            Vector2[] destination = GetSquare();
-            Matrix4d homography = MathExt.GetHomography(source, destination);
             Vector3[] vectors = new Vector3[] {
                 new Vector3(source[0]),
                 new Vector3(source[1]),
@@ -329,7 +320,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void GetHomographyTest2()
+        public void GetHomographyTest1()
         {
             Vector2[] source = GetSquare();
             Vector2[] destination = new Vector2[] {
@@ -364,7 +355,7 @@ namespace UnitTest
         /// Correctly throw ExceptionInvalidPolygon if source and destination quads aren't both convex or concave.
         /// </summary>
         [TestMethod]
-        public void GetHomographyTest3()
+        public void GetHomographyTest2()
         {
             Vector2[] source = new Vector2[] {
                 new Vector2(12, 50),
@@ -390,7 +381,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void GetHomographyTest4()
+        public void GetHomographyTest3()
         {
             Vector2[] source = new Vector2[] {
                 new Vector2(15, -10),
@@ -425,50 +416,6 @@ namespace UnitTest
                 Assert.IsTrue(offset.Length < 0.001f);
             }
         }
-        #endregion
-
-        #region QuadToUV tests
-        /*[TestMethod]
-        public void QuadToUVTest0()
-        {
-            Vector2 testPoint = new Vector2();
-            Vector2 uv = MathExt.QuadToUV(GetSquare(), testPoint);
-            Assert.IsTrue(uv == testPoint);
-        }
-
-        [TestMethod]
-        public void QuadToUVTest1()
-        {
-            Vector2 testPoint = new Vector2(0, 1);
-            Vector2 uv = MathExt.QuadToUV(GetSquare(), testPoint);
-            Assert.IsTrue(uv == testPoint);
-        }
-
-        [TestMethod]
-        public void QuadToUVTest2()
-        {
-            Vector2 testPoint = new Vector2(1, 0);
-            Vector2 uv = MathExt.QuadToUV(GetSquare(), testPoint);
-            Assert.IsTrue(uv == testPoint);
-        }
-
-        [TestMethod]
-        public void QuadToUVTest3()
-        {
-            Vector2 testPoint = new Vector2(1, 0);
-            Vector2[] square = GetSquare();
-            Vector2 uv = MathExt.QuadToUV(square[0], square[1], square[2], square[3], testPoint);
-            Assert.IsTrue(uv == testPoint);
-        }
-
-        [TestMethod]
-        public void QuadToUVTest4()
-        {
-            Vector2 testPoint = new Vector2(2, -99);
-            Vector2[] square = GetSquare();
-            Vector2 uv = MathExt.QuadToUV(square[0], square[1], square[2], square[3], testPoint);
-            Assert.IsTrue(uv == testPoint);
-        }*/
         #endregion
     }
 }

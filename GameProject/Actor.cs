@@ -31,22 +31,31 @@ namespace Game
             BodyId = body.BodyId;
         }
 
-        public override SceneNode Clone(Scene scene)
+        public override IDeepClone ShallowClone()
         {
-            Actor clone = new Actor(scene, Body.DeepClone(scene.World));
-            Clone(clone);
+            Actor clone = new Actor(Scene, Body.DeepClone(Scene.World));
+            ShallowClone(clone);
             return clone;
         }
 
-        protected override void Clone(SceneNode destination)
+        protected override void ShallowClone(SceneNode destination)
         {
-            base.Clone(destination);
+            base.ShallowClone(destination);
             Actor destinationCast = (Actor)destination;
             BodyUserData bodyData = BodyExt.SetUserData(destinationCast.Body, destinationCast);
             foreach (Fixture f in destinationCast.Body.FixtureList)
             {
                 FixtureUserData fixtureData = FixtureExt.SetUserData(f);
             }
+        }
+
+        public override void SetScene(Scene scene)
+        {
+            Debug.Assert(scene != null);
+            Body BodyClone = Body.DeepClone(scene.World);
+            Scene.World.RemoveBody(Body);
+            Body = BodyClone;
+            base.SetScene(scene);
         }
 
         public override void Remove()

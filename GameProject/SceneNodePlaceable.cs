@@ -28,16 +28,16 @@ namespace Game
         {
         }
 
-        public override SceneNode Clone(Scene scene)
+        public override IDeepClone ShallowClone()
         {
-            SceneNodePlaceable clone = new SceneNodePlaceable(scene);
-            Clone(clone);
+            SceneNodePlaceable clone = new SceneNodePlaceable(Scene);
+            ShallowClone(clone);
             return clone;
         }
 
-        protected override void Clone(SceneNode destination)
+        protected override void ShallowClone(SceneNode destination)
         {
-            base.Clone(destination);
+            base.ShallowClone(destination);
             SceneNodePlaceable destinationCast = (SceneNodePlaceable)destination;
             destinationCast.SetTransform(GetTransform());
         }

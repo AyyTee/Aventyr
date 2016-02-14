@@ -45,18 +45,18 @@ namespace Game
             SetSize(1f);
         }
 
-        protected override void Clone(SceneNode destination)
+        protected override void ShallowClone(SceneNode destination)
         {
-            base.Clone(destination);
+            base.ShallowClone(destination);
             Portal destinationCast = (Portal)destination;
             destinationCast.Size = Size;
             destinationCast.OneSided = OneSided;
             destinationCast.IsMirrored = IsMirrored;
         }
 
-        protected override void DeepCloneFinalize(Dictionary<SceneNode, SceneNode> cloneMap)
+        public override void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
         {
-            base.DeepCloneFinalize(cloneMap);
+            base.UpdateRefs(cloneMap);
             Portal clone = (Portal)cloneMap[this];
             if (Linked != null && cloneMap.ContainsKey(Linked))
             {

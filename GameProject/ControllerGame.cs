@@ -158,7 +158,7 @@ namespace Game
             renderer.AddScene(scene);
             renderer.AddScene(hud);
 
-            new Serializer().Serialize(scene.Root, "blah.save", "blah_phys.save");
+            //new Serializer().Serialize(scene.Root, "blah.save", "blah_phys.save");
         }
 
         public override void OnRenderFrame(FrameEventArgs e)

@@ -111,7 +111,7 @@ namespace Editor
             ControllerEditor.AddAction(() =>
                 {
                     string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
-                    new Serializer().Serialize(ControllerEditor.Back.Root, filename, physFilename);
+                    //new Serializer().Serialize(ControllerEditor.Back.Root, filename, physFilename);
                 });
         }
 
@@ -121,7 +121,7 @@ namespace Editor
                 {
                     ControllerEditor.NewLevel();
                     string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
-                    new Serializer().Deserialize(ControllerEditor.Back, filename, physFilename);
+                    //new Serializer().Deserialize(ControllerEditor.Back, filename, physFilename);
                 });
         }
 

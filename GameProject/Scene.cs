@@ -19,8 +19,6 @@ namespace Game
     public class Scene
     {
         public World World { get; private set; }
-        /// <summary>Number of unique ids that have been used for SceneNodes within this scene.</summary>
-        int _idCount = 0;
         PhysContactListener _contactListener;
 
         public Camera2 ActiveCamera { get; private set; }
@@ -180,13 +178,6 @@ namespace Game
             return Root.FindByName(name);
         }
 
-        /// <summary>Get a unique SceneNode id.</summary>
-        public int GetId()
-        {
-            _idCount++;
-            return _idCount - 1;
-        }
-
         public void SetActiveCamera(Camera2 camera)
         {
             Debug.Assert(camera.Scene == this);
@@ -202,22 +193,6 @@ namespace Game
             World = world;
             World.ProcessChanges();
             _contactListener = new PhysContactListener(this);
-        }
-
-        public Scene DeepClone()
-        {
-            return DeepClone(new Scene());
-        }
-
-        /// <summary>
-        /// Clones everything into a new scene.
-        /// </summary>
-        /// <param name="scene">Scene to clone into.</param>
-        /// <returns></returns>
-        public Scene DeepClone(Scene scene)
-        {
-            Root.DeepClone(scene);
-            return scene;
         }
     }
 }

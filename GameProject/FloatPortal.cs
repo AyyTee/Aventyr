@@ -19,10 +19,10 @@ namespace Game
         {
         }
 
-        public override SceneNode Clone(Scene scene)
+        public override IDeepClone ShallowClone()
         {
-            FloatPortal clone = new FloatPortal(scene);
-            Clone(clone);
+            FloatPortal clone = new FloatPortal(Scene);
+            ShallowClone(clone);
             return clone;
         }
 

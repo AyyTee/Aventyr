@@ -22,7 +22,6 @@ namespace Game
         public int PortalRenderDepth { get; set; }
         public int PortalRenderMax { get; set; }
         public int PortalClipDepth { get; set; }
-        public Vector3 PortalEdgeColor { get; set; }
         ShaderProgram _activeShader;
         Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
 
@@ -45,7 +44,6 @@ namespace Game
             PortalRenderDepth = 5;
             PortalRenderMax = 50;
             PortalClipDepth = 4;
-            PortalEdgeColor = new Vector3(0.1f, 0.1f, 0.1f);
         }
 
         public static void Init()
@@ -390,7 +388,6 @@ namespace Game
                         }
                     }
                 }
-                portalEdges.SetColor(PortalEdgeColor);
                 RenderModel(portalEdges, cam.GetViewMatrix(false), Matrix4.Identity);
                 SetEnable(EnableCap.Blend, false);
                 GL.Enable(EnableCap.DepthTest);

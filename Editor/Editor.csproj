@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -103,6 +104,7 @@
     <Compile Include="ControllerCamera.cs" />
     <Compile Include="ControllerEditor.cs" />
     <Compile Include="DrawDepths.cs" />
+    <Compile Include="EditorClone.cs" />
     <Compile Include="EditorEntity.cs" />
     <Compile Include="EditorObject.cs" />
     <Compile Include="EditorPortal.cs" />
