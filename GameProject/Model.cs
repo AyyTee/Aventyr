@@ -13,7 +13,7 @@ namespace Game
     /// An object made up of vertices
     /// </summary>
     [DataContract]
-    public class Model : IDisposable, IVertices
+    public class Model : IDisposable, IShallowClone<Model>
     {
         static object _lockDelete = new object();
         public static object LockDelete { get { return _lockDelete; } }
@@ -115,6 +115,17 @@ namespace Game
             }
         }
 
+        public Model ShallowClone()
+        {
+            Model clone = new Model();
+            clone.Vertices = new List<Vertex>(Vertices);
+            clone.Triangles = new List<Triangle>(Triangles);
+            clone.Transform = Transform.ShallowClone();
+            clone.Texture = Texture;
+            clone.TransformUv = TransformUv.ShallowClone();
+            return clone;
+        }
+
         public void SetTexture(ITexture texture)
         {
             Texture = texture;
@@ -125,9 +136,10 @@ namespace Game
         /// </summary>
         public void SetColor(Vector3 color)
         {
-            foreach (Vertex v in Vertices)
+            for (int i = 0; i < Vertices.Count; i++)
             {
-                v.Color = color;
+                Vertex v = Vertices[i];
+                Vertices[i] = new Vertex(v.Position, v.TextureCoord, color, v.Normal);
             }
         }
 

@@ -52,21 +52,22 @@ namespace Editor
                 Vector2 mousePos = Controller.GetMouseWorldPosition();
                 if (_vertices.Count >= 3 && (mousePos - _vertices[0]).Length < 0.1f)
                 {
-                    EditorEntity entity = new EditorEntity(Controller.Level);// Controller.CreateLevelEntity();
+                    Entity entity = new Entity(Controller.Level.Scene);
+                    EditorEntity editorEntity = new EditorEntity(Controller.Level, entity);// Controller.CreateLevelEntity();
                     Vector2 average = new Vector2(_vertices.Average(item => item.X), _vertices.Average(item => item.Y));
                     for (int i = 0; i < _vertices.Count; i++)
                     {
                         _vertices[i] -= average;
                     }
-                    Transform2.SetPosition(entity, average);
+                    Transform2.SetPosition(editorEntity, average);
                     //Actor actor = ActorFactory.CreateEntityPolygon(Controller.Level, new Transform2D(average), _vertices.ToArray());
-                    entity.Entity.IsPortalable = true;
-                    entity.Entity.AddModel(ModelFactory.CreatePolygon(_vertices.ToArray()));
-                    entity.Entity.ModelList[0].Wireframe = true;
-                    //entity.Entity.Models[0].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
-                    //entity.Entity.Models[0].SetShader("default");
-                    entity.Entity.AddModel(ModelFactory.CreatePolygon(_vertices.ToArray()));
-                    entity.Entity.ModelList[1].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
+                    entity.IsPortalable = true;
+                    entity.AddModel(ModelFactory.CreatePolygon(_vertices.ToArray()));
+                    entity.ModelList[0].Wireframe = true;
+                    //entity.Models[0].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
+                    //entity.Models[0].SetShader("default");
+                    entity.AddModel(ModelFactory.CreatePolygon(_vertices.ToArray()));
+                    entity.ModelList[1].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
                     //entity.Entity.Models[1].SetShader("default");
                     _vertices.Clear();
                     _entity.RemoveAllModels();

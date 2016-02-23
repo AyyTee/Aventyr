@@ -28,6 +28,7 @@ namespace Game
         #region Constructors
         public SceneNode(Scene scene)
         {
+            Name = "";
             Debug.Assert(scene != null);
             Scene = scene;
             if (Scene != null)
@@ -44,10 +45,11 @@ namespace Game
             return clone;
         }
 
-        protected virtual void ShallowClone(SceneNode destination)
+        protected void ShallowClone(SceneNode destination)
         {
+            destination.Parent = Parent;
             destination._children = Children;
-            destination.Name = Name;
+            destination.Name = Name + " Clone";
         }
 
         public virtual List<IDeepClone> GetCloneableRefs()
@@ -57,6 +59,18 @@ namespace Game
 
         public virtual void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
         {
+            if (Parent != null)
+            {
+                if (cloneMap.ContainsKey(Parent))
+                {
+                    Parent = (SceneNode)cloneMap[Parent];
+                }
+                else
+                {
+                    Parent = Scene.Root;
+                }
+            }
+            
             List<SceneNode> children = Children;
             _children.Clear();
             foreach (SceneNode e in children)
@@ -82,7 +96,15 @@ namespace Game
 
         public virtual void SetScene(Scene scene)
         {
-            Scene = scene;
+            if (Parent == Scene.Root)
+            {
+                Scene = scene;
+                SetParent(scene.Root);
+            }
+            else
+            {
+                Scene = scene;
+            }
         }
 
         public void RemoveChildren()
@@ -93,9 +115,10 @@ namespace Game
             }
         }
 
-        /// <summary>Remove from scene graph.</summary>
+        /// <summary>Remove from scene.</summary>
         public virtual void Remove()
         {
+            Debug.Assert(Parent != null);
             SetParent(null);
             //RemoveChildren();
         }

@@ -60,12 +60,14 @@ namespace Game
             return clone;
         }
 
-        protected override void ShallowClone(SceneNode destination)
+        protected void ShallowClone(Entity destination)
         {
             base.ShallowClone(destination);
-            Entity destinationCast = (Entity)destination;
-            destinationCast.IsPortalable = IsPortalable;
-            destinationCast._models = ModelList;
+            destination.IsPortalable = IsPortalable;
+            foreach (Model m in ModelList)
+            {
+                destination._models.Add(m.ShallowClone());
+            }
         }
 
         public void AddModel(Model model)

@@ -25,7 +25,7 @@ namespace Editor
 
         public Transform2 GetTransform()
         {
-            return _transform.Clone();
+            return _transform.ShallowClone();
         }
     }
 }

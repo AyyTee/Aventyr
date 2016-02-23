@@ -13,10 +13,23 @@ namespace Editor
     [DataContract]
     public class EditorObject : ITreeNode<EditorObject>, ITransform2, IDeepClone
     {
-        public EditorScene Scene { get; private set; }
+        EditorScene _scene;
+        public EditorScene Scene 
+        { 
+            get
+            {
+                if (_scene == null)
+                {
+                    return Parent.Scene;
+                }
+                return _scene;
+            }
+            private set { _scene = value; }
+        }
 
         public Entity Marker { get; private set; }
         public bool IsSelected { get; private set; }
+        public string Name { get; set; }
 
         List<EditorObject> _children = new List<EditorObject>();
         public List<EditorObject> Children { get { return new List<EditorObject>(_children); } }
@@ -24,15 +37,24 @@ namespace Editor
 
         public EditorObject(EditorScene editorScene)
         {
+            Name = "";
             Debug.Assert(editorScene != null);
-            Scene = editorScene;
-            SetParent(Scene.Root);
+            SetParent(editorScene);
+            SetMarker();
+        }
+
+        public EditorObject(EditorObject entity)
+        {
+            Name = "";
+            Debug.Assert(entity != null);
+            SetParent(entity);
             SetMarker();
         }
 
         private void SetMarker()
         {
             Marker = new Entity(Scene.Scene);
+            Marker.Name = "Marker";
             //Marker.SetParent(this);
             Marker.DrawOverPortals = true;
             Model circle = ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
@@ -43,22 +65,37 @@ namespace Editor
 
         public virtual void SetScene(EditorScene scene)
         {
+            Scene.Children.Remove(this);
             Scene = scene;
+            Scene.Children.Add(this);
+            Marker.SetScene(scene.Scene);
         }
 
         public virtual List<IDeepClone> GetCloneableRefs()
         {
-            return new List<IDeepClone>(Children);
+            List<IDeepClone> list = new List<IDeepClone>();
+            list.AddRange(Children);
+            //list.Add(Marker);
+            return list;
         }
 
         public virtual void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
         {
+            if (Parent != null && cloneMap.ContainsKey(Parent))
+            {
+                Parent = (EditorObject)cloneMap[Parent];
+            }
+            else
+            {
+                Parent = null;
+            }
             List<EditorObject> children = Children;
             _children.Clear();
             foreach (EditorObject e in children)
             {
                 _children.Add((EditorObject)cloneMap[e]);
             }
+            //Marker = (Entity)cloneMap[Marker];
         }
 
         public virtual IDeepClone ShallowClone()
@@ -68,25 +105,34 @@ namespace Editor
             return clone;
         }
 
-        protected virtual void ShallowClone(EditorObject destination)
+        protected void ShallowClone(EditorObject destination)
         {
             destination._children = Children;
             destination.IsSelected = IsSelected;
             destination.SetTransform(GetTransform());
+            destination.Name = Name + " Clone";
+        }
+
+        public virtual void SetParent(EditorScene scene)
+        {
+            Debug.Assert(scene != null);
+            RemoveSelf();
+            Scene = scene;
+            Scene.Children.Add(this);
+            Parent = null;
         }
 
         public virtual void SetParent(EditorObject parent)
         {
-            if (Parent != null)
+            Debug.Assert(parent != null);
+            RemoveSelf();
+            /*if (Parent != null)
             {
                 Parent._children.Remove(this);
-            }
+            }*/
             Parent = parent;
-            if (Parent != null)
-            {
-                Debug.Assert(parent.Scene == Scene, "Parent cannot be in a different scene.");
-                parent._children.Add(this);
-            }
+            parent._children.Add(this);
+            Scene = null;
             Debug.Assert(!Tree<EditorObject>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
         }
 
@@ -105,10 +151,24 @@ namespace Editor
             return Marker.GetTransform();
         }
 
-        public void Remove()
+        private void RemoveSelf()
         {
-            SetParent(null);
-            Marker.SetParent(null);
+            if (Parent != null)
+            {
+                Parent._children.Remove(this);
+                Parent = null;
+            }
+            if (_scene != null)
+            {
+                _scene.Children.Remove(this);
+                Scene = null;
+            }
+        }
+
+        public virtual void Remove()
+        {
+            RemoveSelf();
+            Marker.Remove();
         }
 
         public virtual void SetSelected(bool isSelected)

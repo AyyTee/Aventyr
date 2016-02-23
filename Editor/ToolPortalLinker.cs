@@ -28,8 +28,9 @@ namespace Editor
             }
             else if (_input.MousePress(MouseButton.Left))
             {
-                EditorPortal portal = (EditorPortal)Controller.GetNearestObject(Controller.GetMouseWorldPosition(), 
-                    item => item.GetType() == typeof(EditorPortal));
+                Vector2 mousePos = Controller.GetMouseWorldPosition();
+                EditorPortal portal = (EditorPortal)Controller.GetNearestObject(mousePos,
+                    item => item.GetType() == typeof(EditorPortal) && (mousePos - Transform2.GetPosition(item)).Length < 1);
                 if (portal != null && portal != _portalPrevious)
                 {
                     if (_portalPrevious == null)

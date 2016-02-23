@@ -36,10 +36,13 @@ namespace Editor
                 /*EditorEntity entity = Controller.CreateLevelEntity();
                 entity.SetPosition(Controller.GetMouseWorldPosition());
                 EntityFactory.CreateEntityBox(entity.Entity, new Vector2());*/
-                EditorEntity editorEntity = new EditorEntity(Controller.Level);//_controller.CreateLevelEntity();
-                editorEntity.Entity.AddModel(ModelFactory.CreateCube());
-                editorEntity.Entity.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
-                editorEntity.Entity.IsPortalable = true;
+                Entity entity = new Entity(Controller.Level.Scene);
+                entity.AddModel(ModelFactory.CreateCube());
+                entity.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
+                entity.IsPortalable = true;
+                EditorEntity editorEntity = new EditorEntity(Controller.Level, entity);
+                editorEntity.Name = "Editor Entity";
+                
                 Transform2.SetPosition(editorEntity, Controller.GetMouseWorldPosition());
                 Controller.selection.Set(editorEntity);
 

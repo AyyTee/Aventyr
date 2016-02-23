@@ -65,14 +65,13 @@ namespace Game
             return clone;
         }
 
-        protected override void ShallowClone(SceneNode destination)
+        protected void ShallowClone(Camera2 destination)
         {
             base.ShallowClone(destination);
-            Camera2 destinationCast = (Camera2)destination;
-            destinationCast.Aspect = Aspect;
-            destinationCast.ZNear = ZNear;
-            destinationCast.ZFar = ZFar;
-            destinationCast.ViewOffset = ViewOffset;
+            destination.Aspect = Aspect;
+            destination.ZNear = ZNear;
+            destination.ZFar = ZFar;
+            destination.ViewOffset = ViewOffset;
         }
 
         /// <summary>

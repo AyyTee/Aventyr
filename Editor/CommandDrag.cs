@@ -18,19 +18,19 @@ namespace Editor
             {
                 _modified.Add(new MementoDrag(e));
             }
-            _transform = transform.Clone();
+            _transform = transform.ShallowClone();
         }
 
         public CommandDrag(List<MementoDrag> modified, Transform2 transform)
         {
             _modified.UnionWith(modified);
-            _transform = transform.Clone();
+            _transform = transform.ShallowClone();
         }
 
         public CommandDrag(HashSet<MementoDrag> modified, Transform2 transform)
         {
             _modified.UnionWith(modified);
-            _transform = transform.Clone();
+            _transform = transform.ShallowClone();
         }
 
         public void Do()

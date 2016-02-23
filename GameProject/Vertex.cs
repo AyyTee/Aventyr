@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class Vertex : ILerp<Vertex>
+    public class Vertex
     {
         [DataMember]
-        public Vector3 Position;
+        public readonly Vector3 Position;
         [DataMember]
-        public Vector3 Color;
+        public readonly Vector3 Color;
         [DataMember]
-        public Vector2 TextureCoord;
+        public readonly Vector2 TextureCoord;
         [DataMember]
-        public Vector3 Normal;
+        public readonly Vector3 Normal;
 
         public Vertex()
             : this(new Vector3())
@@ -58,7 +58,7 @@ namespace Game
             return new Vertex(Position, TextureCoord, Color, Normal);
         }
 
-        public Vertex Lerp(Vertex v1, float t)
+        /*public Vertex Lerp(Vertex v1, float t)
         {
             return Lerp(this, v1, t);
         }
@@ -71,7 +71,7 @@ namespace Game
             vNew.TextureCoord = MathExt.Lerp(v0.TextureCoord, v1.TextureCoord, t);
             vNew.Color = MathExt.Lerp(v0.Color, v1.Color, t);
             return vNew;
-        }
+        }*/
 
         /// <summary>
         /// Returns true if a pair of vertices have the same position, normal, color, and texture coordinate.

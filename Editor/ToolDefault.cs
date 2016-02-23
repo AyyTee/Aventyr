@@ -53,7 +53,7 @@ namespace Editor
             List<EditorObject> selected = Controller.selection.GetAll();
             if (_dragState == DragState.Neither)
             {
-                if (_input.KeyDown(InputExt.KeyBoth.Control) && _input.KeyPress(Key.P))
+                /*if (_input.KeyDown(InputExt.KeyBoth.Control) && _input.KeyPress(Key.P))
                 {
                     EditorObject first = Controller.selection.First;
                     foreach (EditorObject e in Controller.selection.GetAll())
@@ -62,6 +62,18 @@ namespace Editor
                         {
                             e.SetParent(first);
                         }
+                    }
+                }*/
+                if (_input.KeyDown(InputExt.KeyBoth.Control))
+                {
+                    if (_input.KeyPress(Key.C))
+                    {
+                        List<IDeepClone> cloneList = new List<IDeepClone>(Controller.selection.GetAll());
+                        EditorClone.DeepClone(cloneList, Controller.Clipboard);
+                    }
+                    else if (_input.KeyPress(Key.V))
+                    {
+                        EditorClone.DeepClone(Controller.Clipboard, Controller.Level);
                     }
                 }
                 if (_input.MousePress(MouseButton.Right))

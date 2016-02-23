@@ -26,7 +26,7 @@ namespace Editor
 
         public virtual void Redo()
         {
-            _editorObject.SetParent(_editorObject.Scene.Root);
+            _editorObject.SetParent(_editorObject.Scene);
             _editorObject.Marker.SetParent(_editorObject.Scene.Scene.Root);
             _controller.selection.Set(_editorObject);
         }

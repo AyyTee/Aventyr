@@ -157,7 +157,8 @@ namespace Game
             Vector3 offset = new Vector3((float)Math.Round(-x0 * alignment.X), (float)Math.Round(charHeight * (1 - alignment.Y)), 0);
             for (int i = 0; i < vertices.Length; i++)
             {
-                vertices[i].Position += offset;
+                Vector3 pos = vertices[i].Position + offset;
+                vertices[i] = new Vertex(pos, vertices[i].TextureCoord);
             }
             textModel.Vertices.AddRange(vertices);
             //textModel.Indices.AddRange(indices);

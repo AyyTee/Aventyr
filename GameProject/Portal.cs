@@ -45,22 +45,21 @@ namespace Game
             SetSize(1f);
         }
 
-        protected override void ShallowClone(SceneNode destination)
+        protected void ShallowClone(Portal destination)
         {
             base.ShallowClone(destination);
-            Portal destinationCast = (Portal)destination;
-            destinationCast.Size = Size;
-            destinationCast.OneSided = OneSided;
-            destinationCast.IsMirrored = IsMirrored;
+            destination.Size = Size;
+            destination.OneSided = OneSided;
+            destination.IsMirrored = IsMirrored;
         }
 
         public override void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
         {
             base.UpdateRefs(cloneMap);
-            Portal clone = (Portal)cloneMap[this];
+            //Portal clone = (Portal)cloneMap[this];
             if (Linked != null && cloneMap.ContainsKey(Linked))
             {
-                clone.SetLinked((Portal)cloneMap[Linked]);
+                SetLinked((Portal)cloneMap[Linked]);
             }
         }
 
@@ -194,7 +193,7 @@ namespace Game
 
         public void SetLinked(Portal portal)
         {
-            Debug.Assert(Scene == portal.Scene, "Linked portals must be in the same Scene.");
+            Debug.Assert(portal == null || Scene == portal.Scene, "Linked portals must be in the same Scene.");
             if (Linked != portal)
             {
                 if (Linked != null)

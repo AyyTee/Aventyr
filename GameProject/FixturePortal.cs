@@ -11,7 +11,7 @@ using Xna = Microsoft.Xna.Framework;
 namespace Game
 {
     [DataContract]
-    public class FixturePortal : Portal, IVertices2
+    public class FixturePortal : Portal
     {
         [DataMember]
         public FixtureEdgeCoord Position { get; private set; }

@@ -142,7 +142,7 @@
     <Compile Include="ClipperExt.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="IDeepClone.cs" />
-    <Compile Include="ILerp.cs" />
+    <Compile Include="IShallowClone.cs" />
     <Compile Include="ITexture.cs" />
     <Compile Include="ITransform2.cs" />
     <Compile Include="ITreeNode.cs" />
@@ -159,8 +159,6 @@
     <Compile Include="FontRenderer.cs" />
     <Compile Include="InputExt.cs" />
     <Compile Include="FixtureEdgeCoord.cs" />
-    <Compile Include="IVertices.cs" />
-    <Compile Include="IVertices2.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="MathExt.cs" />
     <Compile Include="Matrix4Ext.cs" />

@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 namespace Game
 {
     [DataContract]
-    public class Transform2
+    public class Transform2 : IShallowClone<Transform2>
     {
         [DataMember]
         Vector2 _position = new Vector2();
@@ -103,7 +103,7 @@ namespace Game
         }
         #endregion
 
-        public Transform2 Clone()
+        public Transform2 ShallowClone()
         {
             Transform2 clone = new Transform2();
             clone.Position = Position;
@@ -150,7 +150,7 @@ namespace Game
 
         public Transform2 Transform(Transform2 transform)
         {
-            Transform2 output = Clone();
+            Transform2 output = ShallowClone();
             output.Rotation += transform.Rotation;
             output.Size *= transform.Size;
             output.IsMirrored = output.IsMirrored != transform.IsMirrored;
@@ -160,7 +160,7 @@ namespace Game
 
         public Transform2 Add(Transform2 transform)
         {
-            Transform2 output = Clone();
+            Transform2 output = ShallowClone();
             output.Rotation += transform.Rotation;
             output.Size *= transform.Size;
             output.IsMirrored = output.IsMirrored != transform.IsMirrored;
@@ -171,7 +171,7 @@ namespace Game
         /// <summary>Subtracts transfrom from this.</summary>
         public Transform2 Subtract(Transform2 transform)
         {
-            Transform2 output = Clone();
+            Transform2 output = ShallowClone();
             output.Rotation -= transform.Rotation;
             output.Size /= transform.Size;
             output.IsMirrored = output.IsMirrored != transform.IsMirrored;

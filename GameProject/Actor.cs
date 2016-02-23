@@ -38,12 +38,11 @@ namespace Game
             return clone;
         }
 
-        protected override void ShallowClone(SceneNode destination)
+        protected void ShallowClone(Actor destination)
         {
             base.ShallowClone(destination);
-            Actor destinationCast = (Actor)destination;
-            BodyUserData bodyData = BodyExt.SetUserData(destinationCast.Body, destinationCast);
-            foreach (Fixture f in destinationCast.Body.FixtureList)
+            BodyUserData bodyData = BodyExt.SetUserData(destination.Body, destination);
+            foreach (Fixture f in destination.Body.FixtureList)
             {
                 FixtureUserData fixtureData = FixtureExt.SetUserData(f);
             }

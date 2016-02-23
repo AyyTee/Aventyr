@@ -372,10 +372,12 @@ namespace Game
                         for (int k = index; k < portalEdges.Vertices.Count; k++)
                         {
                             Vertex vertex = portalEdges.Vertices[k];
-                            
-                            vertex.Position = Vector3Ext.Transform(vertex.Position, homography);
-                            vertex.Position.Z = cam.UnitZToWorld(vertex.Position.Z);
+                            Vector3 pos = Vector3Ext.Transform(vertex.Position, homography);
+                            pos.Z = cam.UnitZToWorld(pos.Z);
+                            /*vertex.Position = Vector3Ext.Transform(vertex.Position, homography);
+                            vertex.Position.Z = cam.UnitZToWorld(vertex.Position.Z);*/
 
+                            Vector2 texCoord;
                             Vector2 v = new Vector2(vertex.Position.X, vertex.Position.Y);
                             double distance = line.GetPerpendicularLeft().PointDistance(v, false);
                             double texCoordX = line.PointDistance(v, false) / minWidth;
@@ -384,7 +386,9 @@ namespace Game
                                 texCoordX *= -1;
                             }
                             texCoordX += 0.5;
-                            vertex.TextureCoord = new Vector2((float)texCoordX, (float)(distance / line.Length));
+                            texCoord = new Vector2((float)texCoordX, (float)(distance / line.Length));
+
+                            portalEdges.Vertices[k] = new Vertex(pos, texCoord);
                         }
                     }
                 }

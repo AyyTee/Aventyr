@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public class ClipperExt<T> where T : ILerp<T>
+    public class ClipperExt<T>
     {
         Clipper _clipper = new Clipper();
         List<T> _data = new List<T>();
@@ -32,7 +32,7 @@ namespace Game
                     Debug.Assert(index0 != NULL_POINTER && index1 != NULL_POINTER);
                     float t = new Line(ToVector2(e1Top), ToVector2(e1Bot)).NearestT(ToVector2(pt), false);
                     Debug.Assert(t >= 0 && t <= 1);
-                    T ptNew = _data[index0].Lerp(_data[index1], t);
+                    T ptNew = _data[index0];//.Lerp(_data[index1], t);
                     if (pt.Z > 4)
                     {
                     }

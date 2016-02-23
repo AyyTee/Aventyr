@@ -10,19 +10,23 @@ namespace Editor
     public class EditorScene
     {
         public readonly Scene Scene;
-        public readonly EditorObject Root;
+        //public readonly EditorObject Root;
+        public List<EditorObject> Children = new List<EditorObject>();
 
         public EditorScene(Scene scene)
         {
             Scene = scene;
-            Root = new EditorObject(this);
-            Root.SetVisible(false);
+            //Root = new EditorObject(this);
         }
 
         public List<T> FindByType<T>() where T : EditorObject
         {
-            List<T> list = Tree<EditorObject>.FindByType<T>(Root);
-            list.Remove(Root as T);
+            List<T> list = new List<T>();
+            foreach (EditorObject e in Children)
+            {
+                list.AddRange(Tree<EditorObject>.FindByType<T>(e));
+                //list.Remove(Root as T);
+            }
             return list;
         }
 

@@ -64,15 +64,14 @@ namespace Game
             FixedScale = fixedScale;
         }
 
-        /// <summary>
-        /// Copy constructor
-        /// </summary>
-        public Transform3(Transform3 transform)
+        public Transform3 ShallowClone()
         {
-            Rotation = new Quaternion(transform.Rotation.X, transform.Rotation.Y, transform.Rotation.Z, transform.Rotation.W);
-            Position = new Vector3(transform.Position);
-            Scale = new Vector3(transform.Scale);
-            FixedScale = transform.FixedScale;
+            Transform3 clone = new Transform3();
+            clone.Rotation = new Quaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W);
+            clone.Position = new Vector3(Position);
+            clone.Scale = new Vector3(Scale);
+            clone.FixedScale = FixedScale;
+            return clone;
         }
 
         public Matrix4 GetMatrix()

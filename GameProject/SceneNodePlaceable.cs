@@ -35,16 +35,15 @@ namespace Game
             return clone;
         }
 
-        protected override void ShallowClone(SceneNode destination)
+        protected void ShallowClone(SceneNodePlaceable destination)
         {
             base.ShallowClone(destination);
-            SceneNodePlaceable destinationCast = (SceneNodePlaceable)destination;
-            destinationCast.SetTransform(GetTransform());
+            destination.SetTransform(GetTransform());
         }
 
         public virtual void SetTransform(Transform2 transform)
         {
-            _transform = transform.Clone();
+            _transform = transform.ShallowClone();
         }
 
         public void PortalEnterInvoke(Portal portalEnter)
@@ -57,17 +56,17 @@ namespace Game
 
         public override Transform2 GetVelocity()
         {
-            return _velocity.Clone();
+            return _velocity.ShallowClone();
         }
 
         public void SetVelocity(Transform2 transform)
         {
-            _velocity = transform.Clone();
+            _velocity = transform.ShallowClone();
         }
 
         public override Transform2 GetTransform()
         {
-            return _transform.Clone();
+            return _transform.ShallowClone();
         }
     }
 }

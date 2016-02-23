@@ -69,12 +69,12 @@ namespace Editor
             if (First != null)
             {
                 _firstMarker.Visible = true;
-                _firstMarker.SetParent(First.Marker);
+                //_firstMarker.SetParent(First.Marker);
             }
             else
             {
                 _firstMarker.Visible = false;
-                _firstMarker.SetParent(null);
+                //_firstMarker.SetParent(null);
             }
         }
 
