@@ -46,12 +46,12 @@ namespace Editor
         {
             base.OnLoad(e);
             Back = new Scene();
-            renderer.AddScene(Back);
-            NewLevel();
+            renderer.AddLayer(Back);
+            LevelNew();
             
             Hud = new Scene();
             Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
-            renderer.AddScene(Hud);
+            renderer.AddLayer(Hud);
             Clipboard = new EditorScene(new Scene());
             /*debugText = new Entity(Hud);
             debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
@@ -60,7 +60,7 @@ namespace Editor
             ScenePause();
         }
 
-        public void NewLevel()
+        public void LevelNew()
         {
             /*if (Level != null)
             {
@@ -89,6 +89,21 @@ namespace Editor
             CamControl = new ControllerCamera(this, Back.ActiveCamera, InputExt);
         }
 
+        public void LevelLoad(EditorScene load)
+        {
+            /*Level = level;
+            renderer.RemoveScene(Back);
+            Back = level.Scene;
+            renderer.AddScene(Back);*/
+            Level.Clear();
+
+            foreach (EditorObject e in load.FindAll())
+            {
+                //e.SetMarker();
+                e.SetScene(Level);
+            }
+        }
+
         public override void OnRenderFrame(OpenTK.FrameEventArgs e)
         {
             base.OnRenderFrame(e);
@@ -100,23 +115,6 @@ namespace Editor
         {
             return Back.ActiveCamera.ScreenToWorld(InputExt.MousePos);
         }
-
-        /*public void SetMouseWorldPosition(Vector2 mousePosition)
-        {
-            Level.ActiveCamera.WorldToScreen(mousePosition);
-            //System.Windows.Forms.Cursor.Position = mousePosition;
-        }*/
-
-        /*public EditorEntity CreateLevelEntity()
-        {
-            EditorEntity entity = new EditorEntity(this.Level);
-
-            if (EntityAdded != null)
-            {
-                EntityAdded(this, entity);
-            }
-            return entity;
-        }*/
 
         public void Remove(EditorObject editorObject)
         {

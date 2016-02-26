@@ -42,7 +42,7 @@ namespace Game
                 }
                 BodyExt.GetUserData(body).PreviousPosition = body.Position;
             }
-            foreach (Portal p in Scene.PortalList)
+            foreach (Portal p in Scene.GetPortalList())
             {
                 if (p.GetType() == typeof(FixturePortal))
                 {
@@ -102,7 +102,7 @@ namespace Game
 
                 Line position = new Line(body.Position, BodyExt.GetUserData(body).PreviousPosition);
                 //portalNearest = Scene.PortalList.Min(item => new Line(item.GetWorldVerts()).);
-                foreach (Portal p in Scene.PortalList)
+                foreach (Portal p in Scene.GetPortalList())
                 {
                     if (!p.IsValid())
                     {
@@ -191,7 +191,7 @@ namespace Game
             FarseerPhysics.Common.FixedArray2<Xna.Vector2> vList;
             contact.GetWorldManifold(out normal, out vList);
 
-            foreach (Portal p in Scene.PortalList)
+            foreach (Portal p in Scene.GetPortalList())
             {
                 if (!p.IsValid())
                 {

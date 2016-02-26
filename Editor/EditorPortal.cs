@@ -79,5 +79,12 @@ namespace Editor
             Portal.SetLinked(null);
             PortalEntity.Remove();
         }
+
+        public override void SetScene(EditorScene scene)
+        {
+            base.SetScene(scene);
+            Portal.SetScene(Scene.Scene);
+            PortalEntity.SetScene(Scene.Scene);
+        }
     }
 }

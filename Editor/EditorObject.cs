@@ -13,27 +13,26 @@ namespace Editor
     [DataContract]
     public class EditorObject : ITreeNode<EditorObject>, ITransform2, IDeepClone
     {
+        [DataMember]
         EditorScene _scene;
         public EditorScene Scene 
         { 
-            get
-            {
-                if (_scene == null)
-                {
-                    return Parent.Scene;
-                }
-                return _scene;
-            }
+            get { return _scene == null ? Parent.Scene : _scene; }
             private set { _scene = value; }
         }
-
+        [DataMember]
         public Entity Marker { get; private set; }
+        [DataMember]
         public bool IsSelected { get; private set; }
+        [DataMember]
         public string Name { get; set; }
-
+        [DataMember]
         List<EditorObject> _children = new List<EditorObject>();
         public List<EditorObject> Children { get { return new List<EditorObject>(_children); } }
+        [DataMember]
         public EditorObject Parent { get; private set; }
+        [DataMember]
+        Transform2 _transform = new Transform2();
 
         public EditorObject(EditorScene editorScene)
         {
@@ -51,8 +50,12 @@ namespace Editor
             SetMarker();
         }
 
-        private void SetMarker()
+        public void SetMarker()
         {
+            if (Marker != null)
+            {
+                Marker.Remove();
+            }
             Marker = new Entity(Scene.Scene);
             Marker.Name = "Marker";
             //Marker.SetParent(this);
@@ -61,14 +64,15 @@ namespace Editor
             circle.Transform.Position = new Vector3(0, 0, DrawDepth.EntityMarker);
             circle.SetColor(new Vector3(1f, 0.5f, 0f));
             Marker.AddModel(circle);
+            Marker.SetTransform(GetTransform());
         }
 
         public virtual void SetScene(EditorScene scene)
         {
-            Scene.Children.Remove(this);
+            Scene._children.Remove(this);
             Scene = scene;
-            Scene.Children.Add(this);
-            Marker.SetScene(scene.Scene);
+            Scene._children.Add(this);
+            Marker.SetScene(Scene.Scene);
         }
 
         public virtual List<IDeepClone> GetCloneableRefs()
@@ -118,7 +122,7 @@ namespace Editor
             Debug.Assert(scene != null);
             RemoveSelf();
             Scene = scene;
-            Scene.Children.Add(this);
+            Scene._children.Add(this);
             Parent = null;
         }
 
@@ -138,7 +142,8 @@ namespace Editor
 
         public virtual void SetTransform(Transform2 transform)
         {
-            Marker.SetTransform(transform);
+            _transform = transform.ShallowClone();
+            Marker.SetTransform(_transform);
         }
 
         public Transform2 GetWorldTransform()
@@ -148,7 +153,7 @@ namespace Editor
 
         public virtual Transform2 GetTransform()
         {
-            return Marker.GetTransform();
+            return _transform.ShallowClone();
         }
 
         private void RemoveSelf()
@@ -160,7 +165,7 @@ namespace Editor
             }
             if (_scene != null)
             {
-                _scene.Children.Remove(this);
+                _scene._children.Remove(this);
                 Scene = null;
             }
         }

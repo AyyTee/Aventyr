@@ -2,30 +2,37 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Editor
 {
+    [DataContract]
     public class EditorScene
     {
-        public readonly Scene Scene;
-        //public readonly EditorObject Root;
-        public List<EditorObject> Children = new List<EditorObject>();
+        [DataMember]
+        public Scene Scene;
+        [DataMember]
+        public List<EditorObject> _children = new List<EditorObject>();
+        public List<EditorObject> Children { get { return new List<EditorObject>(_children); } }
 
         public EditorScene(Scene scene)
         {
             Scene = scene;
-            //Root = new EditorObject(this);
+        }
+
+        public List<EditorObject> FindAll()
+        {
+            return FindByType<EditorObject>();
         }
 
         public List<T> FindByType<T>() where T : EditorObject
         {
             List<T> list = new List<T>();
-            foreach (EditorObject e in Children)
+            foreach (EditorObject e in _children)
             {
                 list.AddRange(Tree<EditorObject>.FindByType<T>(e));
-                //list.Remove(Root as T);
             }
             return list;
         }
@@ -35,9 +42,12 @@ namespace Editor
             Scene.Step();
         }
 
-        /*public SceneNode FindByName(string name)
+        public void Clear()
         {
-            return Root.FindByName(name);
-        }*/
+            foreach (EditorObject e in Children)
+            {
+                e.Remove();
+            }
+        }
     }
 }

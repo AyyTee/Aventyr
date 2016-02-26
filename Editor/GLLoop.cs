@@ -88,10 +88,7 @@ namespace Editor
                         _loopControl.OnResize(new EventArgs(), _control.ClientSize);
                         _resize = false;
                     }
-                    if (_focused)
-                    {
-                        _loopControl.InputExt.Update();
-                    }
+                    _loopControl.InputExt.Update(_focused);
                     _loopControl.OnUpdateFrame(new FrameEventArgs());
                     _loopControl.OnRenderFrame(new FrameEventArgs());
 

@@ -116,7 +116,7 @@ namespace Game
             }
             List<float> cutLines = new List<float>();
             List<Portal> collisions = new List<Portal>();
-            foreach (Portal portal in Scene.PortalList)
+            foreach (Portal portal in Scene.GetPortalList())
             {
                 //ignore any portal attached to this entity on the first recursive iteration
                 if (portal.Parent == this && count == 0)

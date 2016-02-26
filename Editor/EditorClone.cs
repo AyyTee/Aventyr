@@ -11,47 +11,29 @@ namespace Editor
 {
     public class EditorClone
     {
-        public static void DeepClone(EditorScene source, EditorScene destination)
+        public static void Clone(EditorScene source, EditorScene destination)
         {
-            HashSet<IDeepClone> cloneList = new HashSet<IDeepClone>();
-            GetReferences(new List<IDeepClone>(source.Children), cloneList);
-            DeepClone(cloneList, destination);
+            Clone(new List<IDeepClone>(source._children), destination);
         }
 
-        public static void DeepClone(List<IDeepClone> source, EditorScene destination)
+        public static void Clone(List<IDeepClone> source, EditorScene destination)
         {
-            HashSet<IDeepClone> cloneList = new HashSet<IDeepClone>();
-            GetReferences(new List<IDeepClone>(source), cloneList);
-            DeepClone(cloneList, destination);
+            Debug.Assert(source != null);
+            HashSet<IDeepClone> cloned = DeepClone.Clone(source);
+            SetScene(cloned, destination);
         }
 
-        public static void DeepClone(IDeepClone source, EditorScene destination)
+        public static void Clone(IDeepClone source, EditorScene destination)
         {
-            if (source == null)
-            {
-                return;
-            }
-            HashSet<IDeepClone> cloneList = new HashSet<IDeepClone>();
-            GetReferences(source, cloneList);
-            DeepClone(cloneList, destination);
+            Debug.Assert(source != null);
+            List<IDeepClone> sourceList = new List<IDeepClone>();
+            sourceList.Add(source);
+            Clone(sourceList, destination);
         }
 
-        private static void DeepClone(HashSet<IDeepClone> cloneHash, EditorScene destination)
+        private static void SetScene(HashSet<IDeepClone> cloned, EditorScene destination)
         {
-            Dictionary<IDeepClone, IDeepClone> cloneMap = new Dictionary<IDeepClone, IDeepClone>();
-            foreach (IDeepClone original in cloneHash)
-            {
-                IDeepClone clone = original.ShallowClone();
-                Debug.Assert(clone.GetType() == original.GetType(), "Type of cloned instance must match type of original instance.");
-                cloneMap.Add(original, clone);
-            }
-            Debug.Assert(cloneMap.Count == cloneHash.Count);
-            ReadOnlyDictionary<IDeepClone, IDeepClone> readOnlyCloneMap = new ReadOnlyDictionary<IDeepClone, IDeepClone>(cloneMap);
-            foreach (IDeepClone clone in readOnlyCloneMap.Values)
-            {
-                clone.UpdateRefs(readOnlyCloneMap);
-            }
-            foreach (IDeepClone clone in readOnlyCloneMap.Values)
+            foreach (IDeepClone clone in cloned)
             {
                 if (clone is EditorObject)
                 {
@@ -61,23 +43,6 @@ namespace Editor
                 {
                     ((SceneNode)clone).SetScene(destination.Scene);
                 }
-            }
-        }
-
-        public static void GetReferences(List<IDeepClone> entities, HashSet<IDeepClone> cloneList)
-        {
-            foreach (IDeepClone e in entities)
-            {
-                GetReferences(e, cloneList);
-            }
-        }
-
-        public static void GetReferences(IDeepClone entity, HashSet<IDeepClone> cloneList)
-        {
-            cloneList.Add(entity);
-            foreach (IDeepClone cloneable in entity.GetCloneableRefs())
-            {
-                GetReferences(cloneable, cloneList);
             }
         }
     }

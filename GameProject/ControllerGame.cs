@@ -155,8 +155,8 @@ namespace Game
             cam.SetParent(scene.FindByName("player"));
             scene.SetActiveCamera(cam);
             hud.SetActiveCamera(hudCam);
-            renderer.AddScene(scene);
-            renderer.AddScene(hud);
+            renderer.AddLayer(scene);
+            renderer.AddLayer(hud);
 
             //new Serializer().Serialize(scene.Root, "blah.save", "blah_phys.save");
         }

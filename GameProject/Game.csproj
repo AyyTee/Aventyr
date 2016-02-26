@@ -140,8 +140,10 @@
     <Compile Include="ClipModel.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="ClipperExt.cs" />
+    <Compile Include="DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="IDeepClone.cs" />
+    <Compile Include="IRenderLayer.cs" />
     <Compile Include="IShallowClone.cs" />
     <Compile Include="ITexture.cs" />
     <Compile Include="ITransform2.cs" />

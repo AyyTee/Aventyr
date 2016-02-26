@@ -69,11 +69,16 @@ namespace Editor
                     if (_input.KeyPress(Key.C))
                     {
                         List<IDeepClone> cloneList = new List<IDeepClone>(Controller.selection.GetAll());
-                        EditorClone.DeepClone(cloneList, Controller.Clipboard);
+                        if (cloneList.Count > 0)
+                        {
+                            Controller.Clipboard.Clear();
+                            EditorClone.Clone(cloneList, Controller.Clipboard);
+                        }
+                        
                     }
                     else if (_input.KeyPress(Key.V))
                     {
-                        EditorClone.DeepClone(Controller.Clipboard, Controller.Level);
+                        EditorClone.Clone(Controller.Clipboard, Controller.Level);
                     }
                 }
                 if (_input.MousePress(MouseButton.Right))

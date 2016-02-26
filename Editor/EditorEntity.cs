@@ -21,8 +21,6 @@ namespace Editor
         {
             Debug.Assert(entity.Scene == Scene.Scene);
             Entity = entity;
-            /*Entity = new Entity(Scene.Scene);
-            Entity.Name = "Entity";*/
         }
 
         public override IDeepClone ShallowClone()
@@ -54,6 +52,12 @@ namespace Editor
         {
             base.Remove();
             Entity.Remove();
+        }
+
+        public override void SetScene(EditorScene scene)
+        {
+            base.SetScene(scene);
+            Entity.SetScene(Scene.Scene);
         }
 
         public override void SetTransform(Transform2 transform)

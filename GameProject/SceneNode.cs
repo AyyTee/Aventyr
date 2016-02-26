@@ -10,7 +10,7 @@ using System.Xml;
 namespace Game
 {
     /// <summary>
-    /// Scene graph node.  All derived classes MUST override Clone(Scene) and return an instance of the derived class.
+    /// Scene graph node.  All derived classes MUST override ShallowClone() and return an instance of the derived class.
     /// </summary>
     [DataContract]
     public class SceneNode : ITreeNode<SceneNode>, IDeepClone
@@ -23,13 +23,14 @@ namespace Game
         [DataMember]
         public SceneNode Parent { get; private set; }
 
+        [DataMember]
         public Scene Scene { get; private set; }
 
         #region Constructors
         public SceneNode(Scene scene)
         {
             Name = "";
-            Debug.Assert(scene != null);
+            //Debug.Assert(scene != null);
             Scene = scene;
             if (Scene != null)
             {
@@ -96,7 +97,7 @@ namespace Game
 
         public virtual void SetScene(Scene scene)
         {
-            if (Parent == Scene.Root)
+            if (Scene == null || Parent == Scene.Root)
             {
                 Scene = scene;
                 SetParent(scene.Root);
@@ -104,6 +105,10 @@ namespace Game
             else
             {
                 Scene = scene;
+            }
+            foreach (SceneNode s in Children)
+            {
+                s.SetScene(scene);
             }
         }
 

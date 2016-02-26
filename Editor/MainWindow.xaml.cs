@@ -112,7 +112,7 @@ namespace Editor
             ControllerEditor.AddAction(() =>
                 {
                     string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
-                    //new Serializer().Serialize(ControllerEditor.Back.Root, filename, physFilename);
+                    Serializer.Serialize(ControllerEditor.Level, filename);
                 });
         }
 
@@ -120,9 +120,9 @@ namespace Editor
         {
             ControllerEditor.AddAction(() =>
                 {
-                    ControllerEditor.NewLevel();
-                    string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
-                    //new Serializer().Deserialize(ControllerEditor.Back, filename, physFilename);
+                    //ControllerEditor.LevelNew();
+                    //string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
+                    ControllerEditor.LevelLoad(Serializer.Deserialize(ControllerEditor.Back, filename));
                 });
         }
 
@@ -256,7 +256,7 @@ namespace Editor
         {
             ControllerEditor.AddAction(() =>
             {
-                ControllerEditor.NewLevel();
+                ControllerEditor.LevelNew();
             });
         }
     }

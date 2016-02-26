@@ -16,7 +16,7 @@ namespace Game
 {
     public class Renderer
     {
-        List<Scene> _scenes = new List<Scene>();
+        List<IRenderLayer> _layers = new List<IRenderLayer>();
         readonly Controller _controller;
         public bool PortalRenderEnabled { get; set; }
         public int PortalRenderDepth { get; set; }
@@ -57,16 +57,16 @@ namespace Game
             GL.Enable(EnableCap.ScissorTest);
         }
 
-        public void AddScene(Scene scene)
+        public void AddLayer(IRenderLayer layer)
         {
-            _scenes.Add(scene);
+            _layers.Add(layer);
         }
 
         /// <summary>Remove a Scene from the Renderer.</summary>
         /// <returns>True if the Scene was in the Renderer, otherwise false.</returns>
-        public bool RemoveScene(Scene scene)
+        public bool RemoveLayer(IRenderLayer layer)
         {
-            return _scenes.Remove(scene);
+            return _layers.Remove(layer);
         }
 
         private void SetShader(ShaderProgram shader)
@@ -108,11 +108,11 @@ namespace Game
             }
             SetShader(Shaders["uber"]);
             GL.Enable(EnableCap.DepthTest);
-            for (int i = 0; i < _scenes.Count(); i++)
+            for (int i = 0; i < _layers.Count(); i++)
             {
-                Scene scene = _scenes[i];
-                Camera2 camera = scene.ActiveCamera;
-                DrawPortalAll(scene);
+                IRenderLayer layer = _layers[i];
+                Camera2 camera = layer.GetCamera();
+                DrawPortalAll(layer);
                 GL.Clear(ClearBufferMask.DepthBufferBit);
             }
 
@@ -260,15 +260,15 @@ namespace Game
             return true;
         }
 
-        public void DrawPortalAll(Scene scene)
+        public void DrawPortalAll(IRenderLayer layer)
         {
-            Camera2 cam = scene.ActiveCamera;
+            Camera2 cam = layer.GetCamera();
             int depth = 0;
             if (PortalRenderEnabled)
             {
                 depth = PortalRenderDepth;
             }
-            PortalView portalView = CalculatePortalViews(scene.PortalList.ToArray(), cam, depth);
+            PortalView portalView = CalculatePortalViews(layer.GetPortalList().ToArray(), cam, depth);
             List<PortalView> portalViewList = portalView.GetPortalViewList(PortalRenderMax);
 
             int stencilValueMax = 1 << GL.GetInteger(GetPName.StencilBits);
@@ -300,7 +300,7 @@ namespace Game
                 for (int i = 0; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
                 {
                     GL.StencilFunc(StencilFunction.Equal, i, stencilMask);
-                    DrawScene(scene, portalViewList[i].ViewMatrix, 0, i > 0);
+                    DrawLayer(layer, portalViewList[i].ViewMatrix, 0, i > 0);
                 }
             }
             
@@ -406,11 +406,11 @@ namespace Game
             return Math.Min(angleDiff, angleMax);
         }
 
-        private void DrawScene(Scene scene, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)
+        private void DrawLayer(IRenderLayer layer, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)
         {
             List<ClipModel> defaultShader = new List<ClipModel>();
             List<ClipModel> clipShader = new List<ClipModel>();
-            foreach (Entity e in scene.EntityList)
+            foreach (Entity e in layer.GetEntityList())
             {
                 if (!e.Visible)
                 {

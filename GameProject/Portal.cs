@@ -51,6 +51,7 @@ namespace Game
             destination.Size = Size;
             destination.OneSided = OneSided;
             destination.IsMirrored = IsMirrored;
+            destination.Linked = Linked;
         }
 
         public override void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
@@ -59,7 +60,12 @@ namespace Game
             //Portal clone = (Portal)cloneMap[this];
             if (Linked != null && cloneMap.ContainsKey(Linked))
             {
-                SetLinked((Portal)cloneMap[Linked]);
+                Linked = (Portal)cloneMap[Linked];
+                //SetLinked((Portal)cloneMap[Linked]);
+            }
+            else
+            {
+                Linked = null;
             }
         }
 

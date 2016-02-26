@@ -16,14 +16,13 @@ using FarseerPhysics.Dynamics.Contacts;
 namespace Game
 {
     [DataContract]
-    public class Scene
+    public class Scene : IRenderLayer
     {
         public World World { get; private set; }
         PhysContactListener _contactListener;
 
         public Camera2 ActiveCamera { get; private set; }
         public List<SceneNode> SceneNodeList { get { return Tree<SceneNode>.ToList(Root); } }
-        public List<Portal> PortalList { get { return Tree<SceneNode>.FindByType<Portal>(Root); } }
         public List<Entity> EntityList { get { return Tree<SceneNode>.FindByType<Entity>(Root); } }
         /// <summary>Root node to the scene graph.</summary>
         [DataMember]
@@ -76,6 +75,21 @@ namespace Game
             {
                 s.StepEnd();
             }
+        }
+
+        public Camera2 GetCamera()
+        {
+            return ActiveCamera;
+        }
+
+        public List<Entity> GetEntityList()
+        {
+            return EntityList;
+        }
+
+        public List<Portal> GetPortalList()
+        {
+            return Tree<SceneNode>.FindByType<Portal>(Root);
         }
 
         public void RayCast(SceneNodePlaceable placeable)

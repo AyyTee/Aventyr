@@ -51,11 +51,7 @@ namespace Game
         {
             //loopTimer.Restart();
             base.OnUpdateFrame(e);
-            if (Focused)
-            {
-                InputExt.Update();
-            }
-
+            InputExt.Update(Focused);
             if (InputExt.KeyPress(Key.F4))
             {
                 ToggleFullScreen();
