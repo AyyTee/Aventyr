@@ -83,10 +83,16 @@
     <Compile Include="PortalTests.cs" />
     <Compile Include="LineTests.cs" />
     <Compile Include="Transform2DTests.cs" />
-    <Compile Include="SceneTests.cs" />
+    <Compile Include="SceneNodeTests.cs" />
     <Compile Include="FixtureUserDataTests.cs" />
+    <Compile Include="EditorCloneTests.cs" />
+    <Compile Include="DeepCloneTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Editor\Editor.csproj">
+      <Project>{8ac53023-4d63-425a-b2f7-3728b5680bce}</Project>
+      <Name>Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GameProject\Game.csproj">
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
       <Name>Game</Name>

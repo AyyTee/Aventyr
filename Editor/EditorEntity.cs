@@ -35,9 +35,9 @@ namespace Editor
             base.ShallowClone(destination);
         }
 
-        public override List<IDeepClone> GetCloneableRefs()
+        public override HashSet<IDeepClone> GetCloneableRefs()
         {
-            List<IDeepClone> list = base.GetCloneableRefs();
+            HashSet<IDeepClone> list = base.GetCloneableRefs();
             list.Add(Entity);
             return list;
         }
@@ -54,10 +54,11 @@ namespace Editor
             Entity.Remove();
         }
 
-        public override void SetScene(EditorScene scene)
+        public override void SetScene(EditorScene destination)
         {
-            base.SetScene(scene);
-            Entity.SetScene(Scene.Scene);
+            base.SetScene(destination);
+            //Entity.SetScene(Scene.Scene);
+            Entity.SetParent(Scene.Scene.Root);
         }
 
         public override void SetTransform(Transform2 transform)

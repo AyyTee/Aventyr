@@ -10,8 +10,17 @@ namespace Game
 {
     public static class DeepClone
     {
-        /// <param name="toClone">Set of instances to clone.</param>
-        /// <returns>Set of cloned instances.</returns>
+        /// <summary>Deep clone instance.</summary>
+        /// <returns>Set of shallow cloned instances.</returns>
+        public static HashSet<IDeepClone> Clone(IDeepClone toClone)
+        {
+            List<IDeepClone> list = new List<IDeepClone>();
+            list.Add(toClone);
+            return Clone(list);
+        }
+
+        /// <summary>Deep clone list of instances.</summary>
+        /// <returns>Set of shallow cloned instances.</returns>
         public static HashSet<IDeepClone> Clone(List<IDeepClone> toClone)
         {
             HashSet<IDeepClone> cloneHash = new HashSet<IDeepClone>();

@@ -39,6 +39,25 @@ namespace Game
             return false;
         }
 
+        /// <summary>
+        /// Check if a tree's nodes have Parent and Children pointers matching.
+        /// </summary>
+        public static bool IsValid(T root)
+        {
+            foreach (T child in root.Children)
+            {
+                if (child.Parent != root)
+                {
+                    return false;
+                }
+                if (!IsValid(child))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public static List<T> ToList(T root)
         {
             return FindByType<T>(root);
@@ -57,6 +76,14 @@ namespace Game
                 list.AddRange(Tree<T>.FindByType<S>(p));
             }
             return list;
+        }
+
+        /// <summary>
+        /// Check if two trees are isomorphic (same shape and nodes equal eachother).
+        /// </summary>
+        public static bool Isomorphic(T Root0, T Root1)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -11,24 +11,25 @@ namespace Editor
 {
     public class EditorClone
     {
-        public static void Clone(EditorScene source, EditorScene destination)
+        public static List<EditorObject> Clone(EditorScene source, EditorScene destination)
         {
-            Clone(new List<IDeepClone>(source._children), destination);
+            return Clone(new List<IDeepClone>(source._children), destination);
         }
 
-        public static void Clone(List<IDeepClone> source, EditorScene destination)
+        public static List<EditorObject> Clone(List<IDeepClone> source, EditorScene destination)
         {
             Debug.Assert(source != null);
             HashSet<IDeepClone> cloned = DeepClone.Clone(source);
             SetScene(cloned, destination);
+            return cloned.OfType<EditorObject>().ToList();
         }
 
-        public static void Clone(IDeepClone source, EditorScene destination)
+        public static List<EditorObject> Clone(IDeepClone source, EditorScene destination)
         {
             Debug.Assert(source != null);
             List<IDeepClone> sourceList = new List<IDeepClone>();
             sourceList.Add(source);
-            Clone(sourceList, destination);
+            return Clone(sourceList, destination);
         }
 
         private static void SetScene(HashSet<IDeepClone> cloned, EditorScene destination)
@@ -41,7 +42,11 @@ namespace Editor
                 }
                 else if (clone is SceneNode)
                 {
-                    ((SceneNode)clone).SetScene(destination.Scene);
+                    SceneNode sceneNode = (SceneNode)clone;
+                    if (!cloned.Contains(sceneNode.Parent))
+                    {
+                        sceneNode.SetParent(destination.Scene.Root);
+                    }
                 }
             }
         }

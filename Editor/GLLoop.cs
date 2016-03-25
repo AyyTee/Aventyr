@@ -49,6 +49,7 @@ namespace Editor
             _average = new RollingAverage(60, MillisecondsPerStep);
             _control.Context.MakeCurrent(null);
             Thread = new Thread(new ThreadStart(Loop));
+            Thread.Name = "OGL Thread";
             Thread.Start();
         }
 

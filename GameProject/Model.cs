@@ -63,7 +63,10 @@ namespace Game
         #region Constructors
         public Model()
         {
-            InitIbo();
+            if (Renderer.IsInitialized)
+            {
+                InitIbo();
+            }
         }
 
         public Model(Vertex[] vertices)

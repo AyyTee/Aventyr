@@ -49,9 +49,9 @@ namespace Editor
             destination.PortalEntity = PortalEntity;
         }
 
-        public override List<IDeepClone> GetCloneableRefs()
+        public override HashSet<IDeepClone> GetCloneableRefs()
         {
-            List<IDeepClone> list = base.GetCloneableRefs();
+            HashSet<IDeepClone> list = base.GetCloneableRefs();
             list.Add(Portal);
             list.Add(PortalEntity);
             return list;
@@ -80,11 +80,10 @@ namespace Editor
             PortalEntity.Remove();
         }
 
-        public override void SetScene(EditorScene scene)
+        public override void SetScene(EditorScene destination)
         {
-            base.SetScene(scene);
-            Portal.SetScene(Scene.Scene);
-            PortalEntity.SetScene(Scene.Scene);
+            base.SetScene(destination);
+            PortalEntity.SetParent(destination.Scene.Root);
         }
     }
 }

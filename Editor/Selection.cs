@@ -25,7 +25,6 @@ namespace Editor
             _firstMarker.ModelList[0].SetColor(new Vector3(0f, 1f, 0f));
             _firstMarker.ModelList[0].Transform.Position = new Vector3(0, 0, DrawDepth.EntityActive);
             _firstMarker.DrawOverPortals = true;
-            _firstMarker.SetParent(null);
         }
 
         public void Set(EditorObject selected)

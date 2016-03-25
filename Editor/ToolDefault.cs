@@ -78,7 +78,8 @@ namespace Editor
                     }
                     else if (_input.KeyPress(Key.V))
                     {
-                        EditorClone.Clone(Controller.Clipboard, Controller.Level);
+                        List<EditorObject> cloned = EditorClone.Clone(Controller.Clipboard, Controller.Level);
+                        Controller.selection.SetRange(cloned);
                     }
                 }
                 if (_input.MousePress(MouseButton.Right))

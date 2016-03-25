@@ -18,23 +18,35 @@ namespace Game
         [DataMember]
         public string Name { get; set; }
         [DataMember]
-        List<SceneNode> _children = new List<SceneNode>();
+        HashSet<SceneNode> _children = new HashSet<SceneNode>();
         public List<SceneNode> Children { get { return new List<SceneNode>(_children); } }
         [DataMember]
         public SceneNode Parent { get; private set; }
 
+        /*[DataMember]
+        public Scene Scene { get; private set; }*/
         [DataMember]
-        public Scene Scene { get; private set; }
+        readonly Scene _scene;
+        public Scene Scene
+        {
+            get { return _scene == null ? Parent.Scene : _scene; }
+        }
 
         #region Constructors
         public SceneNode(Scene scene)
         {
-            Name = "";
             //Debug.Assert(scene != null);
-            Scene = scene;
-            if (Scene != null)
+            //Scene = scene;
+            //if (Scene != null && Scene.Root != null)
+            if (scene.Root != null)
             {
-                SetParent(Scene.Root);
+                Name = "";
+                SetParent(scene.Root);
+            }
+            else
+            {
+                Name = "Root";
+                _scene = scene;
             }
         }
         #endregion
@@ -48,14 +60,16 @@ namespace Game
 
         protected void ShallowClone(SceneNode destination)
         {
+            //Remove the child pointer from the root node since the cloned instance is automatically parented to it.
+            Scene.Root._children.Remove(destination);
             destination.Parent = Parent;
-            destination._children = Children;
+            destination._children = new HashSet<SceneNode>(Children);
             destination.Name = Name + " Clone";
         }
 
-        public virtual List<IDeepClone> GetCloneableRefs()
+        public virtual HashSet<IDeepClone> GetCloneableRefs()
         {
-            return new List<IDeepClone>(Children);
+            return new HashSet<IDeepClone>(Children);
         }
 
         public virtual void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
@@ -65,51 +79,55 @@ namespace Game
                 if (cloneMap.ContainsKey(Parent))
                 {
                     Parent = (SceneNode)cloneMap[Parent];
+                    //SetParent((SceneNode)cloneMap[Parent]);
                 }
                 else
                 {
-                    Parent = Scene.Root;
+                    //Parent = Scene.Root;
+                    SetParent(Parent);
                 }
             }
+            /*if (Parent != null && cloneMap.ContainsKey(Parent))
+            {
+                Parent = (SceneNode)cloneMap[Parent];
+            }
+            else
+            {
+                Parent = null;
+            }*/
             
             List<SceneNode> children = Children;
             _children.Clear();
             foreach (SceneNode e in children)
             {
+                //((SceneNode)cloneMap[e]).SetParent(this);
                 _children.Add((SceneNode)cloneMap[e]);
             }
         }
 
-        public virtual void SetParent(SceneNode parent)
+        private void RemoveParent()
         {
             if (Parent != null)
             {
                 Parent._children.Remove(this);
             }
-            Parent = parent;
-            if (Parent != null)
-            {
-                Debug.Assert(parent.Scene == Scene, "Parent cannot be in a different scene.");
-                parent._children.Add(this);
-            }
-            Debug.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
+            Parent = null;
         }
 
-        public virtual void SetScene(Scene scene)
+        public virtual void SetParent(SceneNode parent)
         {
-            if (Scene == null || Parent == Scene.Root)
+            Debug.Assert(parent != null);
+            Debug.Assert(_scene == null);
+            RemoveParent();
+            Parent = parent;
+            //if (Parent != null)
             {
-                Scene = scene;
-                SetParent(scene.Root);
+                //Scene = null;
+                //Debug.Assert(parent.Scene == Scene, "Parent cannot be in a different scene.");
+                parent._children.Add(this);
             }
-            else
-            {
-                Scene = scene;
-            }
-            foreach (SceneNode s in Children)
-            {
-                s.SetScene(scene);
-            }
+            Debug.Assert(Scene.SceneNodeList.FindAll(item => item == this).Count <= 1);
+            Debug.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
         }
 
         public void RemoveChildren()
@@ -124,7 +142,9 @@ namespace Game
         public virtual void Remove()
         {
             Debug.Assert(Parent != null);
-            SetParent(null);
+            //SetParent(null);
+            RemoveParent();
+            //Scene = null;
             //RemoveChildren();
         }
 

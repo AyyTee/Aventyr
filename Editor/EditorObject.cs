@@ -67,20 +67,18 @@ namespace Editor
             Marker.SetTransform(GetTransform());
         }
 
-        public virtual void SetScene(EditorScene scene)
+        public virtual void SetScene(EditorScene destination)
         {
             Scene._children.Remove(this);
-            Scene = scene;
+            Scene = destination;
             Scene._children.Add(this);
-            Marker.SetScene(Scene.Scene);
+            //Marker.SetScene(Scene.Scene);
+            Marker.SetParent(Scene.Scene.Root);
         }
 
-        public virtual List<IDeepClone> GetCloneableRefs()
+        public virtual HashSet<IDeepClone> GetCloneableRefs()
         {
-            List<IDeepClone> list = new List<IDeepClone>();
-            list.AddRange(Children);
-            //list.Add(Marker);
-            return list;
+            return new HashSet<IDeepClone>(Children);
         }
 
         public virtual void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)

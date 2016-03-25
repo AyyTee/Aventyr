@@ -48,7 +48,7 @@ namespace Editor
             Back = new Scene();
             renderer.AddLayer(Back);
             LevelNew();
-            
+
             Hud = new Scene();
             Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
             renderer.AddLayer(Hud);

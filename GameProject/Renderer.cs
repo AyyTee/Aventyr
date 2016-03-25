@@ -27,6 +27,7 @@ namespace Game
 
         public static Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
+        public static bool IsInitialized { get; private set; }
 
         /// <summary>
         /// Represents the size of the cutLines array within the fragment shader
@@ -55,6 +56,7 @@ namespace Game
             GL.PointSize(15f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Enable(EnableCap.ScissorTest);
+            IsInitialized = true;
         }
 
         public void AddLayer(IRenderLayer layer)

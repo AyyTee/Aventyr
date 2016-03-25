@@ -69,10 +69,9 @@ namespace Game
             KeyCurrent = Keyboard.GetState();
             MousePrevious = MouseCurrent;
             MouseCurrent = Mouse.GetState();
-            //Point mousePoint = System.Windows.Input.Mouse.GetPosition(ParentControl);
             MouseInside = _mouseInside;
             MousePosPrev = MousePos;
-            MousePos = _mousePos; //new Vector2((float)mousePoint.X, (float)mousePoint.Y);//
+            MousePos = _mousePos;
             wheelDeltaPrev = wheelDelta;
             wheelDelta = 0;
             if (Ctx != null)
@@ -83,7 +82,7 @@ namespace Game
 
         public bool KeyDown(Key input)
         {
-            return KeyCurrent.IsKeyDown(input);
+            return KeyCurrent.IsKeyDown(input) && Focus;
         }
 
         public bool KeyDown(KeyBoth input)
@@ -151,7 +150,7 @@ namespace Game
 
         public bool MouseDown(MouseButton Input)
         {
-            return MouseCurrent.IsButtonDown(Input);
+            return MouseCurrent.IsButtonDown(Input) && Focus;
         }
 
         public bool MousePress(MouseButton Input)

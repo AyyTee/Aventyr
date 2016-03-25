@@ -48,14 +48,14 @@ namespace Game
             }
         }
 
-        public override void SetScene(Scene scene)
+        /*public override void SetScene(Scene scene)
         {
             Debug.Assert(scene != null);
             Body BodyClone = Body.DeepClone(scene.World);
             Scene.World.RemoveBody(Body);
             Body = BodyClone;
             base.SetScene(scene);
-        }
+        }*/
 
         public override void Remove()
         {
