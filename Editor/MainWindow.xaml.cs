@@ -67,7 +67,7 @@ namespace Editor
             //ControllerEditor.EntitySelected += ControllerEditor_EntitySelected;
             ControllerEditor.ScenePlayed += ControllerEditor_ScenePlayed;
             ControllerEditor.ScenePaused += ControllerEditor_ScenePaused;
-            ControllerEditor.SceneStopped += ControllerEditor_ScenePaused;
+            ControllerEditor.SceneStopped += ControllerEditor_SceneStopped;
             ControllerEditor.SceneModified += ControllerEditor_SceneModified;
             glControl.MouseMove += glControl_MouseMove;
             _loop = new GLLoop(glControl, ControllerEditor);
@@ -163,37 +163,65 @@ namespace Editor
 
         private void Button_Play(object sender, RoutedEventArgs e)
         {
-            ControllerEditor.ScenePlay();
+            ControllerEditor.AddAction(() =>
+                {
+                    ControllerEditor.ScenePlay();
+                });
         }
 
         private void Button_Pause(object sender, RoutedEventArgs e)
         {
-            ControllerEditor.ScenePause();
+            ControllerEditor.AddAction(() =>
+                {
+                    ControllerEditor.ScenePause();
+                });
         }
 
         private void Button_Stop(object sender, RoutedEventArgs e)
         {
-            ControllerEditor.SceneStop();
-        }
-
-        private void ControllerEditor_ScenePaused(ControllerEditor controller, Scene scene)
-        {
-            toolStart.IsEnabled = true;
-            toolPause.IsEnabled = false;
-            toolStop.IsEnabled = false;
-            menuRunStop.IsEnabled = false;
-            menuRunStart.IsEnabled = true;
-            menuRunPause.IsEnabled = false;
+            ControllerEditor.AddAction(() =>
+                {
+                    ControllerEditor.SceneStop();
+                });
         }
 
         private void ControllerEditor_ScenePlayed(ControllerEditor controller, Scene scene)
         {
-            toolStart.IsEnabled = false;
-            toolPause.IsEnabled = true;
-            toolStop.IsEnabled = true;
-            menuRunStop.IsEnabled = true;
-            menuRunStart.IsEnabled = false;
-            menuRunPause.IsEnabled = true;
+            this.Dispatcher.Invoke((Action)(() =>
+                {
+                    toolStart.IsEnabled = false;
+                    toolPause.IsEnabled = true;
+                    toolStop.IsEnabled = true;
+                    menuRunStart.IsEnabled = false;
+                    menuRunPause.IsEnabled = true;
+                    menuRunStop.IsEnabled = true;
+                }));
+        }
+
+        private void ControllerEditor_ScenePaused(ControllerEditor controller, Scene scene)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                toolStart.IsEnabled = true;
+                toolPause.IsEnabled = false;
+                toolStop.IsEnabled = true;
+                menuRunStart.IsEnabled = true;
+                menuRunPause.IsEnabled = false;
+                menuRunStop.IsEnabled = true;
+            }));
+        }
+
+        private void ControllerEditor_SceneStopped(ControllerEditor controller, Scene scene)
+        {
+            this.Dispatcher.Invoke((Action)(() =>
+            {
+                toolStart.IsEnabled = true;
+                toolPause.IsEnabled = false;
+                toolStop.IsEnabled = false;
+                menuRunStart.IsEnabled = true;
+                menuRunPause.IsEnabled = false;
+                menuRunStop.IsEnabled = false;
+            }));
         }
 
         private void LoadModel(object sender, RoutedEventArgs e)

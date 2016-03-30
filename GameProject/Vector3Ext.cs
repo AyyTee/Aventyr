@@ -34,7 +34,7 @@ namespace Game
             return (Vector3)Vector3d.Transform(new Vector3d(vectors.X, vectors.Y, vectors.Z), matrix);
         }
 
-        public static List<Vector3> Transform(List<Vector3> vectors, Matrix4 matrix)
+        public static List<Vector3> Transform(IEnumerable<Vector3> vectors, Matrix4 matrix)
         {
             List<Vector3> vList = new List<Vector3>();
             foreach (Vector3 v in vectors)

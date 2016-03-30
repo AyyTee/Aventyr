@@ -128,6 +128,9 @@ namespace Game
 
         public PortalView CalculatePortalViews(Portal[] portals, Camera2 camera, int depth)
         {
+            Debug.Assert(camera != null);
+            Debug.Assert(depth >= 0);
+            Debug.Assert(portals != null);
             List<IntPoint> view = ClipperConvert.ToIntPoint(camera.GetWorldVerts());
             List<List<IntPoint>> paths = new List<List<IntPoint>>();
             paths.Add(view);
@@ -265,6 +268,10 @@ namespace Game
         public void DrawPortalAll(IRenderLayer layer)
         {
             Camera2 cam = layer.GetCamera();
+            if (cam == null)
+            {
+                return;
+            }
             int depth = 0;
             if (PortalRenderEnabled)
             {
@@ -491,6 +498,8 @@ namespace Game
 
         public void RenderModel(Model model, Matrix4 viewMatrix, Matrix4 offset)
         {
+            Debug.Assert(model != null);
+
             List<Vector3> verts = new List<Vector3>();
             List<int> inds = new List<int>();
             List<Vector3> colors = new List<Vector3>();

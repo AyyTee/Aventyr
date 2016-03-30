@@ -166,7 +166,7 @@ namespace Game
             Triangles.Add(triangle);
         }
 
-        public void AddTriangles(Triangle[] triangles)
+        public void AddTriangles(IEnumerable<Triangle> triangles)
         {
             Triangles.AddRange(triangles);
         }

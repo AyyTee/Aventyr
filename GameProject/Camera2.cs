@@ -168,7 +168,7 @@ namespace Game
 
         public Vector2[] GetWorldVerts()
         {
-            return Vector2Ext.Transform(GetVerts(), GetWorldToClipMatrix().Inverted());
+            return (Vector2[])Vector2Ext.Transform(GetVerts(), GetWorldToClipMatrix().Inverted());
         }
 
         public float UnitZToWorld(float z)

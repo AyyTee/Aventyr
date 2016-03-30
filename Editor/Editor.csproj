@@ -109,6 +109,7 @@
     <Compile Include="EditorObject.cs" />
     <Compile Include="EditorPortal.cs" />
     <Compile Include="EditorScene.cs" />
+    <Compile Include="LevelExport.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="IEditorObject.cs" />
     <Compile Include="MementoSelection.cs" />

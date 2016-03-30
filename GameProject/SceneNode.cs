@@ -22,6 +22,7 @@ namespace Game
         public List<SceneNode> Children { get { return new List<SceneNode>(_children); } }
         [DataMember]
         public SceneNode Parent { get; private set; }
+        public bool IsRoot { get { return _scene != null; } }
 
         /*[DataMember]
         public Scene Scene { get; private set; }*/
@@ -79,28 +80,17 @@ namespace Game
                 if (cloneMap.ContainsKey(Parent))
                 {
                     Parent = (SceneNode)cloneMap[Parent];
-                    //SetParent((SceneNode)cloneMap[Parent]);
                 }
                 else
                 {
-                    //Parent = Scene.Root;
                     SetParent(Parent);
                 }
             }
-            /*if (Parent != null && cloneMap.ContainsKey(Parent))
-            {
-                Parent = (SceneNode)cloneMap[Parent];
-            }
-            else
-            {
-                Parent = null;
-            }*/
             
             List<SceneNode> children = Children;
             _children.Clear();
             foreach (SceneNode e in children)
             {
-                //((SceneNode)cloneMap[e]).SetParent(this);
                 _children.Add((SceneNode)cloneMap[e]);
             }
         }
@@ -120,14 +110,23 @@ namespace Game
             Debug.Assert(_scene == null);
             RemoveParent();
             Parent = parent;
-            //if (Parent != null)
-            {
-                //Scene = null;
-                //Debug.Assert(parent.Scene == Scene, "Parent cannot be in a different scene.");
-                parent._children.Add(this);
-            }
+
+            parent._children.Add(this);
             Debug.Assert(Scene.SceneNodeList.FindAll(item => item == this).Count <= 1);
             Debug.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
+        }
+
+        public static void SetScene(ICollection<SceneNode> sceneNodes, Scene destination)
+        {
+            foreach (SceneNode s in sceneNodes)
+            {
+                Debug.Assert(s != null);
+                Debug.Assert(!s.IsRoot, "Root nodes cannot be moved.");
+                if (!sceneNodes.Contains(s.Parent))
+                {
+                    s.SetParent(destination.Root);
+                }
+            }
         }
 
         public void RemoveChildren()
@@ -142,10 +141,7 @@ namespace Game
         public virtual void Remove()
         {
             Debug.Assert(Parent != null);
-            //SetParent(null);
             RemoveParent();
-            //Scene = null;
-            //RemoveChildren();
         }
 
         public virtual void StepBegin()

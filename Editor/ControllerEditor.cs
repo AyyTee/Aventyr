@@ -14,7 +14,7 @@ namespace Editor
 {
     public class ControllerEditor : Controller
     {
-        public Scene Hud, Back;
+        public Scene Hud, Back, ActiveLevel;
         public EditorScene Level, Clipboard;
         public ControllerCamera CamControl { get; private set; }
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
@@ -36,6 +36,7 @@ namespace Editor
         public Selection selection { get; private set; }
         public StateList StateList { get; private set; }
         object _lockAction = new object();
+        bool _isPaused = true;
 
         public ControllerEditor(Size canvasSize, InputExt input)
             : base(canvasSize, input)
@@ -57,7 +58,7 @@ namespace Editor
             debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
             */
             InitTools();
-            ScenePause();
+            SceneStop();
         }
 
         public void LevelNew()
@@ -166,10 +167,11 @@ namespace Editor
                 //SceneModified(this, Level);
                 _editorObjectModified = false;
             }
-            //if (!_isPaused)
+            if (!_isPaused && ActiveLevel != null)
             {
-                Back.Step();
+                ActiveLevel.Step();
             }
+            Back.Step();
         }
 
         private void _setTool(Tool tool)
@@ -230,21 +232,36 @@ namespace Editor
 
         public void ScenePlay()
         {
-            //_isPaused = false;
+            if (ActiveLevel == null)
+            {
+                ActiveLevel = LevelExport.Export(Level);
+                renderer.AddLayer(ActiveLevel);
+                renderer.RemoveLayer(Back);
+                renderer.RemoveLayer(Hud);
+            }
+            _isPaused = false;
             if (ScenePlayed != null)
                 ScenePlayed(this, Back);
         }
 
         public void ScenePause()
         {
-            //_isPaused = true;
+            _isPaused = true;
             if (ScenePaused != null)
                 ScenePaused(this, Back);
         }
 
         public void SceneStop()
         {
-            //_isPaused = true;
+            if (ActiveLevel != null)
+            {
+                renderer.RemoveLayer(ActiveLevel);
+                renderer.AddLayer(Hud);
+                renderer.AddLayer(Back);
+            }
+
+            ActiveLevel = null;
+            _isPaused = true;
             if (SceneStopped != null)
                 SceneStopped(this, Back);
         }

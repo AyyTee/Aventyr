@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace Editor
         public static List<EditorObject> Clone(List<IDeepClone> source, EditorScene destination)
         {
             Debug.Assert(source != null);
-            HashSet<IDeepClone> cloned = DeepClone.Clone(source);
+            List<IDeepClone> cloned = DeepClone.Clone(source).Values.ToList();
             SetScene(cloned, destination);
             return cloned.OfType<EditorObject>().ToList();
         }
@@ -32,8 +33,12 @@ namespace Editor
             return Clone(sourceList, destination);
         }
 
-        private static void SetScene(HashSet<IDeepClone> cloned, EditorScene destination)
+        public static void SetScene(IEnumerable<IDeepClone> cloned, EditorScene destination)
         {
+            /*Contract.Requires(cloned != null);
+            Contract.*/
+            /*Debug.Assert(cloned != null);
+            Debug.Assert(destination != null);*/
             foreach (IDeepClone clone in cloned)
             {
                 if (clone is EditorObject)

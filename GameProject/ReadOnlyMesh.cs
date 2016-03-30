@@ -34,17 +34,17 @@ namespace Game
         public readonly ReadOnlyCollection<Vertex> Vertices;
         public readonly List<int> Triangles;
 
-        public ReadOnlyMesh(Triangle[] triangles)
+        public ReadOnlyMesh(IEnumerable<Triangle> triangles)
         {
             List<Vertex> vertices = new List<Vertex>();
             List<Indices> indices = new List<Indices>();
 
-            for (int i = 0; i < triangles.Length; i++)
+            foreach (Triangle t in triangles)
             {
                 int[] triangle = new int[3];
                 for (int j = 0; j < 3; j++)
                 {
-                    Vertex v = triangles[i][0].ShallowClone();
+                    Vertex v = t[0].ShallowClone();
                     int index = vertices.FindIndex(item => v.Equals(item));
                     if (index != -1)
                     {

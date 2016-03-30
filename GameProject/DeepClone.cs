@@ -12,16 +12,21 @@ namespace Game
     {
         /// <summary>Deep clone instance.</summary>
         /// <returns>Set of shallow cloned instances.</returns>
-        public static HashSet<IDeepClone> Clone(IDeepClone toClone)
+        public static Dictionary<IDeepClone, IDeepClone> Clone(IDeepClone toClone)
         {
             List<IDeepClone> list = new List<IDeepClone>();
             list.Add(toClone);
             return Clone(list);
         }
 
+        public static Dictionary<IDeepClone, IDeepClone> Clone(HashSet<IDeepClone> toClone)
+        {
+            return Clone(toClone.ToList());
+        }
+
         /// <summary>Deep clone list of instances.</summary>
         /// <returns>Set of shallow cloned instances.</returns>
-        public static HashSet<IDeepClone> Clone(List<IDeepClone> toClone)
+        public static Dictionary<IDeepClone, IDeepClone> Clone(List<IDeepClone> toClone)
         {
             HashSet<IDeepClone> cloneHash = new HashSet<IDeepClone>();
             GetReferences(toClone, cloneHash);
@@ -39,7 +44,8 @@ namespace Game
             {
                 clone.UpdateRefs(readOnlyCloneMap);
             }
-            return new HashSet<IDeepClone>(readOnlyCloneMap.Values);
+            //return new HashSet<IDeepClone>(readOnlyCloneMap.Values);
+            return cloneMap;
         }
 
         private static void GetReferences(List<IDeepClone> entities, HashSet<IDeepClone> cloneList)
