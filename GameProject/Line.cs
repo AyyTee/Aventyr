@@ -71,19 +71,25 @@ namespace Game
         }
 
         /// <summary>
-        /// Returns whether a point is left or right of the line
+        /// Returns whether a point is left or right of this line.
         /// </summary>
-        public Side GetSideOf(Vector2 point)
+        /// <param name="ignoreEdgeCase">Whether or not to treat points exactly on the line as to the right of it instead.</param>
+        public Side GetSideOf(Vector2 point, bool ignoreEdgeCase = true)
         {
-            if ((Vertices[1].X - Vertices[0].X) * (point.Y - Vertices[0].Y) - (Vertices[1].Y - Vertices[0].Y) * (point.X - Vertices[0].X) > 0)
+            double p = (Vertices[1].X - Vertices[0].X) * (point.Y - Vertices[0].Y) - (Vertices[1].Y - Vertices[0].Y) * (point.X - Vertices[0].X);
+            if (p > 0)
             {
                 return Side.IsLeftOf;
+            }
+            else if (p == 0 && !ignoreEdgeCase)
+            {
+                return Side.IsNeither;
             }
             return Side.IsRightOf;
         }
 
         /// <summary>
-        /// Returns whether a point is left or right of the line
+        /// Returns whether a point is left or right of the line.
         /// </summary>
         public Side GetSideOf(Xna.Vector2 point)
         {
@@ -91,7 +97,7 @@ namespace Game
         }
 
         /// <summary>
-        /// returns whether a line is left, right, or inbetween the line
+        /// Returns whether a line is left, right, or inbetween the line.
         /// </summary>
         /// <param name="line"></param>
         /// <returns></returns>
@@ -116,12 +122,12 @@ namespace Game
         /// </summary>
         public bool IsInsideFOV(Vector2 viewPoint, Vector2 v)
         {
-            //check if the lookPoint is on the opposite side of the line from the viewPoint
+            //Check if the lookPoint is on the opposite side of the line from the viewPoint.
             if (GetSideOf(viewPoint) == GetSideOf(v))
             {
                 return false;
             }
-            //check if the lookPoint is within the FOV angles
+            //Check if the lookPoint is within the FOV angles.
             double Angle0 = MathExt.AngleVector(Vertices[0] - viewPoint);
             double Angle1 = MathExt.AngleVector(Vertices[1] - viewPoint);
             double AngleDiff = MathExt.AngleDiff(Angle0, Angle1);
@@ -157,7 +163,7 @@ namespace Game
                 return true;
             }
 
-            //check if the lookPoint is within the FOV angles
+            //Check if the lookPoint is within the FOV angles.
             double Angle0 = MathExt.AngleVector(Vertices[0] - viewPoint);
             double Angle1 = MathExt.AngleVector(Vertices[1] - viewPoint);
             double AngleDiff = MathExt.AngleDiff(Angle0, Angle1);

@@ -15,6 +15,8 @@ namespace Editor
     {
         [DataMember]
         public Entity Entity { get; private set; }
+        [DataMember]
+        public bool PhysicsEnabled { get; set; }
 
         public EditorEntity(EditorScene editorScene, Entity entity)
             : base(editorScene)

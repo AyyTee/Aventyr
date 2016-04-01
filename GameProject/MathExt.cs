@@ -186,7 +186,7 @@ namespace Game
         }
 
         /// <summary>Tests if two lines intersect.</summary>
-        /// <returns>Location where the two lines intersect. T is relative to the first line.</returns>
+        /// <returns>Location where the two lines intersect. TFirst is relative to the first line.</returns>
         static public IntersectPoint LineIntersection(Vector2d ps0, Vector2d pe0, Vector2d ps1, Vector2d pe1, bool SegmentOnly)
         {
             IntersectPoint v = new IntersectPoint();
@@ -646,34 +646,65 @@ namespace Game
             return mat;
         }
 
-        /*public static Vector2 QuadToUV(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3, Vector2 p)
+        /// <summary>
+        /// Bisects a 3d triangle with a plane perpendicular to the xy-plane.
+        /// </summary>
+        /// <param name="triangle">Triangle to bisect.</param>
+        /// <param name="bisector">Bisection plane defined by a line on the xy-plane.</param>
+        /// <param name="keepSide">Which side of the bisector to not remove from the triangle.</param>
+        /// <returns>Triangles not removed by the bisection.  Will either be 0,1,2 triangles.</returns>
+        public static Triangle[] BisectTriangle(Triangle triangle, Line bisector, Line.Side keepSide = Line.Side.IsLeftOf)
         {
-            return QuadToUV(new Vector2[] {v0, v1, v2, v3}, p);
+            Debug.Assert(triangle != null);
+            Debug.Assert(bisector != null);
+            Debug.Assert(keepSide != Line.Side.IsNeither);
+            Vector2[] vertices = new Vector2[]
+            {
+                new Vector2(triangle[0].Position.X, triangle[0].Position.Y),
+                new Vector2(triangle[1].Position.X, triangle[1].Position.Y),
+                new Vector2(triangle[2].Position.X, triangle[2].Position.Y)
+            };
+
+            List<Vertex> keep = new List<Vertex>();
+            int intersectCount = 0;
+            for (int i = 0; i < Triangle.VERTEX_COUNT; i++)
+            {
+                Line.Side side = bisector.GetSideOf(vertices[i], false);
+                if (side == keepSide || side == Line.Side.IsNeither)
+                {
+                    keep.Add(triangle[i]);
+                }
+                Line edge = new Line(vertices[i], vertices[(i + 1) % Triangle.VERTEX_COUNT]);
+                IntersectPoint intersect = edge.Intersects(bisector, true);
+                if (intersect.Exists && intersect.TFirst > 0 && intersect.TFirst < 1)
+                {
+                    intersectCount++;
+                    Debug.Assert(intersectCount <= 2);
+                    int index = (i + 1) % Triangle.VERTEX_COUNT;
+                    keep.Add(Vertex.Lerp(triangle[i], triangle[index], (float)intersect.TFirst));
+                }
+            }
+
+            Debug.Assert(keep.Count <= 4);
+            if (keep.Count == 3)
+            {
+                return new Triangle[]
+                {
+                    new Triangle(keep[0], keep[1], keep[2])
+                };
+            }
+            else if (keep.Count == 4)
+            {
+                return new Triangle[]
+                {
+                    new Triangle(keep[0], keep[1], keep[2]),
+                    new Triangle(keep[0], keep[2], keep[3])
+                };
+            }
+            else
+            {
+                return new Triangle[0];
+            }
         }
-
-        public static Vector2 QuadToUV(Vector2[] quad, Vector2 p)
-        {
-            Debug.Assert(quad.Length == 4);
-            quad = SetHandedness(quad, true);
-            Vector2 v0, v1, v2, v3;
-            v0 = quad[0];
-            v1 = quad[1];
-            v2 = quad[2];
-            v3 = quad[3];
-            double C = (double)(v0.Y - p.Y) * (v3.X - p.X) - (double)(v0.X - p.X) * (v3.Y - p.Y);
-            double B = (double)(v0.Y - p.Y) * (v2.X - v3.X) + (double)(v1.Y - v0.Y) * (v3.X - p.X) - (double)(v0.X - p.X) * (v2.Y - v3.Y) - (double)(v1.X - v0.X) * (v3.Y - p.Y);
-            double A = (double)(v1.Y - v0.Y) * (v2.X - v3.X) - (double)(v1.X - v0.X) * (v2.Y - v3.Y);
-
-            double D = B * B - 4 * A * C;
-
-            double u = (-B - Math.Sqrt(D)) / (2 * A);
-
-            double p1x = v0.X + (v1.X - v0.X) * u;
-            double p2x = v3.X + (v2.X - v3.X) * u;
-            double px = p.X;
-
-            double v = (px - p1x) / (p2x - p1x);
-            return new Vector2((float)u, (float)v);
-        }*/
     }
 }

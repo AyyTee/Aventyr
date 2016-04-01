@@ -157,7 +157,6 @@ namespace UnitTest
                 );
         }
         #endregion
-
         #region IsClockwise tests
         [TestMethod]
         public void IsClockwiseTest0()
@@ -215,7 +214,6 @@ namespace UnitTest
             Assert.IsFalse(MathExt.IsClockwise(vList));
         }
         #endregion
-
         #region GetLineCircleIntersections tests
         [TestMethod]
         public void GetLineCircleIntersectionsTest0()
@@ -275,7 +273,7 @@ namespace UnitTest
             Assert.IsTrue(intersections.Length == 0);
         }
         #endregion
-
+        #region GetHomography tests
         public Vector2[] GetSquare()
         {
             return new Vector2[] {
@@ -286,7 +284,6 @@ namespace UnitTest
             };
         }
 
-        #region GetHomography tests
         public Camera2 GetCamera()
         {
             return new Camera2(new Scene(), new Transform2(), 1.3333f);
@@ -415,6 +412,115 @@ namespace UnitTest
                 Vector2 offset = camera.GetOverlapOffset(vectors[i], new Vector3(destination[i]));
                 Assert.IsTrue(offset.Length < 0.001f);
             }
+        }
+        #endregion
+        #region BisectTriangle tests
+        private Triangle GetDefaultTriangle()
+        {
+            return new Triangle(new Vertex(0, 0), new Vertex(1, 0), new Vertex(0, 1));
+        }
+
+        private Triangle GetDefaultComparison()
+        {
+            return new Triangle(new Vertex(0.5f, 0.5f), new Vertex(0, 1), new Vertex(0, 0.5f));
+        }
+
+        private Line GetDefaultBisector()
+        {
+            return new Line(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
+        }
+        
+        [TestMethod]
+        public void BisectTriangleTest0()
+        {
+            Triangle triangle = GetDefaultTriangle();
+            Triangle[] result = MathExt.BisectTriangle(triangle, GetDefaultBisector());
+
+            Assert.IsTrue(result.Length == 1);
+            Triangle comparison = GetDefaultComparison();
+            Assert.IsTrue(Triangle.IsIsomorphic(result[0], comparison));
+        }
+
+        [TestMethod]
+        public void BisectTriangleTest1()
+        {
+            Triangle triangle = GetDefaultTriangle().Reverse();
+            Triangle[] result = MathExt.BisectTriangle(triangle, GetDefaultBisector());
+
+            Assert.IsTrue(result.Length == 1);
+            Triangle comparison = GetDefaultComparison().Reverse();
+            Assert.IsTrue(Triangle.IsIsomorphic(result[0], comparison));
+        }
+
+        [TestMethod]
+        public void BisectTriangleTest2()
+        {
+            Triangle triangle = GetDefaultTriangle();
+            Triangle[] result = MathExt.BisectTriangle(triangle, GetDefaultBisector(), Line.Side.IsLeftOf);
+
+            Assert.IsTrue(result.Length == 1);
+            Triangle comparison = GetDefaultComparison();
+            Assert.IsTrue(Triangle.IsIsomorphic(result[0], comparison));
+        }
+
+        [TestMethod]
+        public void BisectTriangleTest3()
+        {
+            Triangle triangle = GetDefaultTriangle();
+            Triangle[] result = MathExt.BisectTriangle(triangle, GetDefaultBisector(), Line.Side.IsRightOf);
+
+            Assert.IsTrue(result.Length == 2);
+            Assert.IsTrue(Triangle.IsIsomorphic(result[0], new Triangle(new Vertex(0, 0), new Vertex(1, 0), new Vertex(0.5f, 0.5f))));
+            Assert.IsTrue(Triangle.IsIsomorphic(result[1], new Triangle(new Vertex(0, 0), new Vertex(0.5f, 0.5f), new Vertex(0, 0.5f))));
+        }
+
+        [TestMethod]
+        public void BisectTriangleTest4()
+        {
+            Triangle triangle = GetDefaultTriangle();
+            Triangle[] result = MathExt.BisectTriangle(triangle, new Line(new Vector2(-1, 1), new Vector2(1, 1)));
+
+            Assert.IsTrue(result.Length == 0);
+        }
+
+        [TestMethod]
+        public void BisectTriangleTest5()
+        {
+            Triangle triangle = GetDefaultTriangle();
+            Triangle[] result = MathExt.BisectTriangle(triangle, new Line(new Vector2(1, 1), new Vector2(-1, 1)), Line.Side.IsRightOf);
+
+            Assert.IsTrue(result.Length == 0);
+        }
+
+        [TestMethod]
+        public void BisectTriangleTest6()
+        {
+            Triangle triangle = GetDefaultTriangle();
+            Triangle[] result = MathExt.BisectTriangle(triangle, new Line(new Vector2(-1, 1), new Vector2(1, 1)), Line.Side.IsRightOf);
+
+            Assert.IsTrue(result.Length == 1);
+            Assert.IsTrue(result[0].Equals(triangle));
+        }
+
+        [TestMethod]
+        public void BisectTriangleTest7()
+        {
+            Triangle triangle = GetDefaultTriangle();
+            Triangle[] result = MathExt.BisectTriangle(triangle, new Line(new Vector2(1, 1), new Vector2(-1, 1)));
+
+            Assert.IsTrue(result.Length == 1);
+            Assert.IsTrue(result[0].Equals(triangle));
+        }
+
+        [TestMethod]
+        public void BisectTriangleTest8()
+        {
+            Triangle triangle = new Triangle(new Vertex(0, 0, 5f), new Vertex(1, 0, 0), new Vertex(0, 1, 2f));
+            Triangle[] result = MathExt.BisectTriangle(triangle, new Line(new Vector2(-1, 0.6f), new Vector2(1, 0.6f)));
+
+            Assert.IsTrue(result.Length == 1);
+            Triangle comparison = new Triangle(new Vertex(0.399999976f, 0.6f, 1.2f), new Vertex(0f, 1f, 2f), new Vertex(0f, 0.6f, 3.19999981f));
+            Assert.IsTrue(Triangle.IsIsomorphic(result[0], comparison));
         }
         #endregion
     }

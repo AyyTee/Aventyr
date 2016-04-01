@@ -32,6 +32,11 @@ namespace Editor
                     toClone.Add(editorPortal.PortalEntity);
                     toClone.Add(editorPortal.Portal);
                 }
+                else if (e is EditorActor)
+                {
+                    EditorActor editorActor = (EditorActor)e;
+                    ActorFactory.CreateEntityBox(new Entity(scene), Transform2.GetPosition(editorActor));
+                }
             }
 
             Dictionary<IDeepClone, IDeepClone> dictionary = DeepClone.Clone(toClone);

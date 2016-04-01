@@ -30,21 +30,32 @@ namespace Editor
             InitializeComponent();
 
             _controller = controller;
-            Tool[] tools = new Tool[] {
-                new ToolAddEntity(_controller),
-                new ToolAddPortal(_controller),
-                new ToolPolygon(_controller),
-                new ToolPortalLinker(_controller)
+
+            var arguments = new[] {
+                new {
+                    tool = (Tool)new ToolAddEntity(_controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png")))
+                },
+                new {
+                    tool = (Tool)new ToolAddPortal(_controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "portalIcon.png")))
+                },
+                new {
+                    tool = (Tool)new ToolPolygon(_controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonIcon.png")))
+                },
+                new {
+                    tool = (Tool)new ToolPortalLinker(_controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonLinkerIcon.png")))
+                },
+                new {
+                    tool = (Tool)new ToolAddActor(_controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png")))
+                }
             };
-            BitmapImage[] bitmaps = new BitmapImage[] {
-                new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png"))),
-                new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "portalIcon.png"))),
-                new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonIcon.png"))),
-                new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonLinkerIcon.png")))
-            };
-            for (int i = 0; i < tools.Length; i++)
+            for (int i = 0; i < arguments.Length; i++)
             {
-                AddButton(tools[i], bitmaps[i]);
+                AddButton(arguments[i].tool, arguments[i].image);
             }
             _controller.ToolChanged += ControllerEditor_ToolChanged;
         }
