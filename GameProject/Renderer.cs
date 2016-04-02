@@ -417,7 +417,27 @@ namespace Game
 
         private void DrawLayer(IRenderLayer layer, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)
         {
-            List<ClipModel> defaultShader = new List<ClipModel>();
+            SetShader(Shaders["uber"]);
+            foreach (Entity e in layer.GetEntityList())
+            {
+                if (!e.Visible)
+                {
+                    continue;
+                }
+                if (isPortalRender && e.DrawOverPortals)
+                {
+                    continue;
+                }
+                foreach (ClipModel clip in e.GetClipModels(PortalClipDepth))
+                {
+                    foreach (Line l in clip.ClipLines)
+                    {
+                        
+                    }
+                    RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform);
+                }
+            }
+            /*List<ClipModel> defaultShader = new List<ClipModel>();
             List<ClipModel> clipShader = new List<ClipModel>();
             foreach (Entity e in layer.GetEntityList())
             {
@@ -451,7 +471,7 @@ namespace Game
                 RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix());
                 SetEnable(EnableCap.StencilTest, true);
             }
-            SetShader(Shaders["uberClip"]);
+            //SetShader(Shaders["uberClip"]);
             foreach (ClipModel clip in clipShader)
             {
                 Matrix4 ScaleMatrix;
@@ -473,15 +493,15 @@ namespace Game
                         l[1].Y
                     });
                 }
-                /*Vector2 vMax, vMin;
-                MathExt.GetBBox(clip.ClipLines, out vMin, out vMax);
-                GL.Scissor((int)vMin.X, (int)vMin.Y, (int)vMax.X + 1, (int)vMax.Y + 1);*/
+                //Vector2 vMax, vMin;
+                //MathExt.GetBBox(clip.ClipLines, out vMin, out vMax);
+                //GL.Scissor((int)vMin.X, (int)vMin.Y, (int)vMax.X + 1, (int)vMax.Y + 1);
 
-                GL.Uniform1(_activeShader.GetUniform("cutLinesLength"), cutLines.Count);
-                GL.Uniform1(GL.GetUniformLocation(_activeShader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
+                //GL.Uniform1(_activeShader.GetUniform("cutLinesLength"), cutLines.Count);
+                //GL.Uniform1(GL.GetUniformLocation(_activeShader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
                 RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform);
-            }
-            SetShader(Shaders["uber"]);
+            }*/
+            //SetShader(Shaders["uber"]);
         }
 
         private void UpdateCullFace(Matrix4 viewMatrix)

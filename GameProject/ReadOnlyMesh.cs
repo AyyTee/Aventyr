@@ -7,37 +7,21 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public class ReadOnlyMesh
+    public class ReadOnlyMesh : IMesh
     {
-        private struct Indices
-        {
-            readonly int[] indices;
-            #region constructors
-            public Indices(int i0, int i1, int i2)
-            {
-                indices = new int[3] {i0, i1, i2};
-            }
-
-            public Indices(int[] indices)
-            {
-                this.indices = new int[3] 
-                {
-                    indices[0],
-                    indices[1],
-                    indices[2]
-                };
-            }
-            #endregion
-            public int this[int index] { get { return indices[index]; } }
-        }
-
         public readonly ReadOnlyCollection<Vertex> Vertices;
-        public readonly List<int> Triangles;
+        public readonly ReadOnlyCollection<int> Indices;
+
+        public ReadOnlyMesh(IMesh mesh)
+        {
+            Vertices = new ReadOnlyCollection<Vertex>(mesh.GetVertices().ToList());
+            Indices = new ReadOnlyCollection<int>(mesh.GetIndices().ToList());
+        }
 
         public ReadOnlyMesh(IEnumerable<Triangle> triangles)
         {
             List<Vertex> vertices = new List<Vertex>();
-            List<Indices> indices = new List<Indices>();
+            List<int> triangleIndices = new List<int>();
 
             foreach (Triangle t in triangles)
             {
@@ -55,15 +39,21 @@ namespace Game
                         triangle[j] = vertices.Count - 1;
                     }
                 }
-                Triangles.AddRange(triangle);
+                triangleIndices.AddRange(triangle);
             }
 
             Vertices = new ReadOnlyCollection<Vertex>(vertices);
+            Indices = new ReadOnlyCollection<int>(triangleIndices);
         }
 
-        public int[] GetTriangles()
+        public List<Vertex> GetVertices()
         {
-            return Triangles.ToArray();
+            return new List<Vertex>(Vertices);
+        }
+
+        public List<int> GetIndices()
+        {
+            return new List<int>(Indices);
         }
     }
 }

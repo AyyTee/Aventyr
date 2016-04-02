@@ -143,11 +143,13 @@
     <Compile Include="DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="IDeepClone.cs" />
+    <Compile Include="IMesh.cs" />
     <Compile Include="IRenderLayer.cs" />
     <Compile Include="IShallowClone.cs" />
     <Compile Include="ITexture.cs" />
     <Compile Include="ITransform2.cs" />
     <Compile Include="ITreeNode.cs" />
+    <Compile Include="Mesh.cs" />
     <Compile Include="ReadOnlyMesh.cs" />
     <Compile Include="ModelLoader.cs" />
     <Compile Include="ControllerGame.cs" />
