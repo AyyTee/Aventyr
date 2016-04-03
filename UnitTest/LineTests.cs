@@ -23,86 +23,86 @@ namespace UnitTest
         public void GetSideOfTest0()
         {
             Line line = new Line(new Vector2(0, 0), new Vector2(1, 0));
-            Assert.IsFalse(line.GetSideOf(new Vector2(0, 0)) == Line.Side.IsLeftOf);
+            Assert.IsFalse(line.GetSideOf(new Vector2(0, 0)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest1()
         {
             Line line = new Line(new Vector2(0, 0), new Vector2(1, 0));
-            Assert.IsTrue(line.GetSideOf(new Vector2(0, 100)) == Line.Side.IsLeftOf);
+            Assert.IsTrue(line.GetSideOf(new Vector2(0, 100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest2()
         {
             Line line = new Line(new Vector2(0, 0), new Vector2(1, 0));
-            Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Line.Side.IsLeftOf);
+            Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest3()
         {
             Line line = new Line(new Vector2(0, 0), new Vector2(0, 1));
-            Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Line.Side.IsLeftOf);
+            Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest4()
         {
             Line line = new Line(new Vector2(0, 0), new Vector2(0, 0));
-            Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Line.Side.IsLeftOf);
+            Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest5()
         {
             Line line = new Line(new Vector2(0, 0), new Vector2(0, 0));
-            Assert.IsFalse(line.GetSideOf(new Vector2(0, 100)) == Line.Side.IsLeftOf);
+            Assert.IsFalse(line.GetSideOf(new Vector2(0, 100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest6()
         {
             Line line = new Line(new Vector2(0, 0), new Vector2(1, 1));
-            Assert.IsTrue(line.GetSideOf(new Vector2(0.5f, 100)) == Line.Side.IsLeftOf);
+            Assert.IsTrue(line.GetSideOf(new Vector2(0.5f, 100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest7()
         {
             Line line = new Line(new Vector2(0, 0), new Vector2(-1, -1));
-            Assert.IsFalse(line.GetSideOf(new Vector2(0, 100)) == Line.Side.IsLeftOf);
+            Assert.IsFalse(line.GetSideOf(new Vector2(0, 100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest8()
         {
             Line line = new Line(new Vector2(1, -1), new Vector2(0, 0));
-            Assert.IsFalse(line.GetSideOf(new Vector2(0, 100)) == Line.Side.IsLeftOf);
+            Assert.IsFalse(line.GetSideOf(new Vector2(0, 100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest9()
         {
             Line line = new Line(new Vector2(-1, 1), new Vector2(0, 0));
-            Assert.IsTrue(line.GetSideOf(new Vector2(0, 100)) == Line.Side.IsLeftOf);
+            Assert.IsTrue(line.GetSideOf(new Vector2(0, 100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest10()
         {
             Line line = new Line(new Vector2(-1, 1), new Vector2(0, 0));
-            Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Line.Side.IsLeftOf);
+            Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest11()
         {
             Line line = new Line(new Vector2(-1, 1), new Vector2(0, 0));
-            Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Line.Side.IsLeftOf);
+            Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest12()
         {
             Line line = new Line(new Vector2(-5, 20), new Vector2(20, 0));
-            Assert.IsFalse(line.GetSideOf(new Vector2(0, 0)) == Line.Side.IsLeftOf);
+            Assert.IsFalse(line.GetSideOf(new Vector2(0, 0)) == Side.Left);
         }
         [TestMethod]
         public void GetSideOfTest13()
         {
             Line line = new Line(new Vector2(5, 20), new Vector2(10, 25));
             Line lineCheck = new Line(new Vector2(-25, 10), new Vector2(25, 10));
-            Assert.IsTrue(line.GetSideOf(lineCheck) == Line.Side.IsNeither);
+            Assert.IsTrue(line.GetSideOf(lineCheck) == Side.Neither);
         }
         [TestMethod]
         public void GetSideOfTest14()
@@ -114,7 +114,7 @@ namespace UnitTest
                 Vector2 v1 = new Vector2((float)Math.Cos(rot + Math.PI), (float)Math.Sin(rot + Math.PI));
                 Vector2 v2 = new Vector2((float)Math.Cos(rot + Math.PI/2), (float)Math.Sin(rot + Math.PI/2));
                 Line line = new Line(v0, v1);
-                Assert.IsTrue(line.GetSideOf(v2) == Line.Side.IsRightOf);
+                Assert.IsTrue(line.GetSideOf(v2) == Side.Right);
             }
         }
         #endregion

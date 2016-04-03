@@ -217,14 +217,14 @@ namespace Game
                 Matrix4 viewMatrixNew = portalMatrixNew * viewMatrix;
 
                 Line[] lines = p.GetFovLines(viewPos, 500);
-                lines[0].Transform(portalMatrix);
-                lines[1].Transform(portalMatrix);
+                lines[0] = lines[0].Transform(portalMatrix);
+                lines[1] = lines[1].Transform(portalMatrix);
                 Line[] linesPrevious = p.GetFovLines(viewPosPrevious, 500);
-                linesPrevious[0].Transform(portalMatrix);
-                linesPrevious[1].Transform(portalMatrix);
+                linesPrevious[0] = linesPrevious[0].Transform(portalMatrix);
+                linesPrevious[1] = linesPrevious[1].Transform(portalMatrix);
 
                 Line portalWorldLine = new Line(p.GetWorldVerts());
-                portalWorldLine.Transform(portalMatrix);
+                portalWorldLine = portalWorldLine.Transform(portalMatrix);
                 PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNewer, lines, linesPrevious, portalWorldLine);
 
                 CalculatePortalViews(p, portals, viewMatrix, viewPosNew, viewPosPreviousNew, depth - 1, portalViewNew, portalMatrixNew);
@@ -376,11 +376,12 @@ namespace Game
                         {
                             continue;
                         }
-                        int index = ModelFactory.AddPolygon(portalEdges, lineWidth);
+                        int index = ModelFactory.AddPolygon((Mesh)portalEdges.Mesh, lineWidth);
 
-                        for (int k = index; k < portalEdges.Vertices.Count; k++)
+                        IMesh mesh = portalEdges.Mesh;
+                        for (int k = index; k < mesh.GetVertices().Count; k++)
                         {
-                            Vertex vertex = portalEdges.Vertices[k];
+                            Vertex vertex = mesh.GetVertices()[k];
                             Vector3 pos = Vector3Ext.Transform(vertex.Position, homography);
                             pos.Z = cam.UnitZToWorld(pos.Z);
                             /*vertex.Position = Vector3Ext.Transform(vertex.Position, homography);
@@ -390,14 +391,14 @@ namespace Game
                             Vector2 v = new Vector2(vertex.Position.X, vertex.Position.Y);
                             double distance = line.GetPerpendicularLeft().PointDistance(v, false);
                             double texCoordX = line.PointDistance(v, false) / minWidth;
-                            if (line.GetSideOf(v) == Line.Side.IsLeftOf)
+                            if (line.GetSideOf(v) == Side.Left)
                             {
                                 texCoordX *= -1;
                             }
                             texCoordX += 0.5;
                             texCoord = new Vector2((float)texCoordX, (float)(distance / line.Length));
 
-                            portalEdges.Vertices[k] = new Vertex(pos, texCoord);
+                            mesh.GetVertices()[k] = new Vertex(pos, texCoord);
                         }
                     }
                 }
@@ -430,78 +431,22 @@ namespace Game
                 }
                 foreach (ClipModel clip in e.GetClipModels(PortalClipDepth))
                 {
-                    foreach (Line l in clip.ClipLines)
+                    if (clip.ClipLines.Length > 0)
                     {
-                        
-                    }
-                    RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform);
-                }
-            }
-            /*List<ClipModel> defaultShader = new List<ClipModel>();
-            List<ClipModel> clipShader = new List<ClipModel>();
-            foreach (Entity e in layer.GetEntityList())
-            {
-                if (!e.Visible)
-                {
-                    continue;
-                }
-                if (isPortalRender && e.DrawOverPortals)
-                {
-                    continue;
-                }
-                foreach (ClipModel clip in e.GetClipModels(PortalClipDepth))
-                {
-                    if (clip.ClipLines.Length == 0 || e.DrawOverPortals)
-                    {
-                        defaultShader.Add(clip);
+                        Model model = clip.Model.DeepClone();
+                        Matrix4 transform = clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform;
+                        for (int i = 0; i < clip.ClipLines.Length; i++)
+                        {
+                            model.Mesh = MathExt.BisectMesh(model.Mesh, clip.ClipLines[i], transform, Side.Right);
+                        }
+                        RenderModel(model, viewMatrix, transform);
                     }
                     else
                     {
-                        clipShader.Add(clip);
+                        RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform);
                     }
                 }
             }
-            SetShader(Shaders["uber"]);
-            foreach (ClipModel clip in defaultShader)
-            {
-                if (clip.Entity.DrawOverPortals)
-                {
-                    SetEnable(EnableCap.StencilTest, false);
-                }
-                RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix());
-                SetEnable(EnableCap.StencilTest, true);
-            }
-            //SetShader(Shaders["uberClip"]);
-            foreach (ClipModel clip in clipShader)
-            {
-                Matrix4 ScaleMatrix;
-                ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
-                ScaleMatrix = ScaleMatrix * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
-                bool isMirrored = Matrix4Ext.IsMirrored(viewMatrix);
-                List<float> cutLines = new List<float>();
-                foreach (Line l in clip.ClipLines)
-                {
-                    if (isMirrored)
-                    {
-                        l.Reverse();
-                    }
-                    l.Transform(ScaleMatrix);
-                    cutLines.AddRange(new float[4] {
-                        l[0].X,
-                        l[0].Y,
-                        l[1].X,
-                        l[1].Y
-                    });
-                }
-                //Vector2 vMax, vMin;
-                //MathExt.GetBBox(clip.ClipLines, out vMin, out vMax);
-                //GL.Scissor((int)vMin.X, (int)vMin.Y, (int)vMax.X + 1, (int)vMax.Y + 1);
-
-                //GL.Uniform1(_activeShader.GetUniform("cutLinesLength"), cutLines.Count);
-                //GL.Uniform1(GL.GetUniformLocation(_activeShader.ProgramID, "cutLines[0]"), cutLines.Count, cutLines.ToArray());
-                RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform);
-            }*/
-            //SetShader(Shaders["uber"]);
         }
 
         private void UpdateCullFace(Matrix4 viewMatrix)
@@ -532,7 +477,7 @@ namespace Game
             inds.AddRange(model.GetIndices().ToList());
             colors.AddRange(model.GetColorData().ToList());
             texcoords.AddRange(model.GetTextureCoords());
-            vertcount += model.Vertices.Count;
+            vertcount += model.Mesh.GetVertices().Count;
 
             Vector3[] vertdata;
             Vector3[] coldata;
@@ -541,7 +486,12 @@ namespace Game
 
             vertdata = verts.ToArray();
             indicedata = inds.ToArray();
-            coldata = colors.ToArray();
+            coldata = new Vector3[colors.Count];
+            for (int i = 0; i < colors.Count; i++)
+            {
+                coldata[i] = colors[i] * (1 - model.Color.W) + new Vector3(model.Color * model.Color.W);
+            }
+            //coldata = colors.ToArray();
             texcoorddata = texcoords.ToArray();
 
             Debug.Assert(indicedata.Length % 3 == 0, "Model must have a multiple of 3 vertex indices.");

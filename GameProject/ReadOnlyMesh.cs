@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +14,16 @@ namespace Game
         public readonly ReadOnlyCollection<int> Indices;
 
         public ReadOnlyMesh(IMesh mesh)
+            : this(mesh.GetVertices(), mesh.GetIndices())
         {
-            Vertices = new ReadOnlyCollection<Vertex>(mesh.GetVertices().ToList());
-            Indices = new ReadOnlyCollection<int>(mesh.GetIndices().ToList());
+        }
+
+        public ReadOnlyMesh(IList<Vertex> vertices, IList<int> indices)
+        {
+            Vertices = new ReadOnlyCollection<Vertex>(vertices);
+            Indices = new ReadOnlyCollection<int>(indices);
+            Debug.Assert(Indices.Count == 0 || Indices.Max() < Vertices.Count);
+            Debug.Assert(Indices.Count % 3 == 0);
         }
 
         public ReadOnlyMesh(IEnumerable<Triangle> triangles)
@@ -54,6 +62,11 @@ namespace Game
         public List<int> GetIndices()
         {
             return new List<int>(Indices);
+        }
+
+        public IMesh ShallowClone()
+        {
+            return new ReadOnlyMesh(Vertices, Indices);
         }
     }
 }

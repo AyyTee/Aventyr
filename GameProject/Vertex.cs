@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    [DataContract]
+    [DataContract, DebuggerDisplay("Vertex {Position}")]
     public class Vertex : IShallowClone<Vertex>
     {
         [DataMember]
@@ -78,6 +78,13 @@ namespace Game
                 normal
                 );
             return vNew;
+        }
+
+        public Vertex Transform(Matrix4 transform)
+        {
+            Vector3 position = Vector3.Transform(Position, transform);
+            Vector3 normal = Vector3.Transform(Normal, transform);
+            return new Vertex(position, TextureCoord, Color, normal);
         }
 
         public static bool Equals(Vertex v0, Vertex v1)

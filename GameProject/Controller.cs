@@ -94,10 +94,6 @@ namespace Game
                 Path.Combine(shaderFolder, "vs_uber.glsl"),
                 Path.Combine(shaderFolder, "fs_uber.glsl"),
                 true));
-            Renderer.Shaders.Add("uberClip", new ShaderProgram(
-                Path.Combine(shaderFolder, "vs_uber.glsl"),
-                Path.Combine(shaderFolder, "fs_uber_clip.glsl"),
-                true));
         }
 
         public virtual void OnRenderFrame(FrameEventArgs e)

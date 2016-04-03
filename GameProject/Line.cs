@@ -8,24 +8,12 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
+    [DebuggerDisplay("Line {Vertices[0]}, {Vertices[1]}")]
     public class Line
     {
-        public enum Side
-        {
-            IsLeftOf,
-            IsRightOf,
-            IsNeither
-        }
-
-        public float Length
-        {
-            get
-            {
-                return (Vertices[1] - Vertices[0]).Length;
-            }
-        }
+        public float Length { get { return (this[1] - this[0]).Length; } }
         public Vector2[] Vertices = new Vector2[2];
-        public Vector2 Center { get { return (Vertices[0] + Vertices[1]) / 2; } }
+        public Vector2 Center { get { return (this[0] + this[1]) / 2; } }
 
         #region Constructors
         public Line()
@@ -79,13 +67,13 @@ namespace Game
             double p = (Vertices[1].X - Vertices[0].X) * (point.Y - Vertices[0].Y) - (Vertices[1].Y - Vertices[0].Y) * (point.X - Vertices[0].X);
             if (p > 0)
             {
-                return Side.IsLeftOf;
+                return Side.Left;
             }
             else if (p == 0 && !ignoreEdgeCase)
             {
-                return Side.IsNeither;
+                return Side.Neither;
             }
-            return Side.IsRightOf;
+            return Side.Right;
         }
 
         /// <summary>
@@ -109,7 +97,7 @@ namespace Game
             {
                 return side0;
             }
-            return Side.IsNeither;
+            return Side.Neither;
         }
 
         public Vector2 GetNormal()
@@ -281,9 +269,10 @@ namespace Game
             Vertices[1] = temp;
         }
 
-        public void Transform(Matrix4 transformMatrix)
+        public Line Transform(Matrix4 transformMatrix)
         {
-            Vertices = Vector2Ext.Transform(Vertices, transformMatrix);
+            //Vertices = Vector2Ext.Transform(Vertices, transformMatrix);
+            return new Line(Vector2Ext.Transform(Vertices, transformMatrix));
         }
 
         public Vector2 Lerp(float t)
@@ -344,7 +333,7 @@ namespace Game
             for (int i = 0; i < detail; i++ )
             {
                 Line lineNext = line.Copy();
-                lineNext.Transform(transform);
+                lineNext = lineNext.Transform(transform);
 
                 Vector2[] verts = new Vector2[] {
                     line[0],

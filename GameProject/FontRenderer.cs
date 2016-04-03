@@ -137,8 +137,8 @@ namespace Game
         /// <returns></returns>
         public Model GetModel(String text, Vector2 alignment, float charSpacing)
         {
-            Model textModel = new Model();
-            textModel.Texture = texture;
+            Mesh textMesh = new Mesh();
+            
             CharData[] charData = GetChar(text);
             Vertex[] vertices = new Vertex[charData.Length * 4];
             List<int> indices = new List<int>();
@@ -160,9 +160,13 @@ namespace Game
                 Vector3 pos = vertices[i].Position + offset;
                 vertices[i] = new Vertex(pos, vertices[i].TextureCoord);
             }
-            textModel.Vertices.AddRange(vertices);
+            textMesh.Vertices.AddRange(vertices);
             //textModel.Indices.AddRange(indices);
-            textModel.AddTriangles(indices.ToArray());
+            //textMesh.AddTriangles(indices.ToArray());
+            textMesh.Indices.AddRange(indices);
+
+            Model textModel = new Model(textMesh);
+            textModel.Texture = texture;
             textModel.IsTransparent = true;
             return textModel;
         }

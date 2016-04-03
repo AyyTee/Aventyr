@@ -653,11 +653,11 @@ namespace Game
         /// <param name="bisector">Bisection plane defined by a line on the xy-plane.</param>
         /// <param name="keepSide">Which side of the bisector to not remove from the triangle.</param>
         /// <returns>Triangles not removed by the bisection.  Will either be 0,1,2 triangles.</returns>
-        public static Triangle[] BisectTriangle(Triangle triangle, Line bisector, Line.Side keepSide = Line.Side.IsLeftOf)
+        public static Triangle[] BisectTriangle(Triangle triangle, Line bisector, Side keepSide = Side.Left)
         {
             Debug.Assert(triangle != null);
             Debug.Assert(bisector != null);
-            Debug.Assert(keepSide != Line.Side.IsNeither);
+            Debug.Assert(keepSide != Side.Neither);
             Vector2[] vertices = new Vector2[]
             {
                 new Vector2(triangle[0].Position.X, triangle[0].Position.Y),
@@ -669,13 +669,13 @@ namespace Game
             int intersectCount = 0;
             for (int i = 0; i < Triangle.VERTEX_COUNT; i++)
             {
-                Line.Side side = bisector.GetSideOf(vertices[i], false);
-                if (side == keepSide || side == Line.Side.IsNeither)
+                Side side = bisector.GetSideOf(vertices[i], false);
+                if (side == keepSide || side == Side.Neither)
                 {
                     keep.Add(triangle[i]);
                 }
                 Line edge = new Line(vertices[i], vertices[(i + 1) % Triangle.VERTEX_COUNT]);
-                IntersectPoint intersect = edge.Intersects(bisector, true);
+                IntersectPoint intersect = edge.Intersects(bisector, false);
                 if (intersect.Exists && intersect.TFirst > 0 && intersect.TFirst < 1)
                 {
                     intersectCount++;
@@ -705,6 +705,45 @@ namespace Game
             {
                 return new Triangle[0];
             }
+        }
+
+        public static Mesh BisectMesh(IMesh mesh, Line bisector, Side keepSide = Side.Left)
+        {
+            return BisectMesh(mesh, bisector, Matrix4.Identity, keepSide);
+        }
+
+        public static Mesh BisectMesh(IMesh mesh, Line bisector, Matrix4 transform, Side keepSide = Side.Left)
+        {
+            Debug.Assert(mesh != null);
+            Debug.Assert(bisector != null);
+            Debug.Assert(keepSide != Side.Neither);
+            Triangle[] triangles = GetTriangles(mesh);
+
+            Mesh meshBisected = new Mesh();
+            for (int i = 0; i < triangles.Length; i++)
+            {
+                Triangle[] bisected = BisectTriangle(triangles[i].Transform(transform), bisector, keepSide);
+                meshBisected.AddTriangleRange(bisected);
+            }
+            meshBisected.Transform(transform.Inverted());
+            return meshBisected;
+        }
+
+        public static Triangle[] GetTriangles(IMesh mesh)
+        {
+            Debug.Assert(mesh != null);
+            List<Vertex> vertices = mesh.GetVertices();
+            List<int> indices = mesh.GetIndices();
+            Triangle[] triangles = new Triangle[indices.Count / 3];
+            for (int i = 0; i < triangles.Length; i++)
+            {
+                Vertex v0, v1, v2;
+                v0 = vertices[indices[i * 3]];
+                v1 = vertices[indices[i * 3 + 1]];
+                v2 = vertices[indices[i * 3 + 2]];
+                triangles[i] = new Triangle(v0, v1, v2);
+            }
+            return triangles;
         }
     }
 }

@@ -1,10 +1,8 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
-using Poly2Tri;
 using System.Diagnostics;
 using System;
-using System.Xml.Serialization;
 using System.Runtime.Serialization;
 
 namespace Game
@@ -27,39 +25,14 @@ namespace Game
         [DataMember]
         public ITexture Texture;
         [DataMember]
+        public Vector4 Color = new Vector4();
+        [DataMember]
         public Transform2 TransformUv = new Transform2();
         [DataMember]
         public bool Wireframe = false;
-
-        [DataContract]
-        public class Triangle
-        {
-            public const int NUMBER_OF_VERTICES = 3;
-            [DataMember]
-            public int[] Indices = new int[NUMBER_OF_VERTICES];
-
-            private Triangle()
-            {
-            }
-
-            public Triangle(int i0, int i1, int i2)
-            {
-                Indices[0] = i0;
-                Indices[1] = i1;
-                Indices[2] = i2;
-            }
-
-            public Triangle(int[] indices)
-            {
-                Debug.Assert(indices.Length == NUMBER_OF_VERTICES, "There can only be 3 indices assigned to a Triangle.");
-                Indices = indices;
-            }
-        }
-
         [DataMember]
-        public List<Vertex> Vertices = new List<Vertex>();
-        [DataMember]
-        List<Triangle> Triangles = new List<Triangle>();
+        public IMesh Mesh = new Mesh();
+        
         #region Constructors
         public Model()
         {
@@ -69,16 +42,10 @@ namespace Game
             }
         }
 
-        public Model(Vertex[] vertices)
-            : this(vertices, new Triangle[0])
-        {
-        }
-
-        public Model(Vertex[] vertices, Triangle[] triangles)
+        public Model(IMesh mesh)
             : this()
         {
-            Vertices.AddRange(vertices);
-            Triangles.AddRange(triangles);
+            Mesh = mesh;
         }
 
         #endregion
@@ -121,11 +88,20 @@ namespace Game
         public Model ShallowClone()
         {
             Model clone = new Model();
-            clone.Vertices = new List<Vertex>(Vertices);
-            clone.Triangles = new List<Triangle>(Triangles);
+            clone.Mesh = Mesh;
             clone.Transform = Transform.ShallowClone();
             clone.Texture = Texture;
             clone.TransformUv = TransformUv.ShallowClone();
+            clone.Wireframe = Wireframe;
+            clone.Color = Color;
+            clone.IsTransparent = IsTransparent;
+            return clone;
+        }
+
+        public Model DeepClone()
+        {
+            Model clone = ShallowClone();
+            clone.Mesh = Mesh.ShallowClone();
             return clone;
         }
 
@@ -139,19 +115,21 @@ namespace Game
         /// </summary>
         public void SetColor(Vector3 color)
         {
-            for (int i = 0; i < Vertices.Count; i++)
-            {
-                Vertex v = Vertices[i];
-                Vertices[i] = new Vertex(v.Position, v.TextureCoord, color, v.Normal);
-            }
+            Color = new Vector4(color, 1);
+        }
+
+        public void SetColor(Vector4 color)
+        {
+            Color = color;
         }
 
         public Vector3[] GetVerts()
         {
-            Vector3[] val = new Vector3[Vertices.Count];
+            List<Vertex> vertices = Mesh.GetVertices();
+            Vector3[] val = new Vector3[vertices.Count];
             for (int i = 0; i < val.Length; i++)
             {
-                val[i] = Vertices[i].Position;
+                val[i] = vertices[i].Position;
             }
             return val;
         }
@@ -160,48 +138,10 @@ namespace Game
         {
             return Vector3Ext.Transform(GetVerts(), Transform.GetMatrix());
         }
-
-        public void AddTriangle(Triangle triangle)
-        {
-            Triangles.Add(triangle);
-        }
-
-        public void AddTriangles(IEnumerable<Triangle> triangles)
-        {
-            Triangles.AddRange(triangles);
-        }
-
-        public void AddTriangle(int index0, int index1, int index2)
-        {
-            Triangles.Add(new Triangle(index0, index1, index2));
-        }
-
-        public void AddTriangles(int[] indices)
-        {
-            for (int i = 0; i < indices.Length; i += 3)
-            {
-                AddTriangle(indices[i], indices[i + 1], indices[i + 2]);
-            }
-        }
-
-        /// <summary>Adds a Vertex and returns its index.</summary>
-        public int AddVertex(Vertex vertex)
-        {
-            Vertices.Add(vertex);
-            return Vertices.Count - 1;
-        }
-
-        /// <summary>Adds an array of vertices and returns the index of the first vertex.</summary>
-        public int AddVertexRange(Vertex[] vertices)
-        {
-            Vertices.AddRange(vertices);
-            return Vertices.Count - vertices.Length;
-        }
         
         /// <summary>
         /// Returns a convex hull of the model projected onto the z-plane in the world space
         /// </summary>
-        /// <returns></returns>
         public Vector2[] GetWorldConvexHull()
         {
             Vector3[] v = GetWorldVerts();
@@ -218,31 +158,28 @@ namespace Game
         /// </summary>
         public int[] GetIndices()
         {
-            List<int> indices = new List<int>();
-            foreach (Triangle t in Triangles)
-            {
-                indices.AddRange(t.Indices);
-            }
-            return indices.ToArray();
+            return Mesh.GetIndices().ToArray();
         }
 
         public Vector3[] GetColorData()
         {
-            Vector3[] val = new Vector3[Vertices.Count];
+            List<Vertex> vertices = Mesh.GetVertices();
+            Vector3[] val = new Vector3[vertices.Count];
             for (int i = 0; i < val.Length; i++)
             {
-                val[i] = Vertices[i].Color;
+                val[i] = vertices[i].Color;
             }
             return val;
         }
 
         public Vector2[] GetTextureCoords()
         {
-            Vector2[] val = new Vector2[Vertices.Count];
+            List<Vertex> vertices = Mesh.GetVertices();
+            Vector2[] val = new Vector2[vertices.Count];
             
             for (int i = 0; i < val.Length; i++)
             {
-                val[i] = Vertices[i].TextureCoord;
+                val[i] = vertices[i].TextureCoord;
             }
             return val;
         }

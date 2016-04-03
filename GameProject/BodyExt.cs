@@ -75,7 +75,7 @@ namespace Game
                     //verts = Vector2Ext.Transform(verts, bodyMatrix);
                     Line line = new Line(verts);
                     Vector2 normal = line.GetNormal();
-                    if (line.GetSideOf(localPoint) == Line.Side.IsLeftOf)
+                    if (line.GetSideOf(localPoint) == Side.Left)
                     {
                         normal = -normal;
                     }

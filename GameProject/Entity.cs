@@ -140,7 +140,7 @@ namespace Game
                 {
                     Line currentLine = new Line(collisions[i].GetWorldVerts());
                     Line checkLine = new Line(collisions[j].GetWorldVerts());
-                    Line.Side checkSide = currentLine.GetSideOf(checkLine);
+                    Side checkSide = currentLine.GetSideOf(checkLine);
                     if (checkSide != currentLine.GetSideOf(centerPoint))
                     {
                         collisions.RemoveAt(j);

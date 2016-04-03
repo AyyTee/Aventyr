@@ -25,9 +25,13 @@ namespace Game
                 0, 2, 1,
                 0, 3, 2,
             };*/
-            Model model = new Model(vertices);
-            model.AddTriangle(0, 2, 1);
-            model.AddTriangle(0, 3, 2);
+            Mesh mesh = new Mesh();
+            mesh.Vertices = vertices.ToList();
+            mesh.Indices.AddRange(new[] { 0, 2, 1 });
+            mesh.Indices.AddRange(new[] { 0, 3, 2 });
+            Model model = new Model(mesh);
+            /*model.AddTriangle(0, 2, 1);
+            model.AddTriangle(0, 3, 2);*/
             return model;
         }
 
@@ -90,9 +94,9 @@ namespace Game
                 //bottom 
                 20,21,22,20,22,23
             };
-            
-            Model model = new Model(vertices);
-            model.AddTriangles(indices);
+            Mesh mesh = new Mesh(vertices, indices);
+            Model model = new Model(mesh);
+            //model.AddTriangles(indices);
             //model.SetTexture(Renderer.Textures["default.png"]);
             return model;
         }
@@ -102,59 +106,62 @@ namespace Game
         /// </summary>
         public static Model CreatePolygon(Vector2[] vertices, Vector3 offset = new Vector3())
         {
-            Model model = new Model();
-            AddPolygon(model, vertices, offset);
+            Mesh mesh = new Mesh();
+            AddPolygon(mesh, vertices, offset);
+            Model model = new Model(mesh);
             return model;
             //return CreatePolygon(PolygonFactory.CreatePolygon(vertices), offset);
         }
 
         public static Model CreatePolygon(Polygon polygon, Vector3 offset = new Vector3())
         {
-            Model model = new Model();
-            AddPolygon(model, polygon, offset);
+            Mesh mesh = new Mesh();
+            AddPolygon(mesh, polygon, offset);
+            Model model = new Model(mesh);
             return model;
         }
 
         public static Model CreatePolygon(PolyTree polygon)
         {
-            Model model = new Model();
-            AddPolygon(model, polygon);
+            Mesh mesh = new Mesh();
+            AddPolygon(mesh, polygon);
+            Model model = new Model(mesh);
             return model;
         }
 
-        public static int AddPolygon(Model model, Vector2[] v, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh model, Vector2[] v, Vector3 offset = new Vector3())
         {
             return AddPolygon(model, PolygonFactory.CreatePolygon(v), offset);
         }
 
-        public static int AddPolygon(Model model, PolyTree polyTree, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh model, PolyTree polyTree, Vector3 offset = new Vector3())
         {
             return AddPolygon(model, PolygonFactory.CreatePolygon(polyTree).ToArray(), offset);
         }
 
-        public static int AddPolygon(Model model, List<List<IntPoint>> paths, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh model, List<List<IntPoint>> paths, Vector3 offset = new Vector3())
         {
             return AddPolygon(model, PolygonFactory.CreatePolygon(paths).ToArray(), offset);
         }
 
-        public static int AddPolygon(Model model, Polygon[] polygon, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh mesh, Polygon[] polygon, Vector3 offset = new Vector3())
         {
-            int indexFirst = model.Vertices.Count;
+            int indexFirst = mesh.Vertices.Count;
             for (int i = 0; i < polygon.Length; i++)
             {
-                int index = AddPolygon(model, polygon[i], new Vector3());
+                int index = AddPolygon(mesh, polygon[i], new Vector3());
             }
             return indexFirst;
         }
 
-        public static int AddPolygon(Model model, Polygon polygon, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh mesh, Polygon polygon, Vector3 offset = new Vector3())
         {
-            int indexFirst = model.Vertices.Count;
+            int indexFirst = mesh.Vertices.Count;
             if (polygon == null)
             {
                 return indexFirst;
             }
-            int vertCountPrev = model.Vertices.Count;
+            int vertCountPrev = mesh.Vertices.Count;
             Vertex[] verts = new Vertex[polygon.Points.Count];
             List<int> indices = new List<int>();
 
@@ -166,7 +173,7 @@ namespace Game
                 float ty = (float)((p.Y - polygon.MinY) / (polygon.MaxY - polygon.MinY));
                 Vector2 tc = new Vector2(tx, ty);
                 //verts[i] = new Vertex(v, tc);
-                model.Vertices.Add(new Vertex(v, tc));
+                mesh.Vertices.Add(new Vertex(v, tc));
             }
 
             foreach (Poly2Tri.DelaunayTriangle t in polygon.Triangles)
@@ -180,65 +187,68 @@ namespace Game
                 {
                     continue;
                 }
-                model.AddTriangle(index0 + vertCountPrev, index1 + vertCountPrev, index2 + vertCountPrev);
+                mesh.AddTriangle(index0 + vertCountPrev, index1 + vertCountPrev, index2 + vertCountPrev);
             }
             return indexFirst;
         }
 
         public static Model CreateLines(Line[] lines)
         {
-            Model model = new Model();
-            model.Wireframe = true;
+            Mesh mesh = new Mesh();
             for (int i = 0; i < lines.Length; i++)
             {
                 Vector3 v;
                 v = new Vector3(lines[i][0].X, lines[i][0].Y, 0);
-                int index0 = model.AddVertex(new Vertex(v, new Vector2()));
+                int index0 = mesh.AddVertex(new Vertex(v, new Vector2()));
                 v = new Vector3(lines[i][1].X, lines[i][1].Y, 0);
-                int index1 = model.AddVertex(new Vertex(v, new Vector2()));
-                model.AddTriangle(index0, index1, index1);
+                int index1 = mesh.AddVertex(new Vertex(v, new Vector2()));
+                mesh.AddTriangle(index0, index1, index1);
             }
+            Model model = new Model(mesh);
+            model.Wireframe = true;
             return model;
         }
 
         public static Model CreateLinesWidth(Line[] lines, float width)
         {
-            Model model = new Model();
-            AddLinesWidth(model, lines, width);
+            Mesh mesh = new Mesh();
+            AddLinesWidth(mesh, lines, width);
+            Model model = new Model(mesh);
             return model;
         }
 
-        public static void AddLinesWidth(Model model, Line[] lines, float width)
+        public static void AddLinesWidth(Mesh mesh, Line[] lines, float width)
         {
             for (int i = 0; i < lines.Length; i++)
             {
                 Vector2 vStart, vEnd;
                 vStart = lines[i][0];
                 vEnd = lines[i][1];
-                AddLineWidth(model, vStart, vEnd, width);
+                AddLineWidth(mesh, vStart, vEnd, width);
             }
         }
 
         public static Model CreateLineStripWidth(Vector2[] vertices, float width, bool closed)
         {
-            Model model = new Model();
-            AddLineStripWidth(model, vertices, width, closed);
+            Mesh mesh = new Mesh();
+            AddLineStripWidth(mesh, vertices, width, closed);
+            Model model = new Model(mesh);
             return model;
         }
 
-        public static void AddLineStripWidth(Model model, Vector2[] vertices, float width, bool closed)
+        public static void AddLineStripWidth(Mesh mesh, Vector2[] vertices, float width, bool closed)
         {
             for (int i = 0; i < vertices.Length - 1; i++)
             {
-                AddLineWidth(model, vertices[i], vertices[i + 1], width);
+                AddLineWidth(mesh, vertices[i], vertices[i + 1], width);
             }
             if (closed)
             {
-                AddLineWidth(model, vertices[vertices.Length - 1], vertices[0], width);
+                AddLineWidth(mesh, vertices[vertices.Length - 1], vertices[0], width);
             }
         }
 
-        private static void AddLineWidth(Model model, Vector2 v0, Vector2 v1, float width)
+        private static void AddLineWidth(Mesh mesh, Vector2 v0, Vector2 v1, float width)
         {
             Vector2[] vectors = PolygonFactory.CreateLineWidth(new Line(v0, v1), width);
             Vertex[] vertices = new Vertex[vectors.Length];
@@ -246,16 +256,15 @@ namespace Game
             {
                 vertices[i] = new Vertex(vectors[i]);
             }
-            int index = model.AddVertexRange(vertices);
-            model.AddTriangle(index + 2, index + 1, index);
-            model.AddTriangle(index, index + 3, index + 2);
+            int index = mesh.AddVertexRange(vertices);
+            mesh.AddTriangle(index + 2, index + 1, index);
+            mesh.AddTriangle(index, index + 3, index + 2);
         }
 
         public static Model CreateLineStrip(Vector2[] vertices, Vector3[] colors)
         {
             Debug.Assert(vertices.Length >= 2);
-            Model model = new Model();
-            model.Wireframe = true;
+            Mesh mesh = new Mesh();
             for (int i = 0; i < vertices.Length - 1; i++)
             {
                 Vector3 v, color = new Vector3();
@@ -265,11 +274,13 @@ namespace Game
                 }
                 
                 v = new Vector3(vertices[i].X, vertices[i].Y, 0);
-                int index0 = model.AddVertex(new Vertex(v, new Vector2(), color));
+                int index0 = mesh.AddVertex(new Vertex(v, new Vector2(), color));
                 v = new Vector3(vertices[i + 1].X, vertices[i + 1].Y, 0);
-                int index1 = model.AddVertex(new Vertex(v, new Vector2(), color));
-                model.AddTriangle(index0, index1, index1);
+                int index1 = mesh.AddVertex(new Vertex(v, new Vector2(), color));
+                mesh.AddTriangle(index0, index1, index1);
             }
+            Model model = new Model(mesh);
+            model.Wireframe = true;
             return model;
         }
 
@@ -281,13 +292,13 @@ namespace Game
         public static Model CreateCircle(Vector3 origin, float radius, int detail)
         {
             Debug.Assert(detail >= 3, "Detail must be greater or equal to 3.");
-            Model model = new Model();
+            Mesh mesh = new Mesh();
             for (int i = 0; i < detail; i++)
             {
                 double rad = Math.PI * 2 * i / detail;
                 Vector3 pos = new Vector3((float)Math.Cos(rad), (float)Math.Sin(rad), 0) * radius + origin;
                 Vector2 textureCoord = new Vector2((float)(1 + Math.Cos(rad) / 2), (float)(1 + Math.Sin(rad) / 2));
-                model.Vertices.Add(new Vertex(pos, textureCoord));
+                mesh.Vertices.Add(new Vertex(pos, textureCoord));
             }
 
             for (int i = 0; i < detail - 1; i++)
@@ -296,8 +307,9 @@ namespace Game
                 {
                     continue;
                 }
-                model.AddTriangle(i, i + 1, detail - 1 - i);
+                mesh.AddTriangle(i, i + 1, detail - 1 - i);
             }
+            Model model = new Model(mesh);
             return model;
         }
 

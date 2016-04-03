@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface IMesh
+    public interface IMesh : IShallowClone<IMesh>
     {
         /// <summary>
         /// Get a shallow copy of list containing vertices in the mesh.

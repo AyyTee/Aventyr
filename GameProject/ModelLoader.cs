@@ -111,14 +111,14 @@ namespace Game
                 else
                 {
                     Vertex vertex = new Vertex(points[vertId], texCoord, new Vector3(), normal);
-                    int index = model.AddVertex(vertex);
+                    int index = 0;//model.AddVertex(vertex); //TODO
                     vectorMap.Add(key, index);
                     vertIndices.Add(index);
                 }
             }
             for (int i = 2; i < vertIndices.Count; i++)
             {
-                model.AddTriangle(vertIndices[0], vertIndices[i - 1], vertIndices[i]);
+                //model.AddTriangle(vertIndices[0], vertIndices[i - 1], vertIndices[i]); //TODO
             }
             return true;
         }

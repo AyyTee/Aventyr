@@ -159,7 +159,7 @@ namespace Game
                     if (distanceToPortal < Portal.EnterMinDistance)
                     {
                         Vector2 exitNormal = p.GetWorldTransform().GetRight();
-                        Line.Side sideOf;
+                        Side sideOf;
                         if (p == portalPrevious)
                         {
                             sideOf = exitLine.GetSideOf(position + velocity.Position);

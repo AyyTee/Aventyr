@@ -1,5 +1,7 @@
-﻿using System;
+﻿using OpenTK;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -12,15 +14,15 @@ namespace Game
     /// </summary>
     public class Triangle : IShallowClone<Triangle>
     {
-        public readonly Vertex[] Vertices;
+        public Vertex V0 { get { return Vertices[0]; } }
+        public Vertex V1 { get { return Vertices[1]; } }
+        public Vertex V2 { get { return Vertices[2]; } }
+        public readonly ReadOnlyCollection<Vertex> Vertices;
         public const int VERTEX_COUNT = 3;
 
         public Triangle(Vertex v0, Vertex v1, Vertex v2)
         {
-            Vertices = new Vertex[VERTEX_COUNT];
-            Vertices[0] = v0;
-            Vertices[1] = v1;
-            Vertices[2] = v2;
+            Vertices = new ReadOnlyCollection<Vertex>(new[] { v0, v1, v2 });
         }
 
         public Triangle ShallowClone()
@@ -42,6 +44,15 @@ namespace Game
         public Triangle Reverse()
         {
             return new Triangle(this[2], this[1], this[0]);
+        }
+
+        public Triangle Transform(Matrix4 transform)
+        {
+            return new Triangle(
+                this[0].Transform(transform),
+                this[1].Transform(transform),
+                this[2].Transform(transform)
+                );
         }
 
         /// <summary>
