@@ -12,7 +12,6 @@ namespace Game
     {
         public Matrix4 ViewMatrix { get; private set; }
         public List<List<IntPoint>> Paths { get; private set; }
-        public List<Vector2> ClipPolygon { get; private set; }
         public List<PortalView> Children { get; private set; }
         public PortalView Parent { get; private set; }
         public Line[] FovLines { get; private set; }

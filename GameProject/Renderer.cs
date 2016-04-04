@@ -100,7 +100,7 @@ namespace Game
         public void Render()
         {
             GL.Viewport(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
-            GL.Scissor(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
+            ResetScissor();
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit | ClearBufferMask.ColorBufferBit);
 
             var shaderList = Renderer.Shaders.ToList();
@@ -308,9 +308,11 @@ namespace Game
                 GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
                 for (int i = 0; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
                 {
+                    SetScissor(portalViewList[i], cam.GetViewMatrix());
                     GL.StencilFunc(StencilFunction.Equal, i, stencilMask);
                     DrawLayer(layer, portalViewList[i].ViewMatrix, 0, i > 0);
                 }
+                ResetScissor();
             }
             
             //Draw the portal edges.
@@ -447,6 +449,40 @@ namespace Game
                     }
                 }
             }
+        }
+
+        /// <summary>Sets scissor region around a portalview.</summary>
+        /// <param name="viewMatrix">Camera view matrix, do not use view matrix for the portalview.</param>
+        private void SetScissor(PortalView view, Matrix4 viewMatrix)
+        {
+            Debug.Assert(view != null);
+            if (view.Paths == null)
+            {
+                ResetScissor();
+                return;
+            }
+            Matrix4 ScaleMatrix;
+            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
+            ScaleMatrix = ScaleMatrix * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
+
+            Vector2 vMin, vMax;
+            vMin = ClipperConvert.ToVector2(view.Paths[0][0]);
+            vMax = ClipperConvert.ToVector2(view.Paths[0][0]);
+            for (int i = 0; i < view.Paths.Count; i++)
+            {
+                for (int j = 0; j < view.Paths[i].Count; j++)
+                {
+                    Vector2 vTransform = Vector2Ext.Transform(ClipperConvert.ToVector2(view.Paths[i][j]), ScaleMatrix);
+                    vMax = Vector2.ComponentMax(vMax, vTransform);
+                    vMin = Vector2.ComponentMin(vMin, vTransform);
+                }
+            }
+            GL.Scissor((int)vMin.X, (int)vMin.Y, (int)Math.Ceiling(vMax.X - vMin.X), (int)Math.Ceiling(vMax.Y - vMin.Y));
+        }
+
+        private void ResetScissor()
+        {
+            GL.Scissor(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
         }
 
         private void UpdateCullFace(Matrix4 viewMatrix)

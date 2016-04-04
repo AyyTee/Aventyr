@@ -67,6 +67,22 @@ namespace Game
             }
         }
 
+        /// <summary>
+        /// Remove all identical vertices.
+        /// </summary>
+        public void RemoveDuplicates()
+        {
+            List<Vertex> unique = new HashSet<Vertex>(Vertices).ToList();
+            List<int> indicesOld = Indices;
+            Indices = new List<int>();
+            for (int i = 0; i < indicesOld.Count; i++)
+            {
+                int index = unique.FindIndex(item => item == Vertices[i]);
+                Indices.Add(index);
+            }
+            Vertices = unique;
+        }
+
         public void Transform(Matrix4 transform)
         {
             for (int i = 0; i < Vertices.Count; i++)

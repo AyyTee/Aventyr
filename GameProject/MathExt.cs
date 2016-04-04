@@ -725,6 +725,7 @@ namespace Game
                 Triangle[] bisected = BisectTriangle(triangles[i].Transform(transform), bisector, keepSide);
                 meshBisected.AddTriangleRange(bisected);
             }
+            meshBisected.RemoveDuplicates();
             meshBisected.Transform(transform.Inverted());
             return meshBisected;
         }

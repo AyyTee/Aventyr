@@ -79,6 +79,7 @@ namespace Editor
             background.Transform.Scale = new Vector3(size, size, size);
             background.TransformUv.Size = size;
             Entity back = new Entity(Back, new Vector2(0f, 0f));
+            back.Name = "Background";
             back.AddModel(background);
             #endregion
 
