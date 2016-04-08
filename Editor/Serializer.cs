@@ -13,7 +13,7 @@ namespace Editor
     public static class Serializer
     {
         const string fileSuffixPhysics = "_phys";
-        public const string fileExtension = "save";
+        public const string fileExtension = "xml";
         public const string fileExtensionName = "Save File";
 
         private static IEnumerable<Type> GetKnownTypes()
@@ -59,7 +59,12 @@ namespace Editor
             XmlReaderSettings settings = new XmlReaderSettings();
             using (XmlReader reader = XmlReader.Create(filename, settings))
             {
-                return (EditorScene)GetSerializer().ReadObject(reader);
+                EditorScene editorScene = (EditorScene)GetSerializer().ReadObject(reader);
+                foreach (EditorObject e in editorScene.FindAll())
+                {
+                    e.Initialize();
+                }
+                return editorScene;
             }
         }
     }

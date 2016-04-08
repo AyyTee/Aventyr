@@ -51,6 +51,10 @@ namespace Editor
                 new {
                     tool = (Tool)new ToolAddActor(_controller),
                     image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png")))
+                },
+                new {
+                    tool = (Tool)new ToolAddWall(_controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonIcon.png")))
                 }
             };
             for (int i = 0; i < arguments.Length; i++)

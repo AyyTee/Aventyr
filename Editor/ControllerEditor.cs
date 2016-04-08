@@ -23,6 +23,8 @@ namespace Editor
         public event SceneEventHandler ScenePaused;
         public event SceneEventHandler ScenePlayed;
         public event SceneEventHandler SceneStopped;
+        public delegate void LevelLoadedHandler(ControllerEditor controller, string filepath);
+        public event LevelLoadedHandler LevelLoaded;
         /// <summary>Called when an EditorObject's public state has been modified.</summary>
         public event SceneEventHandler SceneModified;
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
@@ -35,6 +37,9 @@ namespace Editor
         Queue<Action> Actions = new Queue<Action>();
         public Selection selection { get; private set; }
         public StateList StateList { get; private set; }
+        /// <summary>
+        /// Prevent race conditions when adding and reading from the action queue.
+        /// </summary>
         object _lockAction = new object();
         bool _isPaused = true;
 
@@ -46,8 +51,7 @@ namespace Editor
         public override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            Back = new Scene();
-            renderer.AddLayer(Back);
+            
             LevelNew();
 
             Hud = new Scene();
@@ -63,12 +67,10 @@ namespace Editor
 
         public void LevelNew()
         {
-            /*if (Level != null)
-            {
-                renderer.RemoveScene(Level.Scene);
-            }*/
+            renderer.RemoveLayer(Back);
+            Back = new Scene();
+            renderer.AddLayer(Back);
             Level = new EditorScene(Back);
-            //renderer.AddScene(Level.Scene);
 
             #region create background
             Model background = ModelFactory.CreatePlane();
@@ -91,8 +93,9 @@ namespace Editor
             CamControl = new ControllerCamera(this, Back.ActiveCamera, InputExt);
         }
 
-        public void LevelLoad(EditorScene load)
+        public void LevelLoad(string filepath)
         {
+            EditorScene load = Serializer.Deserialize(Back, filepath);
             /*Level = level;
             renderer.RemoveScene(Back);
             Back = level.Scene;
@@ -103,6 +106,11 @@ namespace Editor
             {
                 //e.SetMarker();
                 e.SetScene(Level);
+            }
+
+            if (LevelLoaded != null)
+            {
+                LevelLoaded(this, filepath);
             }
         }
 
@@ -152,17 +160,6 @@ namespace Editor
             CamControl.Update();
             _setTool(_nextTool);
             _activeTool.Update();
-            if (InputExt.KeyDown(InputExt.KeyBoth.Control) && !_activeTool.Active)
-            {
-                if (InputExt.KeyPress(Key.Y) || (InputExt.KeyDown(InputExt.KeyBoth.Shift) && InputExt.KeyPress(Key.Z)))
-                {
-                    StateList.Redo();
-                }
-                else if (InputExt.KeyPress(Key.Z))
-                {
-                    StateList.Undo();
-                }
-            }
             if (_editorObjectModified && SceneModified != null)
             {
                 //SceneModified(this, Level);
@@ -173,6 +170,22 @@ namespace Editor
                 ActiveLevel.Step();
             }
             Back.Step();
+        }
+
+        public void Undo()
+        {
+            if (!_activeTool.Active)
+            {
+                StateList.Undo();
+            }
+        }
+
+        public void Redo()
+        {
+            if (!_activeTool.Active)
+            {
+                StateList.Redo();
+            }
         }
 
         private void _setTool(Tool tool)

@@ -116,6 +116,13 @@ namespace Game
             Debug.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
         }
 
+        public static void SetScene(SceneNode sceneNode, Scene destination)
+        {
+            Debug.Assert(sceneNode != null);
+            Debug.Assert(!sceneNode.IsRoot, "Root nodes cannot be moved.");
+            sceneNode.SetParent(destination.Root);
+        }
+
         public static void SetScene(ICollection<SceneNode> sceneNodes, Scene destination)
         {
             foreach (SceneNode s in sceneNodes)

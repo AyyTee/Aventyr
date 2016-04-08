@@ -70,20 +70,23 @@ namespace Game
             return actor;
         }
 
-        public static Actor CreateEntityPolygon(Scene scene, Vector2 position, Vector2[] vertices)
+        public static Actor CreateEntityPolygon(Scene scene, Vector2 position, IList<Vector2> vertices)
         {
             return CreateEntityPolygon(scene, new Transform2(position), vertices);
         }
 
-        public static Actor CreateEntityPolygon(Scene scene, Transform2 transform, Vector2[] vertices)
+        public static Actor CreateEntityPolygon(Scene scene, Transform2 transform, IList<Vector2> vertices)
         {
             Debug.Assert(scene != null);
-            Entity entity = new Entity(scene, transform);
+            Entity entity = new Entity(scene);
             return CreateEntityPolygon(entity, transform, vertices);
         }
 
-        private static Actor CreateEntityPolygon(Entity entity, Transform2 transform, Vector2[] vertices)
+        private static Actor CreateEntityPolygon(Entity entity, Transform2 transform, IList<Vector2> vertices)
         {
+            Debug.Assert(entity != null);
+            Debug.Assert(transform != null);
+            Debug.Assert(vertices != null && vertices.Count >= 3);
             vertices = MathExt.SetHandedness(vertices, false);
             Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(vertices);
 

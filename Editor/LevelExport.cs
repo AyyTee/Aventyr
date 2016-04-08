@@ -1,4 +1,5 @@
 ﻿using Game;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,13 +36,19 @@ namespace Editor
                 else if (e is EditorActor)
                 {
                     EditorActor editorActor = (EditorActor)e;
-                    ActorFactory.CreateEntityBox(new Entity(scene), Transform2.GetPosition(editorActor));
+                    Actor actor = ActorFactory.CreateEntityBox(new Entity(scene), Transform2.GetPosition(editorActor));
+                    actor.SetTransform(editorActor.GetTransform());
+                }
+                else if (e is EditorWall)
+                {
+                    EditorWall editorWall = (EditorWall)e;
+                    Actor actor = ActorFactory.CreateEntityPolygon(scene, editorWall.GetTransform(), editorWall.Vertices);
                 }
             }
 
             Dictionary<IDeepClone, IDeepClone> dictionary = DeepClone.Clone(toClone);
             /*Cast all the cloned instances to SceneNode.  
-            There should not be any types other than SceneNode and any derived types.*/
+            There should not be any types other than SceneNode or its derived types.*/
             List<SceneNode> cloned = dictionary.Values.Cast<SceneNode>().ToList();
 
             SceneNode.SetScene(cloned, scene);

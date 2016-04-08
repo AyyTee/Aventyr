@@ -104,7 +104,7 @@ namespace Game
         /// <summary>
         /// Create a polygon model from an array of vertices. If the polygon is degenerate or non-simple then the model will be empty.
         /// </summary>
-        public static Model CreatePolygon(Vector2[] vertices, Vector3 offset = new Vector3())
+        public static Model CreatePolygon(IList<Vector2> vertices, Vector3 offset = new Vector3())
         {
             Mesh mesh = new Mesh();
             AddPolygon(mesh, vertices, offset);
@@ -129,7 +129,7 @@ namespace Game
             return model;
         }
 
-        public static int AddPolygon(Mesh model, Vector2[] v, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh model, IList<Vector2> v, Vector3 offset = new Vector3())
         {
             return AddPolygon(model, PolygonFactory.CreatePolygon(v), offset);
         }

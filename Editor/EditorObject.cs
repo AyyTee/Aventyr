@@ -50,6 +50,10 @@ namespace Editor
             SetMarker();
         }
 
+        public virtual void Initialize()
+        { 
+        }
+
         public void SetMarker()
         {
             if (Marker != null)
@@ -58,7 +62,6 @@ namespace Editor
             }
             Marker = new Entity(Scene.Scene);
             Marker.Name = "Marker";
-            //Marker.SetParent(this);
             Marker.DrawOverPortals = true;
             Model circle = ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
             circle.Transform.Position = new Vector3(0, 0, DrawDepth.EntityMarker);
@@ -72,7 +75,6 @@ namespace Editor
             Scene._children.Remove(this);
             Scene = destination;
             Scene._children.Add(this);
-            //Marker.SetScene(Scene.Scene);
             Marker.SetParent(Scene.Scene.Root);
         }
 
@@ -128,10 +130,6 @@ namespace Editor
         {
             Debug.Assert(parent != null);
             RemoveSelf();
-            /*if (Parent != null)
-            {
-                Parent._children.Remove(this);
-            }*/
             Parent = parent;
             parent._children.Add(this);
             Scene = null;

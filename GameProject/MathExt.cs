@@ -349,13 +349,13 @@ namespace Game
         /// </summary>
         /// <param name="v">Array of vertices that form a polygon</param>
         /// <returns></returns
-        public static bool IsClockwise(Vector2[] polygon)
+        public static bool IsClockwise(IList<Vector2> polygon)
         {
-            Debug.Assert(polygon.Length >= 3, "Polygon must have 3 or more vertices.");
+            Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
             double signedArea = 0;
-            for (int i0 = 0; i0 < polygon.Length; i0++)
+            for (int i0 = 0; i0 < polygon.Count; i0++)
             {
-                int i1 = (i0 + 1) % polygon.Length;
+                int i1 = (i0 + 1) % polygon.Count;
                 signedArea += (polygon[i0].X * polygon[i1].Y - polygon[i1].X * polygon[i0].Y);
             }
             Debug.Assert(signedArea != 0, "Polygon has 0 area.");
@@ -386,7 +386,7 @@ namespace Game
         /// <param name="polygon">A polygon represented as a list of vectors.</param>
         /// <param name="clockwise">Clockwise if true, C.Clockwise if false.</param>
         /// <returns></returns>
-        public static List<Vector2> SetHandedness(List<Vector2> polygon, bool clockwise)
+        public static IList<Vector2> SetHandedness(IList<Vector2> polygon, bool clockwise)
         {
             if (IsClockwise(polygon) != clockwise)
             {

@@ -14,7 +14,7 @@ namespace Game
     public static class PolygonFactory
     {
 
-        public static Polygon CreatePolygon(Vector2[] vertices)
+        public static Polygon CreatePolygon(IList<Vector2> vertices)
         {
             Polygon polygon = GetPolygon(vertices);
             if (Triangulate(polygon))
@@ -127,11 +127,11 @@ namespace Game
             return new Polygon(polygonPoints);
         }
 
-        private static Polygon GetPolygon(Vector2[] vertices)
+        private static Polygon GetPolygon(IList<Vector2> vertices)
         {
             HashSet<Vector2> points = new HashSet<Vector2>();
             List<PolygonPoint> polygonPoints = new List<PolygonPoint>();
-            for (int i = 0; i < vertices.Length; i++)
+            for (int i = 0; i < vertices.Count; i++)
             {
                 Vector2 v = vertices[i];
                 polygonPoints.Add(new PolygonPoint(v.X, v.Y));

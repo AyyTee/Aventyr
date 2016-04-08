@@ -103,6 +103,8 @@
     <Compile Include="CommandDrag.cs" />
     <Compile Include="ControllerCamera.cs" />
     <Compile Include="ControllerEditor.cs" />
+    <Compile Include="ControllerFiles.cs" />
+    <Compile Include="WPFCommands.cs" />
     <Compile Include="DrawDepths.cs" />
     <Compile Include="EditorActor.cs" />
     <Compile Include="EditorClone.cs" />
@@ -110,6 +112,8 @@
     <Compile Include="EditorObject.cs" />
     <Compile Include="EditorPortal.cs" />
     <Compile Include="EditorScene.cs" />
+    <Compile Include="EditorWall.cs" />
+    <Compile Include="FileRecentMenuItem.cs" />
     <Compile Include="LevelExport.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="MementoSelection.cs" />
@@ -121,6 +125,7 @@
     <Compile Include="ToolAddEntity.cs" />
     <Compile Include="Tool.cs" />
     <Compile Include="ToolAddPortal.cs" />
+    <Compile Include="ToolAddWall.cs" />
     <Compile Include="ToolButton.xaml.cs">
       <DependentUpon>ToolButton.xaml</DependentUpon>
     </Compile>
@@ -169,6 +174,12 @@
     </Compile>
     <Resource Include="favicon.ico" />
     <Resource Include="editor assets\icons\eye.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="editor assets\icons\arrow-circle-315-left.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="editor assets\icons\arrow-circle-225.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
     <Content Include="editor assets\icons\polygonIcon.png">

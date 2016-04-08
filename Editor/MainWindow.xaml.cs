@@ -6,7 +6,6 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Timers;
 using System.Windows.Input;
-using System.IO;
 
 namespace Editor
 {
@@ -20,8 +19,8 @@ namespace Editor
         public static string LocalDirectory { get; private set; }
         public static string AssetsDirectory { get; private set; }
         OpenFileDialog _loadModelDialog = new OpenFileDialog();
-        SaveFileDialog _saveFileDialog = new SaveFileDialog();
-        OpenFileDialog _loadFileDialog = new OpenFileDialog();
+        ControllerFiles ControllerFiles;
+        
         System.Timers.Timer updateTimer;
         public MainWindow()
         {
@@ -32,10 +31,9 @@ namespace Editor
             Width = 1000;
             Height = 650;
             _loadModelDialog.FileOk += _openFileDialog_FileOk;
-            _saveFileDialog.FileOk += _saveFileDialog_FileOk;
-            _loadFileDialog.FileOk += _loadFileDialog_FileOk;
-            _saveFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension;
-            _loadFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension;
+
+            FileRecentMenuItem recentFile = new FileRecentMenuItem("test");
+            filesRecent.Items.Add(recentFile);
         }
 
         private void _openFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
@@ -51,16 +49,6 @@ namespace Editor
             });
         }
 
-        private void _loadFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            Load(((OpenFileDialog)sender).FileName);
-        }
-
-        private void _saveFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            Save(((SaveFileDialog)sender).FileName);
-        }
-
         public void GLControl_Load(object sender, EventArgs e)
         {
             ControllerEditor = new ControllerEditor(glControl.ClientSize, new InputExt(glControl));
@@ -69,24 +57,29 @@ namespace Editor
             ControllerEditor.ScenePaused += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopped += ControllerEditor_SceneStopped;
             ControllerEditor.SceneModified += ControllerEditor_SceneModified;
+            
             glControl.MouseMove += glControl_MouseMove;
             _loop = new GLLoop(glControl, ControllerEditor);
             _loop.Run(60);
 
             ToolPanel ToolPanel = new ToolPanel(ControllerEditor);
             ToolGrid.Children.Add(ToolPanel);
-
             updateTimer = new System.Timers.Timer(500);
             updateTimer.Elapsed += new ElapsedEventHandler(UpdateFrameRate);  
             updateTimer.Enabled = true;
             UpdateTransformLabels(null);
 
             SetPortalRendering(true);
+
+            ControllerFiles = new ControllerFiles(ControllerEditor);
+            //Properties.Settings.Default["AutoLoadFile"] = "test.xml";
         }
+
+        
 
         private void ControllerEditor_SceneModified(Editor.ControllerEditor controller, Scene scene)
         {
-            this.Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke((Action)(() =>
             {
                 UpdateTransformLabels(controller.selection.First);
             }));
@@ -94,7 +87,7 @@ namespace Editor
 
         private void UpdateFrameRate(object sender, ElapsedEventArgs e)
         {
-            this.Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke((Action)(() =>
             {
                 int fps = (int)Math.Round(_loop.UpdatesPerSecond * (double)_loop.MillisecondsPerStep / _loop.GetAverage());
                 FrameRate.Content = "FPS " + fps.ToString() + "/" + _loop.UpdatesPerSecond.ToString();
@@ -107,28 +100,9 @@ namespace Editor
             MouseWorldCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
         }
 
-        private void Save(string filename)
-        {
-            ControllerEditor.AddAction(() =>
-                {
-                    string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
-                    Serializer.Serialize(ControllerEditor.Level, filename);
-                });
-        }
-
-        private void Load(string filename)
-        {
-            ControllerEditor.AddAction(() =>
-                {
-                    //ControllerEditor.LevelNew();
-                    //string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
-                    ControllerEditor.LevelLoad(Serializer.Deserialize(ControllerEditor.Back, filename));
-                });
-        }
-
         /*private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, EditorObject entity)
         {
-            this.Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke((Action)(() =>
             {
                 UpdateTransformLabels(controller.GetSelectedObject());
             }));
@@ -152,6 +126,7 @@ namespace Editor
         {
             base.OnClosing(e);
             updateTimer.Stop();
+            //Prevent this method from completing until the GL loop is finished.
             _loop.Stop();
             lock (_loop) { }
         }
@@ -187,7 +162,7 @@ namespace Editor
 
         private void ControllerEditor_ScenePlayed(ControllerEditor controller, Scene scene)
         {
-            this.Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke((Action)(() =>
                 {
                     toolStart.IsEnabled = false;
                     toolPause.IsEnabled = true;
@@ -200,7 +175,7 @@ namespace Editor
 
         private void ControllerEditor_ScenePaused(ControllerEditor controller, Scene scene)
         {
-            this.Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke((Action)(() =>
             {
                 toolStart.IsEnabled = true;
                 toolPause.IsEnabled = false;
@@ -213,7 +188,7 @@ namespace Editor
 
         private void ControllerEditor_SceneStopped(ControllerEditor controller, Scene scene)
         {
-            this.Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke((Action)(() =>
             {
                 toolStart.IsEnabled = true;
                 toolPause.IsEnabled = false;
@@ -270,22 +245,45 @@ namespace Editor
             });
         }
 
-        private void Button_Save(object sender, RoutedEventArgs e)
+        private void Button_Save(object sender, EventArgs e)
         {
-            _saveFileDialog.ShowDialog();
+            ControllerFiles.SaveCurrent();
         }
 
-        private void Button_Load(object sender, RoutedEventArgs e)
+        private void Button_Load(object sender, EventArgs e)
         {
-            _loadFileDialog.ShowDialog();
+            ControllerFiles.LoadAs();
         }
 
-        private void Button_New(object sender, RoutedEventArgs e)
+        private void Button_New(object sender, EventArgs e)
+        {
+            ControllerFiles.New();
+        }
+
+        private void Button_SaveAs(object sender, EventArgs e)
+        {
+            ControllerFiles.SaveAs();
+        }
+
+        private void Button_Undo(object sender, EventArgs e)
         {
             ControllerEditor.AddAction(() =>
             {
-                ControllerEditor.LevelNew();
+                ControllerEditor.Undo();
             });
+        }
+
+        private void Button_Redo(object sender, EventArgs e)
+        {
+            ControllerEditor.AddAction(() =>
+            {
+                ControllerEditor.Redo();
+            });
+        }
+
+        private void commandPlayToggle(object sender, ExecutedRoutedEventArgs e)
+        {
+            
         }
     }
 }

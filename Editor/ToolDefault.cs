@@ -97,17 +97,20 @@ namespace Editor
                     {
                         DragBegin(selected, false, Mode.Position);
                     }
-                    else if (_input.KeyPress(Key.G))
+                    else if (!_input.KeyDown(InputExt.KeyBoth.Control))
                     {
-                        DragBegin(Controller.selection.GetAll(), true, Mode.Position);
-                    }
-                    else if (_input.KeyPress(Key.R))
-                    {
-                        DragBegin(Controller.selection.GetAll(), true, Mode.Rotate);
-                    }
-                    else if (_input.KeyPress(Key.S))
-                    {
-                        DragBegin(Controller.selection.GetAll(), true, Mode.Scale);
+                        if (_input.KeyPress(Key.G))
+                        {
+                            DragBegin(Controller.selection.GetAll(), true, Mode.Position);
+                        }
+                        else if (_input.KeyPress(Key.R))
+                        {
+                            DragBegin(Controller.selection.GetAll(), true, Mode.Rotate);
+                        }
+                        else if (_input.KeyPress(Key.S))
+                        {
+                            DragBegin(Controller.selection.GetAll(), true, Mode.Scale);
+                        }
                     }
                 }
             }

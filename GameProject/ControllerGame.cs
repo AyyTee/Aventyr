@@ -148,7 +148,7 @@ namespace Game
             text2 = new Entity(hud);
             text2.SetTransform(new Transform2(new Vector2(0, CanvasSize.Height - 40)));
             #endregion
-            //new Serializer().Deserialize(scene, "blah.save", "blah_phys.save");
+            //new Serializer().Deserialize(scene, "blah.xml", "blah_phys.xml");
             Camera2 cam = new Camera2(scene, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height);
             //Camera2 cam = new Camera2(scene, new Transform2(new Vector2(), 1), 1);
             //cam.SetRotation((float)Math.PI / 2);
@@ -158,7 +158,7 @@ namespace Game
             renderer.AddLayer(scene);
             renderer.AddLayer(hud);
 
-            //new Serializer().Serialize(scene.Root, "blah.save", "blah_phys.save");
+            //new Serializer().Serialize(scene.Root, "blah.xml", "blah_phys.xml");
         }
 
         public override void OnRenderFrame(FrameEventArgs e)
