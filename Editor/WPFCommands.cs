@@ -49,5 +49,16 @@ namespace Editor
                 typeof(WPFCommands),
                 null
             );
+
+        public static readonly RoutedUICommand TimerStep = new RoutedUICommand
+            (
+                "Step",
+                "TimerStep",
+                typeof(WPFCommands),
+                new InputGestureCollection()
+                {
+                    new KeyGesture(Key.P, ModifierKeys.Control)
+                }
+            );
     }
 }

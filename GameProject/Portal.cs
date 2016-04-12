@@ -48,7 +48,6 @@ namespace Game
         protected void ShallowClone(Portal destination)
         {
             base.ShallowClone(destination);
-            destination.Size = Size;
             destination.OneSided = OneSided;
             destination.IsMirrored = IsMirrored;
             destination.Linked = Linked;
@@ -94,7 +93,8 @@ namespace Game
             {
                 throw new Exception("Size must be greater than 0.");
             }
-            Size = size;
+            //Size = size;
+
         }
 
         /// <summary>

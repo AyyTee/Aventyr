@@ -37,12 +37,18 @@ namespace Editor
                 if (_input.MousePress(MouseButton.Left))
                 {
                     EditorPortal portal = new EditorPortal(Controller.Level);
-                    /*FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
+                    FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.Scene.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
                     if (coord != null)
                     {
-                        editorPortal = Controller.CreateLevelPortal(new FixturePortal(Controller.Level, coord));
+                        //Clumsy way of determining which EditorWall this EditorPortal instance needs to parent itself to.
+                        EditorObject wall = portal.Scene.FindByType<EditorWall>().Find(item => item.Wall == coord.Actor);
+                        //coord.Actor
+                        Debug.Assert(wall != null);
+                        portal.SetParent(wall);
+                        
+                        //editorPortal = Controller.CreateLevelPortal(new FixturePortal(Controller.Level, coord));
                     }
-                    else*/
+                    else
                     {
                         portal.SetTransform(_mouseFollow.GetTransform());
                     }
@@ -71,12 +77,12 @@ namespace Editor
 
         private Transform2 GetPortalTransform()
         {
-            /*FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, 1);
+            FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.Scene.World, Controller.GetMouseWorldPosition(), snapDistance, 1);
             if (coord != null)
             {
                 return coord.GetWorldTransform();
             }
-            else*/
+            else
             {
                 Transform2 transform = new Transform2();
                 transform.Position = Controller.GetMouseWorldPosition();

@@ -15,7 +15,7 @@ namespace Editor
     {
         [DataMember]
         public List<Vector2> Vertices { get; private set; }
-        public Entity Wall { get; private set; }
+        public Actor Wall { get; private set; }
 
         public EditorWall(EditorScene scene, IList<Vector2> vertices)
             : base(scene)
@@ -28,9 +28,10 @@ namespace Editor
         {
             base.Initialize();
             Debug.Assert(Wall == null);
-            Wall = new Entity(Scene.Scene);
+            Wall = ActorFactory.CreateEntityPolygon(Scene.Scene, GetTransform(), Vertices);
+            /*Wall = new Entity(Scene.Scene);
             Wall.AddModel(ModelFactory.CreatePolygon(Vertices));
-            Wall.SetTransform(GetTransform());
+            Wall.SetTransform(GetTransform());*/
         }
 
         public override IDeepClone ShallowClone()

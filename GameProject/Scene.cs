@@ -82,9 +82,9 @@ namespace Game
             return ActiveCamera;
         }
 
-        public List<Entity> GetEntityList()
+        public List<IEntity> GetRenderList()
         {
-            return EntityList;
+            return SceneNodeList.OfType<IEntity>().ToList();
         }
 
         public List<Portal> GetPortalList()

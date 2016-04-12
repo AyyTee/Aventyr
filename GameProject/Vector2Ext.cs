@@ -52,7 +52,7 @@ namespace Game
             return vList;
         }
 
-        public static IEnumerable<Vector2> Transform(IEnumerable<Vector2> vectors, Matrix4 matrix)
+        public static IList<Vector2> Transform(IList<Vector2> vectors, Matrix4 matrix)
         {
             List<Vector2> vList = new List<Vector2>();
             foreach (Vector2 v in vectors)

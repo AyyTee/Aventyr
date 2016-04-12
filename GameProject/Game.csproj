@@ -138,12 +138,14 @@
     <Compile Include="BodyUserData.cs" />
     <Compile Include="Camera2.cs" />
     <Compile Include="ClipModel.cs" />
+    <Compile Include="ClipModelCompute.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="ClipperExt.cs" />
     <Compile Include="DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="GlobalEnums.cs" />
     <Compile Include="IDeepClone.cs" />
+    <Compile Include="IEntity.cs" />
     <Compile Include="IMesh.cs" />
     <Compile Include="IRenderLayer.cs" />
     <Compile Include="IShallowClone.cs" />

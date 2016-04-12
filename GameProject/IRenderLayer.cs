@@ -8,7 +8,7 @@ namespace Game
 {
     public interface IRenderLayer
     {
-        List<Entity> GetEntityList();
+        List<IEntity> GetRenderList();
         List<Portal> GetPortalList();
         Camera2 GetCamera();
     }

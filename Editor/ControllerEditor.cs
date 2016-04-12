@@ -20,9 +20,9 @@ namespace Editor
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
         public event EditorObjectHandler EntityAdded;
         public delegate void SceneEventHandler(ControllerEditor controller, Scene scene);
-        public event SceneEventHandler ScenePaused;
-        public event SceneEventHandler ScenePlayed;
-        public event SceneEventHandler SceneStopped;
+        public event SceneEventHandler ScenePauseEvent;
+        public event SceneEventHandler ScenePlayEvent;
+        public event SceneEventHandler SceneStopEvent;
         public delegate void LevelLoadedHandler(ControllerEditor controller, string filepath);
         public event LevelLoadedHandler LevelLoaded;
         /// <summary>Called when an EditorObject's public state has been modified.</summary>
@@ -42,6 +42,7 @@ namespace Editor
         /// </summary>
         object _lockAction = new object();
         bool _isPaused = true;
+        int _stepsPending = 0;
 
         public ControllerEditor(Size canvasSize, InputExt input)
             : base(canvasSize, input)
@@ -165,8 +166,12 @@ namespace Editor
                 //SceneModified(this, Level);
                 _editorObjectModified = false;
             }
-            if (!_isPaused && ActiveLevel != null)
+            if ((!_isPaused || _stepsPending > 0) && ActiveLevel != null)
             {
+                if (_stepsPending > 0)
+                {
+                    _stepsPending--;
+                }
                 ActiveLevel.Step();
             }
             Back.Step();
@@ -253,16 +258,17 @@ namespace Editor
                 renderer.RemoveLayer(Back);
                 renderer.RemoveLayer(Hud);
             }
+            _stepsPending = 0;
             _isPaused = false;
-            if (ScenePlayed != null)
-                ScenePlayed(this, Back);
+            if (ScenePlayEvent != null)
+                ScenePlayEvent(this, Back);
         }
 
         public void ScenePause()
         {
             _isPaused = true;
-            if (ScenePaused != null)
-                ScenePaused(this, Back);
+            if (ScenePauseEvent != null)
+                ScenePauseEvent(this, Back);
         }
 
         public void SceneStop()
@@ -276,8 +282,20 @@ namespace Editor
 
             ActiveLevel = null;
             _isPaused = true;
-            if (SceneStopped != null)
-                SceneStopped(this, Back);
+            if (SceneStopEvent != null)
+                SceneStopEvent(this, Back);
+        }
+
+        public void SceneStep()
+        {
+            if (ActiveLevel != null)
+            {
+                if (!_isPaused)
+                {
+                    ScenePause();
+                }
+                _stepsPending++;
+            }   
         }
 
         public void AddAction(Action action)

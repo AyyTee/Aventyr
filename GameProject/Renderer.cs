@@ -421,7 +421,7 @@ namespace Game
         private void DrawLayer(IRenderLayer layer, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)
         {
             SetShader(Shaders["uber"]);
-            foreach (Entity e in layer.GetEntityList())
+            foreach (IEntity e in layer.GetRenderList())
             {
                 if (!e.Visible)
                 {
@@ -477,7 +477,8 @@ namespace Game
                     vMin = Vector2.ComponentMin(vMin, vTransform);
                 }
             }
-            GL.Scissor((int)vMin.X, (int)vMin.Y, (int)Math.Ceiling(vMax.X - vMin.X), (int)Math.Ceiling(vMax.Y - vMin.Y));
+            //The -1 and +3 are margins to prevent rounding errors from making the scissor box too small.
+            GL.Scissor((int)vMin.X - 1, (int)vMin.Y - 1, (int)(vMax.X - vMin.X) + 3, (int)(vMax.Y - vMin.Y) + 3);
         }
 
         private void ResetScissor()

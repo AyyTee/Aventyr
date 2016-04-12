@@ -88,6 +88,7 @@ namespace Game
             Debug.Assert(transform != null);
             Debug.Assert(vertices != null && vertices.Count >= 3);
             vertices = MathExt.SetHandedness(vertices, false);
+            vertices = Vector2Ext.Transform(vertices, Matrix4.CreateScale(new Vector3(transform.Scale)));
             Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(vertices);
 
             entity.AddModel(ModelFactory.CreatePolygon(polygon));

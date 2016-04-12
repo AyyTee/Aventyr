@@ -53,9 +53,9 @@ namespace Editor
         {
             ControllerEditor = new ControllerEditor(glControl.ClientSize, new InputExt(glControl));
             //ControllerEditor.EntitySelected += ControllerEditor_EntitySelected;
-            ControllerEditor.ScenePlayed += ControllerEditor_ScenePlayed;
-            ControllerEditor.ScenePaused += ControllerEditor_ScenePaused;
-            ControllerEditor.SceneStopped += ControllerEditor_SceneStopped;
+            ControllerEditor.ScenePlayEvent += ControllerEditor_ScenePlayed;
+            ControllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;
+            ControllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;
             ControllerEditor.SceneModified += ControllerEditor_SceneModified;
             
             glControl.MouseMove += glControl_MouseMove;
@@ -284,6 +284,14 @@ namespace Editor
         private void commandPlayToggle(object sender, ExecutedRoutedEventArgs e)
         {
             
+        }
+
+        private void commandTimerStep(object sender, ExecutedRoutedEventArgs e)
+        {
+            ControllerEditor.AddAction(() =>
+            {
+                ControllerEditor.SceneStep();
+            });
         }
     }
 }

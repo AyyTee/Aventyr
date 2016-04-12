@@ -17,6 +17,7 @@
         <CommandBinding Command="self:WPFCommands.TimerStop" Executed="Button_Stop" />
         <CommandBinding Command="self:WPFCommands.TimerPlay" Executed="Button_Play" />
         <CommandBinding Command="self:WPFCommands.TimerPause" Executed="Button_Pause" />
+        <CommandBinding Command="self:WPFCommands.TimerStep" Executed="commandTimerStep" />
     </Window.CommandBindings>
 
     <Grid Name="MainGrid" KeyDown="MainGrid_KeyDown">

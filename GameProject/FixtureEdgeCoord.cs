@@ -21,17 +21,9 @@ namespace Game
         /// <summary>
         /// Return the Actor linked to the Body that is linked to the Fixture being intersected.
         /// </summary>
-        public Actor Actor
-        {
-            get 
-            {
-                return BodyExt.GetUserData(Fixture.Body).Actor;
-            }
-        }
+        public Actor Actor { get { return BodyExt.GetUserData(Fixture.Body).Actor; } }
         private int _edgeIndex;
-        /// <summary>
-        /// Index value of edge in Fixture's Shape.
-        /// </summary>
+        /// <summary>Index value of edge in Fixture's Shape.</summary>
         public int EdgeIndex
         {
             get { return _edgeIndex; }

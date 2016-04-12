@@ -16,7 +16,20 @@ namespace Editor
         public static Scene Export(EditorScene level)
         {
             Scene scene = new Scene();
-            
+
+            #region create background
+            Model background = ModelFactory.CreatePlane();
+            background.Texture = Renderer.Textures["grid.png"];
+            background.SetColor(new Vector3(1, 1, 0.5f));
+            background.Transform.Position = new Vector3(0, 0, -5f);
+            float size = 50;
+            background.Transform.Scale = new Vector3(size, size, size);
+            background.TransformUv.Size = size;
+            Entity back = new Entity(scene, new Vector2(0f, 0f));
+            back.Name = "Background";
+            back.AddModel(background);
+            #endregion
+
             HashSet<IDeepClone> toClone = new HashSet<IDeepClone>();
             Camera2 camera = level.Scene.ActiveCamera;
             toClone.Add(camera);
@@ -43,6 +56,13 @@ namespace Editor
                 {
                     EditorWall editorWall = (EditorWall)e;
                     Actor actor = ActorFactory.CreateEntityPolygon(scene, editorWall.GetTransform(), editorWall.Vertices);
+                    ((Entity)actor.Children[0]).ModelList[0].SetTexture(Renderer.Textures["default.png"]);
+                    FixturePortal portal0 = new FixturePortal(scene, new FixtureEdgeCoord(actor.Body.FixtureList[0], 0, 0.2f));
+                    //Transform2.SetSize(portal0, 2);
+                    
+                    FixturePortal portal1 = new FixturePortal(scene, new FixtureEdgeCoord(actor.Body.FixtureList[0], 0, 0.8f));
+                    portal1.SetSize(2);
+                    portal0.SetLinked(portal1);
                 }
             }
 
