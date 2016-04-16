@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface IPortal
+    public interface IPortal : IDeepClone
     {
         IPortal Linked { get; }
         Transform2 GetWorldTransform();

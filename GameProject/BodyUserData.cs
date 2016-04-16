@@ -28,8 +28,8 @@ namespace Game
         public class ChildBody
         {
             public Body Body;
-            public Portal Portal;
-            public ChildBody(Body body, Portal portal)
+            public IPortal Portal;
+            public ChildBody(Body body, IPortal portal)
             {
                 Body = body;
                 Portal = portal;
@@ -112,7 +112,7 @@ namespace Game
                 Body bodyClone = Body.DeepClone();
                 BodyUserData userDataClone = BodyExt.SetUserData(bodyClone, null);
                 userDataClone.BodyParent = new ChildBody(Body, portal.Linked);
-                portal.Enter(bodyClone);
+                Portal.Enter(portal, bodyClone);
 
                 ChildBody childBody = new ChildBody(bodyClone, portal);
                 userData.BodyChildren.Add(childBody);

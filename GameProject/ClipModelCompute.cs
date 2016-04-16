@@ -9,7 +9,7 @@ namespace Game
 {
     public static class ClipModelCompute
     {
-        public static List<ClipModel> GetClipModels(IRenderable entity, IList<Portal> portalList, int depth)
+        public static List<ClipModel> GetClipModels(IRenderable entity, IList<IPortal> portalList, int depth)
         {
             List<ClipModel> clipModels = new List<ClipModel>();
             if (entity.IsPortalable && !entity.DrawOverPortals)
@@ -31,7 +31,7 @@ namespace Game
 
         /// <param name="depth">Number of iterations.</param>
         /// <param name="clipModels">Adds the ClipModel instances to this list.</param>
-        private static List<ClipModel> _getClipModels(IRenderable entity, Model model, IList<Portal> portalList, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, int count)
+        private static List<ClipModel> _getClipModels(IRenderable entity, Model model, IList<IPortal> portalList, Vector2 centerPoint, IPortal portalEnter, Matrix4 modelMatrix, int depth, int count)
         {
             List<ClipModel> clipModels = new List<ClipModel>();
             if (depth <= 0)
@@ -39,18 +39,18 @@ namespace Game
                 return clipModels;
             }
             List<float> cutLines = new List<float>();
-            List<Portal> collisions = new List<Portal>();
-            foreach (Portal portal in portalList)
+            List<IPortal> collisions = new List<IPortal>();
+            foreach (IPortal portal in portalList)
             {
                 //ignore any portal attached to this entity on the first recursive iteration
-                if (portal.Parent == entity && count == 0)
+                /*if (portal.Parent == entity && count == 0)
                 {
                     continue;
-                }
-                Line portalLine = new Line(portal.GetWorldVerts());
+                }*/
+                Line portalLine = new Line(Portal.GetWorldVerts(portal));
                 Vector2[] convexHull = Vector2Ext.Transform(model.GetWorldConvexHull(), entity.GetWorldTransform().GetMatrix() * modelMatrix);
 
-                if (portalLine.IsInsideOfPolygon(convexHull) && portal.IsValid())
+                if (portalLine.IsInsideOfPolygon(convexHull) && Portal.IsValid(portal))
                 {
                     collisions.Add(portal);
                 }
@@ -59,11 +59,11 @@ namespace Game
             collisions = collisions.OrderBy(item => (item.GetWorldTransform().Position - centerPoint).Length).ToList();
             for (int i = 0; i < collisions.Count; i++)
             {
-                Portal portal = collisions[i];
+                IPortal portal = collisions[i];
                 for (int j = collisions.Count - 1; j > i; j--)
                 {
-                    Line currentLine = new Line(collisions[i].GetWorldVerts());
-                    Line checkLine = new Line(collisions[j].GetWorldVerts());
+                    Line currentLine = new Line(Portal.GetWorldVerts(collisions[i]));
+                    Line checkLine = new Line(Portal.GetWorldVerts(collisions[j]));
                     Side checkSide = currentLine.GetSideOf(checkLine);
                     if (checkSide != currentLine.GetSideOf(centerPoint))
                     {
@@ -73,9 +73,9 @@ namespace Game
             }
 
             List<Line> clipLines = new List<Line>();
-            foreach (Portal portal in collisions)
+            foreach (IPortal portal in collisions)
             {
-                Vector2[] pv = portal.GetWorldVerts();
+                Vector2[] pv = Portal.GetWorldVerts(portal);
                 Line clipLine = new Line(pv);
 
                 Line portalLine = new Line(pv);
@@ -99,8 +99,8 @@ namespace Game
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = Vector2Ext.Transform(portal.GetWorldTransform().Position + normal, portal.GetPortalMatrix());
-                    clipModels.AddRange(_getClipModels(entity, model, portalList, centerPointNext, portal, modelMatrix * portal.GetPortalMatrix(), depth - 1, count + 1));
+                    Vector2 centerPointNext = Vector2Ext.Transform(portal.GetWorldTransform().Position + normal, Portal.GetPortalMatrix(portal));
+                    clipModels.AddRange(_getClipModels(entity, model, portalList, centerPointNext, portal, modelMatrix * Portal.GetPortalMatrix(portal), depth - 1, count + 1));
                 }
             }
             clipModels.Add(new ClipModel(entity, model, clipLines.ToArray(), modelMatrix));

@@ -50,9 +50,9 @@ namespace Editor
             return FindAll().OfType<IRenderable>().ToList();
         }
 
-        public List<Portal> GetPortalList()
+        public List<IPortal> GetPortalList()
         {
-            return new List<Portal>();
+            return FindAll().OfType<IPortal>().ToList();
         }
 
         public ICamera2 GetCamera()

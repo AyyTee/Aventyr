@@ -71,7 +71,7 @@ namespace Game
                 float area = 0;
                 foreach (FixturePortal portal in userData.PortalCollisions)
                 {
-                    Vector2[] verts = portal.GetWorldVerts();
+                    Vector2[] verts = Portal.GetWorldVerts(portal);
                     //verts = Vector2Ext.Transform(verts, bodyMatrix);
                     Line line = new Line(verts);
                     Vector2 normal = line.GetNormal();

@@ -22,14 +22,17 @@ namespace Editor
             base.Do();
             if (_linked != null)
             {
-                ((EditorPortal)_editorObject).Portal.SetLinked(_linked.Portal);
+                EditorPortal portal = (EditorPortal)_editorObject;
+                portal.Linked = _linked;
+                _linked.Linked = portal;
+                ///((EditorPortal)_editorObject).Portal.SetLinked(_linked.Portal);
             }
         }
 
         public override void Undo()
         {
             base.Undo();
-            ((EditorPortal)_editorObject).Portal.SetLinked(null);
+            //((EditorPortal)_editorObject).Portal.SetLinked(null);
         }
 
         public override void Redo()
@@ -37,7 +40,7 @@ namespace Editor
             base.Redo();
             if (_linked != null)
             {
-                ((EditorPortal)_editorObject).Portal.SetLinked(_linked.Portal);
+                //((EditorPortal)_editorObject).Portal.SetLinked(_linked.Portal);
             }
         }
 

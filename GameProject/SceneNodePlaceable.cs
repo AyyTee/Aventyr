@@ -11,7 +11,7 @@ namespace Game
     [DataContract]
     public class SceneNodePlaceable : SceneNode, ITransform2
     {
-        public delegate void _portalEnter(SceneNodePlaceable placeable, Portal portalEnter);
+        public delegate void _portalEnter(SceneNodePlaceable placeable, IPortal portalEnter);
         public event _portalEnter PortalEnter;
         [DataMember]
         Transform2 _transform = new Transform2();
@@ -46,7 +46,7 @@ namespace Game
             _transform = transform.ShallowClone();
         }
 
-        public void PortalEnterInvoke(Portal portalEnter)
+        public void PortalEnterInvoke(IPortal portalEnter)
         {
             if (PortalEnter != null)
             {

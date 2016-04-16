@@ -9,7 +9,7 @@ namespace Game
     public interface IRenderLayer
     {
         List<IRenderable> GetRenderList();
-        List<Portal> GetPortalList();
+        List<IPortal> GetPortalList();
         ICamera2 GetCamera();
     }
 }

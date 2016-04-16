@@ -10,28 +10,29 @@ using System.Threading.Tasks;
 namespace Editor
 {
     [DataContract]
-    public class EditorPortal : EditorObject
+    public class EditorPortal : EditorObject, IPortal
     {
         [DataMember]
-        public FloatPortal Portal { get; private set; }
+        public IPortal Linked { get; set; }
+
+        public bool OneSided { get { return false; } }
         [DataMember]
-        public Entity PortalEntity { get; private set; }
+        public bool IsMirrored { get; set; }
+        List<Model> _models = new List<Model>();
 
         public EditorPortal(EditorScene editorScene, bool initialize = true)
             : base(editorScene)
         {
             if (initialize)
             {
-                /*PortalEntity = new Entity(Scene.Scene);
                 Model arrow0, arrow1;
                 arrow0 = ModelFactory.CreateArrow(new Vector3(0, -0.5f, 0), new Vector2(0, 1), 0.05f, 0.2f, 0.1f);
                 arrow0.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
-                PortalEntity.AddModel(arrow0);
                 arrow1 = ModelFactory.CreateArrow(new Vector3(), new Vector2(0.2f, 0), 0.05f, 0.2f, 0.1f);
                 arrow1.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
-                PortalEntity.AddModel(arrow1);
-                Portal = new FloatPortal(Scene.Scene);
-                Portal.SetParent(PortalEntity);*/
+
+                _models.Add(arrow0);
+                _models.Add(arrow1);
             }
         }
 
@@ -42,48 +43,16 @@ namespace Editor
             return clone;
         }
 
-        protected void ShallowClone(EditorPortal destination)
+        public Transform2 GetWorldVelocity()
         {
-            base.ShallowClone(destination);
-            destination.Portal = Portal;
-            destination.PortalEntity = PortalEntity;
+            return new Transform2();
         }
 
-        public override HashSet<IDeepClone> GetCloneableRefs()
+        public override List<Model> GetModels()
         {
-            HashSet<IDeepClone> list = base.GetCloneableRefs();
-            list.Add(Portal);
-            list.Add(PortalEntity);
-            return list;
-        }
-
-        public override void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
-        {
-            base.UpdateRefs(cloneMap);
-            Portal = (FloatPortal)cloneMap[Portal];
-            PortalEntity = (Entity)cloneMap[PortalEntity];
-        }
-
-        public override void SetTransform(Transform2 transform)
-        {
-            base.SetTransform(transform);
-            if (PortalEntity != null)
-            {
-                PortalEntity.SetTransform(transform);
-            }
-        }
-
-        public override void Remove()
-        {
-            base.Remove();
-            Portal.SetLinked(null);
-            PortalEntity.Remove();
-        }
-
-        public override void SetScene(EditorScene destination)
-        {
-            base.SetScene(destination);
-            //PortalEntity.SetParent(destination.Scene.Root);
+            List<Model> models = base.GetModels();
+            models.AddRange(_models);
+            return models;
         }
     }
 }

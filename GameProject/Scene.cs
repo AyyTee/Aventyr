@@ -87,9 +87,9 @@ namespace Game
             return SceneNodeList.OfType<IRenderable>().ToList();
         }
 
-        public List<Portal> GetPortalList()
+        public List<IPortal> GetPortalList()
         {
-            return Tree<SceneNode>.FindByType<Portal>(Root);
+            return Tree<SceneNode>.FindByType<SceneNode>(Root).OfType<IPortal>().ToList();
         }
 
         public void RayCast(SceneNodePlaceable placeable)
@@ -101,7 +101,7 @@ namespace Game
             _rayCast(placeable, placeable.GetVelocity().Position.Length, null, 50);
         }
 
-        private void _rayCast(SceneNodePlaceable placeable, double movementLeft, Portal portalPrevious, int depthMax)
+        private void _rayCast(SceneNodePlaceable placeable, double movementLeft, IPortal portalPrevious, int depthMax)
         {
             if (depthMax <= 0)
             {
@@ -122,7 +122,7 @@ namespace Game
                 {
                     continue;
                 }
-                Line portalLine = new Line(p.GetWorldVerts());
+                Line portalLine = new Line(Portal.GetWorldVerts(p));
                 Line ray = new Line(begin.Position, begin.Position + velocity.Position);
                 IntersectPoint intersect = portalLine.Intersects(ray, true);
                 //IntersectPoint intersect2 = portalLine.IntersectsParametric(p.GetVelocity(), ray, 5);
@@ -139,7 +139,7 @@ namespace Game
                 movementLeft -= distanceMin;
                 begin.Position = (Vector2)intersectNearest.Position;
                 placeable.SetTransform(begin);
-                portalNearest.Enter(placeable);
+                Portal.Enter(portalNearest, placeable);
                 _rayCast(placeable, movementLeft, portalNearest.Linked, depthMax - 1);
             }
             else
@@ -153,7 +153,7 @@ namespace Game
                     {
                         continue;
                     }
-                    Line exitLine = new Line(p.GetWorldVerts());
+                    Line exitLine = new Line(Portal.GetWorldVerts(p));
                     Vector2 position = begin.Position;
                     float distanceToPortal = exitLine.PointDistance(position, true);
                     if (distanceToPortal < Portal.EnterMinDistance)

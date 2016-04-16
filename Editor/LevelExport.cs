@@ -43,8 +43,6 @@ namespace Editor
                 else if (e is EditorPortal)
                 {
                     EditorPortal editorPortal = (EditorPortal)e;
-                    toClone.Add(editorPortal.PortalEntity);
-                    toClone.Add(editorPortal.Portal);
                 }
                 else if (e is EditorActor)
                 {

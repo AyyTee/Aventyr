@@ -39,9 +39,10 @@ namespace Editor
                     }
                     else
                     {
-                        portal.Portal.SetLinked(_portalPrevious.Portal);
-                        portal.Portal.IsMirrored = true;
-                        _portalPrevious.Portal.IsMirrored = false;
+                        portal.Linked = _portalPrevious;
+                        _portalPrevious.Linked = portal;
+                        portal.IsMirrored = true;
+                        _portalPrevious.IsMirrored = false;
                         if (_input.KeyDown(InputExt.KeyBoth.Control))
                         {
                             Transform2 t = portal.GetTransform();

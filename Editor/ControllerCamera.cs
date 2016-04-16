@@ -90,7 +90,7 @@ namespace Editor
         private void portalEnterCallback(SceneNodePlaceable placeable, Portal portalEnter)
         {
             Vector2[] list = lazyPan.ToArray();
-            portalEnter.EnterVelocity(list);
+            Portal.EnterVelocity(portalEnter, list);
             lazyPan = new Queue<Vector2>(list);
         }
 
@@ -208,6 +208,8 @@ namespace Editor
                 }
                 lazyPan.Dequeue();
             }
+
+            _transform.Position += GetWorldVelocity().Position;
 
             //If the camera has been moved then call events.
             if ((isMoved || GetWorldVelocity().Position != new Vector2()) && CameraMoved != null)

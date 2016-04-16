@@ -42,14 +42,14 @@ namespace Game
                 }
                 BodyExt.GetUserData(body).PreviousPosition = body.Position;
             }
-            foreach (Portal p in Scene.GetPortalList())
+            foreach (IPortal p in Scene.GetPortalList())
             {
                 if (p.GetType() == typeof(FixturePortal))
                 {
                     FixturePortal portal = (FixturePortal)p;
                     if (portal.Position != null)
                     {
-                        Xna.Vector2[] verts = Vector2Ext.ConvertToXna(p.GetWorldVerts());
+                        Xna.Vector2[] verts = Vector2Ext.ConvertToXna(Portal.GetWorldVerts(p));
                         Scene.World.RayCast(
                             delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
                             {
@@ -97,18 +97,18 @@ namespace Game
 
                 }
 
-                Portal portalNearest = null;
+                IPortal portalNearest = null;
                 double portalTDistance = 1f;
 
                 Line position = new Line(body.Position, BodyExt.GetUserData(body).PreviousPosition);
                 //portalNearest = Scene.PortalList.Min(item => new Line(item.GetWorldVerts()).);
-                foreach (Portal p in Scene.GetPortalList())
+                foreach (IPortal p in Scene.GetPortalList())
                 {
-                    if (!p.IsValid())
+                    if (!Portal.IsValid(p))
                     {
                         continue;
                     }
-                    Line line = new Line(p.GetWorldVerts());
+                    Line line = new Line(Portal.GetWorldVerts(p));
                     IntersectPoint intersect = position.Intersects(line, true);
                     if (intersect.TFirst <= portalTDistance && intersect.Exists)
                     {
@@ -119,7 +119,7 @@ namespace Game
                 if (portalNearest != null)
                 {
                     //float rot = body.Rotation;
-                    portalNearest.Enter(body);
+                    Portal.Enter(portalNearest, body);
                     //Debug.Assert(Math.Abs(rot - body.Rotation) < .01f || Math.Abs(rot - body.Rotation) > Math.PI - .01f);
                 }
             }
@@ -206,7 +206,7 @@ namespace Game
                         continue;
                     }
 
-                    Line line = new Line(portal.GetWorldVerts());
+                    Line line = new Line(Portal.GetWorldVerts(portal));
                     float[] vDist = new float[2];
                     vDist[0] = line.PointDistance(vList[0], true);
                     vDist[1] = line.PointDistance(vList[1], true);
@@ -239,7 +239,7 @@ namespace Game
                     {
                         continue;
                     }
-                    Line line = new Line(portal.GetWorldVerts());
+                    Line line = new Line(Portal.GetWorldVerts(portal));
                     //Xna.Vector2 pos = userData[i0].Fixture.Body.Position;
                     Xna.Vector2 pos = BodyExt.GetUserData(userData[i0].Fixture.Body).PreviousPosition;
                     bool sideOf = line.GetSideOf(vList[0]) != line.GetSideOf(pos);

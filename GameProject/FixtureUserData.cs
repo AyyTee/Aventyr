@@ -174,8 +174,8 @@ namespace Game
                 i = 0;
             }
 
-            verts[0] = Vector2Ext.Transform(portal.GetVerts()[i], portal.GetTransform().GetMatrix());
-            verts[1] = Vector2Ext.Transform(portal.GetVerts()[i] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
+            verts[0] = Vector2Ext.Transform(Portal.GetVerts(portal)[i], portal.GetTransform().GetMatrix());
+            verts[1] = Vector2Ext.Transform(Portal.GetVerts(portal)[i] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
 
             i = 0;
             if (!portalNext.IsMirrored)
@@ -183,8 +183,8 @@ namespace Game
                 i = 1;
             }
 
-            verts[2] = Vector2Ext.Transform(portalNext.GetVerts()[i] + new Vector2(-FixturePortal.EdgeMargin, 0), portalNext.GetTransform().GetMatrix());
-            verts[3] = Vector2Ext.Transform(portalNext.GetVerts()[i], portalNext.GetTransform().GetMatrix());
+            verts[2] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[i] + new Vector2(-FixturePortal.EdgeMargin, 0), portalNext.GetTransform().GetMatrix());
+            verts[3] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[i], portalNext.GetTransform().GetMatrix());
             
             verts = MathExt.SetHandedness(verts, false);
 
@@ -197,7 +197,7 @@ namespace Game
         private PolygonShape CreatePortalShape(FixturePortal portal, bool previousVertex)
         {
             Vector2[] verts = new Vector2[3];
-            var tempVerts = Vector2Ext.Transform(portal.GetVerts(), portal.GetTransform().GetMatrix());
+            var tempVerts = Vector2Ext.Transform(Portal.GetVerts(portal), portal.GetTransform().GetMatrix());
             Line edge = portal.Position.GetEdge();
             PolygonShape shape = (PolygonShape)portal.Position.Fixture.Shape;
             int i = 1;
@@ -215,7 +215,7 @@ namespace Game
             int index = (portal.Position.EdgeIndex + i) % shape.Vertices.Count;
             verts[0] = tempVerts[i0];
             verts[1] = Vector2Ext.ConvertTo(shape.Vertices[index]);
-            verts[2] = Vector2Ext.Transform(portal.GetVerts()[i0] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
+            verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[i0] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
             verts = MathExt.SetHandedness(verts, false);
 
             /*Entity debugEntity = Entity.Scene.CreateEntity();
