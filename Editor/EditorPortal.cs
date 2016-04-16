@@ -14,7 +14,6 @@ namespace Editor
     {
         [DataMember]
         public IPortal Linked { get; set; }
-
         public bool OneSided { get { return false; } }
         [DataMember]
         public bool IsMirrored { get; set; }
@@ -23,6 +22,7 @@ namespace Editor
         public EditorPortal(EditorScene editorScene, bool initialize = true)
             : base(editorScene)
         {
+            DrawOverPortals = true;
             if (initialize)
             {
                 Model arrow0, arrow1;

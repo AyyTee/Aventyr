@@ -104,6 +104,7 @@
     <Compile Include="ControllerCamera.cs" />
     <Compile Include="ControllerEditor.cs" />
     <Compile Include="ControllerFiles.cs" />
+    <Compile Include="Doodad.cs" />
     <Compile Include="WPFCommands.cs" />
     <Compile Include="DrawDepths.cs" />
     <Compile Include="EditorActor.cs" />

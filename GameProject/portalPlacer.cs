@@ -123,7 +123,7 @@ namespace Game
         /// </summary>
         public static FixtureEdgeCoord GetValid(FixtureEdgeCoord intersection, FixturePortal portal)
         {
-            return GetValid(intersection, portal.Size);
+            return GetValid(intersection, portal.GetWorldTransform().Size);
         }
 
         /// <summary>

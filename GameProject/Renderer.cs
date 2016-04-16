@@ -22,6 +22,7 @@ namespace Game
         public int PortalRenderDepth { get; set; }
         public int PortalRenderMax { get; set; }
         public int PortalClipDepth { get; set; }
+        public static int StencilBits { get; private set; }
         ShaderProgram _activeShader;
         Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
 
@@ -57,6 +58,8 @@ namespace Game
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Enable(EnableCap.ScissorTest);
             IsInitialized = true;
+            StencilBits = GL.GetInteger(GetPName.StencilBits);
+            Debug.Assert(StencilBits >= 8, "Stencil bith depth is too small.");
         }
 
         public void AddLayer(IRenderLayer layer)
@@ -210,10 +213,10 @@ namespace Game
                     continue;
                 }
 
-                Vector2 viewPosNew = Vector2Ext.Transform(viewPos, FixturePortal.GetPortalMatrix(p, p.Linked));
-                Vector2 viewPosPreviousNew = Vector2Ext.Transform(viewPosPrevious, FixturePortal.GetPortalMatrix(p, p.Linked));
+                Vector2 viewPosNew = Vector2Ext.Transform(viewPos, Portal.GetPortalMatrix(p, p.Linked));
+                Vector2 viewPosPreviousNew = Vector2Ext.Transform(viewPosPrevious, Portal.GetPortalMatrix(p, p.Linked));
 
-                Matrix4 portalMatrixNew = FixturePortal.GetPortalMatrix(p.Linked, p) * portalMatrix;
+                Matrix4 portalMatrixNew = Portal.GetPortalMatrix(p.Linked, p) * portalMatrix;
                 Matrix4 viewMatrixNew = portalMatrixNew * viewMatrix;
 
                 Line[] lines = Portal.GetFovLines(p, viewPos, 500);
@@ -280,7 +283,7 @@ namespace Game
             PortalView portalView = CalculatePortalViews(layer.GetPortalList().ToArray(), cam, depth);
             List<PortalView> portalViewList = portalView.GetPortalViewList(PortalRenderMax);
 
-            int stencilValueMax = 1 << GL.GetInteger(GetPName.StencilBits);
+            int stencilValueMax = 1 << StencilBits;
             int stencilMask = stencilValueMax - 1;
             //Draw portal FOVs to the stencil buffer.
             {
@@ -493,14 +496,14 @@ namespace Game
         {
 
             SetEnable(EnableCap.CullFace, false);
-            /*if (Matrix4Ext.IsMirrored(viewMatrix))
+            if (Matrix4Ext.IsMirrored(viewMatrix))
             {
                 GL.CullFace(CullFaceMode.Front);
             }
             else
             {
                 GL.CullFace(CullFaceMode.Back);
-            }*/
+            }
         }
 
         public void RenderModel(Model model, Matrix4 viewMatrix, Matrix4 offset)

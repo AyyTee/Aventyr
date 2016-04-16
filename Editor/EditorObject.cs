@@ -25,7 +25,7 @@ namespace Editor
         Model _marker;
         [DataMember]
         public bool Visible { get; private set; }
-        public bool DrawOverPortals { get { return true; } }
+        public bool DrawOverPortals { get; set; }
         public bool IsPortalable { get { return true; } }
         [DataMember]
         public bool IsSelected { get; private set; }

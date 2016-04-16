@@ -110,11 +110,11 @@ namespace Game
             Transform2 begin = placeable.GetTransform();
             Transform2 velocity = placeable.GetVelocity();
             double distanceMin = movementLeft;
-            Portal portalNearest = null;
+            IPortal portalNearest = null;
             IntersectPoint intersectNearest = new IntersectPoint();
-            foreach (Portal p in FindByType<Portal>())
+            foreach (IPortal p in FindByType<SceneNode>().OfType<IPortal>())
             {
-                if (!p.IsValid())
+                if (!Portal.IsValid(p))
                 {
                     continue;
                 }
@@ -147,9 +147,9 @@ namespace Game
                 begin.Position += velocity.Position.Normalized() * (float)movementLeft;
                 /*After the end position of the ray has been determined, adjust it's position so that it isn't too close to any portal.  
                 Otherwise there is a risk of ambiguity as to which side of a portal the end point is on.*/
-                foreach (Portal p in FindByType<Portal>())
+                foreach (IPortal p in FindByType<SceneNode>().OfType<IPortal>())
                 {
-                    if (!p.IsValid())
+                    if (!Portal.IsValid(p))
                     {
                         continue;
                     }

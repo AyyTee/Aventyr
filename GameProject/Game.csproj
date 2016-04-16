@@ -176,7 +176,6 @@
     <Compile Include="ModelFactory.cs" />
     <Compile Include="PhysContactListener.cs" />
     <Compile Include="Actor.cs" />
-    <Compile Include="SceneNode.cs" />
     <Compile Include="PolyCoord.cs" />
     <Compile Include="PolygonFactory.cs" />
     <Compile Include="Portal.cs" />
@@ -184,6 +183,7 @@
     <Compile Include="PortalView.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="SceneNode.cs" />
     <Compile Include="SceneNodePlaceable.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="Texture.cs" />

@@ -128,7 +128,7 @@ namespace Game
             //FixtureExt.GetUserData(Fixture).Entity.Scene.World.ProcessChanges();
             _fixtureChildList.Clear();
             var sortedPortals = _childPortals.ToArray().OrderBy(item => item.Position.EdgeIndexT).ToList();
-            sortedPortals.RemoveAll(item => !item.IsValid());
+            sortedPortals.RemoveAll(item => !Portal.IsValid(item));
             for (int i = 0; i < sortedPortals.Count(); i++)
             {
                 if (i == 0 || (i > 0 && sortedPortals[i].Position.EdgeIndex != sortedPortals[i - 1].Position.EdgeIndex))

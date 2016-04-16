@@ -63,7 +63,7 @@ namespace Game
             transform.IsMirrored = true;
             portalEntity2.SetTransform(transform);
 
-            Portal portal2 = new FloatPortal(scene);
+            FloatPortal portal2 = new FloatPortal(scene);
             portal2.SetParent(portalEntity2);
             portal2.OneSided = true;
             portal2.Name = "portal2";
@@ -79,12 +79,13 @@ namespace Game
             portalEntity3.SetTransform(new Transform2(new Vector2(-1f, 1)));
             //portalEntity3.SetVelocity(new Transform2D(new Vector2(), 0.005f));
 
-            Portal portal3 = new FloatPortal(scene);
+            FloatPortal portal3 = new FloatPortal(scene);
             portal3.SetParent(portalEntity3);
             portal3.OneSided = true;
             
             //portal3.IsMirrored = true;
-            portal2.SetLinked(portal3);
+            portal2.Linked = portal3;
+            portal3.Linked = portal2;
 
             #region player
             Entity player = new Entity(scene);
@@ -134,14 +135,14 @@ namespace Game
             //ground.AddModel(ModelFactory.CreatePolygon(v));
             ground.SetTransform(new Transform2(new Vector2(0, -4f), 1f, 0.05f));
             scene.World.ProcessChanges();
-            Portal portal0 = new FixturePortal(scene, null);
+            /*FixturePortal portal0 = new FixturePortal(scene, null);
             portal0.Name = "portalLeft";
-            Portal portal1 = new FixturePortal(scene, null);
+            FixturePortal portal1 = new FixturePortal(scene, null);
             portal1.Name = "portalRight";
 
             portal0.IsMirrored = true;
-
-            portal0.SetLinked(portal1);
+            portal0.Linked = portal1;
+            portal1.Linked = portal0;*/
 
             text = new Entity(hud);
             text.SetTransform(new Transform2(new Vector2(0, CanvasSize.Height)));
@@ -274,7 +275,7 @@ namespace Game
             }*/
             if (InputExt.KeyPress(Key.F))
             {
-                Portal portal2 = (Portal)scene.FindByName("portal2");
+                FloatPortal portal2 = (FloatPortal)scene.FindByName("portal2");
                 portal2.IsMirrored = !portal2.IsMirrored;
             }
             player.SetVelocity(new Transform2(v));

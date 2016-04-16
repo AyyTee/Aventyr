@@ -11,8 +11,19 @@ using Xna = Microsoft.Xna.Framework;
 namespace Game
 {
     [DataContract]
-    public class FixturePortal : Portal
+    public class FixturePortal : SceneNode, IPortal
     {
+        [DataMember]
+        public IPortal Linked { get; set; }
+        /// <summary>
+        /// If OneSided is true then the portal can only be viewed through it's front side.
+        /// Entities can still travel though the portal in both directions however.
+        /// </summary>
+        [DataMember]
+        public bool OneSided { get; set; }
+        [DataMember]
+        public bool IsMirrored { get; set; }
+
         [DataMember]
         public FixtureEdgeCoord Position { get; private set; }
         public Fixture CollisionFixtureNext;
@@ -52,6 +63,29 @@ namespace Game
             return clone;
         }
 
+        protected void ShallowClone(FixturePortal destination)
+        {
+            base.ShallowClone(destination);
+            destination.OneSided = OneSided;
+            destination.IsMirrored = IsMirrored;
+            destination.Linked = Linked;
+        }
+
+        public override void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
+        {
+            base.UpdateRefs(cloneMap);
+            //Portal clone = (Portal)cloneMap[this];
+            if (Linked != null && cloneMap.ContainsKey(Linked))
+            {
+                Linked = (IPortal)cloneMap[Linked];
+                //SetLinked((Portal)cloneMap[Linked]);
+            }
+            else
+            {
+                Linked = null;
+            }
+        }
+
         /// <summary>
         /// Returns a copy of the Transform local to the Body this is attached to.
         /// </summary>
@@ -75,14 +109,15 @@ namespace Game
             return transform;
         }
 
-        protected override bool _isValid()
+        /*protected override bool _isValid()
         {
             return base._isValid() && Position != null;
-        }
+        }*/
 
         public override void Remove()
         {
             RemoveFixture();
+            //SetLinked(null);
             base.Remove();
         }
 

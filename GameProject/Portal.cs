@@ -11,97 +11,17 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public abstract class Portal : SceneNode, IPortal
+    public static class Portal
     {
-        [DataMember]
-        public IPortal Linked { get; private set; }
-        /// <summary>Size of the portal.</summary>
-        [DataMember]
-        public float Size { get; private set; }
-        /// <summary>
-        /// True if entities can travel through this portal.  Does not affect portal clipping.
-        /// </summary>
-        //public bool IsPortalable { get; set; }
         /// <summary>
         /// The distance at which an entity enters and exits a portal.  
         /// It is used to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
         /// </summary>
         public const float EnterMinDistance = 0.001f;
-        /// <summary>
-        /// If OneSided is true then the portal can only be viewed through it's front side.
-        /// Entities can still travel though the portal in both directions however.
-        /// </summary>
-        [DataMember]
-        public bool OneSided { get; set; }
-        [DataMember]
-        public bool IsMirrored { get; set; }
-        public Portal(Scene scene)
-            : base(scene)
-        {
-            if (scene == null)
-            {
-                throw new NullReferenceException("Scene cannot be a null reference.");
-            }
-            SetSize(1f);
-        }
-
-        protected void ShallowClone(Portal destination)
-        {
-            base.ShallowClone(destination);
-            destination.OneSided = OneSided;
-            destination.IsMirrored = IsMirrored;
-            destination.Linked = Linked;
-        }
-
-        public override void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
-        {
-            base.UpdateRefs(cloneMap);
-            //Portal clone = (Portal)cloneMap[this];
-            if (Linked != null && cloneMap.ContainsKey(Linked))
-            {
-                Linked = (Portal)cloneMap[Linked];
-                //SetLinked((Portal)cloneMap[Linked]);
-            }
-            else
-            {
-                Linked = null;
-            }
-        }
-
-        public override void Remove()
-        {
-            SetLinked(null);
-            base.Remove();
-        }
-
-        /// <summary>
-        /// Whether a portal can be entered, rendered, and clip models.
-        /// </summary>
-        public bool IsValid()
-        {
-            //return _isValid() && (Linked != null && Linked._isValid());
-            return _isValid();
-        }
 
         public static bool IsValid(IPortal portal)
         {
-            //return portal.IsValid() && (portal.Linked != null && portal.Linked.IsValid());
             return portal.Linked != null && portal.GetWorldTransform() != null;
-        }
-
-        protected virtual bool _isValid()
-        {
-            return Linked != null;
-        }
-
-        public void SetSize(float size)
-        {
-            if (size <= 0)
-            {
-                throw new Exception("Size must be greater than 0.");
-            }
-            //Size = size;
-
         }
 
         /// <summary>
@@ -204,22 +124,23 @@ namespace Game
             placeable.PortalEnterInvoke(portal);
         }
 
-        public void SetLinked(Portal portal)
+        /*public static void SetLinked(IPortal portal0, IPortal portal1)
         {
-            Debug.Assert(portal == null || Scene == portal.Scene, "Linked portals must be in the same Scene.");
-            if (Linked != portal)
+            FixturePortal fixturePortal = portal0 as FixturePortal;
+            Debug.Assert(portal == null || Scene == fixturePortal.Scene, "Linked portals must be in the same Scene.");
+            if (Linked != fixturePortal)
             {
                 if (Linked != null)
                 {
                     ((Portal)Linked).Linked = null;
                 }
-                Linked = portal;
+                Linked = fixturePortal;
                 if (Linked != null)
                 {
                     ((Portal)Linked).SetLinked(this);
                 }
             }
-        }
+        }*/
 
         /// <summary>
         /// Returns an array of two Vectors defining the Portals local location

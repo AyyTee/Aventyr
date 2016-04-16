@@ -191,9 +191,9 @@ namespace Game
             FarseerPhysics.Common.FixedArray2<Xna.Vector2> vList;
             contact.GetWorldManifold(out normal, out vList);
 
-            foreach (Portal p in Scene.GetPortalList())
+            foreach (IPortal p in Scene.GetPortalList())
             {
-                if (!p.IsValid())
+                if (!Portal.IsValid(p))
                 {
                     continue;
                 }

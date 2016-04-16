@@ -59,8 +59,7 @@ namespace Editor
                     //Transform2.SetSize(portal0, 2);
                     
                     FixturePortal portal1 = new FixturePortal(scene, new FixtureEdgeCoord(actor.Body.FixtureList[0], 0, 0.8f));
-                    portal1.SetSize(2);
-                    portal0.SetLinked(portal1);
+                    //portal0.SetLinked(portal1);
                 }
             }
 

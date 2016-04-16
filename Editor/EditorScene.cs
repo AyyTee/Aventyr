@@ -1,4 +1,5 @@
 ﻿using Game;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,22 @@ namespace Editor
         [DataMember]
         public ICamera2 ActiveCamera { get; set; }
         public List<EditorObject> EditorObjects { get { return new List<EditorObject>(_children); } }
+        public List<Doodad> Doodads = new List<Doodad>();
 
         public EditorScene()
         {
+            #region create background
+            Model background = ModelFactory.CreatePlane();
+            background.Texture = Renderer.Textures["grid.png"];
+            background.SetColor(new Vector3(1, 1, 0.5f));
+            background.Transform.Position = new Vector3(0, 0, -5f);
+            float size = 50;
+            background.Transform.Scale = new Vector3(size, size, size);
+            background.TransformUv.Size = size;
+            Doodad back = new Doodad();
+            back.Models.Add(background);
+            Doodads.Add(back);
+            #endregion
         }
 
         public List<EditorObject> FindAll()
@@ -46,8 +60,9 @@ namespace Editor
 
         public List<IRenderable> GetRenderList()
         {
-            
-            return FindAll().OfType<IRenderable>().ToList();
+            List<IRenderable> renderList = FindAll().OfType<IRenderable>().ToList();
+            renderList.AddRange(Doodads);
+            return renderList;
         }
 
         public List<IPortal> GetPortalList()

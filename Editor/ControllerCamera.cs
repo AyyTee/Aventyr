@@ -87,7 +87,7 @@ namespace Editor
             viewCenter.SetParent(Camera);*/
         }
 
-        private void portalEnterCallback(SceneNodePlaceable placeable, Portal portalEnter)
+        private void portalEnterCallback(SceneNodePlaceable placeable, IPortal portalEnter)
         {
             Vector2[] list = lazyPan.ToArray();
             Portal.EnterVelocity(portalEnter, list);
