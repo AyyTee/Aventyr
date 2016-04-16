@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface IEntity
+    public interface IRenderable
     {
         List<Model> GetModels();
-        List<ClipModel> GetClipModels(int depth);
         Transform2 GetWorldTransform();
         bool Visible { get; }
         bool DrawOverPortals { get; }

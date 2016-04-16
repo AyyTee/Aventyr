@@ -15,7 +15,7 @@ namespace Game
     /// An object that exists within the world space and can be drawn
     /// </summary>
     [DataContract]
-    public class Entity : SceneNodePlaceable, IEntity
+    public class Entity : SceneNodePlaceable, IRenderable
     {
         [DataMember]
         List<Model> _models = new List<Model>();
@@ -88,11 +88,6 @@ namespace Game
         public List<Model> GetModels()
         {
             return ModelList;
-        }
-
-        public List<ClipModel> GetClipModels(int depth)
-        {
-            return ClipModelCompute.GetClipModels(this, Scene.GetPortalList(), depth);
         }
     }
 }

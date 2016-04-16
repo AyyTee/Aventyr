@@ -9,7 +9,7 @@ namespace Game
 {
     public static class ClipModelCompute
     {
-        public static List<ClipModel> GetClipModels(IEntity entity, IList<Portal> portalList, int depth)
+        public static List<ClipModel> GetClipModels(IRenderable entity, IList<Portal> portalList, int depth)
         {
             List<ClipModel> clipModels = new List<ClipModel>();
             if (entity.IsPortalable && !entity.DrawOverPortals)
@@ -31,7 +31,7 @@ namespace Game
 
         /// <param name="depth">Number of iterations.</param>
         /// <param name="clipModels">Adds the ClipModel instances to this list.</param>
-        private static List<ClipModel> _getClipModels(IEntity entity, Model model, IList<Portal> portalList, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, int count)
+        private static List<ClipModel> _getClipModels(IRenderable entity, Model model, IList<Portal> portalList, Vector2 centerPoint, Portal portalEnter, Matrix4 modelMatrix, int depth, int count)
         {
             List<ClipModel> clipModels = new List<ClipModel>();
             if (depth <= 0)

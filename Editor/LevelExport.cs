@@ -31,14 +31,14 @@ namespace Editor
             #endregion
 
             HashSet<IDeepClone> toClone = new HashSet<IDeepClone>();
-            Camera2 camera = level.Scene.ActiveCamera;
-            toClone.Add(camera);
-            foreach (EditorObject e in level.Children)
+            ICamera2 camera = level.ActiveCamera;
+            //toClone.Add(camera);
+            foreach (EditorObject e in level.EditorObjects)
             {
                 if (e is EditorEntity)
                 {
                     EditorEntity editorEntity = (EditorEntity)e;
-                    toClone.Add(editorEntity.Entity);
+                    //toClone.Add(editorEntity.Entity);
                 }
                 else if (e is EditorPortal)
                 {
@@ -72,7 +72,7 @@ namespace Editor
             List<SceneNode> cloned = dictionary.Values.Cast<SceneNode>().ToList();
 
             SceneNode.SetScene(cloned, scene);
-            scene.SetActiveCamera((Camera2)dictionary[camera]);
+            //scene.SetActiveCamera((Camera2)dictionary[camera]);
             return scene;
         }
     }

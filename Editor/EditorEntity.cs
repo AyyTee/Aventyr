@@ -14,20 +14,16 @@ namespace Editor
     public class EditorEntity : EditorObject
     {
         [DataMember]
-        public Entity Entity { get; private set; }
-        [DataMember]
-        public bool PhysicsEnabled { get; set; }
+        public List<Model> _models = new List<Model>();
 
-        public EditorEntity(EditorScene editorScene, Entity entity)
+        public EditorEntity(EditorScene editorScene)
             : base(editorScene)
         {
-            Debug.Assert(entity.Scene == Scene.Scene);
-            Entity = entity;
         }
 
         public override IDeepClone ShallowClone()
         {
-            EditorEntity clone = new EditorEntity(Scene, Entity);
+            EditorEntity clone = new EditorEntity(Scene);
             ShallowClone(clone);
             return clone;
         }
@@ -37,36 +33,26 @@ namespace Editor
             base.ShallowClone(destination);
         }
 
-        public override HashSet<IDeepClone> GetCloneableRefs()
+        public void AddModel(Model model)
         {
-            HashSet<IDeepClone> list = base.GetCloneableRefs();
-            list.Add(Entity);
-            return list;
+            _models.Add(model);
         }
 
-        public override void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
+        public void RemoveModel(Model model)
         {
-            base.UpdateRefs(cloneMap);
-            Entity = (Entity)cloneMap[Entity];
+            _models.Remove(model);
         }
 
-        public override void Remove()
+        public void RemoveAllModels()
         {
-            base.Remove();
-            Entity.Remove();
+            _models.Clear();
         }
 
-        public override void SetScene(EditorScene destination)
+        public override List<Model> GetModels()
         {
-            base.SetScene(destination);
-            //Entity.SetScene(Scene.Scene);
-            Entity.SetParent(Scene.Scene.Root);
-        }
-
-        public override void SetTransform(Transform2 transform)
-        {
-            base.SetTransform(transform);
-            Entity.SetTransform(transform);
+            List<Model> models = new List<Model>(_models);
+            models.AddRange(base.GetModels());
+            return models;
         }
     }
 }

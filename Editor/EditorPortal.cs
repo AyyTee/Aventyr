@@ -22,7 +22,7 @@ namespace Editor
         {
             if (initialize)
             {
-                PortalEntity = new Entity(Scene.Scene);
+                /*PortalEntity = new Entity(Scene.Scene);
                 Model arrow0, arrow1;
                 arrow0 = ModelFactory.CreateArrow(new Vector3(0, -0.5f, 0), new Vector2(0, 1), 0.05f, 0.2f, 0.1f);
                 arrow0.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
@@ -31,7 +31,7 @@ namespace Editor
                 arrow1.SetColor(new Vector3(0.1f, 0.1f, 0.5f));
                 PortalEntity.AddModel(arrow1);
                 Portal = new FloatPortal(Scene.Scene);
-                Portal.SetParent(PortalEntity);
+                Portal.SetParent(PortalEntity);*/
             }
         }
 
@@ -83,7 +83,7 @@ namespace Editor
         public override void SetScene(EditorScene destination)
         {
             base.SetScene(destination);
-            PortalEntity.SetParent(destination.Scene.Root);
+            //PortalEntity.SetParent(destination.Scene.Root);
         }
     }
 }

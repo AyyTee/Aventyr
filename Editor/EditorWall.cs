@@ -28,7 +28,7 @@ namespace Editor
         {
             base.Initialize();
             Debug.Assert(Wall == null);
-            Wall = ActorFactory.CreateEntityPolygon(Scene.Scene, GetTransform(), Vertices);
+            //Wall = ActorFactory.CreateEntityPolygon(Scene.Scene, GetTransform(), Vertices);
             /*Wall = new Entity(Scene.Scene);
             Wall.AddModel(ModelFactory.CreatePolygon(Vertices));
             Wall.SetTransform(GetTransform());*/
@@ -56,7 +56,7 @@ namespace Editor
         public override void SetScene(EditorScene destination)
         {
             base.SetScene(destination);
-            SceneNode.SetScene(Wall, destination.Scene);
+            //SceneNode.SetScene(Wall, destination.Scene);
         }
     }
 }

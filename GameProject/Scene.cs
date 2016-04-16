@@ -21,7 +21,7 @@ namespace Game
         public World World { get; private set; }
         PhysContactListener _contactListener;
 
-        public Camera2 ActiveCamera { get; private set; }
+        public ICamera2 ActiveCamera { get; private set; }
         public List<SceneNode> SceneNodeList { get { return Tree<SceneNode>.ToList(Root); } }
         public List<Entity> EntityList { get { return Tree<SceneNode>.FindByType<Entity>(Root); } }
         /// <summary>Root node to the scene graph.</summary>
@@ -77,14 +77,14 @@ namespace Game
             }
         }
 
-        public Camera2 GetCamera()
+        public ICamera2 GetCamera()
         {
             return ActiveCamera;
         }
 
-        public List<IEntity> GetRenderList()
+        public List<IRenderable> GetRenderList()
         {
-            return SceneNodeList.OfType<IEntity>().ToList();
+            return SceneNodeList.OfType<IRenderable>().ToList();
         }
 
         public List<Portal> GetPortalList()
@@ -192,9 +192,8 @@ namespace Game
             return Root.FindByName(name);
         }
 
-        public void SetActiveCamera(Camera2 camera)
+        public void SetActiveCamera(ICamera2 camera)
         {
-            Debug.Assert(camera.Scene == this);
             ActiveCamera = camera;
         }
 

@@ -14,9 +14,9 @@ namespace Game
         readonly Matrix4 _transform;
         public Matrix4 Transform { get { return _transform; } }
         public readonly Model Model;
-        public readonly IEntity Entity;
+        public readonly IRenderable Entity;
 
-        public ClipModel(IEntity entity, Model model, Line[] clipLines, Matrix4 transform)
+        public ClipModel(IRenderable entity, Model model, Line[] clipLines, Matrix4 transform)
         {
             Entity = entity;
             Model = model;

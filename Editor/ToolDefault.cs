@@ -207,7 +207,7 @@ namespace Editor
                 DragSet(mode, DragState.Both);
                 return;
             }
-            Vector2 mouseDiff = (mousePos - transform.Position) / Transform2.GetSize(Controller.Back.ActiveCamera);
+            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Back.ActiveCamera.GetWorldTransform().Size;
             if (mouseDiff.Length < 1.3f * translationScaleOffset)
             {
                 float margin = 0.2f * translationScaleOffset;
@@ -288,8 +288,9 @@ namespace Editor
                 Vector2 v = mousePos - Transform2.GetPosition(_translator);
                 Vector2 vPrev = mousePosPrev - Transform2.GetPosition(_translator);
                 const float minDist = 0.01f;
-                float lengthPrev = Math.Max(vPrev.Length, Transform2.GetSize(Controller.Back.ActiveCamera) * minDist);
-                float length = Math.Max(v.Length, Transform2.GetSize(Controller.Back.ActiveCamera) * minDist);
+                float size = Controller.Back.ActiveCamera.GetWorldTransform().Size;
+                float lengthPrev = Math.Max(vPrev.Length, size * minDist);
+                float length = Math.Max(v.Length, size * minDist);
                 if (!float.IsPositiveInfinity(length / lengthPrev))
                 {
                     _totalDrag.Size = length / lengthPrev;
@@ -311,7 +312,7 @@ namespace Editor
             _translator.DrawOverPortals = true;
             _dragState = DragState.Neither;
             Controller.CamControl.CameraMoved += UpdateTranslation;
-            UpdateTranslation(Controller.CamControl.Camera);
+            UpdateTranslation(Controller.CamControl);
             _mode = Mode.Position;
         }
 
@@ -326,16 +327,11 @@ namespace Editor
             _translator.Remove();
         }
 
-        private void UpdateTranslation(ControllerCamera controller, Camera2 camera)
-        {
-            UpdateTranslation(camera);
-        }
-
-        private void UpdateTranslation(Camera2 camera)
+        private void UpdateTranslation(ControllerCamera camera)
         {
             Transform2 transform = _translator.GetTransform();
             //transform.Scale = new Vector2(camera.Zoom, camera.Zoom) * translationScaleOffset;
-            transform.Size = Transform2.GetSize(camera) * translationScaleOffset;
+            transform.Size = camera.GetWorldTransform().Size * translationScaleOffset;
             _translator.SetTransform(transform);
         }
 

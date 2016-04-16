@@ -20,11 +20,11 @@ namespace Editor
         public Selection(EditorScene scene)
         {
             Scene = scene;
-            _firstMarker = new Entity(Scene.Scene);
+            /*_firstMarker = new Entity(Scene.Scene);
             _firstMarker.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.08f, 10));
             _firstMarker.ModelList[0].SetColor(new Vector3(0f, 1f, 0f));
             _firstMarker.ModelList[0].Transform.Position = new Vector3(0, 0, DrawDepth.EntityActive);
-            _firstMarker.DrawOverPortals = true;
+            _firstMarker.DrawOverPortals = true;*/
         }
 
         public void Set(EditorObject selected)
@@ -65,16 +65,16 @@ namespace Editor
         public void SetFirst(EditorObject first)
         {
             First = first;
-            if (First != null)
+            /*if (First != null)
             {
                 _firstMarker.Visible = true;
-                //_firstMarker.SetParent(First.Marker);
+                _firstMarker.SetParent(First.Marker);
             }
             else
             {
                 _firstMarker.Visible = false;
-                //_firstMarker.SetParent(null);
-            }
+                _firstMarker.SetParent(null);
+            }*/
         }
 
         public void Reset()

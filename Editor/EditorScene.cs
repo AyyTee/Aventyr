@@ -9,17 +9,16 @@ using System.Threading.Tasks;
 namespace Editor
 {
     [DataContract]
-    public class EditorScene
+    public class EditorScene : IRenderLayer
     {
         [DataMember]
-        public Scene Scene;
-        [DataMember]
         public List<EditorObject> _children = new List<EditorObject>();
-        public List<EditorObject> Children { get { return new List<EditorObject>(_children); } }
+        [DataMember]
+        public ICamera2 ActiveCamera { get; set; }
+        public List<EditorObject> EditorObjects { get { return new List<EditorObject>(_children); } }
 
-        public EditorScene(Scene scene)
+        public EditorScene()
         {
-            Scene = scene;
         }
 
         public List<EditorObject> FindAll()
@@ -37,17 +36,28 @@ namespace Editor
             return list;
         }
 
-        public void Step()
-        {
-            Scene.Step();
-        }
-
         public void Clear()
         {
-            foreach (EditorObject e in Children)
+            foreach (EditorObject e in EditorObjects)
             {
                 e.Remove();
             }
+        }
+
+        public List<IRenderable> GetRenderList()
+        {
+            
+            return FindAll().OfType<IRenderable>().ToList();
+        }
+
+        public List<Portal> GetPortalList()
+        {
+            return new List<Portal>();
+        }
+
+        public ICamera2 GetCamera()
+        {
+            return ActiveCamera;
         }
     }
 }

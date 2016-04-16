@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Editor
 {
     [DataContract]
-    public class EditorObject : ITreeNode<EditorObject>, ITransform2, IDeepClone
+    public class EditorObject : ITreeNode<EditorObject>, ITransform2, IDeepClone, IRenderable
     {
         [DataMember]
         EditorScene _scene;
@@ -20,8 +20,13 @@ namespace Editor
             get { return _scene == null ? Parent.Scene : _scene; }
             private set { _scene = value; }
         }
+        /*[DataMember]
+        public Entity Marker { get; private set; }*/
+        Model _marker;
         [DataMember]
-        public Entity Marker { get; private set; }
+        public bool Visible { get; private set; }
+        public bool DrawOverPortals { get { return true; } }
+        public bool IsPortalable { get { return true; } }
         [DataMember]
         public bool IsSelected { get; private set; }
         [DataMember]
@@ -33,13 +38,16 @@ namespace Editor
         public EditorObject Parent { get; private set; }
         [DataMember]
         Transform2 _transform = new Transform2();
+        bool _initialized = false;
 
         public EditorObject(EditorScene editorScene)
         {
             Name = "";
             Debug.Assert(editorScene != null);
             SetParent(editorScene);
-            SetMarker();
+            Visible = true;
+            Initialize();
+            //SetMarker();
         }
 
         public EditorObject(EditorObject entity)
@@ -47,14 +55,32 @@ namespace Editor
             Name = "";
             Debug.Assert(entity != null);
             SetParent(entity);
-            SetMarker();
+            Visible = true;
+            Initialize();
+            //SetMarker();
         }
 
+        /// <summary>
+        /// Initializes instance state. It is expected to be called in the constructor or during deserialization. 
+        /// Should only be called once during the lifetime of this instance.
+        /// </summary>
         public virtual void Initialize()
-        { 
+        {
+            Debug.Assert(_initialized == false);
+            _initialized = true;
+            _marker = ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
+            _marker.Transform.Position = new Vector3(0, 0, DrawDepth.EntityMarker);
+            _marker.SetColor(new Vector3(1f, 0.5f, 0f));
         }
 
-        public void SetMarker()
+        public virtual List<Model> GetModels()
+        {
+            List<Model> models = new List<Model>();
+            models.Add(_marker);
+            return models;
+        }
+
+        /*public void SetMarker()
         {
             if (Marker != null)
             {
@@ -68,14 +94,14 @@ namespace Editor
             circle.SetColor(new Vector3(1f, 0.5f, 0f));
             Marker.AddModel(circle);
             Marker.SetTransform(GetTransform());
-        }
+        }*/
 
         public virtual void SetScene(EditorScene destination)
         {
             Scene._children.Remove(this);
             Scene = destination;
             Scene._children.Add(this);
-            Marker.SetParent(Scene.Scene.Root);
+            //Marker.SetParent(Scene.Scene.Root);
         }
 
         public virtual HashSet<IDeepClone> GetCloneableRefs()
@@ -139,7 +165,7 @@ namespace Editor
         public virtual void SetTransform(Transform2 transform)
         {
             _transform = transform.ShallowClone();
-            Marker.SetTransform(_transform);
+            //Marker.SetTransform(_transform);
         }
 
         public Transform2 GetWorldTransform()
@@ -169,7 +195,7 @@ namespace Editor
         public virtual void Remove()
         {
             RemoveSelf();
-            Marker.Remove();
+            //Marker.Remove();
         }
 
         public virtual void SetSelected(bool isSelected)
@@ -177,19 +203,19 @@ namespace Editor
             IsSelected = isSelected;
             if (IsSelected)
             {
-                Marker.ModelList[0].SetColor(new Vector3(1f, 1f, 0f));
-                Marker.ModelList[0].Transform.Scale = new Vector3(1.5f, 1.5f, 1.5f);
+                _marker.SetColor(new Vector3(1f, 1f, 0f));
+                _marker.Transform.Scale = new Vector3(1.5f, 1.5f, 1.5f);
             }
             else
             {
-                Marker.ModelList[0].SetColor(new Vector3(1f, 0.5f, 0f));
-                Marker.ModelList[0].Transform.Scale = new Vector3(1f, 1f, 1f);
+                _marker.SetColor(new Vector3(1f, 0.5f, 0f));
+                _marker.Transform.Scale = new Vector3(1f, 1f, 1f);
             }
         }
 
         public virtual void SetVisible(bool isVisible)
         {
-            Marker.Visible = isVisible;
+            Visible = isVisible;
         }
     }
 }

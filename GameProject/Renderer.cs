@@ -113,7 +113,7 @@ namespace Game
             for (int i = 0; i < _layers.Count(); i++)
             {
                 IRenderLayer layer = _layers[i];
-                Camera2 camera = layer.GetCamera();
+                ICamera2 camera = layer.GetCamera();
                 DrawPortalAll(layer);
                 GL.Clear(ClearBufferMask.DepthBufferBit);
             }
@@ -126,12 +126,12 @@ namespace Game
             GL.Flush();
         }
 
-        public PortalView CalculatePortalViews(Portal[] portals, Camera2 camera, int depth)
+        public PortalView CalculatePortalViews(Portal[] portals, ICamera2 camera, int depth)
         {
             Debug.Assert(camera != null);
             Debug.Assert(depth >= 0);
             Debug.Assert(portals != null);
-            List<IntPoint> view = ClipperConvert.ToIntPoint(camera.GetWorldVerts());
+            List<IntPoint> view = ClipperConvert.ToIntPoint(CameraExt.GetWorldVerts(camera));
             List<List<IntPoint>> paths = new List<List<IntPoint>>();
             paths.Add(view);
             PortalView portalView = new PortalView(null, camera.GetViewMatrix(), view, new Line[0], new Line[0]);
@@ -267,7 +267,7 @@ namespace Game
 
         public void DrawPortalAll(IRenderLayer layer)
         {
-            Camera2 cam = layer.GetCamera();
+            ICamera2 cam = layer.GetCamera();
             if (cam == null)
             {
                 return;
@@ -385,7 +385,7 @@ namespace Game
                         {
                             Vertex vertex = mesh.GetVertices()[k];
                             Vector3 pos = Vector3Ext.Transform(vertex.Position, homography);
-                            pos.Z = cam.UnitZToWorld(pos.Z);
+                            pos.Z = CameraExt.UnitZToWorld(cam, pos.Z);
                             /*vertex.Position = Vector3Ext.Transform(vertex.Position, homography);
                             vertex.Position.Z = cam.UnitZToWorld(vertex.Position.Z);*/
 
@@ -421,7 +421,8 @@ namespace Game
         private void DrawLayer(IRenderLayer layer, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)
         {
             SetShader(Shaders["uber"]);
-            foreach (IEntity e in layer.GetRenderList())
+            List<IRenderable> renderList = layer.GetRenderList();
+            foreach (IRenderable e in renderList)
             {
                 if (!e.Visible)
                 {
@@ -431,7 +432,9 @@ namespace Game
                 {
                     continue;
                 }
-                foreach (ClipModel clip in e.GetClipModels(PortalClipDepth))
+                //foreach (ClipModel clip in e.GetClipModels(PortalClipDepth))
+                List<ClipModel> clipModels = ClipModelCompute.GetClipModels(e, layer.GetPortalList(), PortalClipDepth);
+                foreach (ClipModel clip in clipModels)
                 {
                     if (clip.ClipLines.Length > 0)
                     {
@@ -488,14 +491,16 @@ namespace Game
 
         private void UpdateCullFace(Matrix4 viewMatrix)
         {
-            if (Matrix4Ext.IsMirrored(viewMatrix))
+
+            SetEnable(EnableCap.CullFace, false);
+            /*if (Matrix4Ext.IsMirrored(viewMatrix))
             {
                 GL.CullFace(CullFaceMode.Front);
             }
             else
             {
                 GL.CullFace(CullFaceMode.Back);
-            }
+            }*/
         }
 
         public void RenderModel(Model model, Matrix4 viewMatrix, Matrix4 offset)
@@ -592,6 +597,7 @@ namespace Game
                 SetEnable(EnableCap.Blend, true);
             }
 
+            //viewMatrix.M43 = 0.5f;
             RenderSetTransformMatrix(offset, model, viewMatrix);
             GL.DrawElements(BeginMode.Triangles, model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
 

@@ -22,11 +22,11 @@ namespace Editor
 
         public override void Initialize()
         {
-            Debug.Assert(Entity == null);
+            /*Debug.Assert(Entity == null);
             Entity = new Entity(Scene.Scene);
             Entity.SetTransform(GetTransform());
             Model cube = ModelFactory.CreateCube();
-            Entity.AddModel(cube);
+            Entity.AddModel(cube);*/
         }
 
         public override IDeepClone ShallowClone()
@@ -51,7 +51,7 @@ namespace Editor
         public override void SetScene(EditorScene destination)
         {
             base.SetScene(destination);
-            SceneNode.SetScene(Entity, destination.Scene);
+            //SceneNode.SetScene(Entity, destination.Scene);
         }
     }
 }

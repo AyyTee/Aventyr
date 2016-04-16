@@ -54,11 +54,10 @@ namespace Editor
             base.OnLoad(e);
             
             LevelNew();
-
-            Hud = new Scene();
+            
             Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
-            renderer.AddLayer(Hud);
-            Clipboard = new EditorScene(new Scene());
+            
+            Clipboard = new EditorScene();
             /*debugText = new Entity(Hud);
             debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
             */
@@ -68,10 +67,12 @@ namespace Editor
 
         public void LevelNew()
         {
-            renderer.RemoveLayer(Back);
+            Hud = new Scene();
             Back = new Scene();
+            Level = new EditorScene();
             renderer.AddLayer(Back);
-            Level = new EditorScene(Back);
+            renderer.AddLayer(Level);
+            renderer.AddLayer(Hud);
 
             #region create background
             Model background = ModelFactory.CreatePlane();
@@ -86,12 +87,19 @@ namespace Editor
             back.AddModel(background);
             #endregion
 
+            EditorEntity entity = new EditorEntity(Level);
+            entity.AddModel(ModelFactory.CreateCube());
+
             selection = new Selection(Level);
             StateList = new StateList();
 
-            Back.SetActiveCamera(new Camera2(Back, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height));
+            //Level.ActiveCamera = new Camera2(null, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height);
 
-            CamControl = new ControllerCamera(this, Back.ActiveCamera, InputExt);
+            CamControl = new ControllerCamera(this, InputExt);
+            Transform2.SetSize(CamControl, 10);
+            Hud.SetActiveCamera(CamControl);
+            Level.ActiveCamera = CamControl;
+            Back.SetActiveCamera(CamControl);
         }
 
         public void LevelLoad(string filepath)
@@ -124,7 +132,7 @@ namespace Editor
 
         public Vector2 GetMouseWorldPosition()
         {
-            return Back.ActiveCamera.ScreenToWorld(InputExt.MousePos);
+            return CameraExt.ScreenToWorld(Level.ActiveCamera, InputExt.MousePos);
         }
 
         public void Remove(EditorObject editorObject)
@@ -174,7 +182,7 @@ namespace Editor
                 }
                 ActiveLevel.Step();
             }
-            Back.Step();
+            //Back.Step();
         }
 
         public void Undo()
@@ -255,7 +263,7 @@ namespace Editor
             {
                 ActiveLevel = LevelExport.Export(Level);
                 renderer.AddLayer(ActiveLevel);
-                renderer.RemoveLayer(Back);
+                //renderer.RemoveLayer(Back);
                 renderer.RemoveLayer(Hud);
             }
             _stepsPending = 0;
@@ -314,10 +322,11 @@ namespace Editor
         public override void OnResize(EventArgs e, System.Drawing.Size canvasSize)
         {
             base.OnResize(e, canvasSize);
+            
             Back.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             Hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             //Hud.ActiveCamera.Zoom = canvasSize.Height;
-            Transform2.SetSize(Hud.ActiveCamera, canvasSize.Height);
+            Transform2.SetSize((Camera2)Hud.ActiveCamera, canvasSize.Height);
         }
     }
 }

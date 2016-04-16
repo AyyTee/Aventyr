@@ -178,7 +178,7 @@ namespace Game
             //ground.Velocity.Position = new Vector2((float)Math.Sin(TimeFixedStep), 0);
             tempLine.SetTransform(new Transform2(player.GetTransform().Position));
 
-            Vector2 mousePos = scene.ActiveCamera.ScreenToWorld(InputExt.MousePos);
+            Vector2 mousePos = CameraExt.ScreenToWorld(scene.ActiveCamera, InputExt.MousePos);
 
             Vector2 rayBegin = player.GetTransform().Position;
             Vector2 rayEnd = mousePos;
@@ -195,7 +195,7 @@ namespace Game
             int fixtureCount = WorldExt.GetFixtures(scene.World).Count;
             int bodyCount = scene.World.BodyList.Count;
             //text2.Models.Add(FontRenderer.GetModel(fixtureCount.ToString() + "        " + bodyCount.ToString()));
-            Camera2 cam = scene.ActiveCamera;
+            ICamera2 cam = scene.ActiveCamera;
 
             if (InputExt.MousePress(MouseButton.Left))
             {
@@ -258,7 +258,7 @@ namespace Game
                 bullet.SetVelocity(velocity);
             }*/
 
-            if (InputExt.MouseWheelDelta() != 0)
+            /*if (InputExt.MouseWheelDelta() != 0)
             {
                 Transform2.SetScale(cam, Transform2.GetScale(cam) / (float)Math.Pow(1.2, InputExt.MouseWheelDelta()));
             }
@@ -271,7 +271,7 @@ namespace Game
             {
                 Transform2.SetScale(cam, Transform2.GetScale(cam) / (float)Math.Pow(1.04, -1));
                 //cam.Zoom /= (float)Math.Pow(1.04, -1);
-            }
+            }*/
             if (InputExt.KeyPress(Key.F))
             {
                 Portal portal2 = (Portal)scene.FindByName("portal2");
@@ -298,7 +298,7 @@ namespace Game
             base.OnResize(e, canvasSize);
             scene.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            Transform2.SetSize(hud.ActiveCamera, CanvasSize.Height);
+            Transform2.SetSize((Camera2)hud.ActiveCamera, CanvasSize.Height);
         }
     }
 }

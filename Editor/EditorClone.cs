@@ -50,7 +50,7 @@ namespace Editor
                     SceneNode sceneNode = (SceneNode)clone;
                     if (!cloned.Contains(sceneNode.Parent))
                     {
-                        sceneNode.SetParent(destination.Scene.Root);
+                        //sceneNode.SetParent(destination.Scene.Root);
                     }
                 }
             }
