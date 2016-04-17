@@ -13,7 +13,7 @@ namespace Editor
 {
     public class ToolDefault : Tool
     {
-        Entity _translator;
+        Doodad _translator;
         Model translationModel;
         const float translationScaleOffset = 0.1f;
         DragState _dragState;
@@ -207,7 +207,7 @@ namespace Editor
                 DragSet(mode, DragState.Both);
                 return;
             }
-            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Back.ActiveCamera.GetWorldTransform().Size;
+            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Level.ActiveCamera.GetWorldTransform().Size;
             if (mouseDiff.Length < 1.3f * translationScaleOffset)
             {
                 float margin = 0.2f * translationScaleOffset;
@@ -288,7 +288,7 @@ namespace Editor
                 Vector2 v = mousePos - Transform2.GetPosition(_translator);
                 Vector2 vPrev = mousePosPrev - Transform2.GetPosition(_translator);
                 const float minDist = 0.01f;
-                float size = Controller.Back.ActiveCamera.GetWorldTransform().Size;
+                float size = Controller.Level.ActiveCamera.GetWorldTransform().Size;
                 float lengthPrev = Math.Max(vPrev.Length, size * minDist);
                 float length = Math.Max(v.Length, size * minDist);
                 if (!float.IsPositiveInfinity(length / lengthPrev))
@@ -306,10 +306,10 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            _translator = new Entity(Controller.Back);
-            _translator.AddModel(translationModel);
+            _translator = new Doodad(Controller.Level);//new Entity(Controller.Level);
+            _translator.Models.Add(translationModel);
             _translator.Visible = false;
-            _translator.DrawOverPortals = true;
+            //_translator.DrawOverPortals = true;
             _dragState = DragState.Neither;
             Controller.CamControl.CameraMoved += UpdateTranslation;
             UpdateTranslation(Controller.CamControl);
@@ -324,15 +324,15 @@ namespace Editor
                 DragEnd(false);
             }
             Controller.CamControl.CameraMoved -= UpdateTranslation;
-            _translator.Remove();
+            Controller.Level.Doodads.Remove(_translator);
         }
 
         private void UpdateTranslation(ControllerCamera camera)
         {
-            Transform2 transform = _translator.GetTransform();
+            /*Transform2 transform = _translator.GetTransform();
             //transform.Scale = new Vector2(camera.Zoom, camera.Zoom) * translationScaleOffset;
             transform.Size = camera.GetWorldTransform().Size * translationScaleOffset;
-            _translator.SetTransform(transform);
+            _translator.SetTransform(transform);*/
         }
 
         public override Tool Clone()

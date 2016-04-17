@@ -22,7 +22,8 @@ namespace Editor
         public EditorPortal(EditorScene editorScene, bool initialize = true)
             : base(editorScene)
         {
-            DrawOverPortals = true;
+            //DrawOverPortals = true;
+            IsPortalable = false;
             if (initialize)
             {
                 Model arrow0, arrow1;
@@ -53,6 +54,15 @@ namespace Editor
             List<Model> models = base.GetModels();
             models.AddRange(_models);
             return models;
+        }
+
+        public override void Remove()
+        {
+            base.Remove();
+            if (Linked != null && Linked.Linked == this)
+            {
+                ((EditorPortal)Linked).Linked = null;
+            }
         }
     }
 }

@@ -12,8 +12,6 @@ namespace Editor
     [DataContract]
     public class EditorActor : EditorObject
     {
-        public Entity Entity { get; private set; }
-
         public EditorActor(EditorScene editorScene)
             : base(editorScene)
         {
@@ -34,24 +32,6 @@ namespace Editor
             EditorActor clone = new EditorActor(Scene);
             base.ShallowClone(clone);
             return clone;
-        }
-
-        public override void SetTransform(Transform2 transform)
-        {
-            base.SetTransform(transform);
-            Entity.SetTransform(transform);
-        }
-
-        public override void Remove()
-        {
-            base.Remove();
-            Entity.Remove();
-        }
-
-        public override void SetScene(EditorScene destination)
-        {
-            base.SetScene(destination);
-            //SceneNode.SetScene(Entity, destination.Scene);
         }
     }
 }

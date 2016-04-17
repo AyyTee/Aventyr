@@ -17,7 +17,7 @@ namespace Game
 
         public static bool PortalPlace(FixturePortal portal, Line ray)
         {
-            FixtureEdgeCoord intersection = RayCast(portal.Scene, ray);
+            FixtureEdgeCoord intersection = RayCast(portal.Scene.World, ray);
             if (intersection != null)
             {
                 intersection = GetValid(intersection, portal);
@@ -30,7 +30,7 @@ namespace Game
             return false;
         }
 
-        public static FixtureEdgeCoord RayCast(Scene scene, Line ray)
+        public static FixtureEdgeCoord RayCast(World world, Line ray)
         {
             Vector2 rayBegin = ray[0];
             Vector2 rayEnd = ray[1];
@@ -38,7 +38,7 @@ namespace Game
             {
                 List<FixtureEdgeCoord> intersections = new List<FixtureEdgeCoord>();
                 IntersectPoint intersectLast = new IntersectPoint();
-                scene.World.RayCast(
+                world.RayCast(
                     delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
                     {
                         Vector2 rayIntersect = Vector2Ext.ConvertTo(point);

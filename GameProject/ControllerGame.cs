@@ -19,6 +19,7 @@ namespace Game
         Entity text, text2;
         Sound testSound;
         Scene scene, hud;
+        Camera2 camera;
         private bool SingleStepMode = false;
 
         public ControllerGame(Window window)
@@ -150,11 +151,11 @@ namespace Game
             text2.SetTransform(new Transform2(new Vector2(0, CanvasSize.Height - 40)));
             #endregion
             //new Serializer().Deserialize(scene, "blah.xml", "blah_phys.xml");
-            Camera2 cam = new Camera2(scene, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height);
+            camera = new Camera2(scene, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height);
             //Camera2 cam = new Camera2(scene, new Transform2(new Vector2(), 1), 1);
             //cam.SetRotation((float)Math.PI / 2);
-            cam.SetParent(scene.FindByName("player"));
-            scene.SetActiveCamera(cam);
+            camera.SetParent(scene.FindByName("player"));
+            scene.SetActiveCamera(camera);
             hud.SetActiveCamera(hudCam);
             renderer.AddLayer(scene);
             renderer.AddLayer(hud);
@@ -259,20 +260,20 @@ namespace Game
                 bullet.SetVelocity(velocity);
             }*/
 
-            /*if (InputExt.MouseWheelDelta() != 0)
+            if (InputExt.MouseWheelDelta() != 0)
             {
-                Transform2.SetScale(cam, Transform2.GetScale(cam) / (float)Math.Pow(1.2, InputExt.MouseWheelDelta()));
+                Transform2.SetScale(camera, Transform2.GetScale(camera) / (float)Math.Pow(1.2, InputExt.MouseWheelDelta()));
             }
             else if (InputExt.KeyDown(Key.Q))
             {
-                Transform2.SetScale(cam, Transform2.GetScale(cam) / (float)Math.Pow(1.04, 1));
+                Transform2.SetScale(camera, Transform2.GetScale(camera) / (float)Math.Pow(1.04, 1));
                 //cam.Zoom /= (float)Math.Pow(1.04, 1);
             }
             else if (InputExt.KeyDown(Key.E))
             {
-                Transform2.SetScale(cam, Transform2.GetScale(cam) / (float)Math.Pow(1.04, -1));
+                Transform2.SetScale(camera, Transform2.GetScale(camera) / (float)Math.Pow(1.04, -1));
                 //cam.Zoom /= (float)Math.Pow(1.04, -1);
-            }*/
+            }
             if (InputExt.KeyPress(Key.F))
             {
                 FloatPortal portal2 = (FloatPortal)scene.FindByName("portal2");

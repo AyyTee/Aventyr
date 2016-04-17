@@ -89,7 +89,7 @@ namespace Editor
         {
             base.Enable();
             _portalPrevious = null;
-            line = new Entity(Controller.Back);
+            //line = new Entity(Controller.Back);
         }
 
         public override void Disable()

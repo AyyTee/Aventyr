@@ -15,23 +15,13 @@ namespace Editor
     {
         [DataMember]
         public List<Vector2> Vertices { get; private set; }
-        public Actor Wall { get; private set; }
+        //public Actor Wall { get; private set; }
 
         public EditorWall(EditorScene scene, IList<Vector2> vertices)
             : base(scene)
         {
             Vertices = new List<Vector2>(vertices);
-            Initialize();
-        }
 
-        public override void Initialize()
-        {
-            base.Initialize();
-            Debug.Assert(Wall == null);
-            //Wall = ActorFactory.CreateEntityPolygon(Scene.Scene, GetTransform(), Vertices);
-            /*Wall = new Entity(Scene.Scene);
-            Wall.AddModel(ModelFactory.CreatePolygon(Vertices));
-            Wall.SetTransform(GetTransform());*/
         }
 
         public override IDeepClone ShallowClone()
@@ -41,22 +31,11 @@ namespace Editor
             return clone;
         }
 
-        public override void Remove()
+        public override List<Model> GetModels()
         {
-            base.Remove();
-            Wall.Remove();
-        }
-
-        public override void SetTransform(Transform2 transform)
-        {
-            base.SetTransform(transform);
-            Wall.SetTransform(transform);
-        }
-
-        public override void SetScene(EditorScene destination)
-        {
-            base.SetScene(destination);
-            //SceneNode.SetScene(Wall, destination.Scene);
+            List<Model> models = base.GetModels();
+            models.Add(ModelFactory.CreatePolygon(Vertices));
+            return models;
         }
     }
 }

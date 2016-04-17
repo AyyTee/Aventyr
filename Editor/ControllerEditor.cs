@@ -14,12 +14,12 @@ namespace Editor
 {
     public class ControllerEditor : Controller
     {
-        public Scene Hud, Back, ActiveLevel;
+        public Scene Hud, ActiveLevel;
         public EditorScene Level, Clipboard;
         public ControllerCamera CamControl { get; private set; }
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
         public event EditorObjectHandler EntityAdded;
-        public delegate void SceneEventHandler(ControllerEditor controller, Scene scene);
+        public delegate void SceneEventHandler(ControllerEditor controller);
         public event SceneEventHandler ScenePauseEvent;
         public event SceneEventHandler ScenePlayEvent;
         public event SceneEventHandler SceneStopEvent;
@@ -68,9 +68,7 @@ namespace Editor
         public void LevelNew()
         {
             Hud = new Scene();
-            Back = new Scene();
             Level = new EditorScene();
-            renderer.AddLayer(Back);
             renderer.AddLayer(Level);
             renderer.AddLayer(Hud);
 
@@ -83,23 +81,18 @@ namespace Editor
             Transform2.SetSize(CamControl, 10);
             Hud.SetActiveCamera(CamControl);
             Level.ActiveCamera = CamControl;
-            Back.SetActiveCamera(CamControl);
         }
 
         public void LevelLoad(string filepath)
         {
-            EditorScene load = Serializer.Deserialize(Back, filepath);
-            /*Level = level;
-            renderer.RemoveScene(Back);
-            Back = level.Scene;
-            renderer.AddScene(Back);*/
+            //EditorScene load = Serializer.Deserialize(Back, filepath);
             Level.Clear();
 
-            foreach (EditorObject e in load.FindAll())
+            /*foreach (EditorObject e in load.FindAll())
             {
                 //e.SetMarker();
                 e.SetScene(Level);
-            }
+            }*/
 
             if (LevelLoaded != null)
             {
@@ -253,14 +246,14 @@ namespace Editor
             _stepsPending = 0;
             _isPaused = false;
             if (ScenePlayEvent != null)
-                ScenePlayEvent(this, Back);
+                ScenePlayEvent(this);
         }
 
         public void ScenePause()
         {
             _isPaused = true;
             if (ScenePauseEvent != null)
-                ScenePauseEvent(this, Back);
+                ScenePauseEvent(this);
         }
 
         public void SceneStop()
@@ -269,13 +262,12 @@ namespace Editor
             {
                 renderer.RemoveLayer(ActiveLevel);
                 renderer.AddLayer(Hud);
-                renderer.AddLayer(Back);
             }
 
             ActiveLevel = null;
             _isPaused = true;
             if (SceneStopEvent != null)
-                SceneStopEvent(this, Back);
+                SceneStopEvent(this);
         }
 
         public void SceneStep()
@@ -306,10 +298,8 @@ namespace Editor
         public override void OnResize(EventArgs e, System.Drawing.Size canvasSize)
         {
             base.OnResize(e, canvasSize);
-            
-            Back.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             Hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            //Hud.ActiveCamera.Zoom = canvasSize.Height;
+            Level.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             Transform2.SetSize((Camera2)Hud.ActiveCamera, canvasSize.Height);
         }
     }

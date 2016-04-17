@@ -145,6 +145,7 @@
     <Compile Include="DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="GlobalEnums.cs" />
+    <Compile Include="IActor.cs" />
     <Compile Include="ICamera2.cs" />
     <Compile Include="IDeepClone.cs" />
     <Compile Include="IPortal.cs" />

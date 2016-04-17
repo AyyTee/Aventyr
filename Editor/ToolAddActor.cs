@@ -60,10 +60,10 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            _mouseFollow = new Entity(Controller.Back);
+            /*_mouseFollow = new Entity(Controller.Back);
             _mouseFollow.AddModel(ModelFactory.CreateCube());
             _mouseFollow.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
-            _mouseFollow.IsPortalable = true;
+            _mouseFollow.IsPortalable = true;*/
         }
 
         public override void Disable()

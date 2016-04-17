@@ -12,7 +12,7 @@ namespace Editor
     public class ToolAddWall : Tool
     {
         List<Vector2> _vertices = new List<Vector2>();
-        Entity _entity;
+        Doodad _polygon;
         public ToolAddWall(ControllerEditor controller)
             : base(controller)
         {
@@ -21,14 +21,14 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            _entity = new Entity(Controller.Back);
-            _entity.IsPortalable = true;
+            _polygon = new Doodad(Controller.Level);
+            _polygon.IsPortalable = true;
         }
 
         public override void Disable()
         {
             _vertices.Clear();
-            _entity.Remove();
+            Controller.Level.Doodads.Remove(_polygon);
             base.Disable();
         }
 
@@ -52,7 +52,6 @@ namespace Editor
                 Vector2 mousePos = Controller.GetMouseWorldPosition();
                 if (_vertices.Count >= 3 && (mousePos - _vertices[0]).Length < 0.1f)
                 {
-                    
                     Vector2 average = new Vector2(_vertices.Average(item => item.X), _vertices.Average(item => item.Y));
                     for (int i = 0; i < _vertices.Count; i++)
                     {
@@ -72,7 +71,7 @@ namespace Editor
 
         public void UpdatePolygon()
         {
-            _entity.RemoveAllModels();
+            _polygon.Models.Clear();
             if (_vertices.Count() >= 2)
             {
                 PolyCoord[] intersects = MathExt.GetLineStripIntersections(_vertices.ToArray(), true);
@@ -88,7 +87,7 @@ namespace Editor
                 Model model = ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
                 model.Transform.Position = new Vector3(0, 0, 6);
                 //model.SetShader("default");
-                _entity.AddModel(model);
+                _polygon.Models.Add(model);
             }
         }
 

@@ -295,11 +295,13 @@ namespace Game
                 for (int i = 1; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
                 {
                     GL.StencilFunc(StencilFunction.Always, i, stencilMask);
+                    Mesh mesh = new Mesh();
                     for (int j = 0; j < portalViewList[i].Paths.Count; j++)
                     {
                         Vector2[] a = ClipperConvert.ToVector2(portalViewList[i].Paths[j]);
-                        RenderModel(ModelFactory.CreatePolygon(a), cam.GetViewMatrix(), Matrix4.Identity);
+                        ModelFactory.AddPolygon(mesh, a);
                     }
+                    RenderModel(new Model(mesh), cam.GetViewMatrix(), Matrix4.Identity);
                 }
             }
             
@@ -435,7 +437,6 @@ namespace Game
                 {
                     continue;
                 }
-                //foreach (ClipModel clip in e.GetClipModels(PortalClipDepth))
                 List<ClipModel> clipModels = ClipModelCompute.GetClipModels(e, layer.GetPortalList(), PortalClipDepth);
                 foreach (ClipModel clip in clipModels)
                 {

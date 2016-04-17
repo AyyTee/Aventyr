@@ -1,4 +1,5 @@
-﻿using Game;
+﻿using FarseerPhysics.Dynamics;
+using Game;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -6,12 +7,15 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Editor
 {
     [DataContract]
     public class EditorScene : IRenderLayer
     {
+        [DataMember]
+        public World World;
         [DataMember]
         public List<EditorObject> _children = new List<EditorObject>();
         [DataMember]
@@ -21,6 +25,8 @@ namespace Editor
 
         public EditorScene()
         {
+            World = new World(new Xna.Vector2(0, 9.8f));
+
             #region create background
             Model background = ModelFactory.CreatePlane();
             background.Texture = Renderer.Textures["grid.png"];

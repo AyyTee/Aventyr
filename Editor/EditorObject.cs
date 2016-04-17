@@ -26,7 +26,7 @@ namespace Editor
         [DataMember]
         public bool Visible { get; private set; }
         public bool DrawOverPortals { get; set; }
-        public bool IsPortalable { get { return true; } }
+        public bool IsPortalable { get; set; }
         [DataMember]
         public bool IsSelected { get; private set; }
         [DataMember]
@@ -46,18 +46,8 @@ namespace Editor
             Debug.Assert(editorScene != null);
             SetParent(editorScene);
             Visible = true;
+            IsPortalable = true;
             Initialize();
-            //SetMarker();
-        }
-
-        public EditorObject(EditorObject entity)
-        {
-            Name = "";
-            Debug.Assert(entity != null);
-            SetParent(entity);
-            Visible = true;
-            Initialize();
-            //SetMarker();
         }
 
         /// <summary>

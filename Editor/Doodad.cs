@@ -10,13 +10,20 @@ namespace Editor
     public class Doodad : IRenderable, ITransform2
     {
         public bool DrawOverPortals { get { return false; } }
-        public bool IsPortalable { get { return false; } }
-        public bool Visible { get { return true; } }
+        public bool IsPortalable { get; set; }
+        public bool Visible { get; set; }
         Transform2 _transform = new Transform2();
         public List<Model> Models = new List<Model>();
 
         public Doodad()
         {
+            Visible = true;
+        }
+
+        public Doodad(EditorScene scene)
+            : this()
+        {
+            scene.Doodads.Add(this);
         }
 
         public List<Model> GetModels()

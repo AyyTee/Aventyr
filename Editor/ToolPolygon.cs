@@ -21,8 +21,8 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            _entity = new Entity(Controller.Back);
-            _entity.IsPortalable = true;
+            /*_entity = new Entity(Controller.Level);
+            _entity.IsPortalable = true;*/
         }
 
         public override void Disable()

@@ -37,7 +37,7 @@ namespace Editor
                 if (_input.MousePress(MouseButton.Left))
                 {
                     EditorPortal portal = new EditorPortal(Controller.Level);
-                    /*FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.Scene.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
+                    /*FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
                     if (coord != null)
                     {
                         //Clumsy way of determining which EditorWall this EditorPortal instance needs to parent itself to.

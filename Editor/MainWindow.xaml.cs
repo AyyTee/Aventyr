@@ -77,7 +77,7 @@ namespace Editor
 
         
 
-        private void ControllerEditor_SceneModified(Editor.ControllerEditor controller, Scene scene)
+        private void ControllerEditor_SceneModified(Editor.ControllerEditor controller)
         {
             Dispatcher.Invoke((Action)(() =>
             {
@@ -160,7 +160,7 @@ namespace Editor
                 });
         }
 
-        private void ControllerEditor_ScenePlayed(ControllerEditor controller, Scene scene)
+        private void ControllerEditor_ScenePlayed(ControllerEditor controller)
         {
             Dispatcher.Invoke((Action)(() =>
                 {
@@ -173,7 +173,7 @@ namespace Editor
                 }));
         }
 
-        private void ControllerEditor_ScenePaused(ControllerEditor controller, Scene scene)
+        private void ControllerEditor_ScenePaused(ControllerEditor controller)
         {
             Dispatcher.Invoke((Action)(() =>
             {
@@ -186,7 +186,7 @@ namespace Editor
             }));
         }
 
-        private void ControllerEditor_SceneStopped(ControllerEditor controller, Scene scene)
+        private void ControllerEditor_SceneStopped(ControllerEditor controller)
         {
             Dispatcher.Invoke((Action)(() =>
             {
