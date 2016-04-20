@@ -39,7 +39,7 @@ namespace Game
         /// </summary>
         private List<FixturePortal> _childPortals = new List<FixturePortal>();
         private List<Fixture> _fixtureChildList = new List<Fixture>();
-        public Actor Entity
+        public IActor Entity
         {
             get
             {

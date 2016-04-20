@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class Actor : SceneNodePlaceable
+    public class Actor : SceneNodePlaceable, IActor
     {
         [DataMember]
         public int BodyId { get; private set; }

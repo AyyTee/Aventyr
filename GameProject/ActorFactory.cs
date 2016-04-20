@@ -34,28 +34,12 @@ namespace Game
 
         private static Actor CreateEntityBox(Entity entity, Transform2 transform)
         {
-            /*Transform2D t = entity.GetTransform();
-            t.Position = transform.Position;
-            t.Rotation = transform.Rotation;
-            entity.SetTransform(t);*/
             entity.IsPortalable = true;
             entity.AddModel(ModelFactory.CreatePlane(transform.Scale));
 
-            /*Actor actor = new Actor(entity.Scene, BodyExt.CreateBody(entity.Scene.World));
-            //actor.SetTransform(transform);
-            entity.SetParent(actor);
-            BodyExt.SetUserData(actor.Body, actor);
-            var vertices = new FarseerPhysics.Common.Vertices();
-            vertices.Add(new Xna.Vector2(-0.5f, 0.5f));
-            vertices.Add(new Xna.Vector2(0.5f, 0.5f));
-            vertices.Add(new Xna.Vector2(0.5f, -0.5f));
-            vertices.Add(new Xna.Vector2(-0.5f, -0.5f));
-            FixtureExt.CreateFixture(actor.Body, new PolygonShape(vertices, 1));
-
-            */
-
-            Body body = BodyFactory.CreateRectangle(entity.Scene.World, transform.Scale.X, transform.Scale.Y, 1);
-            entity.Scene.World.ProcessChanges();
+            /*Body body = BodyFactory.CreateRectangle(entity.Scene.World, transform.Scale.X, transform.Scale.Y, 1);
+            entity.Scene.World.ProcessChanges();*/
+            Body body = CreateBox(entity.Scene.World, new Vector2(1,1));
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             Actor actor = new Actor(entity.Scene, body);
             body.BodyType = BodyType.Dynamic;
@@ -68,6 +52,20 @@ namespace Game
             t.Rotation = transform.Rotation;
             actor.SetTransform(t);
             return actor;
+        }
+
+        public static Body CreateBox(World world, Vector2 scale)
+        {
+            //Body body = BodyFactory.CreateRectangle(world, scale.X, scale.Y, 1);
+            Vector2[] vertices = new Vector2[] {
+                new Vector2(-0.5f, -0.5f),
+                new Vector2(0.5f, -0.5f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(-0.5f, 0.5f)
+            };
+            Body body = CreatePolygon(world, new Transform2(), vertices);
+            world.ProcessChanges();
+            return body;
         }
 
         public static Actor CreateEntityPolygon(Scene scene, Vector2 position, IList<Vector2> vertices)
@@ -87,19 +85,31 @@ namespace Game
             Debug.Assert(entity != null);
             Debug.Assert(transform != null);
             Debug.Assert(vertices != null && vertices.Count >= 3);
+            Body body = CreatePolygon(entity.Scene.World, transform, vertices);
+
+            Actor actor = new Actor(entity.Scene, body);
+            Transform2 t = new Transform2();
+            t.Position = transform.Position;
+            t.Rotation = transform.Rotation;
+            actor.SetTransform(t);
+            entity.SetParent(actor);
+
+            return actor;
+        }
+
+        public static Body CreatePolygon(World world, Transform2 transform, IList<Vector2> vertices)
+        {
+            Debug.Assert(world != null);
+            Debug.Assert(transform != null);
+            Debug.Assert(vertices != null && vertices.Count >= 3);
             vertices = MathExt.SetHandedness(vertices, false);
             vertices = Vector2Ext.Transform(vertices, Matrix4.CreateScale(new Vector3(transform.Scale)));
             Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(vertices);
 
-            entity.AddModel(ModelFactory.CreatePolygon(polygon));
-
-            Xna.Vector2 vPos = Vector2Ext.ConvertToXna(transform.Position);
-
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 
+            Body body = BodyExt.CreateBody(world);
 
-            Body body = BodyExt.CreateBody(entity.Scene.World);
-            //body.Position = Vector2Ext.ConvertToXna(transform.Position);
             for (int i = 0; i < polygon.Triangles.Count; i++)
             {
                 var v1 = new FarseerPhysics.Common.Vertices();
@@ -118,15 +128,7 @@ namespace Game
                     userData.EdgeIsExterior[j] = polygon.Triangles[i].EdgeIsConstrained[(j + 2) % 3];
                 }
             }
-
-            Actor actor = new Actor(entity.Scene, body);
-            Transform2 t = new Transform2();
-            t.Position = transform.Position;
-            t.Rotation = transform.Rotation;
-            actor.SetTransform(t);
-            entity.SetParent(actor);
-
-            return actor;
+            return body;
         }
     }
 }

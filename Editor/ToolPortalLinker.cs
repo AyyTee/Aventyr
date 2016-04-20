@@ -11,7 +11,7 @@ namespace Editor
 {
     public class ToolPortalLinker : Tool
     {
-        Entity line;
+        Doodad line;
         EditorPortal _portalPrevious;
 
         public ToolPortalLinker(ControllerEditor controller)
@@ -75,13 +75,13 @@ namespace Editor
             }
             if (_portalPrevious != null)
             {
-                line.RemoveAllModels();
+                line.Models.Clear();
                 Model lineModel = ModelFactory.CreateLineStrip(new Vector2[] {
                     Controller.GetMouseWorldPosition(),
                     _portalPrevious.GetWorldTransform().Position
                 });
                 lineModel.SetColor(new Vector3(0.1f, 0.7f, 0.1f));
-                line.AddModel(lineModel);
+                line.Models.Add(lineModel);
             }
         }
 
@@ -89,13 +89,13 @@ namespace Editor
         {
             base.Enable();
             _portalPrevious = null;
-            //line = new Entity(Controller.Back);
+            line = new Doodad(Controller.Level);
         }
 
         public override void Disable()
         {
             base.Disable();
-            line.Remove();
+            Controller.Level.Doodads.Remove(line);
         }
 
         public override Tool Clone()

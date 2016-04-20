@@ -1,4 +1,6 @@
-﻿using Game;
+﻿using FarseerPhysics.Dynamics;
+using Game;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,8 +12,10 @@ using System.Threading.Tasks;
 namespace Editor
 {
     [DataContract]
-    public class EditorActor : EditorObject
+    public sealed class EditorActor : EditorObject, IActor
     {
+        public Body Body { get; private set; }
+
         public EditorActor(EditorScene editorScene)
             : base(editorScene)
         {
@@ -20,11 +24,9 @@ namespace Editor
 
         public override void Initialize()
         {
-            /*Debug.Assert(Entity == null);
-            Entity = new Entity(Scene.Scene);
-            Entity.SetTransform(GetTransform());
-            Model cube = ModelFactory.CreateCube();
-            Entity.AddModel(cube);*/
+            //Body = BodyExt.CreateBody(Scene.World, this);
+            Body = ActorFactory.CreateBox(Scene.World, new Vector2(2,2));
+            BodyExt.SetUserData(Body, this);
         }
 
         public override IDeepClone ShallowClone()
@@ -32,6 +34,38 @@ namespace Editor
             EditorActor clone = new EditorActor(Scene);
             base.ShallowClone(clone);
             return clone;
+        }
+
+        public override Transform2 GetTransform()
+        {
+            return BodyExt.GetTransform(Body);
+        }
+
+        /// <summary>
+        /// Set the transform.  Scale is discarded since physics bodies do have a Scale field.
+        /// </summary>
+        public override void SetTransform(Transform2 transform)
+        {
+            BodyExt.SetTransform(Body, transform);
+        }
+
+        public Transform2 GetVelocity()
+        {
+            return new Transform2();
+        }
+
+        public override void Remove()
+        {
+            Debug.Assert(Body != null);
+            Scene.World.RemoveBody(Body);
+            base.Remove();
+        }
+
+        public override List<Model> GetModels()
+        {
+            List<Model> models = base.GetModels();
+            models.Add(ModelFactory.CreateCube(new Vector3(2,2,2)));
+            return models;
         }
     }
 }

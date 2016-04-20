@@ -14,7 +14,7 @@ namespace Game
     {
         public int BodyId;
         [XmlIgnore]
-        public readonly Actor Actor;
+        public readonly IActor Actor;
         [XmlIgnore]
         public readonly Body Body;
         public Xna.Vector2 PreviousPosition { get; set; }
@@ -41,7 +41,7 @@ namespace Game
         {
         }
 
-        public BodyUserData(Actor actor, Body body)
+        public BodyUserData(IActor actor, Body body)
         {
             Debug.Assert(body != null);
             Debug.Assert(actor != null);

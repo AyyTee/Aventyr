@@ -36,6 +36,11 @@ namespace Editor
             return GetTransform();
         }
 
+        public Transform2 GetWorldVelocity()
+        {
+            return new Transform2();
+        }
+
         public Transform2 GetTransform()
         {
             return _transform.ShallowClone();

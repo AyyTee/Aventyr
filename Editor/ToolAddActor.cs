@@ -11,7 +11,7 @@ namespace Editor
 {
     public class ToolAddActor : Tool
     {
-        Entity _mouseFollow;
+        Doodad _mouseFollow;
 
         public ToolAddActor(ControllerEditor controller)
             : base(controller)
@@ -60,16 +60,16 @@ namespace Editor
         public override void Enable()
         {
             base.Enable();
-            /*_mouseFollow = new Entity(Controller.Back);
-            _mouseFollow.AddModel(ModelFactory.CreateCube());
-            _mouseFollow.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
-            _mouseFollow.IsPortalable = true;*/
+            _mouseFollow = new Doodad(Controller.Level);
+            _mouseFollow.Models.Add(ModelFactory.CreateCube());
+            _mouseFollow.Models[0].SetTexture(Renderer.Textures["default.png"]);
+            _mouseFollow.IsPortalable = true;
         }
 
         public override void Disable()
         {
             base.Disable();
-            _mouseFollow.Remove();
+            Controller.Level.Doodads.Remove(_mouseFollow);
         }
 
         public override Tool Clone()

@@ -13,10 +13,11 @@ namespace Editor
 {
     class ToolAddPortal : Tool
     {
-        EditorPortal _mouseFollow;
+        Doodad _mouseFollow;
         float snapDistance = 0.2f;
         bool isSecondPortal = false;
         EditorPortal portalPrevious = null;
+        float unsnapAngle = 0;
 
         public ToolAddPortal(ControllerEditor controller)
             : base(controller)
@@ -27,6 +28,7 @@ namespace Editor
         {
             base.Update();
             _mouseFollow.SetTransform(GetPortalTransform());
+            Transform2.SetRotation(_mouseFollow, unsnapAngle);
 
             if (_input.MouseDown(MouseButton.Right) || _input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape))
             {
@@ -37,18 +39,13 @@ namespace Editor
                 if (_input.MousePress(MouseButton.Left))
                 {
                     EditorPortal portal = new EditorPortal(Controller.Level);
-                    /*FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, _mouseFollow.Portal.Size);
+                    FixtureEdgeCoord coord = GetEdgeCoord();
                     if (coord != null)
                     {
-                        //Clumsy way of determining which EditorWall this EditorPortal instance needs to parent itself to.
-                        EditorObject wall = portal.Scene.FindByType<EditorWall>().Find(item => item.Wall == coord.Actor);
-                        //coord.Actor
-                        Debug.Assert(wall != null);
-                        portal.SetParent(wall);
-                        
-                        //editorPortal = Controller.CreateLevelPortal(new FixturePortal(Controller.Level, coord));
+                        portal.SetParent((EditorWall)coord.Actor);
+                        portal.SetTransform(coord.GetTransform());
                     }
-                    else*/
+                    else
                     {
                         portal.SetTransform(_mouseFollow.GetTransform());
                     }
@@ -75,19 +72,24 @@ namespace Editor
             }
         }
 
+        private FixtureEdgeCoord GetEdgeCoord()
+        {
+            float size = Transform2.GetSize(_mouseFollow);
+            return FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, size);
+        }
+
         private Transform2 GetPortalTransform()
         {
-            /*FixtureEdgeCoord coord = FixtureExt.GetNearestPortalableEdge(Controller.Level.Scene.World, Controller.GetMouseWorldPosition(), snapDistance, 1);
+            FixtureEdgeCoord coord = GetEdgeCoord();
             if (coord != null)
             {
                 return coord.GetWorldTransform();
             }
-            else*/
+            else
             {
                 Transform2 transform = new Transform2();
                 transform.Position = Controller.GetMouseWorldPosition();
                 transform.Rotation = _mouseFollow.GetTransform().Rotation;
-                //transform.Scale = _mouseFollow.GetTransform().Scale;
                 transform.Size = _mouseFollow.GetTransform().Size;
                 transform.IsMirrored = _mouseFollow.GetTransform().IsMirrored;
                 return transform;
@@ -99,13 +101,15 @@ namespace Editor
             base.Enable();
             isSecondPortal = false;
             portalPrevious = null;
-            _mouseFollow = new EditorPortal(Controller.Level);
+            unsnapAngle = 0;
+            _mouseFollow = new Doodad(Controller.Level);
+            _mouseFollow.Models.AddRange(EditorModelFactory.CreatePortal());
         }
 
         public override void Disable()
         {
             base.Disable();
-            Controller.Remove(_mouseFollow);
+            Controller.Level.Doodads.Remove(_mouseFollow);
         }
 
         public override Tool Clone()

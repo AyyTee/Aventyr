@@ -11,6 +11,7 @@ namespace Game
     {
         List<Model> GetModels();
         Transform2 GetWorldTransform();
+        Transform2 GetWorldVelocity();
         bool Visible { get; }
         bool DrawOverPortals { get; }
         bool IsPortalable { get; }

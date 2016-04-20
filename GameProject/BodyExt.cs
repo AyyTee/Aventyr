@@ -20,6 +20,19 @@ namespace Game
             return body;
         }
 
+        /// <summary>
+        /// Create body and assign it to an IActor instance.
+        /// </summary>
+        public static Body CreateBody(World world, IActor actor)
+        {
+            Debug.Assert(actor != null);
+            Debug.Assert(actor.Body == null);
+            Debug.Assert(world != null);
+            Body body = CreateBody(world);
+            BodyExt.SetUserData(body, actor);
+            return body;
+        }
+
         /*public static Transform2D GetTransform(Body body)
         {
             var transform = new FarseerPhysics.Common.Transform();
@@ -27,7 +40,7 @@ namespace Game
             return new Transform2D(transform.Position, transform.Angle);
         }*/
 
-        public static BodyUserData SetUserData(Body body, Actor entity)
+        public static BodyUserData SetUserData(Body body, IActor entity)
         {
             //Ugly solution to storing Game classes in a way that still works when deserializing the data.
             //This list is intended to only store one element.
@@ -45,7 +58,7 @@ namespace Game
 
         public static Transform2 GetTransform(Body body)
         {
-            return new Transform2(Vector2Ext.ConvertTo(body.Position), body.Rotation);
+            return new Transform2(Vector2Ext.ConvertTo(body.Position), 1, body.Rotation);
         }
 
         public static void SetTransform(Body body, Transform2 transform)

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Editor
 {
     [DataContract]
-    public class EditorEntity : EditorObject
+    public sealed class EditorEntity : EditorObject
     {
         [DataMember]
         public List<Model> _models = new List<Model>();
@@ -28,9 +28,14 @@ namespace Editor
             return clone;
         }
 
-        protected void ShallowClone(EditorEntity destination)
+        private void ShallowClone(EditorEntity destination)
         {
             base.ShallowClone(destination);
+            destination._models = new List<Model>(_models);
+            /*for (int i = 0; i < _models.Count; i++)
+            {
+                destination._models.Add(_models[i].DeepClone());
+            }*/
         }
 
         public void AddModel(Model model)

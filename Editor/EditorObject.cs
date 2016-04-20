@@ -16,16 +16,15 @@ namespace Editor
         [DataMember]
         EditorScene _scene;
         public EditorScene Scene 
-        { 
+        {
             get { return _scene == null ? Parent.Scene : _scene; }
             private set { _scene = value; }
         }
-        /*[DataMember]
-        public Entity Marker { get; private set; }*/
-        Model _marker;
         [DataMember]
         public bool Visible { get; private set; }
+        [DataMember]
         public bool DrawOverPortals { get; set; }
+        [DataMember]
         public bool IsPortalable { get; set; }
         [DataMember]
         public bool IsSelected { get; private set; }
@@ -38,7 +37,6 @@ namespace Editor
         public EditorObject Parent { get; private set; }
         [DataMember]
         Transform2 _transform = new Transform2();
-        bool _initialized = false;
 
         public EditorObject(EditorScene editorScene)
         {
@@ -47,51 +45,37 @@ namespace Editor
             SetParent(editorScene);
             Visible = true;
             IsPortalable = true;
-            Initialize();
         }
 
-        /// <summary>
-        /// Initializes instance state. It is expected to be called in the constructor or during deserialization. 
-        /// Should only be called once during the lifetime of this instance.
-        /// </summary>
         public virtual void Initialize()
         {
-            Debug.Assert(_initialized == false);
-            _initialized = true;
-            _marker = ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
-            _marker.Transform.Position = new Vector3(0, 0, DrawDepth.EntityMarker);
-            _marker.SetColor(new Vector3(1f, 0.5f, 0f));
         }
 
         public virtual List<Model> GetModels()
         {
             List<Model> models = new List<Model>();
-            models.Add(_marker);
+            Model marker = ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
+            marker.Transform.Position = new Vector3(0, 0, DrawDepth.EntityMarker);
+
+            if (IsSelected)
+            {
+                marker.SetColor(new Vector3(1f, 1f, 0f));
+                marker.Transform.Scale = new Vector3(1.5f, 1.5f, 1.5f);
+            }
+            else
+            {
+                marker.SetColor(new Vector3(1f, 0.5f, 0f));
+            }
+
+            models.Add(marker);
             return models;
         }
-
-        /*public void SetMarker()
-        {
-            if (Marker != null)
-            {
-                Marker.Remove();
-            }
-            Marker = new Entity(Scene.Scene);
-            Marker.Name = "Marker";
-            Marker.DrawOverPortals = true;
-            Model circle = ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
-            circle.Transform.Position = new Vector3(0, 0, DrawDepth.EntityMarker);
-            circle.SetColor(new Vector3(1f, 0.5f, 0f));
-            Marker.AddModel(circle);
-            Marker.SetTransform(GetTransform());
-        }*/
 
         public virtual void SetScene(EditorScene destination)
         {
             Scene._children.Remove(this);
             Scene = destination;
             Scene._children.Add(this);
-            //Marker.SetParent(Scene.Scene.Root);
         }
 
         public virtual HashSet<IDeepClone> GetCloneableRefs()
@@ -115,7 +99,6 @@ namespace Editor
             {
                 _children.Add((EditorObject)cloneMap[e]);
             }
-            //Marker = (Entity)cloneMap[Marker];
         }
 
         public virtual IDeepClone ShallowClone()
@@ -155,17 +138,25 @@ namespace Editor
         public virtual void SetTransform(Transform2 transform)
         {
             _transform = transform.ShallowClone();
-            //Marker.SetTransform(_transform);
-        }
-
-        public Transform2 GetWorldTransform()
-        {
-            return GetTransform();
         }
 
         public virtual Transform2 GetTransform()
         {
             return _transform.ShallowClone();
+        }
+
+        public virtual Transform2 GetWorldTransform()
+        {
+            if (Parent != null)
+            {
+                return GetTransform().Transform(Parent.GetWorldTransform());
+            }
+            return GetTransform();
+        }
+
+        public Transform2 GetWorldVelocity()
+        {
+            return new Transform2();
         }
 
         private void RemoveSelf()
@@ -185,22 +176,11 @@ namespace Editor
         public virtual void Remove()
         {
             RemoveSelf();
-            //Marker.Remove();
         }
 
         public virtual void SetSelected(bool isSelected)
         {
             IsSelected = isSelected;
-            if (IsSelected)
-            {
-                _marker.SetColor(new Vector3(1f, 1f, 0f));
-                _marker.Transform.Scale = new Vector3(1.5f, 1.5f, 1.5f);
-            }
-            else
-            {
-                _marker.SetColor(new Vector3(1f, 0.5f, 0f));
-                _marker.Transform.Scale = new Vector3(1f, 1f, 1f);
-            }
         }
 
         public virtual void SetVisible(bool isVisible)

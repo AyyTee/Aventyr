@@ -47,37 +47,42 @@ namespace Game
 
         public static Model CreateCube()
         {
+            return CreateCube(new Vector3(1,1,1));
+        }
+
+        public static Model CreateCube(Vector3 scale)
+        {
             Vertex[] vertices = new Vertex[] {
                 //left
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(0.0f, 1.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f) * scale, new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f) * scale, new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f)),
                 //back
-                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f)),
                 //right
-                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f) * scale, new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f) * scale, new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f)),
                 //top
-                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  0.5f), new Vector2(0.0f, 1.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f)),
                 //front
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(0.0f, 1.0f)), 
-                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f), new Vector2(1.0f, 0.0f)), 
-                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f), new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(0.0f, 1.0f)), 
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(1.0f, 0.0f)), 
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f) * scale, new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(1.0f, 1.0f)),
                 //bottom
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 1.0f)), 
-                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f), new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  0.5f), new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f), new Vector2(0.0f, 1.0f))
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f)), 
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f))
             };
 
             int[] indices = new int[] {

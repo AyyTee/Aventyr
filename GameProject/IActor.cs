@@ -9,6 +9,11 @@ namespace Game
 {
     public interface IActor
     {
-        Body GetBody();
+        Body Body { get; }
+        void Remove();
+        Transform2 GetWorldTransform();
+        Transform2 GetWorldVelocity();
+        Transform2 GetTransform();
+        Transform2 GetVelocity();
     }
 }
