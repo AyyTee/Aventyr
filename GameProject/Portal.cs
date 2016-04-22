@@ -73,6 +73,15 @@ namespace Game
             EnterVelocity(portal, velocity);
         }
 
+        public static void Enter(IPortal portal, IPortalable portable)
+        {
+            Transform2 transform = portable.GetTransform();
+            Transform2 velocity = portable.GetVelocity();
+            Enter(portal, transform, velocity);
+            portable.SetTransform(transform);
+            portable.SetVelocity(velocity);
+        }
+
         public static void EnterVelocity(IPortal portal, Transform2 velocity)
         {
             Matrix4 matrix = GetPortalMatrix(portal);

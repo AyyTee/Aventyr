@@ -82,12 +82,8 @@ namespace Game
 
         public Line GetWorldEdge()
         {
-            Line line = GetEdge();
-            var transform = new FarseerPhysics.Common.Transform();
-            Fixture.Body.GetTransform(out transform);
-            Matrix4 matTransform = Matrix4Ext.ConvertTo(transform);
-            line.Transform(matTransform);
-            return line;
+            Transform2 transform = BodyExt.GetTransform(Fixture.Body);
+            return GetEdge().Transform(transform.GetMatrix());
         }
 
         public Vector2 GetNormal()

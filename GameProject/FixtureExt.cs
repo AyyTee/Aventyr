@@ -97,8 +97,6 @@ namespace Game
             {
                 Debug.Assert(BodyExt.GetUserData(f.Body).Actor.GetTransform().Position == Vector2Ext.ConvertTo(f.Body.Position));
                 Vector2 localPoint = Vector2Ext.ConvertTo(f.Body.GetLocalPoint(new Xna.Vector2(point.X, point.Y)));
-                //Vector2 localPoint2 = Vector2Ext.Transform(point, FixtureExt.GetUserData(f).Entity.Transform.GetWorldMatrix().Inverted());
-                //Debug.Assert(localPoint == localPoint2);
                 switch (f.Shape.ShapeType)
                 {
                     case ShapeType.Polygon:

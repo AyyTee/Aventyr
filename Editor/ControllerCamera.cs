@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Editor
 {
-    public class ControllerCamera : ICamera2, ITransform2
+    public class ControllerCamera : ICamera2, IPortalable
     {
         public delegate void CameraObjectHandler(ControllerCamera camera);
         /// <summary>Event is fired if the camera Transform is modified by this controller.</summary>
@@ -23,6 +23,7 @@ namespace Editor
         public float KeyMoveSpeed = 0.013f;
         Queue<Vector2> lazyPan = new Queue<Vector2>();
         Transform2 _transform = new Transform2();
+        const int QUEUE_SIZE = 3;
 
         private float _zoomScrollFactor;
         /// <summary>How much the camera zooms in/out with mouse scrolling. Value must be greater than 1.</summary>
@@ -74,7 +75,7 @@ namespace Editor
             ZoomFactor = 1.5f;
             //camera.PortalEnter += portalEnterCallback;
             InputExt = inputExt;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < QUEUE_SIZE; i++)
             {
                 lazyPan.Enqueue(new Vector2());
             }
@@ -87,12 +88,12 @@ namespace Editor
             viewCenter.SetParent(Camera);*/
         }
 
-        private void portalEnterCallback(SceneNodePlaceable placeable, IPortal portalEnter)
+        /*private void portalEnterCallback(SceneNodePlaceable placeable, IPortal portalEnter)
         {
             Vector2[] list = lazyPan.ToArray();
             Portal.EnterVelocity(portalEnter, list);
             lazyPan = new Queue<Vector2>(list);
-        }
+        }*/
 
         public Matrix4 GetViewMatrix(bool isOrtho = true)
         {
@@ -101,8 +102,7 @@ namespace Editor
 
         public Transform2 GetWorldVelocity()
         {
-            Vector2 velocity = lazyPan.Aggregate((item, acc) => item + acc) / lazyPan.Count;
-            return new Transform2(velocity);
+            return GetVelocity();
         }
 
         public Transform2 GetWorldTransform()
@@ -209,12 +209,27 @@ namespace Editor
                 lazyPan.Dequeue();
             }
 
-            _transform.Position += GetWorldVelocity().Position;
+            //_transform.Position += GetWorldVelocity().Position;
 
             //If the camera has been moved then call events.
             if ((isMoved || GetWorldVelocity().Position != new Vector2()) && CameraMoved != null)
             {
                 CameraMoved(this);
+            }
+        }
+
+        public Transform2 GetVelocity()
+        {
+            Vector2 velocity = lazyPan.Aggregate((item, acc) => item + acc) / lazyPan.Count;
+            return new Transform2(velocity);
+        }
+
+        public void SetVelocity(Transform2 velocity)
+        {
+            lazyPan = new Queue<Vector2>();
+            for (int i = 0; i < QUEUE_SIZE; i++)
+            {
+                lazyPan.Enqueue(velocity.Position);
             }
         }
     }

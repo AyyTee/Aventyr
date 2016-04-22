@@ -61,7 +61,7 @@ namespace Editor
         {
             base.Enable();
             _mouseFollow = new Doodad(Controller.Level);
-            _mouseFollow.Models.Add(ModelFactory.CreateCube());
+            _mouseFollow.Models.Add(Game.ModelFactory.CreateCube());
             _mouseFollow.Models[0].SetTexture(Renderer.Textures["default.png"]);
             _mouseFollow.IsPortalable = true;
         }

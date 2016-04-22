@@ -14,6 +14,8 @@ namespace Game
         Transform2 GetWorldTransform();
         Transform2 GetWorldVelocity();
         Transform2 GetTransform();
+        void SetTransform(Transform2 velocity);
         Transform2 GetVelocity();
+        void SetVelocity(Transform2 velocity);
     }
 }

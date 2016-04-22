@@ -149,9 +149,11 @@
     <Compile Include="ICamera2.cs" />
     <Compile Include="IDeepClone.cs" />
     <Compile Include="IPortal.cs" />
+    <Compile Include="IPortalable.cs" />
     <Compile Include="IRenderable.cs" />
     <Compile Include="IMesh.cs" />
     <Compile Include="IRenderLayer.cs" />
+    <Compile Include="IScene.cs" />
     <Compile Include="IShallowClone.cs" />
     <Compile Include="ITexture.cs" />
     <Compile Include="ITransform2.cs" />
@@ -184,6 +186,7 @@
     <Compile Include="PortalView.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="SceneExt.cs" />
     <Compile Include="SceneNode.cs" />
     <Compile Include="SceneNodePlaceable.cs" />
     <Compile Include="Serializer.cs" />

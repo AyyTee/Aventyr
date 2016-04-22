@@ -62,12 +62,12 @@ namespace Editor
                     Transform2.SetPosition(editorEntity, average);
                     //Actor actor = ActorFactory.CreateEntityPolygon(Controller.Level, new Transform2D(average), _vertices.ToArray());
 
-                    Model m0 = ModelFactory.CreatePolygon(_vertices.ToArray());
+                    Model m0 = Game.ModelFactory.CreatePolygon(_vertices.ToArray());
                     editorEntity.AddModel(m0);
                     m0.Wireframe = true;
                     //entity.Models[0].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
                     //entity.Models[0].SetShader("default");
-                    Model m1 = ModelFactory.CreatePolygon(_vertices.ToArray());
+                    Model m1 = Game.ModelFactory.CreatePolygon(_vertices.ToArray());
                     editorEntity.AddModel(m1);
                     m1.SetColor(new Vector3(0.5f, 0.5f, 0.5f));
                     //entity.Entity.Models[1].SetShader("default");
@@ -98,7 +98,7 @@ namespace Editor
                 {
                     colors[p.LineIndex] = new Vector3(1f, 0.2f, 0.2f);
                 }
-                Model model = ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
+                Model model = Game.ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
                 model.Transform.Position = new Vector3(0, 0, 6);
                 //model.SetShader("default");
                 _entity.AddModel(model);

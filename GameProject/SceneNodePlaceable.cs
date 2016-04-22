@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class SceneNodePlaceable : SceneNode, ITransform2
+    public class SceneNodePlaceable : SceneNode, IPortalable
     {
         public delegate void _portalEnter(SceneNodePlaceable placeable, IPortal portalEnter);
         public event _portalEnter PortalEnter;

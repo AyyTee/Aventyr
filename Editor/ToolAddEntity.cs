@@ -41,7 +41,7 @@ namespace Editor
                 entity.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
                 entity.IsPortalable = true;*/
                 EditorEntity editorEntity = new EditorEntity(Controller.Level);
-                Model m = ModelFactory.CreateCube();
+                Model m = Game.ModelFactory.CreateCube();
                 m.SetTexture(Renderer.Textures["default.png"]);
                 editorEntity.AddModel(m);
                 editorEntity.Name = "Editor Entity";
@@ -63,7 +63,7 @@ namespace Editor
         {
             base.Enable();
             _mouseFollow = new Doodad(Controller.Level);
-            _mouseFollow.Models.Add(ModelFactory.CreateCube());
+            _mouseFollow.Models.Add(Game.ModelFactory.CreateCube());
             _mouseFollow.Models[0].SetTexture(Renderer.Textures["default.png"]);
             _mouseFollow.IsPortalable = true;
         }

@@ -30,7 +30,7 @@ namespace Editor
             {
                 Vector2 mousePos = Controller.GetMouseWorldPosition();
                 EditorPortal portal = (EditorPortal)Controller.GetNearestObject(mousePos,
-                    item => item.GetType() == typeof(EditorPortal) && (mousePos - Transform2.GetPosition(item)).Length < 1);
+                    item => item.GetType() == typeof(EditorPortal) && (mousePos - item.GetWorldTransform().Position).Length < 1);
                 if (portal != null && portal != _portalPrevious)
                 {
                     if (_portalPrevious == null)
@@ -43,9 +43,9 @@ namespace Editor
                         _portalPrevious.Linked = portal;
                         portal.IsMirrored = true;
                         _portalPrevious.IsMirrored = false;
+                        Transform2 t = portal.GetTransform();
                         if (_input.KeyDown(InputExt.KeyBoth.Control))
                         {
-                            Transform2 t = portal.GetTransform();
                             //t.Scale = new Vector2(1, -1);
                             t.Size *= -1;
                             t.IsMirrored = true;
@@ -57,7 +57,6 @@ namespace Editor
                         }
                         else
                         {
-                            Transform2 t = portal.GetTransform();
                             //t.Scale = new Vector2(1, 1);
                             t.IsMirrored = false;
                             portal.SetTransform(t);
@@ -76,7 +75,7 @@ namespace Editor
             if (_portalPrevious != null)
             {
                 line.Models.Clear();
-                Model lineModel = ModelFactory.CreateLineStrip(new Vector2[] {
+                Model lineModel = Game.ModelFactory.CreateLineStrip(new Vector2[] {
                     Controller.GetMouseWorldPosition(),
                     _portalPrevious.GetWorldTransform().Position
                 });

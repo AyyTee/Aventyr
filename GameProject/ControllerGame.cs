@@ -136,14 +136,14 @@ namespace Game
             //ground.AddModel(ModelFactory.CreatePolygon(v));
             ground.SetTransform(new Transform2(new Vector2(0, -4f), 1f, 0.05f));
             scene.World.ProcessChanges();
-            /*FixturePortal portal0 = new FixturePortal(scene, null);
+            FixturePortal portal0 = new FixturePortal(scene, null);
             portal0.Name = "portalLeft";
             FixturePortal portal1 = new FixturePortal(scene, null);
             portal1.Name = "portalRight";
 
             portal0.IsMirrored = true;
             portal0.Linked = portal1;
-            portal1.Linked = portal0;*/
+            portal1.Linked = portal0;
 
             text = new Entity(hud);
             text.SetTransform(new Transform2(new Vector2(0, CanvasSize.Height)));

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Editor
 {
     [DataContract]
-    public class EditorObject : ITreeNode<EditorObject>, ITransform2, IDeepClone, IRenderable
+    public class EditorObject : ITreeNode<EditorObject>, IPortalable, IDeepClone, IRenderable
     {
         [DataMember]
         EditorScene _scene;
@@ -54,7 +54,7 @@ namespace Editor
         public virtual List<Model> GetModels()
         {
             List<Model> models = new List<Model>();
-            Model marker = ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
+            Model marker = Game.ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
             marker.Transform.Position = new Vector3(0, 0, DrawDepth.EntityMarker);
 
             if (IsSelected)
@@ -152,6 +152,15 @@ namespace Editor
                 return GetTransform().Transform(Parent.GetWorldTransform());
             }
             return GetTransform();
+        }
+
+        public Transform2 GetVelocity()
+        {
+            return new Transform2();
+        }
+
+        public void SetVelocity(Transform2 velocity)
+        {
         }
 
         public Transform2 GetWorldVelocity()

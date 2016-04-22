@@ -28,7 +28,6 @@ namespace Editor
         {
             base.Update();
             _mouseFollow.SetTransform(GetPortalTransform());
-            Transform2.SetRotation(_mouseFollow, unsnapAngle);
 
             if (_input.MouseDown(MouseButton.Right) || _input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape))
             {
@@ -42,7 +41,7 @@ namespace Editor
                     FixtureEdgeCoord coord = GetEdgeCoord();
                     if (coord != null)
                     {
-                        portal.SetParent((EditorWall)coord.Actor);
+                        portal.SetParent((EditorObject)coord.Actor);
                         portal.SetTransform(coord.GetTransform());
                     }
                     else
@@ -89,7 +88,9 @@ namespace Editor
             {
                 Transform2 transform = new Transform2();
                 transform.Position = Controller.GetMouseWorldPosition();
-                transform.Rotation = _mouseFollow.GetTransform().Rotation;
+                //transform.Rotation = _mouseFollow.GetTransform().Rotation;
+                transform.Rotation = unsnapAngle;
+                //Transform2.SetRotation(_mouseFollow, unsnapAngle);
                 transform.Size = _mouseFollow.GetTransform().Size;
                 transform.IsMirrored = _mouseFollow.GetTransform().IsMirrored;
                 return transform;
@@ -103,7 +104,7 @@ namespace Editor
             portalPrevious = null;
             unsnapAngle = 0;
             _mouseFollow = new Doodad(Controller.Level);
-            _mouseFollow.Models.AddRange(EditorModelFactory.CreatePortal());
+            _mouseFollow.Models.AddRange(ModelFactory.CreatePortal());
         }
 
         public override void Disable()

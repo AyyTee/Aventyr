@@ -159,6 +159,7 @@ namespace Editor
                 }
                 ActiveLevel.Step();
             }
+            Level.Step(1 / (float)60);
             //Back.Step();
         }
 

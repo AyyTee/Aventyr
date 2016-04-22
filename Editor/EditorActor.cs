@@ -41,17 +41,14 @@ namespace Editor
             return BodyExt.GetTransform(Body);
         }
 
+        
+
         /// <summary>
         /// Set the transform.  Scale is discarded since physics bodies do have a Scale field.
         /// </summary>
         public override void SetTransform(Transform2 transform)
         {
             BodyExt.SetTransform(Body, transform);
-        }
-
-        public Transform2 GetVelocity()
-        {
-            return new Transform2();
         }
 
         public override void Remove()
@@ -64,7 +61,7 @@ namespace Editor
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
-            models.Add(ModelFactory.CreateCube(new Vector3(2,2,2)));
+            models.Add(Game.ModelFactory.CreateCube(new Vector3(2,2,2)));
             return models;
         }
     }

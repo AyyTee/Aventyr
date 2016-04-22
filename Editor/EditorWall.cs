@@ -17,7 +17,6 @@ namespace Editor
         [DataMember]
         public List<Vector2> Vertices { get; private set; }
         public Body Body { get; private set; }
-        //public Actor Wall { get; private set; }
 
         public EditorWall(EditorScene scene, IList<Vector2> vertices)
             : base(scene)
@@ -42,7 +41,7 @@ namespace Editor
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
-            models.Add(ModelFactory.CreatePolygon(Vertices));
+            models.Add(Game.ModelFactory.CreatePolygon(Vertices));
             return models;
         }
 
@@ -57,11 +56,6 @@ namespace Editor
         public override void SetTransform(Transform2 transform)
         {
             BodyExt.SetTransform(Body, transform);
-        }
-
-        public Transform2 GetVelocity()
-        {
-            return new Transform2();
         }
 
         public override void Remove()

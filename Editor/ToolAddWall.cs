@@ -84,7 +84,7 @@ namespace Editor
                 {
                     colors[p.LineIndex] = new Vector3(1f, 0.2f, 0.2f);
                 }
-                Model model = ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
+                Model model = Game.ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
                 model.Transform.Position = new Vector3(0, 0, 6);
                 //model.SetShader("default");
                 _polygon.Models.Add(model);

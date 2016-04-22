@@ -37,8 +37,6 @@ namespace Game
             entity.IsPortalable = true;
             entity.AddModel(ModelFactory.CreatePlane(transform.Scale));
 
-            /*Body body = BodyFactory.CreateRectangle(entity.Scene.World, transform.Scale.X, transform.Scale.Y, 1);
-            entity.Scene.World.ProcessChanges();*/
             Body body = CreateBox(entity.Scene.World, new Vector2(1,1));
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             Actor actor = new Actor(entity.Scene, body);
@@ -56,15 +54,13 @@ namespace Game
 
         public static Body CreateBox(World world, Vector2 scale)
         {
-            //Body body = BodyFactory.CreateRectangle(world, scale.X, scale.Y, 1);
             Vector2[] vertices = new Vector2[] {
-                new Vector2(-0.5f, -0.5f),
-                new Vector2(0.5f, -0.5f),
-                new Vector2(0.5f, 0.5f),
-                new Vector2(-0.5f, 0.5f)
+                new Vector2(-0.5f, -0.5f) * scale,
+                new Vector2(0.5f, -0.5f) * scale,
+                new Vector2(0.5f, 0.5f) * scale,
+                new Vector2(-0.5f, 0.5f) * scale
             };
             Body body = CreatePolygon(world, new Transform2(), vertices);
-            world.ProcessChanges();
             return body;
         }
 
@@ -109,6 +105,7 @@ namespace Game
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 
             Body body = BodyExt.CreateBody(world);
+            BodyExt.SetTransform(body, transform);
 
             for (int i = 0; i < polygon.Triangles.Count; i++)
             {

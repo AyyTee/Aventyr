@@ -22,11 +22,10 @@ namespace Editor
         public EditorPortal(EditorScene editorScene, bool initialize = true)
             : base(editorScene)
         {
-            //DrawOverPortals = true;
             IsPortalable = false;
             if (initialize)
             {
-                _models.AddRange(EditorModelFactory.CreatePortal());
+                _models.AddRange(ModelFactory.CreatePortal());
             }
         }
 
