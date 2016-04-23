@@ -41,10 +41,8 @@ namespace Editor
             return BodyExt.GetTransform(Body);
         }
 
-        
-
         /// <summary>
-        /// Set the transform.  Scale is discarded since physics bodies do have a Scale field.
+        /// Set the transform.  Scale is discarded since physics bodies do not have a Scale field.
         /// </summary>
         public override void SetTransform(Transform2 transform)
         {

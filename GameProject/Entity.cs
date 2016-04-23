@@ -15,8 +15,12 @@ namespace Game
     /// An object that exists within the world space and can be drawn
     /// </summary>
     [DataContract]
-    public class Entity : SceneNodePlaceable, IRenderable
+    public class Entity : SceneNode, IRenderable, IPortalable
     {
+        [DataMember]
+        Transform2 _transform = new Transform2();
+        [DataMember]
+        Transform2 _velocity = new Transform2();
         [DataMember]
         List<Model> _models = new List<Model>();
         /// <summary>
@@ -88,6 +92,26 @@ namespace Game
         public List<Model> GetModels()
         {
             return ModelList;
+        }
+
+        public void SetTransform(Transform2 transform)
+        {
+            _transform = transform.ShallowClone();
+        }
+
+        public override Transform2 GetTransform()
+        {
+            return _transform.ShallowClone();
+        }
+
+        public override Transform2 GetVelocity()
+        {
+            return _velocity.ShallowClone();
+        }
+
+        public void SetVelocity(Transform2 transform)
+        {
+            _velocity = transform.ShallowClone();
         }
     }
 }

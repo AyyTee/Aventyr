@@ -10,8 +10,12 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class Camera2 : SceneNodePlaceable, ICamera2
+    public class Camera2 : SceneNode, ICamera2, IPortalable
     {
+        [DataMember]
+        Transform2 _transform = new Transform2();
+        [DataMember]
+        Transform2 _velocity = new Transform2();
         [DataMember]
         public float _aspect = 1;
         public float Aspect
@@ -67,6 +71,26 @@ namespace Game
         public Matrix4 GetViewMatrix(bool isOrtho = true)
         {
             return CameraExt.GetViewMatrix(this, isOrtho);
+        }
+
+        public void SetTransform(Transform2 transform)
+        {
+            _transform = transform.ShallowClone();
+        }
+
+        public override Transform2 GetTransform()
+        {
+            return _transform.ShallowClone();
+        }
+
+        public override Transform2 GetVelocity()
+        {
+            return _velocity.ShallowClone();
+        }
+
+        public void SetVelocity(Transform2 transform)
+        {
+            _velocity = transform.ShallowClone();
         }
     }
 }

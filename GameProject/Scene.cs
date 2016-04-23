@@ -48,21 +48,25 @@ namespace Game
             {
                 s.StepBegin();
             }
-            foreach (SceneNodePlaceable s in FindByType<SceneNodePlaceable>())
+            foreach (SceneNode s in FindByType<SceneNode>())
             {
                 //Skip Actors, they handle movement using rigid body physics.
                 if (s.GetType() == typeof(Actor))
                 {
                     continue;
                 }
-                //Parented SceneNodes can't perform portal teleportation directly.
-                if (s.Parent == s.Scene.Root)
+                if (s is IPortalable)
                 {
-                    SceneExt.RayCast(s, GetPortalList());
-                }
-                else
-                {
-                    s.SetTransform(s.GetTransform().Add(s.GetVelocity()));
+                    IPortalable portalable = (IPortalable)s;
+                    //Parented SceneNodes can't perform portal teleportation directly.
+                    if (s.Parent == s.Scene.Root)
+                    {
+                        SceneExt.RayCast(portalable, GetPortalList());
+                    }
+                    else
+                    {
+                        portalable.SetTransform(portalable.GetTransform().Add(portalable.GetVelocity()));
+                    }
                 }
             }
             if (World != null)

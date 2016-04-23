@@ -66,6 +66,17 @@ namespace Game
             body.SetTransform(Vector2Ext.ConvertToXna(transform.Position), transform.Rotation);
         }
 
+        public static Transform2 GetVelocity(Body body)
+        {
+            return new Transform2(Vector2Ext.ConvertTo(body.LinearVelocity), 1, body.AngularVelocity);
+        }
+
+        public static void SetVelocity(Body body, Transform2 velocity)
+        {
+            body.LinearVelocity = Vector2Ext.ConvertToXna(velocity.Position);
+            body.AngularVelocity = velocity.Rotation;
+        }
+
         /// <summary>
         /// Returns the area of non-portal fixtures that are in the same coordinate space as localPoint. 
         /// In other words, find the area not on other other side of a portal relative to localPoint.
@@ -95,7 +106,7 @@ namespace Game
 
                     Xna.Vector2 v, xnaNormal;
                     xnaNormal = Vector2Ext.ConvertToXna(normal);
-                    area += f.Shape.ComputeSubmergedArea(ref xnaNormal, line.GetOffset(), ref bodyTransform, out v);
+                    area += f.Shape.ComputeSubmergedArea(ref xnaNormal, (float)line.GetOffset(), ref bodyTransform, out v);
                 }
                 totalMass -= f.Shape.Density * area;
             }

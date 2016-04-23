@@ -150,7 +150,7 @@ namespace Game
             {
                 vProject.Add(new Vector2(v[i].X, v[i].Y));
             }
-            return MathExt.ComputeConvexHull(vProject).ToArray();
+            return MathExt.GetConvexHull(vProject).ToArray();
         }
 
         /// <summary>

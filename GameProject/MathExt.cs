@@ -4,8 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
@@ -32,47 +31,12 @@ namespace Game
                 Math.Abs(TLast - intersect.TLast) < EQUALITY_EPSILON;
         }
     }
+
     public static class MathExt
     {
-        static public Vector2d Matrix2dMult(Vector2d V, Matrix2d M)
-        {
-            return new Vector2d(V.X * M.M11 + V.Y * M.M21, V.X * M.M12 + V.Y * M.M22);
-        }
-        static public Vector2 Matrix2Mult(Vector2 V, Matrix2 M)
-        {
-            return new Vector2(V.X * M.M11 + V.Y * M.M21, V.X * M.M12 + V.Y * M.M22);
-        }
-        static public double AngleLine(Vector2d V0, Vector2d V1)
-        {
-            return AngleVector(V0 - V1);
-        }
-        static public double AngleLine(Vector2 V0, Vector2 V1)
-        {
-            return AngleLine(new Vector2d(V0.X, V0.Y), new Vector2d(V1.X, V1.Y));
-        }
+        public const double TAU = Math.PI * 2;
 
-        static public double AngleVector(Vector2d V0)
-        {
-            //Debug.Assert(V0 == Vector2d.Zero, "Vector must have non-zero length.");
-            double val = Math.Atan2(V0.X, V0.Y);
-
-            if (Double.IsNaN(val))
-            {
-                return 0;
-            }
-            return (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
-        }
-
-        static public double AngleVector(Vector2 V0)
-        {
-            return AngleVector(new Vector2d(V0.X, V0.Y));
-        }
-
-        static public double AngleDiff(double angle0, double angle1)
-        {
-            return ((angle1 - angle0) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
-        }
-
+        #region Lerp
         static public double Lerp(double Value0, double Value1, double T)
         {
             return Value0 * (1 - T) + Value1 * T;
@@ -98,27 +62,6 @@ namespace Game
             return Vector0 * (1 - T) + Vector1 * T;
         }
 
-        static public double ValueWrap(double Value, double mod)
-        {
-            Value = Value % mod;
-            if (Value < 0)
-            {
-                return mod + Value;
-            }
-            return Value;
-        }
-
-        static public double Round(double value, double size)
-        {
-            return Math.Round(value/size) * size;
-        }
-
-        static public double AngleWrap(double value)
-        {
-            double tau = Math.PI * 2;
-            return ((value % tau) + tau) % tau;
-        }
-
         static public double LerpAngle(double Angle0, double Angle1, double T, bool IsClockwise)
         {
             if (IsClockwise == true)
@@ -135,95 +78,88 @@ namespace Game
                 {
                     Angle1 += 2 * Math.PI;
                 }
-                
+
                 return Lerp(Angle0, Angle1, T) % (2 * Math.PI);
             }
         }
-
-        static public double PointLineDistance(Vector2d ps0, Vector2d pe0, Vector2d Point, bool IsSegment)
+        #endregion
+        #region Distance
+        public static double PointLineDistance(Vector2 point, Line line, bool isSegment)
         {
+            Vector2 V;
+            Vector2 VDelta = line[1] - line[0];
+            if ((VDelta.X == 0) && (VDelta.Y == 0))
             {
-                Vector2d V;
-                Vector2d VDelta = pe0 - ps0;
-                if ((VDelta.X == 0) && (VDelta.Y == 0))
-                {
-                    V = ps0;
-                }
-                else
-                {
-                    double t = ((Point.X - ps0.X) * VDelta.X + (Point.Y - ps0.Y) * VDelta.Y) / (Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
-                    if (IsSegment) {t = MathHelper.Clamp(t, 0, 1);}
-                    V = ps0 + Vector2d.Multiply(VDelta, t);
-                }
-                return (Point - V).Length;
-            }
-        }
-
-        static public double PointLineDistance(Vector2 ps0, Vector2 pe0, Vector2 Point, bool IsSegment)
-        {
-            return PointLineDistance(new Vector2d(ps0.X, ps0.Y), new Vector2d(pe0.X, pe0.Y), new Vector2d(Point.X, Point.Y), IsSegment);
-        }
-
-        /// <summary>
-        /// Returns a projection of V0 onto V1
-        /// </summary>
-        /// <param name="V0"></param>
-        /// <param name="V1"></param>
-        static public Vector2d VectorProject(Vector2d V0, Vector2d V1)
-        {
-            return V1.Normalized() * V0;
-        }
-
-        /// <summary>
-        /// Mirrors V0 across an axis defined by V1
-        /// </summary>
-        /// <param name="V0"></param>
-        /// <param name="V1"></param>
-        /// <returns></returns>
-        static public Vector2d VectorMirror(Vector2d V0, Vector2d V1)
-        {
-            return -V0 + 2 * (V0 - VectorProject(V0, V1));
-        }
-
-        /// <summary>Tests if two lines intersect.</summary>
-        /// <returns>Location where the two lines intersect. TFirst is relative to the first line.</returns>
-        static public IntersectPoint LineIntersection(Vector2d ps0, Vector2d pe0, Vector2d ps1, Vector2d pe1, bool SegmentOnly)
-        {
-            IntersectPoint v = new IntersectPoint();
-            double ua, ub;
-            double ud = (pe1.Y - ps1.Y) * (pe0.X - ps0.X) - (pe1.X - ps1.X) * (pe0.Y - ps0.Y);
-            if (ud != 0)
-            {
-                ua = ((pe1.X - ps1.X) * (ps0.Y - ps1.Y) - (pe1.Y - ps1.Y) * (ps0.X - ps1.X)) / ud;
-                ub = ((pe0.X - ps0.X) * (ps0.Y - ps1.Y) - (pe0.Y - ps0.Y) * (ps0.X - ps1.X)) / ud;
-                if (SegmentOnly)
-                {
-                    if (ua < 0 || ua > 1 || ub < 0 || ub > 1)
-                    {
-                        v.Exists = false;
-                        return v;
-                    }
-                }
+                V = line[0];
             }
             else
             {
-                v.Exists = false;
-                return v;
+                float t = ((point.X - line[0].X) * VDelta.X + (point.Y - line[0].Y) * VDelta.Y) / (float)(Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
+                Debug.Assert(float.IsNaN(t) == false);
+                if (isSegment) { t = (float)MathHelper.Clamp(t, 0, 1); }
+                V = line[0] + Vector2.Multiply(VDelta, t);
             }
-            v.Exists = true;
-            v.Position = Lerp(ps0, pe0, ua);
-            v.TFirst = ua;
-            v.TLast = ub;
-            return v;
+            float distance = (point - V).Length;
+            Debug.Assert(distance >= 0);
+            return distance;
         }
 
-        /// <summary>Tests if two lines intersect.</summary>
-        /// <returns>Location where the two lines intersect. T is relative to the first line.</returns>
-        static public IntersectPoint LineIntersection(Vector2 ps0, Vector2 pe0, Vector2 ps1, Vector2 pe1, bool segmentOnly)
+        public static double PointLineDistance(Xna.Vector2 point, Line line, bool isSegment)
         {
-            return LineIntersection(new Vector2d(ps0.X, ps0.Y), new Vector2d(pe0.X, pe0.Y), new Vector2d(ps1.X, ps1.Y), new Vector2d(pe1.X, pe1.Y), segmentOnly);
+            return PointLineDistance(Vector2Ext.ConvertTo(point), line, isSegment);
         }
 
+        static public double PointPolygonDistance(Vector2 point, IList<Vector2> polygon)
+        {
+            Line edge = new Line(polygon[0], polygon[1]);
+            double distMin = PointLineDistance(point, edge, true);
+            for (int i = 1; i < polygon.Count; i++)
+            {
+                edge = new Line(polygon[i], polygon[(i + 1) % polygon.Count]);
+                distMin = Math.Min(distMin, PointLineDistance(point, edge, true));
+            }
+            if (PointInPolygon(point, polygon))
+            {
+                distMin = -distMin;
+            }
+            return distMin;
+        }
+
+        /// <summary>
+        /// Returns the distance between a line and polygon. 
+        /// If the line is contained in the polygon then the distance will be negative value.
+        /// </summary>
+        public static double LinePolygonDistance(Line line, IList<Vector2> polygon)
+        {
+            Line edge = new Line(polygon[0], polygon[1]);
+            double distMin = LineLineDistance(line, edge);
+            for (int i = 0; i < polygon.Count; i++)
+            {
+                edge = new Line(polygon[i], polygon[(i + 1) % polygon.Count]);
+                distMin = Math.Min(distMin, LineLineDistance(line, edge));
+            }
+            if (PointInPolygon(line[0], polygon))
+            {
+                distMin = -distMin;
+            }
+            return distMin;
+        }
+
+        public static double LineLineDistance(Line line0, Line line1)
+        {
+            if (MathExt.LineLineIntersect(line0, line1, true).Exists)
+            {
+                return 0;
+            }
+            return new double[] {
+                PointLineDistance(line1[0], line0, true),
+                PointLineDistance(line1[1], line0, true),
+                PointLineDistance(line0[0], line1, true),
+                PointLineDistance(line0[1], line1, true)
+            }.Max();
+        }
+        #endregion
+        #region Inside
         static public bool PointInRectangle(Vector2d V0, Vector2d V1, Vector2d Point)
         {
             if (((Point.X >= V0.X && Point.X <= V1.X) || (Point.X <= V0.X && Point.X >= V1.X)) && ((Point.Y >= V0.Y && Point.Y <= V1.Y) || (Point.Y <= V0.Y && Point.Y >= V1.Y)))
@@ -231,6 +167,47 @@ namespace Game
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Checks if the line is at least partially contained in a polygon
+        /// </summary>
+        /// <param name="polygon">A closed polygon</param>
+        /// <returns></returns>
+        public static bool LineInPolygon(Line line, IList<Vector2> polygon)
+        {
+            if (MathExt.PointInPolygon(line[0], polygon))
+            {
+                return true;
+            }
+            if (MathExt.PointInPolygon(line[1], polygon))
+            {
+                return true;
+            }
+            return LinePolygonIntersect(line, polygon).Exists;
+        }
+
+        /// <summary>
+        /// Tests if a point is contained in a closed polygon.  Polygon may be degenerate with a minimum of 2 sides.
+        /// </summary>
+        /// <param name="polygon">A closed polygon</param>
+        /// <param name="point"></param>
+        /// <remarks>Code was found here http://dominoc925.blogspot.com/2012/02/c-code-snippet-to-determine-if-point-is.html
+        /// </remarks>
+        public static bool PointInPolygon(Vector2 point, IList<Vector2> polygon)
+        {
+            Debug.Assert(polygon != null);
+            Debug.Assert(polygon.Count >= 2);
+            bool isInside = false;
+            for (int i = 0, j = polygon.Count - 1; i < polygon.Count; j = i++)
+            {
+                if (((polygon[i].Y > point.Y) != (polygon[j].Y > point.Y)) &&
+                (point.X < (polygon[j].X - polygon[i].X) * (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) + polygon[i].X))
+                {
+                    isInside = !isInside;
+                }
+            }
+            return isInside;
         }
 
         /// <summary>
@@ -255,7 +232,7 @@ namespace Game
             };
             for (int i = 0; i < v.Length; i++)
             {
-                if (LineIntersection(v[i], v[(i+1) % v.Length], lineBegin, lineEnd, true).Exists)
+                if (LineLineIntersect(new Line(v[i], v[(i+1) % v.Length]), new Line(lineBegin, lineEnd), true).Exists)
                 {
                     return true;
                 }
@@ -267,18 +244,20 @@ namespace Game
         {
             return LineInRectangle(new Vector2d(topLeft.X, topLeft.Y), new Vector2d(bottomRight.X, bottomRight.Y), new Vector2d(lineBegin.X, lineBegin.Y), new Vector2d(lineEnd.X, lineEnd.Y));
         }
-
+        #endregion
+        #region Convex Hull
         /// <summary>Computes the convex hull of a polygon, in clockwise order in a Y-up 
         /// coordinate system (counterclockwise in a Y-down coordinate system).</summary>
         /// <remarks>Uses the Monotone Chain algorithm, a.k.a. Andrew's Algorithm.
         /// Script found at: http://loyc-etc.blogspot.com/2014/05/2d-convex-hull-in-c-45-lines-of-code.html
         /// </remarks>
-        public static List<Vector2> ComputeConvexHull(IEnumerable<Vector2> points)
+        public static List<Vector2> GetConvexHull(IEnumerable<Vector2> points)
         {
             var list = new List<Vector2>(points);
-            return ComputeConvexHull(list, true);
+            return GetConvexHull(list, true);
         }
-        public static List<Vector2> ComputeConvexHull(List<Vector2> points, bool sortInPlace = false)
+
+        public static List<Vector2> GetConvexHull(List<Vector2> points, bool sortInPlace = false)
         {
             if (points.Count <= 3)
             {
@@ -321,29 +300,8 @@ namespace Game
             hull.RemoveAt(hull.Count - 1);
             return hull;
         }
-
-        /// <summary>
-        /// Tests if a point is contained in a closed polygon
-        /// </summary>
-        /// <param name="polygon">A closed polygon</param>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        /// <remarks>Code was found here http://dominoc925.blogspot.com/2012/02/c-code-snippet-to-determine-if-point-is.html
-        /// </remarks>
-        public static bool IsPointInPolygon(Vector2[] polygon, Vector2 point)
-        {
-            bool isInside = false;
-            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
-            {
-                if (((polygon[i].Y > point.Y) != (polygon[j].Y > point.Y)) &&
-                (point.X < (polygon[j].X - polygon[i].X) * (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) + polygon[i].X))
-                {
-                    isInside = !isInside;
-                }
-            }
-            return isInside;
-        }
-
+        #endregion
+        #region Polygon Handedness
         /// <summary>
         /// Returns true if vertices are ordered clockwise, false they are counter-clockwise.  It is assumed that the polygon they form is simple.
         /// </summary>
@@ -360,11 +318,6 @@ namespace Game
             }
             Debug.Assert(signedArea != 0, "Polygon has 0 area.");
             return Math.Sign(signedArea) == -1;
-        }
-
-        public static bool IsClockwise(List<Vector2> polygon)
-        {
-            return IsClockwise(polygon.ToArray());
         }
 
         public static bool IsClockwise(List<IntPoint> polygon)
@@ -397,11 +350,40 @@ namespace Game
 
         public static Vector2[] SetHandedness(Vector2[] polygon, bool clockwise)
         {
-            if (IsClockwise(polygon) != clockwise)
+            return (Vector2[])SetHandedness((IList<Vector2>)polygon, clockwise);
+        }
+        #endregion
+        #region Intersections
+        /// <summary>Tests if two lines intersect.</summary>
+        /// <returns>Location where the two lines intersect. TFirst is relative to the first line.</returns>
+        static public IntersectPoint LineLineIntersect(Line line0, Line line1, bool SegmentOnly)
+        {
+            IntersectPoint v = new IntersectPoint();
+            double ua, ub;
+            double ud = (line1[1].Y - line1[0].Y) * (line0[1].X - line0[0].X) - (line1[1].X - line1[0].X) * (line0[1].Y - line0[0].Y);
+            if (ud != 0)
             {
-                Array.Reverse(polygon);
+                ua = ((line1[1].X - line1[0].X) * (line0[0].Y - line1[0].Y) - (line1[1].Y - line1[0].Y) * (line0[0].X - line1[0].X)) / ud;
+                ub = ((line0[1].X - line0[0].X) * (line0[0].Y - line1[0].Y) - (line0[1].Y - line0[0].Y) * (line0[0].X - line1[0].X)) / ud;
+                if (SegmentOnly)
+                {
+                    if (ua < 0 || ua > 1 || ub < 0 || ub > 1)
+                    {
+                        v.Exists = false;
+                        return v;
+                    }
+                }
             }
-            return polygon;
+            else
+            {
+                v.Exists = false;
+                return v;
+            }
+            v.Exists = true;
+            v.Position = Lerp(new Vector2d(line0[0].X, line0[0].Y), new Vector2d(line0[1].X, line0[1].Y), ua);
+            v.TFirst = ua;
+            v.TLast = ub;
+            return v;
         }
 
         /// <summary>
@@ -410,7 +392,7 @@ namespace Game
         /// <param name="vertices"></param>
         /// <param name="includeTwice">If true, each intersection will be added twice relative to each intersecting line.</param>
         /// <returns></returns>
-        public static PolyCoord[] GetLineStripIntersections(Vector2[] vertices, bool includeTwice)
+        public static PolyCoord[] LineStripIntersect(Vector2[] vertices, bool includeTwice)
         {
             List<PolyCoord> intersections = new List<PolyCoord>();
             //for now we'll just use the slow O(n^2) implementation
@@ -418,13 +400,13 @@ namespace Game
             {
                 for (int j = i + 2; j < vertices.Length - 1; j++)
                 {
-                    IntersectPoint first = LineIntersection(vertices[i], vertices[i + 1], vertices[j], vertices[j + 1], true);
+                    IntersectPoint first = LineLineIntersect(new Line(vertices[i], vertices[i + 1]), new Line(vertices[j], vertices[j + 1]), true);
                     if (first.Exists && first.TFirst < 1)
                     {
                         intersections.Add(new PolyCoord(i, (float)first.TFirst));
                         if (includeTwice)
                         {
-                            IntersectPoint second = LineIntersection(vertices[i], vertices[i + 1], vertices[j], vertices[j + 1], true);
+                            IntersectPoint second = LineLineIntersect(new Line(vertices[i], vertices[i + 1]), new Line(vertices[j], vertices[j + 1]), true);
                             Debug.Assert(second.Exists);
                             intersections.Add(new PolyCoord(j, (float)second.TFirst));
                         }
@@ -435,20 +417,25 @@ namespace Game
         }
 
         /// <summary>
-        /// Find the bounding box for an array of lines.  A mimimum of one line is required.
+        /// Checks if the line intersects the edges of a polygon.  This does not test if the line is contained in the polygon.
         /// </summary>
-        public static void GetBBox(Line[] lines, out Vector2 vMin, out Vector2 vMax)
+        /// <param name="polygon">A closed polygon</param>
+        /// <returns>An intersection point</returns>
+        public static IntersectPoint LinePolygonIntersect(Line line, IList<Vector2> polygon)
         {
-            Debug.Assert(lines.Length > 0, "A minimum of one line is needed for there to be a bounding box.");
-            vMin = lines[0][0];
-            vMax = lines[0][0];
-            for (int i = 0; i < lines.Length; i++)
+            IntersectPoint point;
+            for (int i0 = 0; i0 < polygon.Count; i0++)
             {
-                vMin = Vector2.ComponentMin(vMin, lines[i][0]);
-                vMin = Vector2.ComponentMin(vMin, lines[i][1]);
-                vMax = Vector2.ComponentMax(vMax, lines[i][0]);
-                vMax = Vector2.ComponentMax(vMax, lines[i][1]);
+                int i1 = (i0 + 1) % polygon.Count;
+                point = MathExt.LineLineIntersect(line, new Line(polygon[i0], polygon[i1]), true);
+                if (point.Exists)
+                {
+                    return point;
+                }
             }
+            point = new IntersectPoint();
+            point.Exists = false;
+            return point;
         }
 
         /// <summary>Finds the intersections between a line and a circle.  IntersectPoint contains the T value for the intersecting line.</summary>
@@ -456,9 +443,10 @@ namespace Game
         /// <param name="radius">Radius of circle.</param>
         /// <param name="line">Line used to check intersections with circle.</param>
         /// <returns>Array of intersections. If no intersections exist then an array of length 0 is returned.</returns>
-        /// <remarks>Original code was found here http://csharphelper.com/blog/2014/09/determine-where-a-line-intersects-a-circle-in-c/
+        /// <remarks>Original code was found here 
+        /// http://csharphelper.com/blog/2014/09/determine-where-a-line-intersects-a-circle-in-c/
         /// </remarks>
-        public static IntersectPoint[] GetLineCircleIntersections(Vector2 circle, float radius, Line line, bool isSegment)
+        public static IntersectPoint[] LineCircleIntersect(Vector2 circle, float radius, Line line, bool isSegment)
         {
             IntersectPoint intersect0 = new IntersectPoint();
             IntersectPoint intersect1 = new IntersectPoint();
@@ -502,7 +490,7 @@ namespace Game
                     intersect0.TFirst = t;
                     list.Add(intersect0);
                 }
-                
+
                 t = (float)((-B - Math.Sqrt(det)) / (2 * A));
                 if (t >= 0 && t < 1 || !isSegment)
                 {
@@ -516,65 +504,40 @@ namespace Game
             return new IntersectPoint[0];
         }
 
-        /// <summary>Get the area of a polygon.</summary>
-        /// <remarks>Original code was found here http://csharphelper.com/blog/2014/07/calculate-the-area-of-a-polygon-in-c/
-        /// </remarks>
-        public static double GetArea(Vector2[] polygon)
+        public static IntersectPoint IntersectParametric(Line line, Transform2 velocity, Line pointMotion, int detail)
         {
-            // Add the first point to the end.
-            int num_points = polygon.Length;
-            Vector2[] pts = new Vector2[num_points + 1];
-            polygon.CopyTo(pts, 0);
-            pts[num_points] = polygon[0];
-
-            // Get the areas.
-            float area = 0;
-            for (int i = 0; i < num_points; i++)
+            Matrix4 transform = Matrix4.CreateTranslation(new Vector3(velocity.Position) / detail);
+            transform = Matrix4.CreateRotationZ(velocity.Rotation / detail) * transform;
+            line = line.ShallowClone();
+            IntersectPoint intersect = new IntersectPoint();
+            for (int i = 0; i < detail; i++)
             {
-                area +=
-                    (pts[i + 1].X - pts[i].X) *
-                    (pts[i + 1].Y + pts[i].Y) / 2;
-            }
+                Line lineNext = line.ShallowClone();
+                lineNext = lineNext.Transform(transform);
 
-            // Return the result.
-            return Math.Abs(area);
-        }
+                Vector2[] verts = new Vector2[] {
+                    line[0],
+                    line[1],
+                    lineNext[1],
+                    lineNext[0]
+                };
 
-        /// <summary>
-        /// Check if a simple polygon is convex.
-        /// </summary>
-        /// <param name="polygon"></param>
-        /// <remarks>Original code was found here http://stackoverflow.com/questions/471962/how-do-determine-if-a-polygon-is-complex-convex-nonconvex </remarks>
-        public static bool IsConvex(Vector2[] polygon)
-        {
-            if (polygon.Length < 4)
-            {
-                return true;
-            }
-            bool sign = false;
-            int n = polygon.Length;
-            for (int i = 0; i < n; i++)
-            {
-                double dx1 = polygon[(i + 2) % n].X - polygon[(i + 1) % n].X;
-                double dy1 = polygon[(i + 2) % n].Y - polygon[(i + 1) % n].Y;
-                double dx2 = polygon[i].X - polygon[(i + 1) % n].X;
-                double dy2 = polygon[i].Y - polygon[(i + 1) % n].Y;
-                double zcrossproduct = dx1 * dy2 - dy1 * dx2;
-                if (i == 0)
+                Line pointLine = new Line(pointMotion.Lerp(i / detail), pointMotion.Lerp((i + 1) / detail));
+                if (MathExt.LineInPolygon(pointLine, verts))
                 {
-                    sign = zcrossproduct > 0;
+                    intersect.TFirst = (i + 0.5f) / detail;
+                    intersect.Exists = true;
+                    Vector2 pos = pointMotion.Lerp((float)intersect.TFirst);
+                    intersect.Position = new Vector2d(pos.X, pos.Y);
+                    return intersect;
                 }
-                else
-                {
-                    if (sign != (zcrossproduct > 0))
-                    {
-                        return false;
-                    }
-                }
+                line = lineNext;
             }
-            return true;
+            intersect.Exists = false;
+            return intersect;
         }
-
+        #endregion
+        #region Homography
         public static Matrix4d GetHomography(Vector2[] src, Vector2[] dest)
         {
             Debug.Assert(src.Length == 4 && dest.Length == 4, "Source and destination quads must have 4 vertices each.");
@@ -645,7 +608,8 @@ namespace Game
             mat.M41 = c1 * idet;    mat.M42 = f1 * idet;    mat.M43 = 0; mat.M44 = i1 * idet;
             return mat;
         }
-
+        #endregion
+        #region Bisect
         /// <summary>
         /// Bisects a 3d triangle with a plane perpendicular to the xy-plane.
         /// </summary>
@@ -675,7 +639,7 @@ namespace Game
                     keep.Add(triangle[i]);
                 }
                 Line edge = new Line(vertices[i], vertices[(i + 1) % Triangle.VERTEX_COUNT]);
-                IntersectPoint intersect = edge.Intersects(bisector, false);
+                IntersectPoint intersect = MathExt.LineLineIntersect(edge, bisector, false);
                 if (intersect.Exists && intersect.TFirst > 0 && intersect.TFirst < 1)
                 {
                     intersectCount++;
@@ -729,6 +693,7 @@ namespace Game
             meshBisected.Transform(transform.Inverted());
             return meshBisected;
         }
+        #endregion
 
         public static Triangle[] GetTriangles(IMesh mesh)
         {
@@ -746,5 +711,165 @@ namespace Game
             }
             return triangles;
         }
+
+        static public Vector2d Matrix2dMult(Vector2d V, Matrix2d M)
+        {
+            return new Vector2d(V.X * M.M11 + V.Y * M.M21, V.X * M.M12 + V.Y * M.M22);
+        }
+        static public Vector2 Matrix2Mult(Vector2 V, Matrix2 M)
+        {
+            return new Vector2(V.X * M.M11 + V.Y * M.M21, V.X * M.M12 + V.Y * M.M22);
+        }
+        static public double AngleLine(Vector2d V0, Vector2d V1)
+        {
+            return AngleVector(V0 - V1);
+        }
+        static public double AngleLine(Vector2 V0, Vector2 V1)
+        {
+            return AngleLine(new Vector2d(V0.X, V0.Y), new Vector2d(V1.X, V1.Y));
+        }
+
+        static public double AngleVector(Vector2d V0)
+        {
+            //Debug.Assert(V0 == Vector2d.Zero, "Vector must have non-zero length.");
+            double val = Math.Atan2(V0.X, V0.Y);
+
+            if (Double.IsNaN(val))
+            {
+                return 0;
+            }
+            return (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
+        }
+
+        static public double AngleVector(Vector2 V0)
+        {
+            return AngleVector(new Vector2d(V0.X, V0.Y));
+        }
+
+        static public double AngleDiff(double angle0, double angle1)
+        {
+            return ((angle1 - angle0) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
+        }
+
+        static public double ValueWrap(double Value, double mod)
+        {
+            Value = Value % mod;
+            if (Value < 0)
+            {
+                return mod + Value;
+            }
+            return Value;
+        }
+
+        static public double Round(double value, double size)
+        {
+            return Math.Round(value / size) * size;
+        }
+
+        static public double AngleWrap(double value)
+        {
+            return ((value % TAU) + TAU) % TAU;
+        }
+
+        /// <summary>
+        /// Returns a projection of V0 onto V1
+        /// </summary>
+        /// <param name="V0"></param>
+        /// <param name="V1"></param>
+        static public Vector2d VectorProject(Vector2d V0, Vector2d V1)
+        {
+            return V1.Normalized() * V0;
+        }
+
+        /// <summary>
+        /// Mirrors V0 across an axis defined by V1
+        /// </summary>
+        /// <param name="V0"></param>
+        /// <param name="V1"></param>
+        /// <returns></returns>
+        static public Vector2d VectorMirror(Vector2d V0, Vector2d V1)
+        {
+            return -V0 + 2 * (V0 - VectorProject(V0, V1));
+        }
+
+        /// <summary>
+        /// Find the bounding box for an array of lines.  A mimimum of one line is required.
+        /// </summary>
+        public static void GetBBox(Line[] lines, out Vector2 vMin, out Vector2 vMax)
+        {
+            Debug.Assert(lines.Length > 0, "A minimum of one line is needed for there to be a bounding box.");
+            vMin = lines[0][0];
+            vMax = lines[0][0];
+            for (int i = 0; i < lines.Length; i++)
+            {
+                vMin = Vector2.ComponentMin(vMin, lines[i][0]);
+                vMin = Vector2.ComponentMin(vMin, lines[i][1]);
+                vMax = Vector2.ComponentMax(vMax, lines[i][0]);
+                vMax = Vector2.ComponentMax(vMax, lines[i][1]);
+            }
+        }
+
+        /// <summary>Get the area of a polygon.</summary>
+        /// <remarks>Original code was found here 
+        /// http://csharphelper.com/blog/2014/07/calculate-the-area-of-a-polygon-in-c/
+        /// </remarks>
+        public static double GetArea(Vector2[] polygon)
+        {
+            // Add the first point to the end.
+            int num_points = polygon.Length;
+            Vector2[] pts = new Vector2[num_points + 1];
+            polygon.CopyTo(pts, 0);
+            pts[num_points] = polygon[0];
+
+            // Get the areas.
+            float area = 0;
+            for (int i = 0; i < num_points; i++)
+            {
+                area +=
+                    (pts[i + 1].X - pts[i].X) *
+                    (pts[i + 1].Y + pts[i].Y) / 2;
+            }
+
+            // Return the result.
+            return Math.Abs(area);
+        }
+
+        /// <summary>
+        /// Check if a simple polygon is convex.
+        /// </summary>
+        /// <param name="polygon"></param>
+        /// <remarks>Original code was found here 
+        /// http://stackoverflow.com/questions/471962/how-do-determine-if-a-polygon-is-complex-convex-nonconvex 
+        /// </remarks>
+        public static bool IsConvex(Vector2[] polygon)
+        {
+            if (polygon.Length < 4)
+            {
+                return true;
+            }
+            bool sign = false;
+            int n = polygon.Length;
+            for (int i = 0; i < n; i++)
+            {
+                double dx1 = polygon[(i + 2) % n].X - polygon[(i + 1) % n].X;
+                double dy1 = polygon[(i + 2) % n].Y - polygon[(i + 1) % n].Y;
+                double dx2 = polygon[i].X - polygon[(i + 1) % n].X;
+                double dy2 = polygon[i].Y - polygon[(i + 1) % n].Y;
+                double zcrossproduct = dx1 * dy2 - dy1 * dx2;
+                if (i == 0)
+                {
+                    sign = zcrossproduct > 0;
+                }
+                else
+                {
+                    if (sign != (zcrossproduct > 0))
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
     }
 }

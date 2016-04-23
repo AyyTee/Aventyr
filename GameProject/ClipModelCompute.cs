@@ -50,7 +50,8 @@ namespace Game
                 Line portalLine = new Line(Portal.GetWorldVerts(portal));
                 Vector2[] convexHull = Vector2Ext.Transform(model.GetWorldConvexHull(), entity.GetWorldTransform().GetMatrix() * modelMatrix);
 
-                if (portalLine.IsInsideOfPolygon(convexHull) && Portal.IsValid(portal))
+                //portalLine = portalLine.Translate(portalLine.GetNormal() * -0.1f);
+                if (MathExt.LineInPolygon(portalLine, convexHull) && Portal.IsValid(portal))
                 {
                     collisions.Add(portal);
                 }

@@ -188,7 +188,6 @@
     <Compile Include="Scene.cs" />
     <Compile Include="SceneExt.cs" />
     <Compile Include="SceneNode.cs" />
-    <Compile Include="SceneNodePlaceable.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="Texture.cs" />
     <Compile Include="TextureFile.cs" />

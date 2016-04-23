@@ -109,7 +109,7 @@ namespace Game
                         continue;
                     }
                     Line line = new Line(Portal.GetWorldVerts(p));
-                    IntersectPoint intersect = position.Intersects(line, true);
+                    IntersectPoint intersect = MathExt.LineLineIntersect(position, line, true);
                     if (intersect.TFirst <= portalTDistance && intersect.Exists)
                     {
                         portalNearest = p;
@@ -207,9 +207,10 @@ namespace Game
                     }
 
                     Line line = new Line(Portal.GetWorldVerts(portal));
-                    float[] vDist = new float[2];
-                    vDist[0] = line.PointDistance(vList[0], true);
-                    vDist[1] = line.PointDistance(vList[1], true);
+                    double[] vDist = new double[] {
+                        MathExt.PointLineDistance(vList[0], line, true),
+                        MathExt.PointLineDistance(vList[1], line, true)
+                    };
                     //only consider contacts that are between the fixture this portal is parented too and some other fixture
                     if (contact.FixtureA == portal.FixtureParent || contact.FixtureB == portal.FixtureParent)
                     {

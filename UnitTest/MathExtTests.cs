@@ -80,7 +80,7 @@ namespace UnitTest
             });
             List<Vector2> listOut;
 
-            listOut = MathExt.ComputeConvexHull(listIn);
+            listOut = MathExt.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(0, 0) &&
@@ -100,7 +100,7 @@ namespace UnitTest
             });
             List<Vector2> listOut;
 
-            listOut = MathExt.ComputeConvexHull(listIn);
+            listOut = MathExt.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(-5, -5) &&
@@ -122,7 +122,7 @@ namespace UnitTest
             });
             List<Vector2> listOut;
 
-            listOut = MathExt.ComputeConvexHull(listIn);
+            listOut = MathExt.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(-5, -5) &&
@@ -146,7 +146,7 @@ namespace UnitTest
             });
             List<Vector2> listOut;
 
-            listOut = MathExt.ComputeConvexHull(listIn);
+            listOut = MathExt.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(15, 51) &&
@@ -220,34 +220,34 @@ namespace UnitTest
         {
             //test degernate line outside of circle
             Line line = new Line(new Vector2(1, 0), new Vector2(1, 0));
-            Assert.IsTrue(MathExt.GetLineCircleIntersections(new Vector2(1, 0), 0.1f, line, true).Length == 0);
+            Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, true).Length == 0);
         }
         [TestMethod]
         public void GetLineCircleIntersectionsTest1()
         {
             //test degenerate line inside of circle
             Line line = new Line(new Vector2(1, 0), new Vector2(1f, 0));
-            Assert.IsTrue(MathExt.GetLineCircleIntersections(new Vector2(1, 0), 0.1f, line, true).Length == 0);
+            Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, true).Length == 0);
         }
         [TestMethod]
         public void GetLineCircleIntersectionsTest2()
         {
             //test degernate line outside of circle
             Line line = new Line(new Vector2(1, 0), new Vector2(1, 0));
-            Assert.IsTrue(MathExt.GetLineCircleIntersections(new Vector2(1, 0), 0.1f, line, false).Length == 0);
+            Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, false).Length == 0);
         }
         [TestMethod]
         public void GetLineCircleIntersectionsTest3()
         {
             //test degenerate line inside of circle
             Line line = new Line(new Vector2(1, 0), new Vector2(1f, 0));
-            Assert.IsTrue(MathExt.GetLineCircleIntersections(new Vector2(1, 0), 0.1f, line, false).Length == 0);
+            Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, false).Length == 0);
         }
         [TestMethod]
         public void GetLineCircleIntersectionsTest4()
         {
             Line line = new Line(new Vector2(-1f, 1f), new Vector2(2f, 1f));
-            IntersectPoint[] intersects = MathExt.GetLineCircleIntersections(new Vector2(1, 1), 0.1f, line, true);
+            IntersectPoint[] intersects = MathExt.LineCircleIntersect(new Vector2(1, 1), 0.1f, line, true);
             Assert.IsTrue(intersects[0].Exists == true && intersects[1].Exists == true);
             Assert.IsTrue(
                 ((intersects[0].Position - new Vector2d(1.1, 1)).Length < ErrorMargin && intersects[0].TFirst - 0.7 < ErrorMargin &&
@@ -261,7 +261,7 @@ namespace UnitTest
         public void GetLineCircleIntersectionsTest5()
         {
             Line line = new Line(new Vector2(-100f, 1f), new Vector2(20f, 100f));
-            IntersectPoint[] intersections = MathExt.GetLineCircleIntersections(new Vector2(1, 1), 1f, line, true);
+            IntersectPoint[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1f, line, true);
             Assert.IsTrue(intersections.Length == 0);
         }
 
@@ -269,7 +269,7 @@ namespace UnitTest
         public void GetLineCircleIntersectionsTest6()
         {
             Line line = new Line(new Vector2(-100f, 1f), new Vector2(20f, 100f));
-            IntersectPoint[] intersections = MathExt.GetLineCircleIntersections(new Vector2(1, 1), 1000f, line, true);
+            IntersectPoint[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1000f, line, true);
             Assert.IsTrue(intersections.Length == 0);
         }
         #endregion

@@ -88,7 +88,7 @@ namespace Editor
             _entity.RemoveAllModels();
             if (_vertices.Count() >= 2)
             {
-                PolyCoord[] intersects = MathExt.GetLineStripIntersections(_vertices.ToArray(), true);
+                PolyCoord[] intersects = MathExt.LineStripIntersect(_vertices.ToArray(), true);
                 Vector3[] colors = new Vector3[_vertices.Count() - 1];
                 for (int i = 0; i < colors.Length; i++)
                 {

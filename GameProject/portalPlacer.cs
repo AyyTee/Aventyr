@@ -60,11 +60,9 @@ namespace Game
                                 {
                                     int i0 = i;
                                     int i1 = (i + 1) % vertices.Count();
-                                    IntersectPoint intersect = MathExt.LineIntersection(
-                                        vertices[i0],
-                                        vertices[i1],
-                                        rayBegin,
-                                        rayIntersect,
+                                    IntersectPoint intersect = MathExt.LineLineIntersect(
+                                        new Line(vertices[i0], vertices[i1]),
+                                        new Line(rayBegin, rayIntersect),
                                         true);
                                     if (intersect.Exists)
                                     {

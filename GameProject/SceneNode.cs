@@ -15,6 +15,11 @@ namespace Game
     [DataContract]
     public class SceneNode : ITreeNode<SceneNode>, IDeepClone
     {
+        /// <summary>
+        /// Whether or not this entity will interact with portals when intersecting them
+        /// </summary>
+        [DataMember]
+        public bool IsPortalable { get; set; }
         [DataMember]
         public string Name { get; set; }
         [DataMember]

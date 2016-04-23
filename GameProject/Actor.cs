@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class Actor : SceneNodePlaceable, IActor
+    public class Actor : SceneNode, IActor, IPortalable
     {
         [DataMember]
         public int BodyId { get; private set; }
@@ -48,15 +48,6 @@ namespace Game
             }
         }
 
-        /*public override void SetScene(Scene scene)
-        {
-            Debug.Assert(scene != null);
-            Body BodyClone = Body.DeepClone(scene.World);
-            Scene.World.RemoveBody(Body);
-            Body = BodyClone;
-            base.SetScene(scene);
-        }*/
-
         public override void Remove()
         {
             if (Body != null)
@@ -66,7 +57,7 @@ namespace Game
             base.Remove();
         }
 
-        public override void StepBegin()
+        /*public override void StepBegin()
         {
             base.StepBegin();
             Xna.Vector2 v0 = Vector2Ext.ConvertToXna(GetWorldTransform().Position);
@@ -86,6 +77,29 @@ namespace Game
             velocity.Position = Vector2Ext.ConvertTo(Body.LinearVelocity);
             velocity.Rotation = Body.AngularVelocity;
             SetVelocity(velocity);
+        }*/
+
+        public override Transform2 GetTransform()
+        {
+            return BodyExt.GetTransform(Body);
+        }
+
+        /// <summary>
+        /// Set the transform.  Scale is discarded since physics bodies do not have a Scale field.
+        /// </summary>
+        public void SetTransform(Transform2 transform)
+        {
+            BodyExt.SetTransform(Body, transform);
+        }
+
+        public override Transform2 GetVelocity()
+        {
+            return BodyExt.GetVelocity(Body);
+        }
+
+        public void SetVelocity(Transform2 velocity)
+        {
+            BodyExt.SetVelocity(Body, velocity);
         }
     }
 }

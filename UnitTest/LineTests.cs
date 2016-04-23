@@ -143,7 +143,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
                 Scene scene = new Scene();
-                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                Entity node = new Entity(scene);
                 FloatPortal p0 = new FloatPortal(scene);
                 p0.SetParent(node);
                 Transform2.SetRotation(node, (float)(i + Math.PI / 4));
@@ -161,7 +161,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
                 Scene scene = new Scene();
-                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                Entity node = new Entity(scene);
                 Transform2.SetPosition(node, new Vector2(x, y));
                 Transform2.SetRotation(node, (float)(i + Math.PI / 4));
                 FloatPortal p0 = new FloatPortal(scene);
@@ -181,7 +181,7 @@ namespace UnitTest
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
                 Scene scene = new Scene();
-                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                Entity node = new Entity(scene);
                 Transform2.SetPosition(node, new Vector2(x, y));
                 Transform2.SetRotation(node, (float)(i + Math.PI / 4));
                 FloatPortal p0 = new FloatPortal(scene);
@@ -201,7 +201,7 @@ namespace UnitTest
             {
                 Scene scene = new Scene();
                 FloatPortal p0 = new FloatPortal(scene);
-                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                Entity node = new Entity(scene);
                 Transform2.SetPosition(node, new Vector2(x, y));
                 Transform2.SetRotation(node, (float)(i + Math.PI / 4));
                 p0.SetParent(node);
@@ -221,7 +221,7 @@ namespace UnitTest
             {
                 Scene scene = new Scene();
                 FloatPortal p0 = new FloatPortal(scene);
-                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                Entity node = new Entity(scene);
                 Transform2.SetPosition(node, new Vector2(x, y));
                 Transform2.SetRotation(node, (float)(i + Math.PI / 4));
                 p0.SetParent(node);
@@ -241,7 +241,7 @@ namespace UnitTest
             {
                 Scene scene = new Scene();
                 FloatPortal p0 = new FloatPortal(scene);
-                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                Entity node = new Entity(scene);
                 Transform2.SetPosition(node, new Vector2(x, y));
                 Transform2.SetRotation(node, (float)(i + Math.PI / 4));
                 p0.SetParent(node);
@@ -260,7 +260,7 @@ namespace UnitTest
             {
                 Scene scene = new Scene();
                 FloatPortal p0 = new FloatPortal(scene);
-                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                Entity node = new Entity(scene);
                 Transform2.SetPosition(node, new Vector2(x, y));
                 Transform2.SetRotation(node, (float)(i + Math.PI / 4));
                 p0.SetParent(node);
@@ -279,7 +279,7 @@ namespace UnitTest
             {
                 Scene scene = new Scene();
                 FloatPortal p0 = new FloatPortal(scene);
-                SceneNodePlaceable node = new SceneNodePlaceable(scene);
+                Entity node = new Entity(scene);
                 Transform2.SetPosition(node, new Vector2(x, y));
                 Transform2.SetRotation(node, (float)(i + Math.PI / 4));
                 p0.SetParent(node);
@@ -368,7 +368,7 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, 1f));
             Line line1 = new Line(new Vector2(-0.5f, 0.6f), new Vector2(0.5f, 0.6f));
-            IntersectPoint intersect = line0.Intersects(line1, false);
+            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
 
             IntersectPoint comparison = new IntersectPoint();
             comparison.Exists = true;
@@ -383,7 +383,7 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, 1f));
             Line line1 = new Line(new Vector2(-0.5f, 1f), new Vector2(0.5f, 1f));
-            IntersectPoint intersect = line0.Intersects(line1, false);
+            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
 
             IntersectPoint comparison = new IntersectPoint();
             comparison.Exists = true;
@@ -398,7 +398,7 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, -1f));
             Line line1 = new Line(new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f));
-            IntersectPoint intersect = line0.Intersects(line1, false);
+            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
 
             IntersectPoint comparison = new IntersectPoint();
             comparison.Exists = true;
@@ -413,7 +413,7 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, -1000000f));
             Line line1 = new Line(new Vector2(-0.5f, -1000000), new Vector2(0.5f, -1000000f));
-            IntersectPoint intersect = line0.Intersects(line1, false);
+            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
 
             IntersectPoint comparison = new IntersectPoint();
             comparison.Exists = true;
@@ -428,7 +428,7 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, -1f));
             Line line1 = new Line(new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f));
-            IntersectPoint intersect = line0.Intersects(line1, true);
+            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, true);
 
             IntersectPoint comparison = new IntersectPoint();
             comparison.Exists = true;
@@ -443,7 +443,7 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, -1000000f));
             Line line1 = new Line(new Vector2(-0.5f, -1000000), new Vector2(0.5f, -1000000f));
-            IntersectPoint intersect = line0.Intersects(line1, true);
+            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, true);
 
             IntersectPoint comparison = new IntersectPoint();
             comparison.Exists = true;
@@ -458,7 +458,7 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(1f, 1f), new Vector2(2f, 2f));
             Line line1 = new Line(new Vector2(1.5f, 3f), new Vector2(1.5f, -1.5f));
-            IntersectPoint intersect = line0.Intersects(line1, false);
+            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
 
             IntersectPoint comparison = new IntersectPoint();
             comparison.Exists = true;
@@ -473,7 +473,7 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(1f, 1f), new Vector2(2f, 2f));
             Line line1 = new Line(new Vector2(3f, 9f), new Vector2(12f, -6f));
-            IntersectPoint intersect = line0.Intersects(line1, true);
+            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, true);
 
             IntersectPoint comparison = new IntersectPoint();
             comparison.Exists = false;
@@ -485,7 +485,7 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(1f, 1f), new Vector2(2f, 2f));
             Line line1 = new Line(new Vector2(3f, 9f), new Vector2(12f, -6f));
-            IntersectPoint intersect = line0.Intersects(line1, false);
+            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
 
             IntersectPoint comparison = new IntersectPoint();
             comparison.Exists = true;

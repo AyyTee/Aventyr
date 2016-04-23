@@ -396,8 +396,8 @@ namespace Game
 
                             Vector2 texCoord;
                             Vector2 v = new Vector2(vertex.Position.X, vertex.Position.Y);
-                            double distance = line.GetPerpendicularLeft().PointDistance(v, false);
-                            double texCoordX = line.PointDistance(v, false) / minWidth;
+                            double distance = MathExt.PointLineDistance(v, line.GetPerpendicularLeft(), false);
+                            double texCoordX = MathExt.PointLineDistance(v, line, false) / minWidth;
                             if (line.GetSideOf(v) == Side.Left)
                             {
                                 texCoordX *= -1;

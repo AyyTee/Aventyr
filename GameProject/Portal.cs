@@ -123,16 +123,6 @@ namespace Game
             body.AngularVelocity = velocity.Rotation;
         }
 
-        public static void Enter(IPortal portal, SceneNodePlaceable placeable)
-        {
-            Transform2 transform = placeable.GetTransform();
-            Transform2 velocity = placeable.GetVelocity();
-            Enter(portal, transform, velocity);
-            placeable.SetTransform(transform);
-            placeable.SetVelocity(velocity);
-            placeable.PortalEnterInvoke(portal);
-        }
-
         /*public static void SetLinked(IPortal portal0, IPortal portal1)
         {
             FixturePortal fixturePortal = portal0 as FixturePortal;

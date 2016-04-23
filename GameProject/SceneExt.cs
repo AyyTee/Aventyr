@@ -9,13 +9,13 @@ namespace Game
 {
     public static class SceneExt
     {
-        public static void RayCast(IPortalable placeable, IList<IPortal> portals)
+        public static void RayCast(IPortalable portalable, IList<IPortal> portals)
         {
-            if (placeable.GetVelocity().Position.Length == 0)
+            if (portalable.GetVelocity().Position.Length == 0)
             {
                 return;
             }
-            _rayCast(placeable, portals, placeable.GetVelocity().Position.Length, null, 50);
+            _rayCast(portalable, portals, portalable.GetVelocity().Position.Length, null, 50);
         }
 
         private static void _rayCast(IPortalable placeable, IList<IPortal> portals, double movementLeft, IPortal portalPrevious, int depthMax)
@@ -41,7 +41,7 @@ namespace Game
                 }
                 Line portalLine = new Line(Portal.GetWorldVerts(p));
                 Line ray = new Line(begin.Position, begin.Position + velocity.Position);
-                IntersectPoint intersect = portalLine.Intersects(ray, true);
+                IntersectPoint intersect = MathExt.LineLineIntersect(portalLine, ray, true);
                 //IntersectPoint intersect2 = portalLine.IntersectsParametric(p.GetVelocity(), ray, 5);
                 double distance = ((Vector2d)begin.Position - intersect.Position).Length;
                 if (intersect.Exists && distance < distanceMin)
@@ -72,7 +72,7 @@ namespace Game
                     }
                     Line exitLine = new Line(Portal.GetWorldVerts(p));
                     Vector2 position = begin.Position;
-                    float distanceToPortal = exitLine.PointDistance(position, true);
+                    double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
                     if (distanceToPortal < Portal.EnterMinDistance)
                     {
                         Vector2 exitNormal = p.GetWorldTransform().GetRight();
@@ -90,7 +90,7 @@ namespace Game
                             exitNormal = -exitNormal;
                         }
 
-                        Vector2 pos = exitNormal * (Portal.EnterMinDistance - distanceToPortal);
+                        Vector2 pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
                         begin.Position += pos;
                         break;
                     }

@@ -62,7 +62,7 @@ namespace Game
                         {
                             int iNext = (i + 1) % polygon.Vertices.Count;
                             Line edge = new Line(polygon.Vertices[i], polygon.Vertices[iNext]);
-                            IntersectPoint[] intersects = MathExt.GetLineCircleIntersections(new Vector2(relativePoint.X, relativePoint.Y), radius, edge, true);
+                            IntersectPoint[] intersects = MathExt.LineCircleIntersect(new Vector2(relativePoint.X, relativePoint.Y), radius, edge, true);
                             for (int j = 0; i < intersects.Length; i++)
                             {
                                 collisions.Add(new FixtureEdgeCoord(f, i, (float)intersects[j].TFirst));
