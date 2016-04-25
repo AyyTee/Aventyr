@@ -54,14 +54,21 @@ namespace Game
 
         public static Body CreateBox(World world, Vector2 scale)
         {
+            Debug.Assert(world != null);
+            Body body = BodyExt.CreateBody(world);
+            CreateBox(body, scale);
+            return body;
+        }
+
+        public static void CreateBox(Body body, Vector2 scale)
+        {
             Vector2[] vertices = new Vector2[] {
                 new Vector2(-0.5f, -0.5f) * scale,
                 new Vector2(0.5f, -0.5f) * scale,
                 new Vector2(0.5f, 0.5f) * scale,
                 new Vector2(-0.5f, 0.5f) * scale
             };
-            Body body = CreatePolygon(world, new Transform2(), vertices);
-            return body;
+            CreatePolygon(body, new Transform2(), vertices);
         }
 
         public static Actor CreateEntityPolygon(Scene scene, Vector2 position, IList<Vector2> vertices)
@@ -96,6 +103,14 @@ namespace Game
         public static Body CreatePolygon(World world, Transform2 transform, IList<Vector2> vertices)
         {
             Debug.Assert(world != null);
+            Body body = BodyExt.CreateBody(world);
+            CreatePolygon(body, transform, vertices);
+            return body;
+        }
+
+        public static void CreatePolygon(Body body, Transform2 transform, IList<Vector2> vertices)
+        {
+            Debug.Assert(body != null);
             Debug.Assert(transform != null);
             Debug.Assert(vertices != null && vertices.Count >= 3);
             vertices = MathExt.SetHandedness(vertices, false);
@@ -104,7 +119,7 @@ namespace Game
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 
-            Body body = BodyExt.CreateBody(world);
+            //Body body = BodyExt.CreateBody(world);
             BodyExt.SetTransform(body, transform);
 
             for (int i = 0; i < polygon.Triangles.Count; i++)
@@ -125,7 +140,6 @@ namespace Game
                     userData.EdgeIsExterior[j] = polygon.Triangles[i].EdgeIsConstrained[(j + 2) % 3];
                 }
             }
-            return body;
         }
     }
 }

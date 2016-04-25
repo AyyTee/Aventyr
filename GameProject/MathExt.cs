@@ -133,7 +133,7 @@ namespace Game
         {
             Line edge = new Line(polygon[0], polygon[1]);
             double distMin = LineLineDistance(line, edge);
-            for (int i = 0; i < polygon.Count; i++)
+            for (int i = 1; i < polygon.Count; i++)
             {
                 edge = new Line(polygon[i], polygon[(i + 1) % polygon.Count]);
                 distMin = Math.Min(distMin, LineLineDistance(line, edge));
@@ -156,7 +156,7 @@ namespace Game
                 PointLineDistance(line1[1], line0, true),
                 PointLineDistance(line0[0], line1, true),
                 PointLineDistance(line0[1], line1, true)
-            }.Max();
+            }.Min();
         }
         #endregion
         #region Inside

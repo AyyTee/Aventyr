@@ -300,7 +300,7 @@ namespace Game
             base.OnResize(e, canvasSize);
             scene.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            Transform2.SetSize((Camera2)hud.ActiveCamera, CanvasSize.Height);
+            Transform2.SetSize((ITransform2)hud.ActiveCamera, CanvasSize.Height);
         }
     }
 }

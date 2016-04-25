@@ -15,7 +15,7 @@ namespace Game
     /// A coordinate defined it's position on a edge in a Fixture
     /// </summary>
     [DataContract]
-    public class FixtureEdgeCoord
+    public class FixtureEdgeCoord : IShallowClone<FixtureEdgeCoord>
     {
         public Fixture Fixture { get; private set; }
         /// <summary>
@@ -70,14 +70,23 @@ namespace Game
             EdgeIndex = edgeIndex;
         }
 
+        public FixtureEdgeCoord ShallowClone()
+        {
+            return new FixtureEdgeCoord(Fixture, EdgeIndex, EdgeT);
+        }
+
         public Line GetEdge()
         {
             PolygonShape shape = (PolygonShape)Fixture.Shape;
-            Line line = new Line(
-                Vector2Ext.ConvertTo(shape.Vertices[EdgeIndex]),
-                Vector2Ext.ConvertTo(shape.Vertices[(EdgeIndex + 1) % shape.Vertices.Count])
-                );
-            return line;
+            Vector2 v0, v1, scaleFactor;
+            v0 = Vector2Ext.ConvertTo(shape.Vertices[EdgeIndex]);
+            v1 = Vector2Ext.ConvertTo(shape.Vertices[(EdgeIndex + 1) % shape.Vertices.Count]);
+            scaleFactor = Actor.GetTransform().Scale;
+            /*return new Line(
+                new Vector2(v0.X / scaleFactor.X, v0.Y / scaleFactor.Y),
+                new Vector2(v1.X / scaleFactor.X, v1.Y / scaleFactor.Y)
+                );*/
+            return new Line(v0, v1);
         }
 
         public Line GetWorldEdge()
@@ -127,10 +136,7 @@ namespace Game
 
         public Transform2 GetWorldTransform()
         {
-            Transform2 transform = new Transform2();
-            transform.Position = GetWorldPosition();
-            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal());
-            return transform;
+            return GetTransform().Transform(Actor.GetWorldTransform());
         }
     }
 }

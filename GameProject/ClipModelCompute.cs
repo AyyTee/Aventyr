@@ -9,6 +9,8 @@ namespace Game
 {
     public static class ClipModelCompute
     {
+        const double PORTAL_CLIP_MARGIN = 0.0001;
+
         public static List<ClipModel> GetClipModels(IRenderable entity, IList<IPortal> portalList, int depth)
         {
             List<ClipModel> clipModels = new List<ClipModel>();
@@ -42,6 +44,10 @@ namespace Game
             List<IPortal> collisions = new List<IPortal>();
             foreach (IPortal portal in portalList)
             {
+                if (!Portal.IsValid(portal))
+                {
+                    continue;
+                }
                 //ignore any portal attached to this entity on the first recursive iteration
                 /*if (portal.Parent == entity && count == 0)
                 {
@@ -50,8 +56,7 @@ namespace Game
                 Line portalLine = new Line(Portal.GetWorldVerts(portal));
                 Vector2[] convexHull = Vector2Ext.Transform(model.GetWorldConvexHull(), entity.GetWorldTransform().GetMatrix() * modelMatrix);
 
-                //portalLine = portalLine.Translate(portalLine.GetNormal() * -0.1f);
-                if (MathExt.LineInPolygon(portalLine, convexHull) && Portal.IsValid(portal))
+                if (MathExt.LinePolygonDistance(portalLine, convexHull) < PORTAL_CLIP_MARGIN)
                 {
                     collisions.Add(portal);
                 }

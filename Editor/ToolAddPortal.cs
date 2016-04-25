@@ -41,8 +41,8 @@ namespace Editor
                     FixtureEdgeCoord coord = GetEdgeCoord();
                     if (coord != null)
                     {
-                        portal.SetParent((EditorObject)coord.Actor);
-                        portal.SetTransform(coord.GetTransform());
+                        //portal.SetParent((EditorObject)coord.Actor);
+                        portal.SetTransform(coord);
                     }
                     else
                     {
@@ -82,7 +82,9 @@ namespace Editor
             FixtureEdgeCoord coord = GetEdgeCoord();
             if (coord != null)
             {
-                return coord.GetWorldTransform();
+                Transform2 transform = coord.GetTransform().Transform(coord.Actor.GetWorldTransform());
+                transform.Size = 1;
+                return transform;
             }
             else
             {

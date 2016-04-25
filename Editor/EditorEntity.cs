@@ -14,7 +14,7 @@ namespace Editor
     public sealed class EditorEntity : EditorObject
     {
         [DataMember]
-        public List<Model> _models = new List<Model>();
+        public List<Model> Models = new List<Model>();
 
         public EditorEntity(EditorScene editorScene)
             : base(editorScene)
@@ -31,7 +31,7 @@ namespace Editor
         private void ShallowClone(EditorEntity destination)
         {
             base.ShallowClone(destination);
-            destination._models = new List<Model>(_models);
+            destination.Models = new List<Model>(Models);
             /*for (int i = 0; i < _models.Count; i++)
             {
                 destination._models.Add(_models[i].DeepClone());
@@ -40,22 +40,22 @@ namespace Editor
 
         public void AddModel(Model model)
         {
-            _models.Add(model);
+            Models.Add(model);
         }
 
         public void RemoveModel(Model model)
         {
-            _models.Remove(model);
+            Models.Remove(model);
         }
 
         public void RemoveAllModels()
         {
-            _models.Clear();
+            Models.Clear();
         }
 
         public override List<Model> GetModels()
         {
-            List<Model> models = new List<Model>(_models);
+            List<Model> models = new List<Model>(Models);
             models.AddRange(base.GetModels());
             return models;
         }

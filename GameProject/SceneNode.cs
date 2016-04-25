@@ -15,11 +15,6 @@ namespace Game
     [DataContract]
     public class SceneNode : ITreeNode<SceneNode>, IDeepClone
     {
-        /// <summary>
-        /// Whether or not this entity will interact with portals when intersecting them
-        /// </summary>
-        [DataMember]
-        public bool IsPortalable { get; set; }
         [DataMember]
         public string Name { get; set; }
         [DataMember]
@@ -28,9 +23,6 @@ namespace Game
         [DataMember]
         public SceneNode Parent { get; private set; }
         public bool IsRoot { get { return _scene != null; } }
-
-        /*[DataMember]
-        public Scene Scene { get; private set; }*/
         [DataMember]
         readonly Scene _scene;
         public Scene Scene
@@ -154,14 +146,6 @@ namespace Game
         {
             Debug.Assert(Parent != null);
             RemoveParent();
-        }
-
-        public virtual void StepBegin()
-        {
-        }
-
-        public virtual void StepEnd()
-        {
         }
 
         public virtual Transform2 GetTransform()

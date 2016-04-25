@@ -18,6 +18,8 @@ namespace Game
     public class Entity : SceneNode, IRenderable, IPortalable
     {
         [DataMember]
+        public bool IsPortalable { get; set; }
+        [DataMember]
         Transform2 _transform = new Transform2();
         [DataMember]
         Transform2 _velocity = new Transform2();
@@ -42,6 +44,7 @@ namespace Game
             Transform2 transform = GetTransform();
             SetTransform(transform);
             Visible = true;
+            IsPortalable = true;
         }
 
         public Entity(Scene scene, Vector2 position)
@@ -77,6 +80,11 @@ namespace Game
         public void AddModel(Model model)
         {
             _models.Add(model);
+        }
+
+        public void AddModelRange(IList<Model> models)
+        {
+            _models.AddRange(models);
         }
 
         public void RemoveModel(Model model)

@@ -214,37 +214,37 @@ namespace UnitTest
             Assert.IsFalse(MathExt.IsClockwise(vList));
         }
         #endregion
-        #region GetLineCircleIntersections tests
+        #region LineCircleIntersect tests
         [TestMethod]
-        public void GetLineCircleIntersectionsTest0()
+        public void LineCircleIntersectTest0()
         {
             //test degernate line outside of circle
             Line line = new Line(new Vector2(1, 0), new Vector2(1, 0));
             Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, true).Length == 0);
         }
         [TestMethod]
-        public void GetLineCircleIntersectionsTest1()
+        public void LineCircleIntersectTest1()
         {
             //test degenerate line inside of circle
             Line line = new Line(new Vector2(1, 0), new Vector2(1f, 0));
             Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, true).Length == 0);
         }
         [TestMethod]
-        public void GetLineCircleIntersectionsTest2()
+        public void LineCircleIntersectTest2()
         {
             //test degernate line outside of circle
             Line line = new Line(new Vector2(1, 0), new Vector2(1, 0));
             Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, false).Length == 0);
         }
         [TestMethod]
-        public void GetLineCircleIntersectionsTest3()
+        public void LineCircleIntersectTest3()
         {
             //test degenerate line inside of circle
             Line line = new Line(new Vector2(1, 0), new Vector2(1f, 0));
             Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, false).Length == 0);
         }
         [TestMethod]
-        public void GetLineCircleIntersectionsTest4()
+        public void LineCircleIntersectTest4()
         {
             Line line = new Line(new Vector2(-1f, 1f), new Vector2(2f, 1f));
             IntersectPoint[] intersects = MathExt.LineCircleIntersect(new Vector2(1, 1), 0.1f, line, true);
@@ -258,7 +258,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void GetLineCircleIntersectionsTest5()
+        public void LineCircleIntersectTest5()
         {
             Line line = new Line(new Vector2(-100f, 1f), new Vector2(20f, 100f));
             IntersectPoint[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1f, line, true);
@@ -266,7 +266,7 @@ namespace UnitTest
         }
 
         [TestMethod]
-        public void GetLineCircleIntersectionsTest6()
+        public void LineCircleIntersectTest6()
         {
             Line line = new Line(new Vector2(-100f, 1f), new Vector2(20f, 100f));
             IntersectPoint[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1000f, line, true);
@@ -530,6 +530,34 @@ namespace UnitTest
             Model m = ModelFactory.CreatePlane();
             Line bisector = new Line(new Vector2(0.4f, -1f), new Vector2(0.4f, 0));
             Mesh mesh = MathExt.BisectMesh(m.Mesh, bisector);
+        }
+        #endregion
+        #region LinePolygonDistance tests
+        [TestMethod]
+        public void LinePolygonDistanceTest0()
+        {
+            Line line = new Line(new Vector2(), new Vector2(4, 0));
+            Vector2[] polygon = PolygonFactory.CreateRectangle(2, 2);
+            double distance = MathExt.LinePolygonDistance(line, polygon);
+            Assert.IsTrue(distance == 0);
+        }
+
+        [TestMethod]
+        public void LinePolygonDistanceTest1()
+        {
+            Line line = new Line(new Vector2(), new Vector2(0.5f, 0.5f));
+            Vector2[] polygon = PolygonFactory.CreateRectangle(2, 2);
+            double distance = MathExt.LinePolygonDistance(line, polygon);
+            Assert.IsTrue(Math.Abs(distance + 0.5) <= ErrorMargin);
+        }
+
+        [TestMethod]
+        public void LinePolygonDistanceTest2()
+        {
+            Line line = new Line(new Vector2(0f, 3f), new Vector2(3f, 0f));
+            Vector2[] polygon = PolygonFactory.CreateRectangle(2, 2);
+            double distance = MathExt.LinePolygonDistance(line, polygon);
+            Assert.IsTrue(Math.Abs(distance - Math.Sqrt(0.5)) <= ErrorMargin);
         }
         #endregion
     }

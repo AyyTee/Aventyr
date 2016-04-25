@@ -241,6 +241,7 @@
     </None>
     <None Include="assets\textures\Thumbs.db" />
     <None Include="assets\Thumbs.db" />
+    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

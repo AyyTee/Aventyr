@@ -46,12 +46,8 @@ namespace Game
             World.ProcessChanges();
             foreach (SceneNode s in FindByType<SceneNode>())
             {
-                s.StepBegin();
-            }
-            foreach (SceneNode s in FindByType<SceneNode>())
-            {
                 //Skip Actors, they handle movement using rigid body physics.
-                if (s.GetType() == typeof(Actor))
+                if (s is IActor)
                 {
                     continue;
                 }
@@ -74,10 +70,6 @@ namespace Game
                 _contactListener.StepBegin();
                 World.Step(stepSize);
                 _contactListener.StepEnd();
-            }
-            foreach (SceneNode s in FindByType<SceneNode>())
-            {
-                s.StepEnd();
             }
         }
 

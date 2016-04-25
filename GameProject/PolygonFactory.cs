@@ -164,29 +164,54 @@ namespace Game
 
         public static Vector2[] CreateLineWidth(Line line, float width)
         {
-            return CreateLineWidth(line[0], line[1], width, width);
+            return CreateLineWidth(line, width, width);
         }
 
         public static Vector2[] CreateLineWidth(Line line, float widthStart, float widthEnd)
         {
-            return CreateLineWidth(line[0], line[1], widthStart, widthEnd);
-        }
-
-        public static Vector2[] CreateLineWidth(Vector2 vStart, Vector2 vEnd, float width)
-        {
-            return CreateLineWidth(vStart, vEnd, width, width);
-        }
-
-        public static Vector2[] CreateLineWidth(Vector2 vStart, Vector2 vEnd, float widthStart, float widthEnd)
-        {
-            Vector2 offsetStart = (vStart - vEnd).PerpendicularLeft.Normalized() * widthStart / 2;
-            Vector2 offsetEnd = (vStart - vEnd).PerpendicularLeft.Normalized() * widthEnd / 2;
+            Vector2 offsetStart = (line[0] - line[1]).PerpendicularLeft.Normalized() * widthStart / 2;
+            Vector2 offsetEnd = (line[0] - line[1]).PerpendicularLeft.Normalized() * widthEnd / 2;
             return new Vector2[] {
-                vStart + offsetStart,
-                vStart - offsetStart,
-                vEnd - offsetEnd,
-                vEnd + offsetEnd
+                line[0] + offsetStart,
+                line[0] - offsetStart,
+                line[1] - offsetEnd,
+                line[1] + offsetEnd
             };
+        }
+
+        public static Vector2[] CreateRectangle()
+        {
+            return CreateRectangle(1, 1);
+        }
+
+        public static Vector2[] CreateRectangle(float width, float height)
+        {
+            return CreateRectangle(width, height, new Vector2());
+        }
+
+        public static Vector2[] CreateRectangle(float width, float height, Vector2 origin)
+        {
+            return new Vector2[] {
+                new Vector2(width/2, height/2) + origin,
+                new Vector2(-width/2, height/2) + origin,
+                new Vector2(-width/2, -height/2) + origin,
+                new Vector2(width/2, -height/2) + origin
+            };
+        }
+
+        public static Vector2[] CreateNGon(int sides, float scale, Vector2 origin)
+        {
+            Debug.Assert(sides >= 3);
+            Vector2[] vertices = new Vector2[sides];
+            for (int i = 0; i < sides; i++)
+            {
+                double angle = i / (MathExt.TAU * sides);
+                float x, y;
+                x = (float)Math.Cos(angle);
+                y = (float)Math.Sin(angle);
+                vertices[i] = new Vector2(x, y) * scale + origin;
+            }
+            return vertices;
         }
     }
 }

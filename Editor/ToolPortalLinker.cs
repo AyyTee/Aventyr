@@ -46,22 +46,22 @@ namespace Editor
                         Transform2 t = portal.GetTransform();
                         if (_input.KeyDown(InputExt.KeyBoth.Control))
                         {
-                            //t.Scale = new Vector2(1, -1);
+                            /*portal.IsMirrored = true;
+                            _portalPrevious.IsMirrored = false;*/
                             t.Size *= -1;
                             t.IsMirrored = true;
                             portal.SetTransform(t);
                             t = _portalPrevious.GetTransform();
-                            //t.Scale = new Vector2(1, 1);
                             t.IsMirrored = false;
                             _portalPrevious.SetTransform(t);
                         }
                         else
                         {
-                            //t.Scale = new Vector2(1, 1);
+                            /*portal.IsMirrored = false;
+                            _portalPrevious.IsMirrored = false;*/
                             t.IsMirrored = false;
                             portal.SetTransform(t);
                             t = _portalPrevious.GetTransform();
-                            //t.Scale = new Vector2(1, 1);
                             t.IsMirrored = false;
                             _portalPrevious.SetTransform(t);
                         }

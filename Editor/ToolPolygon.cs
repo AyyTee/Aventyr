@@ -28,7 +28,7 @@ namespace Editor
         public override void Disable()
         {
             _vertices.Clear();
-            _entity.Remove();
+            //_entity.Remove();
             base.Disable();
         }
 

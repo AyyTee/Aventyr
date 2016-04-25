@@ -1,4 +1,5 @@
-﻿using Game;
+﻿using FarseerPhysics.Dynamics;
+using Game;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -28,38 +29,75 @@ namespace Editor
             Entity back = new Entity(scene, new Vector2(0f, 0f));
             back.Name = "Background";
             back.AddModel(background);
+            back.IsPortalable = false;
             #endregion
 
             HashSet<IDeepClone> toClone = new HashSet<IDeepClone>();
-            ICamera2 camera = level.ActiveCamera;
-            //toClone.Add(camera);
+            //ICamera2 camera = level.ActiveCamera;
+            //toClone.Add(level.ActiveCamera);
             foreach (EditorObject e in level.EditorObjects)
             {
                 if (e is EditorEntity)
                 {
                     EditorEntity editorEntity = (EditorEntity)e;
+                    Entity entity = new Entity(scene);
+                    entity.AddModelRange(editorEntity.Models);
+                    entity.SetTransform(editorEntity.GetTransform());
                     //toClone.Add(editorEntity.Entity);
                 }
                 else if (e is EditorPortal)
                 {
                     EditorPortal editorPortal = (EditorPortal)e;
+                    /*if (editorPortal.Parent is EditorWall)
+                    {
+
+                    }*/
                 }
-                else if (e is EditorActor)
+
+                if (e is IActor)
                 {
-                    EditorActor editorActor = (EditorActor)e;
-                    Actor actor = ActorFactory.CreateEntityBox(new Entity(scene), Transform2.GetPosition(editorActor));
-                    actor.SetTransform(editorActor.GetTransform());
-                }
-                else if (e is EditorWall)
-                {
-                    EditorWall editorWall = (EditorWall)e;
-                    Actor actor = ActorFactory.CreateEntityPolygon(scene, editorWall.GetTransform(), editorWall.Vertices);
-                    ((Entity)actor.Children[0]).ModelList[0].SetTexture(Renderer.Textures["default.png"]);
-                    FixturePortal portal0 = new FixturePortal(scene, new FixtureEdgeCoord(actor.Body.FixtureList[0], 0, 0.2f));
-                    //Transform2.SetSize(portal0, 2);
-                    
-                    FixturePortal portal1 = new FixturePortal(scene, new FixtureEdgeCoord(actor.Body.FixtureList[0], 0, 0.8f));
-                    //portal0.SetLinked(portal1);
+                    Actor actor;
+                    if (e is EditorActor)
+                    {
+                        EditorActor editorActor = (EditorActor)e;
+                        Body bodyClone = editorActor.Body.DeepClone(scene.World);
+                        actor = new Actor(scene, bodyClone);
+                        Entity entity = new Entity(scene);
+                        Transform2.SetSize(entity, Transform2.GetSize(editorActor));
+                        entity.AddModel(editorActor.GetActorModel());
+                        entity.SetParent(actor);
+                        /*Actor actor = ActorFactory.CreateEntityBox(new Entity(scene), Transform2.GetPosition(editorActor));
+                        actor.SetTransform(editorActor.GetTransform());*/
+                    }
+                    else if (e is EditorWall)
+                    {
+                        EditorWall editorWall = (EditorWall)e;
+                        actor = ActorFactory.CreateEntityPolygon(scene, editorWall.GetTransform(), editorWall.Vertices);
+                        Entity entity = new Entity(scene);
+                        entity.AddModel(editorWall.GetWallModel());
+                        entity.ModelList[0].Wireframe = true;
+                        entity.SetParent(actor);
+                    }
+                    else
+                    {
+                        actor = null;
+                    }
+
+
+                    List<FixturePortal> portals = new List<FixturePortal>();
+                    foreach (EditorPortal p in e.Children)
+                    {
+                        FixtureEdgeCoord coord = p.GetFixtureEdgeCoord();
+                        Fixture fixture = coord.Fixture;
+                        int fixtureIndex = fixture.Body.FixtureList.FindIndex(item => item == fixture);
+                        FixtureEdgeCoord clone = new FixtureEdgeCoord(actor.Body.FixtureList[fixtureIndex], coord.EdgeIndex, coord.EdgeT);
+                        portals.Add(new FixturePortal(scene, clone));
+                    }
+                    if (portals.Count >= 2)
+                    {
+                        portals[0].Linked = portals[1];
+                        portals[1].Linked = portals[0];
+                    }
                 }
             }
 
@@ -69,7 +107,7 @@ namespace Editor
             List<SceneNode> cloned = dictionary.Values.Cast<SceneNode>().ToList();
 
             SceneNode.SetScene(cloned, scene);
-            //scene.SetActiveCamera((Camera2)dictionary[camera]);
+            scene.SetActiveCamera(level.ActiveCamera);
             return scene;
         }
     }

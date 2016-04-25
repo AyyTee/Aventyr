@@ -197,6 +197,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="ClassDiagram2.cd" />
     <None Include="editor assets\icons\Thumbs.db" />
     <Content Include="editor assets\models\coordinateArrows.mtl">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

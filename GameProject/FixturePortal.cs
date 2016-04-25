@@ -109,11 +109,6 @@ namespace Game
             return transform;
         }
 
-        /*protected override bool _isValid()
-        {
-            return base._isValid() && Position != null;
-        }*/
-
         public override void Remove()
         {
             RemoveFixture();

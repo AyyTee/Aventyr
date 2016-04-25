@@ -38,7 +38,7 @@ namespace Editor
         public Selection selection { get; private set; }
         public StateList StateList { get; private set; }
         /// <summary>
-        /// Prevent race conditions when adding and reading from the action queue.
+        /// Lock used to prevent race conditions when adding and reading from the action queue.
         /// </summary>
         object _lockAction = new object();
         bool _isPaused = true;
@@ -87,12 +87,6 @@ namespace Editor
         {
             //EditorScene load = Serializer.Deserialize(Back, filepath);
             Level.Clear();
-
-            /*foreach (EditorObject e in load.FindAll())
-            {
-                //e.SetMarker();
-                e.SetScene(Level);
-            }*/
 
             if (LevelLoaded != null)
             {
@@ -160,7 +154,6 @@ namespace Editor
                 ActiveLevel.Step();
             }
             Level.Step(1 / (float)60);
-            //Back.Step();
         }
 
         public void Undo()
@@ -241,7 +234,7 @@ namespace Editor
             {
                 ActiveLevel = LevelExport.Export(Level);
                 renderer.AddLayer(ActiveLevel);
-                //renderer.RemoveLayer(Back);
+                renderer.RemoveLayer(Level);
                 renderer.RemoveLayer(Hud);
             }
             _stepsPending = 0;
@@ -262,6 +255,7 @@ namespace Editor
             if (ActiveLevel != null)
             {
                 renderer.RemoveLayer(ActiveLevel);
+                renderer.AddLayer(Level);
                 renderer.AddLayer(Hud);
             }
 
@@ -296,12 +290,12 @@ namespace Editor
             base.OnClosing(e);
         }
 
-        public override void OnResize(EventArgs e, System.Drawing.Size canvasSize)
+        public override void OnResize(EventArgs e, Size canvasSize)
         {
             base.OnResize(e, canvasSize);
             Hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             Level.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            Transform2.SetSize((Camera2)Hud.ActiveCamera, canvasSize.Height);
+            Transform2.SetSize((ITransform2)Hud.ActiveCamera, canvasSize.Height);
         }
     }
 }

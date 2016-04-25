@@ -30,6 +30,7 @@ namespace Editor
         public bool IsSelected { get; private set; }
         [DataMember]
         public string Name { get; set; }
+        public virtual bool IgnoreScale { get { return false; } }
         [DataMember]
         List<EditorObject> _children = new List<EditorObject>();
         public List<EditorObject> Children { get { return new List<EditorObject>(_children); } }
@@ -149,7 +150,12 @@ namespace Editor
         {
             if (Parent != null)
             {
-                return GetTransform().Transform(Parent.GetWorldTransform());
+                Transform2 transform = GetTransform().Transform(Parent.GetWorldTransform());
+                if (IgnoreScale)
+                {
+                    transform.SetScale(GetTransform().Scale);
+                }
+                return transform;
             }
             return GetTransform();
         }

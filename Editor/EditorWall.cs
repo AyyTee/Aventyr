@@ -41,8 +41,13 @@ namespace Editor
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
-            models.Add(Game.ModelFactory.CreatePolygon(Vertices));
+            models.Add(GetWallModel());
             return models;
+        }
+
+        public Model GetWallModel()
+        {
+            return Game.ModelFactory.CreatePolygon(Vertices);
         }
 
         public override Transform2 GetTransform()

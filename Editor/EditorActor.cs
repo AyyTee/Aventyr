@@ -1,4 +1,5 @@
-﻿using FarseerPhysics.Dynamics;
+﻿using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Dynamics;
 using Game;
 using OpenTK;
 using System;
@@ -7,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Editor
 {
@@ -15,6 +15,8 @@ namespace Editor
     public sealed class EditorActor : EditorObject, IActor
     {
         public Body Body { get; private set; }
+        [DataMember]
+        float _size = 1;
 
         public EditorActor(EditorScene editorScene)
             : base(editorScene)
@@ -24,8 +26,8 @@ namespace Editor
 
         public override void Initialize()
         {
-            //Body = BodyExt.CreateBody(Scene.World, this);
-            Body = ActorFactory.CreateBox(Scene.World, new Vector2(2,2));
+            Body = ActorFactory.CreateBox(Scene.World, new Vector2(1,1) * _size);
+            Body.IsStatic = false;
             BodyExt.SetUserData(Body, this);
         }
 
@@ -38,14 +40,29 @@ namespace Editor
 
         public override Transform2 GetTransform()
         {
-            return BodyExt.GetTransform(Body);
+            Transform2 transform = BodyExt.GetTransform(Body);
+            transform.Size = _size;
+            return transform;
         }
 
-        /// <summary>
-        /// Set the transform.  Scale is discarded since physics bodies do not have a Scale field.
-        /// </summary>
         public override void SetTransform(Transform2 transform)
         {
+            if (transform.Size != _size)
+            {
+                float scaleFactor = transform.Size / _size;
+                _size = transform.Size;
+                var vertices = ((PolygonShape)Body.FixtureList[0].Shape).Vertices;
+                for (int i = 0; i < vertices.Count; i++)
+                {
+                    vertices[i] = vertices[i] * scaleFactor;
+                }
+                /*for (int i = Body.FixtureList.Count - 1; i >= 0; i--)
+                {
+                    Body.DestroyFixture(Body.FixtureList[i]);
+                }
+                ActorFactory.CreateBox(Body, new Vector2(1, 1) * _size);*/
+                //Scene.World.ProcessChanges();
+            }
             BodyExt.SetTransform(Body, transform);
         }
 
@@ -59,8 +76,15 @@ namespace Editor
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
-            models.Add(Game.ModelFactory.CreateCube(new Vector3(2,2,2)));
+            models.Add(GetActorModel());
             return models;
+        }
+
+        public Model GetActorModel()
+        {
+            Model model = Game.ModelFactory.CreateCube(new Vector3(1, 1, 1));
+            model.SetTexture(Renderer.Textures["default.png"]);
+            return model;
         }
     }
 }

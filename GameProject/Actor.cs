@@ -57,28 +57,6 @@ namespace Game
             base.Remove();
         }
 
-        /*public override void StepBegin()
-        {
-            base.StepBegin();
-            Xna.Vector2 v0 = Vector2Ext.ConvertToXna(GetWorldTransform().Position);
-            Body.SetTransform(v0, GetWorldTransform().Rotation);
-            Body.LinearVelocity = Vector2Ext.ConvertToXna(GetVelocity().Position);
-            Body.AngularVelocity = GetVelocity().Rotation;
-        }
-
-        public override void StepEnd()
-        {
-            base.StepEnd();
-            Transform2 transform = GetTransform();
-            transform.Position = Vector2Ext.ConvertTo(Body.Position);
-            transform.Rotation = Body.Rotation;
-            SetTransform(transform);
-            Transform2 velocity = GetVelocity();
-            velocity.Position = Vector2Ext.ConvertTo(Body.LinearVelocity);
-            velocity.Rotation = Body.AngularVelocity;
-            SetVelocity(velocity);
-        }*/
-
         public override Transform2 GetTransform()
         {
             return BodyExt.GetTransform(Body);
