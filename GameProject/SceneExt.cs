@@ -28,7 +28,7 @@ namespace Game
             Transform2 velocity = placeable.GetVelocity();
             double distanceMin = movementLeft;
             IPortal portalNearest = null;
-            IntersectPoint intersectNearest = new IntersectPoint();
+            IntersectCoord intersectNearest = new IntersectCoord();
             foreach (IPortal p in portals)
             {
                 if (!Portal.IsValid(p))
@@ -41,7 +41,7 @@ namespace Game
                 }
                 Line portalLine = new Line(Portal.GetWorldVerts(p));
                 Line ray = new Line(begin.Position, begin.Position + velocity.Position);
-                IntersectPoint intersect = MathExt.LineLineIntersect(portalLine, ray, true);
+                IntersectCoord intersect = MathExt.LineLineIntersect(portalLine, ray, true);
                 //IntersectPoint intersect2 = portalLine.IntersectsParametric(p.GetVelocity(), ray, 5);
                 double distance = ((Vector2d)begin.Position - intersect.Position).Length;
                 if (intersect.Exists && distance < distanceMin)

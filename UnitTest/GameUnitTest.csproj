@@ -90,6 +90,7 @@
     <Compile Include="EditorCloneTests.cs" />
     <Compile Include="DeepCloneTests.cs" />
     <Compile Include="TriangleTests.cs" />
+    <Compile Include="ClipModelTests.cs" />
     <Compile Include="VertexTests.cs" />
   </ItemGroup>
   <ItemGroup>

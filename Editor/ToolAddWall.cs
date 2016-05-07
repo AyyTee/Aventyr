@@ -57,6 +57,8 @@ namespace Editor
                     {
                         _vertices[i] -= average;
                     }
+                    PolygonExt.SetInterior(_vertices);
+                    MathExt.SetHandedness(_vertices, false);
                     EditorWall editorEntity = new EditorWall(Controller.Level, _vertices);
                     Transform2.SetPosition(editorEntity, average);
                     Controller.SetTool(null);
@@ -74,26 +76,21 @@ namespace Editor
             _polygon.Models.Clear();
             if (_vertices.Count() >= 2)
             {
-                PolyCoord[] intersects = MathExt.LineStripIntersect(_vertices.ToArray(), true);
+                PolygonCoord[] intersects = MathExt.LineStripIntersect(_vertices.ToArray(), true);
                 Vector3[] colors = new Vector3[_vertices.Count() - 1];
                 for (int i = 0; i < colors.Length; i++)
                 {
                     colors[i] = new Vector3(0, 0.5f, 0);
                 }
-                foreach (PolyCoord p in intersects)
+                foreach (PolygonCoord p in intersects)
                 {
-                    colors[p.LineIndex] = new Vector3(1f, 0.2f, 0.2f);
+                    colors[p.EdgeIndex] = new Vector3(1f, 0.2f, 0.2f);
                 }
                 Model model = Game.ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
                 model.Transform.Position = new Vector3(0, 0, 6);
                 //model.SetShader("default");
                 _polygon.Models.Add(model);
             }
-        }
-
-        public override Tool Clone()
-        {
-            return new ToolAddWall(Controller);
         }
     }
 }

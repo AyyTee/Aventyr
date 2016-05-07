@@ -142,8 +142,8 @@ namespace Game
             portal1.Name = "portalRight";
 
             portal0.IsMirrored = true;
-            portal0.Linked = portal1;
-            portal1.Linked = portal0;
+            /*portal0.Linked = portal1;
+            portal1.Linked = portal0;*/
 
             text = new Entity(hud);
             text.SetTransform(new Transform2(new Vector2(0, CanvasSize.Height)));

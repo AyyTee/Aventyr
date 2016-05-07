@@ -368,9 +368,9 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, 1f));
             Line line1 = new Line(new Vector2(-0.5f, 0.6f), new Vector2(0.5f, 0.6f));
-            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectPoint comparison = new IntersectPoint();
+            IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, 0.6);
             comparison.TFirst = 0.6;
@@ -383,9 +383,9 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, 1f));
             Line line1 = new Line(new Vector2(-0.5f, 1f), new Vector2(0.5f, 1f));
-            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectPoint comparison = new IntersectPoint();
+            IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, 1);
             comparison.TFirst = 1;
@@ -398,9 +398,9 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, -1f));
             Line line1 = new Line(new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f));
-            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectPoint comparison = new IntersectPoint();
+            IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, -1);
             comparison.TFirst = 1;
@@ -413,9 +413,9 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, -1000000f));
             Line line1 = new Line(new Vector2(-0.5f, -1000000), new Vector2(0.5f, -1000000f));
-            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectPoint comparison = new IntersectPoint();
+            IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, -1000000);
             comparison.TFirst = 1;
@@ -428,9 +428,9 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, -1f));
             Line line1 = new Line(new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f));
-            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, true);
+            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, true);
 
-            IntersectPoint comparison = new IntersectPoint();
+            IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, -1);
             comparison.TFirst = 1;
@@ -443,9 +443,9 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(), new Vector2(0, -1000000f));
             Line line1 = new Line(new Vector2(-0.5f, -1000000), new Vector2(0.5f, -1000000f));
-            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, true);
+            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, true);
 
-            IntersectPoint comparison = new IntersectPoint();
+            IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, -1000000);
             comparison.TFirst = 1;
@@ -458,9 +458,9 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(1f, 1f), new Vector2(2f, 2f));
             Line line1 = new Line(new Vector2(1.5f, 3f), new Vector2(1.5f, -1.5f));
-            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectPoint comparison = new IntersectPoint();
+            IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(1.5, 1.5);
             comparison.TFirst = 0.5;
@@ -473,9 +473,9 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(1f, 1f), new Vector2(2f, 2f));
             Line line1 = new Line(new Vector2(3f, 9f), new Vector2(12f, -6f));
-            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, true);
+            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, true);
 
-            IntersectPoint comparison = new IntersectPoint();
+            IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = false;
             Assert.IsTrue(intersect.Equals(comparison));
         }
@@ -485,9 +485,9 @@ namespace UnitTest
         {
             Line line0 = new Line(new Vector2(1f, 1f), new Vector2(2f, 2f));
             Line line1 = new Line(new Vector2(3f, 9f), new Vector2(12f, -6f));
-            IntersectPoint intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectPoint comparison = new IntersectPoint();
+            IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(5.25, 5.25);
             comparison.TFirst = 4.25;

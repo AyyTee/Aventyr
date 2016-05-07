@@ -334,10 +334,5 @@ namespace Editor
             transform.Size = camera.GetWorldTransform().Size * translationScaleOffset;
             _translator.SetTransform(transform);*/
         }
-
-        public override Tool Clone()
-        {
-            return new ToolDefault(Controller);
-        }
     }
 }

@@ -8,7 +8,7 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
-    public struct IntersectPoint
+    public struct IntersectCoord
     {
         public bool Exists;
         public Vector2d Position;
@@ -19,7 +19,7 @@ namespace Game
 
         const float EQUALITY_EPSILON = 0.0000001f;
 
-        public bool Equals(IntersectPoint intersect)
+        public bool Equals(IntersectCoord intersect)
         {
             if (Exists == intersect.Exists && Exists == false)
             {
@@ -82,6 +82,54 @@ namespace Game
                 return Lerp(Angle0, Angle1, T) % (2 * Math.PI);
             }
         }
+        #endregion
+        #region Nearest
+        /// <summary>
+        /// Find the nearest PolygonCoord on the polygon relative to provided point.  If two edges are equal distance away from the point
+        /// </summary>
+        public static PolygonCoord PolygonCoordNearest(IPolygon polygon, Vector2 point)
+        {
+            PolygonCoord nearest = new PolygonCoord(0, 0);
+            double distanceMin = -1;
+            for (int i = 0; i < polygon.Vertices.Count; i++)
+            {
+                int iNext = (i + 1) % polygon.Vertices.Count;
+                Line edge = new Line(polygon.Vertices[i], polygon.Vertices[iNext]);
+                double distance = PointLineDistance(point, edge, true);
+                if (distanceMin == -1 || distance < distanceMin)
+                {
+                    nearest.EdgeIndex = i;
+                    nearest.EdgeT = edge.NearestT(point, true);
+                    distanceMin = distance;
+                }
+            }
+            return nearest;
+        }
+
+        /*public static PolygonCoord PolygonCoordNearest(IList<Vector2> polygon, Vector2 point)
+        {
+            return PolygonCoordNearest(new Polygon(polygon), point);
+        }
+
+        /// <summary>
+        /// Find the nearest PolygonCoord from a list of polygons relative to provided point.
+        /// </summary>
+        public static PolygonCoord PolygonCoordNearest(IList<IPolygon> polygons, Vector2 point)
+        {
+            PolygonCoord nearest = null;
+            double distanceMin = -1;
+            for (int i = 0; i < polygons.Count; i++)
+            {
+                PolygonCoord coord = PolygonCoordNearest(polygons[i], point);
+                double distance = (coord.GetTransform().Position - point).Length;
+                if (distanceMin == -1 || distance < distanceMin)
+                {
+                    distanceMin = distance;
+                    nearest = coord;
+                }
+            }
+            return nearest;
+        }*/
         #endregion
         #region Distance
         public static double PointLineDistance(Vector2 point, Line line, bool isSegment)
@@ -174,7 +222,7 @@ namespace Game
         /// </summary>
         /// <param name="polygon">A closed polygon</param>
         /// <returns></returns>
-        public static bool LineInPolygon(Line line, IList<Vector2> polygon)
+        public static bool LineInPolygon(Line line, IPolygon polygon)
         {
             if (MathExt.PointInPolygon(line[0], polygon))
             {
@@ -184,7 +232,7 @@ namespace Game
             {
                 return true;
             }
-            return LinePolygonIntersect(line, polygon).Exists;
+            return LinePolygonIntersect(line, polygon).Count > 0;
         }
 
         /// <summary>
@@ -208,6 +256,11 @@ namespace Game
                 }
             }
             return isInside;
+        }
+
+        public static bool PointInPolygon(Vector2 point, IPolygon polygon)
+        {
+            return PointInPolygon(point, polygon.Vertices);
         }
 
         /// <summary>
@@ -249,7 +302,7 @@ namespace Game
         /// <summary>Computes the convex hull of a polygon, in clockwise order in a Y-up 
         /// coordinate system (counterclockwise in a Y-down coordinate system).</summary>
         /// <remarks>Uses the Monotone Chain algorithm, a.k.a. Andrew's Algorithm.
-        /// Script found at: http://loyc-etc.blogspot.com/2014/05/2d-convex-hull-in-c-45-lines-of-code.html
+        /// Script found at http://loyc-etc.blogspot.com/2014/05/2d-convex-hull-in-c-45-lines-of-code.html
         /// </remarks>
         public static List<Vector2> GetConvexHull(IEnumerable<Vector2> points)
         {
@@ -339,26 +392,28 @@ namespace Game
         /// <param name="polygon">A polygon represented as a list of vectors.</param>
         /// <param name="clockwise">Clockwise if true, C.Clockwise if false.</param>
         /// <returns></returns>
-        public static IList<Vector2> SetHandedness(IList<Vector2> polygon, bool clockwise)
+        public static void SetHandedness(List<Vector2> polygon, bool clockwise)
         {
             if (IsClockwise(polygon) != clockwise)
             {
                 polygon.Reverse();
             }
-            return polygon;
         }
 
-        public static Vector2[] SetHandedness(Vector2[] polygon, bool clockwise)
+        public static void SetHandedness(Vector2[] polygon, bool clockwise)
         {
-            return (Vector2[])SetHandedness((IList<Vector2>)polygon, clockwise);
+            if (IsClockwise(polygon) != clockwise)
+            {
+                polygon.Reverse();
+            }
         }
         #endregion
         #region Intersections
         /// <summary>Tests if two lines intersect.</summary>
         /// <returns>Location where the two lines intersect. TFirst is relative to the first line.</returns>
-        static public IntersectPoint LineLineIntersect(Line line0, Line line1, bool SegmentOnly)
+        static public IntersectCoord LineLineIntersect(Line line0, Line line1, bool SegmentOnly)
         {
-            IntersectPoint v = new IntersectPoint();
+            IntersectCoord v = new IntersectCoord();
             double ua, ub;
             double ud = (line1[1].Y - line1[0].Y) * (line0[1].X - line0[0].X) - (line1[1].X - line1[0].X) * (line0[1].Y - line0[0].Y);
             if (ud != 0)
@@ -392,23 +447,23 @@ namespace Game
         /// <param name="vertices"></param>
         /// <param name="includeTwice">If true, each intersection will be added twice relative to each intersecting line.</param>
         /// <returns></returns>
-        public static PolyCoord[] LineStripIntersect(Vector2[] vertices, bool includeTwice)
+        public static PolygonCoord[] LineStripIntersect(Vector2[] vertices, bool includeTwice)
         {
-            List<PolyCoord> intersections = new List<PolyCoord>();
+            List<PolygonCoord> intersections = new List<PolygonCoord>();
             //for now we'll just use the slow O(n^2) implementation
             for (int i = 0; i < vertices.Length - 1; i++)
             {
                 for (int j = i + 2; j < vertices.Length - 1; j++)
                 {
-                    IntersectPoint first = LineLineIntersect(new Line(vertices[i], vertices[i + 1]), new Line(vertices[j], vertices[j + 1]), true);
+                    IntersectCoord first = LineLineIntersect(new Line(vertices[i], vertices[i + 1]), new Line(vertices[j], vertices[j + 1]), true);
                     if (first.Exists && first.TFirst < 1)
                     {
-                        intersections.Add(new PolyCoord(i, (float)first.TFirst));
+                        intersections.Add(new PolygonCoord(i, (float)first.TFirst));
                         if (includeTwice)
                         {
-                            IntersectPoint second = LineLineIntersect(new Line(vertices[i], vertices[i + 1]), new Line(vertices[j], vertices[j + 1]), true);
+                            IntersectCoord second = LineLineIntersect(new Line(vertices[i], vertices[i + 1]), new Line(vertices[j], vertices[j + 1]), true);
                             Debug.Assert(second.Exists);
-                            intersections.Add(new PolyCoord(j, (float)second.TFirst));
+                            intersections.Add(new PolygonCoord(j, (float)second.TFirst));
                         }
                     }
                 }
@@ -421,21 +476,20 @@ namespace Game
         /// </summary>
         /// <param name="polygon">A closed polygon</param>
         /// <returns>An intersection point</returns>
-        public static IntersectPoint LinePolygonIntersect(Line line, IList<Vector2> polygon)
+        public static List<PolygonCoord> LinePolygonIntersect(Line line, IPolygon polygon)
         {
-            IntersectPoint point;
-            for (int i0 = 0; i0 < polygon.Count; i0++)
+            List<PolygonCoord> points = new List<PolygonCoord>();
+            for (int i0 = 0; i0 < polygon.Vertices.Count; i0++)
             {
-                int i1 = (i0 + 1) % polygon.Count;
-                point = MathExt.LineLineIntersect(line, new Line(polygon[i0], polygon[i1]), true);
-                if (point.Exists)
+                int i1 = (i0 + 1) % polygon.Vertices.Count;
+                IntersectCoord intersect = MathExt.LineLineIntersect(line, new Line(polygon.Vertices[i0], polygon.Vertices[i1]), true);
+                
+                if (intersect.Exists)
                 {
-                    return point;
+                    points.Add(new PolygonCoord(i0, (float)intersect.TLast));
                 }
             }
-            point = new IntersectPoint();
-            point.Exists = false;
-            return point;
+            return points;
         }
 
         /// <summary>Finds the intersections between a line and a circle.  IntersectPoint contains the T value for the intersecting line.</summary>
@@ -446,10 +500,10 @@ namespace Game
         /// <remarks>Original code was found here 
         /// http://csharphelper.com/blog/2014/09/determine-where-a-line-intersects-a-circle-in-c/
         /// </remarks>
-        public static IntersectPoint[] LineCircleIntersect(Vector2 circle, float radius, Line line, bool isSegment)
+        public static IntersectCoord[] LineCircleIntersect(Vector2 circle, float radius, Line line, bool isSegment)
         {
-            IntersectPoint intersect0 = new IntersectPoint();
-            IntersectPoint intersect1 = new IntersectPoint();
+            IntersectCoord intersect0 = new IntersectCoord();
+            IntersectCoord intersect1 = new IntersectCoord();
             double dx, dy, A, B, C, det, t;
 
             dx = line[1].X - line[0].X;
@@ -475,13 +529,13 @@ namespace Game
                     intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
                     intersect0.Exists = true;
                     intersect0.TFirst = t;
-                    return new IntersectPoint[] { intersect0 };
+                    return new IntersectCoord[] { intersect0 };
                 }
             }
             else
             {
                 // Two solutions.
-                List<IntersectPoint> list = new List<IntersectPoint>();
+                List<IntersectCoord> list = new List<IntersectCoord>();
                 t = (float)((-B + Math.Sqrt(det)) / (2 * A));
                 if (t >= 0 && t < 1 || !isSegment)
                 {
@@ -501,15 +555,15 @@ namespace Game
                 }
                 return list.ToArray();
             }
-            return new IntersectPoint[0];
+            return new IntersectCoord[0];
         }
 
-        public static IntersectPoint IntersectParametric(Line line, Transform2 velocity, Line pointMotion, int detail)
+        public static IntersectCoord IntersectParametric(Line line, Transform2 velocity, Line pointMotion, int detail)
         {
             Matrix4 transform = Matrix4.CreateTranslation(new Vector3(velocity.Position) / detail);
             transform = Matrix4.CreateRotationZ(velocity.Rotation / detail) * transform;
             line = line.ShallowClone();
-            IntersectPoint intersect = new IntersectPoint();
+            IntersectCoord intersect = new IntersectCoord();
             for (int i = 0; i < detail; i++)
             {
                 Line lineNext = line.ShallowClone();
@@ -523,14 +577,14 @@ namespace Game
                 };
 
                 Line pointLine = new Line(pointMotion.Lerp(i / detail), pointMotion.Lerp((i + 1) / detail));
-                if (MathExt.LineInPolygon(pointLine, verts))
+                /*if (MathExt.LineInPolygon(pointLine, verts))
                 {
                     intersect.TFirst = (i + 0.5f) / detail;
                     intersect.Exists = true;
                     Vector2 pos = pointMotion.Lerp((float)intersect.TFirst);
                     intersect.Position = new Vector2d(pos.X, pos.Y);
                     return intersect;
-                }
+                }*/
                 line = lineNext;
             }
             intersect.Exists = false;
@@ -639,7 +693,7 @@ namespace Game
                     keep.Add(triangle[i]);
                 }
                 Line edge = new Line(vertices[i], vertices[(i + 1) % Triangle.VERTEX_COUNT]);
-                IntersectPoint intersect = MathExt.LineLineIntersect(edge, bisector, false);
+                IntersectCoord intersect = MathExt.LineLineIntersect(edge, bisector, false);
                 if (intersect.Exists && intersect.TFirst > 0 && intersect.TFirst < 1)
                 {
                     intersectCount++;

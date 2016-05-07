@@ -247,7 +247,7 @@ namespace UnitTest
         public void LineCircleIntersectTest4()
         {
             Line line = new Line(new Vector2(-1f, 1f), new Vector2(2f, 1f));
-            IntersectPoint[] intersects = MathExt.LineCircleIntersect(new Vector2(1, 1), 0.1f, line, true);
+            IntersectCoord[] intersects = MathExt.LineCircleIntersect(new Vector2(1, 1), 0.1f, line, true);
             Assert.IsTrue(intersects[0].Exists == true && intersects[1].Exists == true);
             Assert.IsTrue(
                 ((intersects[0].Position - new Vector2d(1.1, 1)).Length < ErrorMargin && intersects[0].TFirst - 0.7 < ErrorMargin &&
@@ -261,7 +261,7 @@ namespace UnitTest
         public void LineCircleIntersectTest5()
         {
             Line line = new Line(new Vector2(-100f, 1f), new Vector2(20f, 100f));
-            IntersectPoint[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1f, line, true);
+            IntersectCoord[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1f, line, true);
             Assert.IsTrue(intersections.Length == 0);
         }
 
@@ -269,7 +269,7 @@ namespace UnitTest
         public void LineCircleIntersectTest6()
         {
             Line line = new Line(new Vector2(-100f, 1f), new Vector2(20f, 100f));
-            IntersectPoint[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1000f, line, true);
+            IntersectCoord[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1000f, line, true);
             Assert.IsTrue(intersections.Length == 0);
         }
         #endregion

@@ -96,10 +96,5 @@ namespace Editor
             base.Disable();
             Controller.Level.Doodads.Remove(line);
         }
-
-        public override Tool Clone()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

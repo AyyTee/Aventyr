@@ -141,13 +141,13 @@ namespace Game
                 return true;
             }
             //Check if there is an intersection between the first FOV line and line.
-            IntersectPoint intersect0 = MathExt.LineLineIntersect(new Line(_vertices[0], 2 * _vertices[0] - viewPoint), line, false);
+            IntersectCoord intersect0 = MathExt.LineLineIntersect(new Line(_vertices[0], 2 * _vertices[0] - viewPoint), line, false);
             if (intersect0.TFirst >= 0 && intersect0.TLast >= 0 && intersect0.TLast < 1)
             {
                 return true;
             }
             //Check if there is an intersection between the second FOV line and line.
-            IntersectPoint intersect1 = MathExt.LineLineIntersect(new Line(_vertices[1], 2 * _vertices[1] - viewPoint), line, false);
+            IntersectCoord intersect1 = MathExt.LineLineIntersect(new Line(_vertices[1], 2 * _vertices[1] - viewPoint), line, false);
             if (intersect1.TFirst >= 0 && intersect1.TLast >= 0 && intersect1.TLast < 1)
             {
                 return true;

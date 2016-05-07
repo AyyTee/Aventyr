@@ -29,7 +29,7 @@ namespace Editor
 
             #region create background
             Model background = Game.ModelFactory.CreatePlane();
-            background.Texture = Renderer.Textures["grid.png"];
+            background.Texture = Renderer.GetTexture("grid.png");
             background.SetColor(new Vector3(1, 1, 0.5f));
             background.Transform.Position = new Vector3(0, 0, -5f);
             float size = 50;

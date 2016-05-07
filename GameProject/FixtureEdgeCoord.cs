@@ -12,10 +12,10 @@ using System.Runtime.Serialization;
 namespace Game
 {
     /// <summary>
-    /// A coordinate defined it's position on a edge in a Fixture
+    /// A coordinate defined by its position on a edge in a Fixture
     /// </summary>
     [DataContract]
-    public class FixtureEdgeCoord : IShallowClone<FixtureEdgeCoord>
+    public class FixtureEdgeCoord : IShallowClone<FixtureEdgeCoord>, IPolygonCoord
     {
         public Fixture Fixture { get; private set; }
         /// <summary>
@@ -46,7 +46,7 @@ namespace Game
 
         private float _edgeT;
         /// <summary>
-        /// Value between [0,1) the represents the position along the edge.
+        /// Value between [0,1) that represents the position along the edge.
         /// </summary>
         public float EdgeT
         {
@@ -73,6 +73,11 @@ namespace Game
         public FixtureEdgeCoord ShallowClone()
         {
             return new FixtureEdgeCoord(Fixture, EdgeIndex, EdgeT);
+        }
+
+        IPolygonCoord IShallowClone<IPolygonCoord>.ShallowClone()
+        {
+            return ShallowClone();
         }
 
         public Line GetEdge()

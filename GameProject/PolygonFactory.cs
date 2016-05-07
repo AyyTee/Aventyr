@@ -14,9 +14,9 @@ namespace Game
     public static class PolygonFactory
     {
 
-        public static Polygon CreatePolygon(IList<Vector2> vertices)
+        public static Poly2Tri.Polygon CreatePolygon(IList<Vector2> vertices)
         {
-            Polygon polygon = GetPolygon(vertices);
+            Poly2Tri.Polygon polygon = GetPolygon(vertices);
             if (Triangulate(polygon))
             {
                 return polygon;
@@ -24,11 +24,11 @@ namespace Game
             return null;
         }
 
-        public static List<Polygon> CreatePolygon(List<List<IntPoint>> paths)
+        public static List<Poly2Tri.Polygon> CreatePolygon(List<List<IntPoint>> paths)
         {
             List<List<IntPoint>> holes = new List<List<IntPoint>>(paths);
-            Dictionary<List<IntPoint>, Polygon> contourMap = new Dictionary<List<IntPoint>,Polygon>();
-            List<Polygon> polygons = new List<Polygon>();
+            Dictionary<List<IntPoint>, Poly2Tri.Polygon> contourMap = new Dictionary<List<IntPoint>, Poly2Tri.Polygon>();
+            List<Poly2Tri.Polygon> polygons = new List<Poly2Tri.Polygon>();
             foreach (List<IntPoint> p in paths)
             {
                 if (p.Count == 0)
@@ -39,7 +39,7 @@ namespace Game
                 Debug.Assert(p.Count != 1 && p.Count != 2, "Polygon is degenerate.");
                 if (!MathExt.IsClockwise(p))
                 {
-                    Polygon polygon = GetPolygon(p);
+                    Poly2Tri.Polygon polygon = GetPolygon(p);
                     polygons.Add(polygon);
                     holes.Remove(p);
                     contourMap.Add(p, polygon);
@@ -52,13 +52,13 @@ namespace Game
                 {
                     if (IsHole(p, contours[i]))
                     {
-                        Polygon polygon = contourMap[contours[i]];
+                        Poly2Tri.Polygon polygon = contourMap[contours[i]];
                         polygon.AddHole(GetPolygon(contours[i]));
                         break;
                     }
                 }
             }
-            foreach (Polygon p in polygons)
+            foreach (Poly2Tri.Polygon p in polygons)
             {
                 Triangulate(p);
             }
@@ -80,9 +80,9 @@ namespace Game
             throw new Exception("Invalid polygon, all vertices are collinear to another polygon.");
         }
 
-        public static List<Polygon> CreatePolygon(PolyTree polyTree)
+        public static List<Poly2Tri.Polygon> CreatePolygon(PolyTree polyTree)
         {
-            List<Polygon> polyList = new List<Polygon>();
+            List<Poly2Tri.Polygon> polyList = new List<Poly2Tri.Polygon>();
             for (int i = 0; i < polyTree.Childs.Count; i++)
             {
                 polyList.AddRange(CreatePolygon(polyTree.Childs[i]));
@@ -90,12 +90,12 @@ namespace Game
             return polyList;
         }
 
-        private static List<Polygon> CreatePolygon(PolyNode polyNode)
+        private static List<Poly2Tri.Polygon> CreatePolygon(PolyNode polyNode)
         {
-            List<Polygon> polyList = new List<Polygon>();
+            List<Poly2Tri.Polygon> polyList = new List<Poly2Tri.Polygon>();
             Debug.Assert(polyNode.IsOpen == false);
             Debug.Assert(polyNode.IsHole == false);
-            Polygon polygon = GetPolygon(polyNode.Contour);
+            Poly2Tri.Polygon polygon = GetPolygon(polyNode.Contour);
             for (int i = 0; i < polyNode.Childs.Count; i++)
             {
                 if (polyNode.Childs[i].IsHole)
@@ -114,7 +114,7 @@ namespace Game
             return polyList;
         }
 
-        private static Polygon GetPolygon(List<IntPoint> vertices)
+        private static Poly2Tri.Polygon GetPolygon(List<IntPoint> vertices)
         {
             HashSet<Vector2> points = new HashSet<Vector2>();
             List<PolygonPoint> polygonPoints = new List<PolygonPoint>();
@@ -124,10 +124,10 @@ namespace Game
                 polygonPoints.Add(new PolygonPoint(v.X, v.Y));
                 Debug.Assert(points.Add(v));
             }
-            return new Polygon(polygonPoints);
+            return new Poly2Tri.Polygon(polygonPoints);
         }
 
-        private static Polygon GetPolygon(IList<Vector2> vertices)
+        private static Poly2Tri.Polygon GetPolygon(IList<Vector2> vertices)
         {
             HashSet<Vector2> points = new HashSet<Vector2>();
             List<PolygonPoint> polygonPoints = new List<PolygonPoint>();
@@ -137,11 +137,11 @@ namespace Game
                 polygonPoints.Add(new PolygonPoint(v.X, v.Y));
                 Debug.Assert(points.Add(v));
             }
-            return new Polygon(polygonPoints);
+            return new Poly2Tri.Polygon(polygonPoints);
         }
 
         /// <summary>Triangulate a polygon and return whether it was successful.</summary>
-        private static bool Triangulate(Polygon polygon)
+        private static bool Triangulate(Poly2Tri.Polygon polygon)
         {
             TextWriter console = Console.Out;
             Console.SetOut(Controller.Log);
@@ -169,14 +169,18 @@ namespace Game
 
         public static Vector2[] CreateLineWidth(Line line, float widthStart, float widthEnd)
         {
+            Debug.Assert(widthStart > 0 && widthEnd > 0, "Line must have positive width.");
             Vector2 offsetStart = (line[0] - line[1]).PerpendicularLeft.Normalized() * widthStart / 2;
             Vector2 offsetEnd = (line[0] - line[1]).PerpendicularLeft.Normalized() * widthEnd / 2;
-            return new Vector2[] {
-                line[0] + offsetStart,
+
+            Vector2[] lineWidth = new Vector2[] {
                 line[0] - offsetStart,
-                line[1] - offsetEnd,
-                line[1] + offsetEnd
+                line[0] + offsetStart,
+                line[1] + offsetEnd,
+                line[1] - offsetEnd
             };
+            Debug.Assert(PolygonExt.IsInterior(lineWidth));
+            return lineWidth;
         }
 
         public static Vector2[] CreateRectangle()
@@ -191,12 +195,14 @@ namespace Game
 
         public static Vector2[] CreateRectangle(float width, float height, Vector2 origin)
         {
-            return new Vector2[] {
+            Vector2[] rectangle = new Vector2[] {
                 new Vector2(width/2, height/2) + origin,
                 new Vector2(-width/2, height/2) + origin,
                 new Vector2(-width/2, -height/2) + origin,
                 new Vector2(width/2, -height/2) + origin
             };
+            Debug.Assert(PolygonExt.IsInterior(rectangle));
+            return rectangle;
         }
 
         public static Vector2[] CreateNGon(int sides, float scale, Vector2 origin)
@@ -211,6 +217,7 @@ namespace Game
                 y = (float)Math.Sin(angle);
                 vertices[i] = new Vector2(x, y) * scale + origin;
             }
+            Debug.Assert(PolygonExt.IsInterior(vertices));
             return vertices;
         }
     }

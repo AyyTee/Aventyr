@@ -186,7 +186,7 @@ namespace Game
             verts[2] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[i] + new Vector2(-FixturePortal.EdgeMargin, 0), portalNext.GetTransform().GetMatrix());
             verts[3] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[i], portalNext.GetTransform().GetMatrix());
             
-            verts = MathExt.SetHandedness(verts, false);
+            MathExt.SetHandedness(verts, false);
 
             /*Entity debugEntity = Entity.Scene.CreateEntity();
             debugEntity.Models.Add(Model.CreatePolygon(verts));*/
@@ -216,7 +216,7 @@ namespace Game
             verts[0] = tempVerts[i0];
             verts[1] = Vector2Ext.ConvertTo(shape.Vertices[index]);
             verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[i0] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
-            verts = MathExt.SetHandedness(verts, false);
+            MathExt.SetHandedness(verts, false);
 
             /*Entity debugEntity = Entity.Scene.CreateEntity();
             debugEntity.Models.Add(Model.CreatePolygon(verts));*/

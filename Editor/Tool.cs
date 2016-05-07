@@ -45,6 +45,5 @@ namespace Editor
         {
             return false;
         }
-        public abstract Tool Clone();
     }
 }

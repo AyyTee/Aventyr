@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 namespace Editor
 {
     [DataContract]
-    public sealed class EditorWall : EditorObject, IActor
+    public sealed class EditorWall : EditorObject, IWall
     {
         [DataMember]
-        public List<Vector2> Vertices { get; private set; }
-        public Body Body { get; private set; }
+        public IList<Vector2> Vertices { get; private set; }
+        Model _wallModel;
 
         public EditorWall(EditorScene scene, IList<Vector2> vertices)
             : base(scene)
@@ -27,8 +27,7 @@ namespace Editor
 
         public override void Initialize()
         {
-            Body = ActorFactory.CreatePolygon(Scene.World, new Transform2(), Vertices);
-            BodyExt.SetUserData(Body, this);
+            _wallModel = Game.ModelFactory.CreatePolygon(Vertices);
         }
 
         public override IDeepClone ShallowClone()
@@ -41,32 +40,13 @@ namespace Editor
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
-            models.Add(GetWallModel());
+            models.Add(_wallModel);
             return models;
         }
 
-        public Model GetWallModel()
+        public IList<Vector2> GetWorldVertices()
         {
-            return Game.ModelFactory.CreatePolygon(Vertices);
-        }
-
-        public override Transform2 GetTransform()
-        {
-            return BodyExt.GetTransform(Body);
-        }
-
-        /// <summary>
-        /// Set the transform.  Scale is discarded since physics bodies do have a Scale field.
-        /// </summary>
-        public override void SetTransform(Transform2 transform)
-        {
-            BodyExt.SetTransform(Body, transform);
-        }
-
-        public override void Remove()
-        {
-            Scene.World.RemoveBody(Body);
-            base.Remove();
+            return Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix());
         }
     }
 }

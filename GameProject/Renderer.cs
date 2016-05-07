@@ -22,18 +22,16 @@ namespace Game
         public int PortalRenderDepth { get; set; }
         public int PortalRenderMax { get; set; }
         public int PortalClipDepth { get; set; }
+        /// <summary>Number of bits in the stencil buffer.</summary>
         public static int StencilBits { get; private set; }
+        /// <summary>Flag for preventing rendering occuring.  Intended for benchmarking purposes.</summary>
+        public bool RenderEnabled { get; set; }
         ShaderProgram _activeShader;
         Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
 
         public static Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
         public static bool IsInitialized { get; private set; }
-
-        /// <summary>
-        /// Represents the size of the cutLines array within the fragment shader
-        /// </summary>
-        const int PORTAL_CLIP_MAX = 8;
         
         public Renderer(Controller controller)
         {
@@ -46,6 +44,7 @@ namespace Game
             PortalRenderDepth = 5;
             PortalRenderMax = 50;
             PortalClipDepth = 4;
+            RenderEnabled = true;
         }
 
         public static void Init()
@@ -59,7 +58,16 @@ namespace Game
             GL.Enable(EnableCap.ScissorTest);
             IsInitialized = true;
             StencilBits = GL.GetInteger(GetPName.StencilBits);
-            Debug.Assert(StencilBits >= 8, "Stencil bith depth is too small.");
+            Debug.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
+        }
+
+        public static TextureFile GetTexture(string name)
+        {
+            if (Textures.ContainsKey(name))
+            {
+                return Textures[name];
+            }
+            return null;
         }
 
         public void AddLayer(IRenderLayer layer)
@@ -201,7 +209,7 @@ namespace Game
                     {
                         continue;
                     }
-                    otherFov = MathExt.SetHandedness(otherFov, true);
+                    MathExt.SetHandedness(otherFov, true);
                     List<IntPoint> otherPathFov = ClipperConvert.ToIntPoint(otherFov);
                     c.AddPath(otherPathFov, PolyType.ptClip, true);
                 }
@@ -510,7 +518,10 @@ namespace Game
         public void RenderModel(Model model, Matrix4 viewMatrix, Matrix4 offset)
         {
             Debug.Assert(model != null);
-
+            if (!RenderEnabled)
+            {
+                return;
+            }
             List<Vector3> verts = new List<Vector3>();
             List<int> inds = new List<int>();
             List<Vector3> colors = new List<Vector3>();
@@ -548,14 +559,14 @@ namespace Game
             Debug.Assert(coldata.Length == vertdata.Length);
             Debug.Assert(texcoorddata.Length == vertdata.Length);
             GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vPosition"));
-            GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
             GL.VertexAttribPointer(_activeShader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
 
             // Buffer vertex color if shader supports it
             if (_activeShader.GetAttribute("vColor") != -1)
             {
                 GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vColor"));
-                GL.BufferData<Vector3>(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
+                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
                 GL.VertexAttribPointer(_activeShader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
             }
 
@@ -563,7 +574,7 @@ namespace Game
             if (_activeShader.GetAttribute("texcoord") != -1)
             {
                 GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("texcoord"));
-                GL.BufferData<Vector2>(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
+                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
                 GL.VertexAttribPointer(_activeShader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
             }
             //GL.BindBuffer(BufferTarget.ArrayBuffer, 0); I don't know why this is here so I've commented it out until something breaks.

@@ -109,7 +109,7 @@ namespace Game
                         continue;
                     }
                     Line line = new Line(Portal.GetWorldVerts(p));
-                    IntersectPoint intersect = MathExt.LineLineIntersect(position, line, true);
+                    IntersectCoord intersect = MathExt.LineLineIntersect(position, line, true);
                     if (intersect.TFirst <= portalTDistance && intersect.Exists)
                     {
                         portalNearest = p;

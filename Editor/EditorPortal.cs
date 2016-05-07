@@ -18,16 +18,17 @@ namespace Editor
         public bool OneSided { get { return false; } }
         [DataMember]
         public bool IsMirrored { get; set; }
-        public bool IsFixed { get { return _fixtureTransform != null; } }
-        public override bool IgnoreScale { get { return false; } }
+        public bool IsFixed { get { return _polygonTransform != null; } }
+        public override bool IgnoreScale { get { return true; } }
         [DataMember]
-        FixtureEdgeCoord _fixtureTransform;
-        List<Model> _models = new List<Model>();
+        IPolygonCoord _polygonTransform;
+        Model _portalModel;
 
         public EditorPortal(EditorScene editorScene)
             : base(editorScene)
         {
             IsPortalable = false;
+            Initialize();
         }
 
         public override IDeepClone ShallowClone()
@@ -37,21 +38,21 @@ namespace Editor
             return clone;
         }
 
+        public override void Initialize()
+        {
+            base.Initialize();
+            _portalModel = ModelFactory.CreatePortal();
+            _portalModel.Transform.Position += new Vector3(0, 0, 2);
+        }
+
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
-            Model[] portalModel = ModelFactory.CreatePortal();
-            
-            foreach (Model m in portalModel)
+            if (IsFixed)
             {
-                if (IsFixed)
-                {
-                    m.SetColor(new Vector3(0, 0.8f, 0.5f));
-                }
-                m.Transform.Position += new Vector3(0,0,2);
+                _portalModel.SetColor(new Vector3(0, 0.8f, 0.5f));
             }
-
-            models.AddRange(portalModel);
+            models.Add(_portalModel);
             return models;
         }
 
@@ -66,13 +67,14 @@ namespace Editor
 
         public override Transform2 GetTransform()
         {
-            return _fixtureTransform == null ? base.GetTransform() : _fixtureTransform.GetTransform();
+            return _polygonTransform == null ? 
+                base.GetTransform() : PolygonExt.GetTransform(((IWall)Parent).Vertices, _polygonTransform);
         }
 
         public override void SetTransform(Transform2 transform)
         {
             base.SetTransform(transform);
-            _fixtureTransform = null;
+            _polygonTransform = null;
         }
 
         /// <summary>
@@ -80,15 +82,16 @@ namespace Editor
         /// associated with the FixtureEdgeCoord's fixture.
         /// </summary>
         /// <param name="transform"></param>
-        public void SetTransform(FixtureEdgeCoord transform)
+        public void SetTransform(IWall wall, IPolygonCoord transform)
         {
-            _fixtureTransform = transform;
-            SetParent((EditorObject)FixtureExt.GetUserData(transform.Fixture).Entity);
+            _polygonTransform = transform;
+            SetParent((EditorObject)wall);
+            //SetParent((EditorObject)FixtureExt.GetUserData(transform.Fixture).Entity);
         }
 
-        public FixtureEdgeCoord GetFixtureEdgeCoord()
+        public IPolygonCoord GetPolygonCoord()
         {
-            return _fixtureTransform.ShallowClone();
+            return _polygonTransform.ShallowClone();
         }
     }
 }

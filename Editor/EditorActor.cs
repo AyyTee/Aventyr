@@ -12,11 +12,9 @@ using System.Text;
 namespace Editor
 {
     [DataContract]
-    public sealed class EditorActor : EditorObject, IActor
+    public sealed class EditorActor : EditorObject, IWall
     {
-        public Body Body { get; private set; }
-        [DataMember]
-        float _size = 1;
+        public IList<Vector2> Vertices { get; private set; }
 
         public EditorActor(EditorScene editorScene)
             : base(editorScene)
@@ -26,9 +24,7 @@ namespace Editor
 
         public override void Initialize()
         {
-            Body = ActorFactory.CreateBox(Scene.World, new Vector2(1,1) * _size);
-            Body.IsStatic = false;
-            BodyExt.SetUserData(Body, this);
+            Vertices = PolygonFactory.CreateRectangle();
         }
 
         public override IDeepClone ShallowClone()
@@ -38,46 +34,16 @@ namespace Editor
             return clone;
         }
 
-        public override Transform2 GetTransform()
-        {
-            Transform2 transform = BodyExt.GetTransform(Body);
-            transform.Size = _size;
-            return transform;
-        }
-
-        public override void SetTransform(Transform2 transform)
-        {
-            if (transform.Size != _size)
-            {
-                float scaleFactor = transform.Size / _size;
-                _size = transform.Size;
-                var vertices = ((PolygonShape)Body.FixtureList[0].Shape).Vertices;
-                for (int i = 0; i < vertices.Count; i++)
-                {
-                    vertices[i] = vertices[i] * scaleFactor;
-                }
-                /*for (int i = Body.FixtureList.Count - 1; i >= 0; i--)
-                {
-                    Body.DestroyFixture(Body.FixtureList[i]);
-                }
-                ActorFactory.CreateBox(Body, new Vector2(1, 1) * _size);*/
-                //Scene.World.ProcessChanges();
-            }
-            BodyExt.SetTransform(Body, transform);
-        }
-
-        public override void Remove()
-        {
-            Debug.Assert(Body != null);
-            Scene.World.RemoveBody(Body);
-            base.Remove();
-        }
-
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
             models.Add(GetActorModel());
             return models;
+        }
+
+        public IList<Vector2> GetWorldVertices()
+        {
+            return Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix());
         }
 
         public Model GetActorModel()

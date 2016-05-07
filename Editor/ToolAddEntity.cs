@@ -73,10 +73,5 @@ namespace Editor
             base.Disable();
             Controller.Level.Doodads.Remove(_mouseFollow);
         }
-
-        public override Tool Clone()
-        {
-            return new ToolAddEntity(Controller);
-        }
     }
 }

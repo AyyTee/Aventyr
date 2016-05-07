@@ -53,52 +53,42 @@ namespace Editor
 
                     }*/
                 }
-
-                if (e is IActor)
+                else if (e is EditorActor)
                 {
-                    Actor actor;
-                    if (e is EditorActor)
-                    {
-                        EditorActor editorActor = (EditorActor)e;
-                        Body bodyClone = editorActor.Body.DeepClone(scene.World);
-                        actor = new Actor(scene, bodyClone);
-                        Entity entity = new Entity(scene);
-                        Transform2.SetSize(entity, Transform2.GetSize(editorActor));
-                        entity.AddModel(editorActor.GetActorModel());
-                        entity.SetParent(actor);
-                        /*Actor actor = ActorFactory.CreateEntityBox(new Entity(scene), Transform2.GetPosition(editorActor));
-                        actor.SetTransform(editorActor.GetTransform());*/
-                    }
-                    else if (e is EditorWall)
-                    {
-                        EditorWall editorWall = (EditorWall)e;
-                        actor = ActorFactory.CreateEntityPolygon(scene, editorWall.GetTransform(), editorWall.Vertices);
-                        Entity entity = new Entity(scene);
-                        entity.AddModel(editorWall.GetWallModel());
-                        entity.ModelList[0].Wireframe = true;
-                        entity.SetParent(actor);
-                    }
-                    else
-                    {
-                        actor = null;
-                    }
-
-
-                    List<FixturePortal> portals = new List<FixturePortal>();
-                    foreach (EditorPortal p in e.Children)
-                    {
-                        FixtureEdgeCoord coord = p.GetFixtureEdgeCoord();
-                        Fixture fixture = coord.Fixture;
-                        int fixtureIndex = fixture.Body.FixtureList.FindIndex(item => item == fixture);
-                        FixtureEdgeCoord clone = new FixtureEdgeCoord(actor.Body.FixtureList[fixtureIndex], coord.EdgeIndex, coord.EdgeT);
-                        portals.Add(new FixturePortal(scene, clone));
-                    }
-                    if (portals.Count >= 2)
-                    {
-                        portals[0].Linked = portals[1];
-                        portals[1].Linked = portals[0];
-                    }
+                    EditorActor editorActor = (EditorActor)e;
+                    Body body = ActorFactory.CreatePolygon(scene.World, editorActor.GetTransform(), editorActor.Vertices);
+                    body.IsStatic = false;
+                    Actor actor = new Actor(scene, body);
+                    Entity entity = new Entity(scene);
+                    Transform2.SetSize(entity, Transform2.GetSize(editorActor));
+                    entity.AddModel(editorActor.GetActorModel());
+                    entity.SetParent(actor);
+                    /*Actor actor = ActorFactory.CreateEntityBox(new Entity(scene), Transform2.GetPosition(editorActor));
+                    actor.SetTransform(editorActor.GetTransform());*/
                 }
+                else if (e is EditorWall)
+                {
+                    EditorWall editorWall = (EditorWall)e;
+                    Actor actor = ActorFactory.CreateEntityPolygon(scene, editorWall.GetTransform(), editorWall.Vertices);
+                    Entity entity = new Entity(scene);
+                    //entity.AddModel(editorWall.GetWallModel());
+                    //entity.ModelList[0].Wireframe = true;
+                    entity.SetParent(actor);
+                }
+                /*List<FixturePortal> portals = new List<FixturePortal>();
+                foreach (EditorPortal p in e.Children)
+                {
+                    FixtureEdgeCoord coord = p.GetFixtureEdgeCoord();
+                    Fixture fixture = coord.Fixture;
+                    int fixtureIndex = fixture.Body.FixtureList.FindIndex(item => item == fixture);
+                    FixtureEdgeCoord clone = new FixtureEdgeCoord(actor.Body.FixtureList[fixtureIndex], coord.EdgeIndex, coord.EdgeT);
+                    portals.Add(new FixturePortal(scene, clone));
+                }
+                if (portals.Count >= 2)
+                {
+                    portals[0].Linked = portals[1];
+                    portals[1].Linked = portals[0];
+                }*/
             }
 
             Dictionary<IDeepClone, IDeepClone> dictionary = DeepClone.Clone(toClone);

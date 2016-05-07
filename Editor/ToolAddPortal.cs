@@ -23,7 +23,7 @@ namespace Editor
             : base(controller)
         {
         }
-
+        
         public override void Update()
         {
             base.Update();
@@ -38,11 +38,11 @@ namespace Editor
                 if (_input.MousePress(MouseButton.Left))
                 {
                     EditorPortal portal = new EditorPortal(Controller.Level);
-                    FixtureEdgeCoord coord = GetEdgeCoord();
-                    if (coord != null)
+                    var coord = GetEdgeCoord();
+                    if (coord.Item1 != null)
                     {
                         //portal.SetParent((EditorObject)coord.Actor);
-                        portal.SetTransform(coord);
+                        portal.SetTransform(coord.Item1, coord.Item2);
                     }
                     else
                     {
@@ -71,18 +71,19 @@ namespace Editor
             }
         }
 
-        private FixtureEdgeCoord GetEdgeCoord()
+        private Tuple<IWall, PolygonCoord> GetEdgeCoord()
         {
             float size = Transform2.GetSize(_mouseFollow);
-            return FixtureExt.GetNearestPortalableEdge(Controller.Level.World, Controller.GetMouseWorldPosition(), snapDistance, size);
+            IWall[] walls = Controller.Level.FindAll().OfType<IWall>().ToArray();
+            return PortalPlacer.GetNearestPortalableEdge(walls, Controller.GetMouseWorldPosition(), snapDistance, size);
         }
 
         private Transform2 GetPortalTransform()
         {
-            FixtureEdgeCoord coord = GetEdgeCoord();
-            if (coord != null)
+            var coord = GetEdgeCoord();
+            if (coord.Item1 != null)
             {
-                Transform2 transform = coord.GetTransform().Transform(coord.Actor.GetWorldTransform());
+                Transform2 transform = PolygonExt.GetTransform(coord.Item1.GetWorldVertices(), coord.Item2);
                 transform.Size = 1;
                 return transform;
             }
@@ -106,18 +107,13 @@ namespace Editor
             portalPrevious = null;
             unsnapAngle = 0;
             _mouseFollow = new Doodad(Controller.Level);
-            _mouseFollow.Models.AddRange(ModelFactory.CreatePortal());
+            _mouseFollow.Models.Add(ModelFactory.CreatePortal());
         }
 
         public override void Disable()
         {
             base.Disable();
             Controller.Level.Doodads.Remove(_mouseFollow);
-        }
-
-        public override Tool Clone()
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -118,7 +118,7 @@ namespace Game
             //return CreatePolygon(PolygonFactory.CreatePolygon(vertices), offset);
         }
 
-        public static Model CreatePolygon(Polygon polygon, Vector3 offset = new Vector3())
+        public static Model CreatePolygon(Poly2Tri.Polygon polygon, Vector3 offset = new Vector3())
         {
             Mesh mesh = new Mesh();
             AddPolygon(mesh, polygon, offset);
@@ -149,17 +149,17 @@ namespace Game
             return AddPolygon(model, PolygonFactory.CreatePolygon(paths).ToArray(), offset);
         }
 
-        public static int AddPolygon(Mesh mesh, Polygon[] polygon, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh mesh, IList<Poly2Tri.Polygon> polygon, Vector3 offset = new Vector3())
         {
             int indexFirst = mesh.Vertices.Count;
-            for (int i = 0; i < polygon.Length; i++)
+            for (int i = 0; i < polygon.Count; i++)
             {
                 int index = AddPolygon(mesh, polygon[i], new Vector3());
             }
             return indexFirst;
         }
 
-        public static int AddPolygon(Mesh mesh, Polygon polygon, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh mesh, Poly2Tri.Polygon polygon, Vector3 offset = new Vector3())
         {
             int indexFirst = mesh.Vertices.Count;
             if (polygon == null)
@@ -329,6 +329,13 @@ namespace Game
         /// <returns></returns>
         public static Model CreateArrow(Vector3 origin, Vector2 pointAt, float lineThickness, float arrowLength, float arrowThickness)
         {
+            Mesh mesh = new Mesh();
+            AddArrow(mesh, origin, pointAt, lineThickness, arrowLength, arrowThickness);
+            return new Model(mesh);
+        }
+
+        public static void AddArrow(Mesh mesh, Vector3 origin, Vector2 pointAt, float lineThickness, float arrowLength, float arrowThickness)
+        {
             float length = pointAt.Length;
             Vector2[] polygon;
             if (length <= arrowLength)
@@ -352,7 +359,7 @@ namespace Game
                 };
             }
             polygon = Vector2Ext.Transform(polygon, Matrix4.CreateRotationZ((float)-(MathExt.AngleVector(pointAt) + Math.PI / 2)));
-            return CreatePolygon(polygon, origin);
+            AddPolygon(mesh, polygon, origin);
         }
     }
 }
