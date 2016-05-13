@@ -41,29 +41,32 @@ namespace Editor
                     {
                         portal.Linked = _portalPrevious;
                         _portalPrevious.Linked = portal;
-                        portal.IsMirrored = true;
-                        _portalPrevious.IsMirrored = false;
+
                         Transform2 t = portal.GetTransform();
                         if (_input.KeyDown(InputExt.KeyBoth.Control))
                         {
                             /*portal.IsMirrored = true;
                             _portalPrevious.IsMirrored = false;*/
-                            t.Size *= -1;
+                            /*t.Size *= -1;
                             t.IsMirrored = true;
-                            portal.SetTransform(t);
-                            t = _portalPrevious.GetTransform();
-                            t.IsMirrored = false;
-                            _portalPrevious.SetTransform(t);
+                            portal.SetTransform(t);*/
+                            portal._transform.IsMirrored = true;
+                            _portalPrevious._transform.IsMirrored = false;
+                            //t = _portalPrevious.GetTransform();
+                            //t.IsMirrored = false;
+                            //_portalPrevious.SetTransform(t);
                         }
                         else
                         {
                             /*portal.IsMirrored = false;
                             _portalPrevious.IsMirrored = false;*/
-                            t.IsMirrored = false;
+                            /*t.IsMirrored = false;
                             portal.SetTransform(t);
                             t = _portalPrevious.GetTransform();
                             t.IsMirrored = false;
-                            _portalPrevious.SetTransform(t);
+                            _portalPrevious.SetTransform(t);*/
+                            portal._transform.IsMirrored = false;
+                            _portalPrevious._transform.IsMirrored = false;
                         }
                         
                         

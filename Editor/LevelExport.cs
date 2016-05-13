@@ -35,63 +35,50 @@ namespace Editor
             HashSet<IDeepClone> toClone = new HashSet<IDeepClone>();
             //ICamera2 camera = level.ActiveCamera;
             //toClone.Add(level.ActiveCamera);
-            foreach (EditorObject e in level.EditorObjects)
-            {
-                if (e is EditorEntity)
-                {
-                    EditorEntity editorEntity = (EditorEntity)e;
-                    Entity entity = new Entity(scene);
-                    entity.AddModelRange(editorEntity.Models);
-                    entity.SetTransform(editorEntity.GetTransform());
-                    //toClone.Add(editorEntity.Entity);
-                }
-                else if (e is EditorPortal)
-                {
-                    EditorPortal editorPortal = (EditorPortal)e;
-                    /*if (editorPortal.Parent is EditorWall)
-                    {
+            Dictionary<EditorObject, SceneNode> dictionary = new Dictionary<EditorObject, SceneNode>();
 
-                    }*/
-                }
-                else if (e is EditorActor)
+            List<EditorObject> editorObjects = level.EditorObjects;
+            foreach (EditorObject e in editorObjects)
+            {
+                if (e is EditorPortal)
                 {
-                    EditorActor editorActor = (EditorActor)e;
-                    Body body = ActorFactory.CreatePolygon(scene.World, editorActor.GetTransform(), editorActor.Vertices);
-                    body.IsStatic = false;
-                    Actor actor = new Actor(scene, body);
-                    Entity entity = new Entity(scene);
-                    Transform2.SetSize(entity, Transform2.GetSize(editorActor));
-                    entity.AddModel(editorActor.GetActorModel());
-                    entity.SetParent(actor);
-                    /*Actor actor = ActorFactory.CreateEntityBox(new Entity(scene), Transform2.GetPosition(editorActor));
-                    actor.SetTransform(editorActor.GetTransform());*/
+                    EditorPortal cast = (EditorPortal)e;
+                    if (cast.OnEdge)
+                    {
+                        dictionary.Add(cast, new FixturePortal(scene));
+                    }
+                    else
+                    {
+                        dictionary.Add(cast, new FloatPortal(scene));
+                    }
+                }
+                else if (e is EditorEntity)
+                {
+                    EditorEntity cast = (EditorEntity)e;
+                    dictionary.Add(cast, new Entity(scene));
                 }
                 else if (e is EditorWall)
                 {
-                    EditorWall editorWall = (EditorWall)e;
-                    Actor actor = ActorFactory.CreateEntityPolygon(scene, editorWall.GetTransform(), editorWall.Vertices);
-                    Entity entity = new Entity(scene);
-                    //entity.AddModel(editorWall.GetWallModel());
-                    //entity.ModelList[0].Wireframe = true;
-                    entity.SetParent(actor);
+                    EditorWall cast = (EditorWall)e;
+                    Body body = ActorFactory.CreatePolygon(scene.World, cast.GetTransform(), cast.Vertices);
+                    dictionary.Add(cast, new Actor(scene, body));
                 }
-                /*List<FixturePortal> portals = new List<FixturePortal>();
-                foreach (EditorPortal p in e.Children)
-                {
-                    FixtureEdgeCoord coord = p.GetFixtureEdgeCoord();
-                    Fixture fixture = coord.Fixture;
-                    int fixtureIndex = fixture.Body.FixtureList.FindIndex(item => item == fixture);
-                    FixtureEdgeCoord clone = new FixtureEdgeCoord(actor.Body.FixtureList[fixtureIndex], coord.EdgeIndex, coord.EdgeT);
-                    portals.Add(new FixturePortal(scene, clone));
-                }
-                if (portals.Count >= 2)
-                {
-                    portals[0].Linked = portals[1];
-                    portals[1].Linked = portals[0];
-                }*/
             }
 
-            Dictionary<IDeepClone, IDeepClone> dictionary = DeepClone.Clone(toClone);
+            foreach (EditorObject e in editorObjects)
+            {
+                SceneNode parent = dictionary[e.Parent];
+                SceneNode clone = dictionary[e];
+                clone.SetParent(parent);
+                if (clone is FixturePortal)
+                {
+                    FixturePortal cast = (FixturePortal)clone;
+                    
+                    //cast.SetFixtureParent(((EditorPortal)e).PolygonTransform);
+                }
+            }
+
+            //Dictionary<IDeepClone, IDeepClone> dictionary = DeepClone.Clone(toClone);
             /*Cast all the cloned instances to SceneNode.  
             There should not be any types other than SceneNode or its derived types.*/
             List<SceneNode> cloned = dictionary.Values.Cast<SceneNode>().ToList();

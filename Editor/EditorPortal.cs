@@ -16,12 +16,8 @@ namespace Editor
         [DataMember]
         public IPortal Linked { get; set; }
         public bool OneSided { get { return false; } }
-        [DataMember]
-        public bool IsMirrored { get; set; }
-        public bool IsFixed { get { return _polygonTransform != null; } }
+        public bool IsMirrored { get { return GetTransform().IsMirrored; } }
         public override bool IgnoreScale { get { return true; } }
-        [DataMember]
-        IPolygonCoord _polygonTransform;
         Model _portalModel;
 
         public EditorPortal(EditorScene editorScene)
@@ -48,9 +44,13 @@ namespace Editor
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
-            if (IsFixed)
+            if (OnEdge)
             {
                 _portalModel.SetColor(new Vector3(0, 0.8f, 0.5f));
+            }
+            else
+            {
+                _portalModel.SetColor(ModelFactory.ColorPortalDefault);
             }
             models.Add(_portalModel);
             return models;
@@ -63,35 +63,6 @@ namespace Editor
             {
                 ((EditorPortal)Linked).Linked = null;
             }
-        }
-
-        public override Transform2 GetTransform()
-        {
-            return _polygonTransform == null ? 
-                base.GetTransform() : PolygonExt.GetTransform(((IWall)Parent).Vertices, _polygonTransform);
-        }
-
-        public override void SetTransform(Transform2 transform)
-        {
-            base.SetTransform(transform);
-            _polygonTransform = null;
-        }
-
-        /// <summary>
-        /// Set transform as FixtureEdgeCoord.  This EditorPortal's parent will become the EditorObject 
-        /// associated with the FixtureEdgeCoord's fixture.
-        /// </summary>
-        /// <param name="transform"></param>
-        public void SetTransform(IWall wall, IPolygonCoord transform)
-        {
-            _polygonTransform = transform;
-            SetParent((EditorObject)wall);
-            //SetParent((EditorObject)FixtureExt.GetUserData(transform.Fixture).Entity);
-        }
-
-        public IPolygonCoord GetPolygonCoord()
-        {
-            return _polygonTransform.ShallowClone();
         }
     }
 }

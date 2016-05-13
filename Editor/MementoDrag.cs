@@ -7,24 +7,46 @@ using System.Threading.Tasks;
 
 namespace Editor
 {
-    public struct MementoDrag
+    public class MementoDrag
     {
-        public readonly ITransform2 Transformable;
+        public readonly EditorObject Transformable;
         readonly Transform2 _transform;
+        readonly IWall _parent;
+        readonly IPolygonCoord _polygonCoord;
 
-        public MementoDrag(ITransform2 transformable)
+        public MementoDrag(EditorObject transformable)
         {
             Transformable = transformable;
-            _transform = Transformable.GetTransform();
+            _polygonCoord = transformable.GetPolygonCoord();
+            _transform = null;
+            if (_polygonCoord != null)
+            {
+                _parent = (IWall)transformable.Parent;
+            }
+            else
+            {
+                _transform = transformable.GetTransform();
+            }
         }
 
         public void ResetTransform()
         {
-            Transformable.SetTransform(_transform);
+            if (_polygonCoord == null)
+            {
+                Transformable.SetTransform(_transform);
+            }
+            else
+            {
+                Transformable.SetTransform(_parent, _polygonCoord);
+            }
         }
 
         public Transform2 GetTransform()
         {
+            if (_transform == null)
+            {
+                return PolygonExt.GetTransform(_parent.Vertices, _polygonCoord);
+            }
             return _transform.ShallowClone();
         }
     }

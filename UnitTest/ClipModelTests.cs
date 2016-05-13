@@ -25,24 +25,46 @@ namespace UnitTest
         }
 
         /// <summary>
-        /// Check that the correct number of ClipModels are created.
+        /// Portals attached to a square should have no clipping regardless of its orientation and position.
         /// </summary>
         [TestMethod]
-        public void ClipCount0()
+        public void FixturePortal()
         {
-            var testScene = CreateTestScene();
+            EditorPortal portal0, portal1;
+            EditorScene scene = new EditorScene();
+            EditorWall polygon = new EditorWall(scene, PolygonFactory.CreateRectangle(2, 2));
 
-            List<ClipModel> clipmodels = ClipModelCompute.GetClipModels(testScene.Item2, testScene.Item1.GetPortalList(), 0);
-            Assert.IsTrue(clipmodels.Count == 0);
+            portal0 = new EditorPortal(scene);
+            portal1 = new EditorPortal(scene);
+            portal0.SetTransform(polygon, new PolygonCoord(0, 0.5f));
+            portal1.SetTransform(polygon, new PolygonCoord(1, 0.5f));
+            portal0.Linked = portal1;
+            portal1.Linked = portal0;
+
+            for (float i = 0; i < MathExt.TAU; i += 0.01f)
+            {
+                polygon.SetTransform(new Transform2(new Vector2(100000, -123), 1, i));
+                List<ClipModel> clipmodels = ClipModelCompute.GetClipModels(polygon, scene.GetPortalList(), 2);
+                Assert.IsTrue(clipmodels.Count == polygon.GetModels().Count);
+            }
         }
 
         [TestMethod]
-        public void ClipCount1()
+        public void FloatPortal()
         {
-            var testScene = CreateTestScene();
+            EditorPortal portal0, portal1;
+            EditorScene scene = new EditorScene();
+            EditorWall polygon = new EditorWall(scene, PolygonFactory.CreateRectangle(2, 2));
 
-            List<ClipModel> clipmodels = ClipModelCompute.GetClipModels(testScene.Item2, testScene.Item1.GetPortalList(), 1);
-            Assert.IsTrue(clipmodels.Count == 0);
+            portal0 = new EditorPortal(scene);
+            portal1 = new EditorPortal(scene);
+            portal0.SetTransform(new Transform2(new Vector2(-0.8f, 0)));
+            portal1.SetTransform(new Transform2(new Vector2(0.8f, 0)));
+            portal0.Linked = portal1;
+            portal1.Linked = portal0;
+
+            List<ClipModel> clipmodels = ClipModelCompute.GetClipModels(polygon, scene.GetPortalList(), 2);
+            Assert.IsTrue(clipmodels.Count == polygon.GetModels().Count + 2);
         }
     }
 }

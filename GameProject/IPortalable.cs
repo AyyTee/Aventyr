@@ -9,7 +9,7 @@ namespace Game
     /// <summary>
     /// An object that can travel through portals.
     /// </summary>
-    public interface IPortalable : ITransform2
+    public interface IPortalable : ITransformable2
     {
         /// <summary>Returns a copy of the local velocity.</summary>
         Transform2 GetVelocity();

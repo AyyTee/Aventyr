@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Editor
 {
-    public class Doodad : IRenderable, ITransform2
+    public class Doodad : IRenderable, ITransformable2
     {
         public bool DrawOverPortals { get { return false; } }
         public bool IsPortalable { get; set; }

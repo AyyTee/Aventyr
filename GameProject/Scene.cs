@@ -22,7 +22,7 @@ namespace Game
         PhysContactListener _contactListener;
 
         public ICamera2 ActiveCamera { get; private set; }
-        public List<SceneNode> SceneNodeList { get { return Tree<SceneNode>.ToList(Root); } }
+        public List<SceneNode> SceneNodeList { get { return Tree<SceneNode>.GetDescendents(Root); } }
         public List<Entity> EntityList { get { return Tree<SceneNode>.FindByType<Entity>(Root); } }
         /// <summary>Root node to the scene graph.</summary>
         [DataMember]

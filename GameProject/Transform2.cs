@@ -89,8 +89,8 @@ namespace Game
         {
         }
 
-        public Transform2(Xna.Vector2 position, float rotation)
-            : this(Vector2Ext.ConvertTo(position), 1, rotation)
+        public Transform2(Xna.Vector2 position, float scale, float rotation)
+            : this(Vector2Ext.ConvertTo(position), scale, rotation)
         {
         }
 
@@ -155,7 +155,32 @@ namespace Game
             output.Size *= transform.Size;
             output.IsMirrored = output.IsMirrored != transform.IsMirrored;
             output.Position = Vector2Ext.Transform(output.Position, transform.GetMatrix());
+            Debug.Assert(Matrix4Ext.Compare(output.GetMatrix(), GetMatrix() * transform.GetMatrix()));
             return output;
+        }
+
+        /// <summary>
+        /// Returns an inverted Transform2 instance.
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>The inversion has the following property:
+        /// Inverted().GetMatrix() equals GetMatrix().Inverted() when ignoring rounding errors.</remarks>
+        public Transform2 Inverted()
+        {
+            Transform2 invert = new Transform2();
+            if ((Scale.Y < 0) == (Scale.X < 0))
+            {
+                invert.Rotation = -Rotation;
+            }
+            else
+            {
+                invert.Rotation = Rotation;
+            }
+            invert.SetScale(new Vector2(1 / Scale.X, 1 / Scale.Y));
+            Matrix4 mat = Matrix4.CreateRotationZ(-Rotation) * Matrix4.CreateScale(new Vector3(invert.Scale));
+            invert.Position = Vector2Ext.Transform(-Position, mat);
+            Debug.Assert(Matrix4Ext.Compare(GetMatrix().Inverted(), invert.GetMatrix()));
+            return invert;
         }
 
         public Transform2 Add(Transform2 transform)
@@ -234,57 +259,57 @@ namespace Game
             return false;
         }
 
-        public static void SetPosition(ITransform2 transformable, Vector2 position)
+        public static void SetPosition(ITransformable2 transformable, Vector2 position)
         {
             Transform2 transform = transformable.GetTransform();
             transform.Position = position;
             transformable.SetTransform(transform);
         }
 
-        public static void SetRotation(ITransform2 transformable, float rotation)
+        public static void SetRotation(ITransformable2 transformable, float rotation)
         {
             Transform2 transform = transformable.GetTransform();
             transform.Rotation = rotation;
             transformable.SetTransform(transform);
         }
 
-        public static void SetScale(ITransform2 transformable, Vector2 scale)
+        public static void SetScale(ITransformable2 transformable, Vector2 scale)
         {
             Transform2 transform = transformable.GetTransform();
             transform.SetScale(scale);
             transformable.SetTransform(transform);
         }
 
-        public static void SetSize(ITransform2 transformable, float size)
+        public static void SetSize(ITransformable2 transformable, float size)
         {
             Transform2 transform = transformable.GetTransform();
             transform.Size = size;
             transformable.SetTransform(transform);
         }
 
-        public static void SetScale(ITransform2 transformable, float size, bool mirrorX, bool mirrorY)
+        public static void SetScale(ITransformable2 transformable, float size, bool mirrorX, bool mirrorY)
         {
             Transform2 transform = transformable.GetTransform();
             transform.SetScale(size, mirrorX, mirrorY);
             transformable.SetTransform(transform);
         }
 
-        public static Vector2 GetPosition(ITransform2 transformable)
+        public static Vector2 GetPosition(ITransformable2 transformable)
         {
             return transformable.GetTransform().Position;
         }
 
-        public static float GetRotation(ITransform2 transformable)
+        public static float GetRotation(ITransformable2 transformable)
         {
             return transformable.GetTransform().Rotation;
         }
 
-        public static Vector2 GetScale(ITransform2 transformable)
+        public static Vector2 GetScale(ITransformable2 transformable)
         {
             return transformable.GetTransform().Scale;
         }
 
-        public static float GetSize(ITransform2 transformable)
+        public static float GetSize(ITransformable2 transformable)
         {
             return transformable.GetTransform().Size;
         }

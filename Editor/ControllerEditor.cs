@@ -295,7 +295,7 @@ namespace Editor
             base.OnResize(e, canvasSize);
             Hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             Level.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            Transform2.SetSize((ITransform2)Hud.ActiveCamera, canvasSize.Height);
+            Transform2.SetSize((ITransformable2)Hud.ActiveCamera, canvasSize.Height);
         }
     }
 }

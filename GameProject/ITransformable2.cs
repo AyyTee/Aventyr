@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface ITransform2
+    public interface ITransformable2
     {
         /// <summary>Returns a copy of the local transform.</summary>
         Transform2 GetTransform();

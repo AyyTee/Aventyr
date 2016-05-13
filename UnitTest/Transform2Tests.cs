@@ -6,7 +6,7 @@ using OpenTK;
 namespace UnitTest
 {
     [TestClass]
-    public class Transform2DTests
+    public class Transform2Tests
     {
         #region GetNormal test
         [TestMethod]
@@ -144,97 +144,105 @@ namespace UnitTest
             Assert.IsFalse(transform0.Compare(transform1));
         }
         #endregion
-        #region ParentLoop tests
-        /*[TestMethod]
-        public void ParentLoopTest0()
+        #region Inverted tests
+        [TestMethod]
+        public void InvertedTest0()
         {
-            Transform2D transform0 = new Transform2D();
-            try
-            { 
-                transform0.Parent = transform0;
-                Assert.Fail();
-            }
-            catch 
-            { 
-            }
+            Transform2 t = new Transform2();
+            Transform2 tInverted = t.Inverted();
+            Assert.IsTrue(t.GetMatrix() == tInverted.GetMatrix().Inverted());
         }
         [TestMethod]
-        public void ParentLoopTest1()
+        public void InvertedTest1()
         {
-            Transform2D transform0 = new Transform2D();
-            Transform2D transform1 = new Transform2D();
-            transform0.Parent = transform1;
-            try
-            {
-                transform1.Parent = transform0;
-                Assert.Fail();
-            }
-            catch
-            {
-            }
+            Transform2 t = new Transform2();
+            t.SetScale(new Vector2(5, -5));
+            Transform2 tInverted = t.Inverted();
+            Assert.IsTrue(t.GetMatrix() == tInverted.GetMatrix().Inverted());
         }
         [TestMethod]
-        public void ParentLoopTest2()
+        public void InvertedTest2()
         {
-            Transform2D transform0 = new Transform2D();
-            Transform2D transform1 = new Transform2D();
-            Transform2D transform2 = new Transform2D();
-            transform0.Parent = transform1;
-            transform1.Parent = transform2;
-            try
-            {
-                transform2.Parent = transform0;
-                Assert.Fail();
-            }
-            catch
-            {
-            }
+            Transform2 t = new Transform2();
+            t.Rotation = 123;
+            Transform2 tInverted = t.Inverted();
+            Assert.IsTrue(Matrix4Ext.Compare(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
         }
         [TestMethod]
-        public void ParentLoopTest3()
+        public void InvertedTest3()
         {
-            Transform2D transform0 = new Transform2D();
-            Transform2D transform1 = new Transform2D();
-            Transform2D transform2 = new Transform2D();
-            transform0.Parent = transform1;
-            transform1.Parent = transform2;
-            transform0.Parent = transform2;
+            Transform2 t = new Transform2();
+            t.SetScale(new Vector2(-5, -5));
+            t.Rotation = (float)Math.PI/5;
+            Transform2 tInverted = t.Inverted();
+            Assert.IsTrue(Matrix4Ext.Compare(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
         }
         [TestMethod]
-        public void ParentLoopTest4()
+        public void InvertedTest4()
         {
-            Transform2D transform0 = new Transform2D();
-            Transform2D transform1 = new Transform2D();
-            Transform2D transform2 = new Transform2D();
-            Transform2D transform3 = new Transform2D();
-            Transform2D transform4 = new Transform2D();
-            transform0.Parent = transform1;
-            transform0.Parent = transform2;
-            transform1.Parent = transform2;
-            transform3.Parent = transform2;
-            transform4.Parent = transform3;
+            Transform2 t = new Transform2();
+            t.SetScale(new Vector2(5, -5));
+            t.Rotation = (float)Math.PI / 3;
+            Transform2 tInverted = t.Inverted();
+            Assert.IsTrue(Matrix4Ext.Compare(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
         }
         [TestMethod]
-        public void ParentLoopTest5()
+        public void InvertedTest5()
         {
-            Transform2D transform0 = new Transform2D();
-            Transform2D transform1 = new Transform2D();
-            Transform2D transform2 = new Transform2D();
-            Transform2D transform3 = new Transform2D();
-            Transform2D transform4 = new Transform2D();
-            transform0.Parent = transform1;
-            transform1.Parent = transform2;
-            transform2.Parent = transform3;
-            transform3.Parent = transform4;
-            try
-            {
-                transform4.Parent = transform1;
-                Assert.Fail();
-            }
-            catch
-            {
-            }
-        }*/
+            Transform2 t = new Transform2();
+            t.SetScale(new Vector2(-5, 5));
+            t.Rotation = (float)(Math.PI / 3.4);
+            Transform2 tInverted = t.Inverted();
+            Assert.IsTrue(Matrix4Ext.Compare(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+        }
+        [TestMethod]
+        public void InvertedTest6()
+        {
+            Transform2 t = new Transform2();
+            t.Position = new Vector2(2, 1);
+            t.SetScale(new Vector2(5, -5));
+            //t.Rotation = (float)(Math.PI / 3.4);
+            Transform2 tInverted = t.Inverted();
+            Assert.IsTrue(Matrix4Ext.Compare(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+        }
+        [TestMethod]
+        public void InvertedTest7()
+        {
+            Transform2 t = new Transform2();
+            t.Position = new Vector2(2, 1);
+            t.SetScale(new Vector2(-5, -5));
+            t.Rotation = (float)(Math.PI / 3.4);
+            Transform2 tInverted = t.Inverted();
+            Assert.IsTrue(Matrix4Ext.Compare(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+        }
+        [TestMethod]
+        public void InvertedTest8()
+        {
+            Transform2 t = new Transform2();
+            t.Position = new Vector2(2, 1);
+            t.SetScale(new Vector2(-5, 5));
+            t.Rotation = (float)(Math.PI / 3.4);
+            Transform2 tInverted = t.Inverted();
+            Assert.IsTrue(Matrix4Ext.Compare(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+        }
+        #endregion
+        #region Transform tests
+        [TestMethod]
+        public void TransformTest0()
+        {
+            Transform2 t0 = new Transform2();
+            Transform2 t1 = new Transform2(new Vector2(1,2), 3, 123);
+            Transform2 result = t0.Transform(t1);
+            Assert.IsTrue(Matrix4Ext.Compare(result.GetMatrix(), t1.GetMatrix() * t0.GetMatrix()));
+        }
+        [TestMethod]
+        public void TransformTest1()
+        {
+            Transform2 t0 = new Transform2(new Vector2(1,1), -2, 3.21f);
+            Transform2 t1 = new Transform2(new Vector2(-100, 2), 3, 123);
+            Transform2 result = t0.Transform(t1);
+            Assert.IsTrue(Matrix4Ext.Compare(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+        }
         #endregion
     }
 }

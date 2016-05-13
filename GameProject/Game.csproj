@@ -158,7 +158,7 @@
     <Compile Include="IScene.cs" />
     <Compile Include="IShallowClone.cs" />
     <Compile Include="ITexture.cs" />
-    <Compile Include="ITransform2.cs" />
+    <Compile Include="ITransformable2.cs" />
     <Compile Include="ITreeNode.cs" />
     <Compile Include="IWall.cs" />
     <Compile Include="Mesh.cs" />

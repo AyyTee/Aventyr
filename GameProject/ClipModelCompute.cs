@@ -40,7 +40,6 @@ namespace Game
             {
                 return clipModels;
             }
-            List<float> cutLines = new List<float>();
             List<IPortal> collisions = new List<IPortal>();
             foreach (IPortal portal in portalList)
             {

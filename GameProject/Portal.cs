@@ -114,8 +114,8 @@ namespace Game
 
         public static void Enter(IPortal portal, Body body)
         {
-            Transform2 transform = new Transform2(body.Position, body.Rotation);
-            Transform2 velocity = new Transform2(body.LinearVelocity, body.AngularVelocity);
+            Transform2 transform = new Transform2(body.Position, 1, body.Rotation);
+            Transform2 velocity = new Transform2(body.LinearVelocity, 1, body.AngularVelocity);
             Enter(portal, transform, velocity);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             body.Rotation = transform.Rotation;

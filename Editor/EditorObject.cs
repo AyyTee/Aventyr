@@ -15,19 +15,20 @@ namespace Editor
     {
         [DataMember]
         EditorScene _scene;
-        public EditorScene Scene 
+        public EditorScene Scene
         {
             get { return _scene == null ? Parent.Scene : _scene; }
             private set { _scene = value; }
         }
         [DataMember]
-        public bool Visible { get; private set; }
+        public bool Visible { get; set; }
         [DataMember]
         public bool DrawOverPortals { get; set; }
         [DataMember]
         public bool IsPortalable { get; set; }
         [DataMember]
         public bool IsSelected { get; private set; }
+        public bool OnEdge { get { return PolygonTransform != null; } }
         [DataMember]
         public string Name { get; set; }
         public virtual bool IgnoreScale { get { return false; } }
@@ -37,7 +38,9 @@ namespace Editor
         [DataMember]
         public EditorObject Parent { get; private set; }
         [DataMember]
-        Transform2 _transform = new Transform2();
+        public Transform2 _transform = new Transform2();
+        [DataMember]
+        public IPolygonCoord PolygonTransform;
 
         public EditorObject(EditorScene editorScene)
         {
@@ -138,11 +141,26 @@ namespace Editor
 
         public virtual void SetTransform(Transform2 transform)
         {
+            if (PolygonTransform != null)
+            {
+                PolygonTransform = null;
+                SetParent(Scene);
+            }
             _transform = transform.ShallowClone();
+            
         }
 
         public virtual Transform2 GetTransform()
         {
+            /*if (_transform == null)
+            {
+                return PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform);
+            }
+            return _transform.ShallowClone();*/
+            if (PolygonTransform != null)
+            {
+                return _transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
+            }
             return _transform.ShallowClone();
         }
 
@@ -198,9 +216,21 @@ namespace Editor
             IsSelected = isSelected;
         }
 
-        public virtual void SetVisible(bool isVisible)
+        /// <summary>
+        /// Set transform as FixtureEdgeCoord.  This EditorPortal's parent will become the EditorObject 
+        /// associated with the FixtureEdgeCoord's fixture.
+        /// </summary>
+        /// <param name="transform"></param>
+        public void SetTransform(IWall wall, IPolygonCoord transform)
         {
-            Visible = isVisible;
+            _transform = new Transform2();
+            PolygonTransform = transform;
+            SetParent((EditorObject)wall);
+        }
+
+        public IPolygonCoord GetPolygonCoord()
+        {
+            return OnEdge ? PolygonTransform.ShallowClone() : null;
         }
     }
 }

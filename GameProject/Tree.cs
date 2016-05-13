@@ -58,9 +58,24 @@ namespace Game
             return true;
         }
 
-        public static List<T> ToList(T root)
+        public static List<T> GetDescendents(T root, bool includeRoot = true)
         {
-            return FindByType<T>(root);
+            List<T> list = FindByType<T>(root);
+            if (!includeRoot)
+            {
+                list.Remove(root);
+            }
+            return list;
+        }
+
+        public static List<T> GetDescendents(IList<T> roots, bool includeRoots = true)
+        {
+            List<T> list = new List<T>();
+            foreach (T root in roots)
+            {
+                list.AddRange(GetDescendents(root));
+            }
+            return list;
         }
 
         public static List<S> FindByType<S>(T root) where S : class, T
@@ -73,17 +88,22 @@ namespace Game
             }
             foreach (T p in root.Children)
             {
-                list.AddRange(Tree<T>.FindByType<S>(p));
+                list.AddRange(FindByType<S>(p));
             }
             return list;
         }
 
         /// <summary>
-        /// Check if two trees are isomorphic (same shape and nodes equal eachother).
+        /// Given a set of nodes, return a set containing only nodes that are not descendents of other nodes within the set.
         /// </summary>
-        public static bool Isomorphic(T Root0, T Root1)
+        public static HashSet<T> FindRoots(IList<T> nodes)
         {
-            throw new NotImplementedException();
+            HashSet<T> parents = new HashSet<T>(nodes);
+            foreach (T node in nodes)
+            {
+                parents.ExceptWith(GetDescendents(node, false));
+            }
+            return parents;
         }
     }
 }

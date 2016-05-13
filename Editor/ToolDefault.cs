@@ -13,15 +13,26 @@ namespace Editor
 {
     public class ToolDefault : Tool
     {
+        private struct Drag
+        {
+            public Doodad Doodad;
+            public EditorObject EditorObject;
+            public Drag(Doodad doodad, EditorObject editorObject)
+            {
+                Doodad = doodad;
+                EditorObject = editorObject;
+            }
+        }
+
+
         Doodad _translator;
         Model translationModel;
         const float translationScaleOffset = 0.1f;
         DragState _dragState;
         Mode _mode;
-        EditorObject dragObject { get { return Controller.selection.First; } }
         bool dragToggled = false;
         Vector2 mousePosPrev;
-        List<MementoDrag> _transformPrev = new List<MementoDrag>();
+        List<MementoDrag> dragObjects = new List<MementoDrag>();
         Transform2 _totalDrag;
         double _rotateIncrementSize = Math.PI / 8;
         public enum DragState
@@ -116,7 +127,6 @@ namespace Editor
             }
             else
             {
-                Debug.Assert(dragObject != null);
                 if (_input.MousePress(MouseButton.Right))
                 {
                     DragEnd(true);
@@ -173,15 +183,16 @@ namespace Editor
             }
         }
 
-        private void DragSet(Mode mode, DragState state)
+        private void DragSet(IList<EditorObject> selected, Mode mode, DragState state)
         {
             _dragState = state;
             _mode = mode;
             _totalDrag = new Transform2();
-            _transformPrev.Clear();
-            foreach (EditorObject e in Controller.selection.GetAll())
+            dragObjects.Clear();
+
+            foreach (EditorObject e in Tree<EditorObject>.FindRoots(selected))
             {
-                _transformPrev.Add(new MementoDrag(e));
+                dragObjects.Add(new MementoDrag(e));
             }
             Active = true;
         }
@@ -191,10 +202,10 @@ namespace Editor
             return _dragState != DragState.Neither;
         }
 
-        private void DragBegin(List<EditorObject> dragObjects, bool toggleMode, Mode mode)
+        private void DragBegin(List<EditorObject> selected, bool toggleMode, Mode mode)
         {
-            Debug.Assert(dragObjects != null);
-            if (dragObjects.Count <= 0)
+            Debug.Assert(selected != null);
+            if (selected.Count <= 0)
             {
                 return;
             }
@@ -204,7 +215,7 @@ namespace Editor
             mousePosPrev = mousePos;
             if (toggleMode)
             {
-                DragSet(mode, DragState.Both);
+                DragSet(selected, mode, DragState.Both);
                 return;
             }
             Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Level.ActiveCamera.GetWorldTransform().Size;
@@ -213,15 +224,15 @@ namespace Editor
                 float margin = 0.2f * translationScaleOffset;
                 if (Math.Abs(mouseDiff.X) < margin && Math.Abs(mouseDiff.Y) < margin)
                 {
-                    DragSet(mode, DragState.Both);
+                    DragSet(selected, mode, DragState.Both);
                 }
                 else if (Math.Abs(mouseDiff.X) < margin && mouseDiff.Y > 0)
                 {
-                    DragSet(mode, DragState.Vertical);
+                    DragSet(selected, mode, DragState.Vertical);
                 }
                 else if (Math.Abs(mouseDiff.Y) < margin && mouseDiff.X > 0)
                 {
-                    DragSet(mode, DragState.Horizontal);
+                    DragSet(selected, mode, DragState.Horizontal);
                 }
             }
         }
@@ -230,15 +241,16 @@ namespace Editor
         {
             if (reset)
             {
-                foreach (MementoDrag t in _transformPrev)
+                foreach (MementoDrag d in dragObjects)
                 {
-                    t.ResetTransform();
+                    d.ResetTransform();
                 }
             }
             else
             {
-                Controller.StateList.Add(new CommandDrag(_transformPrev, _totalDrag), false);
+                Controller.StateList.Add(new CommandDrag(dragObjects, _totalDrag), true);
             }
+
             _dragState = DragState.Neither;
             dragToggled = false;
             Active = false;
@@ -246,21 +258,22 @@ namespace Editor
 
         private void DragUpdate()
         {
+            Transform2 _dragAmount = new Transform2();
             Vector2 mousePos = Controller.GetMouseWorldPosition();
             if (_mode == Mode.Position)
             {
                 switch (_dragState)
                 {
                     case DragState.Both:
-                        _totalDrag.Position += mousePos - mousePosPrev;
+                        _dragAmount.Position += mousePos - mousePosPrev;
                         break;
 
                     case DragState.Horizontal:
-                        _totalDrag.Position += new Vector2(mousePos.X - mousePosPrev.X, 0);
+                        _dragAmount.Position += new Vector2(mousePos.X - mousePosPrev.X, 0);
                         break;
 
                     case DragState.Vertical:
-                        _totalDrag.Position += new Vector2(0, mousePos.Y - mousePosPrev.Y);
+                        _dragAmount.Position += new Vector2(0, mousePos.Y - mousePosPrev.Y);
                         break;
                 }
                 mousePosPrev = mousePos;
@@ -274,12 +287,12 @@ namespace Editor
                 if (_input.KeyDown(InputExt.KeyBoth.Control))
                 {
                     angle = MathExt.Round(angle, _rotateIncrementSize);
-                    _totalDrag.Rotation = (float)MathExt.Round(_totalDrag.Rotation + MathExt.AngleDiff(angle, anglePrev), _rotateIncrementSize);
+                    _dragAmount.Rotation = (float)MathExt.Round(_dragAmount.Rotation + MathExt.AngleDiff(angle, anglePrev), _rotateIncrementSize);
                     mousePosPrev = new Vector2((float)Math.Cos(-angle), (float)Math.Sin(-angle)) + _translator.GetTransform().Position;
                 }
                 else
                 {
-                    _totalDrag.Rotation += (float)MathExt.AngleDiff(angle, anglePrev);
+                    _dragAmount.Rotation += (float)MathExt.AngleDiff(angle, anglePrev);
                     mousePosPrev = mousePos;
                 }
             }
@@ -293,13 +306,18 @@ namespace Editor
                 float length = Math.Max(v.Length, size * minDist);
                 if (!float.IsPositiveInfinity(length / lengthPrev))
                 {
-                    _totalDrag.Size = length / lengthPrev;
+                    _dragAmount.Size = length / (lengthPrev * _totalDrag.Size);
                 }
             }
-            foreach (MementoDrag e in _transformPrev)
+            _totalDrag = _totalDrag.Add(_dragAmount);
+            //_totalDrag.Size = _dragAmount.Size;
+
+            foreach (MementoDrag e in dragObjects)
             {
                 Transform2 t = e.Transformable.GetTransform();
-                e.Transformable.SetTransform(e.GetTransform().Add(_totalDrag));
+                t = t.Add(_dragAmount);
+                //t.Size = _dragAmount.Size;
+                e.Transformable.SetTransform(t);
             }
         }
 
