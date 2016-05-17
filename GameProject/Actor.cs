@@ -7,20 +7,34 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK;
 
 namespace Game
 {
+    /// <summary>A SceneNode with rigid body physics.</summary>
     [DataContract]
     public class Actor : SceneNode, IActor, IPortalable
     {
         [DataMember]
         public int BodyId { get; private set; }
         public Body Body { get; private set; }
+        [DataMember]
+        Vector2 _scale = new Vector2(1, 1);
+        /// <summary>Collision polygon for physics and for portal placement.</summary>
+        [DataMember]
+        public IList<Vector2> Vertices { get; set; }
 
-        public Actor(Scene scene, Body body)
+        public Actor(Scene scene, IList<Vector2> vertices)
+            : this(scene, vertices, new Transform2())
+        {
+        }
+
+        public Actor(Scene scene, IList<Vector2> vertices, Transform2 transform)
             : base(scene)
         {
-            SetBody(body);
+            Vertices = vertices;
+            _scale = transform.Scale;
+            Body = ActorFactory.CreatePolygon(scene.World, transform, Vertices);
             BodyExt.SetUserData(Body, this);
         }
 
@@ -33,7 +47,7 @@ namespace Game
 
         public override IDeepClone ShallowClone()
         {
-            Actor clone = new Actor(Scene, Body.DeepClone(Scene.World));
+            Actor clone = new Actor(Scene, Vertices, GetTransform());
             ShallowClone(clone);
             return clone;
         }
@@ -59,7 +73,9 @@ namespace Game
 
         public override Transform2 GetTransform()
         {
-            return BodyExt.GetTransform(Body);
+            Transform2 bodyTransform = BodyExt.GetTransform(Body);
+            bodyTransform.SetScale(_scale);
+            return bodyTransform;
         }
 
         /// <summary>
@@ -68,6 +84,11 @@ namespace Game
         public void SetTransform(Transform2 transform)
         {
             BodyExt.SetTransform(Body, transform);
+            if (_scale != transform.Scale)
+            {
+                Debug.Assert(false);
+            }
+            _scale = transform.Scale;
         }
 
         public override Transform2 GetVelocity()
@@ -78,6 +99,11 @@ namespace Game
         public void SetVelocity(Transform2 velocity)
         {
             BodyExt.SetVelocity(Body, velocity);
+        }
+
+        public IList<Vector2> GetWorldVertices()
+        {
+            return Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix());
         }
     }
 }

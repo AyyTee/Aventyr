@@ -25,16 +25,17 @@ namespace Game
         public bool IsMirrored { get; set; }
 
         [DataMember]
-        public FixtureEdgeCoord Position { get; private set; }
+        public IPolygonCoord Position { get; private set; }
         public Fixture CollisionFixtureNext;
         public Fixture CollisionFixturePrevious;
+        public override bool IgnoreScale { get { return true; } }
         public Fixture FixtureParent {
             get
             {
-                if (Position != null)
+                /*if (Position != null)
                 {
                     return Position.Fixture;
-                }
+                }*/
                 return null;
             }
         }
@@ -43,16 +44,16 @@ namespace Game
         public const float CollisionMargin = 0.1f;
 
         public FixturePortal(Scene scene)
-            : this(scene, null)
+            : this(scene, null, null)
         {
         }
 
-        public FixturePortal(Scene scene, FixtureEdgeCoord position)
+        public FixturePortal(Scene scene, IWall parent, IPolygonCoord position)
             : base(scene)
         {
-            if (position != null)
+            if (parent != null && position != null)
             {
-                SetFixtureParent(position);
+                SetPosition(parent, position);
             }
         }
 
@@ -89,24 +90,9 @@ namespace Game
         /// <summary>
         /// Returns a copy of the Transform local to the Body this is attached to.
         /// </summary>
-        /// <returns></returns>
         public override Transform2 GetTransform()
         {
-            Transform2 transform = new Transform2();
-            if (Position == null)
-            {
-                return transform;
-            }
-            Line edge = Position.GetEdge();
-            transform.Position = edge.Lerp(Position.EdgeT);
-            transform.Rotation = -edge.Angle() + (float)Math.PI/2;
-            if (IsMirrored)
-            {
-                //transform.Scale = new Vector2(1, -1);
-                transform.Size = -1;
-                transform.IsMirrored = true;
-            }
-            return transform;
+            return PolygonExt.GetTransform(((IWall)Parent).Vertices, Position);
         }
 
         public override void Remove()
@@ -120,20 +106,20 @@ namespace Game
         {
             if (Position != null)
             {
-                FixtureExt.GetUserData(Position.Fixture).RemovePortal(this);
+                //FixtureExt.GetUserData(Position.Fixture).RemovePortal(this);
             }
         }
 
-        public void SetFixtureParent(FixtureEdgeCoord position)
+        public void SetPosition(IWall wall, IPolygonCoord position)
         {
             RemoveFixture();
             Position = position;
-            Debug.Assert(position.Actor != null);
-            Debug.Assert(position.Fixture != null);
+            Debug.Assert(wall != null);
+            Debug.Assert(wall is SceneNode);
             if (Position != null)
             {
-                SetParent((SceneNode)Position.Actor);
-                FixtureExt.GetUserData(Position.Fixture).AddPortal(this);
+                SetParent((SceneNode)wall);
+                //FixtureExt.GetUserData(Position.Fixture).AddPortal(this);
                 //wake up all the bodies so that they will fall if there is now a portal entrance below them
                 foreach (Body b in Scene.World.BodyList)
                 {

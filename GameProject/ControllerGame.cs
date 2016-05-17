@@ -68,7 +68,6 @@ namespace Game
             portal2.SetParent(portalEntity2);
             portal2.OneSided = true;
             portal2.Name = "portal2";
-            portal2.IsMirrored = true;
 
             Entity portalEntity3 = new Entity(scene);
             portalEntity3.IsPortalable = false;
@@ -136,9 +135,9 @@ namespace Game
             //ground.AddModel(ModelFactory.CreatePolygon(v));
             ground.SetTransform(new Transform2(new Vector2(0, -4f), 1f, 0.05f));
             scene.World.ProcessChanges();
-            FixturePortal portal0 = new FixturePortal(scene, null);
+            FixturePortal portal0 = new FixturePortal(scene);
             portal0.Name = "portalLeft";
-            FixturePortal portal1 = new FixturePortal(scene, null);
+            FixturePortal portal1 = new FixturePortal(scene);
             portal1.Name = "portalRight";
 
             portal0.IsMirrored = true;
@@ -274,11 +273,11 @@ namespace Game
                 Transform2.SetScale(camera, Transform2.GetScale(camera) / (float)Math.Pow(1.04, -1));
                 //cam.Zoom /= (float)Math.Pow(1.04, -1);
             }
-            if (InputExt.KeyPress(Key.F))
+            /*if (InputExt.KeyPress(Key.F))
             {
                 FloatPortal portal2 = (FloatPortal)scene.FindByName("portal2");
                 portal2.IsMirrored = !portal2.IsMirrored;
-            }
+            }*/
             player.SetVelocity(new Transform2(v));
             #endregion
 

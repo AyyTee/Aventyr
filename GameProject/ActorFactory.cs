@@ -37,13 +37,17 @@ namespace Game
             entity.IsPortalable = true;
             entity.AddModel(ModelFactory.CreatePlane(transform.Scale));
 
-            Body body = CreateBox(entity.Scene.World, new Vector2(1,1));
-            body.Position = Vector2Ext.ConvertToXna(transform.Position);
-            Actor actor = new Actor(entity.Scene, body);
-            body.BodyType = BodyType.Dynamic;
+            Vector2[] vertices = new Vector2[] {
+                new Vector2(-0.5f, -0.5f),
+                new Vector2(0.5f, -0.5f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(-0.5f, 0.5f)
+            };
+            Actor actor = new Actor(entity.Scene, vertices, transform);
+            actor.Body.BodyType = BodyType.Dynamic;
             entity.SetParent(actor);
 
-            FixtureUserData userData = FixtureExt.SetUserData(body.FixtureList[0]);
+            //FixtureUserData userData = FixtureExt.SetUserData(body.FixtureList[0]);
 
             Transform2 t = new Transform2();
             t.Position = transform.Position;
@@ -90,11 +94,8 @@ namespace Game
             Debug.Assert(vertices != null && vertices.Count >= 3);
             Body body = CreatePolygon(entity.Scene.World, transform, vertices);
 
-            Actor actor = new Actor(entity.Scene, body);
+            Actor actor = new Actor(entity.Scene, vertices, transform);
             Transform2 t = new Transform2();
-            t.Position = transform.Position;
-            t.Rotation = transform.Rotation;
-            actor.SetTransform(t);
             entity.SetParent(actor);
 
             return actor;
@@ -115,7 +116,7 @@ namespace Game
             Debug.Assert(vertices != null && vertices.Count >= 3);
             List<Vector2> verticesCopy = new List<Vector2>(vertices);
             MathExt.SetHandedness(verticesCopy, false);
-            vertices = Vector2Ext.Transform(vertices, Matrix4.CreateScale(new Vector3(transform.Scale)));
+            verticesCopy = (List<Vector2>)Vector2Ext.Transform(verticesCopy, Matrix4.CreateScale(new Vector3(transform.Scale)));
             Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(verticesCopy);
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();

@@ -23,6 +23,7 @@ namespace Game
         [DataMember]
         public SceneNode Parent { get; private set; }
         public bool IsRoot { get { return _scene != null; } }
+        public virtual bool IgnoreScale { get { return false; } }
         [DataMember]
         readonly Scene _scene;
         public Scene Scene
@@ -157,7 +158,12 @@ namespace Game
         {
             if (Parent != null)
             {
-                return GetTransform().Transform(Parent.GetWorldTransform());
+                Transform2 t = GetTransform().Transform(Parent.GetWorldTransform());
+                if (IgnoreScale)
+                {
+                    t.SetScale(GetTransform().Scale);
+                }
+                return t;
             }
             return GetTransform();
         }

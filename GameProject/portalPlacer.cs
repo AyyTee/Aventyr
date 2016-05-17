@@ -23,7 +23,7 @@ namespace Game
                 intersection = GetValid(intersection, portal);
                 if (intersection != null)
                 {
-                    portal.SetFixtureParent(intersection);
+                    portal.SetPosition(intersection.Actor, new PolygonCoord(intersection.EdgeIndex, intersection.EdgeT));
                     return true;
                 }
             }

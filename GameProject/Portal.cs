@@ -24,6 +24,11 @@ namespace Game
             return portal.Linked != null && portal.GetWorldTransform() != null;
         }
 
+        public static bool IsMirrored(IPortal portal)
+        {
+            return portal.GetWorldTransform().IsMirrored;
+        }
+
         /// <summary>
         /// Converts a Transform2D from one portal's coordinate space to the portal it is linked with.
         /// If it isn't linked then the Transform2D is unchanged.

@@ -32,6 +32,11 @@ namespace Game
         public bool Wireframe = false;
         [DataMember]
         public IMesh Mesh = new Mesh();
+        /// <summary>
+        /// Ignore the scale of any parent when computing the world transform for this model.
+        /// </summary>
+        [DataMember]
+        public bool IgnoreScale = false;
         
         #region Constructors
         public Model()

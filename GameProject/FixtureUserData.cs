@@ -127,7 +127,7 @@ namespace Game
             int b = Fixture.Body.FixtureList.Count;
             //FixtureExt.GetUserData(Fixture).Entity.Scene.World.ProcessChanges();
             _fixtureChildList.Clear();
-            var sortedPortals = _childPortals.ToArray().OrderBy(item => item.Position.EdgeIndexT).ToList();
+            var sortedPortals = _childPortals.ToArray().OrderBy(item => PolygonExt.EdgeIndexT(item.Position)).ToList();
             sortedPortals.RemoveAll(item => !Portal.IsValid(item));
             for (int i = 0; i < sortedPortals.Count(); i++)
             {
@@ -164,8 +164,8 @@ namespace Game
         private PolygonShape CreatePortalShape(FixturePortal portal, FixturePortal portalNext)
         {
             Vector2[] verts = new Vector2[4];
-            Line edge = portal.Position.GetEdge();
-            PolygonShape shape = (PolygonShape)portal.Position.Fixture.Shape;
+            Line edge = PolygonExt.GetEdge(((IWall)portal.Parent).Vertices, portal.Position);
+            //PolygonShape shape = (PolygonShape)portal.Position.Fixture.Shape;
 
             int i;
             i = 1;
@@ -188,9 +188,6 @@ namespace Game
             
             MathExt.SetHandedness(verts, false);
 
-            /*Entity debugEntity = Entity.Scene.CreateEntity();
-            debugEntity.Models.Add(Model.CreatePolygon(verts));*/
-
             return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
         }
 
@@ -198,8 +195,8 @@ namespace Game
         {
             Vector2[] verts = new Vector2[3];
             var tempVerts = Vector2Ext.Transform(Portal.GetVerts(portal), portal.GetTransform().GetMatrix());
-            Line edge = portal.Position.GetEdge();
-            PolygonShape shape = (PolygonShape)portal.Position.Fixture.Shape;
+            Line edge = PolygonExt.GetEdge(((IWall)portal.Parent).Vertices, portal.Position);
+            PolygonShape shape = (PolygonShape)null;// portal.Position.Fixture.Shape;
             int i = 1;
             if (previousVertex)
             {

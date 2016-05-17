@@ -24,7 +24,7 @@ namespace UnitTest
             return ground;
         }
 
-        public Scene CreateSceneWithPortal()
+        /*public Scene CreateSceneWithPortal()
         {
             Scene scene = new Scene();
             Actor ground = CreateGround(scene);
@@ -34,7 +34,7 @@ namespace UnitTest
 
             FixtureExt.GetUserData(fixture).ProcessChanges();
             return scene;
-        }
+        }*/
 
         /*[TestMethod]
         public void PortalParentTest0()

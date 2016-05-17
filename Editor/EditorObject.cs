@@ -147,7 +147,6 @@ namespace Editor
                 SetParent(Scene);
             }
             _transform = transform.ShallowClone();
-            
         }
 
         public virtual Transform2 GetTransform()

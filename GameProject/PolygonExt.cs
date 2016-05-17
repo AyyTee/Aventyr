@@ -25,6 +25,11 @@ namespace Game
             return new Line(vertices[coord.EdgeIndex], vertices[(coord.EdgeIndex + 1) % vertices.Count]);
         }
 
+        public static float EdgeIndexT(IPolygonCoord coord)
+        {
+            return coord.EdgeIndex + coord.EdgeT;
+        }
+
         /// <summary>
         /// Changes handedness so polygon edge normals face inward.
         /// </summary>

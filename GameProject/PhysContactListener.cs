@@ -29,7 +29,7 @@ namespace Game
 
         public void StepBegin()
         {
-            foreach (Body body in Scene.World.BodyList)
+            /*foreach (Body body in Scene.World.BodyList)
             {
                 //the number of fixtures is going to change so a copy of FixtureList is made
                 List<Fixture> fixtures = new List<Fixture>(body.FixtureList);
@@ -64,7 +64,7 @@ namespace Game
                             verts[1]);
                     }
                 }
-            }
+            }*/
             //List<Body> bodiesToRemove = new List<Body>();
 
             foreach (Body b in Scene.World.BodyList)
@@ -86,6 +86,7 @@ namespace Game
 
         public void StepEnd()
         {
+            return;
             foreach (Body body in Scene.World.BodyList)
             {
                 if ((body.Position - BodyExt.GetUserData(body).PreviousPosition).Length() > .2f)
@@ -127,6 +128,7 @@ namespace Game
 
         private void PreSolveListener(Contact contact, ref FarseerPhysics.Collision.Manifold oldManifold)
         {
+            return;
             if (contact.Manifold.PointCount > 0)
             {
                 if (!IsContactValid(contact))

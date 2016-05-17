@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface IActor
+    public interface IActor : IWall
     {
         Body Body { get; }
         void Remove();

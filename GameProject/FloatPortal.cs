@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class FloatPortal : SceneNode, IPortal
+    public class FloatPortal : SceneNode, IPortal, ITransformable2
     {
         [DataMember]
         public IPortal Linked { get; set; }
@@ -20,7 +20,10 @@ namespace Game
         [DataMember]
         public bool OneSided { get; set; }
         [DataMember]
-        public bool IsMirrored { get; set; }
+        public bool IsMirrored { get { return GetTransform().IsMirrored; } }
+        [DataMember]
+        Transform2 _transform = new Transform2();
+        public override bool IgnoreScale { get { return true; } }
 
         public const float EdgeMargin = 0.02f;
         public const float CollisionMargin = 0.1f;
@@ -41,18 +44,15 @@ namespace Game
         {
             base.ShallowClone(destination);
             destination.OneSided = OneSided;
-            destination.IsMirrored = IsMirrored;
             destination.Linked = Linked;
         }
 
         public override void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
         {
             base.UpdateRefs(cloneMap);
-            //Portal clone = (Portal)cloneMap[this];
             if (Linked != null && cloneMap.ContainsKey(Linked))
             {
                 Linked = (IPortal)cloneMap[Linked];
-                //SetLinked((Portal)cloneMap[Linked]);
             }
             else
             {
@@ -67,17 +67,12 @@ namespace Game
 
         public override Transform2 GetTransform()
         {
-            if (IsMirrored)
-            {
-                return new Transform2(new Vector2(), -1, 0, true);
-            }
-            return new Transform2();
+            return _transform.ShallowClone();
         }
 
-        public override void Remove()
+        public void SetTransform(Transform2 transform)
         {
-            //SetLinked(null);
-            base.Remove();
+            _transform = transform.ShallowClone();
         }
     }
 }
