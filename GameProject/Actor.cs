@@ -20,9 +20,10 @@ namespace Game
         public Body Body { get; private set; }
         [DataMember]
         Vector2 _scale = new Vector2(1, 1);
-        /// <summary>Collision polygon for physics and for portal placement.</summary>
         [DataMember]
-        public IList<Vector2> Vertices { get; set; }
+        Vector2[] _vertices;
+        /// <summary>Copy of local coordinates for collision mask.</summary>
+        public IList<Vector2> Vertices { get { return _vertices.ToList(); } }
 
         public Actor(Scene scene, IList<Vector2> vertices)
             : this(scene, vertices, new Transform2())
@@ -32,7 +33,7 @@ namespace Game
         public Actor(Scene scene, IList<Vector2> vertices, Transform2 transform)
             : base(scene)
         {
-            Vertices = vertices;
+            _vertices = vertices.ToArray();
             _scale = transform.Scale;
             Body = ActorFactory.CreatePolygon(scene.World, transform, Vertices);
             BodyExt.SetUserData(Body, this);
@@ -101,6 +102,9 @@ namespace Game
             BodyExt.SetVelocity(Body, velocity);
         }
 
+        /// <summary>
+        /// Get world coordinates for collision mask.
+        /// </summary>
         public IList<Vector2> GetWorldVertices()
         {
             return Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix());

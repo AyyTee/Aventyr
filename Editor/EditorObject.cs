@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace Editor
 {
     [DataContract]
-    public class EditorObject : ITreeNode<EditorObject>, IPortalable, IDeepClone, IRenderable
+    public class EditorObject : ITreeNode<EditorObject>, IPortalable, IDeepClone, IRenderable, ISceneObject
     {
         [DataMember]
         EditorScene _scene;

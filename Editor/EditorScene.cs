@@ -15,18 +15,14 @@ namespace Editor
     public class EditorScene : IRenderLayer, IScene
     {
         [DataMember]
-        public World World;
-        [DataMember]
         public List<EditorObject> _children = new List<EditorObject>();
         [DataMember]
         public ControllerCamera ActiveCamera { get; set; }
-        public List<EditorObject> EditorObjects { get { return new List<EditorObject>(_children); } }
+        [DataMember]
         public List<Doodad> Doodads = new List<Doodad>();
 
         public EditorScene()
         {
-            World = new World(new Xna.Vector2(0, 9.8f));
-
             #region create background
             Model background = Game.ModelFactory.CreatePlane();
             background.Texture = Renderer.GetTexture("grid.png");
@@ -41,24 +37,21 @@ namespace Editor
             #endregion
         }
 
-        public List<EditorObject> FindAll()
+        public List<ISceneObject> GetAll()
         {
-            return FindByType<EditorObject>();
-        }
-
-        public List<T> FindByType<T>() where T : EditorObject
-        {
-            List<T> list = new List<T>();
+            HashSet<ISceneObject> set = new HashSet<ISceneObject>();
             foreach (EditorObject e in _children)
             {
-                list.AddRange(Tree<EditorObject>.FindByType<T>(e));
+                set.UnionWith(Tree<EditorObject>.GetDescendents(e));
             }
-            return list;
+            set.Add(ActiveCamera);
+            return set.ToList();
         }
 
         public void Clear()
         {
-            foreach (EditorObject e in EditorObjects)
+            List<EditorObject> childrenCopy = new List<EditorObject>(_children);
+            foreach (EditorObject e in childrenCopy)
             {
                 e.Remove();
             }
@@ -66,14 +59,14 @@ namespace Editor
 
         public List<IRenderable> GetRenderList()
         {
-            List<IRenderable> renderList = FindAll().OfType<IRenderable>().ToList();
+            List<IRenderable> renderList = GetAll().OfType<IRenderable>().ToList();
             renderList.AddRange(Doodads);
             return renderList;
         }
 
         public List<IPortal> GetPortalList()
         {
-            return FindAll().OfType<IPortal>().ToList();
+            return GetAll().OfType<IPortal>().ToList();
         }
 
         public ICamera2 GetCamera()
@@ -83,9 +76,13 @@ namespace Editor
 
         public void Step(float stepSize)
         {
-            foreach (EditorObject s in FindAll())
+            foreach (IStep s in GetAll().OfType<IStep>())
             {
-                //Parented SceneNodes can't perform portal teleportation directly.
+                s.StepBegin();
+            }
+            foreach (EditorObject s in GetAll().OfType<EditorObject>())
+            {
+                //Parented EditorObjects can't perform portal teleportation.
                 if (s.Parent != null)
                 {
                     SceneExt.RayCast(s, GetPortalList());
@@ -95,7 +92,10 @@ namespace Editor
                     s.SetTransform(s.GetTransform().Add(s.GetVelocity()));
                 }
             }
-            SceneExt.RayCast(ActiveCamera, GetPortalList());
+            foreach (IStep s in GetAll().OfType<IStep>())
+            {
+                s.StepEnd();
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Game
     public class FixtureUserData
     {
         public bool[] EdgeIsExterior;
-        private Fixture _fixture;
+        private readonly Fixture _fixture;
         /// <summary>
         /// All FixturePortals that this fixture is colliding with.
         /// </summary>
@@ -54,12 +54,11 @@ namespace Game
             get { return _fixture; }
         }
 
-        private int _fixtureId;
+        private readonly int _fixtureId;
 
         public int FixtureId
         {
             get { return _fixtureId; }
-            set { _fixtureId = value; }
         }
 
         #region Constructors

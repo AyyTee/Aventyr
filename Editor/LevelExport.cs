@@ -38,7 +38,7 @@ namespace Editor
             //toClone.Add(level.ActiveCamera);
             Dictionary<EditorObject, SceneNode> dictionary = new Dictionary<EditorObject, SceneNode>();
 
-            List<EditorObject> editorObjects = level.FindAll();
+            List<EditorObject> editorObjects = level.GetAll().OfType<EditorObject>().ToList();
             foreach (EditorObject e in editorObjects)
             {
                 if (e is EditorPortal)
@@ -47,7 +47,9 @@ namespace Editor
                     if (cast.OnEdge)
                     {
                         FixturePortal portal = new FixturePortal(scene);
-                        
+                        Transform2 t = cast.GetTransform();
+                        portal.Size = t.Size;
+                        portal.IsMirrored = t.IsMirrored;
                         dictionary.Add(cast, portal);
                     }
                     else
@@ -65,18 +67,11 @@ namespace Editor
                     clone.SetTransform(cast.GetTransform());
                     dictionary.Add(cast, clone);
                 }
-                /*else if (e is EditorWall)
-                {
-                    EditorWall cast = (EditorWall)e;
-                    Body body = ActorFactory.CreatePolygon(scene.World, cast.GetTransform(), cast.Vertices);
-                    dictionary.Add(cast, new Actor(scene, body));
-                }*/
                 else if (e is IWall)
                 {
                     EditorObject cast = (EditorObject)e;
 
                     Transform2 t = cast.GetTransform();
-                    //Body body = ActorFactory.CreatePolygon(scene.World, t, ((IWall)e).Vertices);
                     Actor actor = new Actor(scene, ((IWall)e).Vertices, t);
                     
                     Transform2 tEntity = new Transform2();
@@ -86,7 +81,7 @@ namespace Editor
                     if (e is EditorWall)
                     {
                         EditorWall castWall = (EditorWall)e;
-                        actor.Vertices = castWall.Vertices;
+                        //actor.Vertices = castWall.Vertices;
                         entity.AddModel(Game.ModelFactory.CreatePolygon(castWall.Vertices));
                         dictionary.Add(castWall, actor);
                     }
@@ -94,7 +89,7 @@ namespace Editor
                     {
                         actor.Body.IsStatic = false;
                         EditorActor castActor = (EditorActor)e;
-                        actor.Vertices = castActor.Vertices;
+                        //actor.Vertices = castActor.Vertices;
                         entity.AddModel(castActor.GetActorModel());
                         dictionary.Add(castActor, actor);
                     }
@@ -140,16 +135,17 @@ namespace Editor
                         }
                     }
                 }
-                
             }
 
             //Dictionary<IDeepClone, IDeepClone> dictionary = DeepClone.Clone(toClone);
             /*Cast all the cloned instances to SceneNode.  
             There should not be any types other than SceneNode or its derived types.*/
-            List<SceneNode> cloned = dictionary.Values.Cast<SceneNode>().ToList();
+            /*List<SceneNode> cloned = dictionary.Values.Cast<SceneNode>().ToList();
 
-            SceneNode.SetScene(cloned, scene);
-            scene.SetActiveCamera(level.ActiveCamera);
+            SceneNode.SetScene(cloned, scene);*/
+            ControllerCamera camera = level.ActiveCamera.ShallowClone();
+            camera.Scene = scene;
+            scene.SetActiveCamera(camera);
             return scene;
         }
     }

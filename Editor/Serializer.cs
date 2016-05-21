@@ -48,19 +48,19 @@ namespace Editor
             settings.OmitXmlDeclaration = true;
             using (XmlWriter writer = XmlWriter.Create(filename, settings))
             {
-                EditorScene saveScene = new EditorScene();
-                EditorClone.Clone(scene, saveScene);
-                GetSerializer().WriteObject(writer, saveScene);
+                /*EditorScene saveScene = new EditorScene();
+                EditorClone.Clone(scene, saveScene);*/
+                GetSerializer().WriteObject(writer, scene);
             }
         }
 
-        public static EditorScene Deserialize(Scene scene, string filename)
+        public static EditorScene Deserialize(string filename)
         {
             XmlReaderSettings settings = new XmlReaderSettings();
             using (XmlReader reader = XmlReader.Create(filename, settings))
             {
                 EditorScene editorScene = (EditorScene)GetSerializer().ReadObject(reader);
-                foreach (EditorObject e in editorScene.FindAll())
+                foreach (EditorObject e in editorScene.GetAll().OfType<EditorObject>())
                 {
                     e.Initialize();
                 }

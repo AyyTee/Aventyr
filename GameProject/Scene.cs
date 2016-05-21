@@ -44,7 +44,11 @@ namespace Game
         public void Step(float stepSize)
         {
             World.ProcessChanges();
-            foreach (SceneNode s in FindByType<SceneNode>())
+            foreach (IStep s in GetAll().OfType<IStep>())
+            {
+                s.StepBegin();
+            }
+            foreach (SceneNode s in SceneNodeList)
             {
                 //Skip Actors, they handle movement using rigid body physics.
                 if (s is IActor)
@@ -71,11 +75,23 @@ namespace Game
                 World.Step(stepSize);
                 _contactListener.StepEnd();
             }
+            foreach (IStep s in GetAll().OfType<IStep>())
+            {
+                s.StepEnd();
+            }
         }
 
         public ICamera2 GetCamera()
         {
             return ActiveCamera;
+        }
+
+        public List<ISceneObject> GetAll()
+        {
+            HashSet<ISceneObject> set = new HashSet<ISceneObject>();
+            set.UnionWith(SceneNodeList);
+            set.Add(ActiveCamera);
+            return set.ToList();
         }
 
         public List<IRenderable> GetRenderList()
@@ -85,12 +101,7 @@ namespace Game
 
         public List<IPortal> GetPortalList()
         {
-            return Tree<SceneNode>.FindByType<SceneNode>(Root).OfType<IPortal>().ToList();
-        }
-
-        public List<T> FindByType<T>() where T : SceneNode
-        {
-            return Tree<SceneNode>.FindByType<T>(Root);
+            return GetAll().OfType<IPortal>().ToList();
         }
 
         public SceneNode FindByName(string name)

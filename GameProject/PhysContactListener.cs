@@ -214,7 +214,7 @@ namespace Game
                         MathExt.PointLineDistance(vList[1], line, true)
                     };
                     //only consider contacts that are between the fixture this portal is parented too and some other fixture
-                    if (contact.FixtureA == portal.FixtureParent || contact.FixtureB == portal.FixtureParent)
+                    if (contact.FixtureA == FixtureExt.GetFixturePortalParent(portal) || contact.FixtureB == FixtureExt.GetFixturePortalParent(portal))
                     {
                         //Debug.Assert(!(contact.FixtureA == portal.FixtureParent && contact.FixtureB == portal.FixtureParent));
                         if (contact.Manifold.PointCount == 1)

@@ -74,7 +74,7 @@ namespace Editor
         private Tuple<IWall, PolygonCoord> GetEdgeCoord()
         {
             float size = Transform2.GetSize(_mouseFollow);
-            IWall[] walls = Controller.Level.FindAll().OfType<IWall>().ToArray();
+            IWall[] walls = Controller.Level.GetAll().OfType<IWall>().ToArray();
             return PortalPlacer.GetNearestPortalableEdge(walls, Controller.GetMouseWorldPosition(), snapDistance, size);
         }
 

@@ -16,6 +16,9 @@ namespace Game
         Vector2 _position = new Vector2();
         [DataMember]
         float _rotation = 0;
+        /// <summary>
+        /// X-axis mirroring.
+        /// </summary>
         [DataMember]
         public bool IsMirrored { get; set; }
         const float UNIFORM_SCALE_EPSILON = 0.0001f;
@@ -257,6 +260,41 @@ namespace Game
                 }
             }
             return false;
+        }
+
+        public static bool operator ==(Transform2 left, Transform2 right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Transform2 left, Transform2 right)
+        {
+            return !Equals(left, right);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Transform2)
+            {
+                return Equals(this, (Transform2)obj);
+            }
+            return false;
+        }
+
+        public static bool Equals(Transform2 t0, Transform2 t1)
+        {
+            if (((object)t0) == null && ((object)t1) == null)
+            {
+                return true;
+            }
+            else if (((object)t0) == null || ((object)t1) == null)
+            {
+                return false;
+            }
+
+            return t0.Position == t1.Position && 
+                t0.Rotation == t1.Rotation && 
+                t0.Scale == t1.Scale;
         }
 
         public static void SetPosition(ITransformable2 transformable, Vector2 position)

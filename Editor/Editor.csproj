@@ -105,7 +105,10 @@
     <Compile Include="ControllerEditor.cs" />
     <Compile Include="ControllerFiles.cs" />
     <Compile Include="Doodad.cs" />
+    <Compile Include="RecentFilesList.cs" />
     <Compile Include="ModelFactory.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="SimpleMovement.cs" />
     <Compile Include="WPFCommands.cs" />
     <Compile Include="DrawDepths.cs" />
     <Compile Include="EditorActor.cs" />
@@ -115,7 +118,6 @@
     <Compile Include="EditorPortal.cs" />
     <Compile Include="EditorScene.cs" />
     <Compile Include="EditorWall.cs" />
-    <Compile Include="FileRecentMenuItem.cs" />
     <Compile Include="LevelExport.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="MementoSelection.cs" />

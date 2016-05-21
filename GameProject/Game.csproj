@@ -135,6 +135,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActorExt.cs" />
     <Compile Include="BodyUserData.cs" />
     <Compile Include="Camera2.cs" />
     <Compile Include="CameraExt.cs" />
@@ -156,7 +157,9 @@
     <Compile Include="IMesh.cs" />
     <Compile Include="IRenderLayer.cs" />
     <Compile Include="IScene.cs" />
+    <Compile Include="ISceneObject.cs" />
     <Compile Include="IShallowClone.cs" />
+    <Compile Include="IStep.cs" />
     <Compile Include="ITexture.cs" />
     <Compile Include="ITransformable2.cs" />
     <Compile Include="ITreeNode.cs" />
@@ -176,7 +179,7 @@
     <Compile Include="FloatPortal.cs" />
     <Compile Include="FontRenderer.cs" />
     <Compile Include="InputExt.cs" />
-    <Compile Include="FixtureEdgeCoord.cs" />
+    <Compile Include="FixtureCoord.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="MathExt.cs" />
     <Compile Include="Matrix4Ext.cs" />

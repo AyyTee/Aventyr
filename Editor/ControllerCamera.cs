@@ -5,26 +5,35 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Editor
 {
-    public class ControllerCamera : ICamera2, IPortalable
+    [DataContract]
+    public class ControllerCamera : ICamera2, IPortalable, IShallowClone<ControllerCamera>, IStep
     {
         public delegate void CameraObjectHandler(ControllerCamera camera);
         /// <summary>Event is fired if the camera Transform is modified by this controller.</summary>
         public event CameraObjectHandler CameraMoved;
 
-        public ControllerEditor Controller { get; private set; }
-        public InputExt InputExt { get; private set; }
+        public ControllerEditor Controller { get; set; }
+        public InputExt InputExt { get; set; }
+        [DataMember]
         public float ZoomMin = 0.5f;
+        [DataMember]
         public float ZoomMax = 1000f;
+        [DataMember]
         public float KeyMoveSpeed = 0.013f;
+        [DataMember]
         Queue<Vector2> lazyPan = new Queue<Vector2>();
+        [DataMember]
         Transform2 _transform = new Transform2();
         const int QUEUE_SIZE = 3;
-
+        [DataMember]
+        public IScene Scene { get; set; }
+        [DataMember]
         private float _zoomScrollFactor;
         /// <summary>How much the camera zooms in/out with mouse scrolling. Value must be greater than 1.</summary>
         public float ZoomScrollFactor 
@@ -36,7 +45,7 @@ namespace Editor
                 _zoomScrollFactor = value;
             }
         }
-
+        [DataMember]
         private float _zoomFactor;
         /// <summary>How much the camera zooms in/out with key input. Value must be greater than 1.</summary>
         public float ZoomFactor
@@ -48,8 +57,8 @@ namespace Editor
                 _zoomFactor = value;
             }
         }
+        [DataMember]
         float _aspect = 1;
-
         public float Aspect
         {
             get { return _aspect; }
@@ -59,16 +68,14 @@ namespace Editor
                 _aspect = value;
             }
         }
-
         public Vector2 ViewOffset { get { return new Vector2(); } }
-
         public double Fov { get { return Math.PI / 4; } }
-
         public float ZNear { get { return -1000f; } }
         public float ZFar { get { return 1000f; } }
 
-        public ControllerCamera(ControllerEditor controller, InputExt inputExt)
+        public ControllerCamera(ControllerEditor controller, InputExt inputExt, IScene scene)
         {
+            Scene = scene;
             Controller = controller;
             _transform.Size = 1;
             ZoomScrollFactor = 1.2f;
@@ -125,7 +132,7 @@ namespace Editor
             return Controller.ActiveTool.LockCamera();
         }
 
-        public void Update()
+        public void StepBegin()
         {
             if (IsLocked())
             {
@@ -209,13 +216,16 @@ namespace Editor
                 lazyPan.Dequeue();
             }
 
-            //_transform.Position += GetWorldVelocity().Position;
-
             //If the camera has been moved then call events.
             if ((isMoved || GetWorldVelocity().Position != new Vector2()) && CameraMoved != null)
             {
                 CameraMoved(this);
             }
+        }
+
+        public void StepEnd()
+        {
+            SceneExt.RayCast(this, Scene.GetPortalList());
         }
 
         public Transform2 GetVelocity()
@@ -231,6 +241,19 @@ namespace Editor
             {
                 lazyPan.Enqueue(velocity.Position);
             }
+        }
+
+        public ControllerCamera ShallowClone()
+        {
+            ControllerCamera clone = new ControllerCamera(Controller, InputExt, Scene);
+            clone.lazyPan = new Queue<Vector2>(lazyPan);
+            clone._zoomFactor = _zoomFactor;
+            clone.ZoomMin = ZoomMin;
+            clone.ZoomMax = ZoomMax;
+            clone.KeyMoveSpeed = KeyMoveSpeed;
+            clone._transform = _transform;
+            clone._aspect = _aspect;
+            return clone;
         }
     }
 }

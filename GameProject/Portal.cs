@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    [DataContract]
     public static class Portal
     {
         /// <summary>
@@ -93,7 +92,7 @@ namespace Game
             Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
             velocity.Position = Vector2Ext.Transform(velocity.Position, matrix);
             velocity.Position -= origin;
-            if (portal.IsMirrored == portal.Linked.IsMirrored)
+            if (IsMirrored(portal) == IsMirrored(portal.Linked))
             {
                 velocity.Rotation = -velocity.Rotation;
             }

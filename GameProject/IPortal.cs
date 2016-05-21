@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface IPortal : IDeepClone
+    public interface IPortal : IDeepClone, ISceneObject
     {
         IPortal Linked { get; }
         Transform2 GetWorldTransform();
         Transform2 GetWorldVelocity();
         bool OneSided { get; }
-        bool IsMirrored { get; }
     }
 }

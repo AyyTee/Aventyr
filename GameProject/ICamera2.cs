@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface ICamera2
+    public interface ICamera2 : ISceneObject
     {
         Matrix4 GetViewMatrix(bool isOrtho = true);
         Transform2 GetWorldTransform();

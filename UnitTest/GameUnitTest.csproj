@@ -91,6 +91,7 @@
     <Compile Include="DeepCloneTests.cs" />
     <Compile Include="TriangleTests.cs" />
     <Compile Include="ClipModelTests.cs" />
+    <Compile Include="FixtureExtTests.cs" />
     <Compile Include="VertexTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -17,7 +17,7 @@ namespace Game
 
         public static bool PortalPlace(FixturePortal portal, Line ray)
         {
-            FixtureEdgeCoord intersection = RayCast(portal.Scene.World, ray);
+            FixtureCoord intersection = RayCast(portal.Scene.World, ray);
             if (intersection != null)
             {
                 intersection = GetValid(intersection, portal);
@@ -30,13 +30,13 @@ namespace Game
             return false;
         }
 
-        public static FixtureEdgeCoord RayCast(World world, Line ray)
+        public static FixtureCoord RayCast(World world, Line ray)
         {
             Vector2 rayBegin = ray[0];
             Vector2 rayEnd = ray[1];
             if (rayBegin != rayEnd)
             {
-                List<FixtureEdgeCoord> intersections = new List<FixtureEdgeCoord>();
+                List<FixtureCoord> intersections = new List<FixtureCoord>();
                 IntersectCoord intersectLast = new IntersectCoord();
                 world.RayCast(
                     delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
@@ -78,7 +78,7 @@ namespace Game
                                         }
 
                                         intersectLast = intersect;
-                                        intersections.Add(new FixtureEdgeCoord(fixture, i, (float)intersect.TFirst));
+                                        intersections.Add(new FixtureCoord(fixture, i, (float)intersect.TFirst));
                                         break;
                                     }
                                     Debug.Assert(i + 1 < vertices.Count(), "Intersection edge was not found in shape.");
@@ -103,7 +103,7 @@ namespace Game
         /// <summary>
         /// Returns a valid FixtureEdgeCoord for a portal location (which could be the same position), or null if none exists.
         /// </summary>
-        public static FixtureEdgeCoord GetValid(FixtureEdgeCoord intersection, float portalSize)
+        public static FixtureCoord GetValid(FixtureCoord intersection, float portalSize)
         {
             Line edge = intersection.GetWorldEdge();
             if (!EdgeValidLength(edge.Length, portalSize))
@@ -112,7 +112,7 @@ namespace Game
             }
             float portalSizeT = (portalSize + FixturePortal.EdgeMargin * 2) / edge.Length;
             float portalT = MathHelper.Clamp(intersection.EdgeT, portalSizeT / 2, 1 - portalSizeT / 2);
-            FixtureEdgeCoord intersectValid = new FixtureEdgeCoord(intersection.Fixture, intersection.EdgeIndex, portalT);
+            FixtureCoord intersectValid = new FixtureCoord(intersection.Fixture, intersection.EdgeIndex, portalT);
             return intersectValid;
         }
 
@@ -131,7 +131,7 @@ namespace Game
         /// <summary>
         /// Returns a valid FixtureEdgeCoord for a portal location (which could be the same position), or null if none exists.
         /// </summary>
-        public static FixtureEdgeCoord GetValid(FixtureEdgeCoord intersection, FixturePortal portal)
+        public static FixtureCoord GetValid(FixtureCoord intersection, FixturePortal portal)
         {
             return GetValid(intersection, portal.GetWorldTransform().Size);
         }
@@ -237,7 +237,7 @@ namespace Game
             return new Tuple<IWall, PolygonCoord>(wallNearest, nearest);
         }
 
-        public static FixtureEdgeCoord GetNearestPortalableEdge(World world, Vector2 point, float maxRadius, float portalSize)
+        public static FixtureCoord GetNearestPortalableEdge(World world, Vector2 point, float maxRadius, float portalSize)
         {
             List<Fixture> potentials = new List<Fixture>();
             var box = new FarseerPhysics.Collision.AABB(Vector2Ext.ConvertToXna(point), maxRadius * 2, maxRadius * 2);
@@ -247,7 +247,7 @@ namespace Game
                 return true;
             }, ref box);
 
-            FixtureEdgeCoord nearest = null;
+            FixtureCoord nearest = null;
             foreach (Fixture f in potentials)
             {
                 Debug.Assert(BodyExt.GetUserData(f.Body).Actor.GetTransform().Position == Vector2Ext.ConvertTo(f.Body.Position));
@@ -270,7 +270,7 @@ namespace Game
                             if ((nearest == null && vDist <= maxRadius) ||
                                 (nearest != null && vDist < (nearest.GetPosition() - localPoint).Length))
                             {
-                                nearest = new FixtureEdgeCoord(f, i, edge.NearestT(localPoint, true));
+                                nearest = new FixtureCoord(f, i, edge.NearestT(localPoint, true));
                             }
                         }
                         break;

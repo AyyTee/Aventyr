@@ -23,22 +23,23 @@ namespace Game
         public bool OneSided { get; set; }
         [DataMember]
         public bool IsMirrored { get; set; }
+        [DataMember]
+        float _size = 1;
+        //Size of portal. Must not be equal to 0.
+        public float Size {
+            get { return _size; }
+            set
+            {
+                Debug.Assert(_size != 0);
+                _size = value;
+            }
+        }
 
         [DataMember]
         public IPolygonCoord Position { get; private set; }
         public Fixture CollisionFixtureNext;
         public Fixture CollisionFixturePrevious;
         public override bool IgnoreScale { get { return true; } }
-        public Fixture FixtureParent {
-            get
-            {
-                /*if (Position != null)
-                {
-                    return Position.Fixture;
-                }*/
-                return null;
-            }
-        }
         
         public const float EdgeMargin = 0.02f;
         public const float CollisionMargin = 0.1f;
@@ -92,7 +93,10 @@ namespace Game
         /// </summary>
         public override Transform2 GetTransform()
         {
-            return PolygonExt.GetTransform(((IWall)Parent).Vertices, Position);
+            Transform2 t = PolygonExt.GetTransform(((IWall)Parent).Vertices, Position);
+            t.Size = Size;
+            t.IsMirrored = IsMirrored;
+            return t;
         }
 
         public override void Remove()
@@ -116,9 +120,17 @@ namespace Game
             Position = position;
             Debug.Assert(wall != null);
             Debug.Assert(wall is SceneNode);
+            Debug.Assert(Position != null);
             if (Position != null)
             {
                 SetParent((SceneNode)wall);
+
+                IActor actor = wall as IActor;
+                if (actor != null)
+                {
+                    FixtureCoord fixtureCoord = FixtureExt.GetFixtureEdgeCoord(actor, Position);
+
+                }
                 //FixtureExt.GetUserData(Position.Fixture).AddPortal(this);
                 //wake up all the bodies so that they will fall if there is now a portal entrance below them
                 foreach (Body b in Scene.World.BodyList)

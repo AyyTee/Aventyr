@@ -13,7 +13,7 @@ namespace Game
     /// Scene graph node.  All derived classes MUST override ShallowClone() and return an instance of the derived class.
     /// </summary>
     [DataContract]
-    public class SceneNode : ITreeNode<SceneNode>, IDeepClone
+    public class SceneNode : ITreeNode<SceneNode>, IDeepClone, ISceneObject
     {
         [DataMember]
         public string Name { get; set; }

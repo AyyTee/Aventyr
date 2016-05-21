@@ -15,7 +15,7 @@ namespace Game
     /// A coordinate defined by its position on a edge in a Fixture
     /// </summary>
     [DataContract]
-    public class FixtureEdgeCoord : IShallowClone<FixtureEdgeCoord>, IPolygonCoord
+    public class FixtureCoord : IShallowClone<FixtureCoord>, IPolygonCoord
     {
         public Fixture Fixture { get; private set; }
         /// <summary>
@@ -63,16 +63,16 @@ namespace Game
         /// </summary>
         public float EdgeIndexT { get { return (float)EdgeIndex + EdgeT; } }
 
-        public FixtureEdgeCoord(Fixture fixture, int edgeIndex = 0, float edgeT = 0)
+        public FixtureCoord(Fixture fixture, int edgeIndex = 0, float edgeT = 0)
         {
             Fixture = fixture;
             EdgeT = edgeT;
             EdgeIndex = edgeIndex;
         }
 
-        public FixtureEdgeCoord ShallowClone()
+        public FixtureCoord ShallowClone()
         {
-            return new FixtureEdgeCoord(Fixture, EdgeIndex, EdgeT);
+            return new FixtureCoord(Fixture, EdgeIndex, EdgeT);
         }
 
         IPolygonCoord IShallowClone<IPolygonCoord>.ShallowClone()

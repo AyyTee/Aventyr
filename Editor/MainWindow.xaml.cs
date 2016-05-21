@@ -9,9 +9,7 @@ using System.Windows.Input;
 
 namespace Editor
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    /// <summary>Interaction logic for MainWindow.xaml</summary>
     public partial class MainWindow : System.Windows.Window
     {
         GLLoop _loop;
@@ -20,7 +18,8 @@ namespace Editor
         public static string AssetsDirectory { get; private set; }
         OpenFileDialog _loadModelDialog = new OpenFileDialog();
         ControllerFiles ControllerFiles;
-        
+        RecentFilesList RecentFiles;
+
         System.Timers.Timer updateTimer;
         public MainWindow()
         {
@@ -30,10 +29,19 @@ namespace Editor
             //Set the application window size here.  That way it can be super small in the editor!
             Width = 1000;
             Height = 650;
+            CenterWindowOnScreen();
             _loadModelDialog.FileOk += _openFileDialog_FileOk;
+        }
 
-            FileRecentMenuItem recentFile = new FileRecentMenuItem("test");
-            filesRecent.Items.Add(recentFile);
+        /// <summary>
+        /// Centers main window within display.  Doesn't work for multiple displays that are different sizes.
+        /// </summary>
+        /// <remarks>Code found at http://stackoverflow.com/questions/4019831/how-do-you-center-your-main-window-in-wpf </remarks>
+        private void CenterWindowOnScreen()
+        {
+            Rect workArea = SystemParameters.WorkArea;
+            Left = (workArea.Width - Width) / 2 + workArea.Left;
+            Top = (workArea.Height - Height) / 2 + workArea.Top;
         }
 
         private void _openFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
@@ -57,6 +65,7 @@ namespace Editor
             ControllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;
             ControllerEditor.SceneModified += ControllerEditor_SceneModified;
+            ControllerEditor.LevelLoaded += ControllerEditor_LevelLoaded;
             
             glControl.MouseMove += glControl_MouseMove;
             _loop = new GLLoop(glControl, ControllerEditor);
@@ -72,10 +81,17 @@ namespace Editor
             SetPortalRendering(true);
 
             ControllerFiles = new ControllerFiles(ControllerEditor);
-            //Properties.Settings.Default["AutoLoadFile"] = "test.xml";
+
+            RecentFiles = new RecentFilesList(filesRecent, ControllerFiles);
         }
 
-        
+        private void ControllerEditor_LevelLoaded(ControllerEditor controller, string filepath)
+        {
+            Dispatcher.Invoke((Action)(() =>
+            {
+                RecentFiles.AddFilepath(filepath);
+            }));
+        }
 
         private void ControllerEditor_SceneModified(Editor.ControllerEditor controller)
         {
@@ -129,6 +145,8 @@ namespace Editor
             //Prevent this method from completing until the GL loop is finished.
             _loop.Stop();
             lock (_loop) { }
+
+            Properties.Settings.Default.Save();
         }
 
         private void Button_Close(object sender, RoutedEventArgs e)
@@ -210,19 +228,19 @@ namespace Editor
             //Remove arrow key responses. They interfere when trying to pan the camera in the editor.
             switch (e.Key)
             {
-                case System.Windows.Input.Key.Left:
-                case System.Windows.Input.Key.Right:
-                case System.Windows.Input.Key.Up:
-                case System.Windows.Input.Key.Down:
+                case Key.Left:
+                case Key.Right:
+                case Key.Up:
+                case Key.Down:
                     e.Handled = true;
                     break;
                 default:
                     break;
             }
 
-            if (e.Key == System.Windows.Input.Key.D && 
-                (Keyboard.IsKeyDown(System.Windows.Input.Key.LeftCtrl) ||
-                Keyboard.IsKeyDown(System.Windows.Input.Key.RightCtrl)))
+            if (e.Key == Key.D && 
+                (Keyboard.IsKeyDown(Key.LeftCtrl) ||
+                Keyboard.IsKeyDown(Key.RightCtrl)))
             {
                 SetPortalRendering(!ControllerEditor.renderer.PortalRenderEnabled);
             }
@@ -292,6 +310,17 @@ namespace Editor
             {
                 ControllerEditor.SceneStep();
             });
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (ControllerEditor != null)
+            {
+                ControllerEditor.AddAction(() =>
+                {
+                    ControllerEditor.SetPhysicsStepSize((float)e.NewValue);
+                });
+            }
         }
     }
 }

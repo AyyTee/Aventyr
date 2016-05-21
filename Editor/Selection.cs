@@ -149,7 +149,7 @@ namespace Editor
 
         public List<EditorObject> GetAll()
         {
-            return Scene.FindByType<EditorObject>().FindAll(item => item.IsSelected);
+            return Scene.GetAll().OfType<EditorObject>().ToList().FindAll(item => item.IsSelected);
         }
     }
 }

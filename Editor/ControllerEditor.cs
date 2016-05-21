@@ -32,6 +32,7 @@ namespace Editor
         bool _editorObjectModified;
         Tool _activeTool;
         public Tool ActiveTool { get { return _activeTool; } }
+        float physicsStepSize = 1;
         Tool _toolDefault;
         Tool _nextTool;
         Queue<Action> Actions = new Queue<Action>();
@@ -77,7 +78,7 @@ namespace Editor
 
             //Level.ActiveCamera = new Camera2(null, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height);
 
-            CamControl = new ControllerCamera(this, InputExt);
+            CamControl = new ControllerCamera(this, InputExt, Level);
             Transform2.SetSize(CamControl, 10);
             Hud.SetActiveCamera(CamControl);
             Level.ActiveCamera = CamControl;
@@ -85,13 +86,15 @@ namespace Editor
 
         public void LevelLoad(string filepath)
         {
-            //EditorScene load = Serializer.Deserialize(Back, filepath);
-            Level.Clear();
-
-            if (LevelLoaded != null)
-            {
-                LevelLoaded(this, filepath);
-            }
+            EditorScene load = Serializer.Deserialize(filepath);
+            load.ActiveCamera.Controller = this;
+            load.ActiveCamera.InputExt = InputExt;
+            renderer.AddLayer(load);
+            renderer.RemoveLayer(Level);
+            Level = load;
+            selection = new Selection(Level);
+            //Level.Clear();
+            LevelLoaded(this, filepath);
         }
 
         public override void OnRenderFrame(OpenTK.FrameEventArgs e)
@@ -135,11 +138,9 @@ namespace Editor
                 {
                     item();
                 }
+                Actions.Clear();
             }
-            Actions.Clear();
-            CamControl.Update();
             _setTool(_nextTool);
-            _activeTool.Update();
             if (_editorObjectModified && SceneModified != null)
             {
                 //SceneModified(this, Level);
@@ -153,7 +154,11 @@ namespace Editor
                 }
                 ActiveLevel.Step();
             }
-            Level.Step(1 / (float)60);
+            else
+            {
+                _activeTool.Update();
+                Level.Step(physicsStepSize / 60);
+            }
         }
 
         public void Undo()
@@ -182,10 +187,7 @@ namespace Editor
             _activeTool.Disable();
             _activeTool = tool;
             _activeTool.Enable();
-            if (ToolChanged != null)
-            {
-                ToolChanged(this, tool);
-            }
+            ToolChanged(this, tool);
         }
 
         private void InitTools()
@@ -208,6 +210,11 @@ namespace Editor
             }
         }
 
+        public void SetPhysicsStepSize(float stepSize)
+        {
+            physicsStepSize = stepSize;
+        }
+
         public EditorObject GetNearestObject(Vector2 point)
         {
             return GetNearestObject(point, item => true);
@@ -216,7 +223,7 @@ namespace Editor
         public EditorObject GetNearestObject(Vector2 point, Func<EditorObject, bool> validObject)
         {
             List<EditorObject> tempList = new List<EditorObject>();
-            tempList.AddRange(Level.FindByType<EditorObject>());
+            tempList.AddRange(Level.GetAll().OfType<EditorObject>());
             var sorted = tempList.OrderBy(item => (point - item.GetWorldTransform().Position).Length).ToList();
             for (int i = 0; i < sorted.Count; i++)
             {
@@ -239,15 +246,13 @@ namespace Editor
             }
             _stepsPending = 0;
             _isPaused = false;
-            if (ScenePlayEvent != null)
-                ScenePlayEvent(this);
+            ScenePlayEvent(this);
         }
 
         public void ScenePause()
         {
             _isPaused = true;
-            if (ScenePauseEvent != null)
-                ScenePauseEvent(this);
+            ScenePauseEvent(this);
         }
 
         public void SceneStop()
@@ -261,8 +266,7 @@ namespace Editor
 
             ActiveLevel = null;
             _isPaused = true;
-            if (SceneStopEvent != null)
-                SceneStopEvent(this);
+            SceneStopEvent(this);
         }
 
         public void SceneStep()
