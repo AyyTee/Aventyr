@@ -9,23 +9,23 @@ namespace Game
 {
     public static class SceneExt
     {
-        public static void RayCast(IPortalable portalable, IList<IPortal> portals)
+        public static void RayCast(IPortalable portalable, IList<IPortal> portals, float stepSize = 1)
         {
-            if (portalable.GetVelocity().Position.Length == 0)
+            if (portalable.GetVelocity().Position.Length == 0 || stepSize == 0)
             {
                 return;
             }
-            _rayCast(portalable, portals, portalable.GetVelocity().Position.Length, null, 50);
+            _rayCast(portalable, portals, portalable.GetVelocity().Position.Length * stepSize, null, 50, stepSize);
         }
 
-        private static void _rayCast(IPortalable placeable, IList<IPortal> portals, double movementLeft, IPortal portalPrevious, int depthMax)
+        private static void _rayCast(IPortalable placeable, IList<IPortal> portals, double movementLeft, IPortal portalPrevious, int depthMax, float stepSize)
         {
             if (depthMax <= 0)
             {
                 return;
             }
             Transform2 begin = placeable.GetTransform();
-            Transform2 velocity = placeable.GetVelocity();
+            Transform2 velocity = placeable.GetVelocity().Multiply(stepSize);
             double distanceMin = movementLeft;
             IPortal portalNearest = null;
             IntersectCoord intersectNearest = new IntersectCoord();
@@ -57,7 +57,7 @@ namespace Game
                 begin.Position = (Vector2)intersectNearest.Position;
                 placeable.SetTransform(begin);
                 Portal.Enter(portalNearest, placeable);
-                _rayCast(placeable, portals, movementLeft, portalNearest.Linked, depthMax - 1);
+                _rayCast(placeable, portals, movementLeft, portalNearest.Linked, depthMax - 1, stepSize);
             }
             else
             {

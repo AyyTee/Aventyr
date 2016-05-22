@@ -83,6 +83,11 @@ namespace Editor
             ControllerFiles = new ControllerFiles(ControllerEditor);
 
             RecentFiles = new RecentFilesList(filesRecent, ControllerFiles);
+
+            Slider_ValueChanged(
+                null, 
+                new RoutedPropertyChangedEventArgs<double>(ControllerEditor.physicsStepSize, ControllerEditor.physicsStepSize)
+                );
         }
 
         private void ControllerEditor_LevelLoaded(ControllerEditor controller, string filepath)
@@ -316,9 +321,10 @@ namespace Editor
         {
             if (ControllerEditor != null)
             {
+                labelTimeStep.Content = e.NewValue.ToString() + "x";
                 ControllerEditor.AddAction(() =>
                 {
-                    ControllerEditor.SetPhysicsStepSize((float)e.NewValue);
+                    ControllerEditor.physicsStepSize = (float)e.NewValue;
                 });
             }
         }

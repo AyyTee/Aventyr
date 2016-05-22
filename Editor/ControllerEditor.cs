@@ -32,7 +32,7 @@ namespace Editor
         bool _editorObjectModified;
         Tool _activeTool;
         public Tool ActiveTool { get { return _activeTool; } }
-        float physicsStepSize = 1;
+        public float physicsStepSize { get; set; }
         Tool _toolDefault;
         Tool _nextTool;
         Queue<Action> Actions = new Queue<Action>();
@@ -48,6 +48,7 @@ namespace Editor
         public ControllerEditor(Size canvasSize, InputExt input)
             : base(canvasSize, input)
         {
+            physicsStepSize = 1;
         }
 
         public override void OnLoad(EventArgs e)
@@ -89,6 +90,7 @@ namespace Editor
             EditorScene load = Serializer.Deserialize(filepath);
             load.ActiveCamera.Controller = this;
             load.ActiveCamera.InputExt = InputExt;
+            load.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             renderer.AddLayer(load);
             renderer.RemoveLayer(Level);
             Level = load;
@@ -152,12 +154,12 @@ namespace Editor
                 {
                     _stepsPending--;
                 }
-                ActiveLevel.Step();
+                ActiveLevel.Step(physicsStepSize / 60);
             }
             else
             {
                 _activeTool.Update();
-                Level.Step(physicsStepSize / 60);
+                Level.Step(1 / 60);
             }
         }
 
@@ -208,11 +210,6 @@ namespace Editor
             {
                 _nextTool = tool;
             }
-        }
-
-        public void SetPhysicsStepSize(float stepSize)
-        {
-            physicsStepSize = stepSize;
         }
 
         public EditorObject GetNearestObject(Vector2 point)

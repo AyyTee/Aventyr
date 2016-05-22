@@ -14,10 +14,12 @@ namespace Game
         /// <summary>
         /// Intended to be called from IScene's step method before movement calculations are performed.
         /// </summary>
-        void StepBegin();
+        /// <param name="stepSize">Represents physics step size in seconds.</param>
+        void StepBegin(float stepSize);
         /// <summary>
         /// Intended to be called from IScene's step method after movement calculations are performed.
         /// </summary>
-        void StepEnd();
+        /// <param name="stepSize">Represents physics step size in seconds.</param>
+        void StepEnd(float stepSize);
     }
 }

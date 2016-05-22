@@ -46,7 +46,7 @@ namespace Game
             World.ProcessChanges();
             foreach (IStep s in GetAll().OfType<IStep>())
             {
-                s.StepBegin();
+                s.StepBegin(stepSize);
             }
             foreach (SceneNode s in SceneNodeList)
             {
@@ -61,11 +61,11 @@ namespace Game
                     //Parented SceneNodes can't perform portal teleportation directly.
                     if (s.Parent == s.Scene.Root)
                     {
-                        SceneExt.RayCast(portalable, GetPortalList());
+                        SceneExt.RayCast(portalable, GetPortalList(), stepSize);
                     }
                     else
                     {
-                        portalable.SetTransform(portalable.GetTransform().Add(portalable.GetVelocity()));
+                        portalable.SetTransform(portalable.GetTransform().Add(portalable.GetVelocity().Multiply(stepSize)));
                     }
                 }
             }
@@ -77,7 +77,7 @@ namespace Game
             }
             foreach (IStep s in GetAll().OfType<IStep>())
             {
-                s.StepEnd();
+                s.StepEnd(stepSize);
             }
         }
 

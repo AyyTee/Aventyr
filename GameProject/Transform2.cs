@@ -196,6 +196,16 @@ namespace Game
             return output;
         }
 
+        public Transform2 Multiply(float scalar)
+        {
+            Debug.Assert(Size > 0);
+            Transform2 output = ShallowClone();
+            output.Rotation = Rotation * scalar;
+            output.Size = (float)Math.Pow(Size, scalar);
+            output.Position = Position * scalar;
+            return output;
+        }
+
         /// <summary>Subtracts transfrom from this.</summary>
         public Transform2 Subtract(Transform2 transform)
         {

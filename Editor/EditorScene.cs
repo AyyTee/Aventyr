@@ -78,23 +78,23 @@ namespace Editor
         {
             foreach (IStep s in GetAll().OfType<IStep>())
             {
-                s.StepBegin();
+                s.StepBegin(stepSize);
             }
             foreach (EditorObject s in GetAll().OfType<EditorObject>())
             {
                 //Parented EditorObjects can't perform portal teleportation.
                 if (s.Parent != null)
                 {
-                    SceneExt.RayCast(s, GetPortalList());
+                    SceneExt.RayCast(s, GetPortalList(), stepSize);
                 }
                 else
                 {
-                    s.SetTransform(s.GetTransform().Add(s.GetVelocity()));
+                    s.SetTransform(s.GetTransform().Add(s.GetVelocity().Multiply(stepSize)));
                 }
             }
             foreach (IStep s in GetAll().OfType<IStep>())
             {
-                s.StepEnd();
+                s.StepEnd(stepSize);
             }
         }
     }

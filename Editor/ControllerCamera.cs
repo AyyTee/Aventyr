@@ -132,7 +132,7 @@ namespace Editor
             return Controller.ActiveTool.LockCamera();
         }
 
-        public void StepBegin()
+        public void StepBegin(float stepSize)
         {
             if (IsLocked())
             {
@@ -223,7 +223,7 @@ namespace Editor
             }
         }
 
-        public void StepEnd()
+        public void StepEnd(float stepSize)
         {
             SceneExt.RayCast(this, Scene.GetPortalList());
         }
