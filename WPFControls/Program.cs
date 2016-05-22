@@ -16,7 +16,9 @@ namespace WPFControls
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+#pragma warning disable CS0436 // Type conflicts with imported type
             Application.Run(new SomeForm());
+#pragma warning restore CS0436 // Type conflicts with imported type
         }
     }
 }

@@ -50,10 +50,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\clipper_library.6.2.1\lib\net40\clipper_library.dll</HintPath>
     </Reference>
-    <Reference Include="FarseerPhysics, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Farseer-Physics.3.5.0.1\lib\net35\FarseerPhysics.dll</HintPath>
-    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
     </Reference>
@@ -98,6 +94,10 @@
     <ProjectReference Include="..\Editor\Editor.csproj">
       <Project>{8ac53023-4d63-425a-b2f7-3728b5680bce}</Project>
       <Name>Editor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FarseerPhysics\Farseer Physics.csproj">
+      <Project>{a4610e4c-dd34-428b-babb-779ca0b5993a}</Project>
+      <Name>Farseer Physics</Name>
     </ProjectReference>
     <ProjectReference Include="..\GameProject\Game.csproj">
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>

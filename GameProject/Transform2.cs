@@ -307,6 +307,15 @@ namespace Game
                 t0.Scale == t1.Scale;
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode() ^ 
+                Rotation.GetHashCode() ^ 
+                Size.GetHashCode() ^ 
+                IsMirrored.GetHashCode() ^
+                Position.GetHashCode();
+        }
+
         public static void SetPosition(ITransformable2 transformable, Vector2 position)
         {
             Transform2 transform = transformable.GetTransform();
