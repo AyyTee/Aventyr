@@ -248,7 +248,7 @@ namespace Editor
             }
             else
             {
-                Controller.StateList.Add(new CommandDrag(dragObjects, _totalDrag), true);
+                Controller.StateList.Add(new Command.Drag(dragObjects, _totalDrag), true);
             }
 
             _dragState = DragState.Neither;

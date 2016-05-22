@@ -12,7 +12,7 @@ namespace Game
         Matrix4 GetViewMatrix(bool isOrtho = true);
         Transform2 GetWorldTransform();
         Transform2 GetWorldVelocity();
-        float Aspect { get; set; }
+        float Aspect { get; }
         /// <summary>Focal point offset.</summary>
         Vector2 ViewOffset { get; }
         /// <summary>

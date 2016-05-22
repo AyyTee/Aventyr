@@ -5,15 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Editor
+namespace Editor.Command
 {
-    public abstract class CommandAdd : ICommand
+    public abstract class Add : ICommand
     {
         protected readonly ControllerEditor _controller;
         protected readonly EditorObject _editorObject;
         MementoSelection _selection;
 
-        public CommandAdd(ControllerEditor controller, EditorObject editorObject)
+        public Add(ControllerEditor controller, EditorObject editorObject)
         {
             _editorObject = editorObject;
             _controller = controller;

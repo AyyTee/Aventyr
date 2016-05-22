@@ -60,7 +60,7 @@ namespace Game
             Transform2 transform = portalEntity2.GetTransform();
             transform.Rotation = 1f;
             transform.Position = new Vector2(2.1f, 2f);
-            transform.Size = 1.5f;
+            transform.Size = 1f;
             transform.IsMirrored = true;
             portalEntity2.SetTransform(transform);
 
@@ -220,10 +220,10 @@ namespace Game
                 SingleStepMode = !SingleStepMode;
             }
             #region camera movement
-            float camSpeed = .05f;
+            float camSpeed = .05f * 60;
             if (InputExt.KeyDown(InputExt.KeyBoth.Shift))
             {
-                camSpeed = .005f;
+                camSpeed = .005f * 60;
             }
             Vector2 v = new Vector2();
             Transform2 transform = player.GetTransform();
@@ -297,8 +297,8 @@ namespace Game
         public override void OnResize(EventArgs e, Size canvasSize)
         {
             base.OnResize(e, canvasSize);
-            scene.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
+            /*scene.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
+            hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;*/
             Transform2.SetSize((ITransformable2)hud.ActiveCamera, CanvasSize.Height);
         }
     }

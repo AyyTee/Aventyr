@@ -5,17 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Editor
+namespace Editor.Command
 {
     /// <summary>
     /// Moves a list of ITransform2 instances in world space and accounts for EditorObjects being parented to other instances.
     /// </summary>
-    public class CommandDrag : ICommand
+    public class Drag : ICommand
     {
         HashSet<MementoDrag> _modified = new HashSet<MementoDrag>();
         Transform2 _transform;
 
-        public CommandDrag(List<EditorObject> modified, Transform2 transform)
+        public Drag(List<EditorObject> modified, Transform2 transform)
         {
             foreach (EditorObject e in modified)
             {
@@ -24,13 +24,13 @@ namespace Editor
             _transform = transform.ShallowClone();
         }
 
-        public CommandDrag(List<MementoDrag> modified, Transform2 transform)
+        public Drag(List<MementoDrag> modified, Transform2 transform)
         {
             _modified.UnionWith(modified);
             _transform = transform.ShallowClone();
         }
 
-        public CommandDrag(HashSet<MementoDrag> modified, Transform2 transform)
+        public Drag(HashSet<MementoDrag> modified, Transform2 transform)
         {
             _modified.UnionWith(modified);
             _transform = transform.ShallowClone();
@@ -79,7 +79,7 @@ namespace Editor
 
         public ICommand Clone()
         {
-            return new CommandDrag(_modified, _transform);
+            return new Drag(_modified, _transform);
         }
     }
 }

@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Editor
+namespace Editor.Command
 {
-    public class CommandAddPortal : CommandAdd
+    public class AddPortal : Add
     {
         readonly EditorPortal _linked;
 
-        public CommandAddPortal(ControllerEditor controller, EditorPortal portal, EditorPortal linked = null)
+        public AddPortal(ControllerEditor controller, EditorPortal portal, EditorPortal linked = null)
             : base(controller, portal)
         {
             _linked = linked;
@@ -46,7 +46,7 @@ namespace Editor
 
         public override ICommand Clone()
         {
-            CommandAddPortal clone = new CommandAddPortal(_controller, (EditorPortal)_editorObject, _linked);
+            AddPortal clone = new AddPortal(_controller, (EditorPortal)_editorObject, _linked);
             return clone;
         }
     }

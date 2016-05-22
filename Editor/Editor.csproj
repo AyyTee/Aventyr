@@ -92,11 +92,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CommandAdd.cs" />
-    <Compile Include="CommandAddEntity.cs" />
-    <Compile Include="CommandAddPortal.cs" />
-    <Compile Include="CommandDelete.cs" />
-    <Compile Include="CommandDrag.cs" />
+    <Compile Include="Commands\Add.cs" />
+    <Compile Include="Commands\AddEntity.cs" />
+    <Compile Include="Commands\AddPortal.cs" />
+    <Compile Include="Commands\Delete.cs" />
+    <Compile Include="Commands\Drag.cs" />
     <Compile Include="ControllerCamera.cs" />
     <Compile Include="ControllerEditor.cs" />
     <Compile Include="ControllerFiles.cs" />
@@ -119,22 +119,22 @@
     <Compile Include="MementoSelection.cs" />
     <Compile Include="RollingAverage.cs" />
     <Compile Include="Selection.cs" />
-    <Compile Include="ICommand.cs" />
+    <Compile Include="Commands\ICommand.cs" />
     <Compile Include="StateList.cs" />
-    <Compile Include="ToolAddActor.cs" />
-    <Compile Include="ToolAddEntity.cs" />
-    <Compile Include="Tool.cs" />
-    <Compile Include="ToolAddPortal.cs" />
-    <Compile Include="ToolAddWall.cs" />
+    <Compile Include="Tools\ToolAddActor.cs" />
+    <Compile Include="Tools\ToolAddEntity.cs" />
+    <Compile Include="Tools\Tool.cs" />
+    <Compile Include="Tools\ToolAddPortal.cs" />
+    <Compile Include="Tools\ToolAddWall.cs" />
     <Compile Include="ToolButton.xaml.cs">
       <DependentUpon>ToolButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ToolDefault.cs" />
+    <Compile Include="Tools\ToolDefault.cs" />
     <Compile Include="ToolPanel.xaml.cs">
       <DependentUpon>ToolPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ToolPolygon.cs" />
-    <Compile Include="ToolPortalLinker.cs" />
+    <Compile Include="Tools\ToolPolygon.cs" />
+    <Compile Include="Tools\ToolPortalLinker.cs" />
     <Compile Include="MementoDrag.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

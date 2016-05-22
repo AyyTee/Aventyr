@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Editor
+namespace Editor.Command
 {
-    public class CommandDelete : ICommand
+    public class Delete : ICommand
     {
-        public CommandDelete()
+        public Delete()
         {
 
         }
@@ -30,7 +30,7 @@ namespace Editor
 
         public ICommand Clone()
         {
-            return new CommandDelete();
+            return new Delete();
         }
     }
 }

@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Editor
+namespace Editor.Command
 {
-    public class CommandAddEntity : CommandAdd
+    public class AddEntity : Add
     {
-        public CommandAddEntity(ControllerEditor controller, EditorEntity editorEntity)
+        public AddEntity(ControllerEditor controller, EditorEntity editorEntity)
             : base(controller, editorEntity)
         {
         }
@@ -22,7 +22,7 @@ namespace Editor
 
         public override ICommand Clone()
         {
-            CommandAddEntity clone = new CommandAddEntity(_controller, (EditorEntity)_editorObject);
+            AddEntity clone = new AddEntity(_controller, (EditorEntity)_editorObject);
             return clone;
         }
     }

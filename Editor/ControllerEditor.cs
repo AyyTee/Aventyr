@@ -38,6 +38,7 @@ namespace Editor
         Queue<Action> Actions = new Queue<Action>();
         public Selection selection { get; private set; }
         public StateList StateList { get; private set; }
+        public float CanvasAspect { get { return CanvasSize.Width / (float)CanvasSize.Height; } }
         /// <summary>
         /// Lock used to prevent race conditions when adding and reading from the action queue.
         /// </summary>
@@ -60,15 +61,15 @@ namespace Editor
             Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
             
             Clipboard = new EditorScene();
-            /*debugText = new Entity(Hud);
-            debugText.SetTransform(new Transform2D(new Vector2(0, CanvasSize.Height - 40)));
-            */
+
             InitTools();
             SceneStop();
         }
 
         public void LevelNew()
         {
+            renderer.RemoveLayer(Hud);
+            renderer.RemoveLayer(Level);
             Hud = new Scene();
             Level = new EditorScene();
             renderer.AddLayer(Level);
@@ -76,8 +77,6 @@ namespace Editor
 
             selection = new Selection(Level);
             StateList = new StateList();
-
-            //Level.ActiveCamera = new Camera2(null, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height);
 
             CamControl = new ControllerCamera(this, InputExt, Level);
             Transform2.SetSize(CamControl, 10);
@@ -90,7 +89,6 @@ namespace Editor
             EditorScene load = Serializer.Deserialize(filepath);
             load.ActiveCamera.Controller = this;
             load.ActiveCamera.InputExt = InputExt;
-            load.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             renderer.AddLayer(load);
             renderer.RemoveLayer(Level);
             Level = load;
@@ -99,11 +97,9 @@ namespace Editor
             LevelLoaded(this, filepath);
         }
 
-        public override void OnRenderFrame(OpenTK.FrameEventArgs e)
+        public override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            /*debugText.Models.Clear();
-            debugText.Models.Add(FontRenderer.GetModel((Time.ElapsedMilliseconds / RenderCount).ToString()));*/
         }
 
         public Vector2 GetMouseWorldPosition()
@@ -131,7 +127,7 @@ namespace Editor
             _editorObjectModified = true;
         }
 
-        public override void OnUpdateFrame(OpenTK.FrameEventArgs e)
+        public override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
             lock (_lockAction)
@@ -275,7 +271,7 @@ namespace Editor
                     ScenePause();
                 }
                 _stepsPending++;
-            }   
+            }
         }
 
         public void AddAction(Action action)
@@ -294,8 +290,6 @@ namespace Editor
         public override void OnResize(EventArgs e, Size canvasSize)
         {
             base.OnResize(e, canvasSize);
-            Hud.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
-            Level.ActiveCamera.Aspect = CanvasSize.Width / (float)CanvasSize.Height;
             Transform2.SetSize((ITransformable2)Hud.ActiveCamera, canvasSize.Height);
         }
     }

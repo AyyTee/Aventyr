@@ -8,6 +8,7 @@ using OpenTK.Input;
 using OpenTK;
 using System.Drawing;
 using System.Diagnostics;
+using Editor.Command;
 
 namespace Editor
 {
@@ -49,15 +50,15 @@ namespace Editor
                         portal.SetTransform(_mouseFollow.GetTransform());
                     }
 
-                    CommandAddPortal command;
+                    AddPortal command;
                     if (isSecondPortal)
                     {
                         Debug.Assert(portalPrevious != null);
-                        command = new CommandAddPortal(Controller, portal, portalPrevious);
+                        command = new AddPortal(Controller, portal, portalPrevious);
                     }
                     else
                     {
-                        command = new CommandAddPortal(Controller, portal);
+                        command = new AddPortal(Controller, portal);
                     }
                     Controller.StateList.Add(command, true);
                     

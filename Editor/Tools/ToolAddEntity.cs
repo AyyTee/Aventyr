@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK.Input;
 using OpenTK;
+using Editor.Command;
 
 namespace Editor
 {
@@ -49,7 +50,7 @@ namespace Editor
                 Transform2.SetPosition(editorEntity, Controller.GetMouseWorldPosition());
                 Controller.selection.Set(editorEntity);
 
-                CommandAddEntity command = new CommandAddEntity(Controller, editorEntity);
+                AddEntity command = new AddEntity(Controller, editorEntity);
                 Controller.StateList.Add(command, true);
 
                 if (!_input.KeyDown(InputExt.KeyBoth.Shift))

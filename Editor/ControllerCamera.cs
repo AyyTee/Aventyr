@@ -57,17 +57,7 @@ namespace Editor
                 _zoomFactor = value;
             }
         }
-        [DataMember]
-        float _aspect = 1;
-        public float Aspect
-        {
-            get { return _aspect; }
-            set
-            {
-                Debug.Assert(value >= 0);
-                _aspect = value;
-            }
-        }
+        public float Aspect { get { return Controller.CanvasAspect; } }
         public Vector2 ViewOffset { get { return new Vector2(); } }
         public double Fov { get { return Math.PI / 4; } }
         public float ZNear { get { return -1000f; } }
@@ -80,7 +70,6 @@ namespace Editor
             _transform.Size = 1;
             ZoomScrollFactor = 1.2f;
             ZoomFactor = 1.5f;
-            //camera.PortalEnter += portalEnterCallback;
             InputExt = inputExt;
             for (int i = 0; i < QUEUE_SIZE; i++)
             {
@@ -252,7 +241,6 @@ namespace Editor
             clone.ZoomMax = ZoomMax;
             clone.KeyMoveSpeed = KeyMoveSpeed;
             clone._transform = _transform;
-            clone._aspect = _aspect;
             return clone;
         }
     }

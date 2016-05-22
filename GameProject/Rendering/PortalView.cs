@@ -95,7 +95,7 @@ namespace Game
             paths.Add(view);
             PortalView portalView = new PortalView(null, camera.GetViewMatrix(), view, new Line[0], new Line[0]);
             Vector2 camPos = camera.GetWorldTransform().Position;
-            CalculatePortalViews(null, portals, camera.GetViewMatrix(), camPos, camPos - camera.GetWorldVelocity().Position, depth, portalView, Matrix4.Identity);
+            CalculatePortalViews(null, portals, camera.GetViewMatrix(), camPos, camPos - camera.GetWorldVelocity().Position / Controller.DrawsPerSecond, depth, portalView, Matrix4.Identity);
             return portalView;
         }
 
