@@ -40,10 +40,10 @@ namespace Editor
                 {
                     EditorPortal portal = new EditorPortal(Controller.Level);
                     var coord = GetEdgeCoord();
-                    if (coord.Item1 != null)
+                    if (coord != null)
                     {
                         //portal.SetParent((EditorObject)coord.Actor);
-                        portal.SetTransform(coord.Item1, coord.Item2);
+                        portal.SetTransform(coord.Wall, coord);
                     }
                     else
                     {
@@ -72,7 +72,7 @@ namespace Editor
             }
         }
 
-        private Tuple<IWall, PolygonCoord> GetEdgeCoord()
+        private WallCoord GetEdgeCoord()
         {
             float size = Transform2.GetSize(_mouseFollow);
             IWall[] walls = Controller.Level.GetAll().OfType<IWall>().ToArray();
@@ -82,9 +82,9 @@ namespace Editor
         private Transform2 GetPortalTransform()
         {
             var coord = GetEdgeCoord();
-            if (coord.Item1 != null)
+            if (coord != null)
             {
-                Transform2 transform = PolygonExt.GetTransform(coord.Item1.GetWorldVertices(), coord.Item2);
+                Transform2 transform = PolygonExt.GetTransform(coord.Wall.GetWorldVertices(), coord);
                 transform.Size = 1;
                 return transform;
             }

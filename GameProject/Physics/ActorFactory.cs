@@ -138,10 +138,6 @@ namespace Game
                 PolygonShape shape = new PolygonShape(v1, 1);
                 Fixture fixture = body.CreateFixture(shape);
                 FixtureUserData userData = FixtureExt.SetUserData(fixture);
-                for (int j = 0; j < polygon.Triangles[i].Neighbors.Count(); j++)
-                {
-                    userData.EdgeIsExterior[j] = polygon.Triangles[i].EdgeIsConstrained[(j + 2) % 3];
-                }
             }
         }
     }

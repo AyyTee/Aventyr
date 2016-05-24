@@ -208,6 +208,7 @@
     <Compile Include="Common\Vector2Ext.cs" />
     <Compile Include="Common\Vector3Ext.cs" />
     <Compile Include="Rendering\Models\Vertex.cs" />
+    <Compile Include="WallCoord.cs" />
     <Compile Include="Window.cs" />
     <Compile Include="Physics\WorldExt.cs" />
   </ItemGroup>

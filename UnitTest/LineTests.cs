@@ -359,7 +359,7 @@ namespace UnitTest
         public void NearestTTest2()
         {
             Line line = new Line(new Vector2(3.3f,-4.9f), new Vector2(-5.3f, -6.1f));
-            Assert.IsTrue(Math.Abs(line.NearestT(new Vector2(-4, 2), false) - 54.5) < 0.0001f);
+            Assert.IsTrue(line.NearestT(new Vector2(-4, 2), false) == 0.722811639f);
         }
         #endregion
         #region Intersect tests

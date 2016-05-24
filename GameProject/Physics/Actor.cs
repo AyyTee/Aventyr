@@ -15,8 +15,9 @@ namespace Game
     [DataContract]
     public class Actor : SceneNode, IActor, IPortalable
     {
-        [DataMember]
-        public int BodyId { get; private set; }
+        /// <summary>
+        /// Physics rigid body associated with this Actor. This body's fixtures may be disposed and replaced over time. 
+        /// </summary>
         public Body Body { get; private set; }
         [DataMember]
         Vector2 _scale = new Vector2(1, 1);
@@ -35,15 +36,8 @@ namespace Game
         {
             _vertices = vertices.ToArray();
             _scale = transform.Scale;
-            Body = ActorFactory.CreatePolygon(scene.World, transform, Vertices);
+            Body = ActorFactory.CreatePolygon(Scene.World, transform, Vertices);
             BodyExt.SetUserData(Body, this);
-        }
-
-        public void SetBody(Body body)
-        {
-            Debug.Assert(body != null, "Actor must be assigned a Body.");
-            Body = body;
-            BodyId = body.BodyId;
         }
 
         public override IDeepClone ShallowClone()
@@ -79,15 +73,18 @@ namespace Game
             return bodyTransform;
         }
 
-        /// <summary>
-        /// Set the transform.  Scale is discarded since physics bodies do not have a Scale field.
-        /// </summary>
         public void SetTransform(Transform2 transform)
         {
-            BodyExt.SetTransform(Body, transform);
             if (_scale != transform.Scale)
             {
-                Debug.Assert(false);
+                Debug.Assert(Scene.InWorldStep == false, "Scale cannot change during a physics step.");
+                _scale = transform.Scale;
+                
+                
+            }
+            else
+            {
+                BodyExt.SetTransform(Body, transform);
             }
             _scale = transform.Scale;
         }
@@ -97,6 +94,9 @@ namespace Game
             return BodyExt.GetVelocity(Body);
         }
 
+        /// <summary>
+        /// Set Actor's velocity.  The scale component is ignored.
+        /// </summary>
         public void SetVelocity(Transform2 velocity)
         {
             BodyExt.SetVelocity(Body, velocity);

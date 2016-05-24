@@ -10,7 +10,6 @@ namespace Game
 {
     public class FixtureUserData
     {
-        public bool[] EdgeIsExterior;
         private readonly Fixture _fixture;
         /// <summary>
         /// All FixturePortals that this fixture is colliding with.
@@ -70,17 +69,6 @@ namespace Game
         {
             _fixture = fixture;
             _fixtureId = fixture.FixtureId;
-            switch (Fixture.Shape.ShapeType)
-            {
-                case ShapeType.Polygon:
-                    PolygonShape shape = (PolygonShape) Fixture.Shape;
-                    EdgeIsExterior = new bool[shape.Vertices.Count];
-                    for (int i = 0; i < EdgeIsExterior.Length; i++)
-                    {
-                        EdgeIsExterior[i] = true;
-                    }
-                    break;
-            }
         }
         #endregion
 
@@ -195,7 +183,7 @@ namespace Game
             Vector2[] verts = new Vector2[3];
             var tempVerts = Vector2Ext.Transform(Portal.GetVerts(portal), portal.GetTransform().GetMatrix());
             Line edge = PolygonExt.GetEdge(((IWall)portal.Parent).Vertices, portal.Position);
-            PolygonShape shape = (PolygonShape)null;// portal.Position.Fixture.Shape;
+            PolygonShape shape = (PolygonShape)FixtureExt.GetFixturePortalParent(portal).Shape;
             int i = 1;
             if (previousVertex)
             {

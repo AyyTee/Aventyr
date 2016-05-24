@@ -24,6 +24,10 @@ namespace Game
         public ICamera2 ActiveCamera { get; private set; }
         public List<SceneNode> SceneNodeList { get { return Tree<SceneNode>.GetDescendents(Root); } }
         public List<Entity> EntityList { get { return Tree<SceneNode>.FindByType<Entity>(Root); } }
+        /// <summary>
+        /// States whether the scene is currently performing a physics step.
+        /// </summary>
+        public bool InWorldStep { get; private set; }
         /// <summary>Root node to the scene graph.</summary>
         [DataMember]
         public SceneNode Root { get; private set; }
@@ -72,7 +76,9 @@ namespace Game
             if (World != null)
             {
                 _contactListener.StepBegin();
+                InWorldStep = true;
                 World.Step(stepSize);
+                InWorldStep = false;
                 _contactListener.StepEnd();
             }
             foreach (IStep s in GetAll().OfType<IStep>())
