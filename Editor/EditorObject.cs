@@ -141,11 +141,11 @@ namespace Editor
 
         public virtual void SetTransform(Transform2 transform)
         {
-            if (PolygonTransform != null)
+            /*if (PolygonTransform != null)
             {
                 PolygonTransform = null;
                 SetParent(Scene);
-            }
+            }*/
             _transform = transform.ShallowClone();
         }
 
@@ -156,6 +156,15 @@ namespace Editor
                 return PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform);
             }
             return _transform.ShallowClone();*/
+            /*if (PolygonTransform != null)
+            {
+                return _transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
+            }*/
+            return _transform.ShallowClone();
+        }
+
+        public Transform2 GetTransformWithPolygon()
+        {
             if (PolygonTransform != null)
             {
                 return _transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
@@ -165,16 +174,26 @@ namespace Editor
 
         public virtual Transform2 GetWorldTransform()
         {
+            Transform2 transform;
+            if (PolygonTransform != null)
+            {
+                transform = _transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
+            }
+            else
+            {
+                transform = GetTransform();
+            }
             if (Parent != null)
             {
-                Transform2 transform = GetTransform().Transform(Parent.GetWorldTransform());
+                transform = transform.Transform(Parent.GetWorldTransform());
+                
                 if (IgnoreScale)
                 {
                     transform.SetScale(GetTransform().Scale);
                 }
                 return transform;
             }
-            return GetTransform();
+            return transform;
         }
 
         public Transform2 GetVelocity()

@@ -10,7 +10,8 @@ namespace Game
     public static class ActorExt
     {
         /// <summary>
-        /// Returns vertices defining the collision mask contour (Not the fixtures themselves!)
+        /// Returns polygon that is the local polygon with only the local transforms Scale component applied. 
+        /// This is useful because the vertices should exactly match up with vertices in the physics fixtures for this Actor's body.
         /// </summary>
         public static List<Vector2> GetFixtureContour(IActor actor)
         {

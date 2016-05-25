@@ -19,7 +19,7 @@ namespace Game
     {
         public Scene Scene { get; private set; }
         Entity DebugEntity;
-        bool DebugMode = true;
+        bool DebugMode = false;
 
         public PhysContactListener(Scene scene)
         {

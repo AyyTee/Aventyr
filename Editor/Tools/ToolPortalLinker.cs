@@ -51,7 +51,9 @@ namespace Editor
                             t.IsMirrored = true;
                             portal.SetTransform(t);*/
                             portal._transform.IsMirrored = true;
+                            portal._transform.Size = -Math.Abs(portal._transform.Size);
                             _portalPrevious._transform.IsMirrored = false;
+                            _portalPrevious._transform.Size = Math.Abs(_portalPrevious._transform.Size);
                             //t = _portalPrevious.GetTransform();
                             //t.IsMirrored = false;
                             //_portalPrevious.SetTransform(t);
@@ -65,8 +67,10 @@ namespace Editor
                             t = _portalPrevious.GetTransform();
                             t.IsMirrored = false;
                             _portalPrevious.SetTransform(t);*/
-                            portal._transform.IsMirrored = false;
-                            _portalPrevious._transform.IsMirrored = false;
+                            portal._transform.IsMirrored = true;
+                            portal._transform.Size = Math.Abs(portal._transform.Size);
+                            _portalPrevious._transform.IsMirrored = true;
+                            _portalPrevious._transform.Size = Math.Abs(_portalPrevious._transform.Size);
                         }
                         
                         

@@ -87,18 +87,20 @@ namespace Game
                 foreach (Fixture f in Body.FixtureList)
                 {
                     PolygonShape shape = (PolygonShape)f.Shape;
+                    //Make a copy of the vertices and manipulate those before assigning it back to the fixture.
+                    //Modifying the vertices directly causes Farseer to not update internal values.
+                    FarseerPhysics.Common.Vertices vertices = new FarseerPhysics.Common.Vertices(shape.Vertices);
                     for (int i = 0; i < shape.Vertices.Count; i++)
                     {
-                        int verticeIndex = contourPrev.FindIndex(item => item == shape.Vertices[i]);
+                        int verticeIndex = contourPrev.FindIndex(item => item == vertices[i]);
                         Debug.Assert(verticeIndex != -1);
-                        shape.Vertices[i] = contour[verticeIndex];
+                        vertices[i] = contour[verticeIndex];
                     }
+                    shape.Vertices = vertices;
                     PolygonExt.SetInterior(shape.Vertices);
                 }
             }
-
             BodyExt.SetTransform(Body, transform);
-            //_scale = transform.Scale;
         }
 
         public override Transform2 GetVelocity()

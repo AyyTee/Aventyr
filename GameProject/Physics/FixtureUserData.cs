@@ -190,16 +190,16 @@ namespace Game
                 i = 0;
             }
 
-            int i0 = i;
+            int iNext = i;
             if (!portal.IsMirrored)
             {
-                i0 = (i + 1) % 2;
+                iNext = (i + 1) % 2;
             }
                 
             int index = (portal.Position.EdgeIndex + i) % shape.Vertices.Count;
-            verts[0] = tempVerts[i0];
+            verts[0] = tempVerts[iNext];
             verts[1] = Vector2Ext.ConvertTo(shape.Vertices[index]);
-            verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[i0] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
+            verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
             MathExt.SetHandedness(verts, false);
 
             /*Entity debugEntity = Entity.Scene.CreateEntity();

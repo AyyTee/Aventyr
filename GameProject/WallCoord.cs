@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Game
 {
+    [DataContract]
     public class WallCoord : IPolygonCoord
     {
+        [DataMember]
         public IWall Wall { get; set; }
+        [DataMember]
         public int EdgeIndex { get; set; }
+        [DataMember]
         public float EdgeT { get; set; }
 
         public WallCoord(IWall wall, int edgeIndex, float edgeT)

@@ -16,7 +16,6 @@ namespace Editor
         [DataMember]
         public IPortal Linked { get; set; }
         public bool OneSided { get { return false; } }
-        public bool IsMirrored { get { return GetTransform().IsMirrored; } }
         public override bool IgnoreScale { get { return true; } }
         Model _portalModel;
 

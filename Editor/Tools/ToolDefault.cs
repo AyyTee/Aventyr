@@ -339,7 +339,7 @@ namespace Editor
             Transform2 transform = _translator.GetTransform();
             Transform2 camT = camera.GetWorldTransform();
             //transform.SetScale(camT.Scale * translationScaleOffset);
-            transform.Size = camera.GetWorldTransform().Size * translationScaleOffset;
+            transform.Size = camT.Size * translationScaleOffset;
             _translator.SetTransform(transform);
         }
     }
