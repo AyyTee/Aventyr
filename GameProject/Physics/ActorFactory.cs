@@ -114,11 +114,11 @@ namespace Game
             Debug.Assert(body != null);
             Debug.Assert(transform != null);
             Debug.Assert(vertices != null && vertices.Count >= 3);
-            List<Vector2> verticesCopy = ActorExt.GetFixtureContour(vertices, transform);//new List<Vector2>(vertices);
-            MathExt.SetHandedness(verticesCopy, false);
+            List<Vector2> fixtureContour = ActorExt.GetFixtureContour(vertices, transform.Scale);
+            MathExt.SetHandedness(fixtureContour, false);
             
             //verticesCopy = (List<Vector2>)Vector2Ext.Transform(verticesCopy, Matrix4.CreateScale(new Vector3(transform.Scale)));
-            Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(verticesCopy);
+            Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(fixtureContour);
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 

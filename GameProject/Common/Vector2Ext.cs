@@ -143,6 +143,16 @@ namespace Game
             return vNew;
         }
 
+        public static List<Xna.Vector2> ConvertToXna(List<Vector2> v)
+        {
+            List<Xna.Vector2> vNew = new List<Xna.Vector2>();
+            for (int i = 0; i < v.Count; i++)
+            {
+                vNew.Add(ConvertToXna(v[i]));
+            }
+            return vNew;
+        }
+
         public static Xna.Vector2 ConvertToXna(TriangulationPoint v)
         {
             return new Xna.Vector2((float)v.X, (float)v.Y);

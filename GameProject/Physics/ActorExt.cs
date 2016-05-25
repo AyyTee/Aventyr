@@ -14,12 +14,12 @@ namespace Game
         /// </summary>
         public static List<Vector2> GetFixtureContour(IActor actor)
         {
-            return GetFixtureContour(actor.Vertices, actor.GetTransform());
+            return GetFixtureContour(actor.Vertices, actor.GetTransform().Scale);
         }
 
-        public static List<Vector2> GetFixtureContour(IList<Vector2> vertices, Transform2 transform)
+        public static List<Vector2> GetFixtureContour(IList<Vector2> vertices, Vector2 scale)
         {
-            Matrix4 scaleMat = Matrix4.CreateScale(new Vector3(transform.Scale));
+            Matrix4 scaleMat = Matrix4.CreateScale(new Vector3(scale));
             return (List<Vector2>)Vector2Ext.Transform(vertices, scaleMat);
         }
     }

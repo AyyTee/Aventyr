@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
@@ -42,6 +43,14 @@ namespace Game
         /// Changes handedness so polygon edge normals face outward.
         /// </summary>
         public static void SetInterior(List<Vector2> polygon)
+        {
+            MathExt.SetHandedness(polygon, false);
+        }
+
+        /// <summary>
+        /// Changes handedness so polygon edge normals face outward.
+        /// </summary>
+        public static void SetInterior(List<Xna.Vector2> polygon)
         {
             MathExt.SetHandedness(polygon, false);
         }

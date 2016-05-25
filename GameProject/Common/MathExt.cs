@@ -359,8 +359,20 @@ namespace Game
         /// Returns true if vertices are ordered clockwise, false they are counter-clockwise.  It is assumed that the polygon they form is simple.
         /// </summary>
         /// <param name="v">Array of vertices that form a polygon</param>
-        /// <returns></returns
         public static bool IsClockwise(IList<Vector2> polygon)
+        {
+            Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
+            double signedArea = 0;
+            for (int i0 = 0; i0 < polygon.Count; i0++)
+            {
+                int i1 = (i0 + 1) % polygon.Count;
+                signedArea += (polygon[i0].X * polygon[i1].Y - polygon[i1].X * polygon[i0].Y);
+            }
+            Debug.Assert(signedArea != 0, "Polygon has 0 area.");
+            return Math.Sign(signedArea) == -1;
+        }
+
+        public static bool IsClockwise(IList<Xna.Vector2> polygon)
         {
             Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
             double signedArea = 0;
@@ -401,6 +413,14 @@ namespace Game
         }
 
         public static void SetHandedness(Vector2[] polygon, bool clockwise)
+        {
+            if (IsClockwise(polygon) != clockwise)
+            {
+                polygon.Reverse();
+            }
+        }
+
+        public static void SetHandedness(List<Xna.Vector2> polygon, bool clockwise)
         {
             if (IsClockwise(polygon) != clockwise)
             {

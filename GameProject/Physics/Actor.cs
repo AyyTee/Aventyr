@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using FarseerPhysics.Collision.Shapes;
 
 namespace Game
 {
@@ -16,7 +17,7 @@ namespace Game
     public class Actor : SceneNode, IActor, IPortalable
     {
         /// <summary>
-        /// Physics rigid body associated with this Actor. This body's fixtures may be disposed and replaced over time. 
+        /// Physics rigid body associated with this Actor.
         /// </summary>
         public Body Body { get; private set; }
         [DataMember]
@@ -77,16 +78,27 @@ namespace Game
         {
             if (_scale != transform.Scale)
             {
-                Debug.Assert(Scene.InWorldStep == false, "Scale cannot change during a physics step.");
+                Debug.Assert(!Scene.InWorldStep, "Scale cannot change during a physics step.");
+
+                List<Xna.Vector2> contourPrev = Vector2Ext.ConvertToXna(ActorExt.GetFixtureContour(Vertices, GetTransform().Scale));
                 _scale = transform.Scale;
-                
-                
+                List<Xna.Vector2> contour = Vector2Ext.ConvertToXna(ActorExt.GetFixtureContour(Vertices, transform.Scale));
+
+                foreach (Fixture f in Body.FixtureList)
+                {
+                    PolygonShape shape = (PolygonShape)f.Shape;
+                    for (int i = 0; i < shape.Vertices.Count; i++)
+                    {
+                        int verticeIndex = contourPrev.FindIndex(item => item == shape.Vertices[i]);
+                        Debug.Assert(verticeIndex != -1);
+                        shape.Vertices[i] = contour[verticeIndex];
+                    }
+                    PolygonExt.SetInterior(shape.Vertices);
+                }
             }
-            else
-            {
-                BodyExt.SetTransform(Body, transform);
-            }
-            _scale = transform.Scale;
+
+            BodyExt.SetTransform(Body, transform);
+            //_scale = transform.Scale;
         }
 
         public override Transform2 GetVelocity()
@@ -107,7 +119,7 @@ namespace Game
         /// </summary>
         public IList<Vector2> GetWorldVertices()
         {
-            return Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix());
+            return Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix()).ToList();
         }
     }
 }
