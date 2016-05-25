@@ -7,13 +7,11 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface IActor : IWall, ISceneObject, ITransformable2
+    public interface IActor : IWall, ISceneObject, IPortalable
     {
         Body Body { get; }
         void Remove();
         Transform2 GetWorldTransform();
         Transform2 GetWorldVelocity();
-        Transform2 GetVelocity();
-        void SetVelocity(Transform2 velocity);
     }
 }

@@ -13,6 +13,7 @@ namespace Editor
         protected InputExt _input { get { return Controller.InputExt; } }
         public bool Enabled { get; private set; }
         public bool Active { get; protected set; }
+        public virtual bool EditorOnly { get; }
 
         public readonly ControllerEditor Controller;
 

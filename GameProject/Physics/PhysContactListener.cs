@@ -119,7 +119,9 @@ namespace Game
                 if (portalNearest != null)
                 {
                     //float rot = body.Rotation;
-                    Portal.Enter(portalNearest, body);
+                    //Portal.Enter(portalNearest, body);
+                    IPortalable actor = (IPortalable)BodyExt.GetUserData(body).Actor;
+                    Portal.Enter(portalNearest, actor);
                     //Debug.Assert(Math.Abs(rot - body.Rotation) < .01f || Math.Abs(rot - body.Rotation) > Math.PI - .01f);
                 }
             }

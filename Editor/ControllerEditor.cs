@@ -144,13 +144,21 @@ namespace Editor
                 //SceneModified(this, Level);
                 _editorObjectModified = false;
             }
-            if ((!_isPaused || _stepsPending > 0) && ActiveLevel != null)
+            if (ActiveLevel != null)
             {
-                if (_stepsPending > 0)
+                float stepSize = physicsStepSize / 60;
+                if (!_isPaused || _stepsPending > 0)
                 {
-                    _stepsPending--;
+                    if (_stepsPending > 0)
+                    {
+                        _stepsPending--;
+                    }
+                    ActiveLevel.Step(stepSize);
                 }
-                ActiveLevel.Step(physicsStepSize / 60);
+                else
+                {
+                    ActiveLevel.Step(0);
+                }
             }
             else
             {

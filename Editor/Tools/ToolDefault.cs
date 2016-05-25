@@ -8,23 +8,12 @@ using OpenTK.Input;
 using System.IO;
 using OpenTK;
 using System.Diagnostics;
+using Editor.Command;
 
 namespace Editor
 {
     public class ToolDefault : Tool
     {
-        private struct Drag
-        {
-            public Doodad Doodad;
-            public EditorObject EditorObject;
-            public Drag(Doodad doodad, EditorObject editorObject)
-            {
-                Doodad = doodad;
-                EditorObject = editorObject;
-            }
-        }
-
-
         Doodad _translator;
         Model translationModel;
         const float translationScaleOffset = 0.1f;
@@ -248,7 +237,7 @@ namespace Editor
             }
             else
             {
-                Controller.StateList.Add(new Command.Drag(dragObjects, _totalDrag), true);
+                Controller.StateList.Add(new Drag(dragObjects, _totalDrag), true);
             }
 
             _dragState = DragState.Neither;
@@ -326,7 +315,7 @@ namespace Editor
             base.Enable();
             _translator = new Doodad(Controller.Level);//new Entity(Controller.Level);
             _translator.Models.Add(translationModel);
-            _translator.Visible = false;
+            _translator.Visible = true;
             //_translator.DrawOverPortals = true;
             _dragState = DragState.Neither;
             Controller.CamControl.CameraMoved += UpdateTranslation;
@@ -347,10 +336,11 @@ namespace Editor
 
         private void UpdateTranslation(ControllerCamera camera)
         {
-            /*Transform2 transform = _translator.GetTransform();
-            //transform.Scale = new Vector2(camera.Zoom, camera.Zoom) * translationScaleOffset;
+            Transform2 transform = _translator.GetTransform();
+            Transform2 camT = camera.GetWorldTransform();
+            //transform.SetScale(camT.Scale * translationScaleOffset);
             transform.Size = camera.GetWorldTransform().Size * translationScaleOffset;
-            _translator.SetTransform(transform);*/
+            _translator.SetTransform(transform);
         }
     }
 }

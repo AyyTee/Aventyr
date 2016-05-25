@@ -14,7 +14,7 @@ namespace Game
 {
     /// <summary>A SceneNode with rigid body physics.</summary>
     [DataContract]
-    public class Actor : SceneNode, IActor, IPortalable
+    public class Actor : SceneNode, IActor
     {
         /// <summary>
         /// Physics rigid body associated with this Actor.

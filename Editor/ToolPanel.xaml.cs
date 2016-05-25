@@ -40,10 +40,10 @@ namespace Editor
                     tool = (Tool)new ToolAddPortal(_controller),
                     image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "portalIcon.png")))
                 },
-                new {
+                /*new {
                     tool = (Tool)new ToolPolygon(_controller),
                     image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonIcon.png")))
-                },
+                },*/
                 new {
                     tool = (Tool)new ToolPortalLinker(_controller),
                     image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonLinkerIcon.png")))

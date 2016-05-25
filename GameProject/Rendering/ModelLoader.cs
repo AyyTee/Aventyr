@@ -20,6 +20,7 @@ namespace Game
             List<Vector3> normals = new List<Vector3>();
             List<Vector2> texCoords = new List<Vector2>();
             Model model = new Model();
+            model.Mesh = new Mesh();
             string mtlFileName = "";
             string line;
             while ((line = reader.ReadLine()) != null)
@@ -82,6 +83,7 @@ namespace Game
             string[] indices = parameters;
             int[] p = new int[indices.Length - 1];
             List<int> vertIndices = new List<int>();
+            Mesh mesh = (Mesh)model.Mesh;
             for (int i = 0; i < p.Length; i++)
             {
                 char[] splitCharsFace = { '/' };
@@ -111,14 +113,16 @@ namespace Game
                 else
                 {
                     Vertex vertex = new Vertex(points[vertId], texCoord, new Vector3(), normal);
-                    int index = 0;//model.AddVertex(vertex); //TODO
+                    int index = mesh.AddVertex(vertex);
                     vectorMap.Add(key, index);
                     vertIndices.Add(index);
                 }
             }
             for (int i = 2; i < vertIndices.Count; i++)
             {
-                //model.AddTriangle(vertIndices[0], vertIndices[i - 1], vertIndices[i]); //TODO
+                mesh.Indices.Add(vertIndices[0]);
+                mesh.Indices.Add(vertIndices[i - 1]);
+                mesh.Indices.Add(vertIndices[i]);
             }
             return true;
         }
