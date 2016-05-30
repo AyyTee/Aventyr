@@ -50,23 +50,26 @@ namespace Editor
             else if (_input.MousePress(MouseButton.Left))
             {
                 Vector2 mousePos = Controller.GetMouseWorldPosition();
-                if (_vertices.Count >= 3 && (mousePos - _vertices[0]).Length < 0.1f)
+                if (mousePos != _vertices.LastOrDefault())
                 {
-                    Vector2 average = new Vector2(_vertices.Average(item => item.X), _vertices.Average(item => item.Y));
-                    for (int i = 0; i < _vertices.Count; i++)
+                    if (_vertices.Count >= 3 && (mousePos - _vertices[0]).Length < 0.1f)
                     {
-                        _vertices[i] -= average;
+                        Vector2 average = new Vector2(_vertices.Average(item => item.X), _vertices.Average(item => item.Y));
+                        for (int i = 0; i < _vertices.Count; i++)
+                        {
+                            _vertices[i] -= average;
+                        }
+                        PolygonExt.SetInterior(_vertices);
+                        MathExt.SetWinding(_vertices, false);
+                        EditorWall editorEntity = new EditorWall(Controller.Level, _vertices);
+                        Transform2.SetPosition(editorEntity, average);
+                        Controller.SetTool(null);
                     }
-                    PolygonExt.SetInterior(_vertices);
-                    MathExt.SetHandedness(_vertices, false);
-                    EditorWall editorEntity = new EditorWall(Controller.Level, _vertices);
-                    Transform2.SetPosition(editorEntity, average);
-                    Controller.SetTool(null);
-                }
-                else
-                {
-                    _vertices.Add(mousePos);
-                    UpdatePolygon();
+                    else
+                    {
+                        _vertices.Add(mousePos);
+                        UpdatePolygon();
+                    }
                 }
             }
         }

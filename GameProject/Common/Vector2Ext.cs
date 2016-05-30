@@ -78,6 +78,11 @@ namespace Game
             return vList;
         }
 
+        public static Vector2 ConvertTo(Point2D v)
+        {
+            return new Vector2(v.Xf, v.Yf);
+        }
+
         public static Vector2 ConvertTo(Vector3 v)
         {
             return new Vector2(v.X, v.Y);

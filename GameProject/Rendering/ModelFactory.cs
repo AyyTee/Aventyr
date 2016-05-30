@@ -1,4 +1,5 @@
 ﻿using ClipperLib;
+using FarseerPhysics.Collision.Shapes;
 using OpenTK;
 using Poly2Tri;
 using System;
@@ -360,6 +361,24 @@ namespace Game
             }
             polygon = Vector2Ext.Transform(polygon, Matrix4.CreateRotationZ((float)-(MathExt.AngleVector(pointAt) + Math.PI / 2)));
             AddPolygon(mesh, polygon, origin);
+        }
+
+        public static Model CreateActorDebug(Actor actor)
+        {
+            Model model = new Model();
+            Mesh mesh = new Mesh();
+            foreach (FarseerPhysics.Dynamics.Fixture f in actor.Body.FixtureList)
+            {
+                PolygonShape polygon = (PolygonShape)f.Shape;
+                var vertices = Vector2Ext.ConvertTo(polygon.Vertices);
+                AddLineStripWidth(mesh, vertices, 0.05f, true);
+            }
+            model.Mesh = mesh;
+            Vector2 scale = actor.GetTransform().Scale;
+            scale.X = 1 / scale.X;
+            scale.Y = 1 / scale.Y;
+            model.Transform = new Transform3(new Vector3(), new Vector3(scale));
+            return model;
         }
     }
 }

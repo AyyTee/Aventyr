@@ -24,17 +24,17 @@ namespace UnitTest
             return ground;
         }
 
-        /*public Scene CreateSceneWithPortal()
+        public Scene CreateSceneWithPortal()
         {
             Scene scene = new Scene();
             Actor ground = CreateGround(scene);
             scene.World.ProcessChanges();
             Fixture fixture = ground.Body.FixtureList[0];
-            FixturePortal portal = new FixturePortal(scene, new FixtureEdgeCoord(fixture, 0, 0.3f));
+            FixturePortal portal = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
 
             FixtureExt.GetUserData(fixture).ProcessChanges();
             return scene;
-        }*/
+        }
 
         /*[TestMethod]
         public void PortalParentTest0()

@@ -157,7 +157,7 @@ namespace Game
                     {
                         continue;
                     }
-                    MathExt.SetHandedness(otherFov, true);
+                    MathExt.SetWinding(otherFov, true);
                     List<IntPoint> otherPathFov = ClipperConvert.ToIntPoint(otherFov);
                     c.AddPath(otherPathFov, PolyType.ptClip, true);
                 }

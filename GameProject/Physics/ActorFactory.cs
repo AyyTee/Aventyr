@@ -115,24 +115,43 @@ namespace Game
             Debug.Assert(transform != null);
             Debug.Assert(vertices != null && vertices.Count >= 3);
             List<Vector2> fixtureContour = ActorExt.GetFixtureContour(vertices, transform.Scale);
-            MathExt.SetHandedness(fixtureContour, false);
-            
+            MathExt.SetWinding(fixtureContour, false);
+
             //verticesCopy = (List<Vector2>)Vector2Ext.Transform(verticesCopy, Matrix4.CreateScale(new Vector3(transform.Scale)));
-            Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(fixtureContour);
+            //Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(fixtureContour);
+            var convexList = PolygonExt.DecomposeConcave(fixtureContour);
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 
             //Body body = BodyExt.CreateBody(world);
+
             BodyExt.SetTransform(body, transform);
 
-            for (int i = 0; i < polygon.Triangles.Count; i++)
+            for (int i = convexList.Count - 1; i >= 0; i--)
+            {
+                int vertMax = FarseerPhysics.Settings.MaxPolygonVertices;
+                int divs = 1 + convexList[i].Count / vertMax;
+                if (divs < 2)
+                {
+                    continue;
+                }
+                int j = 1;
+                while (j < convexList[i].Count)
+                {
+                    List<Vector2> list = new List<Vector2>();
+                    list.Add(convexList[i][0]);
+                    
+                    list.AddRange(convexList[i].GetRange(j, Math.Min(convexList[i].Count - j, vertMax - 1)));
+                    j += vertMax - 2;
+                    convexList.Add(list);
+                }
+                convexList.RemoveAt(i);
+            }
+
+            for (int i = 0; i < convexList.Count; i++)
             {
                 var v1 = new FarseerPhysics.Common.Vertices();
-
-                for (int j = 0; j < polygon.Triangles[i].Points.Count(); j++)
-                {
-                    v1.Add(Vector2Ext.ConvertToXna(polygon.Triangles[i].Points[j]));
-                }
+                v1.AddRange(Vector2Ext.ConvertToXna(convexList[i]));
 
                 vList.Add(v1);
                 PolygonShape shape = new PolygonShape(v1, 1);

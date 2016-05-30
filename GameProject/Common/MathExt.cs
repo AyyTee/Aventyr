@@ -232,7 +232,7 @@ namespace Game
             {
                 return true;
             }
-            return LinePolygonIntersect(line, polygon).Count > 0;
+            return LinePolygonIntersect(line, polygon.Vertices).Count > 0;
         }
 
         /// <summary>
@@ -354,7 +354,7 @@ namespace Game
             return hull;
         }
         #endregion
-        #region Polygon Handedness
+        #region Polygon Winding Order
         /// <summary>
         /// Returns true if vertices are ordered clockwise, false they are counter-clockwise.  It is assumed that the polygon they form is simple.
         /// </summary>
@@ -399,12 +399,12 @@ namespace Game
         }
 
         /// <summary>
-        /// Sets the handedness of a polygon.
+        /// Sets the winding order of a polygon.
         /// </summary>
         /// <param name="polygon">A polygon represented as a list of vectors.</param>
         /// <param name="clockwise">Clockwise if true, C.Clockwise if false.</param>
         /// <returns></returns>
-        public static void SetHandedness(List<Vector2> polygon, bool clockwise)
+        public static void SetWinding(List<Vector2> polygon, bool clockwise)
         {
             if (IsClockwise(polygon) != clockwise)
             {
@@ -412,7 +412,7 @@ namespace Game
             }
         }
 
-        public static void SetHandedness(Vector2[] polygon, bool clockwise)
+        public static void SetWinding(Vector2[] polygon, bool clockwise)
         {
             if (IsClockwise(polygon) != clockwise)
             {
@@ -420,7 +420,7 @@ namespace Game
             }
         }
 
-        public static void SetHandedness(List<Xna.Vector2> polygon, bool clockwise)
+        public static void SetWinding(List<Xna.Vector2> polygon, bool clockwise)
         {
             if (IsClockwise(polygon) != clockwise)
             {
@@ -496,13 +496,13 @@ namespace Game
         /// </summary>
         /// <param name="polygon">A closed polygon</param>
         /// <returns>An intersection point</returns>
-        public static List<PolygonCoord> LinePolygonIntersect(Line line, IPolygon polygon)
+        public static List<PolygonCoord> LinePolygonIntersect(Line line, IList<Vector2> polygon)
         {
             List<PolygonCoord> points = new List<PolygonCoord>();
-            for (int i0 = 0; i0 < polygon.Vertices.Count; i0++)
+            for (int i0 = 0; i0 < polygon.Count; i0++)
             {
-                int i1 = (i0 + 1) % polygon.Vertices.Count;
-                IntersectCoord intersect = MathExt.LineLineIntersect(line, new Line(polygon.Vertices[i0], polygon.Vertices[i1]), true);
+                int i1 = (i0 + 1) % polygon.Count;
+                IntersectCoord intersect = MathExt.LineLineIntersect(line, new Line(polygon[i0], polygon[i1]), true);
                 
                 if (intersect.Exists)
                 {
@@ -808,7 +808,7 @@ namespace Game
             //Debug.Assert(V0 == Vector2d.Zero, "Vector must have non-zero length.");
             double val = Math.Atan2(V0.X, V0.Y);
 
-            if (Double.IsNaN(val))
+            if (double.IsNaN(val))
             {
                 return 0;
             }
@@ -823,6 +823,18 @@ namespace Game
         static public double AngleDiff(double angle0, double angle1)
         {
             return ((angle1 - angle0) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
+        }
+
+        /// <summary>
+        /// Returns the difference between two numbers on a looping numberline.
+        /// </summary>
+        /// <param name="val0"></param>
+        /// <param name="val1"></param>
+        /// <param name="wrapSize"></param>
+        /// <returns></returns>
+        public static int ValueDiff(int val0, int val1, int wrapSize)
+        {
+            return ((val1 - val0) % (wrapSize) + (wrapSize * 3)/2) % (wrapSize) - wrapSize/2;
         }
 
         static public double ValueWrap(double Value, double mod)
@@ -915,14 +927,14 @@ namespace Game
         /// <remarks>Original code was found here 
         /// http://stackoverflow.com/questions/471962/how-do-determine-if-a-polygon-is-complex-convex-nonconvex 
         /// </remarks>
-        public static bool IsConvex(Vector2[] polygon)
+        public static bool IsConvex(IList<Vector2> polygon)
         {
-            if (polygon.Length < 4)
+            if (polygon.Count < 4)
             {
                 return true;
             }
             bool sign = false;
-            int n = polygon.Length;
+            int n = polygon.Count;
             for (int i = 0; i < n; i++)
             {
                 double dx1 = polygon[(i + 2) % n].X - polygon[(i + 1) % n].X;

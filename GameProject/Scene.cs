@@ -47,6 +47,7 @@ namespace Game
 
         public void Step(float stepSize)
         {
+            Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
             World.ProcessChanges();
             foreach (IStep s in GetAll().OfType<IStep>())
             {
@@ -73,7 +74,7 @@ namespace Game
                     }
                 }
             }
-            if (World != null)
+            if (World != null && stepSize > 0)
             {
                 _contactListener.StepBegin();
                 InWorldStep = true;

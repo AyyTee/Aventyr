@@ -66,10 +66,11 @@ namespace Editor
                     clone.AddModelRange(cast.Models);
                     clone.SetTransform(cast.GetTransform());
                     dictionary.Add(cast, clone);
+                    cast.Name = "Entity";
                 }
                 else if (e is IWall)
                 {
-                    EditorObject cast = (EditorObject)e;
+                    EditorObject cast = e;
 
                     Transform2 t = cast.GetTransform();
                     Actor actor = new Actor(scene, ((IWall)e).Vertices, t);
@@ -82,16 +83,22 @@ namespace Editor
                     {
                         EditorWall castWall = (EditorWall)e;
                         //actor.Vertices = castWall.Vertices;
-                        entity.AddModel(Game.ModelFactory.CreatePolygon(castWall.Vertices));
+                        //entity.AddModel(Game.ModelFactory.CreatePolygon(castWall.Vertices));
+                        entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
                         dictionary.Add(castWall, actor);
+                        actor.Name = "Wall";
+                        entity.Name = "Wall Entity";
                     }
                     else if (e is EditorActor)
                     {
                         actor.Body.IsStatic = false;
                         EditorActor castActor = (EditorActor)e;
                         //actor.Vertices = castActor.Vertices;
-                        entity.AddModel(castActor.GetActorModel());
+                        //entity.AddModel(castActor.GetActorModel());
+                        entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
                         dictionary.Add(castActor, actor);
+                        actor.Name = "Actor";
+                        entity.Name = "Actor Entity";
                     }
                     else
                     {
@@ -122,6 +129,11 @@ namespace Editor
                         if (portalEditor.Linked != null)
                         {
                             cast.Linked = (IPortal)dictionary[(EditorPortal)portalEditor.Linked];
+                            cast.Name = "Linked Fixture Portal";
+                        }
+                        else
+                        {
+                            cast.Name = "Unlinked Fixture Portal";
                         }
                     }
                     else if (clone is FloatPortal)
@@ -132,6 +144,11 @@ namespace Editor
                         if (portalEditor.Linked != null)
                         {
                             cast.Linked = (IPortal)dictionary[(EditorPortal)portalEditor.Linked];
+                            cast.Name = "Linked Float Portal";
+                        }
+                        else
+                        {
+                            cast.Name = "Unlinked Float Portal";
                         }
                     }
                 }

@@ -16,6 +16,22 @@ namespace Game
         /// </summary>
         [XmlIgnore]
         public List<FixturePortal> PortalCollisions = new List<FixturePortal>();
+        /*public List<FixturePortal> PortalCollisions {
+            get
+            {
+                List<IPortal> portals = ((SceneNode)Entity).Scene.GetPortalList();
+                List<FixturePortal> collisions = new List<FixturePortal>();
+                foreach (FixturePortal p in portals.OfType<FixturePortal>())
+                {
+                    Line portalEdge = new Line(Portal.GetWorldVerts(p));
+                    if (MathExt.LinePolygonIntersect(portalEdge, Entity.GetWorldVertices()).Count == 0)
+                    {
+                        collisions.Add(p);
+                    }
+                }
+                return collisions;
+            }
+        }*/
         [XmlIgnore]
         public bool Update { get; private set; }
         //Portal this fixture belongs to.
@@ -53,13 +69,6 @@ namespace Game
             get { return _fixture; }
         }
 
-        private readonly int _fixtureId;
-
-        public int FixtureId
-        {
-            get { return _fixtureId; }
-        }
-
         #region Constructors
         public FixtureUserData()
         {
@@ -68,7 +77,6 @@ namespace Game
         public FixtureUserData(Fixture fixture)
         {
             _fixture = fixture;
-            _fixtureId = fixture.FixtureId;
         }
         #endregion
 
@@ -173,7 +181,7 @@ namespace Game
             verts[2] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[i] + new Vector2(-FixturePortal.EdgeMargin, 0), portalNext.GetTransform().GetMatrix());
             verts[3] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[i], portalNext.GetTransform().GetMatrix());
             
-            MathExt.SetHandedness(verts, false);
+            MathExt.SetWinding(verts, false);
 
             return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
         }
@@ -200,7 +208,7 @@ namespace Game
             verts[0] = tempVerts[iNext];
             verts[1] = Vector2Ext.ConvertTo(shape.Vertices[index]);
             verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
-            MathExt.SetHandedness(verts, false);
+            MathExt.SetWinding(verts, false);
 
             /*Entity debugEntity = Entity.Scene.CreateEntity();
             debugEntity.Models.Add(Model.CreatePolygon(verts));*/

@@ -76,11 +76,9 @@ namespace Game
         public override void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
         {
             base.UpdateRefs(cloneMap);
-            //Portal clone = (Portal)cloneMap[this];
             if (Linked != null && cloneMap.ContainsKey(Linked))
             {
                 Linked = (IPortal)cloneMap[Linked];
-                //SetLinked((Portal)cloneMap[Linked]);
             }
             else
             {

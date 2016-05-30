@@ -50,35 +50,39 @@ namespace Editor
             else if (_input.MousePress(MouseButton.Left))
             {
                 Vector2 mousePos = Controller.GetMouseWorldPosition();
-                if (_vertices.Count >= 3 && (mousePos - _vertices[0]).Length < 0.1f)
+                //Prevent user from placing accidentally double clicking vertices on top of eachother.
+                if (mousePos != _vertices.LastOrDefault())
                 {
-                    //Entity entity = new Entity(Controller.Level.Scene);
-                    EditorEntity editorEntity = new EditorEntity(Controller.Level);// Controller.CreateLevelEntity();
-                    Vector2 average = new Vector2(_vertices.Average(item => item.X), _vertices.Average(item => item.Y));
-                    for (int i = 0; i < _vertices.Count; i++)
+                    if (_vertices.Count >= 3 && (mousePos - _vertices[0]).Length < 0.1f)
                     {
-                        _vertices[i] -= average;
-                    }
-                    Transform2.SetPosition(editorEntity, average);
-                    //Actor actor = ActorFactory.CreateEntityPolygon(Controller.Level, new Transform2D(average), _vertices.ToArray());
+                        //Entity entity = new Entity(Controller.Level.Scene);
+                        EditorEntity editorEntity = new EditorEntity(Controller.Level);// Controller.CreateLevelEntity();
+                        Vector2 average = new Vector2(_vertices.Average(item => item.X), _vertices.Average(item => item.Y));
+                        for (int i = 0; i < _vertices.Count; i++)
+                        {
+                            _vertices[i] -= average;
+                        }
+                        Transform2.SetPosition(editorEntity, average);
+                        //Actor actor = ActorFactory.CreateEntityPolygon(Controller.Level, new Transform2D(average), _vertices.ToArray());
 
-                    Model m0 = Game.ModelFactory.CreatePolygon(_vertices.ToArray());
-                    editorEntity.AddModel(m0);
-                    m0.Wireframe = true;
-                    //entity.Models[0].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
-                    //entity.Models[0].SetShader("default");
-                    Model m1 = Game.ModelFactory.CreatePolygon(_vertices.ToArray());
-                    editorEntity.AddModel(m1);
-                    m1.SetColor(new Vector3(0.5f, 0.5f, 0.5f));
-                    //entity.Entity.Models[1].SetShader("default");
-                    _vertices.Clear();
-                    _entity.RemoveAllModels();
-                    Controller.SetTool(null);
-                }
-                else
-                {
-                    _vertices.Add(mousePos);
-                    UpdatePolygon();
+                        Model m0 = Game.ModelFactory.CreatePolygon(_vertices.ToArray());
+                        editorEntity.AddModel(m0);
+                        m0.Wireframe = true;
+                        //entity.Models[0].SetColor(new Vector3(0.5f, 0.5f, 0.5f));
+                        //entity.Models[0].SetShader("default");
+                        Model m1 = Game.ModelFactory.CreatePolygon(_vertices.ToArray());
+                        editorEntity.AddModel(m1);
+                        m1.SetColor(new Vector3(0.5f, 0.5f, 0.5f));
+                        //entity.Entity.Models[1].SetShader("default");
+                        _vertices.Clear();
+                        _entity.RemoveAllModels();
+                        Controller.SetTool(null);
+                    }
+                    else
+                    {
+                        _vertices.Add(mousePos);
+                        UpdatePolygon();
+                    }
                 }
             }
         }

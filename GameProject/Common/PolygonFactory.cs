@@ -13,7 +13,6 @@ namespace Game
 {
     public static class PolygonFactory
     {
-
         public static Poly2Tri.Polygon CreatePolygon(IList<Vector2> vertices)
         {
             Poly2Tri.Polygon polygon = GetPolygon(vertices);
