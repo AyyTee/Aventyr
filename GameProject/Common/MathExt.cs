@@ -87,14 +87,14 @@ namespace Game
         /// <summary>
         /// Find the nearest PolygonCoord on the polygon relative to provided point.  If two edges are equal distance away from the point
         /// </summary>
-        public static PolygonCoord PolygonCoordNearest(IPolygon polygon, Vector2 point)
+        public static PolygonCoord PolygonCoordNearest(IList<Vector2> polygon, Vector2 point)
         {
             PolygonCoord nearest = new PolygonCoord(0, 0);
             double distanceMin = -1;
-            for (int i = 0; i < polygon.Vertices.Count; i++)
+            for (int i = 0; i < polygon.Count; i++)
             {
-                int iNext = (i + 1) % polygon.Vertices.Count;
-                Line edge = new Line(polygon.Vertices[i], polygon.Vertices[iNext]);
+                int iNext = (i + 1) % polygon.Count;
+                Line edge = new Line(polygon[i], polygon[iNext]);
                 double distance = PointLineDistance(point, edge, true);
                 if (distanceMin == -1 || distance < distanceMin)
                 {
@@ -222,7 +222,7 @@ namespace Game
         /// </summary>
         /// <param name="polygon">A closed polygon</param>
         /// <returns></returns>
-        public static bool LineInPolygon(Line line, IPolygon polygon)
+        public static bool LineInPolygon(Line line, IList<Vector2> polygon)
         {
             if (MathExt.PointInPolygon(line[0], polygon))
             {
@@ -232,7 +232,7 @@ namespace Game
             {
                 return true;
             }
-            return LinePolygonIntersect(line, polygon.Vertices).Count > 0;
+            return LinePolygonIntersect(line, polygon).Count > 0;
         }
 
         /// <summary>
@@ -256,11 +256,6 @@ namespace Game
                 }
             }
             return isInside;
-        }
-
-        public static bool PointInPolygon(Vector2 point, IPolygon polygon)
-        {
-            return PointInPolygon(point, polygon.Vertices);
         }
 
         /// <summary>

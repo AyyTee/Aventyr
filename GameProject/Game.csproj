@@ -147,7 +147,6 @@
     <Compile Include="Common\IPolygonCoord.cs" />
     <Compile Include="Portals\IPortal.cs" />
     <Compile Include="Portals\IPortalable.cs" />
-    <Compile Include="Common\IPolygon.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
     <Compile Include="Rendering\Models\IMesh.cs" />
     <Compile Include="Rendering\IRenderLayer.cs" />
@@ -160,7 +159,6 @@
     <Compile Include="ITreeNode.cs" />
     <Compile Include="IWall.cs" />
     <Compile Include="Rendering\Models\Mesh.cs" />
-    <Compile Include="Common\Polygon.cs" />
     <Compile Include="Common\PolygonExt.cs" />
     <Compile Include="Rendering\Models\ReadOnlyMesh.cs" />
     <Compile Include="Rendering\ModelLoader.cs" />

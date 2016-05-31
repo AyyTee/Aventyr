@@ -119,7 +119,7 @@ namespace UnitTest
 
             FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.6f));
             FloatPortal portal2 = new FloatPortal(scene);
-            //Make sure this portal isn't sitting on top of the float portal linked to portal0.
+            //Make sure portal2 isn't sitting on top of the float portal linked to portal0.
             portal2.SetTransform(new Transform2(new Vector2(5, 0)));
             portal1.Linked = portal2;
             portal2.Linked = portal1;
