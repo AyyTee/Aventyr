@@ -10,7 +10,7 @@ namespace Game
 {
     public class FixtureUserData
     {
-        private readonly Fixture _fixture;
+        public readonly Fixture Fixture;
         /// <summary>
         /// All FixturePortals that this fixture is colliding with.
         /// </summary>
@@ -32,8 +32,6 @@ namespace Game
                 return collisions;
             }
         }*/
-        [XmlIgnore]
-        public bool Update { get; private set; }
         //Portal this fixture belongs to.
         private FixturePortal[] _portalParents = new FixturePortal[2];
         [XmlIgnore]
@@ -45,16 +43,13 @@ namespace Game
             }
             private set
             {
-                Debug.Assert(_childPortals.Count == 0, "This fixture cannot be assigned to a portal.");
+                Debug.Assert(GetChildPortals().Count == 0, "This fixture cannot be assigned to a portal.");
                 _portalParents = value;
             }
         }
-        /// <summary>
-        /// A list of FixturePortals that are parented to this fixture.
-        /// </summary>
-        private List<FixturePortal> _childPortals = new List<FixturePortal>();
+        
         private List<Fixture> _fixtureChildList = new List<Fixture>();
-        public IActor Entity
+        public IActor Actor
         {
             get
             {
@@ -64,11 +59,6 @@ namespace Game
             }
         }
 
-        public Fixture Fixture
-        {
-            get { return _fixture; }
-        }
-
         #region Constructors
         public FixtureUserData()
         {
@@ -76,7 +66,7 @@ namespace Game
 
         public FixtureUserData(Fixture fixture)
         {
-            _fixture = fixture;
+            Fixture = fixture;
         }
         #endregion
 
@@ -90,30 +80,11 @@ namespace Game
             return PortalParents[0] == null && PortalParents[1] == null;
         }
 
-        public void AddPortal(FixturePortal portal)
-        {
-            Debug.Assert(IsPortalParentless(), "Portals cannot be parented to this Fixture.");
-            Debug.Assert(!_childPortals.Exists(item => item == portal), "Portal has already been added to this fixture.");
-            _childPortals.Add(portal);
-            Update = true;
-        }
-
-        public void RemovePortal(FixturePortal portal)
-        {
-            _childPortals.Remove(portal);
-            Update = true;
-        }
-
         /// <summary>
         /// Updates the Fixtures used for FixturePortal collisions.
         /// </summary>
         public void ProcessChanges()
         {
-            /*if (Update == false)
-            {
-                return;
-            }*/
-            Update = false;
             int a = Fixture.Body.FixtureList.Count;
             foreach (Fixture f in _fixtureChildList)
             {
@@ -122,7 +93,7 @@ namespace Game
             int b = Fixture.Body.FixtureList.Count;
             //FixtureExt.GetUserData(Fixture).Entity.Scene.World.ProcessChanges();
             _fixtureChildList.Clear();
-            var sortedPortals = _childPortals.ToArray().OrderBy(item => PolygonExt.EdgeIndexT(item.Position)).ToList();
+            var sortedPortals = GetChildPortals().ToArray().OrderBy(item => PolygonExt.EdgeIndexT(item.Position)).ToList();
             sortedPortals.RemoveAll(item => !Portal.IsValid(item));
             for (int i = 0; i < sortedPortals.Count(); i++)
             {
@@ -214,6 +185,15 @@ namespace Game
             debugEntity.Models.Add(Model.CreatePolygon(verts));*/
             
             return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
+        }
+
+        /// <summary>
+        /// A list of FixturePortals that are parented to this fixture.
+        /// </summary>
+        private List<FixturePortal> GetChildPortals()
+        {
+            List<FixturePortal> portals = ((SceneNode)Actor).Children.OfType<FixturePortal>().ToList();
+            return portals.FindAll(item => FixtureExt.GetFixturePortalParent(item) == Fixture);
         }
     }
 }

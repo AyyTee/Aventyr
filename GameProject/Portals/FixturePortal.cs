@@ -122,15 +122,6 @@ namespace Game
             if (Position != null)
             {
                 SetParent((SceneNode)wall);
-
-                IActor actor = wall as IActor;
-                if (actor != null)
-                {
-                    FixtureCoord fixtureCoord = FixtureExt.GetFixtureEdgeCoord(actor, Position);
-                    //BodyExt.GetUserData(actor.Body).
-                    FixtureExt.GetUserData(fixtureCoord.Fixture).AddPortal(this);
-                }
-                //FixtureExt.GetUserData(Position.Fixture).AddPortal(this);
                 //wake up all the bodies so that they will fall if there is now a portal entrance below them
                 foreach (Body b in Scene.World.BodyList)
                 {

@@ -97,7 +97,10 @@ namespace Game
         {
             HashSet<ISceneObject> set = new HashSet<ISceneObject>();
             set.UnionWith(SceneNodeList);
-            set.Add(ActiveCamera);
+            if (ActiveCamera != null)
+            {
+                set.Add(ActiveCamera);
+            }
             return set.ToList();
         }
 

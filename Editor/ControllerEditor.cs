@@ -23,8 +23,9 @@ namespace Editor
         public event SceneEventHandler ScenePauseEvent;
         public event SceneEventHandler ScenePlayEvent;
         public event SceneEventHandler SceneStopEvent;
-        public delegate void LevelLoadedHandler(ControllerEditor controller, string filepath);
-        public event LevelLoadedHandler LevelLoaded;
+        public delegate void SerializationHandler(ControllerEditor controller, string filepath);
+        public event SerializationHandler LevelLoaded;
+        public event SerializationHandler LevelSaved;
         /// <summary>Called when an EditorObject's public state has been modified.</summary>
         public event SceneEventHandler SceneModified;
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
@@ -95,6 +96,12 @@ namespace Editor
             selection = new Selection(Level);
             //Level.Clear();
             LevelLoaded(this, filepath);
+        }
+
+        public void LevelSave(string filepath)
+        {
+            Serializer.Serialize(Level, filepath);
+            LevelSaved(this, filepath);
         }
 
         public override void OnRenderFrame(FrameEventArgs e)

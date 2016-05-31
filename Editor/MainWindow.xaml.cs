@@ -65,7 +65,7 @@ namespace Editor
             ControllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;
             ControllerEditor.SceneModified += ControllerEditor_SceneModified;
-            ControllerEditor.LevelLoaded += ControllerEditor_LevelLoaded;
+            
             
             glControl.MouseMove += glControl_MouseMove;
             _loop = new GLLoop(glControl, ControllerEditor);
@@ -80,9 +80,7 @@ namespace Editor
 
             SetPortalRendering(true);
 
-            ControllerFiles = new ControllerFiles(ControllerEditor);
-
-            RecentFiles = new RecentFilesList(filesRecent, ControllerFiles);
+            ControllerFiles = new ControllerFiles(this, ControllerEditor, filesRecent);
 
             Slider_ValueChanged(
                 null, 
@@ -90,29 +88,21 @@ namespace Editor
                 );
         }
 
-        private void ControllerEditor_LevelLoaded(ControllerEditor controller, string filepath)
+        private void ControllerEditor_SceneModified(ControllerEditor controller)
         {
-            Dispatcher.Invoke((Action)(() =>
-            {
-                RecentFiles.AddFilepath(filepath);
-            }));
-        }
-
-        private void ControllerEditor_SceneModified(Editor.ControllerEditor controller)
-        {
-            Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke(() =>
             {
                 UpdateTransformLabels(controller.selection.First);
-            }));
+            });
         }
 
         private void UpdateFrameRate(object sender, ElapsedEventArgs e)
         {
-            Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke(() =>
             {
                 int fps = (int)Math.Round(_loop.UpdatesPerSecond * (double)_loop.MillisecondsPerStep / _loop.GetAverage());
                 FrameRate.Content = "FPS " + fps.ToString() + "/" + _loop.UpdatesPerSecond.ToString();
-            }));
+            });
         }
 
         private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -123,7 +113,7 @@ namespace Editor
 
         /*private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, EditorObject entity)
         {
-            Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke((() =>
             {
                 UpdateTransformLabels(controller.GetSelectedObject());
             }));
@@ -185,7 +175,7 @@ namespace Editor
 
         private void ControllerEditor_ScenePlayed(ControllerEditor controller)
         {
-            Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke(() =>
                 {
                     toolStart.IsEnabled = false;
                     toolPause.IsEnabled = true;
@@ -193,12 +183,12 @@ namespace Editor
                     menuRunStart.IsEnabled = false;
                     menuRunPause.IsEnabled = true;
                     menuRunStop.IsEnabled = true;
-                }));
+                });
         }
 
         private void ControllerEditor_ScenePaused(ControllerEditor controller)
         {
-            Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke(() =>
             {
                 toolStart.IsEnabled = true;
                 toolPause.IsEnabled = false;
@@ -206,12 +196,12 @@ namespace Editor
                 menuRunStart.IsEnabled = true;
                 menuRunPause.IsEnabled = false;
                 menuRunStop.IsEnabled = true;
-            }));
+            });
         }
 
         private void ControllerEditor_SceneStopped(ControllerEditor controller)
         {
-            Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke(() =>
             {
                 toolStart.IsEnabled = true;
                 toolPause.IsEnabled = false;
@@ -219,7 +209,7 @@ namespace Editor
                 menuRunStart.IsEnabled = true;
                 menuRunPause.IsEnabled = false;
                 menuRunStop.IsEnabled = false;
-            }));
+            });
         }
 
         private void LoadModel(object sender, RoutedEventArgs e)

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Windows;
 using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace Editor
 {
@@ -18,14 +19,18 @@ namespace Editor
     {
         SaveFileDialog _saveFileDialog;
         OpenFileDialog _loadFileDialog;
+        readonly MainWindow ControllerWPF;
         readonly ControllerEditor ControllerEditor;
         public string FilepathCurrent { get; private set; }
         public bool Loading { get; private set; }
+        public RecentFilesList RecentFiles;
 
-        public ControllerFiles(ControllerEditor controllerEditor)
+        public ControllerFiles(MainWindow controller, ControllerEditor controllerEditor, System.Windows.Controls.MenuItem recentFiles)
         {
+            ControllerWPF = controller;
             ControllerEditor = controllerEditor;
             ControllerEditor.LevelLoaded += ControllerEditor_LevelLoaded;
+            ControllerEditor.LevelSaved += ControllerEditor_LevelSaved;
             _saveFileDialog = new SaveFileDialog();
             _loadFileDialog = new OpenFileDialog();
             _saveFileDialog.FileOk += _saveFileDialog_FileOk;
@@ -35,12 +40,33 @@ namespace Editor
 
             FilepathCurrent = null;
             Loading = false;
+
+            RecentFiles = new RecentFilesList(recentFiles, this);
         }
+
+        private void ControllerEditor_LevelSaved(ControllerEditor controller, string filepath)
+        {
+            ControllerWPF.Dispatcher.Invoke((Action)(() =>
+            {
+                RecentFiles.AddFilepath(filepath);
+            }));
+        }
+
+        /*private void ControllerEditor_LevelLoaded(ControllerEditor controller, string filepath)
+        {
+            
+        }*/
 
         private void ControllerEditor_LevelLoaded(ControllerEditor controller, string filepath)
         {
-            Debug.Assert(Loading);
-            Loading = false;
+            ControllerWPF.Dispatcher.Invoke((Action)(() =>
+            {
+                Debug.Assert(Loading);
+                RecentFiles.AddFilepath(filepath);
+                Loading = false;
+            }));
+            
+            
         }
 
         /// <summary>
@@ -82,7 +108,7 @@ namespace Editor
         }
 
         /// <summary>
-        /// Prompt the user for a filepath and then save it
+        /// Prompt the user for a filepath and then save to it
         /// </summary>
         public void SaveAs()
         {
@@ -93,7 +119,7 @@ namespace Editor
         }
 
         /// <summary>
-        /// Prompt the user for a filepath and then load it.
+        /// Prompt the user for a filepath and then load from it.
         /// </summary>
         public void LoadAs()
         {
@@ -116,15 +142,13 @@ namespace Editor
         /// <summary>
         /// Save level with given filepath.
         /// </summary>
-        /// <param name="filepath"></param>
         public void Save(string filepath)
         {
             if (IsUnlocked())
             {
                 ControllerEditor.AddAction(() =>
                 {
-                    string physFilename = Path.GetFileNameWithoutExtension(filepath) + "_phys" + Path.GetExtension(filepath);
-                    Serializer.Serialize(ControllerEditor.Level, filepath);
+                    ControllerEditor.LevelSave(filepath);
                 });
             }
         }
@@ -132,7 +156,6 @@ namespace Editor
         /// <summary>
         /// Load level with given filepath.
         /// </summary>
-        /// <param name="filepath"></param>
         public void Load(string filepath)
         {
             if (IsUnlocked())
@@ -142,7 +165,6 @@ namespace Editor
                 ControllerEditor.AddAction(() =>
                 {
                     //ControllerEditor.LevelNew();
-                    //string physFilename = Path.GetFileNameWithoutExtension(filename) + "_phys" + Path.GetExtension(filename);
                     ControllerEditor.LevelLoad(filepath);
                 });
             }

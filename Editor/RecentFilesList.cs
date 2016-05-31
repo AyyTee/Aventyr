@@ -62,7 +62,7 @@ namespace Editor
         {
             for (int i = 0; i < ButtonList.Count; i++)
             {
-                ButtonList[i].Item1.Header = i.ToString() + " " + ButtonList[i].Item2;
+                ButtonList[i].Item1.Header = (i + 1).ToString() + " " + ButtonList[i].Item2;
             }
             Properties.Settings.Default.RecentFilepaths = GetStringList();
         }
