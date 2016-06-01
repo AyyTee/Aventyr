@@ -8,12 +8,12 @@ using System.IO;
 using System.Windows;
 using System.Diagnostics;
 using System.Windows.Threading;
+using EditorLogic;
 
-namespace Editor
+namespace EditorWindow
 {
     /// <summary>
-    /// Handles the UI side of saving and loading levels.  This class should be exclusively used by the WPF thread.  
-    /// Race conditions will likely arise if this class is used by the GL thread.
+    /// Handles the UI side of saving and loading levels.
     /// </summary>
     public class ControllerFiles
     {

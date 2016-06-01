@@ -13,8 +13,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EditorLogic;
+using System.IO;
 
-namespace Editor
+namespace EditorWindow
 {
     /// <summary>
     /// Interaction logic for ToolPanel.xaml
@@ -30,6 +32,8 @@ namespace Editor
             InitializeComponent();
 
             _controller = controller;
+            bool a = File.Exists(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png"));
+            var image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png")));
 
             var arguments = new[] {
                 new {
@@ -40,10 +44,6 @@ namespace Editor
                     tool = (Tool)new ToolAddPortal(_controller),
                     image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "portalIcon.png")))
                 },
-                /*new {
-                    tool = (Tool)new ToolPolygon(_controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonIcon.png")))
-                },*/
                 new {
                     tool = (Tool)new ToolPortalLinker(_controller),
                     image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonLinkerIcon.png")))

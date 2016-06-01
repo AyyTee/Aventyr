@@ -13,8 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EditorLogic;
 
-namespace Editor
+namespace EditorWindow
 {
     /// <summary>
     /// Interaction logic for ToolButton.xaml

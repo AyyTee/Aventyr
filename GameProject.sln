@@ -11,9 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameUnitTest", "UnitTest\Ga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorControls", "WPFControls\EditorControls.csproj", "{C7D74749-E76C-4B1A-B68E-55757CE38889}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editor", "Editor\Editor.csproj", "{8AC53023-4D63-425A-B2F7-3728B5680BCE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorWindow", "Editor\EditorWindow.csproj", "{8AC53023-4D63-425A-B2F7-3728B5680BCE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer Physics", "FarseerPhysics\Farseer Physics.csproj", "{A4610E4C-DD34-428B-BABB-779CA0B5993A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorLogic", "EditorLogic\EditorLogic.csproj", "{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +78,18 @@ Global
 		{A4610E4C-DD34-428B-BABB-779CA0B5993A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A4610E4C-DD34-428B-BABB-779CA0B5993A}.Release|MonoBuild.ActiveCfg = Release|Any CPU
 		{A4610E4C-DD34-428B-BABB-779CA0B5993A}.Release|MonoBuild.Build.0 = Release|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Debug|MonoBuild.ActiveCfg = Debug|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Debug|MonoBuild.Build.0 = Debug|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.MonoDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.MonoDebug|Any CPU.Build.0 = Debug|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.MonoDebug|MonoBuild.ActiveCfg = Debug|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.MonoDebug|MonoBuild.Build.0 = Debug|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Release|MonoBuild.ActiveCfg = Release|Any CPU
+		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Release|MonoBuild.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -93,9 +93,9 @@
     <Compile Include="VertexTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Editor\Editor.csproj">
-      <Project>{8ac53023-4d63-425a-b2f7-3728b5680bce}</Project>
-      <Name>Editor</Name>
+    <ProjectReference Include="..\EditorLogic\EditorLogic.csproj">
+      <Project>{ab892ce8-6523-4eb1-b159-b8a8f9a0d3d8}</Project>
+      <Name>EditorLogic</Name>
     </ProjectReference>
     <ProjectReference Include="..\FarseerPhysics\Farseer Physics.csproj">
       <Project>{a4610e4c-dd34-428b-babb-779ca0b5993a}</Project>
@@ -105,9 +105,6 @@
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
       <Name>Game</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

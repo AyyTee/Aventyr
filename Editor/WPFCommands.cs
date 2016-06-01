@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Editor
+namespace EditorWindow
 {
     public static class WPFCommands
     {

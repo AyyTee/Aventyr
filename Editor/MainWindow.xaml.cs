@@ -6,8 +6,9 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Timers;
 using System.Windows.Input;
+using EditorLogic;
 
-namespace Editor
+namespace EditorWindow
 {
     /// <summary>Interaction logic for MainWindow.xaml</summary>
     public partial class MainWindow : System.Windows.Window
@@ -321,11 +322,6 @@ namespace Editor
                     ControllerEditor.physicsStepSize = (float)e.NewValue;
                 });
             }
-        }
-
-        private void NameTextBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Game;
-using Editor;
+using EditorLogic;
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenTK;
