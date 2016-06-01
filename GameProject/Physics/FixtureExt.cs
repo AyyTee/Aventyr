@@ -15,22 +15,16 @@ namespace Game
     {
         public static FixtureUserData SetUserData(Fixture fixture)
         {
-            //Debug.Assert(userData != null);
-            //Ugly solution to storing Game classes in a way that still works when deserializing the data.
-            //This list is intended to only store one element.
-            FixtureUserData data = new FixtureUserData(fixture);
-            var a = new List<FixtureUserData>();
-            fixture.UserData = a;
-            a.Add(data);
-            return data;
+            FixtureUserData userData = new FixtureUserData(fixture);
+            fixture.UserData = userData;
+            return userData;
         }
 
         public static FixtureUserData GetUserData(Fixture fixture)
         {
+            Debug.Assert(fixture != null);
             Debug.Assert(fixture.UserData != null);
-            FixtureUserData userData = ((List<FixtureUserData>)fixture.UserData)[0];
-            Debug.Assert(userData != null);
-            return userData;
+            return (FixtureUserData)fixture.UserData;
         }
 
         public static Fixture CreateFixture(Body body, Shape shape)

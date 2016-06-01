@@ -77,9 +77,9 @@ namespace UnitTest
             userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
             Assert.IsTrue(userData.PortalParents[0] == null && userData.PortalParents[1] == null);
             userData = FixtureExt.GetUserData(ground.Body.FixtureList[1]);
-            Assert.IsTrue(userData.IsPortalChild(portal));
+            Assert.IsTrue(userData.PartOfPortal(portal));
             userData = FixtureExt.GetUserData(ground.Body.FixtureList[2]);
-            Assert.IsTrue(userData.IsPortalChild(portal));
+            Assert.IsTrue(userData.PartOfPortal(portal));
         }
 
         [TestMethod]

@@ -26,6 +26,7 @@ namespace Editor
         public delegate void SerializationHandler(ControllerEditor controller, string filepath);
         public event SerializationHandler LevelLoaded;
         public event SerializationHandler LevelSaved;
+        public event SerializationHandler LevelCreated;
         /// <summary>Called when an EditorObject's public state has been modified.</summary>
         public event SceneEventHandler SceneModified;
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
@@ -57,7 +58,7 @@ namespace Editor
         {
             base.OnLoad(e);
             
-            LevelNew();
+            LevelCreate();
             
             Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
             
@@ -67,7 +68,7 @@ namespace Editor
             SceneStop();
         }
 
-        public void LevelNew()
+        public void LevelCreate()
         {
             renderer.RemoveLayer(Hud);
             renderer.RemoveLayer(Level);
@@ -83,6 +84,10 @@ namespace Editor
             Transform2.SetSize(CamControl, 10);
             Hud.SetActiveCamera(CamControl);
             Level.ActiveCamera = CamControl;
+            if (LevelCreated != null)
+            {
+                LevelCreated(this, null);
+            }
         }
 
         public void LevelLoad(string filepath)

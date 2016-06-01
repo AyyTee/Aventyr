@@ -35,12 +35,14 @@ namespace Editor
             {
                 selected.SetSelected(true);
             }
+            SelectionChanged(this);
         }
 
         public void SetRange(MementoSelection selected)
         {
             SetRange(selected.Selected.ToList());
             SetFirst(selected.First);
+            SelectionChanged(this);
         }
 
         public void SetRange(List<EditorObject> selected)
@@ -58,8 +60,7 @@ namespace Editor
             {
                 e.SetSelected(true);
             }
-            if (SelectionChanged != null)
-                SelectionChanged(this);
+            SelectionChanged(this);
         }
 
         public void SetFirst(EditorObject first)
@@ -110,8 +111,7 @@ namespace Editor
             }
             SetFirst(selected);
             selected.SetSelected(true);
-            if (SelectionChanged != null)
-                SelectionChanged(this);
+            SelectionChanged(this);
         }
 
         public void AddRange(List<EditorObject> selected)
@@ -125,8 +125,7 @@ namespace Editor
             {
                 e.SetSelected(true);
             }
-            if (SelectionChanged != null)
-                SelectionChanged(this);
+            SelectionChanged(this);
         }
 
         public bool Remove(EditorObject deselect)
@@ -144,6 +143,7 @@ namespace Editor
             }
             bool wasSelected = deselect.IsSelected;
             deselect.SetSelected(false);
+            SelectionChanged(this);
             return wasSelected;
         }
 

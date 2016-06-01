@@ -133,7 +133,6 @@
     <Compile Include="ToolPanel.xaml.cs">
       <DependentUpon>ToolPanel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tools\ToolPolygon.cs" />
     <Compile Include="Tools\ToolPortalLinker.cs" />
     <Compile Include="MementoDrag.cs" />
     <Page Include="MainWindow.xaml">

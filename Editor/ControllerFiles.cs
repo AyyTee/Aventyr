@@ -31,6 +31,7 @@ namespace Editor
             ControllerEditor = controllerEditor;
             ControllerEditor.LevelLoaded += ControllerEditor_LevelLoaded;
             ControllerEditor.LevelSaved += ControllerEditor_LevelSaved;
+            ControllerEditor.LevelCreated += ControllerEditor_LevelCreated;
             _saveFileDialog = new SaveFileDialog();
             _loadFileDialog = new OpenFileDialog();
             _saveFileDialog.FileOk += _saveFileDialog_FileOk;
@@ -44,29 +45,35 @@ namespace Editor
             RecentFiles = new RecentFilesList(recentFiles, this);
         }
 
-        private void ControllerEditor_LevelSaved(ControllerEditor controller, string filepath)
+        private void ControllerEditor_LevelCreated(ControllerEditor controller, string filepath)
         {
-            ControllerWPF.Dispatcher.Invoke((Action)(() =>
+            ControllerWPF.Dispatcher.Invoke(() =>
             {
-                RecentFiles.AddFilepath(filepath);
-            }));
+                ControllerEditor.selection.SelectionChanged += ControllerWPF.ControllerEditor_EntitySelected;
+            });
         }
 
-        /*private void ControllerEditor_LevelLoaded(ControllerEditor controller, string filepath)
+        private void ControllerEditor_LevelSaved(ControllerEditor controller, string filepath)
         {
-            
-        }*/
+            ControllerWPF.Dispatcher.Invoke(() =>
+            {
+                Debug.Assert(filepath != null);
+                Debug.Assert(filepath != "");
+                RecentFiles.AddFilepath(filepath);
+            });
+        }
 
         private void ControllerEditor_LevelLoaded(ControllerEditor controller, string filepath)
         {
-            ControllerWPF.Dispatcher.Invoke((Action)(() =>
+            ControllerWPF.Dispatcher.Invoke(() =>
             {
+                Debug.Assert(filepath != null);
+                Debug.Assert(filepath != "");
                 Debug.Assert(Loading);
                 RecentFiles.AddFilepath(filepath);
                 Loading = false;
-            }));
-            
-            
+                ControllerEditor.selection.SelectionChanged += ControllerWPF.ControllerEditor_EntitySelected;
+            });
         }
 
         /// <summary>
@@ -84,7 +91,7 @@ namespace Editor
                 FilepathCurrent = null;
                 ControllerEditor.AddAction(() =>
                 {
-                    ControllerEditor.LevelNew();
+                    ControllerEditor.LevelCreate();
                 });
             }
         }

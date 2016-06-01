@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    [DataContract]
+    [DataContract, DebuggerDisplay("FloatPortal {Name}")]
     public class FloatPortal : SceneNode, IPortal, ITransformable2
     {
         [DataMember]

@@ -57,7 +57,7 @@ namespace Game
             {
                 Debug.Assert(child.Body != Body);
             }
-            HashSet<FixturePortal> collisionsNew = new HashSet<FixturePortal>();
+            HashSet<IPortal> collisionsNew = new HashSet<IPortal>();
             foreach (Fixture fixture in Body.FixtureList)
             {
                 FixtureUserData userData = FixtureExt.GetUserData(fixture);
@@ -65,7 +65,7 @@ namespace Game
             }
             var collisionsRemoved = PortalCollisions.Except(collisionsNew).ToList();
             var collisionsAdded = collisionsNew.Except(PortalCollisions).ToList();
-            PortalCollisions = collisionsNew;
+            //PortalCollisions = collisionsNew;
 
             foreach (FixturePortal portal in collisionsAdded)
             {

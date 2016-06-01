@@ -44,7 +44,6 @@ namespace Game
             {
                 clone.UpdateRefs(readOnlyCloneMap);
             }
-            //return new HashSet<IDeepClone>(readOnlyCloneMap.Values);
             return cloneMap;
         }
 

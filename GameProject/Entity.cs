@@ -14,7 +14,7 @@ namespace Game
     /// <summary>
     /// An object that exists within the world space and can be drawn
     /// </summary>
-    [DataContract]
+    [DataContract, DebuggerDisplay("Entity {Name}")]
     public class Entity : SceneNode, IRenderable, IPortalable
     {
         [DataMember]

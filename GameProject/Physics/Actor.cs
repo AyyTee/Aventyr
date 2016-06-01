@@ -13,7 +13,7 @@ using FarseerPhysics.Collision.Shapes;
 namespace Game
 {
     /// <summary>A SceneNode with rigid body physics.</summary>
-    [DataContract]
+    [DataContract, DebuggerDisplay("Actor {Name}")]
     public class Actor : SceneNode, IActor
     {
         /// <summary>

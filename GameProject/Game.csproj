@@ -178,7 +178,7 @@
     <Compile Include="Common\Matrix4Ext.cs" />
     <Compile Include="Physics\BodyExt.cs" />
     <Compile Include="Rendering\ModelFactory.cs" />
-    <Compile Include="Physics\PhysContactListener.cs" />
+    <Compile Include="Physics\PhysicsListener.cs" />
     <Compile Include="Physics\Actor.cs" />
     <Compile Include="Common\PolygonCoord.cs" />
     <Compile Include="Common\PolygonFactory.cs" />

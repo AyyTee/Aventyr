@@ -17,7 +17,6 @@ namespace Game
 {
     public class Serializer
     {
-        const string fileSuffixPhysics = "_phys";
         public const string fileExtension = "save";
         public const string fileExtensionName = "Save File";
 

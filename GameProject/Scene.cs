@@ -19,7 +19,7 @@ namespace Game
     public class Scene : IRenderLayer, IScene
     {
         public World World { get; private set; }
-        PhysContactListener _contactListener;
+        PhyicsListener _contactListener;
 
         public ICamera2 ActiveCamera { get; private set; }
         public List<SceneNode> SceneNodeList { get { return Tree<SceneNode>.GetDescendents(Root); } }
@@ -132,7 +132,7 @@ namespace Game
             //Debug.Assert(World == null, "A physics world has already been assigned to this scene.");
             World = world;
             World.ProcessChanges();
-            _contactListener = new PhysContactListener(this);
+            _contactListener = new PhyicsListener(this);
         }
     }
 }

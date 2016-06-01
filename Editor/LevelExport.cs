@@ -83,8 +83,8 @@ namespace Editor
                     {
                         EditorWall castWall = (EditorWall)e;
                         //actor.Vertices = castWall.Vertices;
-                        //entity.AddModel(Game.ModelFactory.CreatePolygon(castWall.Vertices));
-                        entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
+                        entity.AddModel(Game.ModelFactory.CreatePolygon(castWall.Vertices));
+                        //entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
                         dictionary.Add(castWall, actor);
                         actor.Name = "Wall";
                         entity.Name = "Wall Entity";
@@ -94,8 +94,8 @@ namespace Editor
                         actor.Body.IsStatic = false;
                         EditorActor castActor = (EditorActor)e;
                         //actor.Vertices = castActor.Vertices;
-                        //entity.AddModel(castActor.GetActorModel());
-                        entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
+                        entity.AddModel(castActor.GetActorModel());
+                        //entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
                         dictionary.Add(castActor, actor);
                         actor.Name = "Actor";
                         entity.Name = "Actor Entity";

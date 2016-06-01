@@ -33,27 +33,18 @@ namespace Game
             return body;
         }
 
-        /*public static Transform2D GetTransform(Body body)
-        {
-            var transform = new FarseerPhysics.Common.Transform();
-            body.GetTransform(out transform);
-            return new Transform2D(transform.Position, transform.Angle);
-        }*/
-
         public static BodyUserData SetUserData(Body body, IActor entity)
         {
-            //Ugly solution to storing Game classes in a way that still works when deserializing the data.
-            //This list is intended to only store one element.
-            var a = new List<BodyUserData>();
-            body.UserData = a;
-            a.Add(new BodyUserData(entity, body));
-            return a[0];
+            BodyUserData userData = new BodyUserData(entity, body);
+            body.UserData = userData;
+            return userData;
         }
 
         public static BodyUserData GetUserData(Body body)
         {
             Debug.Assert(body != null);
-            return ((List<BodyUserData>)body.UserData)[0];
+            Debug.Assert(body.UserData != null);
+            return (BodyUserData)body.UserData;
         }
 
         public static Transform2 GetTransform(Body body)

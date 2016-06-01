@@ -85,7 +85,7 @@ namespace Game
         #endregion
         #region Nearest
         /// <summary>
-        /// Find the nearest PolygonCoord on the polygon relative to provided point.  If two edges are equal distance away from the point
+        /// Find the nearest PolygonCoord on the polygon relative to provided point.
         /// </summary>
         public static PolygonCoord PolygonCoordNearest(IList<Vector2> polygon, Vector2 point)
         {
@@ -106,15 +106,10 @@ namespace Game
             return nearest;
         }
 
-        /*public static PolygonCoord PolygonCoordNearest(IList<Vector2> polygon, Vector2 point)
-        {
-            return PolygonCoordNearest(new Polygon(polygon), point);
-        }
-
         /// <summary>
         /// Find the nearest PolygonCoord from a list of polygons relative to provided point.
         /// </summary>
-        public static PolygonCoord PolygonCoordNearest(IList<IPolygon> polygons, Vector2 point)
+        /*public static PolygonCoord PolygonCoordNearest(IList<IPolygon> polygons, Vector2 point)
         {
             PolygonCoord nearest = null;
             double distanceMin = -1;

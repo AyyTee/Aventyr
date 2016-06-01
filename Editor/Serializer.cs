@@ -12,7 +12,6 @@ namespace Editor
 {
     public static class Serializer
     {
-        const string fileSuffixPhysics = "_phys";
         public const string fileExtension = "xml";
         public const string fileExtensionName = "Save File";
 

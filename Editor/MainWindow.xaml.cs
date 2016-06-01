@@ -18,7 +18,6 @@ namespace Editor
         public static string AssetsDirectory { get; private set; }
         OpenFileDialog _loadModelDialog = new OpenFileDialog();
         ControllerFiles ControllerFiles;
-        RecentFilesList RecentFiles;
 
         System.Timers.Timer updateTimer;
         public MainWindow()
@@ -60,13 +59,15 @@ namespace Editor
         public void GLControl_Load(object sender, EventArgs e)
         {
             ControllerEditor = new ControllerEditor(glControl.ClientSize, new InputExt(glControl));
-            //ControllerEditor.EntitySelected += ControllerEditor_EntitySelected;
             ControllerEditor.ScenePlayEvent += ControllerEditor_ScenePlayed;
             ControllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;
             ControllerEditor.SceneModified += ControllerEditor_SceneModified;
-            
-            
+
+            //ControllerFiles must be instantiated before the GLLoop begins, otherwise 
+            //there isn't a listener for ControllerEditor.LevelLoaded.
+            ControllerFiles = new ControllerFiles(this, ControllerEditor, filesRecent);
+
             glControl.MouseMove += glControl_MouseMove;
             _loop = new GLLoop(glControl, ControllerEditor);
             _loop.Run(60);
@@ -80,7 +81,7 @@ namespace Editor
 
             SetPortalRendering(true);
 
-            ControllerFiles = new ControllerFiles(this, ControllerEditor, filesRecent);
+            
 
             Slider_ValueChanged(
                 null, 
@@ -111,13 +112,16 @@ namespace Editor
             MouseWorldCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
         }
 
-        /*private void ControllerEditor_EntitySelected(Editor.ControllerEditor controller, EditorObject entity)
+        public void ControllerEditor_EntitySelected(Selection selection)
         {
             Dispatcher.Invoke((() =>
             {
-                UpdateTransformLabels(controller.GetSelectedObject());
+                if (selection.GetAll().Count == 1)
+                {
+                    UpdateTransformLabels(selection.GetAll()[0]);
+                }
             }));
-        }*/
+        }
 
         private void UpdateTransformLabels(EditorObject entity)
         {
@@ -317,6 +321,11 @@ namespace Editor
                     ControllerEditor.physicsStepSize = (float)e.NewValue;
                 });
             }
+        }
+
+        private void NameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
