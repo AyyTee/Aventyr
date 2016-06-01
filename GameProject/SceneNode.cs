@@ -12,7 +12,7 @@ namespace Game
     /// <summary>
     /// Scene graph node.  All derived classes MUST override ShallowClone() and return an instance of the derived class.
     /// </summary>
-    [DataContract]
+    [DataContract, DebuggerDisplay("SceneNode {Name}")]
     public class SceneNode : ITreeNode<SceneNode>, IDeepClone, ISceneObject
     {
         [DataMember]
@@ -156,16 +156,18 @@ namespace Game
 
         public virtual Transform2 GetWorldTransform()
         {
-            if (Parent != null)
+            Transform2 local = GetTransform();
+            if (local == null || Parent == null)
             {
-                Transform2 t = GetTransform().Transform(Parent.GetWorldTransform());
-                if (IgnoreScale)
-                {
-                    t.SetScale(GetTransform().Scale);
-                }
-                return t;
+                return local;
             }
-            return GetTransform();
+
+            Transform2 t = local.Transform(Parent.GetWorldTransform());
+            if (IgnoreScale)
+            {
+                t.SetScale(local.Scale);
+            }
+            return t;
         }
 
         public virtual Transform2 GetVelocity()

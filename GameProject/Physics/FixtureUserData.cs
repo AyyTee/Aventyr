@@ -15,7 +15,7 @@ namespace Game
         /// All FixturePortals that this fixture is colliding with.
         /// </summary>
         [XmlIgnore]
-        public List<FixturePortal> PortalCollisions = new List<FixturePortal>();
+        public List<IPortal> PortalCollisions = new List<IPortal>();
         /*public List<FixturePortal> PortalCollisions {
             get
             {
@@ -32,8 +32,11 @@ namespace Game
                 return collisions;
             }
         }*/
-        //Portal this fixture belongs to.
         private FixturePortal[] _portalParents = new FixturePortal[2];
+        /// <summary>
+        /// The portals this fixture is a collision edge for (a maximum of 2). 
+        /// Both array indices are null if this fixture does not belong to a portal.
+        /// </summary>
         [XmlIgnore]
         public FixturePortal[] PortalParents 
         { 
@@ -70,7 +73,7 @@ namespace Game
         }
         #endregion
 
-        public bool IsPortalChild(FixturePortal portal)
+        public bool PartOfPortal(FixturePortal portal)
         {
             return PortalParents[0] == portal || PortalParents[1] == portal;
         }

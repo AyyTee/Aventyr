@@ -10,7 +10,7 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
-    [DataContract]
+    [DataContract, DebuggerDisplay("FixturePortal {Name}")]
     public class FixturePortal : SceneNode, IPortal
     {
         [DataMember]
@@ -91,6 +91,10 @@ namespace Game
         /// </summary>
         public override Transform2 GetTransform()
         {
+            if (Position == null)
+            {
+                return null;
+            }
             Transform2 t = PolygonExt.GetTransform(((IWall)Parent).Vertices, Position);
             t.Size = Size;
             t.IsMirrored = IsMirrored;
