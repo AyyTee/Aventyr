@@ -1,7 +1,9 @@
-﻿using System;
+﻿using EditorLogic;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,8 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using EditorLogic;
-using System.IO;
 
 namespace EditorWindow
 {
@@ -23,50 +23,54 @@ namespace EditorWindow
     /// </summary>
     public partial class ToolPanel : UserControl
     {
-        ControllerEditor _controller;
-        
         Dictionary<Tool, ToolButton> ButtonMap = new Dictionary<Tool, ToolButton>();
 
-        public ToolPanel(ControllerEditor controller)
+        public ToolPanel()
         {
             InitializeComponent();
+        }
 
-            _controller = controller;
-            bool a = File.Exists(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png"));
-            var image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png")));
+        /// <summary>
+        /// Adds tool buttons.  Intended to be called once.
+        /// </summary>
+        /// <param name="controller"></param>
+        public void Initialize(ControllerEditor controller)
+        {
+            Debug.Assert(controller != null);
+            controller.ToolChanged += ControllerEditor_ToolChanged;
 
+            string AssetsDirectory = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "editor assets");
             var arguments = new[] {
                 new {
-                    tool = (Tool)new ToolAddEntity(_controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png")))
+                    tool = (Tool)new ToolAddEntity(controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "entityIcon.png")))
                 },
                 new {
-                    tool = (Tool)new ToolAddPortal(_controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "portalIcon.png")))
+                    tool = (Tool)new ToolAddPortal(controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "portalIcon.png")))
                 },
                 new {
-                    tool = (Tool)new ToolPortalLinker(_controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonLinkerIcon.png")))
+                    tool = (Tool)new ToolPortalLinker(controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "polygonLinkerIcon.png")))
                 },
                 new {
-                    tool = (Tool)new ToolAddActor(_controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "entityIcon.png")))
+                    tool = (Tool)new ToolAddActor(controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "entityIcon.png")))
                 },
                 new {
-                    tool = (Tool)new ToolAddWall(_controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(MainWindow.AssetsDirectory, "icons", "polygonIcon.png")))
+                    tool = (Tool)new ToolAddWall(controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "polygonIcon.png")))
                 }
             };
             for (int i = 0; i < arguments.Length; i++)
             {
-                AddButton(arguments[i].tool, arguments[i].image);
+                AddButton(controller, arguments[i].tool, arguments[i].image);
             }
-            _controller.ToolChanged += ControllerEditor_ToolChanged;
         }
 
         private void ControllerEditor_ToolChanged(ControllerEditor controller, Tool tool)
         {
-            this.Dispatcher.Invoke((Action)(() =>
+            Dispatcher.Invoke(() =>
             {
                 if (ButtonMap.ContainsKey(tool))
                 {
@@ -79,13 +83,13 @@ namespace EditorWindow
                         button.Button.IsChecked = false;
                     }
                 }
-            }));
-            
+            });
+
         }
 
-        private void AddButton(Tool tool, BitmapImage buttonImage)
+        private void AddButton(ControllerEditor controller, Tool tool, BitmapImage buttonImage)
         {
-            ToolButton button = new ToolButton(_controller, tool, buttonImage);
+            ToolButton button = new ToolButton(controller, tool, buttonImage);
             ToolGrid.Children.Add(button);
             ButtonMap.Add(tool, button);
         }

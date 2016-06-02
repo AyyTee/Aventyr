@@ -100,14 +100,17 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ControllerFiles.cs" />
+    <Compile Include="PropertiesEditor.xaml.cs">
+      <DependentUpon>PropertiesEditor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RecentFilesList.cs" />
-    <Compile Include="WPFCommands.cs" />
     <Compile Include="ToolButton.xaml.cs">
       <DependentUpon>ToolButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="ToolPanel.xaml.cs">
       <DependentUpon>ToolPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WPFCommands.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -120,9 +123,13 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="ToolButton.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="PropertiesEditor.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ToolButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ToolPanel.xaml">
       <SubType>Designer</SubType>
@@ -177,39 +184,51 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="editor assets\icons\arrow-circle-225.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Resource Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="editor assets\icons\arrow-circle-315-left.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="editor assets\icons\control-pause.png">
+    <Resource Include="editor assets\icons\arrow-circle-225.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="editor assets\icons\control-stop-square.png">
+    </Resource>
+    <Resource Include="editor assets\icons\arrow-circle-315-left.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="editor assets\icons\control.png">
+    </Resource>
+    <Resource Include="editor assets\icons\control-pause.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="editor assets\icons\disk.png">
+    </Resource>
+    <Resource Include="editor assets\icons\control-stop-square.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="editor assets\icons\document.png">
+    </Resource>
+    <Resource Include="editor assets\icons\control.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </Resource>
+    <Resource Include="editor assets\icons\disk.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="editor assets\icons\document.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="editor assets\icons\eye.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="editor assets\icons\folder-open.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="editor assets\icons\grid-snap.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="editor assets\icons\entityIcon.png">
@@ -224,30 +243,6 @@
     <Content Include="editor assets\icons\portalIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="editor assets\icons\grid-snap.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="editor assets\icons\folder-open.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="editor assets\icons\eye.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="favicon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

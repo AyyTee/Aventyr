@@ -73,8 +73,8 @@ namespace EditorWindow
             _loop = new GLLoop(glControl, ControllerEditor);
             _loop.Run(60);
 
-            ToolPanel ToolPanel = new ToolPanel(ControllerEditor);
-            ToolGrid.Children.Add(ToolPanel);
+            //ToolPanel ToolPanel = new ToolPanel(ControllerEditor);
+            //ToolGrid.Children.Add(ToolPanel);
             updateTimer = new System.Timers.Timer(500);
             updateTimer.Elapsed += new ElapsedEventHandler(UpdateFrameRate);  
             updateTimer.Enabled = true;
@@ -82,8 +82,8 @@ namespace EditorWindow
 
             SetPortalRendering(true);
 
+            ToolPanel.Initialize(ControllerEditor);
             
-
             Slider_ValueChanged(
                 null, 
                 new RoutedPropertyChangedEventArgs<double>(ControllerEditor.physicsStepSize, ControllerEditor.physicsStepSize)
