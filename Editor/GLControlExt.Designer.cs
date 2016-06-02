@@ -1,4 +1,4 @@
-﻿namespace WPFControls
+﻿namespace EditorWindow
 {
     partial class GLControlExt
     {

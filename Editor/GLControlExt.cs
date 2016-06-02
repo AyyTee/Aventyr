@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OpenTK;
+using OpenTK.Graphics;
+using Game;
 
-namespace WPFControls
+namespace EditorWindow
 {
-    public partial class SomeForm : Form
+    public partial class GLControlExt : GLControl
     {
-        public SomeForm()
+        public GLControlExt()
+            : base(Window.DefaultGraphics)
         {
             InitializeComponent();
         }

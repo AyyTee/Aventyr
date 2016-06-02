@@ -100,6 +100,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ControllerFiles.cs" />
+    <Compile Include="GLControlExt.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GLControlExt.Designer.cs">
+      <DependentUpon>GLControlExt.cs</DependentUpon>
+    </Compile>
     <Compile Include="PropertiesEditor.xaml.cs">
       <DependentUpon>PropertiesEditor.xaml</DependentUpon>
     </Compile>
@@ -177,10 +183,6 @@
     <ProjectReference Include="..\GameProject\Game.csproj">
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
       <Name>Game</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WPFControls\EditorControls.csproj">
-      <Project>{c7d74749-e76c-4b1a-b68e-55757ce38889}</Project>
-      <Name>EditorControls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
