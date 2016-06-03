@@ -85,6 +85,7 @@ namespace EditorLogic
             {
                 e.SetSelected(false);
             }
+            SelectionChanged(this);
         }
 
         public void Toggle(EditorObject selected)

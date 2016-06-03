@@ -8,9 +8,11 @@ namespace EditorLogic.Command
 {
     public class Delete : ICommand
     {
+        public bool IsMarker { get; set; }
+
         public Delete()
         {
-
+            IsMarker = true;
         }
 
         public void Do()
@@ -28,7 +30,7 @@ namespace EditorLogic.Command
 
         }
 
-        public ICommand Clone()
+        public ICommand ShallowClone()
         {
             return new Delete();
         }

@@ -60,12 +60,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\Add.cs" />
-    <Compile Include="Commands\AddEntity.cs" />
-    <Compile Include="Commands\AddPortal.cs" />
-    <Compile Include="Commands\Delete.cs" />
-    <Compile Include="Commands\Drag.cs" />
-    <Compile Include="Commands\ICommand.cs" />
+    <Compile Include="Command\Add.cs" />
+    <Compile Include="Command\AddEntity.cs" />
+    <Compile Include="Command\AddPortal.cs" />
+    <Compile Include="Command\Delete.cs" />
+    <Compile Include="Command\Drag.cs" />
+    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\Rename.cs" />
     <Compile Include="ControllerCamera.cs" />
     <Compile Include="ControllerEditor.cs" />
     <Compile Include="Doodad.cs" />

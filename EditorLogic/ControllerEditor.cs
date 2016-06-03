@@ -25,11 +25,15 @@ namespace EditorLogic
         public event SerializationHandler LevelLoaded;
         public event SerializationHandler LevelSaved;
         public event SerializationHandler LevelCreated;
+        /// <summary>
+        /// Is called immediately after LevelLoaded or LevelCreated.
+        /// </summary>
+        public event SerializationHandler LevelChanged;
+        public delegate void EditorObjectModified(HashSet<EditorObject> modified);
         /// <summary>Called when an EditorObject's public state has been modified.</summary>
-        public event SceneEventHandler SceneModified;
+        public event EditorObjectModified SceneModified;
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
         public event ToolEventHandler ToolChanged;
-        bool _editorObjectModified;
         Tool _activeTool;
         public Tool ActiveTool { get { return _activeTool; } }
         public float physicsStepSize { get; set; }
@@ -82,10 +86,9 @@ namespace EditorLogic
             Transform2.SetSize(CamControl, 10);
             Hud.SetActiveCamera(CamControl);
             Level.ActiveCamera = CamControl;
-            if (LevelCreated != null)
-            {
-                LevelCreated(this, null);
-            }
+
+            LevelCreated(this, null);
+            LevelChanged(this, null);
         }
 
         public void LevelLoad(string filepath)
@@ -99,6 +102,7 @@ namespace EditorLogic
             selection = new Selection(Level);
             //Level.Clear();
             LevelLoaded(this, filepath);
+            LevelChanged(this, filepath);
         }
 
         public void LevelSave(string filepath)
@@ -114,6 +118,10 @@ namespace EditorLogic
 
         public Vector2 GetMouseWorldPosition()
         {
+            if (Level == null)
+            {
+                return Vector2.Zero;
+            }
             return CameraExt.ScreenToWorld(Level.ActiveCamera, InputExt.MousePos);
         }
 
@@ -132,11 +140,6 @@ namespace EditorLogic
             }
         }
 
-        public void SetEditorObjectModified()
-        {
-            _editorObjectModified = true;
-        }
-
         public override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
@@ -149,11 +152,7 @@ namespace EditorLogic
                 Actions.Clear();
             }
             _setTool(_nextTool);
-            if (_editorObjectModified && SceneModified != null)
-            {
-                //SceneModified(this, Level);
-                _editorObjectModified = false;
-            }
+
             if (ActiveLevel != null)
             {
                 float stepSize = physicsStepSize / 60;
@@ -174,6 +173,16 @@ namespace EditorLogic
             {
                 _activeTool.Update();
                 Level.Step(1 / 60);
+            }
+
+            HashSet<EditorObject> modified = new HashSet<EditorObject>(Level._children.FindAll(item => item.IsModified));
+            foreach (EditorObject reset in modified)
+            {
+                reset.IsModified = false;
+            }
+            if (modified.Count > 0)
+            {
+                SceneModified(modified);
             }
         }
 

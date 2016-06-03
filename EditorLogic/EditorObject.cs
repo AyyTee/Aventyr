@@ -41,6 +41,7 @@ namespace EditorLogic
         public Transform2 _transform = new Transform2();
         [DataMember]
         public IPolygonCoord PolygonTransform;
+        public bool IsModified { get; set; }
 
         public EditorObject(EditorScene editorScene)
         {
@@ -249,6 +250,18 @@ namespace EditorLogic
         public IPolygonCoord GetPolygonCoord()
         {
             return OnEdge ? PolygonTransform.ShallowClone() : null;
+        }
+
+        /// <summary>
+        /// Set name of this EditorObject and flag it as modified.
+        /// </summary>
+        public void SetName(string name)
+        {
+            if (name != Name)
+            {
+                Name = name;
+                IsModified = true;
+            }
         }
     }
 }

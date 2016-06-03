@@ -44,7 +44,7 @@ namespace EditorLogic.Command
             }
         }
 
-        public override ICommand Clone()
+        public override ICommand ShallowClone()
         {
             AddPortal clone = new AddPortal(_controller, (EditorPortal)_editorObject, _linked);
             return clone;

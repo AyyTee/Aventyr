@@ -22,6 +22,7 @@ namespace EditorLogic
         RollingAverage _average;
         public bool IsStopping { get; private set; }
         public bool IsRunning { get; private set; }
+        public bool a { get; set; }
 
         public GLLoop(GLControl control, Controller loopControl)
         {
@@ -50,6 +51,8 @@ namespace EditorLogic
             _control.Context.MakeCurrent(null);
             Thread = new Thread(new ThreadStart(Loop));
             Thread.Name = "OGL Thread";
+            var a = Thread.GetApartmentState();
+            Thread.SetApartmentState(ApartmentState.STA);
             Thread.Start();
         }
 

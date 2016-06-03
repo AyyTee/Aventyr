@@ -12,11 +12,13 @@ namespace EditorLogic.Command
     /// </summary>
     public class Drag : ICommand
     {
+        public bool IsMarker { get; set; }
         HashSet<MementoDrag> _modified = new HashSet<MementoDrag>();
         Transform2 _transform;
 
         public Drag(List<EditorObject> modified, Transform2 transform)
         {
+            IsMarker = true;
             foreach (EditorObject e in modified)
             {
                 _modified.Add(new MementoDrag(e));
@@ -77,7 +79,7 @@ namespace EditorLogic.Command
             }
         }
 
-        public ICommand Clone()
+        public ICommand ShallowClone()
         {
             return new Drag(_modified, _transform);
         }

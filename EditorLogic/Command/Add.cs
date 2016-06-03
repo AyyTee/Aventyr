@@ -9,12 +9,14 @@ namespace EditorLogic.Command
 {
     public abstract class Add : ICommand
     {
+        public bool IsMarker { get; set; }
         protected readonly ControllerEditor _controller;
         protected readonly EditorObject _editorObject;
         MementoSelection _selection;
 
         public Add(ControllerEditor controller, EditorObject editorObject)
         {
+            IsMarker = true;
             _editorObject = editorObject;
             _controller = controller;
         }
@@ -37,6 +39,6 @@ namespace EditorLogic.Command
             _controller.selection.SetRange(_selection);
         }
 
-        public abstract ICommand Clone();
+        public abstract ICommand ShallowClone();
     }
 }

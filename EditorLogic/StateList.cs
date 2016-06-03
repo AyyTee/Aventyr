@@ -14,10 +14,11 @@ namespace EditorLogic
         class FirstNode : ICommand
         {
             public FirstNode() {}
+            public bool IsMarker { get { return true; } }
             public void Do() { throw new NotSupportedException(); }
             public void Redo() { throw new NotSupportedException(); }
             public void Undo() { throw new NotSupportedException(); }
-            public ICommand Clone() { throw new NotSupportedException(); }
+            public ICommand ShallowClone() { throw new NotSupportedException(); }
         }
 
         LinkedList<ICommand> _list = new LinkedList<ICommand>();
@@ -59,13 +60,13 @@ namespace EditorLogic
             _currentState = _list.First;
         }
 
-        public void Add(ICommand state, bool callDo)
+        public void Add(ICommand state, bool callDo = true)
         {
             while (_list.Last != _currentState)
             {
                 _list.RemoveLast();
             }
-            ICommand clonedState = state.Clone();
+            ICommand clonedState = state.ShallowClone();
             if (_currentState == null)
             {
                 _list.AddFirst(clonedState);

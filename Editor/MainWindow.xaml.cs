@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Timers;
 using System.Windows.Input;
 using EditorLogic;
+using System.Collections.Generic;
 
 namespace EditorWindow
 {
@@ -51,9 +52,6 @@ namespace EditorWindow
                 string fileName = ((OpenFileDialog)sender).FileName;
                 ModelLoader loader = new ModelLoader();
                 Model model = loader.LoadObj(fileName);
-                /*Entity entity = new Entity(ControllerEditor.Level.Scene);
-                entity.AddModel(model);
-                new EditorEntity(ControllerEditor.Level, entity);*/
             });
         }
 
@@ -65,16 +63,10 @@ namespace EditorWindow
             ControllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;
             ControllerEditor.SceneModified += ControllerEditor_SceneModified;
 
-            //ControllerFiles must be instantiated before the GLLoop begins, otherwise 
-            //there isn't a listener for ControllerEditor.LevelLoaded.
             ControllerFiles = new ControllerFiles(this, ControllerEditor, filesRecent);
 
             glControl.MouseMove += glControl_MouseMove;
-            _loop = new GLLoop(glControl, ControllerEditor);
-            _loop.Run(60);
-
-            //ToolPanel ToolPanel = new ToolPanel(ControllerEditor);
-            //ToolGrid.Children.Add(ToolPanel);
+            
             updateTimer = new System.Timers.Timer(500);
             updateTimer.Elapsed += new ElapsedEventHandler(UpdateFrameRate);  
             updateTimer.Enabled = true;
@@ -83,18 +75,23 @@ namespace EditorWindow
             SetPortalRendering(true);
 
             ToolPanel.Initialize(ControllerEditor);
+            PropertiesEditor.Initialize(ControllerEditor);
             
             Slider_ValueChanged(
                 null, 
                 new RoutedPropertyChangedEventArgs<double>(ControllerEditor.physicsStepSize, ControllerEditor.physicsStepSize)
                 );
+
+            //Start the drawing loop last to make sure all listeners are in place.
+            _loop = new GLLoop(glControl, ControllerEditor);
+            _loop.Run(60);
         }
 
-        private void ControllerEditor_SceneModified(ControllerEditor controller)
+        private void ControllerEditor_SceneModified(HashSet<EditorObject> modified)
         {
             Dispatcher.Invoke(() =>
             {
-                UpdateTransformLabels(controller.selection.First);
+                //UpdateTransformLabels(controller.selection.First);
             });
         }
 
@@ -110,18 +107,19 @@ namespace EditorWindow
         private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
-            MouseWorldCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
+            MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
         }
 
         public void ControllerEditor_EntitySelected(Selection selection)
         {
-            Dispatcher.Invoke((() =>
+            Dispatcher.Invoke(() =>
             {
                 if (selection.GetAll().Count == 1)
                 {
                     UpdateTransformLabels(selection.GetAll()[0]);
+                    PropertiesEditor.SetSelected(selection.GetAll()[0]);
                 }
-            }));
+            });
         }
 
         private void UpdateTransformLabels(EditorObject entity)
