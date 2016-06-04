@@ -18,8 +18,8 @@ namespace UnitTest
 
         public void Initialize()
         {
-            StateList stateList = new StateList();
-            EditorScene scene = new EditorScene();
+            stateList = new StateList();
+            scene = new EditorScene();
         }
 
         [TestMethod]

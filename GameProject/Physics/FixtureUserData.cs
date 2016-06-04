@@ -88,12 +88,10 @@ namespace Game
         /// </summary>
         public void ProcessChanges()
         {
-            int a = Fixture.Body.FixtureList.Count;
             foreach (Fixture f in _fixtureChildList)
             {
                 Fixture.Body.DestroyFixture(f);
             }
-            int b = Fixture.Body.FixtureList.Count;
             //FixtureExt.GetUserData(Fixture).Entity.Scene.World.ProcessChanges();
             _fixtureChildList.Clear();
             var sortedPortals = GetChildPortals().ToArray().OrderBy(item => PolygonExt.EdgeIndexT(item.Position)).ToList();
@@ -184,9 +182,6 @@ namespace Game
             verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
             MathExt.SetWinding(verts, false);
 
-            /*Entity debugEntity = Entity.Scene.CreateEntity();
-            debugEntity.Models.Add(Model.CreatePolygon(verts));*/
-            
             return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
         }
 

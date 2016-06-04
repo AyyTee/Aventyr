@@ -286,7 +286,7 @@ namespace Game
         private float GetLineBlurAngle(Line line, Line linePrev)
         {
             const float angleMax = (float)(1f * Math.PI / 4);
-            float angleScale = 1f;
+            float angleScale = 80f;
             float angleDiff = (float)Math.Abs(MathExt.AngleDiff(line.Angle(), linePrev.Angle()) * angleScale);
             return Math.Min(angleDiff, angleMax);
         }

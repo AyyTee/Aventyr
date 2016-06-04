@@ -34,8 +34,7 @@ namespace EditorLogic
             #endregion
 
             HashSet<IDeepClone> toClone = new HashSet<IDeepClone>();
-            //ICamera2 camera = level.ActiveCamera;
-            //toClone.Add(level.ActiveCamera);
+            
             Dictionary<EditorObject, SceneNode> dictionary = new Dictionary<EditorObject, SceneNode>();
 
             List<EditorObject> editorObjects = level.GetAll().OfType<EditorObject>().ToList();
@@ -47,6 +46,7 @@ namespace EditorLogic
                     if (cast.OnEdge)
                     {
                         FixturePortal portal = new FixturePortal(scene);
+                        portal.Name = cast.Name;
                         Transform2 t = cast.GetTransform();
                         portal.Size = t.Size;
                         portal.IsMirrored = t.IsMirrored;
@@ -55,6 +55,7 @@ namespace EditorLogic
                     else
                     {
                         FloatPortal portal = new FloatPortal(scene);
+                        portal.Name = cast.Name;
                         portal.SetTransform(cast.GetTransform());
                         dictionary.Add(cast, portal);
                     }
@@ -63,10 +64,10 @@ namespace EditorLogic
                 {
                     EditorEntity cast = (EditorEntity)e;
                     Entity clone = new Entity(scene);
+                    clone.Name = cast.Name;
                     clone.AddModelRange(cast.Models);
                     clone.SetTransform(cast.GetTransform());
                     dictionary.Add(cast, clone);
-                    cast.Name = "Entity";
                 }
                 else if (e is IWall)
                 {
@@ -74,10 +75,11 @@ namespace EditorLogic
 
                     Transform2 t = cast.GetTransform();
                     Actor actor = new Actor(scene, ((IWall)e).Vertices, t);
-                    
+                    actor.Name = cast.Name;
                     Transform2 tEntity = new Transform2();
                     //tEntity.SetScale(t.Scale);
                     Entity entity = new Entity(scene, tEntity);
+                    entity.Name = cast.Name;
                     entity.SetParent(actor);
                     if (e is EditorWall)
                     {
@@ -86,8 +88,6 @@ namespace EditorLogic
                         entity.AddModel(Game.ModelFactory.CreatePolygon(castWall.Vertices));
                         //entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
                         dictionary.Add(castWall, actor);
-                        actor.Name = "Wall";
-                        entity.Name = "Wall Entity";
                     }
                     else if (e is EditorActor)
                     {
@@ -97,8 +97,6 @@ namespace EditorLogic
                         entity.AddModel(castActor.GetActorModel());
                         //entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
                         dictionary.Add(castActor, actor);
-                        actor.Name = "Actor";
-                        entity.Name = "Actor Entity";
                     }
                     else
                     {
@@ -129,11 +127,6 @@ namespace EditorLogic
                         if (portalEditor.Linked != null)
                         {
                             cast.Linked = (IPortal)dictionary[(EditorPortal)portalEditor.Linked];
-                            cast.Name = "Linked Fixture Portal";
-                        }
-                        else
-                        {
-                            cast.Name = "Unlinked Fixture Portal";
                         }
                     }
                     else if (clone is FloatPortal)
@@ -144,11 +137,6 @@ namespace EditorLogic
                         if (portalEditor.Linked != null)
                         {
                             cast.Linked = (IPortal)dictionary[(EditorPortal)portalEditor.Linked];
-                            cast.Name = "Linked Float Portal";
-                        }
-                        else
-                        {
-                            cast.Name = "Unlinked Float Portal";
                         }
                     }
                 }

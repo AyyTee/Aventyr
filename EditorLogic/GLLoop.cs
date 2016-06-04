@@ -11,18 +11,21 @@ namespace EditorLogic
     /// </summary>
     public class GLLoop
     {
-        public Thread Thread { get; private set; }
-        bool _resize = false;
-        bool _focused;
-        public int UpdatesPerSecond { get; private set; }
-        public int MillisecondsPerStep { get { return 1000 / UpdatesPerSecond; } }
+        Thread _thread;
+        volatile bool _resize = false;
+        volatile bool _focused;
+        volatile int _updatesPerSecond = -1;
+        volatile bool _isStopping;
+        volatile bool _isRunning;
         Stopwatch stopwatch = new Stopwatch();
         readonly GLControl _control;
         readonly Controller _loopControl;
         RollingAverage _average;
-        public bool IsStopping { get; private set; }
-        public bool IsRunning { get; private set; }
-        public bool a { get; set; }
+
+        public int UpdatesPerSecond { get { return _updatesPerSecond; } private set { _updatesPerSecond = value; } }
+        public int MillisecondsPerStep { get { return 1000 / UpdatesPerSecond; } }        
+        public bool IsStopping { get { return _isStopping; } private set { _isStopping = value; } }
+        public bool IsRunning { get { return _isRunning; } private set { _isRunning = value; } }
 
         public GLLoop(GLControl control, Controller loopControl)
         {
@@ -49,11 +52,9 @@ namespace EditorLogic
             UpdatesPerSecond = updatesPerSecond;
             _average = new RollingAverage(60, MillisecondsPerStep);
             _control.Context.MakeCurrent(null);
-            Thread = new Thread(new ThreadStart(Loop));
-            Thread.Name = "OGL Thread";
-            var a = Thread.GetApartmentState();
-            Thread.SetApartmentState(ApartmentState.STA);
-            Thread.Start();
+            _thread = new Thread(new ThreadStart(Loop));
+            _thread.Name = "OGL Thread";
+            _thread.Start();
         }
 
         /// <summary>

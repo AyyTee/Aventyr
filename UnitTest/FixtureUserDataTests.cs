@@ -136,5 +136,72 @@ namespace UnitTest
             shape = (PolygonShape)ground.Body.FixtureList[3].Shape;
             Assert.IsTrue(shape.Vertices.Count == 3);
         }
+
+        [TestMethod]
+        public void PortalParentTest5()
+        {
+            Scene scene = CreateSceneWithPortal();
+            Actor ground = (Actor)scene.FindByName("ground");
+            FixturePortal portal0 = scene.GetPortalList().OfType<FixturePortal>().First();
+
+            FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.6f));
+            FloatPortal portal2 = new FloatPortal(scene);
+            //Make sure portal2 isn't sitting on top of the float portal linked to portal0.
+            portal2.SetTransform(new Transform2(new Vector2(5, 0)));
+            portal1.Linked = portal2;
+            portal2.Linked = portal1;
+            FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            userData.ProcessChanges();
+
+
+            FixtureUserData userData0 = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            Assert.IsFalse(userData0.PartOfPortal(portal0));
+            Assert.IsFalse(userData0.PartOfPortal(portal1));
+
+            FixtureUserData userData1 = FixtureExt.GetUserData(ground.Body.FixtureList[1]);
+            Assert.IsTrue(userData1.PartOfPortal(portal0));
+            Assert.IsFalse(userData1.PartOfPortal(portal1));
+
+            FixtureUserData userData2 = FixtureExt.GetUserData(ground.Body.FixtureList[2]);
+            Assert.IsTrue(userData2.PartOfPortal(portal0));
+            Assert.IsTrue(userData2.PartOfPortal(portal1));
+
+            FixtureUserData userData3 = FixtureExt.GetUserData(ground.Body.FixtureList[3]);
+            Assert.IsFalse(userData3.PartOfPortal(portal0));
+            Assert.IsTrue(userData3.PartOfPortal(portal1));
+        }
+
+        [TestMethod]
+        public void PortalParentTest6()
+        {
+            Scene scene = new Scene();
+            Actor ground = CreateGround(scene);
+
+            FixturePortal portal0 = new FixturePortal(scene, ground, new PolygonCoord(1, 0.5f));
+            FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.6f));
+            portal0.Linked = portal0;
+            portal1.Linked = portal1;
+            FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            userData.ProcessChanges();
+
+            Assert.IsFalse(userData.PartOfPortal(portal0));
+            Assert.IsFalse(userData.PartOfPortal(portal1));
+
+            Assert.IsTrue(ground.Body.FixtureList.Count == 5);
+            for (int i = 1; i < ground.Body.FixtureList.Count; i++)
+            {
+                FixtureUserData childUserData = FixtureExt.GetUserData(ground.Body.FixtureList[i]);
+                if (i < 3)
+                {
+                    Assert.IsFalse(childUserData.PartOfPortal(portal0));
+                    Assert.IsTrue(childUserData.PartOfPortal(portal1));
+                }
+                else
+                {
+                    Assert.IsTrue(childUserData.PartOfPortal(portal0));
+                    Assert.IsFalse(childUserData.PartOfPortal(portal1));
+                }
+            }
+        }
     }
 }

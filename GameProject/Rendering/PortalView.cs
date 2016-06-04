@@ -85,7 +85,7 @@ namespace Game
             return list;
         }
 
-        public static PortalView CalculatePortalViews(IPortal[] portals, ICamera2 camera, int depth)
+        public static PortalView CalculatePortalViews(IList<IPortal> portals, ICamera2 camera, int depth)
         {
             Debug.Assert(camera != null);
             Debug.Assert(depth >= 0);
@@ -99,7 +99,7 @@ namespace Game
             return portalView;
         }
 
-        private static void CalculatePortalViews(IPortal portalEnter, IPortal[] portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, int depth, PortalView portalView, Matrix4 portalMatrix)
+        private static void CalculatePortalViews(IPortal portalEnter, IList<IPortal> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, int depth, PortalView portalView, Matrix4 portalMatrix)
         {
             if (depth <= 0)
             {
