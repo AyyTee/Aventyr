@@ -11,7 +11,7 @@ using System.Text;
 
 namespace EditorLogic
 {
-    [DataContract]
+    [DataContract, Affine, AffineMember]
     public sealed class EditorActor : EditorObject, IWall
     {
         public IList<Vector2> Vertices { get; private set; }

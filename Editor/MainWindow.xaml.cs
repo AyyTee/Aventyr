@@ -8,6 +8,7 @@ using System.Timers;
 using System.Windows.Input;
 using EditorLogic;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace EditorWindow
 {
@@ -24,6 +25,7 @@ namespace EditorWindow
         System.Timers.Timer updateTimer;
         public MainWindow()
         {
+            Thread.CurrentThread.Name = "WPF Thread";
             LocalDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             AssetsDirectory = System.IO.Path.Combine(LocalDirectory, "editor assets");
             InitializeComponent();
@@ -106,18 +108,18 @@ namespace EditorWindow
 
         private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
-            MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
+            //Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
+            //MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
         }
 
-        public void ControllerEditor_EntitySelected(Selection selection)
+        public void ControllerEditor_EntitySelected(List<EditorObject> selection)
         {
             Dispatcher.Invoke(() =>
             {
-                if (selection.GetAll().Count == 1)
+                if (selection.Count == 1)
                 {
-                    UpdateTransformLabels(selection.GetAll()[0]);
-                    PropertiesEditor.SetSelected(selection.GetAll()[0]);
+                    UpdateTransformLabels(selection[0]);
+                    PropertiesEditor.SetSelected(selection[0]);
                 }
             });
         }

@@ -42,16 +42,15 @@ namespace EditorWindow
             SetSelected(null);
         }
 
-        private void Selection_SelectionChanged(Selection selection)
+        private void Selection_SelectionChanged(List<EditorObject> selection)
         {
             Dispatcher.Invoke(() =>
             {
-                var selected = selection.GetAll();
-                if (selected.Count == 1)
+                if (selection.Count == 1)
                 {
-                    SetSelected(selection.GetAll()[0]);
+                    SetSelected(selection[0]);
                 }
-                else if (selected.Count == 0)
+                else if (selection.Count == 0)
                 {
                     SetSelected(null);
                 }

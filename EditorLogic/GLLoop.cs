@@ -33,12 +33,13 @@ namespace EditorLogic
             IsRunning = false;
             IsStopping = false;
             _loopControl = loopControl;
-            _loopControl.OnLoad(new EventArgs());
             /*_control.GotFocus += delegate { _focused = true; };
             _control.LostFocus += delegate { _focused = false; };*/
             _control.MouseEnter += delegate { _focused = true; };
             _control.MouseLeave += delegate { _focused = false; };
             _control.Resize += delegate { _resize = true; };
+            
+            //_loopControl.OnLoad(new EventArgs());
         }
 
         /// <summary>
@@ -51,9 +52,13 @@ namespace EditorLogic
             Debug.Assert(IsRunning == false);
             UpdatesPerSecond = updatesPerSecond;
             _average = new RollingAverage(60, MillisecondsPerStep);
-            _control.Context.MakeCurrent(null);
+            //_control.Context.MakeCurrent(null);
             _thread = new Thread(new ThreadStart(Loop));
             _thread.Name = "OGL Thread";
+
+            //_loopControl.OnLoad(new EventArgs());
+
+            _control.Context.MakeCurrent(null);
             _thread.Start();
         }
 
@@ -83,6 +88,7 @@ namespace EditorLogic
             {
                 IsRunning = true;
                 _control.MakeCurrent();
+                _loopControl.OnLoad(new EventArgs());
                 while (!IsStopping)
                 {
                     stopwatch.Stop();

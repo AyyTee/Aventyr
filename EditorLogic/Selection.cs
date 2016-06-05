@@ -11,7 +11,7 @@ namespace EditorLogic
 {
     public class Selection
     {
-        public delegate void EditorObjectHandler(Selection selection);
+        public delegate void EditorObjectHandler(List<EditorObject> selection);
         public event EditorObjectHandler SelectionChanged;
         public readonly EditorScene Scene;
         public EditorObject First { get; private set; }
@@ -35,14 +35,14 @@ namespace EditorLogic
             {
                 selected.SetSelected(true);
             }
-            SelectionChanged(this);
+            SelectionChanged(GetAll());
         }
 
         public void SetRange(MementoSelection selected)
         {
             SetRange(selected.Selected.ToList());
             SetFirst(selected.First);
-            SelectionChanged(this);
+            SelectionChanged(GetAll());
         }
 
         public void SetRange(List<EditorObject> selected)
@@ -60,7 +60,7 @@ namespace EditorLogic
             {
                 e.SetSelected(true);
             }
-            SelectionChanged(this);
+            SelectionChanged(GetAll());
         }
 
         public void SetFirst(EditorObject first)
@@ -85,7 +85,7 @@ namespace EditorLogic
             {
                 e.SetSelected(false);
             }
-            SelectionChanged(this);
+            SelectionChanged(GetAll());
         }
 
         public void Toggle(EditorObject selected)
@@ -112,7 +112,7 @@ namespace EditorLogic
             }
             SetFirst(selected);
             selected.SetSelected(true);
-            SelectionChanged(this);
+            SelectionChanged(GetAll());
         }
 
         public void AddRange(List<EditorObject> selected)
@@ -126,7 +126,7 @@ namespace EditorLogic
             {
                 e.SetSelected(true);
             }
-            SelectionChanged(this);
+            SelectionChanged(GetAll());
         }
 
         public bool Remove(EditorObject deselect)
@@ -144,7 +144,7 @@ namespace EditorLogic
             }
             bool wasSelected = deselect.IsSelected;
             deselect.SetSelected(false);
-            SelectionChanged(this);
+            SelectionChanged(GetAll());
             return wasSelected;
         }
 

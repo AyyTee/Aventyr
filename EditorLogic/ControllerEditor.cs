@@ -11,11 +11,39 @@ using System.Threading.Tasks;
 
 namespace EditorLogic
 {
+    [Affine]
     public class ControllerEditor : Controller
     {
+        [AffineMember]
         public Scene Hud, ActiveLevel;
+        [AffineMember]
         public EditorScene Level, Clipboard;
+        [AffineMember]
         public ControllerCamera CamControl { get; private set; }
+        [AffineMember]
+        Tool _activeTool;
+        public Tool ActiveTool { get { return _activeTool; } }
+        [AffineMember]
+        public float physicsStepSize { get; set; }
+        [AffineMember]
+        Tool _toolDefault;
+        [AffineMember]
+        Tool _nextTool;
+        Queue<Action> Actions = new Queue<Action>();
+        public Selection selection { get; private set; }
+        [AffineMember]
+        public StateList StateList { get; private set; }
+        [AffineMember]
+        public float CanvasAspect { get { return CanvasSize.Width / (float)CanvasSize.Height; } }
+        /// <summary>
+        /// Lock used to prevent race conditions when adding and reading from the action queue.
+        /// </summary>
+        object _lockAction = new object();
+        [AffineMember]
+        bool _isPaused = true;
+        [AffineMember]
+        int _stepsPending = 0;
+
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
         public delegate void SceneEventHandler(ControllerEditor controller);
         public event SceneEventHandler ScenePauseEvent;
@@ -25,30 +53,13 @@ namespace EditorLogic
         public event SerializationHandler LevelLoaded;
         public event SerializationHandler LevelSaved;
         public event SerializationHandler LevelCreated;
-        /// <summary>
-        /// Is called immediately after LevelLoaded or LevelCreated.
-        /// </summary>
+        /// <summary>Called immediately after LevelLoaded and LevelCreated.</summary>
         public event SerializationHandler LevelChanged;
         public delegate void EditorObjectModified(HashSet<EditorObject> modified);
         /// <summary>Called when an EditorObject's public state has been modified.</summary>
         public event EditorObjectModified SceneModified;
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
         public event ToolEventHandler ToolChanged;
-        Tool _activeTool;
-        public Tool ActiveTool { get { return _activeTool; } }
-        public float physicsStepSize { get; set; }
-        Tool _toolDefault;
-        Tool _nextTool;
-        Queue<Action> Actions = new Queue<Action>();
-        public Selection selection { get; private set; }
-        public StateList StateList { get; private set; }
-        public float CanvasAspect { get { return CanvasSize.Width / (float)CanvasSize.Height; } }
-        /// <summary>
-        /// Lock used to prevent race conditions when adding and reading from the action queue.
-        /// </summary>
-        object _lockAction = new object();
-        bool _isPaused = true;
-        int _stepsPending = 0;
 
         public ControllerEditor(Size canvasSize, InputExt input)
             : base(canvasSize, input)

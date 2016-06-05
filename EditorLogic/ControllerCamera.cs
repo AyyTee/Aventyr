@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EditorLogic
 {
-    [DataContract]
+    [DataContract, AffineMember]
     public class ControllerCamera : ICamera2, IPortalable, IShallowClone<ControllerCamera>, IStep
     {
         public delegate void CameraObjectHandler(ControllerCamera camera);
