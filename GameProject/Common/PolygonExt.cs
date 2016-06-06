@@ -67,7 +67,7 @@ namespace Game
         /// <returns></returns>
         public static bool IsSimple(IList<Vector2> polygon)
         {
-            //Use really slow but easy to implement O(n^2) algorithm for now.
+            //Using the really slow but easy to implement O(n^2) algorithm for now.
             for (int i = 0; i < polygon.Count; i++)
             {
                 Line line = new Line(polygon[i], polygon[(i + 1) % polygon.Count]);

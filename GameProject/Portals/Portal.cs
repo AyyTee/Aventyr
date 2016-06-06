@@ -25,7 +25,7 @@ namespace Game
 
         public static bool IsMirrored(IPortal portal)
         {
-            return portal.GetWorldTransform().IsMirrored;
+            return portal.GetWorldTransform().MirrorX;
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Game
             }
             //position.Scale *= new Vector2(flipX * (v1 - v0).Length, flipY * (v2 - v0).Length);
             position.Size *= flipY * (v2 - v0).Length;
-            position.IsMirrored = Math.Sign(position.Scale.X * flipX) != Math.Sign(position.Scale.Y * flipY);
+            position.MirrorX = Math.Sign(position.Scale.X * flipX) != Math.Sign(position.Scale.Y * flipY);
 
             float angle;
             if (flipX != flipY)
@@ -153,9 +153,20 @@ namespace Game
             return new Vector2[] { new Vector2(0, 0.5f), new Vector2(0, -0.5f) };
         }
 
+        /// <summary>
+        /// Get the portal's vertices in world coordinates.
+        /// </summary>
         public static Vector2[] GetWorldVerts(IPortal portal)
         {
             return Vector2Ext.Transform(GetVerts(portal), portal.GetWorldTransform().GetMatrix());
+        }
+
+        /// <summary>
+        /// Get the portal's vertices in world coordinates after being scaled.
+        /// </summary>
+        public static Vector2[] GetWorldVerts(IPortal portal, float scalar)
+        {
+            return Vector2Ext.Transform(Vector2Ext.Scale(GetVerts(portal), scalar), portal.GetWorldTransform().GetMatrix());
         }
 
         public static Matrix4 GetPortalMatrix(IPortal portalEnter)
@@ -168,7 +179,7 @@ namespace Game
         public static Matrix4 GetPortalMatrix(IPortal portalEnter, IPortal portalExit)
         {
             Transform2 transform = portalExit.GetWorldTransform();
-            transform.IsMirrored = !transform.IsMirrored;
+            transform.MirrorX = !transform.MirrorX;
             Matrix4 m = portalEnter.GetWorldTransform().GetMatrix();
             return m.Inverted() * transform.GetMatrix();
         }

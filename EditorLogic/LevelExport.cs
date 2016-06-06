@@ -49,7 +49,7 @@ namespace EditorLogic
                         portal.Name = cast.Name;
                         Transform2 t = cast.GetTransform();
                         portal.Size = t.Size;
-                        portal.IsMirrored = t.IsMirrored;
+                        portal.MirrorX = t.MirrorX;
                         dictionary.Add(cast, portal);
                     }
                     else

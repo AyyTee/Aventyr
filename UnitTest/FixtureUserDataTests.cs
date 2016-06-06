@@ -203,5 +203,173 @@ namespace UnitTest
                 }
             }
         }
+
+        public Vector2[][] GetPortalFixtures(Actor ground)
+        {
+            FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            userData.ProcessChanges();
+
+            Vector2[][] verticeArray = new Vector2[userData.FixtureChildren.Count][];
+            for (int i = 0; i < verticeArray.Length; i++)
+            {
+                verticeArray[i] = Vector2Ext.ConvertTo(((PolygonShape)userData.FixtureChildren[i].Shape).Vertices);
+            }
+            return verticeArray;
+        }
+
+        public void ProcessChangesAssert(Actor ground)
+        {
+            FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            userData.ProcessChanges();
+
+            Vector2[][] verticeArray = GetPortalFixtures(ground);
+            Vector2[][] verticeExpected = new Vector2[][]
+            {
+                new Vector2[] { new Vector2(1.3f, 1.98f), new Vector2(2f, 2f), new Vector2(1.3f, 2f) },
+                new Vector2[] { new Vector2(0.3f, 1.98f), new Vector2(0.3f, 2f), new Vector2(-0.3f, 2f), new Vector2(-0.3f, 1.98f) },
+                new Vector2[] { new Vector2(-1.3f, 2f), new Vector2(-2, 2), new Vector2(-1.3f, 1.98f) },
+            };
+
+            Assert.IsTrue(verticeArray.Length == verticeExpected.Length);
+            for (int i = 0; i < verticeArray.Length; i++)
+            {
+                Assert.IsTrue(MathExt.IsIsomorphic(verticeArray[i], verticeExpected[i], (first, second) => (first - second).Length < 0.0001));
+            }
+        }
+
+        [TestMethod]
+        public void ProcessChangesTest0()
+        {
+            Scene scene = new Scene();
+            Actor ground = new Actor(scene, PolygonFactory.CreateRectangle(4, 4));
+
+            FixturePortal portal0 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
+            FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.7f));
+            portal0.Linked = portal0;
+            portal1.Linked = portal1;
+            
+            ProcessChangesAssert(ground);
+        }
+
+        [TestMethod]
+        public void ProcessChangesTest1()
+        {
+            Scene scene = new Scene();
+            Actor ground = new Actor(scene, PolygonFactory.CreateRectangle(4, 4));
+
+            FixturePortal portal0 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
+            FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.7f));
+            portal0.Linked = portal0;
+            portal1.Linked = portal1;
+
+            portal0.MirrorX = true;
+
+            ProcessChangesAssert(ground);
+        }
+
+        [TestMethod]
+        public void ProcessChangesTest2()
+        {
+            Scene scene = new Scene();
+            Actor ground = new Actor(scene, PolygonFactory.CreateRectangle(4, 4));
+
+            FixturePortal portal0 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
+            FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.7f));
+            portal0.Linked = portal0;
+            portal1.Linked = portal1;
+
+            portal1.MirrorX = true;
+
+            ProcessChangesAssert(ground);
+        }
+
+        [TestMethod]
+        public void ProcessChangesTest3()
+        {
+            Scene scene = new Scene();
+            Actor ground = new Actor(scene, PolygonFactory.CreateRectangle(4, 4));
+
+            FixturePortal portal0 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
+            FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.7f));
+            portal0.Linked = portal0;
+            portal1.Linked = portal1;
+
+            portal0.MirrorX = true;
+            portal0.Size = -1;
+
+            ProcessChangesAssert(ground);
+        }
+
+        [TestMethod]
+        public void ProcessChangesTest4()
+        {
+            Scene scene = new Scene();
+            Actor ground = new Actor(scene, PolygonFactory.CreateRectangle(4, 4));
+
+            FixturePortal portal0 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
+            FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.7f));
+            portal0.Linked = portal0;
+            portal1.Linked = portal1;
+
+            portal1.MirrorX = true;
+            portal1.Size = -1;
+
+            ProcessChangesAssert(ground);
+        }
+
+        [TestMethod]
+        public void ProcessChangesTest5()
+        {
+            Scene scene = new Scene();
+            Actor ground = new Actor(scene, PolygonFactory.CreateRectangle(4, 4));
+
+            FixturePortal portal0 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
+            FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.7f));
+            portal0.Linked = portal0;
+            portal1.Linked = portal1;
+
+            portal0.MirrorX = true;
+            portal0.Size = -1;
+            portal1.MirrorX = true;
+            portal1.Size = -1;
+
+            ProcessChangesAssert(ground);
+        }
+
+        [TestMethod]
+        public void ProcessChangesTest6()
+        {
+            Scene scene = new Scene();
+            Actor ground = new Actor(scene, PolygonFactory.CreateRectangle(4, 4));
+
+            FixturePortal portal0 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
+            FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.7f));
+            portal0.Linked = portal0;
+            portal1.Linked = portal1;
+
+            portal0.MirrorX = true;
+            portal1.MirrorX = true;
+            portal1.Size = -1;
+
+            ProcessChangesAssert(ground);
+        }
+
+        [TestMethod]
+        public void ProcessChangesTest7()
+        {
+            Scene scene = new Scene();
+            Actor ground = new Actor(scene, PolygonFactory.CreateRectangle(4, 4));
+
+            FixturePortal portal0 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
+            FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.7f));
+            portal0.Linked = portal0;
+            portal1.Linked = portal1;
+
+            portal0.MirrorX = true;
+            portal1.MirrorX = true;
+            portal0.Size = -1;
+
+            ProcessChangesAssert(ground);
+        }
     }
 }

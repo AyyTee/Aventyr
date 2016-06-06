@@ -8,7 +8,7 @@ using PostSharp.Patterns.Threading;
 
 namespace EditorLogic
 {
-    [Affine, AffineMember]
+    [AffineMember]
     public class Doodad : IRenderable, ITransformable2
     {
         public bool DrawOverPortals { get { return false; } }

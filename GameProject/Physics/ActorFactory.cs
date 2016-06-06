@@ -15,21 +15,11 @@ namespace Game
 {
     public static class ActorFactory
     {
-        public static Actor CreateEntityBox(Scene scene, Vector2 position)
-        {
-            return CreateEntityBox(scene, new Transform2(position));
-        }
-
         public static Actor CreateEntityBox(Scene scene, Transform2 transform)
         {
             Debug.Assert(scene != null);
             Entity entity = new Entity(scene);
             return CreateEntityBox(entity, transform);
-        }
-
-        public static Actor CreateEntityBox(Entity entity, Vector2 position)
-        {
-            return CreateEntityBox(entity, new Transform2(position));
         }
 
         private static Actor CreateEntityBox(Entity entity, Transform2 transform)
@@ -46,8 +36,6 @@ namespace Game
             Actor actor = new Actor(entity.Scene, vertices, transform);
             actor.Body.BodyType = BodyType.Dynamic;
             entity.SetParent(actor);
-
-            //FixtureUserData userData = FixtureExt.SetUserData(body.FixtureList[0]);
 
             Transform2 t = new Transform2();
             t.Position = transform.Position;

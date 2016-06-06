@@ -21,7 +21,7 @@ namespace Game
         [DataMember]
         public bool OneSided { get; set; }
         [DataMember]
-        public bool IsMirrored { get { return GetTransform().IsMirrored; } }
+        public bool IsMirrored { get { return GetTransform().MirrorX; } }
         [DataMember]
         Transform2 _transform = new Transform2();
         public override bool IgnoreScale { get { return true; } }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EditorLogic
 {
-    [DataContract, Affine, AffineMember]
+    [DataContract, AffineMember]
     public class EditorObject : ITreeNode<EditorObject>, IPortalable, IDeepClone, IRenderable, ISceneObject
     {
         [DataMember]

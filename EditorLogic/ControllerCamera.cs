@@ -160,7 +160,7 @@ namespace EditorLogic
                 Transform2 transform = GetTransform();
                 transform.Rotation = 0;
                 //transform.Scale = new Vector2(Math.Abs(transform.Scale.X), Math.Abs(transform.Scale.Y));
-                transform.IsMirrored = false;
+                transform.MirrorX = false;
                 transform.Size = Math.Abs(transform.Size);
                 EditorObject selected = Controller.selection.First;
                 if (selected != null)

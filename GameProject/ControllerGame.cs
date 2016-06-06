@@ -61,7 +61,7 @@ namespace Game
             transform.Rotation = 1f;
             transform.Position = new Vector2(2.1f, 2f);
             transform.Size = 1f;
-            transform.IsMirrored = true;
+            transform.MirrorX = true;
             portalEntity2.SetTransform(transform);
 
             FloatPortal portal2 = new FloatPortal(scene);
@@ -140,7 +140,7 @@ namespace Game
             FixturePortal portal1 = new FixturePortal(scene);
             portal1.Name = "portalRight";
 
-            portal0.IsMirrored = true;
+            portal0.MirrorX = true;
             /*portal0.Linked = portal1;
             portal1.Linked = portal0;*/
 

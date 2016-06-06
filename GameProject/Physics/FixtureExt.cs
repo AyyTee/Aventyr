@@ -1,4 +1,5 @@
-﻿using FarseerPhysics.Collision.Shapes;
+﻿using ClipperLib;
+using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
 using OpenTK;
 using System;

@@ -302,14 +302,15 @@ namespace EditorLogic
 
         public void SceneStep()
         {
-            if (ActiveLevel != null)
+            if (ActiveLevel == null)
             {
-                if (!_isPaused)
-                {
-                    ScenePause();
-                }
-                _stepsPending++;
+                ScenePlay();
             }
+            if (!_isPaused)
+            {
+                ScenePause();
+            }
+            _stepsPending++;
         }
 
         public void AddAction(Action action)

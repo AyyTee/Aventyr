@@ -108,8 +108,8 @@ namespace EditorWindow
 
         private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            //Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
-            //MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
+            Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
+            MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
         }
 
         public void ControllerEditor_EntitySelected(List<EditorObject> selection)

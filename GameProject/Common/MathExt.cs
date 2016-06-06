@@ -352,11 +352,12 @@ namespace Game
         public static bool IsClockwise(IList<Vector2> polygon)
         {
             Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
+            Debug.Assert(PolygonExt.IsSimple(polygon));
             double signedArea = 0;
-            for (int i0 = 0; i0 < polygon.Count; i0++)
+            for (int i = 0; i < polygon.Count; i++)
             {
-                int i1 = (i0 + 1) % polygon.Count;
-                signedArea += (polygon[i0].X * polygon[i1].Y - polygon[i1].X * polygon[i0].Y);
+                int iNext = (i + 1) % polygon.Count;
+                signedArea += (polygon[i].X * polygon[iNext].Y - polygon[iNext].X * polygon[i].Y);
             }
             Debug.Assert(signedArea != 0, "Polygon has 0 area.");
             return Math.Sign(signedArea) == -1;
@@ -366,10 +367,10 @@ namespace Game
         {
             Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
             double signedArea = 0;
-            for (int i0 = 0; i0 < polygon.Count; i0++)
+            for (int i = 0; i < polygon.Count; i++)
             {
-                int i1 = (i0 + 1) % polygon.Count;
-                signedArea += (polygon[i0].X * polygon[i1].Y - polygon[i1].X * polygon[i0].Y);
+                int iNext = (i + 1) % polygon.Count;
+                signedArea += (polygon[i].X * polygon[iNext].Y - polygon[iNext].X * polygon[i].Y);
             }
             Debug.Assert(signedArea != 0, "Polygon has 0 area.");
             return Math.Sign(signedArea) == -1;
@@ -379,10 +380,10 @@ namespace Game
         {
             Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
             double signedArea = 0;
-            for (int i0 = 0; i0 < polygon.Count; i0++)
+            for (int i = 0; i < polygon.Count; i++)
             {
-                int i1 = (i0 + 1) % polygon.Count;
-                signedArea += (polygon[i0].X * polygon[i1].Y - polygon[i1].X * polygon[i0].Y);
+                int iNext = (i + 1) % polygon.Count;
+                signedArea += (polygon[i].X * polygon[iNext].Y - polygon[iNext].X * polygon[i].Y);
             }
             Debug.Assert(signedArea != 0, "Polygon has 0 area.");
             return Math.Sign(signedArea) == -1;
@@ -947,5 +948,39 @@ namespace Game
             return true;
         }
 
+        public static bool IsIsomorphic<T>(IList<T> first, IList<T> second, Func<T, T, bool> equality)
+        {
+            Debug.Assert(first != null);
+            Debug.Assert(second != null);
+            if (first.Count != second.Count)
+            {
+                return false;
+            }
+            int offset = 0;
+            for (int i = 0; i < first.Count; i++)
+            {
+                int j = (i + offset) % first.Count;
+                
+                if (!equality.Invoke(first[i], second[j]))
+                {
+                    i = 0;
+                    offset++;
+                    if (offset > first.Count)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Check if two lists are isomorphic. In otherwords, they are equal if they contain the same 
+        /// elements in the same order but potentially with an index offset.
+        /// </summary>
+        public static bool IsIsomorphic<T>(IList<T> first, IList<T> second)
+        {
+            return IsIsomorphic(first, second, (itemFirst, itemSecond) => itemFirst.Equals(itemSecond));
+        }
     }
 }

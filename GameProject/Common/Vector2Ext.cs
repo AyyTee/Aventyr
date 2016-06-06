@@ -16,6 +16,17 @@ namespace Game
             return v0.X * v1.Y - v0.Y * v1.X;
         }
 
+        public static Vector2[] Scale(Vector2[] vectors, float scalar)
+        {
+            Debug.Assert(vectors != null);
+            Vector2[] vList = new Vector2[vectors.Length];
+            for (int i = 0; i < vectors.Length; i++)
+            {
+                vList[i] = vectors[i] * scalar;
+            }
+            return vList;
+        }
+
         public static Vector2 Transform(Vector2 vector, Matrix4 matrix)
         {
             Vector3 v = Vector3.Transform(new Vector3(vector.X, vector.Y, 1), matrix);
@@ -24,6 +35,7 @@ namespace Game
 
         public static Vector2[] Transform(Vector2[] vectors, Matrix2 matrix)
         {
+            Debug.Assert(vectors != null);
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
@@ -34,6 +46,7 @@ namespace Game
 
         public static List<Vector2> Transform(IEnumerable<Vector2> vectors, Matrix2 matrix)
         {
+            Debug.Assert(vectors != null);
             List<Vector2> vList = new List<Vector2>();
             foreach (Vector2 v in vectors)
             {
@@ -44,6 +57,7 @@ namespace Game
 
         public static Vector2[] Transform(Vector2[] vectors, Matrix4 matrix)
         {
+            Debug.Assert(vectors != null);
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
@@ -54,6 +68,7 @@ namespace Game
 
         public static IList<Vector2> Transform(IList<Vector2> vectors, Matrix4 matrix)
         {
+            Debug.Assert(vectors != null);
             List<Vector2> vList = new List<Vector2>();
             foreach (Vector2 v in vectors)
             {
@@ -70,6 +85,7 @@ namespace Game
 
         public static Vector2[] Transform(Vector2[] vectors, Matrix4d matrix)
         {
+            Debug.Assert(vectors != null);
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
@@ -100,6 +116,7 @@ namespace Game
 
         public static Vector2[] ConvertTo(Vector3[] v)
         {
+            Debug.Assert(v != null);
             Vector2[] vNew = new Vector2[v.Length];
             for (int i = 0; i < v.Length; i++)
             {
@@ -125,6 +142,7 @@ namespace Game
 
         public static Vector2[] ConvertTo(Xna.Vector2[] v)
         {
+            Debug.Assert(v != null);
             Vector2[] vNew = new Vector2[v.Length];
             for (int i = 0; i < v.Length; i++)
             {
@@ -140,6 +158,7 @@ namespace Game
 
         public static Xna.Vector2[] ConvertToXna(Vector2[] v)
         {
+            Debug.Assert(v != null);
             Xna.Vector2[] vNew = new Xna.Vector2[v.Length];
             for (int i = 0; i < v.Length; i++)
             {
@@ -150,6 +169,7 @@ namespace Game
 
         public static List<Xna.Vector2> ConvertToXna(List<Vector2> v)
         {
+            Debug.Assert(v != null);
             List<Xna.Vector2> vNew = new List<Xna.Vector2>();
             for (int i = 0; i < v.Count; i++)
             {

@@ -50,9 +50,9 @@ namespace EditorLogic
                             /*t.Size *= -1;
                             t.IsMirrored = true;
                             portal.SetTransform(t);*/
-                            portal._transform.IsMirrored = true;
+                            portal._transform.MirrorX = true;
                             portal._transform.Size = -Math.Abs(portal._transform.Size);
-                            _portalPrevious._transform.IsMirrored = false;
+                            _portalPrevious._transform.MirrorX = false;
                             _portalPrevious._transform.Size = Math.Abs(_portalPrevious._transform.Size);
                             //t = _portalPrevious.GetTransform();
                             //t.IsMirrored = false;
@@ -67,9 +67,9 @@ namespace EditorLogic
                             t = _portalPrevious.GetTransform();
                             t.IsMirrored = false;
                             _portalPrevious.SetTransform(t);*/
-                            portal._transform.IsMirrored = true;
+                            portal._transform.MirrorX = true;
                             portal._transform.Size = Math.Abs(portal._transform.Size);
-                            _portalPrevious._transform.IsMirrored = true;
+                            _portalPrevious._transform.MirrorX = true;
                             _portalPrevious._transform.Size = Math.Abs(_portalPrevious._transform.Size);
                         }
                         

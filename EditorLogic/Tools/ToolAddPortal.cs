@@ -96,7 +96,7 @@ namespace EditorLogic
                 transform.Rotation = unsnapAngle;
                 //Transform2.SetRotation(_mouseFollow, unsnapAngle);
                 transform.Size = _mouseFollow.GetTransform().Size;
-                transform.IsMirrored = _mouseFollow.GetTransform().IsMirrored;
+                transform.MirrorX = _mouseFollow.GetTransform().MirrorX;
                 return transform;
             }
         }

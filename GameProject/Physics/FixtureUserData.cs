@@ -1,6 +1,7 @@
 ﻿using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
 using OpenTK;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,7 +15,6 @@ namespace Game
         /// <summary>
         /// All FixturePortals that this fixture is colliding with.
         /// </summary>
-        [XmlIgnore]
         public List<IPortal> PortalCollisions = new List<IPortal>();
         /*public List<FixturePortal> PortalCollisions {
             get
@@ -37,7 +37,6 @@ namespace Game
         /// The portals this fixture is a collision edge for (a maximum of 2). 
         /// Both array indices are null if this fixture does not belong to a portal.
         /// </summary>
-        [XmlIgnore]
         public FixturePortal[] PortalParents 
         { 
             get
@@ -51,7 +50,8 @@ namespace Game
             }
         }
         
-        private List<Fixture> _fixtureChildList = new List<Fixture>();
+        private List<Fixture> _fixtureChildren = new List<Fixture>();
+        public List<Fixture> FixtureChildren { get { return new List<Fixture>(_fixtureChildren); } }
         public IActor Actor
         {
             get
@@ -88,12 +88,12 @@ namespace Game
         /// </summary>
         public void ProcessChanges()
         {
-            foreach (Fixture f in _fixtureChildList)
+            foreach (Fixture f in _fixtureChildren)
             {
                 Fixture.Body.DestroyFixture(f);
             }
             //FixtureExt.GetUserData(Fixture).Entity.Scene.World.ProcessChanges();
-            _fixtureChildList.Clear();
+            _fixtureChildren.Clear();
             var sortedPortals = GetChildPortals().ToArray().OrderBy(item => PolygonExt.EdgeIndexT(item.Position)).ToList();
             sortedPortals.RemoveAll(item => !Portal.IsValid(item));
             for (int i = 0; i < sortedPortals.Count(); i++)
@@ -101,7 +101,7 @@ namespace Game
                 if (i == 0 || (i > 0 && sortedPortals[i].Position.EdgeIndex != sortedPortals[i - 1].Position.EdgeIndex))
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], true));
-                    _fixtureChildList.Add(fixture);
+                    _fixtureChildren.Add(fixture);
                     FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
                         sortedPortals[i],
                         null
@@ -110,7 +110,7 @@ namespace Game
                 if (i < sortedPortals.Count() - 1 && sortedPortals[i].Position.EdgeIndex == sortedPortals[i + 1].Position.EdgeIndex)
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], sortedPortals[i + 1]));
-                    _fixtureChildList.Add(fixture);
+                    _fixtureChildren.Add(fixture);
                     FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
                         sortedPortals[i],
                         sortedPortals[i+1]
@@ -119,7 +119,7 @@ namespace Game
                 else
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], false));
-                    _fixtureChildList.Add(fixture);
+                    _fixtureChildren.Add(fixture);
                     FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
                         sortedPortals[i],
                         null
@@ -130,29 +130,25 @@ namespace Game
 
         private PolygonShape CreatePortalShape(FixturePortal portal, FixturePortal portalNext)
         {
+            Debug.Assert(portal.Position.EdgeIndex == portalNext.Position.EdgeIndex);
+            Debug.Assert(portal.Position.EdgeT < portalNext.Position.EdgeT);
             Vector2[] verts = new Vector2[4];
-            Line edge = PolygonExt.GetEdge(((IWall)portal.Parent).Vertices, portal.Position);
-            //PolygonShape shape = (PolygonShape)portal.Position.Fixture.Shape;
 
-            int i;
-            i = 1;
-            if (!portal.IsMirrored)
             {
-                i = 0;
+                Transform2 t0 = portal.GetTransform();
+                t0.MirrorX = false;
+                t0.Size = Math.Abs(t0.Size);
+                verts[0] = Vector2Ext.Transform(Portal.GetVerts(portal)[0], t0.GetMatrix());
+                verts[1] = Vector2Ext.Transform(Portal.GetVerts(portal)[0] + new Vector2(-FixturePortal.EdgeMargin, 0), t0.GetMatrix());
             }
 
-            verts[0] = Vector2Ext.Transform(Portal.GetVerts(portal)[i], portal.GetTransform().GetMatrix());
-            verts[1] = Vector2Ext.Transform(Portal.GetVerts(portal)[i] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
-
-            i = 0;
-            if (!portalNext.IsMirrored)
             {
-                i = 1;
+                Transform2 t1 = portalNext.GetTransform();
+                t1.MirrorX = false;
+                t1.Size = Math.Abs(t1.Size);
+                verts[2] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[1] + new Vector2(-FixturePortal.EdgeMargin, 0), t1.GetMatrix());
+                verts[3] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[1], t1.GetMatrix());
             }
-
-            verts[2] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[i] + new Vector2(-FixturePortal.EdgeMargin, 0), portalNext.GetTransform().GetMatrix());
-            verts[3] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[i], portalNext.GetTransform().GetMatrix());
-            
             MathExt.SetWinding(verts, false);
 
             return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
@@ -161,25 +157,23 @@ namespace Game
         private PolygonShape CreatePortalShape(FixturePortal portal, bool previousVertex)
         {
             Vector2[] verts = new Vector2[3];
-            var tempVerts = Vector2Ext.Transform(Portal.GetVerts(portal), portal.GetTransform().GetMatrix());
-            Line edge = PolygonExt.GetEdge(((IWall)portal.Parent).Vertices, portal.Position);
+            
             PolygonShape shape = (PolygonShape)FixtureExt.GetFixturePortalParent(portal).Shape;
             int i = 1;
             if (previousVertex)
             {
                 i = 0;
             }
+            int iNext = (i + 1) % 2;
 
-            int iNext = i;
-            if (!portal.IsMirrored)
-            {
-                iNext = (i + 1) % 2;
-            }
-                
-            int index = (portal.Position.EdgeIndex + i) % shape.Vertices.Count;
-            verts[0] = tempVerts[iNext];
-            verts[1] = Vector2Ext.ConvertTo(shape.Vertices[index]);
-            verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), portal.GetTransform().GetMatrix());
+            Transform2 t = portal.GetTransform();
+            t.MirrorX = false;
+            t.Size = Math.Abs(t.Size);
+
+            int index = (portal.Position.EdgeIndex + i) % Actor.Vertices.Count;
+            verts[0] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext], t.GetMatrix());
+            verts[1] = ActorExt.GetFixtureContour(Actor)[index];
+            verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix());
             MathExt.SetWinding(verts, false);
 
             return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);

@@ -20,7 +20,7 @@ namespace Game
         /// X-axis mirroring.
         /// </summary>
         [DataMember]
-        public bool IsMirrored { get; set; }
+        public bool MirrorX { get; set; }
         const float UNIFORM_SCALE_EPSILON = 0.0001f;
         const float EQUALITY_EPSILON = 0.0001f;
 
@@ -49,7 +49,7 @@ namespace Game
         {
             get 
             { 
-                if (IsMirrored)
+                if (MirrorX)
                 {
                     return new Vector2(-Size, Size); 
                 }
@@ -102,7 +102,7 @@ namespace Game
             Position = position;
             Size = scale;
             Rotation = rotation;
-            IsMirrored = isMirrored;
+            MirrorX = isMirrored;
         }
         #endregion
 
@@ -111,7 +111,7 @@ namespace Game
             Transform2 clone = new Transform2();
             clone.Position = Position;
             clone.Size = Size;
-            clone.IsMirrored = IsMirrored;
+            clone.MirrorX = MirrorX;
             clone.Rotation = Rotation;
             return clone;
         }
@@ -156,7 +156,7 @@ namespace Game
             Transform2 output = ShallowClone();
             output.Rotation += transform.Rotation;
             output.Size *= transform.Size;
-            output.IsMirrored = output.IsMirrored != transform.IsMirrored;
+            output.MirrorX = output.MirrorX != transform.MirrorX;
             output.Position = Vector2Ext.Transform(output.Position, transform.GetMatrix());
             Debug.Assert(Matrix4Ext.Compare(output.GetMatrix(), GetMatrix() * transform.GetMatrix()));
             return output;
@@ -191,7 +191,7 @@ namespace Game
             Transform2 output = ShallowClone();
             output.Rotation += transform.Rotation;
             output.Size *= transform.Size;
-            output.IsMirrored = output.IsMirrored != transform.IsMirrored;
+            output.MirrorX = output.MirrorX != transform.MirrorX;
             output.Position += transform.Position;
             return output;
         }
@@ -212,7 +212,7 @@ namespace Game
             Transform2 output = ShallowClone();
             output.Rotation -= transform.Rotation;
             output.Size /= transform.Size;
-            output.IsMirrored = output.IsMirrored != transform.IsMirrored;
+            output.MirrorX = output.MirrorX != transform.MirrorX;
             output.Position -= transform.Position;
             return output;
         }
@@ -234,10 +234,10 @@ namespace Game
                 scale.Y = -Math.Abs(scale.X);
             }
 
-            IsMirrored = false;
+            MirrorX = false;
             if (Math.Sign(scale.X) != Math.Sign(scale.Y))
             {
-                IsMirrored = true;
+                MirrorX = true;
             }
             Size = scale.Y;
             Debug.Assert(Scale == scale);
@@ -248,7 +248,7 @@ namespace Game
             Size = size;
             if (mirrorX != mirrorY)
             {
-                IsMirrored = true;
+                MirrorX = true;
             }
             if (mirrorY)
             {
@@ -312,7 +312,7 @@ namespace Game
             return base.GetHashCode() ^ 
                 Rotation.GetHashCode() ^ 
                 Size.GetHashCode() ^ 
-                IsMirrored.GetHashCode() ^
+                MirrorX.GetHashCode() ^
                 Position.GetHashCode();
         }
 

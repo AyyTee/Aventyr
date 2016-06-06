@@ -44,7 +44,7 @@ namespace UnitTest
         public void GetNormalTest3()
         {
             Transform2 t = new Transform2();
-            t.IsMirrored = true;
+            t.MirrorX = true;
             t.Position = new Vector2(100, -200);
 
             Vector2 normal = t.GetRight();
@@ -55,7 +55,7 @@ namespace UnitTest
         public void GetNormalTest4()
         {
             Transform2 t = new Transform2();
-            t.IsMirrored = true;
+            t.MirrorX = true;
             t.Size = -1;
             t.Position = new Vector2(100, -200);
 
@@ -78,7 +78,7 @@ namespace UnitTest
         public void GetNormalTest6()
         {
             Transform2 t = new Transform2();
-            t.IsMirrored = true;
+            t.MirrorX = true;
             t.Size = -1;
             t.Position = new Vector2(100, -200);
             t.Rotation = (float)Math.PI / 4;
@@ -91,7 +91,7 @@ namespace UnitTest
         public void GetNormalTest7()
         {
             Transform2 t = new Transform2();
-            t.IsMirrored = true;
+            t.MirrorX = true;
             t.Position = new Vector2(100, -200);
             t.Rotation = (float)Math.PI / 4;
 

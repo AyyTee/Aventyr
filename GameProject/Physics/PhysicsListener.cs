@@ -12,6 +12,7 @@ using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Collision;
 using OpenTK;
 using FarseerPhysics.Common;
+using ClipperLib;
 
 namespace Game
 {
@@ -76,6 +77,8 @@ namespace Game
             {
                 //BodyExt.GetUserData(b).UpdatePortalCollisions(ref bodiesToRemove);
                 b.ApplyForce(new Xna.Vector2(0, -9.8f/2) * b.Mass);
+
+                ActorExt.GetGravity(BodyExt.GetUserData(b).Actor, Scene.GetPortalList(), new Vector2(0, -9.8f/2));
             }
             /*foreach (Body b in bodiesToRemove)
             {
@@ -87,6 +90,7 @@ namespace Game
                 DebugEntity.Remove();
             }
             DebugEntity = new Entity(Scene);
+            DebugEntity.IsPortalable = false;
         }
 
         public void StepEnd()
@@ -171,6 +175,18 @@ namespace Game
                                 model.SetColor(new Vector3(0.5f, 0.5f, 0));
                             }
                             model.Transform.Position = new Vector3(vList[i].X, vList[i].Y, 0);
+
+                            if (!userData[i].IsPortalParentless())
+                            {
+                                IList<Vector2> vertices = Vector2Ext.ConvertTo(((PolygonShape)userData[i].Fixture.Shape).Vertices);
+                                Model fixtureModel = ModelFactory.CreatePolygon(vertices);
+                                fixtureModel.SetColor(new Vector3(0, 1, 1));
+                                fixtureModel.Transform = userData[i].Actor.GetTransform().Get3D();
+                                fixtureModel.Transform.Position += new Vector3(0, 0, 5);
+                                fixtureModel.Transform.Scale = Vector3.One;
+                                
+                                DebugEntity.AddModel(fixtureModel);
+                            }
                         }
                     }
                 }

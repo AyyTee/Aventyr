@@ -22,7 +22,7 @@ namespace Game
         [DataMember]
         public bool OneSided { get; set; }
         [DataMember]
-        public bool IsMirrored { get; set; }
+        public bool MirrorX { get; set; }
         [DataMember]
         float _size = 1;
         //Size of portal. Must not be equal to 0.
@@ -69,7 +69,7 @@ namespace Game
         {
             base.ShallowClone(destination);
             destination.OneSided = OneSided;
-            destination.IsMirrored = IsMirrored;
+            destination.MirrorX = MirrorX;
             destination.Linked = Linked;
         }
 
@@ -95,9 +95,9 @@ namespace Game
             {
                 return null;
             }
-            Transform2 t = PolygonExt.GetTransform(((IWall)Parent).Vertices, Position);
+            Transform2 t = PolygonExt.GetTransform(((IWall)Parent).Vertices, Position); 
             t.Size = Size;
-            t.IsMirrored = IsMirrored;
+            t.MirrorX = MirrorX;
             return t;
         }
 
