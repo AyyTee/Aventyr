@@ -13,9 +13,9 @@ namespace Game
 {
     public static class PolygonFactory
     {
-        public static Poly2Tri.Polygon CreatePolygon(IList<Vector2> vertices)
+        public static Polygon CreatePolygon(IList<Vector2> vertices)
         {
-            Poly2Tri.Polygon polygon = GetPolygon(vertices);
+            Polygon polygon = GetPolygon(vertices);
             if (Triangulate(polygon))
             {
                 return polygon;
@@ -23,11 +23,11 @@ namespace Game
             return null;
         }
 
-        public static List<Poly2Tri.Polygon> CreatePolygon(List<List<IntPoint>> paths)
+        public static List<Polygon> CreatePolygon(List<List<IntPoint>> paths)
         {
             List<List<IntPoint>> holes = new List<List<IntPoint>>(paths);
-            Dictionary<List<IntPoint>, Poly2Tri.Polygon> contourMap = new Dictionary<List<IntPoint>, Poly2Tri.Polygon>();
-            List<Poly2Tri.Polygon> polygons = new List<Poly2Tri.Polygon>();
+            Dictionary<List<IntPoint>, Polygon> contourMap = new Dictionary<List<IntPoint>, Polygon>();
+            List<Polygon> polygons = new List<Polygon>();
             foreach (List<IntPoint> p in paths)
             {
                 if (p.Count == 0)
@@ -38,7 +38,7 @@ namespace Game
                 Debug.Assert(p.Count != 1 && p.Count != 2, "Polygon is degenerate.");
                 if (!MathExt.IsClockwise(p))
                 {
-                    Poly2Tri.Polygon polygon = GetPolygon(p);
+                    Polygon polygon = GetPolygon(p);
                     polygons.Add(polygon);
                     holes.Remove(p);
                     contourMap.Add(p, polygon);
@@ -51,13 +51,13 @@ namespace Game
                 {
                     if (IsHole(p, contours[i]))
                     {
-                        Poly2Tri.Polygon polygon = contourMap[contours[i]];
+                        Polygon polygon = contourMap[contours[i]];
                         polygon.AddHole(GetPolygon(contours[i]));
                         break;
                     }
                 }
             }
-            foreach (Poly2Tri.Polygon p in polygons)
+            foreach (Polygon p in polygons)
             {
                 Triangulate(p);
             }
@@ -79,9 +79,9 @@ namespace Game
             throw new Exception("Invalid polygon, all vertices are collinear to another polygon.");
         }
 
-        public static List<Poly2Tri.Polygon> CreatePolygon(PolyTree polyTree)
+        public static List<Polygon> CreatePolygon(PolyTree polyTree)
         {
-            List<Poly2Tri.Polygon> polyList = new List<Poly2Tri.Polygon>();
+            List<Polygon> polyList = new List<Polygon>();
             for (int i = 0; i < polyTree.Childs.Count; i++)
             {
                 polyList.AddRange(CreatePolygon(polyTree.Childs[i]));
@@ -89,12 +89,12 @@ namespace Game
             return polyList;
         }
 
-        private static List<Poly2Tri.Polygon> CreatePolygon(PolyNode polyNode)
+        private static List<Polygon> CreatePolygon(PolyNode polyNode)
         {
-            List<Poly2Tri.Polygon> polyList = new List<Poly2Tri.Polygon>();
+            List<Polygon> polyList = new List<Polygon>();
             Debug.Assert(polyNode.IsOpen == false);
             Debug.Assert(polyNode.IsHole == false);
-            Poly2Tri.Polygon polygon = GetPolygon(polyNode.Contour);
+            Polygon polygon = GetPolygon(polyNode.Contour);
             for (int i = 0; i < polyNode.Childs.Count; i++)
             {
                 if (polyNode.Childs[i].IsHole)
@@ -113,7 +113,7 @@ namespace Game
             return polyList;
         }
 
-        private static Poly2Tri.Polygon GetPolygon(List<IntPoint> vertices)
+        private static Polygon GetPolygon(List<IntPoint> vertices)
         {
             HashSet<Vector2> points = new HashSet<Vector2>();
             List<PolygonPoint> polygonPoints = new List<PolygonPoint>();
@@ -123,10 +123,10 @@ namespace Game
                 polygonPoints.Add(new PolygonPoint(v.X, v.Y));
                 Debug.Assert(points.Add(v));
             }
-            return new Poly2Tri.Polygon(polygonPoints);
+            return new Polygon(polygonPoints);
         }
 
-        private static Poly2Tri.Polygon GetPolygon(IList<Vector2> vertices)
+        private static Polygon GetPolygon(IList<Vector2> vertices)
         {
             HashSet<Vector2> points = new HashSet<Vector2>();
             List<PolygonPoint> polygonPoints = new List<PolygonPoint>();
@@ -136,11 +136,11 @@ namespace Game
                 polygonPoints.Add(new PolygonPoint(v.X, v.Y));
                 Debug.Assert(points.Add(v));
             }
-            return new Poly2Tri.Polygon(polygonPoints);
+            return new Polygon(polygonPoints);
         }
 
         /// <summary>Triangulate a polygon and return whether it was successful.</summary>
-        private static bool Triangulate(Poly2Tri.Polygon polygon)
+        private static bool Triangulate(Polygon polygon)
         {
             TextWriter console = Console.Out;
             Console.SetOut(Controller.Log);

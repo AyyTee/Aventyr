@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using FarseerPhysics.Collision.Shapes;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,6 +21,12 @@ namespace Game
             return transform;
         }
 
+        public static Transform2 GetTransform(FixtureCoord fixtureCoord)
+        {
+            Vector2[] vertices = Vector2Ext.ConvertTo(((PolygonShape)fixtureCoord.Fixture.Shape).Vertices);
+            return GetTransform(vertices, fixtureCoord);
+        }
+
         public static Line GetEdge(IList<Vector2> vertices, IPolygonCoord coord)
         {
             Debug.Assert(vertices.Count >= 1, "Polygon must have at least 1 vertex.");
@@ -32,27 +39,27 @@ namespace Game
         }
 
         /// <summary>
-        /// Changes handedness so polygon edge normals face inward.
+        /// Returns polygon with the order of the verticies changed so that the normals face outward or inward.
         /// </summary>
-        public static void SetExterior(List<Vector2> polygon)
+        public static List<Vector2> SetNormals(List<Vector2> polygon, bool faceOutward = false)
         {
-            MathExt.SetWinding(polygon, true);
+            return MathExt.SetWinding(polygon, faceOutward);
+        }
+
+        /// <summary>
+        /// Returns polygon with the order of the verticies changed so that the normals face outward or inward.
+        /// </summary>
+        public static Vector2[] SetNormals(Vector2[] polygon, bool faceOutward = false)
+        {
+            return MathExt.SetWinding(polygon, faceOutward);
         }
 
         /// <summary>
         /// Changes handedness so polygon edge normals face outward.
         /// </summary>
-        public static void SetInterior(List<Vector2> polygon)
+        public static IList<Xna.Vector2> SetInterior(IList<Xna.Vector2> polygon)
         {
-            MathExt.SetWinding(polygon, false);
-        }
-
-        /// <summary>
-        /// Changes handedness so polygon edge normals face outward.
-        /// </summary>
-        public static void SetInterior(List<Xna.Vector2> polygon)
-        {
-            MathExt.SetWinding(polygon, false);
+            return MathExt.SetWinding(polygon, false);
         }
 
         public static bool IsInterior(IList<Vector2> polygon)

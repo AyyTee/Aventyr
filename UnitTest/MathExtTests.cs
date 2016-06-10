@@ -4,13 +4,15 @@ using Game;
 using OpenTK;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 
 namespace UnitTest
 {
     [TestClass]
     public class MathExtTests
     {
-        double ErrorMargin = 0.0000001;
+        const double ErrorMargin = 0.0000001;
 
         #region LineInRectangle tests
         [TestMethod]
@@ -212,6 +214,46 @@ namespace UnitTest
             List<Vector2> vList = new List<Vector2>(v);
             vList.Reverse();
             Assert.IsFalse(MathExt.IsClockwise(vList));
+        }
+        #endregion
+        #region SetWinding tests
+        [TestMethod]
+        public void SetWindingTest0()
+        {
+            Vector2[] v = new Vector2[] {
+                new Vector2(),
+                new Vector2(0, 1),
+                new Vector2(1, 0)
+            };
+            Debug.Assert(MathExt.IsClockwise(v));
+            Vector2[] result = MathExt.SetWinding(v, false);
+            Vector2[] expected = new Vector2[]
+            {
+                new Vector2(1, 0),
+                new Vector2(0, 1),
+                new Vector2()
+            };
+
+            Assert.IsTrue(Enumerable.SequenceEqual(result, expected));
+        }
+        [TestMethod]
+        public void SetWindingTest1()
+        {
+            List<Vector2> v = new List<Vector2>();
+            v.Add(new Vector2());
+            v.Add(new Vector2(0, 1));
+            v.Add(new Vector2(1, 0));
+            
+            Debug.Assert(MathExt.IsClockwise(v));
+            List<Vector2> result = MathExt.SetWinding(v, false);
+            Vector2[] expected = new Vector2[]
+            {
+                new Vector2(1, 0),
+                new Vector2(0, 1),
+                new Vector2()
+            };
+
+            Assert.IsTrue(Enumerable.SequenceEqual(result, expected));
         }
         #endregion
         #region LineCircleIntersect tests

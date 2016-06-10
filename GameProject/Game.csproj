@@ -131,12 +131,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FCurve.cs" />
+    <Compile Include="Keyframe.cs" />
     <Compile Include="Physics\ActorExt.cs" />
     <Compile Include="Physics\BodyUserData.cs" />
     <Compile Include="Rendering\Camera2.cs" />
     <Compile Include="Rendering\CameraExt.cs" />
-    <Compile Include="Rendering\Models\ClipModel.cs" />
-    <Compile Include="Rendering\Models\ClipModelCompute.cs" />
+    <Compile Include="Rendering\Models\Clip.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="Serialization\DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />

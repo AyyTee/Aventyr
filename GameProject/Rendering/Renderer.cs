@@ -305,8 +305,8 @@ namespace Game
                 {
                     continue;
                 }
-                List<ClipModel> clipModels = ClipModelCompute.GetClipModels(e, layer.GetPortalList(), PortalClipDepth);
-                foreach (ClipModel clip in clipModels)
+                List<Clip.ClipModel> clipModels = Clip.GetClipModels(e, layer.GetPortalList(), PortalClipDepth);
+                foreach (Clip.ClipModel clip in clipModels)
                 {
                     if (clip.ClipLines.Length > 0)
                     {

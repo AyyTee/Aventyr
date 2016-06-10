@@ -10,6 +10,8 @@ namespace UnitTest
     [TestClass]
     public class ActorTests
     {
+        public const float EQUALITY_EPSILON = 0.0001f;
+
         [TestMethod]
         public void SetTransformTest0()
         {
@@ -40,13 +42,42 @@ namespace UnitTest
             actor.SetTransform(t);
 
             List<Vector2> fixture = new List<Vector2>(Vector2Ext.Transform(vertices, Matrix4.CreateScale(new Vector3(t.Scale))));
-            PolygonExt.SetInterior(fixture);
+            fixture = PolygonExt.SetNormals(fixture);
             PolygonShape polygon = (PolygonShape)actor.Body.FixtureList[0].Shape;
 
             for (int i = 0; i < fixture.Count; i++)
             {
-                Assert.IsTrue(fixture[i].X == polygon.Vertices[i].X && fixture[i].Y == polygon.Vertices[i].Y);
+                Assert.AreEqual(fixture[i].X, polygon.Vertices[i].X, EQUALITY_EPSILON);
+                Assert.AreEqual(fixture[i].Y, polygon.Vertices[i].Y, EQUALITY_EPSILON);
             }
+        }
+
+        /// <summary>
+        /// If local vertices are interior then the world verticies should also be interior even when the actor is mirrored.
+        /// </summary>
+        [TestMethod]
+        public void GetWorldVerticesTest0()
+        {
+            Vector2[] vertices = new Vector2[]
+            {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(0, 1)
+            };
+            vertices = PolygonExt.SetNormals(vertices);
+            Actor actor = new Actor(new Scene(), vertices);
+
+            actor.SetTransform(new Transform2(new Vector2(), 1, 0, false));
+            Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));
+
+            actor.SetTransform(new Transform2(new Vector2(), 1, 0, true));
+            Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));
+
+            actor.SetTransform(new Transform2(new Vector2(), -1, 0, false));
+            Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));
+
+            actor.SetTransform(new Transform2(new Vector2(), -1, 0, true));
+            Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));
         }
     }
 }

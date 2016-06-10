@@ -149,7 +149,7 @@ namespace Game
                 verts[2] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[1] + new Vector2(-FixturePortal.EdgeMargin, 0), t1.GetMatrix());
                 verts[3] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[1], t1.GetMatrix());
             }
-            MathExt.SetWinding(verts, false);
+            verts = (Vector2[])MathExt.SetWinding(verts, false);
 
             return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
         }
@@ -174,7 +174,7 @@ namespace Game
             verts[0] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext], t.GetMatrix());
             verts[1] = ActorExt.GetFixtureContour(Actor)[index];
             verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix());
-            MathExt.SetWinding(verts, false);
+            verts = (Vector2[])MathExt.SetWinding(verts, false);
 
             return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
         }

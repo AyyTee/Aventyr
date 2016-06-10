@@ -14,6 +14,8 @@ namespace Game
 {
     public static class FixtureExt
     {
+        const float ERROR_MARGIN = 0.0001f;
+
         public static FixtureUserData SetUserData(Fixture fixture)
         {
             FixtureUserData userData = new FixtureUserData(fixture);
@@ -38,6 +40,7 @@ namespace Game
         public static FixtureCoord GetFixtureEdgeCoord(IActor actor, IPolygonCoord coord)
         {
             Debug.Assert(actor.Body != null);
+            Debug.Assert(coord != null);
 
             FixtureCoord fixtureCoord = coord as FixtureCoord;
             if (fixtureCoord != null)
@@ -47,11 +50,17 @@ namespace Game
             }
 
             List<Vector2> fixtureContour = ActorExt.GetFixtureContour(actor);
+            
             Line edge = PolygonExt.GetEdge(fixtureContour, coord);
             Debug.Assert(
                 edge[0] == fixtureContour[coord.EdgeIndex] &&
                 edge[1] == fixtureContour[(coord.EdgeIndex + 1) % fixtureContour.Count]
                 );
+
+            if (!PolygonExt.IsInterior(fixtureContour))
+            {
+                edge.Reverse();
+            }
 
             foreach (Fixture f in actor.Body.FixtureList)
             {
@@ -62,9 +71,17 @@ namespace Game
                         for (int i = 0; i < polygon.Vertices.Count; i++)
                         {
                             int iNext = (i + 1) % polygon.Vertices.Count;
-                            if (edge[0] == Vector2Ext.ConvertTo(polygon.Vertices[i]) && edge[1] == Vector2Ext.ConvertTo(polygon.Vertices[iNext]))
+                            if ((edge[0] - Vector2Ext.ConvertTo(polygon.Vertices[i])).Length < ERROR_MARGIN && 
+                                (edge[1] - Vector2Ext.ConvertTo(polygon.Vertices[iNext])).Length < ERROR_MARGIN)
                             {
-                                return new FixtureCoord(f, i, coord.EdgeT);
+                                if (PolygonExt.IsInterior(fixtureContour))
+                                {
+                                    return new FixtureCoord(f, i, coord.EdgeT);
+                                }
+                                else
+                                {
+                                    return new FixtureCoord(f, i, 1 - coord.EdgeT);
+                                }
                             }
                         }
                         break;
@@ -73,14 +90,13 @@ namespace Game
                         break;
                 }
             }
-            Debug.Fail("Could not find FixtureEdgeCoord.");
+            //Debug.Fail("Could not find FixtureEdgeCoord.");
             return null;
         }
 
         /// <summary>
         /// Returns Fixture that FixturePortal is attached to, or null if none exists.
         /// </summary>
-        /// <returns></returns>
         public static Fixture GetFixturePortalParent(FixturePortal portal)
         {
             if (portal.Parent == null)
@@ -92,7 +108,7 @@ namespace Game
             {
                 return GetFixtureEdgeCoord(parent, portal.Position).Fixture;
             }
-            return null;   
+            return null;
         }
 
         public static FixtureCoord[] GetFixtureCircleIntersections(World world, Vector2 point, float radius)

@@ -106,7 +106,7 @@ namespace Game
         /// </summary>
         /// <param name="transform"></param>
         /// <returns></returns>
-        public bool Compare(Transform3 transform)
+        public bool AlmostEqual(Transform3 transform)
         {
             return Position == transform.Position && Scale == transform.Scale && Rotation == transform.Rotation;
         }

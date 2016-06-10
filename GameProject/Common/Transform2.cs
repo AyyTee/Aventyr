@@ -154,11 +154,15 @@ namespace Game
         public Transform2 Transform(Transform2 transform)
         {
             Transform2 output = ShallowClone();
+            if (transform.MirrorX)
+            {
+                output.Rotation *= -1;
+            }
             output.Rotation += transform.Rotation;
             output.Size *= transform.Size;
             output.MirrorX = output.MirrorX != transform.MirrorX;
             output.Position = Vector2Ext.Transform(output.Position, transform.GetMatrix());
-            Debug.Assert(Matrix4Ext.Compare(output.GetMatrix(), GetMatrix() * transform.GetMatrix()));
+            Debug.Assert(Matrix4Ext.AlmostEqual(output.GetMatrix(), GetMatrix() * transform.GetMatrix()));
             return output;
         }
 
@@ -182,7 +186,7 @@ namespace Game
             invert.SetScale(new Vector2(1 / Scale.X, 1 / Scale.Y));
             Matrix4 mat = Matrix4.CreateRotationZ(-Rotation) * Matrix4.CreateScale(new Vector3(invert.Scale));
             invert.Position = Vector2Ext.Transform(-Position, mat);
-            Debug.Assert(Matrix4Ext.Compare(GetMatrix().Inverted(), invert.GetMatrix()));
+            Debug.Assert(Matrix4Ext.AlmostEqual(GetMatrix().Inverted(), invert.GetMatrix()));
             return invert;
         }
 
@@ -256,7 +260,7 @@ namespace Game
             }
         }
 
-        public bool Compare(Transform2 transform)
+        public bool AlmostEqual(Transform2 transform)
         {
             if (transform != null)
             {

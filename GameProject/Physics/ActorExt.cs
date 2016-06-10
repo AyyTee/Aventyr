@@ -15,7 +15,7 @@ namespace Game
     {
         /// <summary>
         /// Returns polygon that is the local polygon with only the local transforms Scale component applied. 
-        /// This is useful because the vertices should exactly match up with vertices in the physics fixtures for this Actor's body.
+        /// This is useful because the vertices should match up with vertices in the physics fixtures for this Actor's body (within rounding errors).
         /// </summary>
         public static List<Vector2> GetFixtureContour(IActor actor)
         {

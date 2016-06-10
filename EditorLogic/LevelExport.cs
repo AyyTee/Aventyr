@@ -77,7 +77,6 @@ namespace EditorLogic
                     Actor actor = new Actor(scene, ((IWall)e).Vertices, t);
                     actor.Name = cast.Name;
                     Transform2 tEntity = new Transform2();
-                    //tEntity.SetScale(t.Scale);
                     Entity entity = new Entity(scene, tEntity);
                     entity.Name = cast.Name;
                     entity.SetParent(actor);
@@ -92,9 +91,10 @@ namespace EditorLogic
                     else if (e is EditorActor)
                     {
                         actor.Body.IsStatic = false;
+                        actor.SetVelocity(new Transform2(new Vector2(0.2f, 0)));
                         EditorActor castActor = (EditorActor)e;
                         //actor.Vertices = castActor.Vertices;
-                        entity.AddModel(castActor.GetActorModel());
+                        entity.AddModel(castActor.GetActorModel(castActor));
                         //entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
                         dictionary.Add(castActor, actor);
                     }

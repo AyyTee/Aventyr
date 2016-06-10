@@ -294,12 +294,6 @@ namespace Game
         /// <remarks>Uses the Monotone Chain algorithm, a.k.a. Andrew's Algorithm.
         /// Script found at http://loyc-etc.blogspot.com/2014/05/2d-convex-hull-in-c-45-lines-of-code.html
         /// </remarks>
-        public static List<Vector2> GetConvexHull(IEnumerable<Vector2> points)
-        {
-            var list = new List<Vector2>(points);
-            return GetConvexHull(list, true);
-        }
-
         public static List<Vector2> GetConvexHull(List<Vector2> points, bool sortInPlace = false)
         {
             if (points.Count <= 3)
@@ -390,33 +384,44 @@ namespace Game
         }
 
         /// <summary>
-        /// Sets the winding order of a polygon.
+        /// Returns a copy of the polygon with the new winding order set.
         /// </summary>
         /// <param name="polygon">A polygon represented as a list of vectors.</param>
         /// <param name="clockwise">Clockwise if true, C.Clockwise if false.</param>
         /// <returns></returns>
-        public static void SetWinding(List<Vector2> polygon, bool clockwise)
+        public static Vector2[] SetWinding(Vector2[] polygon, bool clockwise)
         {
             if (IsClockwise(polygon) != clockwise)
             {
-                polygon.Reverse();
+                return polygon.Reverse().ToArray();
             }
+            return polygon;
         }
 
-        public static void SetWinding(Vector2[] polygon, bool clockwise)
+        /// <summary>
+        /// Returns a copy of the polygon with the new winding order set.
+        /// </summary>
+        /// <param name="polygon">A polygon represented as a list of vectors.</param>
+        /// <param name="clockwise">Clockwise if true, C.Clockwise if false.</param>
+        /// <returns></returns>
+        public static List<Vector2> SetWinding(List<Vector2> polygon, bool clockwise)
         {
+            List<Vector2> copy = new List<Vector2>(polygon);
             if (IsClockwise(polygon) != clockwise)
             {
-                polygon.Reverse();
+                copy.Reverse();
+                return copy;
             }
+            return polygon;
         }
 
-        public static void SetWinding(List<Xna.Vector2> polygon, bool clockwise)
+        public static IList<Xna.Vector2> SetWinding(IList<Xna.Vector2> polygon, bool clockwise)
         {
             if (IsClockwise(polygon) != clockwise)
             {
-                polygon.Reverse();
+                return (IList<Xna.Vector2>)polygon.Reverse();
             }
+            return polygon;
         }
         #endregion
         #region Intersections

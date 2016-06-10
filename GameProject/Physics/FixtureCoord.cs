@@ -87,27 +87,7 @@ namespace Game
             v0 = Vector2Ext.ConvertTo(shape.Vertices[EdgeIndex]);
             v1 = Vector2Ext.ConvertTo(shape.Vertices[(EdgeIndex + 1) % shape.Vertices.Count]);
             scaleFactor = Actor.GetTransform().Scale;
-            /*return new Line(
-                new Vector2(v0.X / scaleFactor.X, v0.Y / scaleFactor.Y),
-                new Vector2(v1.X / scaleFactor.X, v1.Y / scaleFactor.Y)
-                );*/
             return new Line(v0, v1);
-        }
-
-        public Line GetWorldEdge()
-        {
-            Transform2 transform = BodyExt.GetTransform(Fixture.Body);
-            return GetEdge().Transform(transform.GetMatrix());
-        }
-
-        public Vector2 GetNormal()
-        {
-            return GetEdge().GetNormal();
-        }
-
-        public Vector2 GetWorldNormal()
-        {
-            return GetWorldEdge().GetNormal();
         }
 
         public Vector2 GetPosition()
@@ -121,27 +101,6 @@ namespace Game
                 default:
                     throw new NotImplementedException();
             }
-        }
-
-        public Vector2 GetWorldPosition()
-        {
-            var transform = new FarseerPhysics.Common.Transform();
-            Fixture.Body.GetTransform(out transform);
-            Matrix4 matTransform = Matrix4Ext.ConvertTo(transform);
-            return Vector2Ext.Transform(GetPosition(), matTransform);
-        }
-
-        public Transform2 GetTransform()
-        {
-            Transform2 transform = new Transform2();
-            transform.Position = GetPosition();
-            transform.Rotation = -(float)MathExt.AngleVector(GetWorldNormal()) - Actor.GetTransform().Rotation;
-            return transform;
-        }
-
-        public Transform2 GetWorldTransform()
-        {
-            return GetTransform().Transform(Actor.GetWorldTransform());
         }
     }
 }

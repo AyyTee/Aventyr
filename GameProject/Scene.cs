@@ -31,6 +31,8 @@ namespace Game
         /// <summary>Root node to the scene graph.</summary>
         [DataMember]
         public SceneNode Root { get; private set; }
+        [DataMember]
+        public float Time { get; private set; }
 
         #region Constructors
         public Scene()
@@ -48,6 +50,7 @@ namespace Game
         public void Step(float stepSize)
         {
             Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
+            Time += stepSize;
             World.ProcessChanges();
             foreach (IStep s in GetAll().OfType<IStep>())
             {

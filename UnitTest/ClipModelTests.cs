@@ -44,7 +44,7 @@ namespace UnitTest
             for (float i = 0; i < MathExt.TAU; i += 0.01f)
             {
                 polygon.SetTransform(new Transform2(new Vector2(100000, -123), 1, i));
-                List<ClipModel> clipmodels = ClipModelCompute.GetClipModels(polygon, scene.GetPortalList(), 2);
+                List<Clip.ClipModel> clipmodels = Clip.GetClipModels(polygon, scene.GetPortalList(), 2);
                 Assert.IsTrue(clipmodels.Count == polygon.GetModels().Count);
             }
         }
@@ -63,7 +63,7 @@ namespace UnitTest
             portal0.Linked = portal1;
             portal1.Linked = portal0;
 
-            List<ClipModel> clipmodels = ClipModelCompute.GetClipModels(polygon, scene.GetPortalList(), 2);
+            List<Clip.ClipModel> clipmodels = Clip.GetClipModels(polygon, scene.GetPortalList(), 2);
             Assert.IsTrue(clipmodels.Count == polygon.GetModels().Count + 2);
         }
     }

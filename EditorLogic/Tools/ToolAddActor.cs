@@ -48,7 +48,7 @@ namespace EditorLogic
 
                 CommandAddEntity command = new CommandAddEntity(Controller, editorEntity);
                 Controller.StateList.Add(command, true);*/
-                EditorActor editorActor = new EditorActor(Controller.Level);
+                EditorActor editorActor = new EditorActor(Controller.Level, PolygonFactory.CreateRectangle(4, 0.5f));
                 Transform2.SetPosition(editorActor, Controller.GetMouseWorldPosition());
                 if (!_input.KeyDown(InputExt.KeyBoth.Shift))
                 {
@@ -61,7 +61,7 @@ namespace EditorLogic
         {
             base.Enable();
             _mouseFollow = new Doodad(Controller.Level);
-            _mouseFollow.Models.Add(Game.ModelFactory.CreateCube());
+            _mouseFollow.Models.Add(Game.ModelFactory.CreatePolygon(PolygonFactory.CreateRectangle(4, 0.5f)));
             _mouseFollow.Models[0].SetTexture(Renderer.Textures["default.png"]);
             _mouseFollow.IsPortalable = true;
         }

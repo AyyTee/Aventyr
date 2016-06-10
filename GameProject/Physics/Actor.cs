@@ -86,6 +86,10 @@ namespace Game
 
                 foreach (Fixture f in Body.FixtureList)
                 {
+                    if (!FixtureExt.GetUserData(f).IsPortalParentless())
+                    {
+                        continue;
+                    }
                     PolygonShape shape = (PolygonShape)f.Shape;
                     //Make a copy of the vertices and manipulate those before assigning it back to the fixture.
                     //Modifying the vertices directly causes Farseer to not update internal values.
@@ -121,7 +125,9 @@ namespace Game
         /// </summary>
         public IList<Vector2> GetWorldVertices()
         {
-            return Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix()).ToList();
+            Transform2 worldTransform = GetWorldTransform();
+            Vector2[] worldVertices = Vector2Ext.Transform(Vertices, worldTransform.GetMatrix()).ToArray();
+            return MathExt.SetWinding(worldVertices, MathExt.IsClockwise(Vertices));
         }
     }
 }

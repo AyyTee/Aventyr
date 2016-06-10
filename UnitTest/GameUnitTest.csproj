@@ -101,6 +101,7 @@
     <Compile Include="FixtureExtTests.cs" />
     <Compile Include="ActorTests.cs" />
     <Compile Include="PolygonExtTests.cs" />
+    <Compile Include="FCurveTests.cs" />
     <Compile Include="VertexTests.cs" />
   </ItemGroup>
   <ItemGroup>

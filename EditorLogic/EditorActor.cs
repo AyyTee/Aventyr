@@ -14,17 +14,19 @@ namespace EditorLogic
     [DataContract, AffineMember]
     public sealed class EditorActor : EditorObject, IWall
     {
+        [DataMember]
         public IList<Vector2> Vertices { get; private set; }
 
         public EditorActor(EditorScene editorScene)
-            : base(editorScene)
+            : this(editorScene, PolygonFactory.CreateRectangle(1, 1))
         {
-            Initialize();
+            
         }
 
-        public override void Initialize()
+        public EditorActor(EditorScene editorScene, IList<Vector2> vertices)
+            : base(editorScene)
         {
-            Vertices = PolygonFactory.CreateRectangle();
+            Vertices = vertices;
         }
 
         public override IDeepClone ShallowClone()
@@ -37,7 +39,7 @@ namespace EditorLogic
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
-            models.Add(GetActorModel());
+            models.Add(GetActorModel(this));
             return models;
         }
 
@@ -46,9 +48,9 @@ namespace EditorLogic
             return Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix());
         }
 
-        public Model GetActorModel()
+        public Model GetActorModel(EditorActor actor)
         {
-            Model model = Game.ModelFactory.CreateCube(new Vector3(1, 1, 1));
+            Model model = Game.ModelFactory.CreatePolygon(actor.Vertices);
             model.SetTexture(Renderer.Textures["default.png"]);
             return model;
         }

@@ -30,7 +30,7 @@ namespace Game
             return MathExt.AngleDiff(MathExt.AngleVector(mirrorTest[0] - mirrorTest[2]), MathExt.AngleVector(mirrorTest[1] - mirrorTest[2])) > 0;
         }
 
-        public static bool Compare(Matrix4 matrix0, Matrix4 matrix1)
+        public static bool AlmostEqual(Matrix4 matrix0, Matrix4 matrix1)
         {
             for (int i = 0; i < MATRIX_4_SIZE; i++)
             {

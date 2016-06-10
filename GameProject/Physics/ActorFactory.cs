@@ -103,7 +103,7 @@ namespace Game
             Debug.Assert(transform != null);
             Debug.Assert(vertices != null && vertices.Count >= 3);
             List<Vector2> fixtureContour = ActorExt.GetFixtureContour(vertices, transform.Scale);
-            MathExt.SetWinding(fixtureContour, false);
+            fixtureContour = (List<Vector2>)MathExt.SetWinding(fixtureContour, false);
 
             //verticesCopy = (List<Vector2>)Vector2Ext.Transform(verticesCopy, Matrix4.CreateScale(new Vector3(transform.Scale)));
             //Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(fixtureContour);
