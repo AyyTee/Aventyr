@@ -59,6 +59,12 @@ namespace Game
             }
         }
 
+        public override void SetParent(SceneNode parent)
+        {
+            Debug.Assert(parent.IsRoot);
+            base.SetParent(parent);
+        }
+
         public override void Remove()
         {
             if (Body != null)

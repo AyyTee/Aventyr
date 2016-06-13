@@ -231,11 +231,10 @@ namespace Game
         }
 
         /// <summary>
-        /// Tests if a point is contained in a closed polygon.  Polygon may be degenerate with a minimum of 2 sides.
+        /// Tests if a point is contained in a polygon.
         /// </summary>
-        /// <param name="polygon">A closed polygon</param>
-        /// <param name="point"></param>
-        /// <remarks>Code was found here http://dominoc925.blogspot.com/2012/02/c-code-snippet-to-determine-if-point-is.html
+        /// <remarks>
+        /// Code was found here http://dominoc925.blogspot.com/2012/02/c-code-snippet-to-determine-if-point-is.html
         /// </remarks>
         public static bool PointInPolygon(Vector2 point, IList<Vector2> polygon)
         {
@@ -572,39 +571,6 @@ namespace Game
                 return list.ToArray();
             }
             return new IntersectCoord[0];
-        }
-
-        public static IntersectCoord IntersectParametric(Line line, Transform2 velocity, Line pointMotion, int detail)
-        {
-            Matrix4 transform = Matrix4.CreateTranslation(new Vector3(velocity.Position) / detail);
-            transform = Matrix4.CreateRotationZ(velocity.Rotation / detail) * transform;
-            line = line.ShallowClone();
-            IntersectCoord intersect = new IntersectCoord();
-            for (int i = 0; i < detail; i++)
-            {
-                Line lineNext = line.ShallowClone();
-                lineNext = lineNext.Transform(transform);
-
-                Vector2[] verts = new Vector2[] {
-                    line[0],
-                    line[1],
-                    lineNext[1],
-                    lineNext[0]
-                };
-
-                Line pointLine = new Line(pointMotion.Lerp(i / detail), pointMotion.Lerp((i + 1) / detail));
-                /*if (MathExt.LineInPolygon(pointLine, verts))
-                {
-                    intersect.TFirst = (i + 0.5f) / detail;
-                    intersect.Exists = true;
-                    Vector2 pos = pointMotion.Lerp((float)intersect.TFirst);
-                    intersect.Position = new Vector2d(pos.X, pos.Y);
-                    return intersect;
-                }*/
-                line = lineNext;
-            }
-            intersect.Exists = false;
-            return intersect;
         }
         #endregion
         #region Homography

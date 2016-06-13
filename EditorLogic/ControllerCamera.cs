@@ -166,7 +166,7 @@ namespace EditorLogic
                 if (selected != null)
                 {
                     transform.Position = selected.GetTransform().Position;
-                    if (selected.GetType() == typeof(EditorPortal))
+                    if (selected is EditorPortal)
                     {
                         transform.Position += selected.GetWorldTransform().GetRight() * Portal.EnterMinDistance;
                     }
@@ -216,7 +216,7 @@ namespace EditorLogic
         {
             if (Controller.renderer.PortalRenderEnabled)
             {
-                SceneExt.RayCast(this, Scene.GetPortalList());
+                SceneExt.RayCast(this, Scene.GetPortalList(), 1, true);
             }
             else
             {

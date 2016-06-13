@@ -18,13 +18,12 @@ namespace Game
         /// <param name="ignorePortalVelocity">Don't add a portals world velocity when entering it.</param>
         /// <param name="timeScale">Scaling factor for velocity.</param>
         /// <param name="maxIterations">The raycast will stop after this number of portal teleportations.</param>
-        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, float timeScale = 1, int maxIterations = 50)
+        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, float timeScale = 1, bool ignorePortalVelocity = false, int maxIterations = 50)
         {
-            RayCast(portalable, portals, null);
+            RayCast(portalable, portals, null, 1, ignorePortalVelocity, maxIterations);
         }
 
-
-        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, Action<IPortal> portalEnter, float timeScale = 1, int maxIterations = 50)
+        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, Action<IPortal> portalEnter, float timeScale = 1, bool ignorePortalVelocity = false, int maxIterations = 50)
         {
             Debug.Assert(maxIterations >= 0);
             Debug.Assert(portalable != null);
@@ -34,10 +33,10 @@ namespace Game
             {
                 return;
             }
-            _rayCast(portalable, portals, portalable.GetVelocity().Position.Length * timeScale, null, 50, timeScale, portalEnter);
+            _rayCast(portalable, portals, portalable.GetVelocity().Position.Length * timeScale, null, 50, timeScale, portalEnter, ignorePortalVelocity);
         }
 
-        private static void _rayCast(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, int depthMax, float timeScale, Action<IPortal> portalEnter)
+        private static void _rayCast(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, int depthMax, float timeScale, Action<IPortal> portalEnter, bool ignorePortalVelocity)
         {
             if (depthMax <= 0)
             {
@@ -75,9 +74,9 @@ namespace Game
                 movementLeft -= distanceMin;
                 begin.Position = (Vector2)intersectNearest.Position;
                 placeable.SetTransform(begin);
-                Portal.Enter(portalNearest, placeable);
+                Portal.Enter(portalNearest, placeable, ignorePortalVelocity);
                 portalEnter?.Invoke(portalNearest);
-                _rayCast(placeable, portals, movementLeft, portalNearest.Linked, depthMax - 1, timeScale, portalEnter);
+                _rayCast(placeable, portals, movementLeft, portalNearest.Linked, depthMax - 1, timeScale, portalEnter, ignorePortalVelocity);
             }
             else
             {

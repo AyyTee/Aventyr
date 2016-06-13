@@ -16,7 +16,7 @@ namespace Game
         /// The distance at which an entity enters and exits a portal.  
         /// It is used to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
         /// </summary>
-        public const float EnterMinDistance = 0.001f;
+        public const float EnterMinDistance = 0.0001f;
 
         public static bool IsValid(IPortal portal)
         {
@@ -54,7 +54,6 @@ namespace Game
             {
                 flipY = -1;
             }
-            //position.Scale *= new Vector2(flipX * (v1 - v0).Length, flipY * (v2 - v0).Length);
             position.Size *= flipY * (v2 - v0).Length;
             position.MirrorX = Math.Sign(position.Scale.X * flipX) != Math.Sign(position.Scale.Y * flipY);
 
@@ -71,52 +70,45 @@ namespace Game
             }
         }
 
-        public static void Enter(IPortal portal, IPortalable portable)
+        public static void Enter(IPortal portal, IPortalable portable, bool ignorePortalVelocity = false)
         {
             Transform2 transform = portable.GetTransform();
             Transform2 velocity = portable.GetVelocity();
             Enter(portal, transform);
-            EnterVelocity(portal, velocity);
+            EnterVelocity(portal, velocity, ignorePortalVelocity);
             portable.SetTransform(transform);
             portable.SetVelocity(velocity);
         }
 
-        public static void EnterVelocity(IPortal portal, Transform2 velocity)
+        public static void EnterVelocity(IPortal portal, Transform2 velocity, bool ignorePortalVelocity = false)
         {
             Matrix4 matrix = GetPortalMatrix(portal);
             Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
+            if (!ignorePortalVelocity)
+            {
+                velocity.Position -= portal.GetWorldVelocity().Position;
+                velocity.Rotation -= portal.GetWorldVelocity().Rotation;
+            }
             velocity.Position = Vector2Ext.Transform(velocity.Position, matrix);
             velocity.Position -= origin;
+
             if (IsMirrored(portal) == IsMirrored(portal.Linked))
             {
                 velocity.Rotation = -velocity.Rotation;
             }
-        }
-
-        public static void EnterVelocity(IPortal portal, ref Vector2 velocity)
-        {
-            Matrix4 matrix = GetPortalMatrix(portal, portal.Linked);
-            Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
-            velocity = Vector2Ext.Transform(velocity, matrix);
-            velocity -= origin;
-        }
-
-        public static void EnterVelocity(IPortal portal, Vector2[] velocity)
-        {
-            Matrix4 matrix = GetPortalMatrix(portal, portal.Linked);
-            Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
-            for (int i = 0; i < velocity.Length; i++)
+            if (!ignorePortalVelocity)
             {
-                velocity[i] = Vector2Ext.Transform(velocity[i], matrix) - origin;
+                velocity.Position += portal.Linked.GetWorldVelocity().Position;
+                velocity.Rotation += portal.Linked.GetWorldVelocity().Rotation;
             }
         }
 
-        public static void Enter(IPortal portal, Body body)
+        public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)
         {
             Transform2 transform = new Transform2(body.Position, 1, body.Rotation);
             Transform2 velocity = new Transform2(body.LinearVelocity, 1, body.AngularVelocity);
             Enter(portal, transform);
-            EnterVelocity(portal, velocity);
+            EnterVelocity(portal, velocity, ignorePortalVelocity);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             body.Rotation = transform.Rotation;
             body.LinearVelocity = Vector2Ext.ConvertToXna(velocity.Position);
@@ -262,6 +254,10 @@ namespace Game
             }
             foreach (ProxyPortal p in dictionary.Values)
             {
+                if (p.Linked == null)
+                {
+                    continue;
+                }
                 p.Linked = dictionary[p.Linked];
             }
             return dictionary.Values.ToList();

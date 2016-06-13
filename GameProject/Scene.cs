@@ -81,11 +81,11 @@ namespace Game
 
                 foreach (ProxyPortalable s in portalablePrevList.FindAll(item => item.Portalable is Actor))
                 {
-                    s.TrueVelocity = s.Portalable.GetVelocity();//.Multiply(stepSize);
-                    s.Velocity = s.Portalable.GetTransform().Minus(s.Transform);//.Multiply(1 / stepSize);
+                    s.TrueVelocity = s.Portalable.GetVelocity();
+                    s.Velocity = s.Portalable.GetTransform().Minus(s.Transform).Multiply(1 / stepSize);
                 }
 
-                SimulationStep.Step(portalPrevList, portalablePrevList, 1, stepSize);
+                SimulationStep.Step(portalPrevList, portalablePrevList, 100, stepSize);
 
                 /*foreach (SceneNode s in SceneNodeList)
                 {
