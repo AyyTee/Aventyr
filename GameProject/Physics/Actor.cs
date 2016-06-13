@@ -38,6 +38,7 @@ namespace Game
             _vertices = vertices.ToArray();
             _scale = transform.Scale;
             Body = ActorFactory.CreatePolygon(Scene.World, transform, Vertices);
+            //Body.IsBullet = true;
             BodyExt.SetUserData(Body, this);
         }
 
@@ -127,7 +128,8 @@ namespace Game
         {
             Transform2 worldTransform = GetWorldTransform();
             Vector2[] worldVertices = Vector2Ext.Transform(Vertices, worldTransform.GetMatrix()).ToArray();
-            return MathExt.SetWinding(worldVertices, MathExt.IsClockwise(Vertices));
+            return worldVertices;
+            //return MathExt.SetWinding(worldVertices, MathExt.IsClockwise(Vertices));
         }
     }
 }

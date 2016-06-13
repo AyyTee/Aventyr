@@ -811,12 +811,17 @@ namespace Game
             return (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
         }
 
-        static public double AngleVector(Vector2 V0)
+        public static double AngleVector(Vector2 V0)
         {
             return AngleVector(new Vector2d(V0.X, V0.Y));
         }
 
-        static public double AngleDiff(double angle0, double angle1)
+        public static double AngleDiff(Vector2 v0, Vector2 v1)
+        {
+            return AngleDiff(AngleVector(v0), AngleVector(v1));
+        }
+
+        public static double AngleDiff(double angle0, double angle1)
         {
             return ((angle1 - angle0) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
         }

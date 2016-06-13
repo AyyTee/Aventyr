@@ -80,7 +80,6 @@ namespace UnitTest
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
             FixtureCoord fixtureCoord = FixtureExt.GetFixtureEdgeCoord(actor, polyCoord);
 
-            //Assert.IsTrue(fixtureCoord.EdgeT == polyCoord.EdgeT);
             Assert.IsTrue(PolygonExt.GetTransform(vertices, polyCoord) == PolygonExt.GetTransform(fixtureCoord));
         }
 
@@ -94,7 +93,6 @@ namespace UnitTest
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
             FixtureCoord fixtureCoord = FixtureExt.GetFixtureEdgeCoord(actor, polyCoord);
 
-            Assert.IsTrue(fixtureCoord.EdgeT == polyCoord.EdgeT);
             Assert.IsTrue(PolygonExt.GetTransform(vertices, polyCoord) == PolygonExt.GetTransform(fixtureCoord));
         }
     }

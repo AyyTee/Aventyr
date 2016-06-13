@@ -49,7 +49,7 @@ namespace Game
                 {
                     Xna.Vector2[] verts = Vector2Ext.ConvertToXna(Portal.GetWorldVerts(portal));
                     Scene.World.RayCast(
-                        delegate(Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
+                        delegate (Fixture fixture, Xna.Vector2 point, Xna.Vector2 normal, float fraction)
                         {
                             FixturePortal fixturePortal = portal as FixturePortal;
                             if (fixturePortal != null)
@@ -76,9 +76,9 @@ namespace Game
             foreach (Body b in Scene.World.BodyList)
             {
                 //BodyExt.GetUserData(b).UpdatePortalCollisions(ref bodiesToRemove);
-                b.ApplyForce(new Xna.Vector2(0, -9.8f/2) * b.Mass);
+                b.ApplyForce(new Xna.Vector2(0, -9.8f / 2) * b.Mass);
 
-                ActorExt.GetGravity(BodyExt.GetUserData(b).Actor, Scene.GetPortalList(), new Vector2(0, -9.8f/2));
+                ActorExt.GetGravity(BodyExt.GetUserData(b).Actor, Scene.GetPortalList(), new Vector2(0, -9.8f / 2));
             }
             /*foreach (Body b in bodiesToRemove)
             {
@@ -95,12 +95,14 @@ namespace Game
 
         public void StepEnd()
         {
-            foreach (Body body in Scene.World.BodyList)
+            /*foreach (Body body in Scene.World.BodyList)
             {
                 IPortal portalNearest = null;
                 double portalTDistance = 1f;
 
-                Line position = new Line(body.Position, BodyExt.GetUserData(body).PreviousPosition);
+                Vector2 prevPos = Vector2Ext.ConvertTo(BodyExt.GetUserData(body).PreviousPosition);
+                Vector2 pos = Vector2Ext.ConvertTo(body.Position);
+                Line position = new Line(prevPos, pos);
                 foreach (IPortal p in Scene.GetPortalList())
                 {
                     if (!Portal.IsValid(p))
@@ -120,8 +122,12 @@ namespace Game
                     IPortalable actor = BodyExt.GetUserData(body).Actor;
                     Portal.Enter(portalNearest, actor);
                 }
+            }*/
 
-                if (DebugMode)
+            #region Debug
+            if (DebugMode)
+            {
+                foreach (Body body in Scene.World.BodyList)
                 {
                     Model model = ModelFactory.CreateCube();
                     model.Transform.Scale = new Vector3(0.03f, 0.03f, 0.03f);
@@ -138,12 +144,14 @@ namespace Game
                     positionPrev.SetColor(new Vector3(1, 0, 0));
                 }
             }
+            #endregion
         }
 
         private void PreSolveListener(Contact contact, ref Manifold oldManifold)
         {
             if (contact.IsTouching)
             {
+                Debug.Assert(contact.Manifold.PointCount > 0);
                 if (!IsContactValid(contact))
                 {
                     contact.Enabled = false;
@@ -158,35 +166,67 @@ namespace Game
                     FixedArray2<Xna.Vector2> vList;
                     contact.GetWorldManifold(out normal, out vList);
 
-                    if (userData[0].PortalCollisions.Count > 0 || userData[1].PortalCollisions.Count > 0)
+                    if (contact.Manifold.PointCount == 2)
                     {
-                        for (int i = 0; i < 2; i++)
+                        Model line = ModelFactory.CreateLines(
+                           new Line[] {
+                            new Line(Vector2Ext.ConvertTo(vList[0]), Vector2Ext.ConvertTo(vList[1]))
+                           });
+                        if (contact.Enabled)
                         {
-                            Model model = ModelFactory.CreateCube();
-                            model.Transform.Scale = new Vector3(0.02f, 0.02f, 0.02f);
-                            model.Transform.Position = new Vector3(0, 0, 10);
-                            DebugEntity.AddModel(model);
-                            if (contact.Enabled)
-                            {
-                                model.SetColor(new Vector3(1, 1, 0.2f));
-                            }
-                            else
-                            {
-                                model.SetColor(new Vector3(0.5f, 0.5f, 0));
-                            }
-                            model.Transform.Position = new Vector3(vList[i].X, vList[i].Y, 0);
+                            line.SetColor(new Vector3(1, 1, 0.2f));
+                        }
+                        else
+                        {
+                            line.SetColor(new Vector3(0.5f, 0.5f, 0));
+                        }
+                        line.Transform.Position += new Vector3(0, 0, 5);
+                        DebugEntity.AddModel(line);
+                    }
 
-                            if (!userData[i].IsPortalParentless())
-                            {
-                                IList<Vector2> vertices = Vector2Ext.ConvertTo(((PolygonShape)userData[i].Fixture.Shape).Vertices);
-                                Model fixtureModel = ModelFactory.CreatePolygon(vertices);
-                                fixtureModel.SetColor(new Vector3(0, 1, 1));
-                                fixtureModel.Transform = userData[i].Actor.GetTransform().Get3D();
-                                fixtureModel.Transform.Position += new Vector3(0, 0, 5);
-                                fixtureModel.Transform.Scale = Vector3.One;
-                                
-                                DebugEntity.AddModel(fixtureModel);
-                            }
+
+                    for (int i = 0; i < 2; i++)
+                    {
+                        float scale = 0.8f;
+                        Vector3 pos = new Vector3(vList[i].X, vList[i].Y, 5);
+                        //Ignore contact points that are exactly on the origin. These are almost certainly null values.
+                        if (pos.X == 0 && pos.Y == 0)
+                        {
+                            continue;
+                        }
+                        Vector2 arrowNormal = Vector2Ext.ConvertTo(normal) * 0.2f * scale;
+                        if (i == 0)
+                        {
+                            arrowNormal *= -1;
+                        }
+                        Model arrow = ModelFactory.CreateArrow(pos, arrowNormal, 0.02f * scale, 0.05f * scale, 0.03f * scale);
+                        DebugEntity.AddModel(arrow);
+
+                        Model model = ModelFactory.CreateCube();
+                        model.Transform.Scale = new Vector3(0.08f, 0.08f, 0.08f) * scale;
+                        DebugEntity.AddModel(model);
+                        if (contact.Enabled)
+                        {
+                            model.SetColor(new Vector3(1, 1, 0.2f));
+                            arrow.SetColor(new Vector3(1, 1, 0.2f));
+                        }
+                        else
+                        {
+                            model.SetColor(new Vector3(0.5f, 0.5f, 0));
+                            arrow.SetColor(new Vector3(0.5f, 0.5f, 0));
+                        }
+                        model.Transform.Position = pos;
+
+                        if (!userData[i].IsPortalParentless())
+                        {
+                            IList<Vector2> vertices = Vector2Ext.ConvertTo(((PolygonShape)userData[i].Fixture.Shape).Vertices);
+                            Model fixtureModel = ModelFactory.CreatePolygon(vertices);
+                            fixtureModel.SetColor(new Vector3(0, 1, 1));
+                            fixtureModel.Transform = userData[i].Actor.GetTransform().Get3D();
+                            fixtureModel.Transform.Position += new Vector3(0, 0, 5);
+                            fixtureModel.Transform.Scale = Vector3.One;
+
+                            DebugEntity.AddModel(fixtureModel);
                         }
                     }
                 }
@@ -206,7 +246,8 @@ namespace Game
             Xna.Vector2 normal;
             FixedArray2<Xna.Vector2> vList;
             contact.GetWorldManifold(out normal, out vList);
-
+            
+            
             //Contact is invalid if it is too close to a portal.
             foreach (IPortal p in Scene.GetPortalList())
             {
@@ -248,18 +289,29 @@ namespace Game
                 }
             }
 
-            //Contact is invalid if it is on the opposite side of the portal from its body origin.
+            
             for (int i = 0; i < userData.Length; i++)
             {
                 int iNext = (i + 1) % userData.Length;
-                foreach (FixturePortal portal in userData[i].PortalCollisions)
+                foreach (FixturePortal portal in userData[i].PortalCollisions.OfType<FixturePortal>())
                 {
+                    Line line = new Line(Portal.GetWorldVerts(portal));
+
+                    
+
                     if (userData[i].PartOfPortal(portal) || userData[iNext].PartOfPortal(portal))
                     {
                         continue;
                     }
-                    Line line = new Line(Portal.GetWorldVerts(portal));
-                    //Xna.Vector2 pos = userData[i0].Fixture.Body.Position;
+
+                    //Contact is invalid if it the world normal is pushing into the portal.
+                    /*double angleDiff = MathExt.AngleDiff(Vector2Ext.ConvertTo(normal), line.GetNormal());
+                    if (!(angleDiff < Math.PI / 4 && angleDiff > -Math.PI / 4))
+                    {
+                        return false;
+                    }*/
+
+                    //Contact is invalid if it is on the opposite side of the portal from its body origin.
                     Xna.Vector2 pos = BodyExt.GetUserData(userData[i].Fixture.Body).PreviousPosition;
                     bool sideOf = line.GetSideOf(vList[0]) != line.GetSideOf(pos);
                     Debug.Assert(contact.Manifold.PointCount > 0);

@@ -71,17 +71,12 @@ namespace Game
             }
         }
 
-        public static void Enter(IPortal portal, Transform2 position, Transform2 velocity)
-        {
-            Enter(portal, position);
-            EnterVelocity(portal, velocity);
-        }
-
         public static void Enter(IPortal portal, IPortalable portable)
         {
             Transform2 transform = portable.GetTransform();
             Transform2 velocity = portable.GetVelocity();
-            Enter(portal, transform, velocity);
+            Enter(portal, transform);
+            EnterVelocity(portal, velocity);
             portable.SetTransform(transform);
             portable.SetVelocity(velocity);
         }
@@ -120,7 +115,8 @@ namespace Game
         {
             Transform2 transform = new Transform2(body.Position, 1, body.Rotation);
             Transform2 velocity = new Transform2(body.LinearVelocity, 1, body.AngularVelocity);
-            Enter(portal, transform, velocity);
+            Enter(portal, transform);
+            EnterVelocity(portal, velocity);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             body.Rotation = transform.Rotation;
             body.LinearVelocity = Vector2Ext.ConvertToXna(velocity.Position);
@@ -252,6 +248,23 @@ namespace Game
                 verts[i] = MathExt.Matrix2Mult(verts[i - 1] - viewPoint, Rot) + viewPoint;
             }
             return verts;
+        }
+
+        /// <summary>
+        /// Create ProxyPortals for a list of portals that are linked to eachother.
+        /// </summary>
+        public static List<ProxyPortal> CreateProxies(IList<IPortal> portals)
+        {
+            Dictionary<IPortal, ProxyPortal> dictionary = new Dictionary<IPortal, ProxyPortal>();
+            foreach (IPortal p in portals)
+            {
+                dictionary.Add(p, new ProxyPortal(p));
+            }
+            foreach (ProxyPortal p in dictionary.Values)
+            {
+                p.Linked = dictionary[p.Linked];
+            }
+            return dictionary.Values.ToList();
         }
     }
 }

@@ -135,6 +135,9 @@
     <Compile Include="Keyframe.cs" />
     <Compile Include="Physics\ActorExt.cs" />
     <Compile Include="Physics\BodyUserData.cs" />
+    <Compile Include="Physics\SimulationStep.cs" />
+    <Compile Include="ProxyPortal.cs" />
+    <Compile Include="ProxyPortalable.cs" />
     <Compile Include="Rendering\Camera2.cs" />
     <Compile Include="Rendering\CameraExt.cs" />
     <Compile Include="Rendering\Models\Clip.cs" />

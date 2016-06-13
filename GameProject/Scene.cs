@@ -52,39 +52,65 @@ namespace Game
             Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
             Time += stepSize;
             World.ProcessChanges();
+
             foreach (IStep s in GetAll().OfType<IStep>())
             {
                 s.StepBegin(stepSize);
             }
-            foreach (SceneNode s in SceneNodeList)
-            {
-                //Skip Actors, they handle movement using rigid body physics.
-                if (s is IActor)
-                {
-                    continue;
-                }
-                if (s is IPortalable)
-                {
-                    IPortalable portalable = (IPortalable)s;
-                    //Parented SceneNodes can't perform portal teleportation directly.
-                    if (s.Parent == s.Scene.Root)
-                    {
-                        SceneExt.RayCast(portalable, GetPortalList(), stepSize);
-                    }
-                    else
-                    {
-                        portalable.SetTransform(portalable.GetTransform().Add(portalable.GetVelocity().Multiply(stepSize)));
-                    }
-                }
-            }
+
             if (World != null && stepSize > 0)
             {
+                List<ProxyPortalable> portalablePrevList = new List<ProxyPortalable>();
+                foreach (IPortalable s in SceneNodeList.OfType<IPortalable>())
+                {
+                    if (s is IPortal)
+                    {
+                        continue;
+                    }
+                    ProxyPortalable proxy = new ProxyPortalable(s);
+                    portalablePrevList.Add(proxy);
+                }
+
+                List<ProxyPortal> portalPrevList = Portal.CreateProxies(GetPortalList());
+
                 _contactListener.StepBegin();
                 InWorldStep = true;
                 World.Step(stepSize);
                 InWorldStep = false;
                 _contactListener.StepEnd();
+
+                foreach (ProxyPortalable s in portalablePrevList.FindAll(item => item.Portalable is Actor))
+                {
+                    s.TrueVelocity = s.Portalable.GetVelocity();//.Multiply(stepSize);
+                    s.Velocity = s.Portalable.GetTransform().Minus(s.Transform);//.Multiply(1 / stepSize);
+                }
+
+                SimulationStep.Step(portalPrevList, portalablePrevList, 1, stepSize);
+
+                /*foreach (SceneNode s in SceneNodeList)
+                {
+                    //Skip Actors, they handle movement using rigid body physics.
+                    if (s is IActor)
+                    {
+                        continue;
+                    }
+                    if (s is IPortalable)
+                    {
+                        IPortalable portalable = (IPortalable)s;
+                        //Parented SceneNodes can't perform portal teleportation directly.
+                        if (s.Parent == s.Scene.Root)
+                        {
+                            //SceneExt.RayCast(portalable, GetPortalList(), stepSize);
+                            SceneExt.RayCast(portalable, portalPrevList.OfType<IPortal>(), stepSize);
+                        }
+                        else
+                        {
+                            portalable.SetTransform(portalable.GetTransform().Add(portalable.GetVelocity().Multiply(stepSize)));
+                        }
+                    }
+                }*/
             }
+
             foreach (IStep s in GetAll().OfType<IStep>())
             {
                 s.StepEnd(stepSize);

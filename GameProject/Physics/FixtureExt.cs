@@ -74,14 +74,9 @@ namespace Game
                             if ((edge[0] - Vector2Ext.ConvertTo(polygon.Vertices[i])).Length < ERROR_MARGIN && 
                                 (edge[1] - Vector2Ext.ConvertTo(polygon.Vertices[iNext])).Length < ERROR_MARGIN)
                             {
-                                if (PolygonExt.IsInterior(fixtureContour))
-                                {
-                                    return new FixtureCoord(f, i, coord.EdgeT);
-                                }
-                                else
-                                {
-                                    return new FixtureCoord(f, i, 1 - coord.EdgeT);
-                                }
+                                //float edgeT = PolygonExt.IsInterior(fixtureContour) ? coord.EdgeT : 1 - coord.EdgeT;
+                                float edgeT = coord.EdgeT;
+                                return new FixtureCoord(f, i, edgeT);
                             }
                         }
                         break;
@@ -90,7 +85,7 @@ namespace Game
                         break;
                 }
             }
-            //Debug.Fail("Could not find FixtureEdgeCoord.");
+            Debug.Fail("Could not find FixtureEdgeCoord.");
             return null;
         }
 

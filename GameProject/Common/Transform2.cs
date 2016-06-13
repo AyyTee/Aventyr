@@ -200,6 +200,21 @@ namespace Game
             return output;
         }
 
+        /// <summary>
+        /// Returns the result of this minus another transform.
+        /// </summary>
+        /// <param name="transform"></param>
+        /// <returns></returns>
+        public Transform2 Minus(Transform2 transform)
+        {
+            Transform2 output = ShallowClone();
+            output.Rotation -= transform.Rotation;
+            output.Size /= transform.Size;
+            output.MirrorX = output.MirrorX != transform.MirrorX;
+            output.Position -= transform.Position;
+            return output;
+        }
+
         public Transform2 Multiply(float scalar)
         {
             Debug.Assert(Size > 0);

@@ -11,6 +11,8 @@ namespace Game
 {
     public class Vector2Ext
     {
+        const float EQUALITY_EPSILON = 0.0001f;
+
         public static float Cross(Vector2 v0, Vector2 v1)
         {
             return v0.X * v1.Y - v0.Y * v1.X;
@@ -66,13 +68,13 @@ namespace Game
             return vList;
         }
 
-        public static IList<Vector2> Transform(IList<Vector2> vectors, Matrix4 matrix)
+        public static List<Vector2> Transform(IList<Vector2> vectors, Matrix4 matrix)
         {
             Debug.Assert(vectors != null);
             List<Vector2> vList = new List<Vector2>();
             foreach (Vector2 v in vectors)
             {
-                vList.Add(Vector2Ext.Transform(v, matrix));
+                vList.Add(Transform(v, matrix));
             }
             return vList;
         }
@@ -194,6 +196,16 @@ namespace Game
                 !float.IsNegativeInfinity(v.X) && 
                 !float.IsPositiveInfinity(v.Y) && 
                 !float.IsNegativeInfinity(v.Y);
+        }
+
+        public static bool AlmostEqual(Vector2 v0, Vector2 v1, float delta)
+        {
+            return Math.Abs(v0.X - v1.X) <= delta && Math.Abs(v0.X - v1.X) <= delta;
+        }
+
+        public static bool AlmostEqual(Vector2 v0, Vector2 v1)
+        {
+            return AlmostEqual(v0, v1, EQUALITY_EPSILON);
         }
     }
 }

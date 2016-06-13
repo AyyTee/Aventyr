@@ -214,7 +214,14 @@ namespace EditorLogic
 
         public void StepEnd(float stepSize)
         {
-            SceneExt.RayCast(this, Scene.GetPortalList());
+            if (Controller.renderer.PortalRenderEnabled)
+            {
+                SceneExt.RayCast(this, Scene.GetPortalList());
+            }
+            else
+            {
+                _transform = _transform.Add(GetWorldVelocity());
+            }
         }
 
         public Transform2 GetVelocity()

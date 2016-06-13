@@ -109,6 +109,10 @@ namespace Game
 
         public static Vector2 ScreenToWorld(ICamera2 camera, Vector2 screenCoord)
         {
+            if (camera == null)
+            {
+                return Vector2.Zero;
+            }
             return Vector2Ext.Transform(screenCoord, GetWorldToScreenMatrix(camera).Inverted());
         }
 

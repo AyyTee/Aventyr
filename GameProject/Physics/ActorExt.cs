@@ -24,8 +24,14 @@ namespace Game
 
         public static List<Vector2> GetFixtureContour(IList<Vector2> vertices, Vector2 scale)
         {
+            Debug.Assert(scale.X != 0 && scale.Y != 0);
             Matrix4 scaleMat = Matrix4.CreateScale(new Vector3(scale));
-            return (List<Vector2>)Vector2Ext.Transform(vertices, scaleMat);
+            List<Vector2> contour = Vector2Ext.Transform(vertices, scaleMat);
+            if (Math.Sign(scale.X) != Math.Sign(scale.Y))
+            {
+                contour.Reverse();
+            }
+            return contour;
         }
 
         public static List<Vector2> GetGravity(IActor actor, IList<IPortal> portals, Vector2 gravity)

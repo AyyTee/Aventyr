@@ -47,9 +47,10 @@ namespace Game
             this[1] = Vector2Ext.ConvertTo(lineEnd);
         }
 
-        public Line(Vector2[] line)
+        public Line(IList<Vector2> line)
         {
-            _vertices = line;
+            Debug.Assert(line.Count == 2);
+            _vertices = line.ToArray();
         }
 
         public Line(Vector2 center, float rotation, float length)

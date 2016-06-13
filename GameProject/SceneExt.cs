@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,23 +10,41 @@ namespace Game
 {
     public static class SceneExt
     {
-        public static void RayCast(IPortalable portalable, IList<IPortal> portals, float stepSize = 1)
+        /// <summary>
+        /// Moves a portable object along a ray, taking into account portal teleportation.
+        /// </summary>
+        /// <param name="portalable">Instance travelling along ray.</param>
+        /// <param name="portals">Collection of portals used for portal teleportation.</param>
+        /// <param name="ignorePortalVelocity">Don't add a portals world velocity when entering it.</param>
+        /// <param name="timeScale">Scaling factor for velocity.</param>
+        /// <param name="maxIterations">The raycast will stop after this number of portal teleportations.</param>
+        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, float timeScale = 1, int maxIterations = 50)
         {
-            if (portalable.GetVelocity().Position.Length == 0 || stepSize == 0)
+            RayCast(portalable, portals, null);
+        }
+
+
+        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, Action<IPortal> portalEnter, float timeScale = 1, int maxIterations = 50)
+        {
+            Debug.Assert(maxIterations >= 0);
+            Debug.Assert(portalable != null);
+            Debug.Assert(portals != null);
+            Debug.Assert(timeScale >= 0);
+            if (portalable.GetVelocity().Position.Length == 0 || timeScale == 0)
             {
                 return;
             }
-            _rayCast(portalable, portals, portalable.GetVelocity().Position.Length * stepSize, null, 50, stepSize);
+            _rayCast(portalable, portals, portalable.GetVelocity().Position.Length * timeScale, null, 50, timeScale, portalEnter);
         }
 
-        private static void _rayCast(IPortalable placeable, IList<IPortal> portals, double movementLeft, IPortal portalPrevious, int depthMax, float stepSize)
+        private static void _rayCast(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, int depthMax, float timeScale, Action<IPortal> portalEnter)
         {
             if (depthMax <= 0)
             {
                 return;
             }
             Transform2 begin = placeable.GetTransform();
-            Transform2 velocity = placeable.GetVelocity().Multiply(stepSize);
+            Transform2 velocity = placeable.GetVelocity().Multiply(timeScale);
             double distanceMin = movementLeft;
             IPortal portalNearest = null;
             IntersectCoord intersectNearest = new IntersectCoord();
@@ -57,7 +76,8 @@ namespace Game
                 begin.Position = (Vector2)intersectNearest.Position;
                 placeable.SetTransform(begin);
                 Portal.Enter(portalNearest, placeable);
-                _rayCast(placeable, portals, movementLeft, portalNearest.Linked, depthMax - 1, stepSize);
+                portalEnter?.Invoke(portalNearest);
+                _rayCast(placeable, portals, movementLeft, portalNearest.Linked, depthMax - 1, timeScale, portalEnter);
             }
             else
             {
