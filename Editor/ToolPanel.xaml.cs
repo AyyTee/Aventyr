@@ -70,7 +70,7 @@ namespace EditorWindow
 
         private void ControllerEditor_ToolChanged(ControllerEditor controller, Tool tool)
         {
-            Dispatcher.Invoke(() =>
+            MainWindow.Invoke(() =>
             {
                 if (ButtonMap.ContainsKey(tool))
                 {

@@ -120,6 +120,9 @@
       <DependentUpon>PropertiesEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="RecentFilesList.cs" />
+    <Compile Include="Time.xaml.cs">
+      <DependentUpon>Time.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ToolButton.xaml.cs">
       <DependentUpon>ToolButton.xaml</DependentUpon>
     </Compile>
@@ -140,6 +143,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="PropertiesEditor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Time.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

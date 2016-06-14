@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:WF="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     xmlns:self="clr-namespace:EditorWindow"
-    Title="Aventyr Edityr" Height="500" Width="350" Icon="favicon.ico">
+    Title="Aventyr Edityr" Height="500" Width="450" Icon="favicon.ico">
 
     <Window.CommandBindings>
         <CommandBinding Command="Save" Executed="Button_Save" />
@@ -103,6 +103,9 @@
             </Button>
             <Slider Value="1" Margin="6,0,6,0" Width="100" IsSnapToTickEnabled="True" TickFrequency="0.1" Minimum="0" Maximum="2" ValueChanged="Slider_ValueChanged" />
             <Label Name="labelTimeStep" Width="30" Padding="0,2,7,0" FontSize="13" HorizontalContentAlignment="Right"/>
+            <Grid>
+                <self:Time x:Name="Time"/>
+            </Grid>
             <Separator VerticalAlignment="Stretch" Margin="0,0,5,0"/>
             <ToggleButton Name="toolPortalsVisible" Height="22" Click="toolPortalsVisible_Click">
                 <Image Source="/editor assets/icons/eye.png" />
@@ -126,6 +129,7 @@
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="100" />
                             <ColumnDefinition Width="100" />

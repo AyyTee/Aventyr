@@ -49,6 +49,7 @@ namespace EditorLogic
         public event SceneEventHandler ScenePauseEvent;
         public event SceneEventHandler ScenePlayEvent;
         public event SceneEventHandler SceneStopEvent;
+        public Action<ControllerEditor, float> TimeChanged;
         public delegate void SerializationHandler(ControllerEditor controller, string filepath);
         public event SerializationHandler LevelLoaded;
         public event SerializationHandler LevelSaved;
@@ -174,6 +175,7 @@ namespace EditorLogic
                         _stepsPending--;
                     }
                     ActiveLevel.Step(stepSize);
+                    TimeChanged(this, ActiveLevel.Time);
                 }
                 else
                 {

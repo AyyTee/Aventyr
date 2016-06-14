@@ -20,6 +20,8 @@ namespace EditorLogic
         public ControllerCamera ActiveCamera { get; set; }
         [DataMember]
         public List<Doodad> Doodads = new List<Doodad>();
+        [DataMember]
+        public float Time { get; set; }
 
         public EditorScene()
         {
