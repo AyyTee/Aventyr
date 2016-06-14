@@ -9,6 +9,7 @@ using System.Windows.Input;
 using EditorLogic;
 using System.Collections.Generic;
 using System.Threading;
+using System.Diagnostics;
 
 namespace EditorWindow
 {
@@ -21,10 +22,18 @@ namespace EditorWindow
         public static string AssetsDirectory { get; private set; }
         OpenFileDialog _loadModelDialog = new OpenFileDialog();
         ControllerFiles ControllerFiles;
+        public bool IsClosing { get; private set; }
+        /// <summary>
+        /// Prevent application from closing while a method is being invoked.
+        /// </summary>
+        object _closingLock = new object();
+        readonly Thread _wpfThread;
+        static MainWindow _window;
 
         System.Timers.Timer updateTimer;
         public MainWindow()
         {
+            _window = this;
             Thread.CurrentThread.Name = "WPF Thread";
             LocalDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             AssetsDirectory = System.IO.Path.Combine(LocalDirectory, "editor assets");
@@ -34,6 +43,9 @@ namespace EditorWindow
             Height = 650;
             CenterWindowOnScreen();
             _loadModelDialog.FileOk += _openFileDialog_FileOk;
+
+            _wpfThread = Thread.CurrentThread;
+            IsClosing = false;
         }
 
         /// <summary>
@@ -64,10 +76,11 @@ namespace EditorWindow
             ControllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;
             ControllerEditor.SceneModified += ControllerEditor_SceneModified;
+            ControllerEditor.TimeChanged += ControllerEditor_TimeChanged;
 
             ControllerFiles = new ControllerFiles(this, ControllerEditor, filesRecent);
 
-            glControl.MouseMove += glControl_MouseMove;
+            //glControl.MouseMove += glControl_MouseMove;
             
             updateTimer = new System.Timers.Timer(500);
             updateTimer.Elapsed += new ElapsedEventHandler(UpdateFrameRate);  
@@ -89,9 +102,35 @@ namespace EditorWindow
             _loop.Run(60);
         }
 
+        /// <summary>
+        /// Use this instead of Dispatcher.Invoke.  This method is not prone deadlocks if the application is closing.
+        /// </summary>
+        /// <param name="action"></param>
+        public static void Invoke(Action action)
+        {
+            Debug.Assert(Thread.CurrentThread != _window._wpfThread, 
+                "The WPF Thread should never need to invoke it's own methods. Additionally this can cause deadlocks.");
+            lock (_window._closingLock)
+            {
+                if (_window.IsClosing)
+                {
+                    return;
+                }
+                _window.Dispatcher.Invoke(action);
+            }
+        }
+
+        private void ControllerEditor_TimeChanged(ControllerEditor controller, float time)
+        {
+            Invoke(() =>
+            {
+                Time.SetTime(time);
+            });
+        }
+
         private void ControllerEditor_SceneModified(HashSet<EditorObject> modified)
         {
-            Dispatcher.Invoke(() =>
+            Invoke(() =>
             {
                 //UpdateTransformLabels(controller.selection.First);
             });
@@ -99,7 +138,7 @@ namespace EditorWindow
 
         private void UpdateFrameRate(object sender, ElapsedEventArgs e)
         {
-            Dispatcher.Invoke(() =>
+            Invoke(() =>
             {
                 int fps = (int)Math.Round(_loop.UpdatesPerSecond * (double)_loop.MillisecondsPerStep / _loop.GetAverage());
                 FrameRate.Content = "FPS " + fps.ToString() + "/" + _loop.UpdatesPerSecond.ToString();
@@ -108,7 +147,7 @@ namespace EditorWindow
 
         private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            Dispatcher.Invoke(() =>
+            Invoke(() =>
             {
                 Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
                 MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
@@ -117,7 +156,7 @@ namespace EditorWindow
 
         public void ControllerEditor_EntitySelected(List<EditorObject> selection)
         {
-            Dispatcher.Invoke(() =>
+            Invoke(() =>
             {
                 if (selection.Count == 1)
                 {
@@ -154,7 +193,10 @@ namespace EditorWindow
 
         private void Button_Close(object sender, RoutedEventArgs e)
         {
-            Close();
+            lock (_closingLock)
+            {
+                Close();
+            }
         }
 
         private void Button_Play(object sender, RoutedEventArgs e)
@@ -183,7 +225,7 @@ namespace EditorWindow
 
         private void ControllerEditor_ScenePlayed(ControllerEditor controller)
         {
-            Dispatcher.Invoke(() =>
+            Invoke(() =>
                 {
                     toolStart.IsEnabled = false;
                     toolPause.IsEnabled = true;
@@ -196,7 +238,7 @@ namespace EditorWindow
 
         private void ControllerEditor_ScenePaused(ControllerEditor controller)
         {
-            Dispatcher.Invoke(() =>
+            Invoke(() =>
             {
                 toolStart.IsEnabled = true;
                 toolPause.IsEnabled = false;
@@ -209,7 +251,7 @@ namespace EditorWindow
 
         private void ControllerEditor_SceneStopped(ControllerEditor controller)
         {
-            Dispatcher.Invoke(() =>
+            Invoke(() =>
             {
                 toolStart.IsEnabled = true;
                 toolPause.IsEnabled = false;
