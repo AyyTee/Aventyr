@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using static Game.InputExt;
 
 namespace EditorLogic
 {
@@ -178,21 +179,24 @@ namespace EditorLogic
             //Handle user input to pan the camera.
             {
                 Vector2 v = new Vector2();
-                if (InputExt.KeyDown(Key.Left))
+                if (!InputExt.KeyDown(KeyBoth.Alt))
                 {
-                    v += GetTransform().GetRight() * -KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
-                }
-                if (InputExt.KeyDown(Key.Right))
-                {
-                    v += GetTransform().GetRight() * KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
-                }
-                if (InputExt.KeyDown(Key.Up))
-                {
-                    v += GetTransform().GetUp() * KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
-                }
-                if (InputExt.KeyDown(Key.Down))
-                {
-                    v += GetTransform().GetUp() * -KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
+                    if (InputExt.KeyDown(Key.Left))
+                    {
+                        v += GetTransform().GetRight() * -KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
+                    }
+                    if (InputExt.KeyDown(Key.Right))
+                    {
+                        v += GetTransform().GetRight() * KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
+                    }
+                    if (InputExt.KeyDown(Key.Up))
+                    {
+                        v += GetTransform().GetUp() * KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
+                    }
+                    if (InputExt.KeyDown(Key.Down))
+                    {
+                        v += GetTransform().GetUp() * -KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
+                    }
                 }
                 if (InputExt.MouseInside && InputExt.MouseDown(MouseButton.Middle))
                 {

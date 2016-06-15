@@ -132,7 +132,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FCurve.cs" />
+    <Compile Include="FCurve2.cs" />
+    <Compile Include="FCurveTransform2.cs" />
+    <Compile Include="ITime.cs" />
+    <Compile Include="Common\ITransform2.cs" />
     <Compile Include="Keyframe.cs" />
+    <Compile Include="Keyframe2.cs" />
     <Compile Include="Physics\ActorExt.cs" />
     <Compile Include="Physics\BodyUserData.cs" />
     <Compile Include="Physics\SimulationStep.cs" />
@@ -166,7 +171,6 @@
     <Compile Include="Common\PolygonExt.cs" />
     <Compile Include="Rendering\Models\ReadOnlyMesh.cs" />
     <Compile Include="Rendering\ModelLoader.cs" />
-    <Compile Include="ControllerGame.cs" />
     <Compile Include="EdgeData.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Rendering\Camera.cs" />

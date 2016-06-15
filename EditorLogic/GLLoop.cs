@@ -11,7 +11,7 @@ namespace EditorLogic
     /// </summary>
     public class GLLoop
     {
-        Thread _thread;
+        public Thread Thread { get; private set; }
         volatile bool _resize = false;
         volatile bool _focused;
         volatile int _updatesPerSecond = -1;
@@ -53,13 +53,13 @@ namespace EditorLogic
             UpdatesPerSecond = updatesPerSecond;
             _average = new RollingAverage(60, MillisecondsPerStep);
             //_control.Context.MakeCurrent(null);
-            _thread = new Thread(new ThreadStart(Loop));
-            _thread.Name = "OGL Thread";
+            Thread = new Thread(new ThreadStart(Loop));
+            Thread.Name = "OGL Thread";
 
             //_loopControl.OnLoad(new EventArgs());
 
             _control.Context.MakeCurrent(null);
-            _thread.Start();
+            Thread.Start();
         }
 
         /// <summary>

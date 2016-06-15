@@ -60,5 +60,65 @@ namespace EditorWindow
                     new KeyGesture(Key.P, ModifierKeys.Control)
                 }
             );
+        public static readonly RoutedUICommand TimerStepFoward = new RoutedUICommand
+            (
+                "Step Foward",
+                "TimerStepFoward",
+                typeof(WPFCommands),
+                new InputGestureCollection()
+                {
+                    new KeyGesture(Key.Right, ModifierKeys.Alt)
+                }
+            );
+        public static readonly RoutedUICommand TimerStepBackward = new RoutedUICommand
+            (
+                "Step Backward",
+                "TimerStepBackward",
+                typeof(WPFCommands),
+                new InputGestureCollection()
+                {
+                    new KeyGesture(Key.Left, ModifierKeys.Alt)
+                }
+            );
+        public static readonly RoutedUICommand TimerJumpFoward = new RoutedUICommand
+            (
+                "Jump Foward",
+                "TimerJumpFoward",
+                typeof(WPFCommands),
+                new InputGestureCollection()
+                {
+                    new KeyGesture(Key.Up, ModifierKeys.Alt)
+                }
+            );
+        public static readonly RoutedUICommand TimerJumpBackward = new RoutedUICommand
+            (
+                "Jump Backward",
+                "TimerJumpBackward",
+                typeof(WPFCommands),
+                new InputGestureCollection()
+                {
+                    new KeyGesture(Key.Down, ModifierKeys.Alt)
+                }
+            );
+        public static readonly RoutedUICommand KeyframeAdd = new RoutedUICommand
+            (
+                "Add Keyframe",
+                "KeyframeAdd",
+                typeof(WPFCommands),
+                new InputGestureCollection()
+                {
+                    new KeyGesture(Key.K, ModifierKeys.Control)
+                }
+            );
+        public static readonly RoutedUICommand KeyframeRemove = new RoutedUICommand
+            (
+                "Remove Keyframe",
+                "KeyframeRemove",
+                typeof(WPFCommands),
+                new InputGestureCollection()
+                {
+                    new KeyGesture(Key.K, ModifierKeys.Alt)
+                }
+            );
     }
 }

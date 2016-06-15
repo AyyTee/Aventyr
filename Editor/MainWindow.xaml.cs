@@ -27,10 +27,10 @@ namespace EditorWindow
         /// Prevent application from closing while a method is being invoked.
         /// </summary>
         object _closingLock = new object();
+        int _dispatchCount = 0;
         readonly Thread _wpfThread;
         static MainWindow _window;
 
-        System.Timers.Timer updateTimer;
         public MainWindow()
         {
             _window = this;
@@ -75,22 +75,17 @@ namespace EditorWindow
             ControllerEditor.ScenePlayEvent += ControllerEditor_ScenePlayed;
             ControllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;
-            ControllerEditor.SceneModified += ControllerEditor_SceneModified;
-            ControllerEditor.TimeChanged += ControllerEditor_TimeChanged;
+            ControllerEditor.Update += ControllerEditor_Update;
 
             ControllerFiles = new ControllerFiles(this, ControllerEditor, filesRecent);
 
-            //glControl.MouseMove += glControl_MouseMove;
-            
-            updateTimer = new System.Timers.Timer(500);
-            updateTimer.Elapsed += new ElapsedEventHandler(UpdateFrameRate);  
-            updateTimer.Enabled = true;
             UpdateTransformLabels(null);
 
             SetPortalRendering(true);
 
             ToolPanel.Initialize(ControllerEditor);
             PropertiesEditor.Initialize(ControllerEditor);
+            Time.Initialize(ControllerEditor);
             
             Slider_ValueChanged(
                 null, 
@@ -102,68 +97,46 @@ namespace EditorWindow
             _loop.Run(60);
         }
 
+        private void ControllerEditor_Update(ControllerEditor controller)
+        {
+            Invoke(() =>
+            {
+                Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
+                MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
+
+                int fps = (int)Math.Round(_loop.UpdatesPerSecond * (double)_loop.MillisecondsPerStep / _loop.GetAverage());
+                FrameRate.Content = "FPS " + fps.ToString() + "/" + _loop.UpdatesPerSecond.ToString();
+
+                var selection = ControllerEditor.selection.GetAll();
+                if (selection.Count > 0)
+                {
+                    UpdateTransformLabels(selection[0]);
+                    PropertiesEditor.SetSelected(selection[0]);
+                }
+                else
+                {
+                    UpdateTransformLabels(null);
+                    PropertiesEditor.SetSelected(null);
+                }
+            });
+        }
+
         /// <summary>
-        /// Use this instead of Dispatcher.Invoke.  This method is not prone deadlocks if the application is closing.
+        /// Use this instead of Dispatcher.Invoke for the OGL Thread. This method is not prone deadlocks if the application is closing.
         /// </summary>
-        /// <param name="action"></param>
         public static void Invoke(Action action)
         {
-            Debug.Assert(Thread.CurrentThread != _window._wpfThread, 
-                "The WPF Thread should never need to invoke it's own methods. Additionally this can cause deadlocks.");
+            Debug.Assert(Thread.CurrentThread == _window._loop.Thread, "This method is intended to be exclusively used by the OGL Thread.");
             lock (_window._closingLock)
             {
                 if (_window.IsClosing)
                 {
                     return;
                 }
+                //_window._dispatchCount++;
                 _window.Dispatcher.Invoke(action);
+                //_window._dispatchCount--;
             }
-        }
-
-        private void ControllerEditor_TimeChanged(ControllerEditor controller, float time)
-        {
-            Invoke(() =>
-            {
-                Time.SetTime(time);
-            });
-        }
-
-        private void ControllerEditor_SceneModified(HashSet<EditorObject> modified)
-        {
-            Invoke(() =>
-            {
-                //UpdateTransformLabels(controller.selection.First);
-            });
-        }
-
-        private void UpdateFrameRate(object sender, ElapsedEventArgs e)
-        {
-            Invoke(() =>
-            {
-                int fps = (int)Math.Round(_loop.UpdatesPerSecond * (double)_loop.MillisecondsPerStep / _loop.GetAverage());
-                FrameRate.Content = "FPS " + fps.ToString() + "/" + _loop.UpdatesPerSecond.ToString();
-            });
-        }
-
-        private void glControl_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            Invoke(() =>
-            {
-                Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
-                MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
-            });
-        }
-
-        public void ControllerEditor_EntitySelected(List<EditorObject> selection)
-        {
-            Invoke(() =>
-            {
-                if (selection.Count == 1)
-                {
-                    UpdateTransformLabels(selection[0]);
-                    PropertiesEditor.SetSelected(selection[0]);
-                }
-            });
         }
 
         private void UpdateTransformLabels(EditorObject entity)
@@ -182,21 +155,19 @@ namespace EditorWindow
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            base.OnClosing(e);
-            updateTimer.Stop();
             //Prevent this method from completing until the GL loop is finished.
+            /*IsClosing = true;
             _loop.Stop();
-            lock (_loop) { }
-
+            lock (_loop) { }*/
+            //Short term solution.
+            _loop.Thread.Abort();
+            base.OnClosing(e);
             Properties.Settings.Default.Save();
         }
 
         private void Button_Close(object sender, RoutedEventArgs e)
         {
-            lock (_closingLock)
-            {
-                Close();
-            }
+            Close();
         }
 
         private void Button_Play(object sender, RoutedEventArgs e)
@@ -233,6 +204,8 @@ namespace EditorWindow
                     menuRunStart.IsEnabled = false;
                     menuRunPause.IsEnabled = true;
                     menuRunStop.IsEnabled = true;
+
+                    Status.Content = "Playing";
                 });
         }
 
@@ -246,6 +219,8 @@ namespace EditorWindow
                 menuRunStart.IsEnabled = true;
                 menuRunPause.IsEnabled = false;
                 menuRunStop.IsEnabled = true;
+
+                Status.Content = "Paused";
             });
         }
 
@@ -259,6 +234,8 @@ namespace EditorWindow
                 menuRunStart.IsEnabled = true;
                 menuRunPause.IsEnabled = false;
                 menuRunStop.IsEnabled = false;
+
+                Status.Content = "Stopped";
             });
         }
 
@@ -367,6 +344,49 @@ namespace EditorWindow
                     ControllerEditor.physicsStepSize = (float)e.NewValue;
                 });
             }
+        }
+
+        private void Command_StepFoward(object sender, ExecutedRoutedEventArgs e)
+        {
+            ControllerEditor.AddAction(() => {
+                ControllerEditor.SetTime(ControllerEditor.Level.Time + 1 / (double)_loop.UpdatesPerSecond);
+            });
+        }
+
+        private void Command_StepBackward(object sender, ExecutedRoutedEventArgs e)
+        {
+            ControllerEditor.AddAction(() => {
+                ControllerEditor.SetTime(ControllerEditor.Level.Time - 1 / (double)_loop.UpdatesPerSecond);
+            });
+        }
+
+        private void Command_JumpFoward(object sender, ExecutedRoutedEventArgs e)
+        {
+            ControllerEditor.AddAction(() => {
+                ControllerEditor.SetTime(ControllerEditor.Level.Time + 1);
+            });
+        }
+
+        private void Command_JumpBackward(object sender, ExecutedRoutedEventArgs e)
+        {
+            ControllerEditor.AddAction(() => {
+                ControllerEditor.SetTime(ControllerEditor.Level.Time - 1);
+            });
+        }
+
+        private void Command_KeyframeAdd(object sender, ExecutedRoutedEventArgs e)
+        {
+            ControllerEditor.AddAction(() => {
+                foreach (EditorObject instance in ControllerEditor.selection.GetAll())
+                {
+                    ControllerEditor.Level.AddKeyframe(instance, instance.GetTransform());
+                }
+            });
+        }
+
+        private void Command_KeyframeRemove(object sender, ExecutedRoutedEventArgs e)
+        {
+
         }
     }
 }

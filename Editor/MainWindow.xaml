@@ -17,6 +17,12 @@
         <CommandBinding Command="self:WPFCommands.TimerPlay" Executed="Button_Play" />
         <CommandBinding Command="self:WPFCommands.TimerPause" Executed="Button_Pause" />
         <CommandBinding Command="self:WPFCommands.TimerStep" Executed="commandTimerStep" />
+        <CommandBinding Command="self:WPFCommands.TimerStepFoward" Executed="Command_StepFoward" />
+        <CommandBinding Command="self:WPFCommands.TimerStepBackward" Executed="Command_StepBackward" />
+        <CommandBinding Command="self:WPFCommands.TimerJumpFoward" Executed="Command_JumpFoward" />
+        <CommandBinding Command="self:WPFCommands.TimerJumpBackward" Executed="Command_JumpBackward" />
+        <CommandBinding Command="self:WPFCommands.KeyframeAdd" Executed="Command_KeyframeAdd" />
+        <CommandBinding Command="self:WPFCommands.KeyframeRemove" Executed="Command_KeyframeRemove" />
     </Window.CommandBindings>
 
     <Grid Name="MainGrid" KeyDown="MainGrid_KeyDown">
@@ -106,10 +112,17 @@
             <Grid>
                 <self:Time x:Name="Time"/>
             </Grid>
-            <Separator VerticalAlignment="Stretch" Margin="0,0,5,0"/>
+            <Separator VerticalAlignment="Stretch" Margin="4,0,4,0"/>
             <ToggleButton Name="toolPortalsVisible" Height="22" Click="toolPortalsVisible_Click">
                 <Image Source="/editor assets/icons/eye.png" />
             </ToggleButton>
+            <Separator VerticalAlignment="Stretch" Margin="4,0,4,0"/>
+            <Button Name="KeyframeAdd" Height="22" Command="self:WPFCommands.KeyframeAdd">
+                <Image Source="/editor assets/icons/key--plus.png" />
+            </Button>
+            <Button Name="KeyframeRemove" Height="22" Command="self:WPFCommands.KeyframeRemove">
+                <Image Source="/editor assets/icons/key--minus.png" />
+            </Button>
         </ToolBar>
         <Grid Grid.Row="2" Background="#293955">
             <Grid.RowDefinitions>
@@ -160,6 +173,7 @@
                     <ColumnDefinition Width="325*"/>
                     <ColumnDefinition Width="567*"/>
                 </Grid.ColumnDefinitions>
+                <Label Name="Status" Foreground="White" Padding="8,0,8,0" VerticalAlignment="Center"/>
             </Grid>
         </Grid>
     </Grid>

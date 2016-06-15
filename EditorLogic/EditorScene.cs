@@ -21,7 +21,7 @@ namespace EditorLogic
         [DataMember]
         public List<Doodad> Doodads = new List<Doodad>();
         [DataMember]
-        public float Time { get; set; }
+        public double Time { get; private set; }
 
         public EditorScene()
         {
@@ -64,6 +64,32 @@ namespace EditorLogic
             List<IRenderable> renderList = GetAll().OfType<IRenderable>().ToList();
             renderList.AddRange(Doodads);
             return renderList;
+        }
+
+        public void AddKeyframe(EditorObject instance, Transform2 keyframe)
+        {
+            AddKeyframe(instance, keyframe, (float)Time);
+        }
+
+        public void AddKeyframe(EditorObject instance, Transform2 keyframe, float time)
+        {
+            if (instance.AnimatedTransform == null)
+            {
+                instance.AnimatedTransform = new FCurveTransform2(this);
+            }
+            instance.AnimatedTransform.AddKeyframe(time, keyframe);
+        }
+
+        public void SetTime(double time)
+        {
+            Time = time;
+            foreach (EditorObject e in GetAll().OfType<EditorObject>())
+            {
+                if (e.AnimatedTransform != null)
+                {
+                    e.SetTransform(e.AnimatedTransform.GetTransform());
+                }
+            }
         }
 
         public List<IPortal> GetPortalList()

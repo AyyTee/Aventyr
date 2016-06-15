@@ -44,7 +44,7 @@ namespace EditorWindow
 
         private void Selection_SelectionChanged(List<EditorObject> selection)
         {
-            Dispatcher.Invoke(() =>
+            MainWindow.Invoke(() =>
             {
                 if (selection.Count == 1)
                 {
@@ -59,7 +59,7 @@ namespace EditorWindow
 
         private void _controller_SceneModified(HashSet<EditorObject> modified)
         {
-            Dispatcher.Invoke(() =>
+            MainWindow.Invoke(() =>
             {
                 EditorObject selected = modified.FirstOrDefault(item => item == _selected);
                 if (selected != null)
@@ -90,7 +90,7 @@ namespace EditorWindow
         private void ObjectName_LostFocus(object sender, RoutedEventArgs e)
         {
             Debug.Assert(_selected != null);
-            //Make a copy of the textbox text so we don't try accessing it from the GL thread.
+            //Make a copy of the textbox text so we don't try accessing it from the OGL thread.
             string text = ObjectName.Text;
             _controller.AddAction(() => { _controller.StateList.Add(new Rename(_selected, text), true); });
         }

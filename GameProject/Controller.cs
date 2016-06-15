@@ -41,10 +41,10 @@ namespace Game
         public static List<int> iboGarbage = new List<int>();
         public static List<int> textureGarbage = new List<int>();
 
-        public static String fontFolder = Path.Combine(new String[2] { "assets", "fonts" });
-        public static String shaderFolder = Path.Combine(new String[2] { "assets", "shaders" });
-        public static String textureFolder = Path.Combine(new String[2] { "assets", "textures" });
-        public static String soundFolder = Path.Combine(new String[2] { "assets", "sounds" });
+        public static string fontFolder = Path.Combine(new string[2] { "assets", "fonts" });
+        public static string shaderFolder = Path.Combine(new string[2] { "assets", "shaders" });
+        public static string textureFolder = Path.Combine(new string[2] { "assets", "textures" });
+        public static string soundFolder = Path.Combine(new string[2] { "assets", "sounds" });
         
         /// <summary>
         /// Records time elapsed since the program start.
@@ -74,8 +74,6 @@ namespace Game
             }
 
             // Load textures from file
-            /*Renderer.Textures.Add("default.png", Renderer.LoadImage(Path.Combine(textureFolder, "default.png")));
-            Renderer.Textures.Add("grid.png", Renderer.LoadImage(Path.Combine(textureFolder, "grid.png")));*/
             Renderer.Textures.Add("default.png", new TextureFile(Path.Combine(textureFolder, "default.png")));
             Renderer.Textures.Add("grid.png", new TextureFile(Path.Combine(textureFolder, "grid.png")));
             Renderer.Textures.Add("lineBlur.png", new TextureFile(Path.Combine(textureFolder, "lineBlur.png")));
@@ -87,9 +85,6 @@ namespace Game
             FontRenderer = new FontRenderer(Default);
 
             // Load shaders from file
-            //Renderer.Shaders.Add("default", new ShaderProgram(Path.Combine(shaderFolder, "vs.glsl"), Path.Combine(shaderFolder, "fs.glsl"), true));
-            //Renderer.Shaders.Add("textured", new ShaderProgram(Path.Combine(shaderFolder, "vs_tex.glsl"), Path.Combine(shaderFolder, "fs_tex.glsl"), true));
-            //Renderer.Shaders.Add("text", new ShaderProgram(Path.Combine(shaderFolder, "vs_text.glsl"), Path.Combine(shaderFolder, "fs_text.glsl"), true));
             Renderer.Shaders.Add("uber", new ShaderProgram(
                 Path.Combine(shaderFolder, "vs_uber.glsl"),
                 Path.Combine(shaderFolder, "fs_uber.glsl"),

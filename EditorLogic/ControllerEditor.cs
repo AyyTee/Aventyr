@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EditorLogic
@@ -40,16 +41,24 @@ namespace EditorLogic
         /// </summary>
         object _lockAction = new object();
         [AffineMember]
-        bool _isPaused = true;
+        public bool IsPaused { get; private set; }
+        [AffineMember]
+        public bool IsStopped { get { return ActiveLevel == null; } }
         [AffineMember]
         int _stepsPending = 0;
 
+        public delegate void UpdateHandler(ControllerEditor controller);
+        public event UpdateHandler Update;
         public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
         public delegate void SceneEventHandler(ControllerEditor controller);
         public event SceneEventHandler ScenePauseEvent;
         public event SceneEventHandler ScenePlayEvent;
         public event SceneEventHandler SceneStopEvent;
-        public Action<ControllerEditor, float> TimeChanged;
+        public delegate void TimeChangedHandler(ControllerEditor controller, double seconds);
+        /// <summary>
+        /// Called if the Level or ActiveLevel's time changes.  Time value is in milliseconds.
+        /// </summary>
+        public event TimeChangedHandler TimeChanged;
         public delegate void SerializationHandler(ControllerEditor controller, string filepath);
         public event SerializationHandler LevelLoaded;
         public event SerializationHandler LevelSaved;
@@ -65,6 +74,7 @@ namespace EditorLogic
         public ControllerEditor(Size canvasSize, InputExt input)
             : base(canvasSize, input)
         {
+            IsPaused = true;
             physicsStepSize = 1;
         }
 
@@ -72,11 +82,13 @@ namespace EditorLogic
         {
             base.OnLoad(e);
             
-            LevelCreate();
             
-            Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
+            
             
             Clipboard = new EditorScene();
+
+            LevelCreate();
+            Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
 
             InitTools();
             SceneStop();
@@ -84,6 +96,8 @@ namespace EditorLogic
 
         public void LevelCreate()
         {
+            //SceneStop();
+            SetTool(null);
             renderer.RemoveLayer(Hud);
             renderer.RemoveLayer(Level);
             Hud = new Scene();
@@ -101,10 +115,13 @@ namespace EditorLogic
 
             LevelCreated(this, null);
             LevelChanged(this, null);
+            TimeChanged(this, Level.Time);
         }
 
         public void LevelLoad(string filepath)
         {
+            SceneStop();
+            SetTool(null);
             EditorScene load = Serializer.Deserialize(filepath);
             load.ActiveCamera.Controller = this;
             load.ActiveCamera.InputExt = InputExt;
@@ -112,15 +129,39 @@ namespace EditorLogic
             renderer.RemoveLayer(Level);
             Level = load;
             selection = new Selection(Level);
-            //Level.Clear();
+
             LevelLoaded(this, filepath);
             LevelChanged(this, filepath);
+            TimeChanged(this, Level.Time);
         }
 
         public void LevelSave(string filepath)
         {
             Serializer.Serialize(Level, filepath);
             LevelSaved(this, filepath);
+        }
+
+        /// <summary>
+        /// Set the current time in the level.
+        /// </summary>
+        /// <returns>True if time is set, otherwise false.</returns>
+        public bool SetTime(double time)
+        {
+            if (IsStopped && Level.Time != time)
+            {
+                Level.SetTime(Math.Max(0, time));
+                TimeChanged(this, Level.Time);
+            }
+            return !IsStopped;
+        }
+
+        public double GetTime()
+        {
+            if (IsStopped)
+            {
+                return Level.Time;
+            }
+            return ActiveLevel.Time;
         }
 
         public override void OnRenderFrame(FrameEventArgs e)
@@ -155,20 +196,29 @@ namespace EditorLogic
         public override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-            lock (_lockAction)
+
+            //Avoid a potential deadlock by making a copy of the action queue and releasing 
+            //the lock before executing actions in the copy.
             {
-                foreach (Action item in Actions)
+                Queue<Action> copy;
+                lock (_lockAction)
+                {
+                    copy = new Queue<Action>(Actions);
+                    Actions.Clear();
+                }
+                foreach (Action item in copy)
                 {
                     item();
                 }
-                Actions.Clear();
             }
+            Update(this);
+
             _setTool(_nextTool);
 
             if (ActiveLevel != null)
             {
                 float stepSize = physicsStepSize / 60;
-                if (!_isPaused || _stepsPending > 0)
+                if (!IsPaused || _stepsPending > 0)
                 {
                     if (_stepsPending > 0)
                     {
@@ -278,13 +328,13 @@ namespace EditorLogic
                 renderer.RemoveLayer(Hud);
             }
             _stepsPending = 0;
-            _isPaused = false;
+            IsPaused = false;
             ScenePlayEvent(this);
         }
 
         public void ScenePause()
         {
-            _isPaused = true;
+            IsPaused = true;
             ScenePauseEvent(this);
         }
 
@@ -298,7 +348,7 @@ namespace EditorLogic
             }
 
             ActiveLevel = null;
-            _isPaused = true;
+            IsPaused = true;
             SceneStopEvent(this);
         }
 
@@ -308,7 +358,7 @@ namespace EditorLogic
             {
                 ScenePlay();
             }
-            if (!_isPaused)
+            if (!IsPaused)
             {
                 ScenePause();
             }

@@ -28,11 +28,9 @@ namespace Game
         public ProxyPortal(IPortal portal, Transform2 transform, Transform2 velocity)
         {
             Debug.Assert(portal != null);
-            Debug.Assert(transform != null);
-            Debug.Assert(velocity != null);
             Portal = portal;
-            WorldTransform = transform;
-            WorldVelocity = velocity;
+            WorldTransform = transform != null ? transform : new Transform2();
+            WorldVelocity = velocity != null ? velocity : new Transform2();
             Linked = portal.Linked;
         }
 

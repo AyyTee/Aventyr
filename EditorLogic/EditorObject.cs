@@ -40,6 +40,8 @@ namespace EditorLogic
         [DataMember]
         public Transform2 _transform = new Transform2();
         [DataMember]
+        public FCurveTransform2 AnimatedTransform;
+        [DataMember]
         public IPolygonCoord PolygonTransform;
         public bool IsModified { get; set; }
 

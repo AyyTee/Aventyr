@@ -38,6 +38,7 @@ namespace EditorWindow
             _loadFileDialog.FileOk += _loadFileDialog_FileOk;
             _saveFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension;
             _loadFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension;
+            //TODO: Figure out how to add callback for user pressing the cancel button in file dialog window.
 
             FilepathCurrent = null;
             Loading = false;
@@ -47,32 +48,32 @@ namespace EditorWindow
 
         private void ControllerEditor_LevelCreated(ControllerEditor controller, string filepath)
         {
-            ControllerWPF.Dispatcher.Invoke(() =>
+            MainWindow.Invoke(() =>
             {
-                ControllerEditor.selection.SelectionChanged += ControllerWPF.ControllerEditor_EntitySelected;
             });
         }
 
         private void ControllerEditor_LevelSaved(ControllerEditor controller, string filepath)
         {
-            ControllerWPF.Dispatcher.Invoke(() =>
+            MainWindow.Invoke(() =>
             {
                 Debug.Assert(filepath != null);
                 Debug.Assert(filepath != "");
                 RecentFiles.AddFilepath(filepath);
+                ControllerWPF.Status.Content = "Saved";
             });
         }
 
         private void ControllerEditor_LevelLoaded(ControllerEditor controller, string filepath)
         {
-            ControllerWPF.Dispatcher.Invoke(() =>
+            MainWindow.Invoke(() =>
             {
                 Debug.Assert(filepath != null);
                 Debug.Assert(filepath != "");
                 Debug.Assert(Loading);
                 RecentFiles.AddFilepath(filepath);
                 Loading = false;
-                ControllerEditor.selection.SelectionChanged += ControllerWPF.ControllerEditor_EntitySelected;
+                ControllerWPF.Status.Content = "Loaded";
             });
         }
 
@@ -121,6 +122,7 @@ namespace EditorWindow
         {
             if (IsUnlocked())
             {
+                ControllerWPF.Status.Content = "Saving...";
                 _saveFileDialog.ShowDialog();
             }
         }
@@ -132,6 +134,7 @@ namespace EditorWindow
         {
             if (IsUnlocked())
             {
+                ControllerWPF.Status.Content = "Loading...";
                 _loadFileDialog.ShowDialog();
             }
         }

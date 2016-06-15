@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface IScene
+    public interface IScene : ITime
     {
-        float Time { get; }
         /// <summary>Perform one simulation step.</summary>
         /// <param name="stepSize">Size of simulation step in seconds.</param>
         /// <returns>Current time in the simulation.</returns>

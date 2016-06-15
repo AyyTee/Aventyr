@@ -1,27 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Game
 {
-    public class Keyframe
+    [DataContract]
+    public class Keyframe : IShallowClone<Keyframe>
     {
-        public float Time;
+        [DataMember]
+        public readonly float Time;
+        [DataMember]
         public float Value;
-        public HandleType Handle = HandleType.Vector;
+        [DataMember]
+        public InterpolateType Handle;
 
-        public enum HandleType
+        public enum InterpolateType
         {
-            Vector,
-            Spline
+            Linear,
+            Spline,
+            Constant
+        }
+
+        public Keyframe()
+            : this(0, 0, InterpolateType.Linear)
+        {
         }
 
         public Keyframe(float time, float value)
+            : this(time, value, InterpolateType.Linear)
         {
-            Value = value;
+        }
+
+        public Keyframe(float time, float value, InterpolateType handle)
+        {
             Time = time;
+            Value = value;
+            Handle = handle;
+        }
+
+        public Keyframe ShallowClone()
+        {
+            return new Keyframe(Time, Value, Handle);
         }
     }
 }

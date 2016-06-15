@@ -16,7 +16,7 @@ namespace Game
         /// The distance at which an entity enters and exits a portal.  
         /// It is used to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
         /// </summary>
-        public const float EnterMinDistance = 0.0001f;
+        public const float EnterMinDistance = 0.001f;
 
         public static bool IsValid(IPortal portal)
         {
@@ -215,7 +215,7 @@ namespace Game
                 Vector4 b = Vector4.Transform(new Vector4(portalVerts[i].X, portalVerts[i].Y, 0, 1), a);
                 verts[i] = new Vector2(b.X, b.Y);
             }
-            //minumum distance in order to prevent self intersections
+            //Minumum distance in order to prevent self intersections.
             const float errorMargin = 0.01f;
             float distanceMin = Math.Max((verts[0] - viewPoint).Length, (verts[1] - viewPoint).Length) + errorMargin;
             distance = Math.Max(distance, distanceMin);

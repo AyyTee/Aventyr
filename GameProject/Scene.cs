@@ -32,7 +32,7 @@ namespace Game
         [DataMember]
         public SceneNode Root { get; private set; }
         [DataMember]
-        public float Time { get; private set; }
+        public double Time { get; private set; }
 
         #region Constructors
         public Scene()
@@ -85,7 +85,7 @@ namespace Game
                     s.Velocity = s.Portalable.GetTransform().Minus(s.Transform).Multiply(1 / stepSize);
                 }
 
-                SimulationStep.Step(portalPrevList, portalablePrevList, 100, stepSize);
+                SimulationStep.Step(portalPrevList, portalablePrevList, 10, stepSize);
 
                 /*foreach (SceneNode s in SceneNodeList)
                 {
