@@ -198,10 +198,18 @@ namespace Game
             return indexFirst;
         }
 
-        public static Model CreateLines(Line[] lines)
+        public static Model CreateLines(IList<Line> lines)
         {
             Mesh mesh = new Mesh();
-            for (int i = 0; i < lines.Length; i++)
+            AddLines(mesh, lines);
+            Model model = new Model(mesh);
+            model.Wireframe = true;
+            return model;
+        }
+
+        public static void AddLines(Mesh mesh, IList<Line> lines)
+        {
+            for (int i = 0; i < lines.Count; i++)
             {
                 Vector3 v;
                 v = new Vector3(lines[i][0].X, lines[i][0].Y, 0);
@@ -210,9 +218,6 @@ namespace Game
                 int index1 = mesh.AddVertex(new Vertex(v, new Vector2()));
                 mesh.AddTriangle(index0, index1, index1);
             }
-            Model model = new Model(mesh);
-            model.Wireframe = true;
-            return model;
         }
 
         public static Model CreateLinesWidth(Line[] lines, float width)

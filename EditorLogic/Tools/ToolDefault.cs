@@ -177,7 +177,7 @@ namespace EditorLogic
         {
             _dragState = state;
             _mode = mode;
-            _totalDrag = new Transform2();
+            _totalDrag = Transform2.CreateVelocity();
             dragObjects.Clear();
 
             foreach (EditorObject e in Tree<EditorObject>.FindRoots(selected))
@@ -248,7 +248,7 @@ namespace EditorLogic
 
         private void DragUpdate()
         {
-            Transform2 _dragAmount = new Transform2();
+            Transform2 _dragAmount = Transform2.CreateVelocity();
             Vector2 mousePos = Controller.GetMouseWorldPosition();
             if (_mode == Mode.Position)
             {
@@ -288,25 +288,15 @@ namespace EditorLogic
             }
             else if (_mode == Mode.Scale)
             {
-                Vector2 v = mousePos - Transform2.GetPosition(_translator);
-                Vector2 vPrev = mousePosPrev - Transform2.GetPosition(_translator);
-                const float minDist = 0.01f;
-                float size = Controller.Level.ActiveCamera.GetWorldTransform().Size;
-                float lengthPrev = Math.Max(vPrev.Length, size * minDist);
-                float length = Math.Max(v.Length, size * minDist);
-                if (!float.IsPositiveInfinity(length / lengthPrev))
-                {
-                    _dragAmount.Size = length / (lengthPrev * _totalDrag.Size);
-                }
+                _dragAmount.Size = mousePos.X - mousePosPrev.X;
+                mousePosPrev = mousePos;
             }
             _totalDrag = _totalDrag.Add(_dragAmount);
-            //_totalDrag.Size = _dragAmount.Size;
 
             foreach (MementoDrag e in dragObjects)
             {
                 Transform2 t = e.Transformable.GetTransform();
                 t = t.Add(_dragAmount);
-                //t.Size = _dragAmount.Size;
                 e.Transformable.SetTransform(t);
             }
         }
@@ -314,7 +304,7 @@ namespace EditorLogic
         public override void Enable()
         {
             base.Enable();
-            _translator = new Doodad(Controller.Level);//new Entity(Controller.Level);
+            _translator = new Doodad(Controller.Level);
             _translator.Models.Add(translationModel);
             _translator.Visible = true;
             //_translator.DrawOverPortals = true;
@@ -339,7 +329,6 @@ namespace EditorLogic
         {
             Transform2 transform = _translator.GetTransform();
             Transform2 camT = camera.GetWorldTransform();
-            //transform.SetScale(camT.Scale * translationScaleOffset);
             transform.Size = camT.Size * translationScaleOffset;
             _translator.SetTransform(transform);
         }

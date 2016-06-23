@@ -22,7 +22,7 @@ namespace Game
         [DataMember]
         Transform2 _transform = new Transform2();
         [DataMember]
-        Transform2 _velocity = new Transform2();
+        Transform2 _velocity = Transform2.CreateVelocity();
         [DataMember]
         List<Model> _models = new List<Model>();
         /// <summary>
@@ -36,6 +36,8 @@ namespace Game
         [DataMember]
         public bool Visible { get; set; }
         public List<Model> ModelList { get { return new List<Model>(_models); } }
+        [DataMember]
+        public Action<IPortal, Transform2, Transform2> enterPortal { get; set; }
 
         #region Constructors
         public Entity(Scene scene)

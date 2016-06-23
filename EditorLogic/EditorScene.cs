@@ -75,7 +75,7 @@ namespace EditorLogic
         {
             if (instance.AnimatedTransform == null)
             {
-                instance.AnimatedTransform = new FCurveTransform2(this);
+                instance.AnimatedTransform = new CurveTransform2();
             }
             instance.AnimatedTransform.AddKeyframe(time, keyframe);
         }
@@ -87,7 +87,7 @@ namespace EditorLogic
             {
                 if (e.AnimatedTransform != null)
                 {
-                    e.SetTransform(e.AnimatedTransform.GetTransform());
+                    e.SetTransform(e.AnimatedTransform.GetTransform((float)Time));
                 }
             }
         }
@@ -106,7 +106,7 @@ namespace EditorLogic
         {
             foreach (IStep s in GetAll().OfType<IStep>())
             {
-                s.StepBegin(stepSize);
+                s.StepBegin(this, stepSize);
             }
             foreach (EditorObject s in GetAll().OfType<EditorObject>())
             {
@@ -122,7 +122,7 @@ namespace EditorLogic
             }
             foreach (IStep s in GetAll().OfType<IStep>())
             {
-                s.StepEnd(stepSize);
+                s.StepEnd(this, stepSize);
             }
         }
     }

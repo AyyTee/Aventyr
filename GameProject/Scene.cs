@@ -24,6 +24,7 @@ namespace Game
         public ICamera2 ActiveCamera { get; private set; }
         public List<SceneNode> SceneNodeList { get { return Tree<SceneNode>.GetDescendents(Root); } }
         public List<Entity> EntityList { get { return Tree<SceneNode>.FindByType<Entity>(Root); } }
+        public List<ISceneObject> SceneObjectList = new List<ISceneObject>();
         /// <summary>
         /// States whether the scene is currently performing a physics step.
         /// </summary>
@@ -50,12 +51,11 @@ namespace Game
         public void Step(float stepSize)
         {
             Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
-            Time += stepSize;
             World.ProcessChanges();
 
             foreach (IStep s in GetAll().OfType<IStep>())
             {
-                s.StepBegin(stepSize);
+                s.StepBegin(this, stepSize);
             }
 
             if (World != null && stepSize > 0)
@@ -113,8 +113,9 @@ namespace Game
 
             foreach (IStep s in GetAll().OfType<IStep>())
             {
-                s.StepEnd(stepSize);
+                s.StepEnd(this, stepSize);
             }
+            Time += stepSize;
         }
 
         public ICamera2 GetCamera()
@@ -125,6 +126,7 @@ namespace Game
         public List<ISceneObject> GetAll()
         {
             HashSet<ISceneObject> set = new HashSet<ISceneObject>();
+            set.UnionWith(SceneObjectList);
             set.UnionWith(SceneNodeList);
             if (ActiveCamera != null)
             {

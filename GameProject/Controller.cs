@@ -13,7 +13,7 @@ using System.Diagnostics;
 
 namespace Game
 {
-    public class Controller
+    public class Controller : ITime
     {
         public Controller(Window window)
             : this(window.ClientSize, window.InputExt)
@@ -37,7 +37,7 @@ namespace Game
         public const int StepsPerSecond = 60;
         public const int DrawsPerSecond = 60;
         public int RenderCount = 0;
-        
+
         public static List<int> iboGarbage = new List<int>();
         public static List<int> textureGarbage = new List<int>();
 
@@ -45,11 +45,12 @@ namespace Game
         public static string shaderFolder = Path.Combine(new string[2] { "assets", "shaders" });
         public static string textureFolder = Path.Combine(new string[2] { "assets", "textures" });
         public static string soundFolder = Path.Combine(new string[2] { "assets", "sounds" });
-        
+
         /// <summary>
         /// Records time elapsed since the program start.
         /// </summary>
-        public Stopwatch Time = new Stopwatch();
+        Stopwatch _time = new Stopwatch();
+        public double Time { get { return _time.ElapsedMilliseconds / (double)1000; } }
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
@@ -61,7 +62,7 @@ namespace Game
 
         public virtual void OnLoad(EventArgs e)
         {
-            Time.Start();
+            _time.Start();
 
             Renderer.Init();
             renderer = new Renderer(this);

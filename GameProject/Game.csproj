@@ -131,11 +131,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FCurve.cs" />
-    <Compile Include="FCurve2.cs" />
-    <Compile Include="FCurveTransform2.cs" />
+    <Compile Include="AnimationDriver.cs" />
+    <Compile Include="Curve.cs" />
+    <Compile Include="Curve2.cs" />
+    <Compile Include="CurveTransform2.cs" />
     <Compile Include="ITime.cs" />
-    <Compile Include="Common\ITransform2.cs" />
     <Compile Include="Keyframe.cs" />
     <Compile Include="Keyframe2.cs" />
     <Compile Include="Physics\ActorExt.cs" />
@@ -208,6 +208,7 @@
     <Compile Include="Rendering\ShaderProgram.cs" />
     <Compile Include="Rendering\Models\Model.cs" />
     <Compile Include="Common\Transform2.cs" />
+    <Compile Include="BezierCurve.cs" />
     <Compile Include="Tree.cs" />
     <Compile Include="Rendering\Models\Triangle.cs" />
     <Compile Include="Common\Vector2Ext.cs" />

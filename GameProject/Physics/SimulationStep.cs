@@ -24,7 +24,7 @@ namespace Game
                     //Note that at very high iterations, portalable instance can fail to enter a portal 
                     //due to their velocity being less than Portal.EnterMinDistance.
                     portalable.Transform.Rotation += portalable.Velocity.Rotation * iterationLength;
-                    portalable.Transform.Size *= (float)Math.Pow(portalable.Velocity.Size, iterationLength);
+                    portalable.Transform.Size += portalable.Velocity.Size * iterationLength;
                     SceneExt.RayCast(portalable, portals, (IPortal portal) =>
                     {
                         Portal.EnterVelocity(portal, portalable.TrueVelocity);

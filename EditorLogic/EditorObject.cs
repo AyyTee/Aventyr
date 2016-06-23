@@ -40,10 +40,12 @@ namespace EditorLogic
         [DataMember]
         public Transform2 _transform = new Transform2();
         [DataMember]
-        public FCurveTransform2 AnimatedTransform;
+        public CurveTransform2 AnimatedTransform;
         [DataMember]
         public IPolygonCoord PolygonTransform;
         public bool IsModified { get; set; }
+        [DataMember]
+        public Action<IPortal, Transform2, Transform2> enterPortal { get; set; }
 
         public EditorObject(EditorScene editorScene)
         {

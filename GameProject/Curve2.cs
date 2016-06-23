@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -9,12 +10,12 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class FCurve2
+    public class Curve2
     {
         [DataMember]
-        FCurve X;
+        Curve X;
         [DataMember]
-        FCurve Y;
+        Curve Y;
         public Vector2 DefaultValue
         {
             get { return new Vector2(X.DefaultValue, Y.DefaultValue); }
@@ -36,15 +37,15 @@ namespace Game
         [DataMember]
         public string Name;
 
-        public FCurve2()
+        public Curve2()
             : this(Vector2.Zero)
         {
         }
 
-        public FCurve2(Vector2 defaultValue)
+        public Curve2(Vector2 defaultValue)
         {
-            X = new FCurve(defaultValue.X);
-            Y = new FCurve(defaultValue.Y);
+            X = new Curve(defaultValue.X);
+            Y = new Curve(defaultValue.Y);
         }
 
         public void AddKeyframe(Keyframe2 keyframe)
@@ -68,5 +69,24 @@ namespace Game
             result.Y = Y.GetDerivative(time);
             return result;
         }
+
+        /*public SortedList<float, Keyframe2> GetKeyframes()
+        {
+            SortedList<float, Keyframe2> keyframes = new SortedList<float, Keyframe2>();
+            keyframes.Add
+        }*/
+
+        /*public static Model GetModel(Curve2 fCurve)
+        {
+            Mesh mesh = new Mesh();
+            Line[] line = new Line[fCurve.Keyframe.X.Count - 1];
+            for (int i = 0; i < line.Length; i++)
+            {
+                line[i] = new Line(fCurve.Keyframes[i].)
+            }
+            ModelFactory.AddLines(mesh, )
+
+            Model model = new Model();
+        }*/
     }
 }

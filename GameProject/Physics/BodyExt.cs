@@ -59,7 +59,7 @@ namespace Game
 
         public static Transform2 GetVelocity(Body body)
         {
-            return new Transform2(Vector2Ext.ConvertTo(body.LinearVelocity), 1, body.AngularVelocity);
+            return Transform2.CreateVelocity(Vector2Ext.ConvertTo(body.LinearVelocity), body.AngularVelocity);
         }
 
         public static void SetVelocity(Body body, Transform2 velocity)

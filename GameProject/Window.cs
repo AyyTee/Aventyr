@@ -18,7 +18,6 @@ namespace Game
         public readonly static GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
         Controller controller;
         public InputExt InputExt;
-        Stopwatch loopTimer = new Stopwatch();
         public Window()
             : base(800, 600, DefaultGraphics, "Game", GameWindowFlags.FixedWindow)
         {

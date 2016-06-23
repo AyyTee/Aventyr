@@ -10,9 +10,9 @@ namespace UnitTest
         public const float ERROR_MARGIN = 0.0001f;
         public float DefaultValue = 5f;
 
-        public FCurve CreateFCurve()
+        public Curve CreateFCurve()
         {
-            FCurve fCurve = new FCurve(DefaultValue);
+            Curve fCurve = new Curve(DefaultValue);
             fCurve.AddKeyframe(new Keyframe(1f, 0f));
             fCurve.AddKeyframe(new Keyframe(6f, 10f));
             return fCurve;
@@ -21,21 +21,21 @@ namespace UnitTest
         [TestMethod]
         public void GetLengthTest0()
         {
-            FCurve fCurve = new FCurve();
+            Curve fCurve = new Curve();
             Assert.AreEqual(fCurve.Length, 0);
         }
 
         [TestMethod]
         public void GetLengthTest1()
         {
-            FCurve fCurve = CreateFCurve();
+            Curve fCurve = CreateFCurve();
             Assert.AreEqual(fCurve.Length, 6f);
         }
 
         [TestMethod]
         public void GetValuesTest0()
         {
-            FCurve fCurve = CreateFCurve();
+            Curve fCurve = CreateFCurve();
             Assert.AreEqual(fCurve.GetValue(1f), 0f, ERROR_MARGIN);
             Assert.AreEqual(fCurve.GetValue(6f), 10f, ERROR_MARGIN);
         }
@@ -46,7 +46,7 @@ namespace UnitTest
         [TestMethod]
         public void GetValuesTest1()
         {
-            FCurve fCurve = CreateFCurve();
+            Curve fCurve = CreateFCurve();
             Assert.AreEqual(fCurve.GetValue(-1f), 0f, ERROR_MARGIN);
             Assert.AreEqual(fCurve.GetValue(0f), 0f, ERROR_MARGIN);
             Assert.AreEqual(fCurve.GetValue(100f), 10f, ERROR_MARGIN);
@@ -55,14 +55,14 @@ namespace UnitTest
         [TestMethod]
         public void GetValuesTest2()
         {
-            FCurve fCurve = CreateFCurve();
+            Curve fCurve = CreateFCurve();
             Assert.AreEqual(fCurve.GetValue(2f), 2f, ERROR_MARGIN);
         }
 
         [TestMethod]
         public void GetValuesTest3()
         {
-            FCurve fCurve = CreateFCurve();
+            Curve fCurve = CreateFCurve();
             fCurve.IsLoop = true;
             float time = 11.5f;
             Assert.AreEqual(fCurve.GetValue(time), fCurve.GetValue(time % fCurve.Length));

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class FCurve : IShallowClone<FCurve>
+    public class Curve : IShallowClone<Curve>
     {
         [DataMember]
         public float DefaultValue { get; set; }
@@ -21,11 +21,11 @@ namespace Game
         public SortedList<float, Keyframe> Keyframes = new SortedList<float, Keyframe>();
         public float Length { get { return Keyframes.Count == 0 ? 0 : Keyframes.Last().Key; } }
 
-        public FCurve()
+        public Curve()
         {
         }
 
-        public FCurve(float defaultValue)
+        public Curve(float defaultValue)
         {
             DefaultValue = defaultValue;
         }
@@ -35,6 +35,10 @@ namespace Game
             if (Keyframes.Count == 0)
             {
                 return DefaultValue;
+            }
+            else if (Keyframes.Count == 1)
+            {
+                return Keyframes[0].Value;
             }
             if (IsLoop)
             {
@@ -67,17 +71,26 @@ namespace Game
             {
                 Keyframe next = Keyframes.ElementAt((index + 1) % Keyframes.Count).Value;
                 float nextTime = next.Time < current.Time ? next.Time + Length : next.Time;
+                if (time == nextTime)
+                {
+                    return current.Value;
+                }
                 float t = (time - current.Time) / (nextTime - current.Time);
                 return (float)MathExt.Lerp(current.Value, next.Value, t);
             }
             return current.Value;
         }
 
+        /// <summary>
+        /// Add a new keyframe. If one already exists at the given time then it is overwritten.
+        /// </summary>
         public void AddKeyframe(Keyframe keyframe)
         {
             Debug.Assert(keyframe != null);
-            Debug.Assert(keyframe.Time > 0, "Keyframe must have a time value greater than 0.");
-            Debug.Assert(!Keyframes.ContainsKey(keyframe.Time));
+            if (Keyframes.ContainsKey(keyframe.Time))
+            {
+                Keyframes.Remove(keyframe.Time);
+            }
             Keyframes.Add(keyframe.Time, keyframe);
         }
 
@@ -99,12 +112,12 @@ namespace Game
             {
                 return 0;
             }
-            for (int i = -1; i < Keyframes.Count; i++)
+            for (int i = 0; i < Keyframes.Count; i++)
             {
                 Keyframe next = Keyframes.ElementAt((i + 1) % Keyframes.Count).Value;
                 if (time < next.Time)
                 {
-                    return _getDerivative((i + Keyframes.Count) % Keyframes.Count, time);
+                    return _getDerivative(i, time);
                 }
             }
             Debug.Fail("Execution should not have reached this point.");
@@ -118,7 +131,7 @@ namespace Game
             {
                 Keyframe next = Keyframes.ElementAt((index + 1) % Keyframes.Count).Value;
                 float nextTime = next.Time < current.Time ? next.Time + Length : next.Time;
-                return (next.Value - current.Value) / (nextTime - time);
+                return (next.Value - current.Value) / (nextTime - current.Time);
             }
             return current.Value;
         }
@@ -127,9 +140,9 @@ namespace Game
         /// Create a shallow copy of this instance.  Note that this will however deep copy Keyframes.
         /// </summary>
         /// <returns></returns>
-        public FCurve ShallowClone()
+        public Curve ShallowClone()
         {
-            FCurve clone = new FCurve();
+            Curve clone = new Curve();
             clone.DefaultValue = DefaultValue;
             foreach (Keyframe k in Keyframes.Values)
             {

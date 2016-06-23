@@ -26,6 +26,8 @@ namespace Game
         Vector2[] _vertices;
         /// <summary>Copy of local coordinates for collision mask.</summary>
         public IList<Vector2> Vertices { get { return _vertices.ToList(); } }
+        [DataMember]
+        public Action<IPortal, Transform2, Transform2> enterPortal { get; set; }
 
         public Actor(Scene scene, IList<Vector2> vertices)
             : this(scene, vertices, new Transform2())

@@ -36,6 +36,8 @@ namespace EditorLogic
         public IScene Scene { get; set; }
         [DataMember]
         private float _zoomScrollFactor;
+        [DataMember]
+        public Action<IPortal, Transform2, Transform2> enterPortal { get; set; }
         /// <summary>How much the camera zooms in/out with mouse scrolling. Value must be greater than 1.</summary>
         public float ZoomScrollFactor 
         { 
@@ -122,7 +124,7 @@ namespace EditorLogic
             return Controller.ActiveTool.LockCamera();
         }
 
-        public void StepBegin(float stepSize)
+        public void StepBegin(IScene scene, float stepSize)
         {
             if (IsLocked())
             {
@@ -216,7 +218,7 @@ namespace EditorLogic
             }
         }
 
-        public void StepEnd(float stepSize)
+        public void StepEnd(IScene scene, float stepSize)
         {
             if (Controller.renderer.PortalRenderEnabled)
             {
@@ -231,7 +233,7 @@ namespace EditorLogic
         public Transform2 GetVelocity()
         {
             Vector2 velocity = lazyPan.Aggregate((item, acc) => item + acc) / lazyPan.Count;
-            return new Transform2(velocity);
+            return Transform2.CreateVelocity(velocity);
         }
 
         public void SetVelocity(Transform2 velocity)

@@ -9,29 +9,31 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class FCurveTransform2
+    public class CurveTransform2
     {
         [DataMember]
-        public FCurve2 PosCurve = new FCurve2();
+        public Curve2 PosCurve = new Curve2();
         [DataMember]
-        public FCurve RotCurve = new FCurve();
+        public Curve RotCurve = new Curve();
         [DataMember]
-        public FCurve SizeCurve = new FCurve();
+        public Curve SizeCurve = new Curve();
         [DataMember]
         public bool MirrorX;
+        [DataMember]
+        public Transform2 offset = new Transform2();
 
-        public FCurveTransform2()
+        public CurveTransform2()
         {
         }
 
         public Transform2 GetTransform(float time)
         {
-            return new Transform2(PosCurve.GetValue(time), SizeCurve.GetValue(time), RotCurve.GetValue(time), MirrorX);
+            return new Transform2(PosCurve.GetValue(time), SizeCurve.GetValue(time), RotCurve.GetValue(time), MirrorX).Transform(offset);
         }
 
         public Transform2 GetVelocity(float time)
         {
-            return new Transform2(PosCurve.GetDerivative(time), SizeCurve.GetDerivative(time), RotCurve.GetDerivative(time), false);
+            return new Transform2(PosCurve.GetDerivative(time), SizeCurve.GetDerivative(time), RotCurve.GetDerivative(time), false).Transform(offset);
         }
 
         public void AddKeyframe(float time, Transform2 keyframe)

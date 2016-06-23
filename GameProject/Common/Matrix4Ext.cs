@@ -32,11 +32,16 @@ namespace Game
 
         public static bool AlmostEqual(Matrix4 matrix0, Matrix4 matrix1)
         {
+            return AlmostEqual(matrix0, matrix1, EQUALITY_EPSILON);
+        }
+
+        public static bool AlmostEqual(Matrix4 matrix0, Matrix4 matrix1, float delta)
+        {
             for (int i = 0; i < MATRIX_4_SIZE; i++)
             {
                 for (int j = 0; j < MATRIX_4_SIZE; j++)
                 {
-                    if (Math.Abs(matrix0[i, j] - matrix1[i, j]) > EQUALITY_EPSILON)
+                    if (Math.Abs(matrix0[i, j] - matrix1[i, j]) > delta)
                     {
                         return false;
                     }

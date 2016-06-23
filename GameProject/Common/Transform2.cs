@@ -29,17 +29,16 @@ namespace Game
             get { return _rotation; }
             set 
             {
-                Debug.Assert(!Double.IsNaN(value));
+                Debug.Assert(!double.IsNaN(value));
                 _rotation = value; 
             }
         }
 
         [DataMember]
         public float _size = 1;
-        public float Size { get { return _size; } 
+        public float Size { get { return _size; }
             set 
             {
-                Debug.Assert(value != 0);
                 Debug.Assert(!float.IsNaN(value) && !float.IsPositiveInfinity(value) && !float.IsNegativeInfinity(value));
                 _size = value; 
             }
@@ -77,8 +76,8 @@ namespace Game
         {
         }
 
-        public Transform2(Vector2 position, float scale)
-            : this(position, scale, 0f)
+        public Transform2(Vector2 position, float size)
+            : this(position, size, 0f)
         {
         }
 
@@ -194,7 +193,7 @@ namespace Game
         {
             Transform2 output = ShallowClone();
             output.Rotation += transform.Rotation;
-            output.Size *= transform.Size;
+            output.Size += transform.Size;
             output.MirrorX = output.MirrorX != transform.MirrorX;
             output.Position += transform.Position;
             return output;
@@ -209,7 +208,7 @@ namespace Game
         {
             Transform2 output = ShallowClone();
             output.Rotation -= transform.Rotation;
-            output.Size /= transform.Size;
+            output.Size -= transform.Size;
             output.MirrorX = output.MirrorX != transform.MirrorX;
             output.Position -= transform.Position;
             return output;
@@ -217,22 +216,10 @@ namespace Game
 
         public Transform2 Multiply(float scalar)
         {
-            Debug.Assert(Size > 0);
             Transform2 output = ShallowClone();
             output.Rotation = Rotation * scalar;
-            output.Size = (float)Math.Pow(Size, scalar);
+            output.Size = Size * scalar;
             output.Position = Position * scalar;
-            return output;
-        }
-
-        /// <summary>Subtracts transfrom from this.</summary>
-        public Transform2 Subtract(Transform2 transform)
-        {
-            Transform2 output = ShallowClone();
-            output.Rotation -= transform.Rotation;
-            output.Size /= transform.Size;
-            output.MirrorX = output.MirrorX != transform.MirrorX;
-            output.Position -= transform.Position;
             return output;
         }
 
@@ -289,6 +276,26 @@ namespace Game
                 }
             }
             return false;
+        }
+
+        public static Transform2 CreateVelocity()
+        {
+            return CreateVelocity(new Vector2());
+        }
+
+        public static Transform2 CreateVelocity(Vector2 linearVelocity)
+        {
+            return CreateVelocity(linearVelocity, 0);
+        }
+
+        public static Transform2 CreateVelocity(Vector2 linearVelocity, float angularVelocity)
+        {
+            return CreateVelocity(linearVelocity, angularVelocity, 0);
+        }
+
+        public static Transform2 CreateVelocity(Vector2 linearVelocity, float angularVelocity, float scalarVelocity)
+        {
+            return new Transform2(linearVelocity, scalarVelocity, angularVelocity);
         }
 
         public static bool operator ==(Transform2 left, Transform2 right)

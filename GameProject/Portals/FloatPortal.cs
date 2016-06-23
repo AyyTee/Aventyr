@@ -63,7 +63,7 @@ namespace Game
 
         public override Transform2 GetVelocity()
         {
-            return new Transform2();
+            return Transform2.CreateVelocity();
         }
 
         public override Transform2 GetTransform()

@@ -172,7 +172,7 @@ namespace Game
 
         public virtual Transform2 GetVelocity()
         {
-            return new Transform2();
+            return Transform2.CreateVelocity();
         }
 
         public virtual Transform2 GetWorldVelocity()

@@ -36,6 +36,8 @@ namespace EditorLogic
             HashSet<IDeepClone> toClone = new HashSet<IDeepClone>();
             
             Dictionary<EditorObject, SceneNode> dictionary = new Dictionary<EditorObject, SceneNode>();
+            AnimationDriver animation = new AnimationDriver();
+            scene.SceneObjectList.Add(animation);
 
             List<EditorObject> editorObjects = level.GetAll().OfType<EditorObject>().ToList();
             foreach (EditorObject e in editorObjects)
@@ -66,8 +68,18 @@ namespace EditorLogic
                     Entity clone = new Entity(scene);
                     clone.Name = cast.Name;
                     clone.AddModelRange(cast.Models);
-                    clone.SetTransform(cast.GetTransform());
+                    
                     dictionary.Add(cast, clone);
+
+                    if (cast.AnimatedTransform != null)
+                    {
+                        animation.animated.Add(clone, cast.AnimatedTransform);
+                        clone.SetTransform(cast.AnimatedTransform.GetTransform(0));
+                    }
+                    else
+                    {
+                        clone.SetTransform(cast.GetTransform());
+                    }
                 }
                 else if (e is IWall)
                 {

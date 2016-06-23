@@ -70,14 +70,19 @@ namespace Game
             }
         }
 
-        public static void Enter(IPortal portal, IPortalable portable, bool ignorePortalVelocity = false)
+        public static void Enter(IPortal portal, IPortalable portalable, bool ignorePortalVelocity = false)
         {
-            Transform2 transform = portable.GetTransform();
-            Transform2 velocity = portable.GetVelocity();
+            Transform2 transform = portalable.GetTransform();
+            Transform2 velocity = portalable.GetVelocity();
+            Transform2 transformPrev = transform.ShallowClone();
+            Transform2 velocityPrev = velocity.ShallowClone();
             Enter(portal, transform);
             EnterVelocity(portal, velocity, ignorePortalVelocity);
-            portable.SetTransform(transform);
-            portable.SetVelocity(velocity);
+            portalable.SetTransform(transform);
+            portalable.SetVelocity(velocity);
+            //portable.enter += (IPortal portals, Transform2 t, Transform2 t2) => { Console.Out.WriteLine("test"); };
+            //portable.enterPortal += (IPortal portals, Transform2 t, Transform2 t2) => { Console.Out.WriteLine("test2"); };
+            portalable.enterPortal(portal, transformPrev, velocityPrev);
         }
 
         public static void EnterVelocity(IPortal portal, Transform2 velocity, bool ignorePortalVelocity = false)
@@ -170,6 +175,14 @@ namespace Game
             transform.MirrorX = !transform.MirrorX;
             Matrix4 m = portalEnter.GetWorldTransform().GetMatrix();
             return m.Inverted() * transform.GetMatrix();
+        }
+
+        public static Transform2 GetPortalTransform(IPortal portalEnter, IPortal portalExit)
+        {
+            Transform2 tExit = portalExit.GetWorldTransform();
+            tExit.MirrorX = !tExit.MirrorX;
+            Transform2 tEnter = portalEnter.GetWorldTransform();
+            return tEnter.Inverted().Transform(tExit);
         }
 
         public static Line[] GetFovLines(IPortal portal, Vector2 origin, float distance)
