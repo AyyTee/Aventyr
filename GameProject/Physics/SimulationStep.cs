@@ -27,7 +27,7 @@ namespace Game
                     portalable.Transform.Size += portalable.Velocity.Size * iterationLength;
                     SceneExt.RayCast(portalable, portals, (IPortal portal) =>
                     {
-                        Portal.EnterVelocity(portal, portalable.TrueVelocity);
+                        portalable.TrueVelocity = Portal.EnterVelocity(portal, portalable.TrueVelocity);
                     },
                     iterationLength);
                 }
@@ -63,7 +63,7 @@ namespace Game
                         if (MathExt.PointInPolygon(portalable.Transform.Position, quad))
                         {
                             Portal.Enter(p, portalable);
-                            Portal.EnterVelocity(p, portalable.TrueVelocity);
+                            portalable.TrueVelocity = Portal.EnterVelocity(p, portalable.TrueVelocity);
                         }
                     }
                     p.WorldTransform.Position -= margin;

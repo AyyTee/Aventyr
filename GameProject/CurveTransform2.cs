@@ -20,7 +20,7 @@ namespace Game
         [DataMember]
         public bool MirrorX;
         [DataMember]
-        public Transform2 offset = new Transform2();
+        public Transform2 Offset = new Transform2();
 
         public CurveTransform2()
         {
@@ -28,12 +28,12 @@ namespace Game
 
         public Transform2 GetTransform(float time)
         {
-            return new Transform2(PosCurve.GetValue(time), SizeCurve.GetValue(time), RotCurve.GetValue(time), MirrorX).Transform(offset);
+            return new Transform2(PosCurve.GetValue(time), SizeCurve.GetValue(time), RotCurve.GetValue(time), MirrorX).Transform(Offset);
         }
 
         public Transform2 GetVelocity(float time)
         {
-            return new Transform2(PosCurve.GetDerivative(time), SizeCurve.GetDerivative(time), RotCurve.GetDerivative(time), false).Transform(offset);
+            return new Transform2(PosCurve.GetDerivative(time), SizeCurve.GetDerivative(time), RotCurve.GetDerivative(time), false).Transform(Offset);
         }
 
         public void AddKeyframe(float time, Transform2 keyframe)

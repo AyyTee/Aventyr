@@ -19,6 +19,8 @@ namespace Game
             animated.Add(portalable, curve);
             portalable.enterPortal += (portal, transformPrev, velocityPrev) => {
                 //Portal.GetPortalMatrix
+                Transform2 t = animated[portalable].Offset.Transform(Portal.GetPortalTransform(portal));
+                animated[portalable].Offset = t;
             };
         }
 

@@ -73,7 +73,7 @@ namespace EditorLogic
 
                     if (cast.AnimatedTransform != null)
                     {
-                        animation.animated.Add(clone, cast.AnimatedTransform);
+                        animation.Add(clone, cast.AnimatedTransform);
                         clone.SetTransform(cast.AnimatedTransform.GetTransform(0));
                     }
                     else

@@ -150,6 +150,13 @@ namespace Game
             return v[1] - v[0];
         }
 
+        /// <summary>
+        /// Returns transform that is this transformed with another Transform2.
+        /// </summary>
+        /// <remarks>The method has the following property:
+        /// Transform(transform).GetMatrix();
+        /// approximately equals 
+        /// GetMatrix() * transform.GetMatrix();</remarks>
         public Transform2 Transform(Transform2 transform)
         {
             Transform2 output = ShallowClone();
@@ -169,8 +176,10 @@ namespace Game
         /// Returns an inverted Transform2 instance.
         /// </summary>
         /// <returns></returns>
-        /// <remarks>The inversion has the following property:
-        /// Inverted().GetMatrix() equals GetMatrix().Inverted() when ignoring rounding errors.</remarks>
+        /// <remarks>The method has the following property:
+        /// Inverted().GetMatrix();
+        /// approximately equals 
+        /// GetMatrix().Inverted();</remarks>
         public Transform2 Inverted()
         {
             Transform2 invert = new Transform2();
@@ -214,6 +223,11 @@ namespace Game
             return output;
         }
 
+        /// <summary>
+        /// Returns a transform that is componentwise multiplication of this with a scalar value.
+        /// </summary>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
         public Transform2 Multiply(float scalar)
         {
             Transform2 output = ShallowClone();
