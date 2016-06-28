@@ -59,7 +59,7 @@ namespace Game
 
             if (!PolygonExt.IsInterior(fixtureContour))
             {
-                edge.Reverse();
+                edge = edge.Reverse();
             }
 
             foreach (Fixture f in actor.Body.FixtureList)

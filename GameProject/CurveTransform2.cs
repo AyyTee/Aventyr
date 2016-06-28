@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class CurveTransform2
+    public class CurveTransform2 : IShallowClone<CurveTransform2>
     {
         [DataMember]
         public Curve2 PosCurve = new Curve2();
@@ -20,7 +20,9 @@ namespace Game
         [DataMember]
         public bool MirrorX;
         [DataMember]
-        public Transform2 Offset = new Transform2();
+        public Transform2 TransformOffset = new Transform2();
+        [DataMember]
+        public Transform2 VelocityOffset = Transform2.CreateVelocity();
 
         public CurveTransform2()
         {
@@ -28,12 +30,31 @@ namespace Game
 
         public Transform2 GetTransform(float time)
         {
-            return new Transform2(PosCurve.GetValue(time), SizeCurve.GetValue(time), RotCurve.GetValue(time), MirrorX).Transform(Offset);
+            return new Transform2(
+                PosCurve.GetValue(time), 
+                SizeCurve.GetValue(time), 
+                RotCurve.GetValue(time), 
+                MirrorX).Transform(TransformOffset);
         }
 
         public Transform2 GetVelocity(float time)
         {
-            return new Transform2(PosCurve.GetDerivative(time), SizeCurve.GetDerivative(time), RotCurve.GetDerivative(time), false).Transform(Offset);
+            Transform2 offset = TransformOffset.ShallowClone();
+            offset.Position = Vector2.Zero;
+            Transform2 velocity = new Transform2(
+                PosCurve.GetDerivative(time), 
+                SizeCurve.GetDerivative(time), 
+                RotCurve.GetDerivative(time), 
+                false);
+            Transform2 velocityTransformed = velocity.Transform(offset);
+            //velocityTransformed.Rotation = velocity.Rotation;
+            return velocityTransformed;
+        }
+
+        public void EnterPortal(IPortal enter, IPortal exit)
+        {
+            TransformOffset = TransformOffset.Transform(Portal.GetPortalTransform(enter, exit));
+            //TransformVelocity = 
         }
 
         public void AddKeyframe(float time, Transform2 keyframe)
@@ -41,6 +62,18 @@ namespace Game
             PosCurve.AddKeyframe(new Keyframe2(time, keyframe.Position));
             RotCurve.AddKeyframe(new Keyframe(time, keyframe.Rotation));
             SizeCurve.AddKeyframe(new Keyframe(time, keyframe.Size));
+        }
+
+        public CurveTransform2 ShallowClone()
+        {
+            CurveTransform2 clone = new CurveTransform2();
+            clone.PosCurve = PosCurve.ShallowClone();
+            clone.RotCurve = RotCurve.ShallowClone();
+            clone.SizeCurve = SizeCurve.ShallowClone();
+            clone.MirrorX = MirrorX;
+            clone.TransformOffset = TransformOffset.ShallowClone();
+            clone.VelocityOffset = VelocityOffset.ShallowClone();
+            return clone;
         }
     }
 }

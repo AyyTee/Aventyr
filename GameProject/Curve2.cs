@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract]
-    public class Curve2
+    public class Curve2 : IShallowClone<Curve2>
     {
         [DataMember]
         Curve X;
@@ -68,6 +68,14 @@ namespace Game
             result.X = X.GetDerivative(time);
             result.Y = Y.GetDerivative(time);
             return result;
+        }
+
+        public Curve2 ShallowClone()
+        {
+            Curve2 clone = new Curve2();
+            clone.X = X.ShallowClone();
+            clone.Y = Y.ShallowClone();
+            return clone;
         }
 
         /*public SortedList<float, Keyframe2> GetKeyframes()

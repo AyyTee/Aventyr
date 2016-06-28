@@ -10,8 +10,9 @@ using System.Threading.Tasks;
 namespace Game
 {
     [DataContract, DebuggerDisplay("FloatPortal {Name}")]
-    public class FloatPortal : SceneNode, IPortal, ITransformable2
+    public class FloatPortal : SceneNode, IPortal, IPortalable
     {
+        public bool IsPortalable { get { return false; } }
         [DataMember]
         public IPortal Linked { get; set; }
         /// <summary>
@@ -24,7 +25,11 @@ namespace Game
         public bool IsMirrored { get { return GetTransform().MirrorX; } }
         [DataMember]
         Transform2 _transform = new Transform2();
+        [DataMember]
+        Transform2 _velocity = Transform2.CreateVelocity();
         public override bool IgnoreScale { get { return true; } }
+
+        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set;}
 
         public const float EdgeMargin = 0.02f;
         public const float CollisionMargin = 0.1f;
@@ -63,7 +68,7 @@ namespace Game
 
         public override Transform2 GetVelocity()
         {
-            return Transform2.CreateVelocity();
+            return _velocity.ShallowClone();
         }
 
         public override Transform2 GetTransform()
@@ -74,6 +79,11 @@ namespace Game
         public void SetTransform(Transform2 transform)
         {
             _transform = transform.ShallowClone();
+        }
+
+        public void SetVelocity(Transform2 velocity)
+        {
+            _velocity = velocity.ShallowClone();
         }
     }
 }

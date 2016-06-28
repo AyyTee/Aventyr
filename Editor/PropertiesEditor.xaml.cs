@@ -71,20 +71,22 @@ namespace EditorWindow
 
         public void SetSelected(EditorObject selected)
         {
-            _selected = selected;
-            if (_selected == null)
+            if (selected != _selected)
             {
-                IsEnabled = false;
-                Type.Content = "";
-                ObjectName.Text = "";
+                _selected = selected;
+                if (_selected == null)
+                {
+                    IsEnabled = false;
+                    Type.Content = "";
+                    ObjectName.Text = "";
+                }
+                else
+                {
+                    Type.Content = selected.GetType().ToString();
+                    ObjectName.Text = selected.Name;
+                    IsEnabled = true;
+                }
             }
-            else
-            {
-                Type.Content = selected.GetType().ToString();
-                ObjectName.Text = selected.Name;
-                IsEnabled = true;
-            }
-            
         }
 
         private void ObjectName_LostFocus(object sender, RoutedEventArgs e)

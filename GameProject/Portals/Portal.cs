@@ -61,7 +61,7 @@ namespace Game
             Transform2 velocity = portalable.GetVelocity();
             portalable.SetTransform(Enter(portal, transform));
             portalable.SetVelocity(EnterVelocity(portal, velocity, ignorePortalVelocity));
-            portalable.enterPortal?.Invoke(portal, transform, velocity);
+            portalable.EnterPortal?.Invoke(portal, transform, velocity);
         }
 
         public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)

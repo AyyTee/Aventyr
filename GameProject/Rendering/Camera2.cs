@@ -12,6 +12,7 @@ namespace Game
     [DataContract]
     public class Camera2 : SceneNode, ICamera2, IPortalable
     {
+        public bool IsPortalable { get; set; }
         [DataMember]
         Transform2 _transform = new Transform2();
         [DataMember]
@@ -34,7 +35,7 @@ namespace Game
         public float ZFar { get { return 10000f; } }
         public double Fov { get { return Math.PI / 4; } }
         [DataMember]
-        public Action<IPortal, Transform2, Transform2> enterPortal { get; set; }
+        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
 
         #region Constructors
         public Camera2(Scene scene)
@@ -50,6 +51,7 @@ namespace Game
         public Camera2(Scene scene, Transform2 transform, float aspectRatio)
             : base(scene)
         {
+            IsPortalable = true;
             SetTransform(transform);
             Aspect = aspectRatio;
             ViewOffset = new Vector2();

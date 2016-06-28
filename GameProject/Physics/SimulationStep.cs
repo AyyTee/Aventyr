@@ -10,6 +10,60 @@ namespace Game
 {
     public static class SimulationStep
     {
+        private class PointMovement
+        {
+            public Line StartEnd;
+            public IPortalable Instance;
+            public PointMovement(IPortalable instance, Line startEnd)
+            {
+                Instance = instance;
+                StartEnd = startEnd;
+            }
+        }
+
+        private class LineMovement
+        {
+            public Line Start;
+            public Line End;
+            public IPortal Portal;
+            public LineMovement(IPortal portal, Line start, Line end)
+            {
+                Portal = portal;
+                Start = start;
+                End = end;
+            }
+        }
+
+        public static void Step(IEnumerable<IPortalable> moving, IEnumerable<IPortal> portals, float stepSize)
+        {
+            List<PointMovement> points = new List<PointMovement>();
+            List<LineMovement> lines = new List<LineMovement>();
+
+            foreach (IPortal p in portals)
+            {
+                lines.Add(new LineMovement(p, new Line(Portal.GetWorldVerts(p)), new Line()));
+            }
+            foreach (IPortalable p in moving)
+            {
+                Line startEnd = new Line(
+                    p.GetTransform().Position,
+                    p.GetTransform().Position + p.GetVelocity().Position);
+                points.Add(new PointMovement(p, startEnd));
+            }
+            foreach (LineMovement line in lines)
+            {
+                line.End = new Line(Portal.GetWorldVerts(line.Portal));
+            }
+
+            foreach (PointMovement p in points)
+            {
+                if (p.Instance.IsPortalable)
+                {
+
+                }
+            }
+        }
+
         public static void Step(IList<ProxyPortal> portals, IList<ProxyPortalable> portalables, int iterations, float stepSize)
         {
             Debug.Assert(iterations > 0);
@@ -28,6 +82,7 @@ namespace Game
                     SceneExt.RayCast(portalable, portals, (IPortal portal) =>
                     {
                         portalable.TrueVelocity = Portal.EnterVelocity(portal, portalable.TrueVelocity);
+                        portalable.Portalable.EnterPortal?.Invoke(portal, null, null);
                     },
                     iterationLength);
                 }

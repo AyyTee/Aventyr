@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
-using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {

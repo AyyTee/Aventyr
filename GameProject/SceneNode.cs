@@ -154,7 +154,7 @@ namespace Game
             return new Transform2();
         }
 
-        public virtual Transform2 GetWorldTransform()
+        public Transform2 GetWorldTransform()
         {
             Transform2 local = GetTransform();
             if (local == null || Parent == null)
@@ -162,11 +162,19 @@ namespace Game
                 return local;
             }
 
-            Transform2 t = local.Transform(Parent.GetWorldTransform());
+            Transform2 parent = Parent.GetWorldTransform();
+            Transform2 t = local.Transform(parent);
             if (IgnoreScale)
             {
                 t.SetScale(local.Scale);
             }
+            IPortalable cast = this as IPortalable;
+            if (cast != null)
+            {
+                SceneExt.RayCast(cast, Scene.GetPortalList(), 1, true);
+            }
+            
+            parent.Position
             return t;
         }
 
@@ -175,11 +183,13 @@ namespace Game
             return Transform2.CreateVelocity();
         }
 
-        public virtual Transform2 GetWorldVelocity()
+        public Transform2 GetWorldVelocity()
         {
             if (Parent != null)
             {
-                return GetVelocity().Transform(Parent.GetWorldVelocity());
+                //Currently velocities are always in world space rather than the coordinate 
+                //space of the parent.  This might need to be changed.
+                return GetVelocity().Add(Parent.GetWorldVelocity());
             }
             return GetVelocity();
         }

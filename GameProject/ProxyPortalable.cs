@@ -15,7 +15,8 @@ namespace Game
         public Transform2 TrueVelocity = new Transform2();
         public Transform2 Transform = new Transform2();
         public Transform2 Velocity = new Transform2();
-        public Action<IPortal, Transform2, Transform2> enterPortal { get; set; }
+        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
+        public bool IsPortalable { get { return Portalable.IsPortalable; } }
 
         public ProxyPortalable(IPortalable portalable)
             : this(portalable, portalable.GetTransform(), portalable.GetVelocity())

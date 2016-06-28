@@ -60,6 +60,16 @@ namespace EditorLogic
                         portal.Name = cast.Name;
                         portal.SetTransform(cast.GetTransform());
                         dictionary.Add(cast, portal);
+
+                        if (cast.AnimatedTransform != null)
+                        {
+                            animation.Add(portal, cast.AnimatedTransform);
+                            portal.SetTransform(cast.AnimatedTransform.GetTransform(0));
+                        }
+                        else
+                        {
+                            portal.SetTransform(cast.GetTransform());
+                        }
                     }
                 }
                 else if (e is EditorEntity)
@@ -103,7 +113,7 @@ namespace EditorLogic
                     else if (e is EditorActor)
                     {
                         actor.Body.IsStatic = false;
-                        actor.SetVelocity(new Transform2(new Vector2(0.2f, 0)));
+                        //actor.SetVelocity(new Transform2(new Vector2(0.2f, 0)));
                         EditorActor castActor = (EditorActor)e;
                         //actor.Vertices = castActor.Vertices;
                         entity.AddModel(castActor.GetActorModel(castActor));
@@ -113,6 +123,17 @@ namespace EditorLogic
                     else
                     {
                         Debug.Assert(false);
+                    }
+
+                    if (cast.AnimatedTransform != null)
+                    {
+                        animation.Add(actor, cast.AnimatedTransform);
+                        actor.SetTransform(cast.AnimatedTransform.GetTransform(0));
+                        actor.Body.IsKinematic = true;
+                    }
+                    else
+                    {
+                        actor.SetTransform(cast.GetTransform());
                     }
                 }
                 else

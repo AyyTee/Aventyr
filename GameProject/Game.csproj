@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimationDriver.cs" />
+    <Compile Include="Common\GeometryUtil.cs" />
     <Compile Include="Curve.cs" />
     <Compile Include="Curve2.cs" />
     <Compile Include="CurveTransform2.cs" />

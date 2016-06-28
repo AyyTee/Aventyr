@@ -602,5 +602,48 @@ namespace UnitTest
             Assert.IsTrue(Math.Abs(distance - Math.Sqrt(0.5)) <= ErrorMargin);
         }
         #endregion
+        #region MovingPointLineIntersect tests
+        [TestMethod]
+        public void MovingPointLineIntersectTest0()
+        {
+            Line point = new Line(Vector2.Zero, Vector2.Zero);
+            Line lineStart = new Line(new Vector2(-1, -1), new Vector2(1, -1));
+            Line lineEnd = new Line(new Vector2(-1, 1), new Vector2(1, 1));
+            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            Assert.IsTrue(result.Count == 1);
+            Assert.AreEqual(result[0].AcrossProportion, 0.5, 0.000001);
+            Assert.AreEqual(result[0].TimeProportion, 0.5, 0.000001);
+        }
+
+        [TestMethod]
+        public void MovingPointLineIntersectTest1()
+        {
+            Line point = new Line(Vector2.Zero, new Vector2(3, 0));
+            Line lineStart = new Line(new Vector2(-1, -1), new Vector2(1, -1));
+            Line lineEnd = new Line(new Vector2(-1, 1), new Vector2(1, 1));
+            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            Assert.IsTrue(result.Count == 0);
+        }
+
+        [TestMethod]
+        public void MovingPointLineIntersectTest2()
+        {
+            Line point = new Line(Vector2.Zero, new Vector2(-3, 0));
+            Line lineStart = new Line(new Vector2(-1, -1), new Vector2(1, -1));
+            Line lineEnd = new Line(new Vector2(-1, 1), new Vector2(1, 1));
+            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            Assert.IsTrue(result.Count == 0);
+        }
+
+        [TestMethod]
+        public void MovingPointLineIntersectTest3()
+        {
+            Line point = new Line(Vector2.Zero, new Vector2(0, 1.5f));
+            Line lineStart = new Line(new Vector2(-1, -1), new Vector2(1, -1));
+            Line lineEnd = new Line(new Vector2(-1, 1), new Vector2(1, 1));
+            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            Assert.IsTrue(result.Count == 0);
+        }
+        #endregion
     }
 }

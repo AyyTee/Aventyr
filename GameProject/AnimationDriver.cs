@@ -16,11 +16,9 @@ namespace Game
 
         public void Add(IPortalable portalable, CurveTransform2 curve)
         {
-            animated.Add(portalable, curve);
-            portalable.enterPortal += (portal, transformPrev, velocityPrev) => {
-                //Portal.GetPortalMatrix
-                Transform2 t = animated[portalable].Offset.Transform(Portal.GetPortalTransform(portal));
-                animated[portalable].Offset = t;
+            animated.Add(portalable, curve.ShallowClone());
+            portalable.EnterPortal += (portal, transformPrev, velocityPrev) => {
+                animated[portalable].EnterPortal(portal, portal.Linked);
             };
         }
 
@@ -30,6 +28,8 @@ namespace Game
             {
                 Transform2 velocity = animated[p].GetVelocity((float)(scene.Time));
                 p.SetVelocity(velocity);
+                Transform2 t = animated[p].GetTransform((float)(scene.Time));
+                p.SetTransform(t);
             }
         }
 

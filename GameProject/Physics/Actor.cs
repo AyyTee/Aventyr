@@ -16,6 +16,8 @@ namespace Game
     [DataContract, DebuggerDisplay("Actor {Name}")]
     public class Actor : SceneNode, IActor
     {
+        [DataMember]
+        public bool IsPortalable { get; set; }
         /// <summary>
         /// Physics rigid body associated with this Actor.
         /// </summary>
@@ -27,7 +29,7 @@ namespace Game
         /// <summary>Copy of local coordinates for collision mask.</summary>
         public IList<Vector2> Vertices { get { return _vertices.ToList(); } }
         [DataMember]
-        public Action<IPortal, Transform2, Transform2> enterPortal { get; set; }
+        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
 
         public Actor(Scene scene, IList<Vector2> vertices)
             : this(scene, vertices, new Transform2())
@@ -37,6 +39,7 @@ namespace Game
         public Actor(Scene scene, IList<Vector2> vertices, Transform2 transform)
             : base(scene)
         {
+            IsPortalable = true;
             _vertices = vertices.ToArray();
             _scale = transform.Scale;
             Body = ActorFactory.CreatePolygon(Scene.World, transform, Vertices);

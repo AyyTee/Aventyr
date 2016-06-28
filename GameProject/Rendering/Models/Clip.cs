@@ -130,7 +130,7 @@ namespace Game
                 }
                 else
                 {
-                    clipLine.Reverse();
+                    clipLine = clipLine.Reverse();
                     normal *= -Portal.EnterMinDistance;
                 }
 
@@ -213,7 +213,7 @@ namespace Game
                 }
                 else
                 {
-                    clipLine.Reverse();
+                    clipLine = clipLine.Reverse();
                     normal *= -Portal.EnterMinDistance;
                 }
 

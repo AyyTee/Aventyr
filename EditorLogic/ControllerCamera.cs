@@ -19,6 +19,7 @@ namespace EditorLogic
         /// <summary>Event is fired if the camera Transform is modified by this controller.</summary>
         public event CameraObjectHandler CameraMoved;
 
+        public bool IsPortalable { get; set; }
         public ControllerEditor Controller { get; set; }
         public InputExt InputExt { get; set; }
         [DataMember]
@@ -37,7 +38,7 @@ namespace EditorLogic
         [DataMember]
         private float _zoomScrollFactor;
         [DataMember]
-        public Action<IPortal, Transform2, Transform2> enterPortal { get; set; }
+        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
         /// <summary>How much the camera zooms in/out with mouse scrolling. Value must be greater than 1.</summary>
         public float ZoomScrollFactor 
         { 
@@ -68,6 +69,7 @@ namespace EditorLogic
 
         public ControllerCamera(ControllerEditor controller, InputExt inputExt, IScene scene)
         {
+            IsPortalable = true;
             Scene = scene;
             Controller = controller;
             _transform.Size = 1;

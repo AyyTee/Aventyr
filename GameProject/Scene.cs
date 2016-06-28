@@ -85,30 +85,8 @@ namespace Game
                     s.Velocity = s.Portalable.GetTransform().Minus(s.Transform).Multiply(1 / stepSize);
                 }
 
+                //SimulationStep.Step(GetAll().OfType<IPortalable>(), GetAll().OfType<IPortal>(), stepSize);
                 SimulationStep.Step(portalPrevList, portalablePrevList, 10, stepSize);
-
-                /*foreach (SceneNode s in SceneNodeList)
-                {
-                    //Skip Actors, they handle movement using rigid body physics.
-                    if (s is IActor)
-                    {
-                        continue;
-                    }
-                    if (s is IPortalable)
-                    {
-                        IPortalable portalable = (IPortalable)s;
-                        //Parented SceneNodes can't perform portal teleportation directly.
-                        if (s.Parent == s.Scene.Root)
-                        {
-                            //SceneExt.RayCast(portalable, GetPortalList(), stepSize);
-                            SceneExt.RayCast(portalable, portalPrevList.OfType<IPortal>(), stepSize);
-                        }
-                        else
-                        {
-                            portalable.SetTransform(portalable.GetTransform().Add(portalable.GetVelocity().Multiply(stepSize)));
-                        }
-                    }
-                }*/
             }
 
             foreach (IStep s in GetAll().OfType<IStep>())

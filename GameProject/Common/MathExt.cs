@@ -572,6 +572,13 @@ namespace Game
             }
             return new IntersectCoord[0];
         }
+        public static List<GeometryUtil.Sweep> MovingPointLineIntersect(Line point, Line lineStart, Line lineEnd)
+        {
+            return GeometryUtil.WhenLineSweepsPoint(
+                lineStart, 
+                lineEnd.Translate(-point[1]), 
+                point[0]).ToList();
+        }
         #endregion
         #region Homography
         public static Matrix4d GetHomography(Vector2[] src, Vector2[] dest)

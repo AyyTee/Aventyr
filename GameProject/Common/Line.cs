@@ -11,9 +11,9 @@ namespace Game
     [DebuggerDisplay("Line {this[0]}, {this[1]}")]
     public class Line : IShallowClone<Line>
     {
-        public float Length { get { return (this[1] - this[0]).Length; } }
+        public float Length { get { return Delta.Length; } }
         Vector2[] _vertices = new Vector2[2];
-        public Vector2 Center { get { return (this[0] + this[1]) / 2; } }
+        public Vector2 Delta { get { return this[1] - this[0]; } }
         public Vector2 this[int index]
         {
             get { return _vertices[index]; }
@@ -194,11 +194,9 @@ namespace Game
         /// <summary>
         /// Swaps the start and end vertice for the line.
         /// </summary>
-        public void Reverse()
+        public Line Reverse()
         {
-            Vector2 temp = _vertices[0];
-            _vertices[0] = _vertices[1];
-            _vertices[1] = temp;
+            return new Line(this[1], this[0]);
         }
 
         public Line Transform(Matrix4 transformMatrix)

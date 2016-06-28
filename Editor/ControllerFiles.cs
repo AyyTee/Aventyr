@@ -61,6 +61,7 @@ namespace EditorWindow
                 Debug.Assert(filepath != "");
                 RecentFiles.AddFilepath(filepath);
                 ControllerWPF.Status.Content = "Saved";
+                FilepathCurrent = filepath;
             });
         }
 
@@ -74,6 +75,7 @@ namespace EditorWindow
                 RecentFiles.AddFilepath(filepath);
                 Loading = false;
                 ControllerWPF.Status.Content = "Loaded";
+                FilepathCurrent = filepath;
             });
         }
 
@@ -170,7 +172,6 @@ namespace EditorWindow
         {
             if (IsUnlocked())
             {
-                FilepathCurrent = filepath;
                 Loading = true;
                 ControllerEditor.AddAction(() =>
                 {

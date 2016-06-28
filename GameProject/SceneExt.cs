@@ -18,12 +18,13 @@ namespace Game
         /// <param name="ignorePortalVelocity">Don't add a portals world velocity when entering it.</param>
         /// <param name="timeScale">Scaling factor for velocity.</param>
         /// <param name="maxIterations">The raycast will stop after this number of portal teleportations.</param>
-        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, float timeScale = 1, bool ignorePortalVelocity = false, int maxIterations = 50)
+        /// <param name="adjustEndpoint">The end position of the portalable instance will be adjusted to not be too near to any portal.</param>
+        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, float timeScale = 1, bool ignorePortalVelocity = false, int maxIterations = 50, bool adjustEndpoint = true)
         {
-            RayCast(portalable, portals, null, 1, ignorePortalVelocity, maxIterations);
+            RayCast(portalable, portals, null, 1, ignorePortalVelocity, maxIterations, adjustEndpoint);
         }
 
-        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, Action<IPortal> portalEnter, float timeScale = 1, bool ignorePortalVelocity = false, int maxIterations = 50)
+        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, Action<IPortal> portalEnter, float timeScale = 1, bool ignorePortalVelocity = false, int maxIterations = 50, bool adjustEndpoint = true)
         {
             Debug.Assert(maxIterations >= 0);
             Debug.Assert(portalable != null);
@@ -33,10 +34,15 @@ namespace Game
             {
                 return;
             }
-            _rayCast(portalable, portals, portalable.GetVelocity().Position.Length * timeScale, null, 50, timeScale, portalEnter, ignorePortalVelocity);
+            _rayCast(portalable, portals, portalable.GetVelocity().Position.Length * timeScale, null, 50, timeScale, portalEnter, ignorePortalVelocity, adjustEndpoint);
         }
 
-        private static void _rayCast(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, int depthMax, float timeScale, Action<IPortal> portalEnter, bool ignorePortalVelocity)
+        public static void RayCast(Transform2 transform, Transform2 velocity, bool ignorePortalVelocity = false, int maxIterations = 50)
+        {
+
+        }
+
+        private static void _rayCast(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, int depthMax, float timeScale, Action<IPortal> portalEnter, bool ignorePortalVelocity, bool adjustEndpoint)
         {
             if (depthMax <= 0)
             {
@@ -76,45 +82,53 @@ namespace Game
                 placeable.SetTransform(begin);
                 Portal.Enter(portalNearest, placeable, ignorePortalVelocity);
                 portalEnter?.Invoke(portalNearest);
-                _rayCast(placeable, portals, movementLeft, portalNearest.Linked, depthMax - 1, timeScale, portalEnter, ignorePortalVelocity);
+                _rayCast(placeable, portals, movementLeft, portalNearest.Linked, depthMax - 1, timeScale, portalEnter, ignorePortalVelocity, adjustEndpoint);
             }
             else
             {
                 begin.Position += velocity.Position.Normalized() * (float)movementLeft;
-                /*After the end position of the ray has been determined, adjust it's position so that it isn't too close to any portal.  
-                Otherwise there is a risk of ambiguity as to which side of a portal the end point is on.*/
-                foreach (IPortal p in portals)
+                if (adjustEndpoint)
                 {
-                    if (!Portal.IsValid(p))
-                    {
-                        continue;
-                    }
-                    Line exitLine = new Line(Portal.GetWorldVerts(p));
-                    Vector2 position = begin.Position;
-                    double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
-                    if (distanceToPortal < Portal.EnterMinDistance)
-                    {
-                        Vector2 exitNormal = p.GetWorldTransform().GetRight();
-                        Side sideOf;
-                        if (p == portalPrevious)
-                        {
-                            sideOf = exitLine.GetSideOf(position + velocity.Position);
-                        }
-                        else
-                        {
-                            sideOf = exitLine.GetSideOf(position - velocity.Position);
-                        }
-                        if (sideOf != exitLine.GetSideOf(exitNormal + p.GetWorldTransform().Position))
-                        {
-                            exitNormal = -exitNormal;
-                        }
-
-                        Vector2 pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
-                        begin.Position += pos;
-                        break;
-                    }
+                    /*After the end position of the ray has been determined, adjust it's position so that it isn't too close to any portal.  
+                    Otherwise there is a risk of ambiguity as to which side of a portal the end point is on.*/
+                    _adjustPosition(portals, portalPrevious, begin, velocity);
                 }
                 placeable.SetTransform(begin);
+            }
+        }
+
+        private static void _adjustPosition(IEnumerable<IPortal> portals, IPortal portalPrevious, Transform2 begin, Transform2 velocity)
+        {
+            foreach (IPortal p in portals)
+            {
+                if (!Portal.IsValid(p))
+                {
+                    continue;
+                }
+                Line exitLine = new Line(Portal.GetWorldVerts(p));
+                Vector2 position = begin.Position;
+                double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
+                if (distanceToPortal < Portal.EnterMinDistance)
+                {
+                    Vector2 exitNormal = p.GetWorldTransform().GetRight();
+                    Side sideOf;
+                    if (p == portalPrevious)
+                    {
+                        sideOf = exitLine.GetSideOf(position + velocity.Position);
+                    }
+                    else
+                    {
+                        sideOf = exitLine.GetSideOf(position - velocity.Position);
+                    }
+                    if (sideOf != exitLine.GetSideOf(exitNormal + p.GetWorldTransform().Position))
+                    {
+                        exitNormal = -exitNormal;
+                    }
+
+                    Vector2 pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
+                    begin.Position += pos;
+                    break;
+                }
             }
         }
     }
