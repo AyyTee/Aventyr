@@ -12,39 +12,26 @@ using System.Threading.Tasks;
 
 namespace EditorLogic
 {
-    [Affine]
     public class ControllerEditor : Controller
     {
-        [AffineMember]
         public Scene Hud, ActiveLevel;
-        [AffineMember]
         public EditorScene Level, Clipboard;
-        [AffineMember]
         public ControllerCamera CamControl { get; private set; }
-        [AffineMember]
         Tool _activeTool;
         public Tool ActiveTool { get { return _activeTool; } }
-        [AffineMember]
         public float physicsStepSize { get; set; }
-        [AffineMember]
         Tool _toolDefault;
-        [AffineMember]
         Tool _nextTool;
         Queue<Action> Actions = new Queue<Action>();
         public Selection selection { get; private set; }
-        [AffineMember]
         public StateList StateList { get; private set; }
-        [AffineMember]
         public float CanvasAspect { get { return CanvasSize.Width / (float)CanvasSize.Height; } }
         /// <summary>
         /// Lock used to prevent race conditions when adding and reading from the action queue.
         /// </summary>
         object _lockAction = new object();
-        [AffineMember]
         public bool IsPaused { get; private set; }
-        [AffineMember]
         public bool IsStopped { get { return ActiveLevel == null; } }
-        [AffineMember]
         int _stepsPending = 0;
 
         public delegate void UpdateHandler(ControllerEditor controller);

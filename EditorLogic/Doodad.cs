@@ -4,11 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PostSharp.Patterns.Threading;
 
 namespace EditorLogic
 {
-    [AffineMember]
     public class Doodad : IRenderable, ITransformable2
     {
         public bool DrawOverPortals { get { return false; } }

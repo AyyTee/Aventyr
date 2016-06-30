@@ -96,12 +96,12 @@ namespace Game
         {
         }
 
-        public Transform2(Vector2 position, float scale, float rotation, bool isMirrored)
+        public Transform2(Vector2 position, float scale, float rotation, bool mirrorX)
         {
             Position = position;
             Size = scale;
             Rotation = rotation;
-            MirrorX = isMirrored;
+            MirrorX = mirrorX;
         }
         #endregion
 

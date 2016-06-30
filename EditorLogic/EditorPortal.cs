@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EditorLogic
 {
-    [DataContract, AffineMember]
+    [DataContract]
     public sealed class EditorPortal : EditorObject, IPortal
     {
         [DataMember]

@@ -168,13 +168,15 @@ namespace Game
             {
                 t.SetScale(local.Scale);
             }
-            IPortalable cast = this as IPortalable;
-            if (cast != null)
-            {
-                SceneExt.RayCast(cast, Scene.GetPortalList(), 1, true);
-            }
-            
-            parent.Position
+
+            Ray.Settings settings = new Ray.Settings();
+            settings.IgnorePortalVelocity = true;
+            IPortalable portalable = new Portalable(parent, Transform2.CreateVelocity(t.Position - parent.Position));
+            List<IPortal> portals = Scene.GetPortalList();
+            portals.Remove(this as IPortal);
+            Ray.RayCast(portalable, portals, settings);
+            t = portalable.GetTransform();
+
             return t;
         }
 

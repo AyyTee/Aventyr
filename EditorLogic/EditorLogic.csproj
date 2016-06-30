@@ -48,14 +48,6 @@
       <HintPath>..\packages\Poly2Tri.dll.1.0.4\lib\Net35\Poly2Tri.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PostSharp, Version=4.2.27.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.4.2.27\lib\net35-client\PostSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="PostSharp.Patterns.Common, Version=4.2.27.0, Culture=neutral, PublicKeyToken=e7f631e6ce13f078, processorArchitecture=MSIL">
-      <HintPath>..\packages\PostSharp.Patterns.Common.4.2.27\lib\net45\PostSharp.Patterns.Common.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -88,7 +80,6 @@
     <Compile Include="EditorScene.cs" />
     <Compile Include="EditorWall.cs" />
     <Compile Include="GLLoop.cs" />
-    <Compile Include="GlobalAspects.cs" />
     <Compile Include="LevelExport.cs" />
     <Compile Include="MementoDrag.cs" />
     <Compile Include="MementoSelection.cs" />
@@ -100,7 +91,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="SimpleMovement.cs" />
     <Compile Include="StateList.cs" />
-    <Compile Include="Affine.cs" />
     <Compile Include="Tools\Tool.cs" />
     <Compile Include="Tools\ToolAddActor.cs" />
     <Compile Include="Tools\ToolAddEntity.cs" />

@@ -34,7 +34,7 @@ namespace Game
             }
         }
 
-        public static void Step(IEnumerable<IPortalable> moving, IEnumerable<IPortal> portals, float stepSize)
+        /*public static void Step(IEnumerable<IPortalable> moving, IEnumerable<IPortal> portals, float stepSize)
         {
             List<PointMovement> points = new List<PointMovement>();
             List<LineMovement> lines = new List<LineMovement>();
@@ -62,7 +62,7 @@ namespace Game
 
                 }
             }
-        }
+        }*/
 
         public static void Step(IList<ProxyPortal> portals, IList<ProxyPortalable> portalables, int iterations, float stepSize)
         {
@@ -79,12 +79,13 @@ namespace Game
                     //due to their velocity being less than Portal.EnterMinDistance.
                     portalable.Transform.Rotation += portalable.Velocity.Rotation * iterationLength;
                     portalable.Transform.Size += portalable.Velocity.Size * iterationLength;
-                    SceneExt.RayCast(portalable, portals, (IPortal portal) =>
+                    Ray.Settings settings = new Ray.Settings();
+                    settings.TimeScale = iterationLength;
+                    Ray.RayCast(portalable, portals, settings, (IPortal portal) =>
                     {
                         portalable.TrueVelocity = Portal.EnterVelocity(portal, portalable.TrueVelocity);
                         portalable.Portalable.EnterPortal?.Invoke(portal, null, null);
-                    },
-                    iterationLength);
+                    });
                 }
                 foreach (ProxyPortal p in portals)
                 {

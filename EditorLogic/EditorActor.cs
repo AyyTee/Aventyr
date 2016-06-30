@@ -11,7 +11,7 @@ using System.Text;
 
 namespace EditorLogic
 {
-    [DataContract, AffineMember]
+    [DataContract]
     public sealed class EditorActor : EditorObject, IWall
     {
         [DataMember]

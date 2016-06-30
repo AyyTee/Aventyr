@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EditorLogic
 {
-    [DataContract, AffineMember]
+    [DataContract]
     public class EditorObject : ITreeNode<EditorObject>, IPortalable, IDeepClone, IRenderable, ISceneObject
     {
         [DataMember]
@@ -177,18 +177,23 @@ namespace EditorLogic
             return _transform.ShallowClone();
         }
 
-        public virtual Transform2 GetWorldTransform()
+        public Transform2 GetWorldTransform()
         {
-            Transform2 transform;
+            Transform2 local;
             if (PolygonTransform != null)
             {
-                transform = _transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
+                local = _transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
             }
             else
             {
-                transform = GetTransform();
+                local = GetTransform();
             }
-            if (Parent != null)
+
+            if (Parent == null)
+            {
+                return local;
+            }
+            /*if (Parent != null)
             {
                 transform = transform.Transform(Parent.GetWorldTransform());
                 
@@ -196,9 +201,25 @@ namespace EditorLogic
                 {
                     transform.SetScale(GetTransform().Scale);
                 }
+
                 return transform;
             }
-            return transform;
+            return transform;*/
+            Transform2 parent = Parent.GetWorldTransform();
+            Transform2 t = local.Transform(parent);
+            if (IgnoreScale)
+            {
+                t.SetScale(local.Scale);
+            }
+
+            Ray.Settings settings = new Ray.Settings();
+            settings.IgnorePortalVelocity = true;
+            IPortalable portalable = new Portalable(new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
+            List<IPortal> portals = Scene.GetPortalList();
+            portals.Remove(this as IPortal);
+            Ray.RayCast(portalable, portals, settings);
+            t = portalable.GetTransform();
+            return t;
         }
 
         public Transform2 GetVelocity()

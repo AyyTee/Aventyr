@@ -12,13 +12,13 @@ using static Game.InputExt;
 
 namespace EditorLogic
 {
-    [DataContract, AffineMember]
+    [DataContract]
     public class ControllerCamera : ICamera2, IPortalable, IShallowClone<ControllerCamera>, IStep
     {
         public delegate void CameraObjectHandler(ControllerCamera camera);
         /// <summary>Event is fired if the camera Transform is modified by this controller.</summary>
         public event CameraObjectHandler CameraMoved;
-
+        [DataMember]
         public bool IsPortalable { get; set; }
         public ControllerEditor Controller { get; set; }
         public InputExt InputExt { get; set; }
@@ -224,7 +224,9 @@ namespace EditorLogic
         {
             if (Controller.renderer.PortalRenderEnabled)
             {
-                SceneExt.RayCast(this, Scene.GetPortalList(), 1, true);
+                Ray.Settings settings = new Ray.Settings();
+                settings.IgnorePortalVelocity = true;
+                Ray.RayCast(this, Scene.GetPortalList(), settings);
             }
             else
             {

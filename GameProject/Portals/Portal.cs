@@ -20,7 +20,7 @@ namespace Game
 
         public static bool IsValid(IPortal portal)
         {
-            return portal.Linked != null && portal.GetWorldTransform() != null;
+            return portal.Linked != null;
         }
 
         public static Transform2 Enter(IPortal portal, Transform2 transform)

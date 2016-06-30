@@ -187,7 +187,7 @@ namespace Game
 
         public static bool IsNaN(Vector2 v)
         {
-            return Double.IsNaN(v.X) || Double.IsNaN(v.Y);
+            return double.IsNaN(v.X) || double.IsNaN(v.Y);
         }
 
         public static bool IsReal(Vector2 v)
