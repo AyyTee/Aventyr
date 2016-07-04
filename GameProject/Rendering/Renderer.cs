@@ -114,13 +114,14 @@ namespace Game
             ResetScissor();
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit | ClearBufferMask.ColorBufferBit);
 
-            var shaderList = Renderer.Shaders.ToList();
-            for (int i = 0; i < Renderer.Shaders.Count; i++)
+            var shaderList = Shaders.ToList();
+            for (int i = 0; i < Shaders.Count; i++)
             {
                 shaderList[i].Value.EnableVertexAttribArrays();
             }
             SetShader(Shaders["uber"]);
             GL.Enable(EnableCap.DepthTest);
+
             for (int i = 0; i < _layers.Count(); i++)
             {
                 IRenderLayer layer = _layers[i];
@@ -129,12 +130,26 @@ namespace Game
                 GL.Clear(ClearBufferMask.DepthBufferBit);
             }
 
-            for (int i = 0; i < Renderer.Shaders.Count; i++)
+            for (int i = 0; i < Shaders.Count; i++)
             {
                 shaderList[i].Value.DisableVertexAttribArrays();
             }
 
             GL.Flush();
+        }
+
+        private class DrawData
+        {
+            public int Index;
+            public Model Model;
+            public Matrix4 Offset;
+
+            public DrawData(int index, Model model, Matrix4 offset)
+            {
+                Index = index;
+                Model = model;
+                Offset = offset;
+            }
         }
 
         public void DrawPortalAll(IRenderLayer layer)
@@ -173,7 +188,50 @@ namespace Game
                     RenderModel(new Model(mesh), cam.GetViewMatrix(), Matrix4.Identity);
                 }
             }
-            
+
+
+            List<DrawData> drawData = new List<DrawData>();
+            //Get models.
+            {
+                HashSet<Model> models = new HashSet<Model>();
+                List<IRenderable> renderList = layer.GetRenderList();
+                foreach (IRenderable e in renderList)
+                {
+                    if (!e.Visible)
+                    {
+                        continue;
+                    }
+                    List<Clip.ClipModel> clipModels = Clip.GetClipModels(e, layer.GetPortalList(), PortalClipDepth);
+                    foreach (Clip.ClipModel clip in clipModels)
+                    {
+                        if (clip.ClipLines.Length > 0)
+                        {
+                            Model model = clip.Model.DeepClone();
+                            Matrix4 transform = clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform;
+                            for (int i = 0; i < clip.ClipLines.Length; i++)
+                            {
+                                model.Mesh = MathExt.BisectMesh(model.Mesh, clip.ClipLines[i], transform, Side.Right);
+                            }
+                            models.Add(model);
+                            drawData.Add(new DrawData(-1, model, transform));
+                            //RenderModel(model, viewMatrix, transform);
+                        }
+                        else
+                        {
+                            models.Add(clip.Model);
+                            drawData.Add(new DrawData(-1, clip.Model, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform));
+                            //RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform);
+                        }
+                    }
+                }
+                var dictionary = BufferModels(models.ToArray());
+                for (int i = 0; i < drawData.Count; i++)
+                {
+                    DrawData d = drawData[i];
+                    d.Index = dictionary[d.Model];
+                }
+            }
+
             //Draw the scenes within each portal's FOV.
             {
                 GL.ColorMask(true, true, true, true);
@@ -184,7 +242,8 @@ namespace Game
                 {
                     SetScissor(portalViewList[i], cam.GetViewMatrix());
                     GL.StencilFunc(StencilFunction.Equal, i, stencilMask);
-                    DrawLayer(layer, portalViewList[i].ViewMatrix, 0, i > 0);
+                    Draw(drawData.ToArray(), portalViewList[i].ViewMatrix);
+                    //DrawLayer(layer, portalViewList[i].ViewMatrix, 0, i > 0);
                 }
                 ResetScissor();
             }
@@ -289,6 +348,68 @@ namespace Game
             float angleScale = 80f;
             float angleDiff = (float)Math.Abs(MathExt.AngleDiff(line.Angle(), linePrev.Angle()) * angleScale);
             return Math.Min(angleDiff, angleMax);
+        }
+
+        private void Draw(DrawData[] drawData, Matrix4 viewMatrix)
+        {
+            for (int i = 0; i < drawData.Length; i++)
+            {
+                DrawData data = drawData[i];
+                Debug.Assert(data.Model != null);
+                if (!RenderEnabled)
+                {
+                    return;
+                }
+
+                if (_activeShader.GetUniform("UVMatrix") != -1)
+                {
+                    Matrix4 UVMatrix = data.Model.TransformUv.GetMatrix();
+                    GL.UniformMatrix4(_activeShader.GetUniform("UVMatrix"), false, ref UVMatrix);
+                }
+
+                if (data.Model.Texture != null)
+                {
+                    GL.Uniform1(_activeShader.GetUniform("isTextured"), 1);
+                    GL.BindTexture(TextureTarget.Texture2D, data.Model.Texture.GetId());
+                }
+                else
+                {
+                    GL.Uniform1(_activeShader.GetUniform("isTextured"), 0);
+                    GL.BindTexture(TextureTarget.Texture2D, -1);
+                }
+
+                // Buffer index data
+                int[] indices = data.Model.GetIndices();
+                for (int j = 0; j < indices.Length; j++)
+                {
+                    indices[j] += data.Index;
+                }
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, data.Model.GetIbo());
+                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StreamDraw);
+
+                if (data.Model.Wireframe)
+                {
+                    SetEnable(EnableCap.CullFace, false);
+                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+                }
+                if (data.Model.IsTransparent)
+                {
+                    SetEnable(EnableCap.Blend, true);
+                }
+
+                RenderSetTransformMatrix(data.Offset, data.Model, viewMatrix);
+                GL.DrawElements(BeginMode.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+
+                if (data.Model.Wireframe)
+                {
+                    SetEnable(EnableCap.CullFace, true);
+                    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+                }
+                if (data.Model.IsTransparent)
+                {
+                    SetEnable(EnableCap.Blend, false);
+                }
+            }
         }
 
         private void DrawLayer(IRenderLayer layer, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)
@@ -409,34 +530,7 @@ namespace Game
             }
             //coldata = colors.ToArray();
             texcoorddata = texcoords.ToArray();
-
-            Debug.Assert(indicedata.Length % 3 == 0, "Model must have a multiple of 3 vertex indices.");
-            foreach (int a in indicedata)
-            {
-                Debug.Assert(a >= 0 && a < vertdata.Length);
-            }
-            Debug.Assert(coldata.Length == vertdata.Length);
-            Debug.Assert(texcoorddata.Length == vertdata.Length);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vPosition"));
-            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
-            GL.VertexAttribPointer(_activeShader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
-
-            // Buffer vertex color if shader supports it
-            if (_activeShader.GetAttribute("vColor") != -1)
-            {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vColor"));
-                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
-                GL.VertexAttribPointer(_activeShader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
-            }
-
-            // Buffer texture coordinates if shader supports it
-            if (_activeShader.GetAttribute("texcoord") != -1)
-            {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("texcoord"));
-                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
-                GL.VertexAttribPointer(_activeShader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
-            }
-            //GL.BindBuffer(BufferTarget.ArrayBuffer, 0); I don't know why this is here so I've commented it out until something breaks.
+            BufferVertices(vertdata, coldata, texcoorddata);
 
             if (_activeShader.GetUniform("UVMatrix") != -1)
             {
@@ -483,6 +577,52 @@ namespace Game
             {
                 SetEnable(EnableCap.Blend, false);
             }
+        }
+
+        private Dictionary<Model, int> BufferModels(Model[] models)
+        {
+            Dictionary<Model, int> modelBuffer = new Dictionary<Model, int>();
+
+            List<Vector3> vertices = new List<Vector3>();
+            List<Vector3> colors = new List<Vector3>();
+            List<Vector2> texCoords = new List<Vector2>();
+            for (int i = 0; i < models.Length; i++)
+            {
+                modelBuffer.Add(models[i], vertices.Count);
+
+                vertices.AddRange(models[i].GetVerts());
+                colors.AddRange(models[i].GetColorData());
+                texCoords.AddRange(models[i].GetTextureCoords());
+            }
+
+            BufferVertices(vertices.ToArray(), colors.ToArray(), texCoords.ToArray());
+            return modelBuffer;
+        }
+
+        private void BufferVertices(Vector3[] vertdata, Vector3[] coldata, Vector2[] texcoorddata)
+        {
+            Debug.Assert(coldata.Length == vertdata.Length);
+            Debug.Assert(texcoorddata.Length == vertdata.Length);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vPosition"));
+            GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
+            GL.VertexAttribPointer(_activeShader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);
+
+            // Buffer vertex color if shader supports it
+            if (_activeShader.GetAttribute("vColor") != -1)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vColor"));
+                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
+                GL.VertexAttribPointer(_activeShader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
+            }
+
+            // Buffer texture coordinates if shader supports it
+            if (_activeShader.GetAttribute("texcoord") != -1)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("texcoord"));
+                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
+                GL.VertexAttribPointer(_activeShader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
+            }
+            //GL.BindBuffer(BufferTarget.ArrayBuffer, 0); I don't know why this is here so I've commented it out until something breaks.
         }
 
         private void RenderSetTransformMatrix(Matrix4 offset, Model model, Matrix4 viewMatrix)
