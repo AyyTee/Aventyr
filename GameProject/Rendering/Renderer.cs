@@ -32,7 +32,9 @@ namespace Game
         public static Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
         public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
         public static bool IsInitialized { get; private set; }
-        
+
+        private static int IboElements;
+
         public Renderer(Controller controller)
         {
             foreach (EnableCap e in Enum.GetValues(typeof(EnableCap)))
@@ -59,6 +61,9 @@ namespace Game
             IsInitialized = true;
             StencilBits = GL.GetInteger(GetPName.StencilBits);
             Debug.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
+
+            
+            GL.GenBuffers(1, out IboElements);
         }
 
         public static TextureFile GetTexture(string name)
@@ -214,21 +219,22 @@ namespace Game
                             }
                             models.Add(model);
                             drawData.Add(new DrawData(-1, model, transform));
-                            //RenderModel(model, viewMatrix, transform);
                         }
                         else
                         {
                             models.Add(clip.Model);
-                            drawData.Add(new DrawData(-1, clip.Model, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform));
-                            //RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform);
+                            drawData.Add(new DrawData(
+                                -1, 
+                                clip.Model, 
+                                clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform));
                         }
                     }
                 }
-                var dictionary = BufferModels(models.ToArray());
+                var indexList = BufferModels(models.ToArray());
                 for (int i = 0; i < drawData.Count; i++)
                 {
                     DrawData d = drawData[i];
-                    d.Index = dictionary[d.Model];
+                    d.Index = indexList[d.Model];
                 }
             }
 
@@ -379,13 +385,13 @@ namespace Game
                 }
 
                 // Buffer index data
-                int[] indices = data.Model.GetIndices();
+                /*int[] indices = data.Model.GetIndices();
                 for (int j = 0; j < indices.Length; j++)
                 {
                     indices[j] += data.Index;
                 }
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, data.Model.GetIbo());
-                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StreamDraw);
+                /*GL.BindBuffer(BufferTarget.ElementArrayBuffer, IboElements);// data.Model.GetIbo());
+                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StreamDraw);*/
 
                 if (data.Model.Wireframe)
                 {
@@ -398,8 +404,8 @@ namespace Game
                 }
 
                 RenderSetTransformMatrix(data.Offset, data.Model, viewMatrix);
-                GL.DrawElements(BeginMode.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
-
+                //GL.DrawElements(BeginMode.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+                GL.DrawElements(PrimitiveType.Triangles, data.Model.GetIndices().Length, DrawElementsType.UnsignedInt, (IntPtr)(data.Index * sizeof(int)));
                 if (data.Model.Wireframe)
                 {
                     SetEnable(EnableCap.CullFace, true);
@@ -522,7 +528,7 @@ namespace Game
             int[] indicedata;
 
             vertdata = verts.ToArray();
-            indicedata = inds.ToArray();
+            indicedata = model.GetIndices();
             coldata = new Vector3[colors.Count];
             for (int i = 0; i < colors.Count; i++)
             {
@@ -530,7 +536,7 @@ namespace Game
             }
             //coldata = colors.ToArray();
             texcoorddata = texcoords.ToArray();
-            BufferVertices(vertdata, coldata, texcoorddata);
+            BufferData(vertdata, coldata, texcoorddata, indicedata, IboElements);
 
             if (_activeShader.GetUniform("UVMatrix") != -1)
             {
@@ -552,8 +558,8 @@ namespace Game
             }
 
             // Buffer index data
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, model.GetIbo());
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);
+            /*GL.BindBuffer(BufferTarget.ElementArrayBuffer, IboElements);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);*/
 
             if (model.Wireframe)
             {
@@ -566,7 +572,7 @@ namespace Game
             }
 
             RenderSetTransformMatrix(offset, model, viewMatrix);
-            GL.DrawElements(BeginMode.Triangles, model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(BeginMode.Triangles, indicedata.Length, DrawElementsType.UnsignedInt, 0);
 
             if (model.Wireframe)
             {
@@ -581,25 +587,36 @@ namespace Game
 
         private Dictionary<Model, int> BufferModels(Model[] models)
         {
-            Dictionary<Model, int> modelBuffer = new Dictionary<Model, int>();
+            Dictionary<Model, int> indexList = new Dictionary<Model, int>();
 
             List<Vector3> vertices = new List<Vector3>();
             List<Vector3> colors = new List<Vector3>();
             List<Vector2> texCoords = new List<Vector2>();
+            List<int> indices = new List<int>();
             for (int i = 0; i < models.Length; i++)
             {
-                modelBuffer.Add(models[i], vertices.Count);
+                indexList.Add(models[i], indices.Count);
 
-                vertices.AddRange(models[i].GetVerts());
+                Vector3[] modelVerts = models[i].GetVerts();
+
+                int[] modelIndices = models[i].GetIndices();
+                for (int j = 0; j < modelIndices.Length; j++)
+                {
+                    Debug.Assert(modelIndices[j] >= 0 && modelIndices[j] < modelVerts.Length);
+                    modelIndices[j] += vertices.Count;
+                }
+                indices.AddRange(modelIndices);
+
+                vertices.AddRange(modelVerts);
                 colors.AddRange(models[i].GetColorData());
                 texCoords.AddRange(models[i].GetTextureCoords());
             }
 
-            BufferVertices(vertices.ToArray(), colors.ToArray(), texCoords.ToArray());
-            return modelBuffer;
+            BufferData(vertices.ToArray(), colors.ToArray(), texCoords.ToArray(), indices.ToArray(), IboElements);
+            return indexList;
         }
 
-        private void BufferVertices(Vector3[] vertdata, Vector3[] coldata, Vector2[] texcoorddata)
+        private void BufferData(Vector3[] vertdata, Vector3[] coldata, Vector2[] texcoorddata, int[] indices, int indexBuffer)
         {
             Debug.Assert(coldata.Length == vertdata.Length);
             Debug.Assert(texcoorddata.Length == vertdata.Length);
@@ -622,7 +639,9 @@ namespace Game
                 GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
                 GL.VertexAttribPointer(_activeShader.GetAttribute("texcoord"), 2, VertexAttribPointerType.Float, true, 0, 0);
             }
-            //GL.BindBuffer(BufferTarget.ArrayBuffer, 0); I don't know why this is here so I've commented it out until something breaks.
+
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StreamDraw);
         }
 
         private void RenderSetTransformMatrix(Matrix4 offset, Model model, Matrix4 viewMatrix)

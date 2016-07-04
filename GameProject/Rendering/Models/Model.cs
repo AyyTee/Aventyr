@@ -11,14 +11,13 @@ namespace Game
     /// An object made up of vertices
     /// </summary>
     [DataContract]
-    public class Model : IDisposable, IShallowClone<Model>
+    public class Model : IShallowClone<Model>
     {
         static object _lockDelete = new object();
         public static object LockDelete { get { return _lockDelete; } }
         [DataMember]
         public Transform3 Transform = new Transform3();
-        int _iboElements;
-        public bool IboExists = false;
+
         /// <summary>If true then gl blending is enabled when rendering this model.</summary>
         [DataMember]
         public bool IsTransparent { get; set; }
@@ -36,10 +35,6 @@ namespace Game
         #region Constructors
         public Model()
         {
-            if (Renderer.IsInitialized)
-            {
-                InitIbo();
-            }
         }
 
         public Model(IMesh mesh)
@@ -49,41 +44,6 @@ namespace Game
         }
 
         #endregion
-        ~Model()
-        {
-            Dispose();
-        }
-
-        private void InitIbo()
-        {
-            Debug.Assert(IboExists == false, "Model has already been initialized.");
-            GL.GenBuffers(1, out _iboElements);
-            IboExists = true;
-        }
-
-        public int GetIbo()
-        {
-            if (!IboExists)
-            {
-                InitIbo();
-            }
-            return _iboElements;
-        }
-
-        public void Dispose()
-        {
-            if (IboExists)
-            {
-                lock (LockDelete)
-                {
-                    if (IboExists)
-                    {
-                        Controller.iboGarbage.Add(_iboElements);
-                        IboExists = false;
-                    }
-                }
-            }
-        }
 
         public Model ShallowClone()
         {
