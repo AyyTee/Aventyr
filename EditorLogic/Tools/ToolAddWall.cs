@@ -49,7 +49,7 @@ namespace EditorLogic
             }
             else if (_input.MousePress(MouseButton.Left))
             {
-                Vector2 mousePos = Controller.GetMouseWorldPosition();
+                Vector2 mousePos = Controller.GetMouseWorld();
                 if (mousePos != _vertices.LastOrDefault())
                 {
                     if (_vertices.Count >= 3 && (mousePos - _vertices[0]).Length < 0.1f)

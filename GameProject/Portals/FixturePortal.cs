@@ -13,6 +13,8 @@ namespace Game
     public class FixturePortal : SceneNode, IPortal
     {
         [DataMember]
+        public Transform2 WorldTransformPrevious { get; set; }
+        [DataMember]
         public IPortal Linked { get; set; }
         /// <summary>
         /// If OneSided is true then the portal can only be viewed through it's front side.
@@ -36,9 +38,10 @@ namespace Game
 
         [DataMember]
         public IPolygonCoord Position { get; private set; }
+        [DataMember]
+        public PortalPath Path { get; private set; }
         public Fixture CollisionFixtureNext;
         public Fixture CollisionFixturePrevious;
-        public override bool IgnoreScale { get { return true; } }
         
         public const float EdgeMargin = 0.02f;
         public const float CollisionMargin = 0.1f;
@@ -46,6 +49,7 @@ namespace Game
         public FixturePortal(Scene scene)
             : this(scene, null, null)
         {
+            Path = new PortalPath();
         }
 
         public FixturePortal(Scene scene, IWall parent, IPolygonCoord position)

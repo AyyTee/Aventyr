@@ -67,7 +67,7 @@ namespace EditorWindow
                 typeof(WPFCommands),
                 new InputGestureCollection()
                 {
-                    new KeyGesture(Key.Right, ModifierKeys.Alt)
+                    new KeyGesture(Key.Right, ModifierKeys.Control)
                 }
             );
         public static readonly RoutedUICommand TimerStepBackward = new RoutedUICommand
@@ -77,7 +77,7 @@ namespace EditorWindow
                 typeof(WPFCommands),
                 new InputGestureCollection()
                 {
-                    new KeyGesture(Key.Left, ModifierKeys.Alt)
+                    new KeyGesture(Key.Left, ModifierKeys.Control)
                 }
             );
         public static readonly RoutedUICommand TimerJumpFoward = new RoutedUICommand
@@ -87,7 +87,7 @@ namespace EditorWindow
                 typeof(WPFCommands),
                 new InputGestureCollection()
                 {
-                    new KeyGesture(Key.Up, ModifierKeys.Alt)
+                    new KeyGesture(Key.Up, ModifierKeys.Control)
                 }
             );
         public static readonly RoutedUICommand TimerJumpBackward = new RoutedUICommand
@@ -97,7 +97,7 @@ namespace EditorWindow
                 typeof(WPFCommands),
                 new InputGestureCollection()
                 {
-                    new KeyGesture(Key.Down, ModifierKeys.Alt)
+                    new KeyGesture(Key.Down, ModifierKeys.Control)
                 }
             );
         public static readonly RoutedUICommand KeyframeAdd = new RoutedUICommand

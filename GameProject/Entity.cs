@@ -123,5 +123,10 @@ namespace Game
         {
             _velocity = transform.ShallowClone();
         }
+
+        public List<IPortal> GetPortalChildren()
+        {
+            return Children.OfType<IPortal>().ToList();
+        }
     }
 }

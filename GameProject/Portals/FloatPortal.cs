@@ -12,6 +12,8 @@ namespace Game
     [DataContract, DebuggerDisplay("FloatPortal {Name}")]
     public class FloatPortal : SceneNode, IPortal, IPortalable
     {
+        [DataMember]
+        public Transform2 WorldTransformPrevious { get; set; }
         public bool IsPortalable { get { return false; } }
         [DataMember]
         public IPortal Linked { get; set; }
@@ -27,7 +29,8 @@ namespace Game
         Transform2 _transform = new Transform2();
         [DataMember]
         Transform2 _velocity = Transform2.CreateVelocity();
-        public override bool IgnoreScale { get { return true; } }
+        [DataMember]
+        public PortalPath Path { get; private set; }
 
         public Action<IPortal, Transform2, Transform2> EnterPortal { get; set;}
 
@@ -37,6 +40,7 @@ namespace Game
         public FloatPortal(Scene scene)
             : base(scene)
         {
+            Path = new PortalPath();
         }
 
         public override IDeepClone ShallowClone()
@@ -84,6 +88,11 @@ namespace Game
         public void SetVelocity(Transform2 velocity)
         {
             _velocity = velocity.ShallowClone();
+        }
+
+        public List<IPortal> GetPortalChildren()
+        {
+            return new List<IPortal>();
         }
     }
 }

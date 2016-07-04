@@ -101,7 +101,7 @@ namespace EditorWindow
         {
             Invoke(() =>
             {
-                Vector2 mousePos = ControllerEditor.GetMouseWorldPosition();
+                Vector2 mousePos = ControllerEditor.GetMouseWorld();
                 MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
 
                 int fps = (int)Math.Round(_loop.UpdatesPerSecond * (double)_loop.MillisecondsPerStep / _loop.GetAverage());
@@ -248,17 +248,21 @@ namespace EditorWindow
         private void MainGrid_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             //Remove arrow key responses. They interfere when trying to pan the camera in the editor.
-            switch (e.Key)
+            if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
-                case Key.Left:
-                case Key.Right:
-                case Key.Up:
-                case Key.Down:
-                    e.Handled = true;
-                    break;
-                default:
-                    break;
+                switch (e.Key)
+                {
+                    case Key.Left:
+                    case Key.Right:
+                    case Key.Up:
+                    case Key.Down:
+                        e.Handled = true;
+                        break;
+                    default:
+                        break;
+                }
             }
+            
 
             if (e.Key == Key.D && 
                 (Keyboard.IsKeyDown(Key.LeftCtrl) ||

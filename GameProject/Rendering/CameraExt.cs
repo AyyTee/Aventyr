@@ -122,5 +122,10 @@ namespace Game
             Matrix4 m = Matrix4.CreateRotationZ(camera.GetWorldTransform().Rotation);
             return Vector2Ext.Transform(new Vector2(0, 1), m);
         }
+
+        public static Transform2 GetWorldViewpoint(ICamera2 camera)
+        {
+            return new Transform2(camera.ViewOffset).Transform(camera.GetWorldTransform());
+        }
     }
 }

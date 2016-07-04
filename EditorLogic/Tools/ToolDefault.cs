@@ -139,7 +139,7 @@ namespace EditorLogic
 
         private void Select()
         {
-            Vector2 mousePos = Controller.GetMouseWorldPosition();
+            Vector2 mousePos = Controller.GetMouseWorld();
             EditorObject nearest = Controller.GetNearestObject(mousePos);
             if (nearest != null && (nearest.GetWorldTransform().Position - mousePos).Length > 1)
             {
@@ -200,7 +200,7 @@ namespace EditorLogic
                 return;
             }
             Transform2 transform = _translator.GetTransform();
-            Vector2 mousePos = Controller.GetMouseWorldPosition();
+            Vector2 mousePos = Controller.GetMouseWorld();
             dragToggled = toggleMode;
             mousePosPrev = mousePos;
             if (toggleMode)
@@ -249,7 +249,10 @@ namespace EditorLogic
         private void DragUpdate()
         {
             Transform2 _dragAmount = Transform2.CreateVelocity();
-            Vector2 mousePos = Controller.GetMouseWorldPosition();
+            Vector2 mousePos;
+
+            mousePos = Controller.GetMouseWorld();
+
             if (_mode == Mode.Position)
             {
                 switch (_dragState)
@@ -296,7 +299,16 @@ namespace EditorLogic
             foreach (MementoDrag e in dragObjects)
             {
                 Transform2 t = e.Transformable.GetTransform();
-                t = t.Add(_dragAmount);
+                //if (dragObjects.Exists(item => item is IPortal))
+                {
+                    t = t.Add(_dragAmount);
+                }
+                /*else
+                {
+                    Portalable temp = new Portalable(t, _dragAmount);
+                    Ray.RayCast(temp, Controller.Level.GetPortalList(), new Ray.Settings());
+                    t = temp.GetTransform();
+                }*/
                 e.Transformable.SetTransform(t);
             }
         }
@@ -305,8 +317,8 @@ namespace EditorLogic
         {
             base.Enable();
             _translator = new Doodad(Controller.Level);
-            _translator.Models.Add(translationModel);
-            _translator.Visible = true;
+            //_translator.Models.Add(translationModel);
+            //_translator.Visible = true;
             //_translator.DrawOverPortals = true;
             _dragState = DragState.Neither;
             Controller.CamControl.CameraMoved += UpdateTranslation;

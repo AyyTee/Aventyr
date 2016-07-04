@@ -156,13 +156,30 @@ namespace EditorLogic
             base.OnRenderFrame(e);
         }
 
-        public Vector2 GetMouseWorldPosition()
+        public Vector2 GetMouseWorld()
         {
             if (Level == null)
             {
                 return Vector2.Zero;
             }
             return CameraExt.ScreenToWorld(Level.ActiveCamera, InputExt.MousePos);
+        }
+
+        public Vector2 GetMouseWorldPortal(IEnumerable<IPortal> portals)
+        {
+            if (Level == null)
+            {
+                return Vector2.Zero;
+            }
+            if (!renderer.PortalRenderEnabled)
+            {
+                return GetMouseWorld();
+            }
+            Transform2 transform = CameraExt.GetWorldViewpoint(Level.ActiveCamera);
+            Vector2 mousePos = CameraExt.ScreenToWorld(Level.ActiveCamera, InputExt.MousePos);
+            Portalable portalable = new Portalable(transform, Transform2.CreateVelocity(mousePos - transform.Position));
+            Ray.RayCast(portalable, Level.GetPortalList(), new Ray.Settings());
+            return portalable.GetTransform().Position;
         }
 
         public void Remove(EditorObject editorObject)

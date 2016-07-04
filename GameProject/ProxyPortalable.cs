@@ -49,5 +49,10 @@ namespace Game
         {
             Velocity = velocity.ShallowClone();
         }
+
+        public List<IPortal> GetPortalChildren()
+        {
+            return Portalable.GetPortalChildren();
+        }
     }
 }

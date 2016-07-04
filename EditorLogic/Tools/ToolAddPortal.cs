@@ -76,7 +76,7 @@ namespace EditorLogic
         {
             float size = Transform2.GetSize(_mouseFollow);
             IWall[] walls = Controller.Level.GetAll().OfType<IWall>().ToArray();
-            return PortalPlacer.GetNearestPortalableEdge(walls, Controller.GetMouseWorldPosition(), snapDistance, size);
+            return PortalPlacer.GetNearestPortalableEdge(walls, Controller.GetMouseWorld(), snapDistance, size);
         }
 
         private Transform2 GetPortalTransform()
@@ -91,7 +91,7 @@ namespace EditorLogic
             else
             {
                 Transform2 transform = new Transform2();
-                transform.Position = Controller.GetMouseWorldPosition();
+                transform.Position = Controller.GetMouseWorld();
                 //transform.Rotation = _mouseFollow.GetTransform().Rotation;
                 transform.Rotation = unsnapAngle;
                 //Transform2.SetRotation(_mouseFollow, unsnapAngle);

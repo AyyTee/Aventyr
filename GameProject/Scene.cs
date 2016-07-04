@@ -53,6 +53,11 @@ namespace Game
             Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
             World.ProcessChanges();
 
+            foreach (IPortal p in GetPortalList())
+            {
+                p.WorldTransformPrevious = p.GetWorldTransform();
+            }
+
             foreach (IStep s in GetAll().OfType<IStep>())
             {
                 s.StepBegin(this, stepSize);

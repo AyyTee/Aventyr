@@ -142,6 +142,7 @@
     <Compile Include="Physics\ActorExt.cs" />
     <Compile Include="Physics\BodyUserData.cs" />
     <Compile Include="Physics\SimulationStep.cs" />
+    <Compile Include="Portals\PortalPath.cs" />
     <Compile Include="Portals\Portalable.cs" />
     <Compile Include="ProxyPortal.cs" />
     <Compile Include="ProxyPortalable.cs" />

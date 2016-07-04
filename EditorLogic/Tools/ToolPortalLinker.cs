@@ -28,7 +28,7 @@ namespace EditorLogic
             }
             else if (_input.MousePress(MouseButton.Left))
             {
-                Vector2 mousePos = Controller.GetMouseWorldPosition();
+                Vector2 mousePos = Controller.GetMouseWorld();
                 EditorPortal portal = (EditorPortal)Controller.GetNearestObject(mousePos,
                     item => item.GetType() == typeof(EditorPortal) && (mousePos - item.GetWorldTransform().Position).Length < 1);
                 if (portal != null && portal != _portalPrevious)
@@ -50,10 +50,10 @@ namespace EditorLogic
                             /*t.Size *= -1;
                             t.IsMirrored = true;
                             portal.SetTransform(t);*/
-                            portal._transform.MirrorX = true;
-                            portal._transform.Size = -Math.Abs(portal._transform.Size);
-                            _portalPrevious._transform.MirrorX = false;
-                            _portalPrevious._transform.Size = Math.Abs(_portalPrevious._transform.Size);
+                            portal.Transform.MirrorX = true;
+                            portal.Transform.Size = -Math.Abs(portal.Transform.Size);
+                            _portalPrevious.Transform.MirrorX = false;
+                            _portalPrevious.Transform.Size = Math.Abs(_portalPrevious.Transform.Size);
                             //t = _portalPrevious.GetTransform();
                             //t.IsMirrored = false;
                             //_portalPrevious.SetTransform(t);
@@ -67,10 +67,10 @@ namespace EditorLogic
                             t = _portalPrevious.GetTransform();
                             t.IsMirrored = false;
                             _portalPrevious.SetTransform(t);*/
-                            portal._transform.MirrorX = true;
-                            portal._transform.Size = Math.Abs(portal._transform.Size);
-                            _portalPrevious._transform.MirrorX = true;
-                            _portalPrevious._transform.Size = Math.Abs(_portalPrevious._transform.Size);
+                            portal.Transform.MirrorX = true;
+                            portal.Transform.Size = Math.Abs(portal.Transform.Size);
+                            _portalPrevious.Transform.MirrorX = true;
+                            _portalPrevious.Transform.Size = Math.Abs(_portalPrevious.Transform.Size);
                         }
                         
                         
@@ -83,7 +83,7 @@ namespace EditorLogic
             {
                 line.Models.Clear();
                 Model lineModel = Game.ModelFactory.CreateLineStrip(new Vector2[] {
-                    Controller.GetMouseWorldPosition(),
+                    Controller.GetMouseWorld(),
                     _portalPrevious.GetWorldTransform().Position
                 });
                 lineModel.SetColor(new Vector3(0.1f, 0.7f, 0.1f));

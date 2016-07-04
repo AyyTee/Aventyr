@@ -175,7 +175,6 @@ namespace Game
         /// <summary>
         /// Returns an inverted Transform2 instance.
         /// </summary>
-        /// <returns></returns>
         /// <remarks>The method has the following property:
         /// Inverted().GetMatrix();
         /// approximately equals 
@@ -211,8 +210,6 @@ namespace Game
         /// <summary>
         /// Returns the result of this minus another transform.
         /// </summary>
-        /// <param name="transform"></param>
-        /// <returns></returns>
         public Transform2 Minus(Transform2 transform)
         {
             Transform2 output = ShallowClone();
@@ -226,8 +223,6 @@ namespace Game
         /// <summary>
         /// Returns a transform that is componentwise multiplication of this with a scalar value.
         /// </summary>
-        /// <param name="scalar"></param>
-        /// <returns></returns>
         public Transform2 Multiply(float scalar)
         {
             Transform2 output = ShallowClone();

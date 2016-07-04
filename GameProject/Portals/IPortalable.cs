@@ -23,5 +23,6 @@ namespace Game
         Transform2 GetVelocity();
         /// <summary>Replaces the local velocity with a copy of the passed argument.</summary>
         void SetVelocity(Transform2 velocity);
+        List<IPortal> GetPortalChildren();
     }
 }

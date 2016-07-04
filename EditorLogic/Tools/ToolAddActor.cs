@@ -24,7 +24,7 @@ namespace EditorLogic
             if (_mouseFollow != null)
             {
                 Transform2 transform = _mouseFollow.GetTransform();
-                transform.Position = Controller.GetMouseWorldPosition();
+                transform.Position = Controller.GetMouseWorld();
                 _mouseFollow.SetTransform(transform);
             }
             if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape) || _input.MousePress(MouseButton.Right))
@@ -49,7 +49,7 @@ namespace EditorLogic
                 CommandAddEntity command = new CommandAddEntity(Controller, editorEntity);
                 Controller.StateList.Add(command, true);*/
                 EditorActor editorActor = new EditorActor(Controller.Level, PolygonFactory.CreateRectangle(4, 0.5f));
-                Transform2.SetPosition(editorActor, Controller.GetMouseWorldPosition());
+                Transform2.SetPosition(editorActor, Controller.GetMouseWorld());
                 if (!_input.KeyDown(InputExt.KeyBoth.Shift))
                 {
                     Controller.SetTool(null);

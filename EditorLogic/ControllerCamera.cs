@@ -183,7 +183,7 @@ namespace EditorLogic
             //Handle user input to pan the camera.
             {
                 Vector2 v = new Vector2();
-                if (!InputExt.KeyDown(KeyBoth.Alt))
+                if (!InputExt.KeyDown(KeyBoth.Control))
                 {
                     if (InputExt.KeyDown(Key.Left))
                     {
@@ -259,6 +259,11 @@ namespace EditorLogic
             clone.KeyMoveSpeed = KeyMoveSpeed;
             clone._transform = _transform;
             return clone;
+        }
+
+        public List<IPortal> GetPortalChildren()
+        {
+            return new List<IPortal>();
         }
     }
 }

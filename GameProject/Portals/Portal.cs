@@ -61,6 +61,14 @@ namespace Game
             Transform2 velocity = portalable.GetVelocity();
             portalable.SetTransform(Enter(portal, transform));
             portalable.SetVelocity(EnterVelocity(portal, velocity, ignorePortalVelocity));
+
+            foreach (IPortal p in portalable.GetPortalChildren())
+            {
+                p.WorldTransformPrevious = Portal.GetPortalTransform(p);
+                p.Path.Enter(portal.Linked);
+                
+            }
+
             portalable.EnterPortal?.Invoke(portal, transform, velocity);
         }
 

@@ -12,5 +12,7 @@ namespace Game
         Transform2 GetWorldTransform();
         Transform2 GetWorldVelocity();
         bool OneSided { get; }
+        PortalPath Path { get; }
+        Transform2 WorldTransformPrevious { get; set; }
     }
 }

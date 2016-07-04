@@ -31,14 +31,13 @@ namespace EditorLogic
         public bool OnEdge { get { return PolygonTransform != null; } }
         [DataMember]
         public string Name { get; set; }
-        public virtual bool IgnoreScale { get { return false; } }
         [DataMember]
         List<EditorObject> _children = new List<EditorObject>();
         public List<EditorObject> Children { get { return new List<EditorObject>(_children); } }
         [DataMember]
         public EditorObject Parent { get; private set; }
         [DataMember]
-        public Transform2 _transform = new Transform2();
+        public Transform2 Transform = new Transform2();
         [DataMember]
         public CurveTransform2 AnimatedTransform;
         [DataMember]
@@ -151,7 +150,7 @@ namespace EditorLogic
                 PolygonTransform = null;
                 SetParent(Scene);
             }*/
-            _transform = transform.ShallowClone();
+            Transform = transform.ShallowClone();
         }
 
         public virtual Transform2 GetTransform()
@@ -165,16 +164,16 @@ namespace EditorLogic
             {
                 return _transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
             }*/
-            return _transform.ShallowClone();
+            return Transform.ShallowClone();
         }
 
         public Transform2 GetTransformWithPolygon()
         {
             if (PolygonTransform != null)
             {
-                return _transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
+                return Transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
             }
-            return _transform.ShallowClone();
+            return Transform.ShallowClone();
         }
 
         public Transform2 GetWorldTransform()
@@ -182,7 +181,7 @@ namespace EditorLogic
             Transform2 local;
             if (PolygonTransform != null)
             {
-                local = _transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
+                local = Transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
             }
             else
             {
@@ -193,33 +192,23 @@ namespace EditorLogic
             {
                 return local;
             }
-            /*if (Parent != null)
-            {
-                transform = transform.Transform(Parent.GetWorldTransform());
-                
-                if (IgnoreScale)
-                {
-                    transform.SetScale(GetTransform().Scale);
-                }
+            local = local.Transform(Parent.GetWorldTransform());
 
-                return transform;
-            }
-            return transform;*/
-            Transform2 parent = Parent.GetWorldTransform();
+            return local;
+
+            /*Transform2 parent = Parent.GetWorldTransform();
             Transform2 t = local.Transform(parent);
-            if (IgnoreScale)
-            {
-                t.SetScale(local.Scale);
-            }
 
-            Ray.Settings settings = new Ray.Settings();
+            t.Transform(PortalPath.GetPortalTransform());*/
+
+            /*Ray.Settings settings = new Ray.Settings();
             settings.IgnorePortalVelocity = true;
             IPortalable portalable = new Portalable(new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
             List<IPortal> portals = Scene.GetPortalList();
             portals.Remove(this as IPortal);
             Ray.RayCast(portalable, portals, settings);
-            t = portalable.GetTransform();
-            return t;
+            t = portalable.GetTransform();*/
+            //return t;
         }
 
         public Transform2 GetVelocity()
@@ -267,7 +256,7 @@ namespace EditorLogic
         /// <param name="transform"></param>
         public void SetTransform(IWall wall, IPolygonCoord transform)
         {
-            _transform = new Transform2();
+            Transform = new Transform2();
             PolygonTransform = transform;
             SetParent((EditorObject)wall);
         }
@@ -287,6 +276,11 @@ namespace EditorLogic
                 Name = name;
                 IsModified = true;
             }
+        }
+
+        public List<IPortal> GetPortalChildren()
+        {
+            return Children.OfType<IPortal>().ToList();
         }
     }
 }

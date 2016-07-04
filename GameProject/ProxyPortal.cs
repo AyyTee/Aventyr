@@ -12,6 +12,7 @@ namespace Game
     /// </summary>
     public class ProxyPortal : IPortal
     {
+        public Transform2 WorldTransformPrevious { get; set; }
         public readonly IPortal Portal;
         public Transform2 WorldTransform;
         public Transform2 WorldVelocity;
@@ -19,6 +20,8 @@ namespace Game
         public IPortal Linked { get; set; }
 
         public bool OneSided { get { return Portal.OneSided; } }
+        
+        public PortalPath Path { get { return Portal.Path; } }
 
         public ProxyPortal(IPortal portal)
             : this(portal, portal.GetWorldTransform(), portal.GetWorldVelocity())

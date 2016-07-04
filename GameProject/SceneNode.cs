@@ -23,7 +23,6 @@ namespace Game
         [DataMember]
         public SceneNode Parent { get; private set; }
         public bool IsRoot { get { return _scene != null; } }
-        public virtual bool IgnoreScale { get { return false; } }
         [DataMember]
         readonly Scene _scene;
         public Scene Scene
@@ -156,27 +155,34 @@ namespace Game
 
         public Transform2 GetWorldTransform()
         {
+            //if (Name == "enter")
+            {
+
+            }
             Transform2 local = GetTransform();
-            if (local == null || Parent == null)
+            if (local == null || Parent.IsRoot)
             {
                 return local;
             }
 
             Transform2 parent = Parent.GetWorldTransform();
             Transform2 t = local.Transform(parent);
-            if (IgnoreScale)
+
+            IPortal portalCast = this as IPortal;
+            if (portalCast != null)
             {
-                t.SetScale(local.Scale);
+                t = t.Transform(portalCast.Path.GetPortalTransform());
             }
-
-            Ray.Settings settings = new Ray.Settings();
-            settings.IgnorePortalVelocity = true;
-            IPortalable portalable = new Portalable(parent, Transform2.CreateVelocity(t.Position - parent.Position));
-            List<IPortal> portals = Scene.GetPortalList();
-            portals.Remove(this as IPortal);
-            Ray.RayCast(portalable, portals, settings);
-            t = portalable.GetTransform();
-
+            else
+            {
+                Ray.Settings settings = new Ray.Settings();
+                settings.IgnorePortalVelocity = true;
+                IPortalable portalable = new Portalable(parent, Transform2.CreateVelocity(t.Position - parent.Position));
+                List<IPortal> portals = Scene.GetPortalList();
+                portals.Remove(this as IPortal);
+                Ray.RayCast(portalable, portals, settings);
+                t = portalable.GetTransform();
+            }
             return t;
         }
 

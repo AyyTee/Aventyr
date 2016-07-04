@@ -142,5 +142,10 @@ namespace Game
             return worldVertices;
             //return MathExt.SetWinding(worldVertices, MathExt.IsClockwise(Vertices));
         }
+
+        public List<IPortal> GetPortalChildren()
+        {
+            return Children.OfType<IPortal>().ToList();
+        }
     }
 }

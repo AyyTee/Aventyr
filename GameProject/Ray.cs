@@ -37,14 +37,14 @@ namespace Game
             Debug.Assert(portalable != null);
             Debug.Assert(portals != null);
             Debug.Assert(settings.TimeScale >= 0);
-            Debug.Assert(!portals.Contains(portalable as IPortal), "Infinite recursion will occur if portalable is in the portals list.");
+            Debug.Assert(!(portalable is IPortal));
             if (portalable.GetVelocity().Position.Length == 0 || settings.TimeScale == 0)
             {
                 return;
             }
             _rayCast(
                 portalable, 
-                portals,//.Where(item => item != portalable), 
+                portals,
                 portalable.GetVelocity().Position.Length * settings.TimeScale, 
                 null, 
                 portalEnter, 

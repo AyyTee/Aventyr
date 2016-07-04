@@ -25,7 +25,7 @@ namespace EditorLogic
             if (_mouseFollow != null)
             {
                 Transform2 transform = _mouseFollow.GetTransform();
-                transform.Position = Controller.GetMouseWorldPosition();
+                transform.Position = Controller.GetMouseWorld();
                 _mouseFollow.SetTransform(transform);
             }
             if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape) || _input.MousePress(MouseButton.Right))
@@ -47,7 +47,7 @@ namespace EditorLogic
                 editorEntity.AddModel(m);
                 editorEntity.Name = "Editor Entity";
                 
-                Transform2.SetPosition(editorEntity, Controller.GetMouseWorldPosition());
+                Transform2.SetPosition(editorEntity, Controller.GetMouseWorld());
                 Controller.selection.Set(editorEntity);
 
                 AddEntity command = new AddEntity(Controller, editorEntity);
