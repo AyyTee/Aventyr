@@ -81,6 +81,9 @@ namespace EditorWindow
 
             UpdateTransformLabels(null);
 
+            PortalDepth.ValueChanged += IntegerUpDown_ValueChanged;
+            PortalDepth.Value = 40;
+
             SetPortalRendering(true);
 
             ToolPanel.Initialize(ControllerEditor);
@@ -121,22 +124,10 @@ namespace EditorWindow
             });
         }
 
-        /// <summary>
-        /// Use this instead of Dispatcher.Invoke for the OGL Thread. This method is not prone deadlocks if the application is closing.
-        /// </summary>
         public static void Invoke(Action action)
         {
             Debug.Assert(Thread.CurrentThread == _window._loop.Thread, "This method is intended to be exclusively used by the OGL Thread.");
-            lock (_window._closingLock)
-            {
-                if (_window.IsClosing)
-                {
-                    return;
-                }
-                //_window._dispatchCount++;
-                _window.Dispatcher.Invoke(action);
-                //_window._dispatchCount--;
-            }
+            _window.Dispatcher.Invoke(action);
         }
 
         private void UpdateTransformLabels(EditorObject entity)
@@ -155,12 +146,10 @@ namespace EditorWindow
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            //Prevent this method from completing until the GL loop is finished.
-            /*IsClosing = true;
-            _loop.Stop();
-            lock (_loop) { }*/
-            //Short term solution.
-            _loop.Thread.Abort();
+            lock (ControllerEditor.ClosingLock)
+            {
+                _loop.Thread.Abort();
+            }
             base.OnClosing(e);
             Properties.Settings.Default.Save();
         }
@@ -391,6 +380,14 @@ namespace EditorWindow
         private void Command_KeyframeRemove(object sender, ExecutedRoutedEventArgs e)
         {
 
+        }
+
+        private void IntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            ControllerEditor.AddAction(() => 
+            {
+                ControllerEditor.renderer.PortalRenderMax = (int)e.NewValue;
+            });
         }
     }
 }

@@ -3,7 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:WF="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
     xmlns:self="clr-namespace:EditorWindow"
-    Title="Aventyr Edityr" Height="500" Width="450" Icon="favicon.ico">
+    xmlns:ext="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+    Title="Aventyr Edityr" Height="500" Width="550" Icon="favicon.ico">
 
     <Window.CommandBindings>
         <CommandBinding Command="Save" Executed="Button_Save" />
@@ -116,6 +117,7 @@
             <ToggleButton Name="toolPortalsVisible" Height="22" Click="toolPortalsVisible_Click">
                 <Image Source="/editor assets/icons/eye.png" />
             </ToggleButton>
+            <ext:IntegerUpDown Name="PortalDepth" Margin="3,0,0,0" Minimum="1" Maximum="255" Width="46"/>
             <Separator VerticalAlignment="Stretch" Margin="4,0,4,0"/>
             <Button Name="KeyframeAdd" Height="22" Command="self:WPFCommands.KeyframeAdd">
                 <Image Source="/editor assets/icons/key--plus.png" />

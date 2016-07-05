@@ -30,6 +30,10 @@ namespace EditorLogic
         /// Lock used to prevent race conditions when adding and reading from the action queue.
         /// </summary>
         object _lockAction = new object();
+        /// <summary>
+        /// Use this lock to prevent the OGL thread from being killed while doing something important .
+        /// </summary>
+        public object ClosingLock { get; private set; }
         public bool IsPaused { get; private set; }
         public bool IsStopped { get { return ActiveLevel == null; } }
         int _stepsPending = 0;
@@ -63,14 +67,12 @@ namespace EditorLogic
         {
             IsPaused = true;
             physicsStepSize = 1;
+            ClosingLock = new object();
         }
 
         public override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            
-            
-            
             
             Clipboard = new EditorScene();
 
@@ -124,7 +126,10 @@ namespace EditorLogic
 
         public void LevelSave(string filepath)
         {
-            Serializer.Serialize(Level, filepath);
+            lock (ClosingLock)
+            {
+                Serializer.Serialize(Level, filepath);
+            }
             LevelSaved(this, filepath);
         }
 

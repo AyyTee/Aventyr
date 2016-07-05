@@ -127,7 +127,7 @@ namespace Game
             Vector3[] val = new Vector3[vertices.Count];
             for (int i = 0; i < val.Length; i++)
             {
-                val[i] = vertices[i].Color;
+                val[i] = vertices[i].Color * (1 - Color.W) + new Vector3(Color * Color.W);
             }
             return val;
         }

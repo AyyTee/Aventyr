@@ -63,28 +63,6 @@ namespace Game
             return list;
         }
 
-        public List<PortalView> GetPortalViewList(int maxCount)
-        {
-            List<PortalView> list = new List<PortalView>();
-            Queue<PortalView> queue = new Queue<PortalView>();
-            queue.Enqueue(this);
-            while (queue.Count != 0)
-            {
-                if (maxCount <= 0)
-                {
-                    break;
-                }
-                PortalView p = queue.Dequeue();
-                foreach (PortalView child in p.Children)
-                {
-                    queue.Enqueue(child);
-                }
-                list.Add(p);
-                maxCount -= 1;
-            }
-            return list;
-        }
-
         public static PortalView CalculatePortalViews(IList<IPortal> portals, ICamera2 camera, int depth)
         {
             Debug.Assert(camera != null);
@@ -95,101 +73,118 @@ namespace Game
             paths.Add(view);
             PortalView portalView = new PortalView(null, camera.GetViewMatrix(), view, new Line[0], new Line[0]);
             Vector2 camPos = camera.GetWorldTransform().Position;
-            CalculatePortalViews(null, portals, camera.GetViewMatrix(), camPos, camPos - camera.GetWorldVelocity().Position / Controller.DrawsPerSecond, depth, portalView, Matrix4.Identity);
+
+            List<Func<bool>> actionList = new List<Func<bool>>();
+
+            foreach (IPortal p in portals)
+            {
+                actionList.Add(() => CalculatePortalViews(p, null, portals, camera.GetViewMatrix(), camPos, camPos - camera.GetWorldVelocity().Position / Controller.DrawsPerSecond, portalView, Matrix4.Identity, actionList));
+            }
+
+            while (actionList.Count > 0 && depth > 0)
+            {
+                bool result = actionList.First().Invoke();
+                if (result)
+                {
+                    depth--;
+                }
+                actionList.RemoveAt(0);
+            }
+
             return portalView;
         }
 
-        private static void CalculatePortalViews(IPortal portalEnter, IList<IPortal> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, int depth, PortalView portalView, Matrix4 portalMatrix)
+        private static bool CalculatePortalViews(IPortal portal, IPortal portalEnter, IList<IPortal> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, PortalView portalView, Matrix4 portalMatrix, List<Func<bool>> actionList)
         {
-            if (depth <= 0)
-            {
-                return;
-            }
             const float AREA_EPSILON = 0.0001f;
             Clipper c = new Clipper();
             //The clipper must be set to strictly simple. Otherwise polygons might have duplicate vertices which causes poly2tri to generate incorrect results.
             c.StrictlySimple = true;
+
+            if (!_isPortalValid(portalEnter, portal, viewPos))
+            {
+                return false;
+            }
+
+            Vector2[] fov = Vector2Ext.Transform(Portal.GetFov(portal, viewPos, 500, 3), portalMatrix);
+            if (MathExt.GetArea(fov) < AREA_EPSILON)
+            {
+                return false;
+            }
+            List<IntPoint> pathFov = ClipperConvert.ToIntPoint(fov);
+
+            var viewNew = new List<List<IntPoint>>();
+
+            c.AddPath(pathFov, PolyType.ptSubject, true);
+            c.AddPaths(portalView.Paths, PolyType.ptClip, true);
+            c.Execute(ClipType.ctIntersection, viewNew);
+            c.Clear();
+
+            if (viewNew.Count <= 0)
+            {
+                return false;
+            }
+            c.AddPaths(viewNew, PolyType.ptSubject, true);
+            foreach (IPortal other in portals)
+            {
+                if (other == portal)
+                {
+                    continue;
+                }
+                if (!_isPortalValid(portalEnter, other, viewPos))
+                {
+                    continue;
+                }
+                //Skip this portal if it's inside the current portal's FOV.
+                Line portalLine = new Line(Portal.GetWorldVerts(portal));
+                Line portalOtherLine = new Line(Portal.GetWorldVerts(other));
+                if (portalLine.IsInsideFOV(viewPos, portalOtherLine))
+                {
+                    continue;
+                }
+                Vector2[] otherFov = Vector2Ext.Transform(Portal.GetFov(other, viewPos, 500, 3), portalMatrix);
+                if (MathExt.GetArea(otherFov) < AREA_EPSILON)
+                {
+                    continue;
+                }
+                otherFov = MathExt.SetWinding(otherFov, true);
+                List<IntPoint> otherPathFov = ClipperConvert.ToIntPoint(otherFov);
+                c.AddPath(otherPathFov, PolyType.ptClip, true);
+            }
+            var viewNewer = new List<List<IntPoint>>();
+            c.Execute(ClipType.ctDifference, viewNewer, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+            c.Clear();
+            if (viewNewer.Count <= 0)
+            {
+                return false;
+            }
+
+            Vector2 viewPosNew = Vector2Ext.Transform(viewPos, Portal.GetPortalMatrix(portal, portal.Linked));
+            Vector2 viewPosPreviousNew = Vector2Ext.Transform(viewPosPrevious, Portal.GetPortalMatrix(portal, portal.Linked));
+
+            Matrix4 portalMatrixNew = Portal.GetPortalMatrix(portal.Linked, portal) * portalMatrix;
+            Matrix4 viewMatrixNew = portalMatrixNew * viewMatrix;
+
+            Line[] lines = Portal.GetFovLines(portal, viewPos, 500);
+            lines[0] = lines[0].Transform(portalMatrix);
+            lines[1] = lines[1].Transform(portalMatrix);
+            Line[] linesPrevious = Portal.GetFovLines(portal, viewPosPrevious, 500);
+            linesPrevious[0] = linesPrevious[0].Transform(portalMatrix);
+            linesPrevious[1] = linesPrevious[1].Transform(portalMatrix);
+
+            Line portalWorldLine = new Line(Portal.GetWorldVerts(portal));
+            portalWorldLine = portalWorldLine.Transform(portalMatrix);
+            PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNewer, lines, linesPrevious, portalWorldLine);
+
             foreach (IPortal p in portals)
             {
-                if (!_isPortalValid(portalEnter, p, viewPos))
-                {
-                    continue;
-                }
-
-                Vector2[] fov = Vector2Ext.Transform(Portal.GetFov(p, viewPos, 500, 3), portalMatrix);
-                if (MathExt.GetArea(fov) < AREA_EPSILON)
-                {
-                    continue;
-                }
-                List<IntPoint> pathFov = ClipperConvert.ToIntPoint(fov);
-
-                var viewNew = new List<List<IntPoint>>();
-
-                c.AddPath(pathFov, PolyType.ptSubject, true);
-                c.AddPaths(portalView.Paths, PolyType.ptClip, true);
-                c.Execute(ClipType.ctIntersection, viewNew);
-                c.Clear();
-
-                if (viewNew.Count <= 0)
-                {
-                    continue;
-                }
-                c.AddPaths(viewNew, PolyType.ptSubject, true);
-                foreach (IPortal other in portals)
-                {
-                    if (other == p)
-                    {
-                        continue;
-                    }
-                    if (!_isPortalValid(portalEnter, other, viewPos))
-                    {
-                        continue;
-                    }
-                    //Skip this portal if it's inside the current portal's FOV.
-                    Line portalLine = new Line(Portal.GetWorldVerts(p));
-                    Line portalOtherLine = new Line(Portal.GetWorldVerts(other));
-                    if (portalLine.IsInsideFOV(viewPos, portalOtherLine))
-                    {
-                        continue;
-                    }
-                    Vector2[] otherFov = Vector2Ext.Transform(Portal.GetFov(other, viewPos, 500, 3), portalMatrix);
-                    if (MathExt.GetArea(otherFov) < AREA_EPSILON)
-                    {
-                        continue;
-                    }
-                    otherFov = (Vector2[])MathExt.SetWinding(otherFov, true);
-                    List<IntPoint> otherPathFov = ClipperConvert.ToIntPoint(otherFov);
-                    c.AddPath(otherPathFov, PolyType.ptClip, true);
-                }
-                var viewNewer = new List<List<IntPoint>>();
-                c.Execute(ClipType.ctDifference, viewNewer, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
-                c.Clear();
-                if (viewNewer.Count <= 0)
-                {
-                    continue;
-                }
-
-                Vector2 viewPosNew = Vector2Ext.Transform(viewPos, Portal.GetPortalMatrix(p, p.Linked));
-                Vector2 viewPosPreviousNew = Vector2Ext.Transform(viewPosPrevious, Portal.GetPortalMatrix(p, p.Linked));
-
-                Matrix4 portalMatrixNew = Portal.GetPortalMatrix(p.Linked, p) * portalMatrix;
-                Matrix4 viewMatrixNew = portalMatrixNew * viewMatrix;
-
-                Line[] lines = Portal.GetFovLines(p, viewPos, 500);
-                lines[0] = lines[0].Transform(portalMatrix);
-                lines[1] = lines[1].Transform(portalMatrix);
-                Line[] linesPrevious = Portal.GetFovLines(p, viewPosPrevious, 500);
-                linesPrevious[0] = linesPrevious[0].Transform(portalMatrix);
-                linesPrevious[1] = linesPrevious[1].Transform(portalMatrix);
-
-                Line portalWorldLine = new Line(Portal.GetWorldVerts(p));
-                portalWorldLine = portalWorldLine.Transform(portalMatrix);
-                PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNewer, lines, linesPrevious, portalWorldLine);
-
-                CalculatePortalViews(p, portals, viewMatrix, viewPosNew, viewPosPreviousNew, depth - 1, portalViewNew, portalMatrixNew);
+                actionList.Add(() =>
+                    CalculatePortalViews(p, portal, portals, viewMatrix, viewPosNew, viewPosPreviousNew, portalViewNew, portalMatrixNew, actionList)
+                );
             }
+            return true;
         }
-
+        
         private static bool _isPortalValid(IPortal previous, IPortal next, Vector2 viewPos)
         {
             //skip this portal if it isn't linked 

@@ -19,7 +19,6 @@ namespace Game
         List<IRenderLayer> _layers = new List<IRenderLayer>();
         readonly Controller _controller;
         public bool PortalRenderEnabled { get; set; }
-        public int PortalRenderDepth { get; set; }
         public int PortalRenderMax { get; set; }
         public int PortalClipDepth { get; set; }
         /// <summary>Number of bits in the stencil buffer.</summary>
@@ -43,7 +42,6 @@ namespace Game
             }
             _controller = controller;
             PortalRenderEnabled = true;
-            PortalRenderDepth = 5;
             PortalRenderMax = 50;
             PortalClipDepth = 4;
             RenderEnabled = true;
@@ -167,10 +165,10 @@ namespace Game
             int depth = 0;
             if (PortalRenderEnabled)
             {
-                depth = PortalRenderDepth;
+                depth = PortalRenderMax;
             }
             PortalView portalView = PortalView.CalculatePortalViews(layer.GetPortalList().ToArray(), cam, depth);
-            List<PortalView> portalViewList = portalView.GetPortalViewList(PortalRenderMax);
+            List<PortalView> portalViewList = portalView.GetPortalViewList();
 
             int stencilValueMax = 1 << StencilBits;
             int stencilMask = stencilValueMax - 1;
@@ -249,7 +247,6 @@ namespace Game
                     SetScissor(portalViewList[i], cam.GetViewMatrix());
                     GL.StencilFunc(StencilFunction.Equal, i, stencilMask);
                     Draw(drawData.ToArray(), portalViewList[i].ViewMatrix);
-                    //DrawLayer(layer, portalViewList[i].ViewMatrix, 0, i > 0);
                 }
                 ResetScissor();
             }
@@ -384,15 +381,6 @@ namespace Game
                     GL.BindTexture(TextureTarget.Texture2D, -1);
                 }
 
-                // Buffer index data
-                /*int[] indices = data.Model.GetIndices();
-                for (int j = 0; j < indices.Length; j++)
-                {
-                    indices[j] += data.Index;
-                }
-                /*GL.BindBuffer(BufferTarget.ElementArrayBuffer, IboElements);// data.Model.GetIbo());
-                GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StreamDraw);*/
-
                 if (data.Model.Wireframe)
                 {
                     SetEnable(EnableCap.CullFace, false);
@@ -404,7 +392,6 @@ namespace Game
                 }
 
                 RenderSetTransformMatrix(data.Offset, data.Model, viewMatrix);
-                //GL.DrawElements(BeginMode.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
                 GL.DrawElements(PrimitiveType.Triangles, data.Model.GetIndices().Length, DrawElementsType.UnsignedInt, (IntPtr)(data.Index * sizeof(int)));
                 if (data.Model.Wireframe)
                 {
@@ -414,41 +401,6 @@ namespace Game
                 if (data.Model.IsTransparent)
                 {
                     SetEnable(EnableCap.Blend, false);
-                }
-            }
-        }
-
-        private void DrawLayer(IRenderLayer layer, Matrix4 viewMatrix, float timeRenderDelta, bool isPortalRender)
-        {
-            SetShader(Shaders["uber"]);
-            List<IRenderable> renderList = layer.GetRenderList();
-            foreach (IRenderable e in renderList)
-            {
-                if (!e.Visible)
-                {
-                    continue;
-                }
-                if (isPortalRender && e.DrawOverPortals)
-                {
-                    continue;
-                }
-                List<Clip.ClipModel> clipModels = Clip.GetClipModels(e, layer.GetPortalList(), PortalClipDepth);
-                foreach (Clip.ClipModel clip in clipModels)
-                {
-                    if (clip.ClipLines.Length > 0)
-                    {
-                        Model model = clip.Model.DeepClone();
-                        Matrix4 transform = clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform;
-                        for (int i = 0; i < clip.ClipLines.Length; i++)
-                        {
-                            model.Mesh = MathExt.BisectMesh(model.Mesh, clip.ClipLines[i], transform, Side.Right);
-                        }
-                        RenderModel(model, viewMatrix, transform);
-                    }
-                    else
-                    {
-                        RenderModel(clip.Model, viewMatrix, clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform);
-                    }
                 }
             }
         }
@@ -508,35 +460,8 @@ namespace Game
             {
                 return;
             }
-            List<Vector3> verts = new List<Vector3>();
-            List<int> inds = new List<int>();
-            List<Vector3> colors = new List<Vector3>();
-            List<Vector2> texcoords = new List<Vector2>();
 
-            // Assemble vertex and indice data for all volumes
-            int vertcount = 0;
-
-            verts.AddRange(model.GetVerts().ToList());
-            inds.AddRange(model.GetIndices().ToList());
-            colors.AddRange(model.GetColorData().ToList());
-            texcoords.AddRange(model.GetTextureCoords());
-            vertcount += model.Mesh.GetVertices().Count;
-
-            Vector3[] vertdata;
-            Vector3[] coldata;
-            Vector2[] texcoorddata;
-            int[] indicedata;
-
-            vertdata = verts.ToArray();
-            indicedata = model.GetIndices();
-            coldata = new Vector3[colors.Count];
-            for (int i = 0; i < colors.Count; i++)
-            {
-                coldata[i] = colors[i] * (1 - model.Color.W) + new Vector3(model.Color * model.Color.W);
-            }
-            //coldata = colors.ToArray();
-            texcoorddata = texcoords.ToArray();
-            BufferData(vertdata, coldata, texcoorddata, indicedata, IboElements);
+            BufferData(model.GetVerts(), model.GetColorData(), model.GetTextureCoords(), model.GetIndices(), IboElements);
 
             if (_activeShader.GetUniform("UVMatrix") != -1)
             {
@@ -548,23 +473,17 @@ namespace Game
             {
                 GL.Uniform1(_activeShader.GetUniform("isTextured"), 1);
                 GL.BindTexture(TextureTarget.Texture2D, model.Texture.GetId());
-                //GL.Uniform1(v.Shader.GetAttribute("maintexture"), v.Texture.Id);
             }
             else
             {
                 GL.Uniform1(_activeShader.GetUniform("isTextured"), 0);
                 GL.BindTexture(TextureTarget.Texture2D, -1);
-                //GL.Uniform1(v.Shader.GetAttribute("maintexture"), -1);
             }
-
-            // Buffer index data
-            /*GL.BindBuffer(BufferTarget.ElementArrayBuffer, IboElements);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indicedata.Length * sizeof(int)), indicedata, BufferUsageHint.StreamDraw);*/
 
             if (model.Wireframe)
             {
-                SetEnable(EnableCap.CullFace, false);
                 GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+                SetEnable(EnableCap.CullFace, false);
             }
             if (model.IsTransparent)
             {
@@ -572,12 +491,12 @@ namespace Game
             }
 
             RenderSetTransformMatrix(offset, model, viewMatrix);
-            GL.DrawElements(BeginMode.Triangles, indicedata.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
 
             if (model.Wireframe)
             {
-                SetEnable(EnableCap.CullFace, true);
                 GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+                SetEnable(EnableCap.CullFace, true);
             }
             if (model.IsTransparent)
             {
