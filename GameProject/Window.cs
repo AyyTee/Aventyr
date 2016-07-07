@@ -15,14 +15,13 @@ namespace Game
 {
     public class Window : GameWindow
     {
-        public readonly static GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
         Controller controller;
         public InputExt InputExt;
-        public Window()
-            : base(800, 600, DefaultGraphics, "Game", GameWindowFlags.FixedWindow)
+        public Window(string[] args)
+            : base(800, 600, Renderer.DefaultGraphics, "Game", GameWindowFlags.FixedWindow)
         {
             InputExt = new InputExt(this);
-            controller = new Controller(this);
+            controller = new Controller(this, args);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -68,14 +67,14 @@ namespace Game
 
         private void ToggleFullScreen()
         {
-            if (WindowState == OpenTK.WindowState.Normal)
+            if (WindowState == WindowState.Normal)
             {
-                WindowState = OpenTK.WindowState.Fullscreen;
+                WindowState = WindowState.Fullscreen;
                 ClientSize = new Size(Width, Height);
             }
-            else if (WindowState == OpenTK.WindowState.Fullscreen)
+            else if (WindowState == WindowState.Fullscreen)
             {
-                WindowState = OpenTK.WindowState.Normal;
+                WindowState = WindowState.Normal;
                 ClientSize = new Size(800, 600);
             }
         }

@@ -24,6 +24,7 @@
         <CommandBinding Command="self:WPFCommands.TimerJumpBackward" Executed="Command_JumpBackward" />
         <CommandBinding Command="self:WPFCommands.KeyframeAdd" Executed="Command_KeyframeAdd" />
         <CommandBinding Command="self:WPFCommands.KeyframeRemove" Executed="Command_KeyframeRemove" />
+        <CommandBinding Command="self:WPFCommands.RunStandalone" Executed="RunStandalone" />
     </Window.CommandBindings>
 
     <Grid Name="MainGrid" KeyDown="MainGrid_KeyDown">
@@ -87,6 +88,11 @@
                 <MenuItem Name="menuRunStop" Command="self:WPFCommands.TimerStop">
                     <MenuItem.Icon>
                         <Image Source="/editor assets/icons/control-stop-square.png" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="self:WPFCommands.RunStandalone">
+                    <MenuItem.Icon>
+                        <Image Source="/editor assets/icons/application-export.png" />
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>

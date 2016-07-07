@@ -15,28 +15,19 @@ namespace Game
 {
     public class Controller : ITime
     {
-        public Controller(Window window)
-            : this(window.ClientSize, window.InputExt)
-        {
-        }
-
-        public Controller(Size canvasSize, InputExt input)
-        {
-            CanvasSize = canvasSize;
-            InputExt = input;
-        }
-
         public InputExt InputExt;
         /// <summary>
-        /// Intended to keep pointless messages from the Poly2Tri library out of the console window.
+        /// Keep pointless messages from the Poly2Tri library out of the console window.
         /// </summary>
-        public static StreamWriter Log = new StreamWriter("Triangulating.txt");
+        public static StreamWriter TrashLog = new StreamWriter(Stream.Null);
         public const int MICROSECONDS_IN_SECOND = 1000000;
         public float TimeFixedStep = 0.0f;
         public static Size CanvasSize;
         public const int StepsPerSecond = 60;
         public const int DrawsPerSecond = 60;
+        public const string tempLevelPrefix = "temp_level_";
         public int RenderCount = 0;
+        public string[] programArgs = new string[0];
 
         public static List<int> iboGarbage = new List<int>();
         public static List<int> textureGarbage = new List<int>();
@@ -60,11 +51,23 @@ namespace Game
         public Font Default;
         public bool SoundEnabled { get; private set; }
 
+        public Controller(Window window, string[] args)
+            : this(window.ClientSize, window.InputExt)
+        {
+            programArgs = args;
+            Debug.Assert(programArgs.Length <= 1);
+        }
+
+        public Controller(Size canvasSize, InputExt input)
+        {
+            CanvasSize = canvasSize;
+            InputExt = input;
+        }
+
         public virtual void OnLoad(EventArgs e)
         {
             _time.Start();
 
-            Renderer.Init();
             renderer = new Renderer(this);
 
             SoundEnabled = false;
@@ -90,6 +93,18 @@ namespace Game
                 Path.Combine(shaderFolder, "vs_uber.glsl"),
                 Path.Combine(shaderFolder, "fs_uber.glsl"),
                 true));
+
+            if (programArgs.Length == 1)
+            {
+                Serializer serializer = new Serializer();
+                Scene scene = serializer.Deserialize(programArgs[0]);
+                scene.SetActiveCamera(new Camera2(scene, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height));
+                renderer.AddLayer(scene);
+                if (programArgs[0].StartsWith(tempLevelPrefix))
+                {
+                    File.Delete(programArgs[0]);
+                }
+            }
         }
 
         public virtual void OnRenderFrame(FrameEventArgs e)

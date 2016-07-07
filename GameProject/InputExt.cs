@@ -35,11 +35,6 @@ namespace Game
             Ctx.MouseWheel += Ctx_MouseWheel;
         }
 
-        private void Ctx_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            wheelDelta += e.DeltaPrecise;
-        }
-
         public InputExt(GLControl control)
         {
             Control = control;
@@ -47,6 +42,11 @@ namespace Game
             control.MouseLeave += delegate { _mouseInside = false; };
             control.MouseEnter += delegate { _mouseInside = true; };
             control.MouseWheel += control_MouseWheel;
+        }
+
+        private void Ctx_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            wheelDelta += e.DeltaPrecise;
         }
 
         private void control_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)

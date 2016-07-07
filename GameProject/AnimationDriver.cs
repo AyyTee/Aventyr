@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Game
 {
+    [DataContract]
     public class AnimationDriver : ISceneObject, IStep
     {
+        [DataMember]
         public Dictionary<IPortalable, CurveTransform2> animated = new Dictionary<IPortalable, CurveTransform2>();
 
         public AnimationDriver()

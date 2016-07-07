@@ -44,7 +44,7 @@ namespace EditorLogic
         { 
             get { return _zoomScrollFactor; }
             set 
-            {  
+            {
                 Debug.Assert(value > 1);
                 _zoomScrollFactor = value;
             }
@@ -80,21 +80,7 @@ namespace EditorLogic
             {
                 lazyPan.Enqueue(new Vector2());
             }
-
-            /*Entity viewCenter = new Entity(Camera.Scene);
-            viewCenter.AddModel(ModelFactory.CreateCircle(new Vector3(), 0.005f, 10));
-            viewCenter.DrawOverPortals = true;
-            viewCenter.ModelList[0].SetColor(new Vector3(1, 0.9f, 0.2f));
-            viewCenter.ModelList[0].Transform.Position = new Vector3(0, 0, DrawDepth.CameraMarker);
-            viewCenter.SetParent(Camera);*/
         }
-
-        /*private void portalEnterCallback(SceneNodePlaceable placeable, IPortal portalEnter)
-        {
-            Vector2[] list = lazyPan.ToArray();
-            Portal.EnterVelocity(portalEnter, list);
-            lazyPan = new Queue<Vector2>(list);
-        }*/
 
         public Matrix4 GetViewMatrix(bool isOrtho = true)
         {

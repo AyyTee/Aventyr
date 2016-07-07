@@ -10,6 +10,7 @@ using EditorLogic;
 using System.Collections.Generic;
 using System.Threading;
 using System.Diagnostics;
+using System.IO;
 
 namespace EditorWindow
 {
@@ -18,16 +19,10 @@ namespace EditorWindow
     {
         GLLoop _loop;
         ControllerEditor ControllerEditor;
-        public static string LocalDirectory { get; private set; }
+        public static string WorkingDirectory { get; private set; }
         public static string AssetsDirectory { get; private set; }
         OpenFileDialog _loadModelDialog = new OpenFileDialog();
         ControllerFiles ControllerFiles;
-        public bool IsClosing { get; private set; }
-        /// <summary>
-        /// Prevent application from closing while a method is being invoked.
-        /// </summary>
-        object _closingLock = new object();
-        int _dispatchCount = 0;
         readonly Thread _wpfThread;
         static MainWindow _window;
 
@@ -35,8 +30,8 @@ namespace EditorWindow
         {
             _window = this;
             Thread.CurrentThread.Name = "WPF Thread";
-            LocalDirectory = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            AssetsDirectory = System.IO.Path.Combine(LocalDirectory, "editor assets");
+            WorkingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            AssetsDirectory = Path.Combine(WorkingDirectory, "editor assets");
             InitializeComponent();
             //Set the application window size here.  That way it can be super small in the editor!
             Width = 1000;
@@ -45,7 +40,6 @@ namespace EditorWindow
             _loadModelDialog.FileOk += _openFileDialog_FileOk;
 
             _wpfThread = Thread.CurrentThread;
-            IsClosing = false;
         }
 
         /// <summary>
@@ -388,6 +382,43 @@ namespace EditorWindow
             {
                 ControllerEditor.renderer.PortalRenderMax = (int)e.NewValue;
             });
+        }
+
+        private void RunStandalone(object sender, ExecutedRoutedEventArgs e)
+        {
+            ControllerEditor.AddAction(() => 
+            {
+                string tempFile;
+                do {
+                    tempFile = Controller.tempLevelPrefix + GenerateRandomString(8) + ".xml";
+                } while (File.Exists(tempFile));
+
+                Scene scene = LevelExport.Export(ControllerEditor.Level);
+                Game.Serializer serializer = new Game.Serializer();
+                serializer.Serialize(scene, tempFile);
+
+                Process process = new Process();
+                process.StartInfo.FileName = "Game.exe";
+                process.StartInfo.WorkingDirectory = WorkingDirectory;
+                process.StartInfo.Arguments = tempFile;
+                process.Start();
+            });
+            
+
+        }
+
+        private string GenerateRandomString(int length)
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var stringChars = new char[length];
+            var random = new Random(Guid.NewGuid().GetHashCode());
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            return new string(stringChars);
         }
     }
 }

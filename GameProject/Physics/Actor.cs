@@ -24,6 +24,11 @@ namespace Game
         public Body Body { get; private set; }
         [DataMember]
         Vector2 _scale = new Vector2(1, 1);
+        /// <summary>
+        /// Used for storing body data when serialized.
+        /// </summary>
+        [DataMember]
+        BodyMemento _body;
         [DataMember]
         Vector2[] _vertices;
         /// <summary>Copy of local coordinates for collision mask.</summary>
@@ -43,8 +48,21 @@ namespace Game
             _vertices = vertices.ToArray();
             _scale = transform.Scale;
             Body = ActorFactory.CreatePolygon(Scene.World, transform, Vertices);
-            //Body.IsBullet = true;
             BodyExt.SetUserData(Body, this);
+        }
+
+        [OnDeserialized]
+        public void Deserialize(StreamingContext context)
+        {
+            Body = ActorFactory.CreatePolygon(Scene.World, _body.Transform, Vertices);
+            BodyExt.SetUserData(Body, this);
+            BodyExt.SetVelocity(Body, _body.Velocity);
+        }
+
+        [OnSerializing]
+        public void Serialize(StreamingContext context)
+        {
+            _body = new BodyMemento(Body);
         }
 
         public override IDeepClone ShallowClone()

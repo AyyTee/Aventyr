@@ -11,18 +11,23 @@ using System.Drawing.Imaging;
 using ClipperLib;
 using System.Diagnostics;
 using OpenTK.Input;
+using OpenTK.Graphics;
 
 namespace Game
 {
+    /// <summary>
+    /// Handles OpenGL rendering.  Only one instance of Renderer should be instantiated during the process's lifetime.
+    /// </summary>
     public class Renderer
     {
+        public readonly static GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
         List<IRenderLayer> _layers = new List<IRenderLayer>();
         readonly Controller _controller;
         public bool PortalRenderEnabled { get; set; }
         public int PortalRenderMax { get; set; }
         public int PortalClipDepth { get; set; }
         /// <summary>Number of bits in the stencil buffer.</summary>
-        public static int StencilBits { get; private set; }
+        public int StencilBits { get; private set; }
         /// <summary>Flag for preventing rendering occuring.  Intended for benchmarking purposes.</summary>
         public bool RenderEnabled { get; set; }
         ShaderProgram _activeShader;
@@ -45,10 +50,7 @@ namespace Game
             PortalRenderMax = 50;
             PortalClipDepth = 4;
             RenderEnabled = true;
-        }
 
-        public static void Init()
-        {
             GL.ClearColor(Color.HotPink);
             GL.CullFace(CullFaceMode.Back);
             GL.Enable(EnableCap.CullFace);
@@ -60,7 +62,6 @@ namespace Game
             StencilBits = GL.GetInteger(GetPName.StencilBits);
             Debug.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
 
-            
             GL.GenBuffers(1, out IboElements);
         }
 

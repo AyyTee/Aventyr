@@ -24,8 +24,6 @@ namespace Game
         [DataMember]
         public bool OneSided { get; set; }
         [DataMember]
-        public bool IsMirrored { get { return GetTransform().MirrorX; } }
-        [DataMember]
         Transform2 _transform = new Transform2();
         [DataMember]
         Transform2 _velocity = Transform2.CreateVelocity();

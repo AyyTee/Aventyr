@@ -120,5 +120,13 @@ namespace EditorWindow
                     new KeyGesture(Key.K, ModifierKeys.Alt)
                 }
             );
+
+        public static readonly RoutedUICommand RunStandalone = new RoutedUICommand
+            (
+                "Run Standalone",
+                "RunStandalone",
+                typeof(WPFCommands),
+                null
+            );
     }
 }

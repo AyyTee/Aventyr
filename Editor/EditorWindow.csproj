@@ -265,6 +265,9 @@
     </Resource>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="editor assets\icons\application-export.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="editor assets\icons\entityIcon.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
