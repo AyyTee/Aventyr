@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game
+namespace Game.Portals
 {
     public static class Portal
     {

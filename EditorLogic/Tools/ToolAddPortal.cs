@@ -9,6 +9,7 @@ using OpenTK;
 using System.Drawing;
 using System.Diagnostics;
 using EditorLogic.Command;
+using Game.Portals;
 
 namespace EditorLogic
 {

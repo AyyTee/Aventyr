@@ -1,4 +1,6 @@
 ﻿using Game;
+using Game.Animation;
+using Game.Portals;
 using OpenTK;
 using System;
 using System.Collections.Generic;

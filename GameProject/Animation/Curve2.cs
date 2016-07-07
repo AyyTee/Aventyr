@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game
+namespace Game.Animation
 {
     [DataContract]
     public class Curve2 : IShallowClone<Curve2>

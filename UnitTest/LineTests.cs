@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
 using OpenTK;
 using FarseerPhysics;
+using Game.Portals;
 
 namespace UnitTest
 {

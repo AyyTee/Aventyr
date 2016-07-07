@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game
+namespace Game.Portals
 {
     /// <summary>
     /// Represents a portal but with a different transform and velocity.

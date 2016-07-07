@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Portals
 {
     public static class PortalPlacer
     {

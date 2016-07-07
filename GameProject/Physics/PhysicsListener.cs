@@ -13,6 +13,7 @@ using FarseerPhysics.Collision;
 using OpenTK;
 using FarseerPhysics.Common;
 using ClipperLib;
+using Game.Portals;
 
 namespace Game
 {

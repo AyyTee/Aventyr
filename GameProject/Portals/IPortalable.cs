@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game
+namespace Game.Portals
 {
     /// <summary>
     /// An object that can travel through portals.

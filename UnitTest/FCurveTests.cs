@@ -1,6 +1,7 @@
 ﻿using System;
 using Game;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Game.Animation;
 
 namespace UnitTest
 {

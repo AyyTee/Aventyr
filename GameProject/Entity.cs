@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
+using Game.Portals;
 
 namespace Game
 {

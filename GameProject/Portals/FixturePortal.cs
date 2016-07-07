@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
-namespace Game
+namespace Game.Portals
 {
     [DataContract, DebuggerDisplay("FixturePortal {Name}")]
     public class FixturePortal : SceneNode, IPortal

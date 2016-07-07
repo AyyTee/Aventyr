@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 using System.Reflection;
 using System;
 using FarseerPhysics.Dynamics.Contacts;
+using Game.Portals;
 
 namespace Game
 {

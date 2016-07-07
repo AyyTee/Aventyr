@@ -5,6 +5,7 @@ using OpenTK;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
 using System.Linq;
+using Game.Portals;
 
 namespace UnitTest
 {

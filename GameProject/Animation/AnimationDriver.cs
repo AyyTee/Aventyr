@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Game.Portals;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game
+namespace Game.Animation
 {
     [DataContract]
     public class AnimationDriver : ISceneObject, IStep

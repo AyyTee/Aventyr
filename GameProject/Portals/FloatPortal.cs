@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game
+namespace Game.Portals
 {
     [DataContract, DebuggerDisplay("FloatPortal {Name}")]
     public class FloatPortal : SceneNode, IPortal, IPortalable

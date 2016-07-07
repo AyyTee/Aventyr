@@ -1,4 +1,5 @@
 ﻿using Game;
+using Game.Portals;
 using EditorLogic;
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
