@@ -44,10 +44,17 @@ namespace Game
             SetWorld(new World(new Xna.Vector2(0f, 0f)));
         }
         #endregion
-        
+
         public void Step()
         {
-            Step(1/(float)Controller.StepsPerSecond);
+            Step(1 / (float)Controller.StepsPerSecond);
+        }
+
+        class ActorPrev
+        {
+            public IActor Actor;
+            public Transform2 Previous;
+            public Transform2 TrueVelocity;
         }
 
         public void Step(float stepSize)
@@ -94,6 +101,40 @@ namespace Game
 
                 //SimulationStep.Step(GetAll().OfType<IPortalable>(), GetAll().OfType<IPortal>(), stepSize);
                 SimulationStep.Step(portalPrevList, portalablePrevList, 10, stepSize);
+
+                /*List<ActorPrev> actorTemp = new List<ActorPrev>();
+                foreach (IActor actor in GetAll().OfType<IActor>())
+                {
+                    ActorPrev actorPrev = new ActorPrev();
+                    actorTemp.Add(actorPrev);
+                    actorPrev.Actor = actor;
+                    actorPrev.Previous = actor.GetTransform();
+                }
+
+                //Perform physics step.
+                {
+                    _contactListener.StepBegin();
+                    InWorldStep = true;
+                    World.Step(stepSize);
+                    InWorldStep = false;
+                    _contactListener.StepEnd();
+                }
+
+                //Replace each actor's velocity with the actor's displacement.
+                foreach (ActorPrev prev in actorTemp)
+                {
+                    prev.TrueVelocity = prev.Actor.GetVelocity();
+                    Transform2 velocity = prev.Actor.GetTransform().Minus(prev.Previous).Multiply(1 / stepSize);
+                    prev.Actor.SetVelocity(velocity);
+                }
+
+                SimulationStep.Step(GetAll().OfType<IPortalable>(), GetAll().OfType<IPortal>(), stepSize);
+
+                //Reset the actor's velocity.
+                foreach (ActorPrev prev in actorTemp)
+                {
+                    prev.Actor.SetVelocity(prev.TrueVelocity);
+                }*/
             }
 
             foreach (IStep s in GetAll().OfType<IStep>())

@@ -16,8 +16,10 @@ namespace Game.Portals
         /// If false, EnterPortal will never be called and collisions with portals will be ignored.
         /// </summary>
         bool IsPortalable { get; }
-        /// <summary>Is called when entering a portal.  
-        /// The first Transform2 is the previous Transform and the second Transform2 is the previous velocity.</summary>
+        /// <summary>
+        /// Is called when entering a portal.  
+        /// EnterPortal(IPortal enter, Transform2 transform, Transform2 velocity)
+        /// </summary>
         Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
         /// <summary>Returns a copy of the local velocity.</summary>
         Transform2 GetVelocity();

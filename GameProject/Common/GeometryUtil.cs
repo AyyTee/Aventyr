@@ -14,9 +14,7 @@ namespace Game
         /// The line's endpoints move at a constant rate along their linear paths.
         /// </summary>
         /// <remarks>Original code found here https://github.com/Strilanc/Methods/blob/master/Methods/Methods/LineSweepPoint/GeometryUtil.cs </remarks>
-        public static IEnumerable<Sweep> WhenLineSweepsPoint(Line pathOfLineStartPoint,
-                                                                Line pathOfLineEndPoint,
-                                                                Vector2 point)
+        public static IEnumerable<Sweep> WhenLineSweepsPoint(Vector2 point, Line pathOfLineStartPoint, Line pathOfLineEndPoint)
         {
             var a = point - pathOfLineStartPoint[0];
             var b = -pathOfLineStartPoint.Delta;
@@ -25,7 +23,7 @@ namespace Game
 
             //return from t in QuadraticRoots(b.Cross(d), a.Cross(d) + b.Cross(c), a.Cross(c))
             return from t in QuadraticRoots(Vector2Ext.Cross(b, d), Vector2Ext.Cross(a, d) + Vector2Ext.Cross(b, c), Vector2Ext.Cross(a, c))
-                   where t >= 0 && t <= 1
+                    where t >= 0 && t <= 1
                     let start = pathOfLineStartPoint.Lerp((float)t)
                     let end = pathOfLineEndPoint.Lerp((float)t)
                     let s = point.LerpProjectOnto(new Line(start, end))

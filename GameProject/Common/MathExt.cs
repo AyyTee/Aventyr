@@ -572,12 +572,27 @@ namespace Game
             }
             return new IntersectCoord[0];
         }
+
         public static List<GeometryUtil.Sweep> MovingPointLineIntersect(Line point, Line lineStart, Line lineEnd)
         {
             return GeometryUtil.WhenLineSweepsPoint(
+                point[0],
                 lineStart, 
-                lineEnd.Translate(-point[1]), 
-                point[0]).ToList();
+                lineEnd.Translate(-point[1]) 
+                ).ToList();
+        }
+
+        /// <summary>
+        /// Returns a list of moving line on line collisions sorted by time of collision in ascending order.
+        /// </summary>
+        public static List<GeometryUtil.Sweep> MovingLineLineIntersect(Line line0Start, Line line0End, Line line1Start, Line line1End)
+        {
+            List<GeometryUtil.Sweep> list = new List<GeometryUtil.Sweep>();
+            list.AddRange(GeometryUtil.WhenLineSweepsPoint(line0Start[0], line1Start, line1End.Translate(-line0End[0])));
+            list.AddRange(GeometryUtil.WhenLineSweepsPoint(line0Start[1], line1Start, line1End.Translate(-line0End[1])));
+            list.AddRange(GeometryUtil.WhenLineSweepsPoint(line1Start[0], line0Start, line0End.Translate(-line1End[0])));
+            list.AddRange(GeometryUtil.WhenLineSweepsPoint(line1Start[1], line0Start, line0End.Translate(-line1End[1])));
+            return list.OrderBy(item => item.TimeProportion).ToList();
         }
         #endregion
         #region Homography

@@ -156,10 +156,6 @@ namespace Game
 
         public Transform2 GetWorldTransform()
         {
-            //if (Name == "enter")
-            {
-
-            }
             Transform2 local = GetTransform();
             if (local == null || Parent.IsRoot)
             {
@@ -179,9 +175,7 @@ namespace Game
                 Ray.Settings settings = new Ray.Settings();
                 settings.IgnorePortalVelocity = true;
                 IPortalable portalable = new Portalable(parent, Transform2.CreateVelocity(t.Position - parent.Position));
-                List<IPortal> portals = Scene.GetPortalList();
-                portals.Remove(this as IPortal);
-                Ray.RayCast(portalable, portals, settings);
+                Ray.RayCast(portalable, Scene.GetPortalList(), settings);
                 t = portalable.GetTransform();
             }
             return t;
@@ -196,9 +190,18 @@ namespace Game
         {
             if (Parent != null)
             {
-                //Currently velocities are always in world space rather than the coordinate 
-                //space of the parent.  This might need to be changed.
-                return GetVelocity().Add(Parent.GetWorldVelocity());
+                Transform2 worldTransform = GetWorldTransform();
+                Transform2 parentVelocity = Parent.GetWorldTransform();
+                Debug.Assert(parentVelocity.Scale == Vector2.Zero);
+
+
+
+
+                float scalarVelocity = GetVelocity().Size + parentVelocity.Size;
+                float angularVelocity = GetVelocity().Rotation + parentVelocity.Rotation;
+                //float angularVelocity = Parent.GetVelocity().Rotation * GetTransform().Position.Length;
+
+                Vector2 linearVelocity = parentVelocity.Position;
             }
             return GetVelocity();
         }

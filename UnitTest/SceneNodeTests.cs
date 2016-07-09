@@ -7,6 +7,7 @@ namespace UnitTest
     [TestClass]
     public class SceneNodeTests
     {
+        #region SetScene tests
         [TestMethod]
         public void SetSceneTest0()
         {
@@ -59,5 +60,14 @@ namespace UnitTest
             Assert.IsTrue(node3.Scene == source);
             Assert.IsTrue(node2.Children.Count == 0);
         }
+        #endregion
+        #region GetWorldVelocity tests
+        [TestMethod]
+        public void GetWorldVelocityTest0()
+        {
+            Scene scene = new Scene();
+
+        }
+        #endregion
     }
 }
