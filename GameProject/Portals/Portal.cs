@@ -202,7 +202,7 @@ namespace Game.Portals
             Matrix2 Rot = Matrix2.CreateRotation((float)diff / (detail - 1));
             for (int i = 3; i < verts.Length - 1; i++)
             {
-                verts[i] = MathExt.Matrix2Mult(verts[i - 1] - viewPoint, Rot) + viewPoint;
+                verts[i] = Vector2Ext.Transform(verts[i - 1] - viewPoint, Rot) + viewPoint;
             }
             return verts;
         }

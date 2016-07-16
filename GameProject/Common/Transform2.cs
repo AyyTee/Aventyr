@@ -6,11 +6,12 @@ using Xna = Microsoft.Xna.Framework;
 using System.ComponentModel;
 using System.Xml;
 using System.Runtime.Serialization;
+using Game.Common;
 
 namespace Game
 {
     [DataContract]
-    public class Transform2 : IShallowClone<Transform2>
+    public class Transform2 : IShallowClone<Transform2>, IAlmostEqual<Transform2>
     {
         [DataMember]
         Vector2 _position = new Vector2();
@@ -151,7 +152,7 @@ namespace Game
         }
 
         /// <summary>
-        /// Returns transform that is this transformed with another Transform2.
+        /// Returns transform that is this transformed with another Transform2.  Do not use this for velocity as it will give inappropriate results.
         /// </summary>
         /// <remarks>The method has the following property:
         /// Transform(transform).GetMatrix();
@@ -168,12 +169,12 @@ namespace Game
             output.Size *= transform.Size;
             output.MirrorX = output.MirrorX != transform.MirrorX;
             output.Position = Vector2Ext.Transform(output.Position, transform.GetMatrix());
-            Debug.Assert(Matrix4Ext.AlmostEqual(output.GetMatrix(), GetMatrix() * transform.GetMatrix()));
+            //Debug.Assert(Matrix4Ext.AlmostEqual(output.GetMatrix(), GetMatrix() * transform.GetMatrix(), 1));
             return output;
         }
 
         /// <summary>
-        /// Returns an inverted Transform2 instance.
+        /// Returns an inverted Transform2 instance.  Do not use this for velocity as it will give inappropriate results.
         /// </summary>
         /// <remarks>The method has the following property:
         /// Inverted().GetMatrix();
@@ -273,16 +274,34 @@ namespace Game
 
         public bool AlmostEqual(Transform2 transform)
         {
+            return AlmostEqual(transform, EQUALITY_EPSILON);
+        }
+
+        public bool AlmostEqual(Transform2 transform, float delta)
+        {
             if (transform != null)
             {
-                if (Math.Abs(Rotation - transform.Rotation) <= EQUALITY_EPSILON &&
-                    Math.Abs(Scale.X - transform.Scale.X) <= EQUALITY_EPSILON &&
-                    Math.Abs(Scale.Y - transform.Scale.Y) <= EQUALITY_EPSILON &&
-                    Math.Abs(Position.X - transform.Position.X) <= EQUALITY_EPSILON &&
-                    Math.Abs(Position.Y - transform.Position.Y) <= EQUALITY_EPSILON)
+                if (Math.Abs(Rotation - transform.Rotation) <= delta &&
+                    Math.Abs(Scale.X - transform.Scale.X) <= delta &&
+                    Math.Abs(Scale.Y - transform.Scale.Y) <= delta &&
+                    Math.Abs(Position.X - transform.Position.X) <= delta &&
+                    Math.Abs(Position.Y - transform.Position.Y) <= delta)
                 {
                     return true;
                 }
+            }
+            return false;
+        }
+
+        public bool AlmostEqualPercent(Transform2 transform, float delta, float percent)
+        {
+            if ((Math.Abs(1 - transform.Rotation / Rotation) <= percent || Math.Abs(transform.Rotation - Rotation) <= delta) &&
+                (Math.Abs(1 - transform.Scale.X / Scale.X) <= percent || Math.Abs(transform.Scale.X - Scale.X) <= delta) &&
+                (Math.Abs(1 - transform.Scale.Y / Scale.Y) <= percent || Math.Abs(transform.Scale.Y - Scale.Y) <= delta) &&
+                (Math.Abs(1 - transform.Position.X / Position.X) <= percent || Math.Abs(transform.Position.X - Position.X) <= delta) &&
+                (Math.Abs(1 - transform.Position.Y / Position.Y) <= percent || Math.Abs(transform.Position.Y - Position.Y) <= delta))
+            {
+                return true;
             }
             return false;
         }

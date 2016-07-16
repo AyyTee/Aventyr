@@ -114,26 +114,6 @@ namespace Game
             Debug.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
         }
 
-        public static void SetScene(SceneNode sceneNode, Scene destination)
-        {
-            Debug.Assert(sceneNode != null);
-            Debug.Assert(!sceneNode.IsRoot, "Root nodes cannot be moved.");
-            sceneNode.SetParent(destination.Root);
-        }
-
-        public static void SetScene(ICollection<SceneNode> sceneNodes, Scene destination)
-        {
-            foreach (SceneNode s in sceneNodes)
-            {
-                Debug.Assert(s != null);
-                Debug.Assert(!s.IsRoot, "Root nodes cannot be moved.");
-                if (!sceneNodes.Contains(s.Parent))
-                {
-                    s.SetParent(destination.Root);
-                }
-            }
-        }
-
         public void RemoveChildren()
         {
             for (int i = 0; i < Children.Count; i++)
@@ -157,7 +137,7 @@ namespace Game
         public Transform2 GetWorldTransform()
         {
             Transform2 local = GetTransform();
-            if (local == null || Parent.IsRoot)
+            if (local == null || IsRoot)
             {
                 return local;
             }
@@ -168,17 +148,16 @@ namespace Game
             IPortal portalCast = this as IPortal;
             if (portalCast != null)
             {
-                t = t.Transform(portalCast.Path.GetPortalTransform());
+                return t.Transform(portalCast.Path.GetPortalTransform());
             }
             else
             {
                 Ray.Settings settings = new Ray.Settings();
                 settings.IgnorePortalVelocity = true;
-                IPortalable portalable = new Portalable(parent, Transform2.CreateVelocity(t.Position - parent.Position));
+                IPortalable portalable = new Portalable(new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
                 Ray.RayCast(portalable, Scene.GetPortalList(), settings);
-                t = portalable.GetTransform();
+                return portalable.GetTransform();
             }
-            return t;
         }
 
         public virtual Transform2 GetVelocity()
@@ -186,24 +165,37 @@ namespace Game
             return Transform2.CreateVelocity();
         }
 
+        /// <summary>
+        /// Returns the instantaneous velocity in world coordinates for this SceneNode.  
+        /// This takes into account portal teleporation.
+        /// </summary>
         public Transform2 GetWorldVelocity()
         {
-            if (Parent != null)
+            Transform2 local = GetTransform();
+            Transform2 velocity = GetVelocity();
+            if (local == null || velocity == null || IsRoot)
             {
-                Transform2 worldTransform = GetWorldTransform();
-                Transform2 parentVelocity = Parent.GetWorldTransform();
-                Debug.Assert(parentVelocity.Scale == Vector2.Zero);
-
-
-
-
-                float scalarVelocity = GetVelocity().Size + parentVelocity.Size;
-                float angularVelocity = GetVelocity().Rotation + parentVelocity.Rotation;
-                //float angularVelocity = Parent.GetVelocity().Rotation * GetTransform().Position.Length;
-
-                Vector2 linearVelocity = parentVelocity.Position;
+                return velocity;
             }
-            return GetVelocity();
+
+            Transform2 parentTransform = Parent.GetWorldTransform();
+            Transform2 worldTransform = GetWorldTransform();
+            Transform2 parentVelocity = Parent.GetWorldVelocity();
+
+            Vector2 positionDelta = (worldTransform.Position - parentTransform.Position);
+
+            float scalarVelocity = local.Size * parentVelocity.Size + velocity.Size * parentTransform.Size;
+
+            
+            float angularVelocity = (parentTransform.MirrorX ? -velocity.Rotation : velocity.Rotation) + parentVelocity.Rotation;
+
+            Vector2 v = positionDelta.PerpendicularLeft * parentVelocity.Rotation;
+            Vector2 scaleSpeed = positionDelta * parentVelocity.Size / parentTransform.Size; //* parentVelocity.Size / parentTransform.Size;
+
+            Matrix2 mat = Matrix2.CreateScale(parentTransform.Scale) * Matrix2.CreateRotation(parentTransform.Rotation);
+            
+            Vector2 linearVelocity = Vector2Ext.Transform(velocity.Position, mat) + parentVelocity.Position + v + scaleSpeed;
+            return Transform2.CreateVelocity(linearVelocity, angularVelocity, scalarVelocity);
         }
 
         public SceneNode FindByName(string name)

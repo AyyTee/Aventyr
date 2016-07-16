@@ -42,6 +42,7 @@ dlldata.c
 *.meta
 *.obj
 !Editor/editor assets/models/*.obj
+!EditorLogic/editor assets/models/*.obj
 *.pch
 *.pdb
 *.pgc

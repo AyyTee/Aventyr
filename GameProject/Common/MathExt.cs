@@ -770,14 +770,6 @@ namespace Game
             return triangles;
         }
 
-        static public Vector2d Matrix2dMult(Vector2d V, Matrix2d M)
-        {
-            return new Vector2d(V.X * M.M11 + V.Y * M.M21, V.X * M.M12 + V.Y * M.M22);
-        }
-        static public Vector2 Matrix2Mult(Vector2 V, Matrix2 M)
-        {
-            return new Vector2(V.X * M.M11 + V.Y * M.M21, V.X * M.M12 + V.Y * M.M22);
-        }
         static public double AngleLine(Vector2d V0, Vector2d V1)
         {
             return AngleVector(V0 - V1);

@@ -24,7 +24,6 @@ namespace Game
 
         public ICamera2 ActiveCamera { get; private set; }
         public List<SceneNode> SceneNodeList { get { return Tree<SceneNode>.GetDescendents(Root); } }
-        public List<Entity> EntityList { get { return Tree<SceneNode>.FindByType<Entity>(Root); } }
         [DataMember]
         public List<ISceneObject> SceneObjectList = new List<ISceneObject>();
         /// <summary>

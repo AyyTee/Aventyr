@@ -35,13 +35,20 @@ namespace Game
             return new Vector2(v.X, v.Y);
         }
 
+        public static Vector2 Transform(Vector2 vector, Matrix2 matrix)
+        {
+            return new Vector2(
+                vector.X * matrix.M11 + vector.Y * matrix.M21, 
+                vector.X * matrix.M12 + vector.Y * matrix.M22);
+        }
+
         public static Vector2[] Transform(Vector2[] vectors, Matrix2 matrix)
         {
             Debug.Assert(vectors != null);
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
-                vList[i] = MathExt.Matrix2Mult(vectors[i], matrix);
+                vList[i] = Transform(vectors[i], matrix);
             }
             return vList;
         }
@@ -52,7 +59,7 @@ namespace Game
             List<Vector2> vList = new List<Vector2>();
             foreach (Vector2 v in vectors)
             {
-                vList.Add(MathExt.Matrix2Mult(v, matrix));
+                vList.Add(Transform(v, matrix));
             }
             return vList;
         }

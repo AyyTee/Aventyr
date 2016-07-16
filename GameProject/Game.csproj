@@ -136,6 +136,7 @@
     <Compile Include="Animation\Curve.cs" />
     <Compile Include="Animation\Curve2.cs" />
     <Compile Include="Animation\CurveTransform2.cs" />
+    <Compile Include="Common\IAlmostEqual.cs" />
     <Compile Include="ITime.cs" />
     <Compile Include="Keyframe.cs" />
     <Compile Include="Keyframe2.cs" />

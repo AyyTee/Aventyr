@@ -49,5 +49,20 @@ namespace Game
             }
             return true;
         }
+
+        public static bool AlmostEqual(Matrix4 matrix0, Matrix4 matrix1, float delta, float percent)
+        {
+            for (int i = 0; i < MATRIX_4_SIZE; i++)
+            {
+                for (int j = 0; j < MATRIX_4_SIZE; j++)
+                {
+                    if (Math.Abs(matrix0[i, j] - matrix1[i, j]) > delta && Math.Abs(1 - matrix1[i, j] / matrix0[i, j]) > percent)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
     }
 }

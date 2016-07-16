@@ -154,7 +154,7 @@ namespace UnitTest
                 Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
             }
         }
-        [TestMethod]
+        /*[TestMethod]
         public void IsInsideFOVTest1()
         {
             float x = 100;
@@ -192,7 +192,7 @@ namespace UnitTest
                 Line line = new Line(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
             }
-        }
+        }*/
         [TestMethod]
         public void IsInsideFOVTest3()
         {
@@ -213,7 +213,7 @@ namespace UnitTest
                 Assert.IsFalse(line.IsInsideFOV(viewPoint, lookPoint));
             }
         }
-        [TestMethod]
+        /*[TestMethod]
         public void IsInsideFOVTest4()
         {
             float x = 0;
@@ -251,7 +251,7 @@ namespace UnitTest
                 Line line = new Line(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
             }
-        }
+        }*/
         [TestMethod]
         public void IsInsideFOVTest6()
         {
