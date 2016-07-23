@@ -138,8 +138,8 @@ namespace Game
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = Vector2Ext.Transform(portal.GetWorldTransform().Position + normal, Portal.GetPortalMatrix(portal));
-                    clipModels.AddRange(_getClipModels(entity, model, portalList, centerPointNext, portal, modelMatrix * Portal.GetPortalMatrix(portal), depth - 1, count + 1));
+                    Vector2 centerPointNext = Vector2Ext.Transform(portal.GetWorldTransform().Position + normal, Portal.GetLinkedMatrix(portal));
+                    clipModels.AddRange(_getClipModels(entity, model, portalList, centerPointNext, portal, modelMatrix * Portal.GetLinkedMatrix(portal), depth - 1, count + 1));
                 }
             }
             clipModels.Add(new ClipModel(entity, model, clipLines.ToArray(), modelMatrix));
@@ -221,8 +221,8 @@ namespace Game
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = Vector2Ext.Transform(portal.GetWorldTransform().Position + normal, Portal.GetPortalMatrix(portal));
-                    clipModels.AddRange(_getClipModels(polygon, portalList, centerPointNext, portal, modelMatrix * Portal.GetPortalMatrix(portal), depth - 1, count + 1));
+                    Vector2 centerPointNext = Vector2Ext.Transform(portal.GetWorldTransform().Position + normal, Portal.GetLinkedMatrix(portal));
+                    clipModels.AddRange(_getClipModels(polygon, portalList, centerPointNext, portal, modelMatrix * Portal.GetLinkedMatrix(portal), depth - 1, count + 1));
                 }
             }
             clipModels.Add(new ClipPolygon(polygon, clipLines.ToArray(), modelMatrix));

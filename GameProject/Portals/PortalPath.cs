@@ -19,7 +19,7 @@ namespace Game.Portals
             Transform2 t = new Transform2();
             for (int i = 0; i < Portals.Count; i++)
             {
-                Transform2 portal = Portal.GetPortalTransform(Portals[i]);
+                Transform2 portal = Portal.GetLinkedTransform(Portals[i]);
                 //t.MirrorX = !t.MirrorX;
                 t = t.Transform(portal);
             }

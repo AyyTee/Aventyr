@@ -18,8 +18,8 @@ namespace UnitTest
             FloatPortal p1 = new FloatPortal(scene);
             p1.SetTransform(new Transform2(new Vector2(4, -1), 1.4f, -3));
 
-            Transform2 result = Portal.GetPortalTransform(p0, p1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), Portal.GetPortalMatrix(p0, p1)));
+            Transform2 result = Portal.GetLinkedTransform(p0, p1);
+            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), Portal.GetLinkedMatrix(p0, p1)));
         }
 
         [TestMethod]
@@ -31,8 +31,8 @@ namespace UnitTest
             FloatPortal p1 = new FloatPortal(scene);
             p1.SetTransform(new Transform2(new Vector2(4, -1), 1.4f, -3, true));
 
-            Transform2 result = Portal.GetPortalTransform(p0, p1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), Portal.GetPortalMatrix(p0, p1)));
+            Transform2 result = Portal.GetLinkedTransform(p0, p1);
+            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), Portal.GetLinkedMatrix(p0, p1)));
         }
     }
 }

@@ -153,7 +153,7 @@ namespace Game
             else
             {
                 Ray.Settings settings = new Ray.Settings();
-                settings.IgnorePortalVelocity = true;
+                //settings.IgnorePortalVelocity = true;
                 IPortalable portalable = new Portalable(new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
                 Ray.RayCast(portalable, Scene.GetPortalList(), settings);
                 return portalable.GetTransform();
@@ -178,24 +178,53 @@ namespace Game
                 return velocity;
             }
 
-            Transform2 parentTransform = Parent.GetWorldTransform();
-            Transform2 worldTransform = GetWorldTransform();
+            Transform2 parent = Parent.GetWorldTransform();
+            Transform2 worldTransform = local.Transform(parent);//GetWorldTransform();
             Transform2 parentVelocity = Parent.GetWorldVelocity();
 
-            Vector2 positionDelta = (worldTransform.Position - parentTransform.Position);
+            Vector2 positionDelta = (worldTransform.Position - parent.Position);
 
-            float scalarVelocity = local.Size * parentVelocity.Size + velocity.Size * parentTransform.Size;
+            Transform2 worldVelocity = Transform2.CreateVelocity();
 
-            
-            float angularVelocity = (parentTransform.MirrorX ? -velocity.Rotation : velocity.Rotation) + parentVelocity.Rotation;
 
-            Vector2 v = positionDelta.PerpendicularLeft * parentVelocity.Rotation;
-            Vector2 scaleSpeed = positionDelta * parentVelocity.Size / parentTransform.Size; //* parentVelocity.Size / parentTransform.Size;
+            worldVelocity.Size = local.Size * parentVelocity.Size + velocity.Size * parent.Size;
 
-            Matrix2 mat = Matrix2.CreateScale(parentTransform.Scale) * Matrix2.CreateRotation(parentTransform.Rotation);
-            
-            Vector2 linearVelocity = Vector2Ext.Transform(velocity.Position, mat) + parentVelocity.Position + v + scaleSpeed;
-            return Transform2.CreateVelocity(linearVelocity, angularVelocity, scalarVelocity);
+            worldVelocity.Rotation = (parent.MirrorX ? -velocity.Rotation : velocity.Rotation) + parentVelocity.Rotation;
+
+            //Vector2 v = positionDelta.PerpendicularLeft * parentVelocity.Rotation;
+            Vector2 v = MathExt.AngularVelocity(positionDelta, parentVelocity.Rotation);
+            Vector2 scaleSpeed = positionDelta * parentVelocity.Size / parent.Size;
+
+            Matrix2 mat = Matrix2.CreateScale(parent.Scale) * Matrix2.CreateRotation(parent.Rotation);
+
+            worldVelocity.Position = Vector2Ext.Transform(velocity.Position, mat) + parentVelocity.Position + v + scaleSpeed;
+
+
+            IPortal portalCast = this as IPortal;
+            if (portalCast != null)
+            {
+                return worldVelocity.Transform(portalCast.Path.GetPortalTransform());
+            }
+            else
+            {
+                IPortalable portalable = new Portalable(new Transform2(parent.Position, worldTransform.Size, worldTransform.Rotation, worldTransform.MirrorX), Transform2.CreateVelocity(positionDelta));
+                Ray.RayCast(portalable, Scene.GetPortalList(), new Ray.Settings(), (IPortal portal, double portalT, double movementT) => {
+                    worldVelocity = Portal.EnterVelocity(portal, 0.5f, worldVelocity);
+                    Vector2 endPosition = portalable.GetTransform().Position + portalable.GetVelocity().Position * (float)(1 - movementT);
+                    float angularVelocity = portal.Linked.GetWorldVelocity().Rotation;
+                    if (portal.GetWorldTransform().MirrorX != portal.Linked.GetWorldTransform().MirrorX)
+                    {
+                        angularVelocity -= portal.GetWorldVelocity().Rotation;
+                    }
+                    else
+                    {
+                        angularVelocity += portal.GetWorldVelocity().Rotation;
+                    }
+                    worldVelocity.Position += MathExt.AngularVelocity(endPosition, portal.Linked.GetWorldTransform().Position, angularVelocity);
+                });
+
+                return worldVelocity;
+            }
         }
 
         public SceneNode FindByName(string name)

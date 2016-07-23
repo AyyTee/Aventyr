@@ -26,19 +26,28 @@ namespace Game.Portals
         public static Transform2 Enter(IPortal portal, Transform2 transform)
         {
             Debug.Assert(IsValid(portal));
-            return transform.Transform(GetPortalTransform(portal, portal.Linked));
+            return transform.Transform(GetLinkedTransform(portal, portal.Linked));
         }
 
-        public static Transform2 EnterVelocity(IPortal portal, Transform2 velocity, bool ignorePortalVelocity = false)
+        /// <summary>
+        /// Returns new velocity from entering portal.
+        /// </summary>
+        /// <param name="portal">Portal being entered.</param>
+        /// <param name="intersectT">Intersection point on the portal.</param>
+        /// <param name="velocity">Velocity before entering.</param>
+        public static Transform2 EnterVelocity(IPortal portal, float intersectT, Transform2 velocity, bool ignorePortalVelocity = false)
         {
             Debug.Assert(IsValid(portal));
-            Matrix4 matrix = GetPortalMatrix(portal);
+            Matrix4 matrix = GetLinkedMatrix(portal);
             Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
             Transform2 velocityClone = velocity.ShallowClone();
+
+            //Transform2 portalVelocity = Transform2.CreateVelocity();
             if (!ignorePortalVelocity)
             {
                 velocityClone.Position -= portal.GetWorldVelocity().Position;
                 velocityClone.Rotation -= portal.GetWorldVelocity().Rotation;
+                //velocityClone.Position -= GetAngularVelocity(portal, intersectT);
             }
             velocityClone.Position = Vector2Ext.Transform(velocityClone.Position, matrix);
             velocityClone.Position -= origin;
@@ -51,8 +60,15 @@ namespace Game.Portals
             {
                 velocityClone.Position += portal.Linked.GetWorldVelocity().Position;
                 velocityClone.Rotation += portal.Linked.GetWorldVelocity().Rotation;
+                //velocityClone.Position += GetAngularVelocity(portal.Linked, intersectT);
             }
             return velocityClone;
+        }
+
+        private static Vector2 GetAngularVelocity(IPortal portal, float intersectT)
+        {
+            Vector2 intersect = new Line(GetWorldVerts(portal)).Lerp(intersectT);
+            return MathExt.AngularVelocity(intersect, portal.GetWorldTransform().Position, portal.GetWorldVelocity().Rotation);
         }
 
         public static void Enter(IPortal portal, IPortalable portalable, bool ignorePortalVelocity = false)
@@ -60,11 +76,11 @@ namespace Game.Portals
             Transform2 transform = portalable.GetTransform();
             Transform2 velocity = portalable.GetVelocity();
             portalable.SetTransform(Enter(portal, transform));
-            portalable.SetVelocity(EnterVelocity(portal, velocity, ignorePortalVelocity));
+            portalable.SetVelocity(EnterVelocity(portal, 0.5f, velocity, ignorePortalVelocity));
 
             foreach (IPortal p in portalable.GetPortalChildren())
             {
-                p.WorldTransformPrevious = Portal.GetPortalTransform(p);
+                p.WorldTransformPrevious = Portal.GetLinkedTransform(p);
                 p.Path.Enter(portal.Linked);
                 
             }
@@ -76,8 +92,8 @@ namespace Game.Portals
         {
             Transform2 transform = new Transform2(body.Position, 1, body.Rotation);
             Transform2 velocity = Transform2.CreateVelocity(Vector2Ext.ConvertTo(body.LinearVelocity), body.AngularVelocity);
+            velocity = EnterVelocity(portal, 0.5f, velocity, ignorePortalVelocity);
             transform = Enter(portal, transform);
-            velocity = EnterVelocity(portal, velocity, ignorePortalVelocity);
             body.Position = Vector2Ext.ConvertToXna(transform.Position);
             body.Rotation = transform.Rotation;
             body.LinearVelocity = Vector2Ext.ConvertToXna(velocity.Position);
@@ -108,14 +124,14 @@ namespace Game.Portals
             return Vector2Ext.Transform(Vector2Ext.Scale(GetVerts(portal), scalar), portal.GetWorldTransform().GetMatrix());
         }
 
-        public static Matrix4 GetPortalMatrix(IPortal portalEnter)
+        public static Matrix4 GetLinkedMatrix(IPortal portalEnter)
         {
             Debug.Assert(portalEnter.Linked != null, "Portal must be linked to another portal.");
-            return GetPortalMatrix(portalEnter, portalEnter.Linked);
+            return GetLinkedMatrix(portalEnter, portalEnter.Linked);
         }
 
         /// <summary>Returns matrix to transform between one portals coordinate space to another.</summary>
-        public static Matrix4 GetPortalMatrix(IPortal portalEnter, IPortal portalExit)
+        public static Matrix4 GetLinkedMatrix(IPortal portalEnter, IPortal portalExit)
         {
             Transform2 transform = portalExit.GetWorldTransform();
             transform.MirrorX = !transform.MirrorX;
@@ -123,13 +139,13 @@ namespace Game.Portals
             return m.Inverted() * transform.GetMatrix();
         }
 
-        public static Transform2 GetPortalTransform(IPortal portalEnter)
+        public static Transform2 GetLinkedTransform(IPortal portalEnter)
         {
             Debug.Assert(portalEnter.Linked != null, "Portal must be linked to another portal.");
-            return GetPortalTransform(portalEnter, portalEnter.Linked);
+            return GetLinkedTransform(portalEnter, portalEnter.Linked);
         }
 
-        public static Transform2 GetPortalTransform(IPortal portalEnter, IPortal portalExit)
+        public static Transform2 GetLinkedTransform(IPortal portalEnter, IPortal portalExit)
         {
             Transform2 tExit = portalExit.GetWorldTransform();
             tExit.MirrorX = !tExit.MirrorX;

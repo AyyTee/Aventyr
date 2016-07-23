@@ -293,7 +293,7 @@ namespace Game
             return false;
         }
 
-        public bool AlmostEqualPercent(Transform2 transform, float delta, float percent)
+        public bool AlmostEqual(Transform2 transform, float delta, float percent)
         {
             if ((Math.Abs(1 - transform.Rotation / Rotation) <= percent || Math.Abs(transform.Rotation - Rotation) <= delta) &&
                 (Math.Abs(1 - transform.Scale.X / Scale.X) <= percent || Math.Abs(transform.Scale.X - Scale.X) <= delta) &&

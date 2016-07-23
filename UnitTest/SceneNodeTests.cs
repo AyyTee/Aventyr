@@ -443,12 +443,520 @@ namespace UnitTest
 
                 Transform2 result = node.GetWorldVelocity();
                 Transform2 expected = ApproximateVelocity(node);
-                if (result.AlmostEqualPercent(expected, 0.05f, 0.01f) == false)
-                {
-
-                }
-                Assert.IsTrue(result.AlmostEqualPercent(expected, 0.05f, 0.05f));
+                Assert.IsTrue(result.AlmostEqual(expected, 0.05f, 0.05f));
             }
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest0()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0)));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(30, 0)));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(2, 0)));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest1()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+            //node.SetVelocity(Transform2.CreateVelocity(Vector2.Zero, 10f));
+
+            Transformable parent = new Transformable(scene);
+            //parent.SetVelocity(Transform2.CreateVelocity(Vector2.Zero, 5.5f));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0)));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(30, 0), 3.3f, 5.5f));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(2, 0)));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest2()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+            //node.SetVelocity(Transform2.CreateVelocity(Vector2.Zero, 10f));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 1f));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0)));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(30, 0), 1f, 0f));
+            //exit.SetVelocity(Transform2.CreateVelocity(new Vector2(2, 0)));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest3()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+            node.SetVelocity(Transform2.CreateVelocity(new Vector2(-2.3f, -56), 10f, 0.4f));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetVelocity(Transform2.CreateVelocity(new Vector2(1.5f, 5.2f), 1f, 2.3f));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0)));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(30, 0), 1f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest4()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0)));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), 1f, 0f));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 1f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest5()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0.45f)));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0)));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), 1f, 0f));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 1f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.06f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest6()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0)));
+            enter.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), -1.5f, 0f));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), 1f, 0f));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 1f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.06f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest7()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0.45f)));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0)));
+            enter.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), -15f, 0f));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), 1f, 0f));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 10f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.06f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest8()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0f)));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0), 1f));
+            enter.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 0f, 0f));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), 2f, 0f));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 1f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            node.GetWorldTransform();
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.06f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest9()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0.45f)));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0), 1f));
+            enter.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), -4f, 0f));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), 1.5f, 0f));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 6f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            node.GetWorldTransform();
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.06f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest10()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0f)));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0), 1f, (float)Math.PI/4));
+            enter.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), -4f, 0f));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), 1.5f, 0f));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 6f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            node.GetWorldTransform();
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest11()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 12)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(1, 1.2f)));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 5), 1f, (float)Math.PI / 4));
+            enter.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), -4f, 0f));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), 1.5f, 3.5f));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 6f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            node.GetWorldTransform();
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest12()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0)));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0), 1f, 0));
+            enter.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 2f, 0f));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), 1f, 0, true));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 0f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            node.GetWorldTransform();
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest13()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0)));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0), 1f, 0, true));
+            enter.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 2f, 0f));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), 1f, 0, true));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 0f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            node.GetWorldTransform();
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest14()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0)));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0), 1.5f, 0, true));
+            enter.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 2f, 0f));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), -1.2f, 0, true));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 3f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            node.GetWorldTransform();
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest15()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, -0.2f)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0.45f)));
+            node.SetParent(parent);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(4, 0), 1.5f, 0, true));
+            enter.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 2f, 0f));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(100, 0), -1.2f, 0));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 3f, 0f));
+
+            exit.Linked = enter;
+            enter.Linked = exit;
+
+            node.GetWorldTransform();
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest16()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, 0)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0)));
+            node.SetParent(parent);
+
+            FloatPortal enter0 = new FloatPortal(scene);
+            enter0.SetTransform(new Transform2(new Vector2(4, 0), 1f, 0));
+            enter0.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 0f, 0f));
+
+            FloatPortal exit0 = new FloatPortal(scene);
+            exit0.SetTransform(new Transform2(new Vector2(100, 0), 1f, (float)Math.PI));
+            exit0.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 0f, 0f));
+
+            exit0.Linked = enter0;
+            enter0.Linked = exit0;
+
+            FloatPortal enter1 = new FloatPortal(scene);
+            enter1.SetTransform(new Transform2(new Vector2(104, 0), 1f, 0));
+            enter1.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 1f, 0f));
+
+            FloatPortal exit1 = new FloatPortal(scene);
+            exit1.SetTransform(new Transform2(new Vector2(50, 30), 1f, 0));
+            exit1.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 0f, 0f));
+
+            exit1.Linked = enter1;
+            enter1.Linked = exit1;
+
+            node.GetWorldTransform();
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
+        }
+
+        [TestMethod]
+        public void GetWorldVelocityWithPortalTest17()
+        {
+            Scene scene = new Scene();
+            Transformable node = new Transformable(scene);
+            node.SetTransform(new Transform2(new Vector2(10, -0.2f)));
+
+            Transformable parent = new Transformable(scene);
+            parent.SetTransform(new Transform2(new Vector2(0, 0.4f)));
+            parent.SetVelocity(Transform2.CreateVelocity(new Vector2(1f, 5f), 3f, 0.3f));
+            node.SetParent(parent);
+
+            FloatPortal enter0 = new FloatPortal(scene);
+            enter0.SetTransform(new Transform2(new Vector2(4, 0), 1.2f, 0, true));
+            enter0.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 1.9f, 0f));
+
+            FloatPortal exit0 = new FloatPortal(scene);
+            exit0.SetTransform(new Transform2(new Vector2(100, 0), 1.5f, (float)Math.PI));
+            exit0.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), -1.3f, 0f));
+
+            exit0.Linked = enter0;
+            enter0.Linked = exit0;
+
+            FloatPortal enter1 = new FloatPortal(scene);
+            enter1.SetTransform(new Transform2(new Vector2(104, 0), 1.3f, -2f));
+            enter1.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), 1f, 0f));
+
+            FloatPortal exit1 = new FloatPortal(scene);
+            exit1.SetTransform(new Transform2(new Vector2(50, 30), -0.4f, 0.5f, true));
+            exit1.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 0), -2f, 0f));
+
+            exit1.Linked = enter1;
+            enter1.Linked = exit1;
+
+            node.GetWorldTransform();
+            Transform2 result = node.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(node);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
         public Transform2 GetRandomTransform(Random random)

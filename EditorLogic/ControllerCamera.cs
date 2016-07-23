@@ -212,7 +212,7 @@ namespace EditorLogic
             if (Controller.renderer.PortalRenderEnabled)
             {
                 Ray.Settings settings = new Ray.Settings();
-                settings.IgnorePortalVelocity = true;
+                //settings.IgnorePortalVelocity = true;
                 Ray.RayCast(this, Scene.GetPortalList(), settings);
             }
             else

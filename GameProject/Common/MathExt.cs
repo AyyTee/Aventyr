@@ -838,6 +838,16 @@ namespace Game
             return ((value % TAU) + TAU) % TAU;
         }
 
+        public static Vector2 AngularVelocity(Vector2 point, Vector2 pivotPoint, float rotationSpeed)
+        {
+            return AngularVelocity(point - pivotPoint, rotationSpeed);
+        }
+
+        public static Vector2 AngularVelocity(Vector2 offset, float rotationSpeed)
+        {
+            return offset.PerpendicularLeft * rotationSpeed;
+        }
+
         /// <summary>
         /// Returns a projection of V0 onto V1
         /// </summary>

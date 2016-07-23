@@ -54,7 +54,7 @@ namespace Game.Animation
 
         public void EnterPortal(IPortal enter, IPortal exit)
         {
-            TransformOffset = TransformOffset.Transform(Portal.GetPortalTransform(enter, exit));
+            TransformOffset = TransformOffset.Transform(Portal.GetLinkedTransform(enter, exit));
             //TransformVelocity = 
         }
 

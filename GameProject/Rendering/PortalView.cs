@@ -160,10 +160,10 @@ namespace Game
                 return false;
             }
 
-            Vector2 viewPosNew = Vector2Ext.Transform(viewPos, Portal.GetPortalMatrix(portal, portal.Linked));
-            Vector2 viewPosPreviousNew = Vector2Ext.Transform(viewPosPrevious, Portal.GetPortalMatrix(portal, portal.Linked));
+            Vector2 viewPosNew = Vector2Ext.Transform(viewPos, Portal.GetLinkedMatrix(portal, portal.Linked));
+            Vector2 viewPosPreviousNew = Vector2Ext.Transform(viewPosPrevious, Portal.GetLinkedMatrix(portal, portal.Linked));
 
-            Matrix4 portalMatrixNew = Portal.GetPortalMatrix(portal.Linked, portal) * portalMatrix;
+            Matrix4 portalMatrixNew = Portal.GetLinkedMatrix(portal.Linked, portal) * portalMatrix;
             Matrix4 viewMatrixNew = portalMatrixNew * viewMatrix;
 
             Line[] lines = Portal.GetFovLines(portal, viewPos, 500);

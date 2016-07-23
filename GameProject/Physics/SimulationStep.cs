@@ -123,9 +123,9 @@ namespace Game
                     portalable.Transform.Size += portalable.Velocity.Size * iterationLength;
                     Ray.Settings settings = new Ray.Settings();
                     settings.TimeScale = iterationLength;
-                    Ray.RayCast(portalable, portals, settings, (IPortal portal) =>
+                    Ray.RayCast(portalable, portals, settings, (IPortal portal, double intersectT, double movementLeft) =>
                     {
-                        portalable.TrueVelocity = Portal.EnterVelocity(portal, portalable.TrueVelocity);
+                        portalable.TrueVelocity = Portal.EnterVelocity(portal, (float)intersectT, portalable.TrueVelocity);
                         portalable.Portalable.EnterPortal?.Invoke(portal, null, null);
                     });
                 }
@@ -161,7 +161,7 @@ namespace Game
                         if (MathExt.PointInPolygon(portalable.Transform.Position, quad))
                         {
                             Portal.Enter(p, portalable);
-                            portalable.TrueVelocity = Portal.EnterVelocity(p, portalable.TrueVelocity);
+                            portalable.TrueVelocity = Portal.EnterVelocity(p, 0.5f, portalable.TrueVelocity);
                         }
                     }
                     p.WorldTransform.Position -= margin;
