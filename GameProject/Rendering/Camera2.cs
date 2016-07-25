@@ -36,7 +36,7 @@ namespace Game
         public float ZFar { get { return 10000f; } }
         public double Fov { get { return Math.PI / 4; } }
         [DataMember]
-        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
+        public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 
         #region Constructors
         public Camera2(Scene scene)

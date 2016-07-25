@@ -144,6 +144,7 @@
     <Compile Include="Physics\BodyMemento.cs" />
     <Compile Include="Physics\BodyUserData.cs" />
     <Compile Include="Physics\SimulationStep.cs" />
+    <Compile Include="Portals\EnterCallbackData.cs" />
     <Compile Include="Portals\PortalPath.cs" />
     <Compile Include="Portals\Portalable.cs" />
     <Compile Include="Portals\ProxyPortal.cs" />

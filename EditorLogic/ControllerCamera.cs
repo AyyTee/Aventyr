@@ -39,7 +39,7 @@ namespace EditorLogic
         [DataMember]
         private float _zoomScrollFactor;
         [DataMember]
-        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
+        public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
         /// <summary>How much the camera zooms in/out with mouse scrolling. Value must be greater than 1.</summary>
         public float ZoomScrollFactor 
         { 

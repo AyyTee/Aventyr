@@ -70,7 +70,7 @@ namespace UnitTest
         {
             Transform2 Transform = new Transform2();
             Transform2 Velocity = Transform2.CreateVelocity();
-            public Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
+            public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
             public bool IsPortalable { get { return true; } }
 
             public Transformable(Scene scene)

@@ -38,7 +38,7 @@ namespace Game
         public bool Visible { get; set; }
         public List<Model> ModelList { get { return new List<Model>(_models); } }
         [DataMember]
-        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
+        public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 
         #region Constructors
         public Entity(Scene scene)

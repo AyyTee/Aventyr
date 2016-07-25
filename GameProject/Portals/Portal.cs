@@ -80,12 +80,12 @@ namespace Game.Portals
 
             foreach (IPortal p in portalable.GetPortalChildren())
             {
-                p.WorldTransformPrevious = Portal.GetLinkedTransform(p);
+                p.WorldTransformPrevious = GetLinkedTransform(p);
                 p.Path.Enter(portal.Linked);
                 
             }
 
-            portalable.EnterPortal?.Invoke(portal, transform, velocity);
+            portalable.EnterPortal?.Invoke(new EnterCallbackData(portal, portalable, 0.5f), transform, velocity);
         }
 
         public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)

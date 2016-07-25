@@ -73,7 +73,7 @@ namespace Game
 
             if (World != null && stepSize > 0)
             {
-                List<ProxyPortalable> portalablePrevList = new List<ProxyPortalable>();
+                /*List<ProxyPortalable> portalablePrevList = new List<ProxyPortalable>();
                 foreach (IPortalable s in SceneNodeList.OfType<IPortalable>())
                 {
                     if (s is IPortal)
@@ -99,9 +99,9 @@ namespace Game
                 }
 
                 //SimulationStep.Step(GetAll().OfType<IPortalable>(), GetAll().OfType<IPortal>(), stepSize);
-                SimulationStep.Step(portalPrevList, portalablePrevList, 10, stepSize);
+                SimulationStep.Step(portalPrevList, portalablePrevList, 10, stepSize);*/
 
-                /*List<ActorPrev> actorTemp = new List<ActorPrev>();
+                List<ActorPrev> actorTemp = new List<ActorPrev>();
                 foreach (IActor actor in GetAll().OfType<IActor>())
                 {
                     ActorPrev actorPrev = new ActorPrev();
@@ -127,13 +127,20 @@ namespace Game
                     prev.Actor.SetVelocity(velocity);
                 }
 
-                SimulationStep.Step(GetAll().OfType<IPortalable>(), GetAll().OfType<IPortal>(), stepSize);
+                SimulationStep.Step(GetAll().OfType<IPortalable>(), GetAll().OfType<IPortal>(), stepSize, (EnterCallbackData data) => {
+                    IActor actor = data.Instance as IActor;
+                    if (actor != null)
+                    {
+                        ActorPrev prev = actorTemp.Find(item => item.Actor == actor);
+                        Portal.EnterVelocity(data.EntrancePortal, (float)data.PortalT, prev.TrueVelocity);
+                    }
+                });
 
                 //Reset the actor's velocity.
                 foreach (ActorPrev prev in actorTemp)
                 {
                     prev.Actor.SetVelocity(prev.TrueVelocity);
-                }*/
+                }
             }
 
             foreach (IStep s in GetAll().OfType<IStep>())

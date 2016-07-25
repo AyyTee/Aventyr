@@ -208,19 +208,19 @@ namespace Game
             else
             {
                 IPortalable portalable = new Portalable(new Transform2(parent.Position, worldTransform.Size, worldTransform.Rotation, worldTransform.MirrorX), Transform2.CreateVelocity(positionDelta));
-                Ray.RayCast(portalable, Scene.GetPortalList(), new Ray.Settings(), (IPortal portal, double portalT, double movementT) => {
-                    worldVelocity = Portal.EnterVelocity(portal, 0.5f, worldVelocity);
+                Ray.RayCast(portalable, Scene.GetPortalList(), new Ray.Settings(), (EnterCallbackData data, double movementT) => {
+                    worldVelocity = Portal.EnterVelocity(data.EntrancePortal, 0.5f, worldVelocity);
                     Vector2 endPosition = portalable.GetTransform().Position + portalable.GetVelocity().Position * (float)(1 - movementT);
-                    float angularVelocity = portal.Linked.GetWorldVelocity().Rotation;
-                    if (portal.GetWorldTransform().MirrorX != portal.Linked.GetWorldTransform().MirrorX)
+                    float angularVelocity = data.EntrancePortal.Linked.GetWorldVelocity().Rotation;
+                    if (data.EntrancePortal.GetWorldTransform().MirrorX != data.EntrancePortal.Linked.GetWorldTransform().MirrorX)
                     {
-                        angularVelocity -= portal.GetWorldVelocity().Rotation;
+                        angularVelocity -= data.EntrancePortal.GetWorldVelocity().Rotation;
                     }
                     else
                     {
-                        angularVelocity += portal.GetWorldVelocity().Rotation;
+                        angularVelocity += data.EntrancePortal.GetWorldVelocity().Rotation;
                     }
-                    worldVelocity.Position += MathExt.AngularVelocity(endPosition, portal.Linked.GetWorldTransform().Position, angularVelocity);
+                    worldVelocity.Position += MathExt.AngularVelocity(endPosition, data.EntrancePortal.Linked.GetWorldTransform().Position, angularVelocity);
                 });
 
                 return worldVelocity;

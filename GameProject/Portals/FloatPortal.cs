@@ -30,7 +30,7 @@ namespace Game.Portals
         [DataMember]
         public PortalPath Path { get; private set; }
 
-        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set;}
+        public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set;}
 
         public const float EdgeMargin = 0.02f;
         public const float CollisionMargin = 0.1f;

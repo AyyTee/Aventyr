@@ -31,7 +31,7 @@ namespace Game
         /// <param name="portalable">Instance travelling along ray.</param>
         /// <param name="portals">Collection of portals used for portal teleportation.</param>
         /// <param name="portalEnter">Callback that is executed after entering a portal.</param>
-        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, Settings settings, Action<IPortal, double, double> portalEnter = null)
+        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, Settings settings, Action<EnterCallbackData, double> portalEnter = null)
         {
             Debug.Assert(settings.MaxIterations >= 0);
             Debug.Assert(portalable != null);
@@ -52,7 +52,7 @@ namespace Game
                 0);
         }
 
-        private static void _rayCast(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Action<IPortal, double, double> portalEnter, Settings settings, int count)
+        private static void _rayCast(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Action<EnterCallbackData, double> portalEnter, Settings settings, int count)
         {
             Transform2 begin = placeable.GetTransform();
             Transform2 velocity = placeable.GetVelocity().Multiply(settings.TimeScale);
@@ -98,7 +98,7 @@ namespace Game
                 placeable.SetTransform(begin);
                 Portal.Enter(portalNearest, placeable, true);
                 
-                portalEnter?.Invoke(portalNearest, intersectNearest.TFirst, t);
+                portalEnter?.Invoke(new EnterCallbackData(portalNearest, placeable, intersectNearest.TFirst), t);
 
                 movementLeft *= Math.Abs(placeable.GetTransform().Size / begin.Size);
                 _rayCast(placeable, portals, movementLeft, portalNearest.Linked, portalEnter, settings, count + 1);

@@ -11,7 +11,7 @@ namespace Game.Portals
     /// </summary>
     public class Portalable : IPortalable
     {
-        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
+        public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
         public bool IsPortalable { get; set; }
         Transform2 _transform = new Transform2();
         Transform2 _velocity = Transform2.CreateVelocity();

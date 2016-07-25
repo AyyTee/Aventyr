@@ -48,7 +48,7 @@ namespace Game
             }
         }
 
-        public static void Step(IEnumerable<IPortalable> moving, IEnumerable<IPortal> portals, float stepSize)
+        public static void Step(IEnumerable<IPortalable> moving, IEnumerable<IPortal> portals, float stepSize, Action<EnterCallbackData> portalEnter)
         {
             List<PortalableMovement> pointMovement = new List<PortalableMovement>();
             List<PortalMovement> lineMovement = new List<PortalMovement>();
@@ -75,6 +75,8 @@ namespace Game
             }
 
             double tCurrent = 0;
+            IPortal portalCollisionLast = null;
+            IPortalable portalableCollisionLast = null;
             PortalableSweep earliest;
             do
             {
@@ -123,10 +125,10 @@ namespace Game
                     portalable.Transform.Size += portalable.Velocity.Size * iterationLength;
                     Ray.Settings settings = new Ray.Settings();
                     settings.TimeScale = iterationLength;
-                    Ray.RayCast(portalable, portals, settings, (IPortal portal, double intersectT, double movementLeft) =>
+                    Ray.RayCast(portalable, portals, settings, (EnterCallbackData data, double movementLeft) =>
                     {
-                        portalable.TrueVelocity = Portal.EnterVelocity(portal, (float)intersectT, portalable.TrueVelocity);
-                        portalable.Portalable.EnterPortal?.Invoke(portal, null, null);
+                        portalable.TrueVelocity = Portal.EnterVelocity(data.EntrancePortal, (float)data.PortalT, portalable.TrueVelocity);
+                        portalable.Portalable.EnterPortal?.Invoke(data, null, null);
                     });
                 }
                 foreach (ProxyPortal p in portals)

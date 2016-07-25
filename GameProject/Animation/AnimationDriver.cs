@@ -21,8 +21,8 @@ namespace Game.Animation
         public void Add(IPortalable portalable, CurveTransform2 curve)
         {
             animated.Add(portalable, curve.ShallowClone());
-            portalable.EnterPortal += (portal, transformPrev, velocityPrev) => {
-                animated[portalable].EnterPortal(portal, portal.Linked);
+            portalable.EnterPortal += (data, transformPrev, velocityPrev) => {
+                animated[portalable].EnterPortal(data.EntrancePortal, data.EntrancePortal.Linked);
             };
         }
 

@@ -20,7 +20,7 @@ namespace Game.Portals
         /// Is called when entering a portal.  
         /// EnterPortal(IPortal enter, Transform2 transform, Transform2 velocity)
         /// </summary>
-        Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
+        Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
         /// <summary>Returns a copy of the local velocity.</summary>
         Transform2 GetVelocity();
         /// <summary>Replaces the local velocity with a copy of the passed argument.</summary>

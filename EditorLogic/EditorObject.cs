@@ -46,7 +46,7 @@ namespace EditorLogic
         public IPolygonCoord PolygonTransform;
         public bool IsModified { get; set; }
         [DataMember]
-        public Action<IPortal, Transform2, Transform2> EnterPortal { get; set; }
+        public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 
         public EditorObject(EditorScene editorScene)
         {
