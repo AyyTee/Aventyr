@@ -18,6 +18,9 @@ namespace Game.Portals
         /// </summary>
         public const float EnterMinDistance = 0.001f;
 
+        /// <summary>
+        /// Returns whether a portal can be entered.
+        /// </summary>
         public static bool IsValid(IPortal portal)
         {
             return portal.Linked != null;
@@ -71,21 +74,20 @@ namespace Game.Portals
             return MathExt.AngularVelocity(intersect, portal.GetWorldTransform().Position, portal.GetWorldVelocity().Rotation);
         }
 
-        public static void Enter(IPortal portal, IPortalable portalable, bool ignorePortalVelocity = false)
+        public static void Enter(IPortal portal, IPortalable portalable, float intersectT, bool ignorePortalVelocity = false)
         {
             Transform2 transform = portalable.GetTransform();
             Transform2 velocity = portalable.GetVelocity();
             portalable.SetTransform(Enter(portal, transform));
-            portalable.SetVelocity(EnterVelocity(portal, 0.5f, velocity, ignorePortalVelocity));
+            portalable.SetVelocity(EnterVelocity(portal, intersectT, velocity, ignorePortalVelocity));
 
             foreach (IPortal p in portalable.GetPortalChildren())
             {
                 p.WorldTransformPrevious = GetLinkedTransform(p);
                 p.Path.Enter(portal.Linked);
-                
             }
 
-            portalable.EnterPortal?.Invoke(new EnterCallbackData(portal, portalable, 0.5f), transform, velocity);
+            portalable.EnterPortal?.Invoke(new EnterCallbackData(portal, portalable, intersectT), transform, velocity);
         }
 
         public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)

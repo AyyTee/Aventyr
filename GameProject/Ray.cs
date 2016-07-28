@@ -96,7 +96,7 @@ namespace Game
 
                 begin.Position = (Vector2)intersectNearest.Position;
                 placeable.SetTransform(begin);
-                Portal.Enter(portalNearest, placeable, true);
+                Portal.Enter(portalNearest, placeable, (float)intersectNearest.TFirst, true);
                 
                 portalEnter?.Invoke(new EnterCallbackData(portalNearest, placeable, intersectNearest.TFirst), t);
 

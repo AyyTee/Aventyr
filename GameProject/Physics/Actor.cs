@@ -18,7 +18,7 @@ namespace Game
     public class Actor : SceneNode, IActor
     {
         [DataMember]
-        public bool IsPortalable { get; set; }
+        public bool IsPortalable { get; set; } = true;
         /// <summary>
         /// Physics rigid body associated with this Actor.
         /// </summary>
@@ -45,7 +45,6 @@ namespace Game
         public Actor(Scene scene, IList<Vector2> vertices, Transform2 transform)
             : base(scene)
         {
-            IsPortalable = true;
             _vertices = vertices.ToArray();
             _scale = transform.Scale;
             Body = ActorFactory.CreatePolygon(Scene.World, transform, Vertices);

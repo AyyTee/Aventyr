@@ -644,6 +644,18 @@ namespace UnitTest
             var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.IsTrue(result.Count == 0);
         }
+
+        [TestMethod]
+        public void MovingPointLineIntersectTest4()
+        {
+            Line point = new Line(Vector2.Zero, new Vector2(10f, 0));
+            Line lineStart = new Line(new Vector2(5, -1), new Vector2(5, 9));
+            Line lineEnd = new Line(new Vector2(5, -1), new Vector2(5, 9));
+            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(0.5f, result[0].TimeProportion, 0.00001);
+            Assert.AreEqual(0.1f, result[0].AcrossProportion, 0.00001);
+        }
         #endregion
     }
 }

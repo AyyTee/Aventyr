@@ -23,13 +23,13 @@ namespace Game
         public readonly static GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
         List<IRenderLayer> _layers = new List<IRenderLayer>();
         readonly Controller _controller;
-        public bool PortalRenderEnabled { get; set; }
-        public int PortalRenderMax { get; set; }
-        public int PortalClipDepth { get; set; }
+        public bool PortalRenderEnabled { get; set; } = true;
+        public int PortalRenderMax { get; set; } = 50;
+        public int PortalClipDepth { get; set; } = 4;
         /// <summary>Number of bits in the stencil buffer.</summary>
         public int StencilBits { get; private set; }
         /// <summary>Flag for preventing rendering occuring.  Intended for benchmarking purposes.</summary>
-        public bool RenderEnabled { get; set; }
+        public bool RenderEnabled { get; set; } = true;
         ShaderProgram _activeShader;
         Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
 
@@ -46,10 +46,6 @@ namespace Game
                 _enableCap[e] = null;
             }
             _controller = controller;
-            PortalRenderEnabled = true;
-            PortalRenderMax = 50;
-            PortalClipDepth = 4;
-            RenderEnabled = true;
 
             GL.ClearColor(Color.HotPink);
             GL.CullFace(CullFaceMode.Back);

@@ -22,14 +22,14 @@ namespace Game
             var d = pathOfLineEndPoint.Delta - pathOfLineStartPoint.Delta;
 
             //return from t in QuadraticRoots(b.Cross(d), a.Cross(d) + b.Cross(c), a.Cross(c))
-            return from t in QuadraticRoots(Vector2Ext.Cross(b, d), Vector2Ext.Cross(a, d) + Vector2Ext.Cross(b, c), Vector2Ext.Cross(a, c))
-                    where t >= 0 && t <= 1
-                    let start = pathOfLineStartPoint.Lerp((float)t)
-                    let end = pathOfLineEndPoint.Lerp((float)t)
-                    let s = point.LerpProjectOnto(new Line(start, end))
-                    where s >= 0 && s <= 1
-                    orderby t
-                    select new Sweep(timeProportion: t, acrossProportion: s);
+            return from across in QuadraticRoots(Vector2Ext.Cross(b, d), Vector2Ext.Cross(a, d) + Vector2Ext.Cross(b, c), Vector2Ext.Cross(a, c))
+                    where across >= 0 && across <= 1
+                    let start = pathOfLineStartPoint.Lerp((float)across)
+                    let end = pathOfLineEndPoint.Lerp((float)across)
+                    let time = point.LerpProjectOnto(new Line(start, end))
+                    where time >= 0 && time <= 1
+                    orderby time
+                    select new Sweep(timeProportion: time, acrossProportion: across);
         }
 
         public struct Sweep

@@ -12,7 +12,7 @@ namespace Game.Portals
     public class Portalable : IPortalable
     {
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
-        public bool IsPortalable { get; set; }
+        public bool IsPortalable { get; set; } = true;
         Transform2 _transform = new Transform2();
         Transform2 _velocity = Transform2.CreateVelocity();
 
@@ -22,7 +22,6 @@ namespace Game.Portals
 
         public Portalable(Transform2 transform, Transform2 velocity)
         {
-            IsPortalable = true;
             SetTransform(transform);
             SetVelocity(velocity);
         }

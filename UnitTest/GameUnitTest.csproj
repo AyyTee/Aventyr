@@ -94,6 +94,7 @@
     <Compile Include="PolygonExtTests.cs" />
     <Compile Include="FCurveTests.cs" />
     <Compile Include="ActorExtTests.cs" />
+    <Compile Include="SimulationStepTests.cs" />
     <Compile Include="VertexTests.cs" />
   </ItemGroup>
   <ItemGroup>
