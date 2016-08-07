@@ -77,7 +77,7 @@ namespace Game
                     Transform2 transform = p.GetTransform();
                     Vector2 pointStart = transform.Position;
                     p.SetTransform(transform.Add(p.GetVelocity().Multiply((float)stepSize)));
-                    Vector2 pointEnd = transform.Position;
+                    Vector2 pointEnd = p.GetTransform().Position;
 
                     pointMovement.Add(new PortalableMovement(p, new Line(pointStart, pointEnd), transform));
                 }
@@ -86,19 +86,19 @@ namespace Game
                 {
                     line.End = new Line(Portal.GetWorldVerts(line.Portal));
                 }
-
-                //Move portalable instance back to their start positions.
-                foreach (PortalableMovement p in pointMovement)
-                {
-                    p.Instance.SetTransform(p.Previous);
-                }
             }
 
-            PortalableSweep earliest = GetEarliestCollision(pointMovement, lineMovement, previous.Sweep.TimeProportion, previous);
+            PortalableSweep earliest = GetEarliestCollision(pointMovement, lineMovement, previous);
 
             if (earliest == null)
             {
                 return;
+            }
+
+            //Move portalable instance back to their start positions so that portal teleportation can be done correctly.
+            foreach (PortalableMovement p in pointMovement)
+            {
+                p.Instance.SetTransform(p.Previous);
             }
 
             double tDelta = earliest.Sweep.TimeProportion;
@@ -112,9 +112,10 @@ namespace Game
             Step(moving, portals, stepSize * (1 - tDelta), portalEnter, earliest);
         }
 
-        private static PortalableSweep GetEarliestCollision(List<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, double tCurrent, PortalableSweep previous)
+        private static PortalableSweep GetEarliestCollision(List<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, PortalableSweep previous)
         {
             double tMin = 1;
+            const double repeatIntersectionEpsilon = 0.00001;
             PortalableSweep earliest = null;
             foreach (PortalableMovement move in pointMovement)
             {
@@ -123,18 +124,27 @@ namespace Game
                     Debug.Assert(!(move is IPortal), "Portals cannot do portal teleporation with other portals.");
                     foreach (PortalMovement portal in lineMovement)
                     {
-                        //Prevent rounding errors from allowing the same portal/portalable collision to happen twice.
-                        if (previous?.Portal == portal.Portal && previous?.Portalable == move.Instance)
-                        {
-                            continue;
-                        }
                         if (move.Instance == portal.Portal)
                         {
                             continue;
                         }
+
                         var collisionList = MathExt.MovingPointLineIntersect(move.StartEnd, portal.Start, portal.End);
-                        if (collisionList.Count > 0 && collisionList[0].TimeProportion >= tCurrent && collisionList[0].TimeProportion < tMin)
+                        if (collisionList.Count == 0)
                         {
+                            continue;
+                        }
+
+                        double time = collisionList[0].TimeProportion;
+                        if (time >= 0 && time < tMin)
+                        {
+                            //Prevent rounding portalable instance for immediately entering the portal it exited.
+                            if (previous?.Portal.Portal.Linked == portal.Portal && 
+                                previous?.Portalable.Instance == move.Instance && 
+                                time < repeatIntersectionEpsilon)
+                            {
+                                continue;
+                            }
                             earliest = new PortalableSweep(collisionList[0], move, portal);
                             tMin = collisionList[0].TimeProportion;
                         }

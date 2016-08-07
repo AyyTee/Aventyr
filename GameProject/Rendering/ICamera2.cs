@@ -10,8 +10,8 @@ namespace Game
     public interface ICamera2 : ISceneObject
     {
         Matrix4 GetViewMatrix(bool isOrtho = true);
-        Transform2 GetWorldTransform();
-        Transform2 GetWorldVelocity();
+        Transform2 GetWorldTransform(bool ignorePortals = false);
+        Transform2 GetWorldVelocity(bool ignorePortals = false);
         float Aspect { get; }
         /// <summary>Focal point offset.</summary>
         Vector2 ViewOffset { get; }

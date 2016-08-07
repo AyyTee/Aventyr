@@ -65,6 +65,81 @@ namespace UnitTest
             Assert.IsTrue(node2.Children.Count == 0);
         }
         #endregion
+        #region GetWorldTransform tests
+        [TestMethod]
+        public void GetWorldTransformTest0()
+        {
+            Scene scene = new Scene();
+            FloatPortal p0 = new FloatPortal(scene);
+            FloatPortal p1 = new FloatPortal(scene);
+            FloatPortal p2 = new FloatPortal(scene);
+            FloatPortal p3 = new FloatPortal(scene);
+            p0.Linked = p1;
+            p1.Linked = p0;
+            p2.Linked = p3;
+            p3.Linked = p2;
+
+            p0.SetTransform(new Transform2(new Vector2(0, 0)));
+            p1.SetTransform(new Transform2(new Vector2(10, 0)));
+            p2.SetTransform(new Transform2(new Vector2(0, 10)));
+            p3.SetTransform(new Transform2(new Vector2(10, 10)));
+
+            //Make sure this doesn't hang.
+            p0.GetWorldTransform();
+        }
+
+        //[TestMethod]
+        public void GetWorldTransformTest1()
+        {
+            Scene scene = new Scene();
+
+            Wall wall = new Wall(scene);
+            wall.Vertices = PolygonFactory.CreateRectangle(4, 4);
+            FixturePortal p0 = new FixturePortal(scene, wall, new PolygonCoord(0, 0.5f));
+            FixturePortal p1 = new FixturePortal(scene, wall, new PolygonCoord(2, 0.5f));
+            FloatPortal p2 = new FloatPortal(scene);
+            FloatPortal p3 = new FloatPortal(scene);
+            p0.Linked = p1;
+            p1.Linked = p0;
+            p2.Linked = p3;
+            p3.Linked = p2;
+
+            p2.SetTransform(new Transform2(new Vector2(0, 10)));
+            p3.SetTransform(new Transform2(new Vector2(10, 10)));
+
+            //Make sure this doesn't hang.
+            p0.GetWorldTransform();
+        }
+
+        //[TestMethod]
+        public void GetWorldTransformTest2()
+        {
+            Scene scene = new Scene();
+
+            Wall wall0 = new Wall(scene);
+            wall0.Vertices = PolygonFactory.CreateRectangle(4, 4);
+            FixturePortal p0 = new FixturePortal(scene, wall0, new PolygonCoord(0, 0.5f));
+            FloatPortal p1 = new FloatPortal(scene);
+            FloatPortal p2 = new FloatPortal(scene);
+
+            Wall wall1 = new Wall(scene);
+            wall1.Vertices = PolygonFactory.CreateRectangle(4, 4);
+            wall1.SetTransform(new Transform2(new Vector2(-50, 50)));
+            FixturePortal p3 = new FixturePortal(scene, wall1, new PolygonCoord(2, 0.5f));
+            p0.Linked = p1;
+            p1.Linked = p0;
+            p2.Linked = p3;
+            p3.Linked = p2;
+
+            p1.SetTransform(new Transform2(new Vector2(10, 0)));
+            p2.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)Math.PI/2));
+
+            p0.Path.Enter(p2);
+
+            //Make sure this doesn't hang.
+            p0.GetWorldTransform();
+        }
+        #endregion
         #region GetWorldVelocity tests
         class Transformable : SceneNode, IPortalable
         {
@@ -104,6 +179,22 @@ namespace UnitTest
             }
         }
 
+        class Wall : Transformable, IWall
+        {
+            public IList<Vector2> Vertices { get; set; } = new List<Vector2>();
+
+            public Wall(Scene scene)
+                : base(scene)
+            {
+            }
+
+            public IList<Vector2> GetWorldVertices()
+            {
+                Vector2[] worldVertices = Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix()).ToArray();
+                return worldVertices;
+            }
+        }
+
         /// <summary>
         /// Returns a simple to calculate approximation of world velocity.  
         /// Has the side effect of moving IPortalable instances slightly.
@@ -118,6 +209,23 @@ namespace UnitTest
             }
             Transform2 current = node.GetWorldTransform();
             return current.Minus(previous).Multiply(1/epsilon);
+        }
+
+        public Transform2 GetRandomTransform(Random random)
+        {
+            return new Transform2(
+                    new Vector2((float)random.NextDouble() * 100 - 50, (float)random.NextDouble() * 100 - 50),
+                    1 + (float)random.NextDouble(),
+                    (float)random.NextDouble() * 2 + 1f,
+                    random.NextDouble() > 0.5);
+        }
+
+        public Transform2 GetRandomVelocity(Random random)
+        {
+            return Transform2.CreateVelocity(
+                    new Vector2((float)random.NextDouble() * 100 - 50, (float)random.NextDouble() * 100 - 50),
+                    (float)random.NextDouble() * 100 - 50,
+                    (float)random.NextDouble() - 0.5f);
         }
 
         /// <summary>
@@ -953,27 +1061,83 @@ namespace UnitTest
             exit1.Linked = enter1;
             enter1.Linked = exit1;
 
-            node.GetWorldTransform();
             Transform2 result = node.GetWorldVelocity();
             Transform2 expected = ApproximateVelocity(node);
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        public Transform2 GetRandomTransform(Random random)
+        [TestMethod]
+        public void GetWorldVelocityFixturePortalTest0()
         {
-            return new Transform2(
-                    new Vector2((float)random.NextDouble() * 100 - 50, (float)random.NextDouble() * 100 - 50),
-                    1 + (float)random.NextDouble(),
-                    (float)random.NextDouble() * 2 + 1f,
-                    random.NextDouble() > 0.5);
+            Scene scene = new Scene();
+            Wall parent = new Wall(scene);
+            parent.Vertices = PolygonExt.SetNormals(new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(2, 0),
+                new Vector2(0, 2)
+            });
+            parent.SetVelocity(Transform2.CreateVelocity(new Vector2(4.2f, -3.4f), -2.1f, 0.2f));
+
+            FixturePortal childPortal = new FixturePortal(scene, parent, new PolygonCoord(0, 0.5f));
+
+            Transform2 result = childPortal.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(childPortal);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        public Transform2 GetRandomVelocity(Random random)
+        [TestMethod]
+        public void GetWorldVelocityFixturePortalTest1()
         {
-            return Transform2.CreateVelocity(
-                    new Vector2((float)random.NextDouble() * 100 - 50, (float)random.NextDouble() * 100 - 50),
-                    (float)random.NextDouble() * 100 - 50,
-                    (float)random.NextDouble() - 0.5f);
+            Scene scene = new Scene();
+            Wall parent = new Wall(scene);
+            parent.Vertices = PolygonFactory.CreateRectangle(4, 4);
+            parent.SetVelocity(Transform2.CreateVelocity(new Vector2(4.2f, -3.4f), -2.1f, 0.2f));
+
+            FixturePortal childPortal = new FixturePortal(scene, parent, new PolygonCoord(0, 0.5f));
+
+            FloatPortal enter = new FloatPortal(scene);
+            FloatPortal exit = new FloatPortal(scene);
+            enter.Linked = exit;
+            exit.Linked = enter;
+
+            enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)Math.PI/2));
+            exit.SetTransform(new Transform2(new Vector2(100, 0)));
+
+            childPortal.Path.Enter(enter);
+
+            Transform2 result = childPortal.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(childPortal);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
+        }
+
+        //[TestMethod]
+        public void GetWorldVelocityFixturePortalTest2()
+        {
+            Scene scene = new Scene();
+            Wall parent = new Wall(scene);
+            parent.Vertices = PolygonFactory.CreateRectangle(4, 4);
+            parent.SetVelocity(Transform2.CreateVelocity(new Vector2(4.2f, -3.4f), -2.1f, 0.2f));
+
+            FixturePortal childPortal = new FixturePortal(scene, parent, new PolygonCoord(0, 0.5f));
+            FloatPortal childExit = new FloatPortal(scene);
+            childExit.SetTransform(new Transform2(new Vector2(20, 20)));
+            childExit.Linked = childPortal;
+            childPortal.Linked = childExit;
+
+
+            FloatPortal enter = new FloatPortal(scene);
+            FloatPortal exit = new FloatPortal(scene);
+            enter.Linked = exit;
+            exit.Linked = enter;
+
+            enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)Math.PI / 2));
+            exit.SetTransform(new Transform2(new Vector2(100, 0)));
+
+            childPortal.Path.Enter(enter);
+
+            Transform2 result = childPortal.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(childPortal);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
         #endregion
     }

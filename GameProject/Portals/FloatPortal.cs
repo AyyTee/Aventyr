@@ -28,7 +28,7 @@ namespace Game.Portals
         [DataMember]
         Transform2 _velocity = Transform2.CreateVelocity();
         [DataMember]
-        public PortalPath Path { get; private set; }
+        public PortalPath Path { get; private set; } = new PortalPath();
 
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set;}
 
@@ -38,7 +38,6 @@ namespace Game.Portals
         public FloatPortal(Scene scene)
             : base(scene)
         {
-            Path = new PortalPath();
         }
 
         public override IDeepClone ShallowClone()

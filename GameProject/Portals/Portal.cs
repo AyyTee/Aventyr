@@ -26,6 +26,15 @@ namespace Game.Portals
             return portal.Linked != null;
         }
 
+        /// <summary>
+        /// Call within portal constructor.
+        /// </summary>
+        /// <param name="portal"></param>
+        public static void Initialize(IPortal portal)
+        {
+            portal.WorldTransformPrevious = portal.GetWorldTransform(true); 
+        }
+
         public static Transform2 Enter(IPortal portal, Transform2 transform)
         {
             Debug.Assert(IsValid(portal));

@@ -155,10 +155,8 @@ namespace Game
         /// </summary>
         public IList<Vector2> GetWorldVertices()
         {
-            Transform2 worldTransform = GetWorldTransform();
-            Vector2[] worldVertices = Vector2Ext.Transform(Vertices, worldTransform.GetMatrix()).ToArray();
+            Vector2[] worldVertices = Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix()).ToArray();
             return worldVertices;
-            //return MathExt.SetWinding(worldVertices, MathExt.IsClockwise(Vertices));
         }
 
         public List<IPortal> GetPortalChildren()

@@ -39,9 +39,7 @@ namespace Game.Portals
         [DataMember]
         public IPolygonCoord Position { get; private set; }
         [DataMember]
-        public PortalPath Path { get; private set; }
-        public Fixture CollisionFixtureNext;
-        public Fixture CollisionFixturePrevious;
+        public PortalPath Path { get; private set; } = new PortalPath();
         
         public const float EdgeMargin = 0.02f;
         public const float CollisionMargin = 0.1f;

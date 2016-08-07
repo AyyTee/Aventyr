@@ -182,16 +182,25 @@ namespace Game
             return lineWidth;
         }
 
+        /// <summary>
+        /// Creates a square centered at the origin with normals facing outward.
+        /// </summary>
         public static Vector2[] CreateRectangle()
         {
             return CreateRectangle(1, 1);
         }
 
+        /// <summary>
+        /// Creates a rectangle centered at the origin with normals facing outward.
+        /// </summary>
         public static Vector2[] CreateRectangle(float width, float height)
         {
             return CreateRectangle(width, height, new Vector2());
         }
 
+        /// <summary>
+        /// Creates a rectangle with normals facing outward.
+        /// </summary>
         public static Vector2[] CreateRectangle(float width, float height, Vector2 origin)
         {
             Vector2[] rectangle = new Vector2[] {

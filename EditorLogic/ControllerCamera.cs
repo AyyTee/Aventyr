@@ -88,12 +88,12 @@ namespace EditorLogic
             return CameraExt.GetViewMatrix(this, isOrtho);
         }
 
-        public Transform2 GetWorldVelocity()
+        public Transform2 GetWorldVelocity(bool ignorePortals = false)
         {
             return GetVelocity();
         }
 
-        public Transform2 GetWorldTransform()
+        public Transform2 GetWorldTransform(bool ignorePortals = false)
         {
             return GetTransform();
         }

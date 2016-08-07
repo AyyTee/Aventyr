@@ -11,8 +11,17 @@ namespace Game.Portals
     /// </summary>
     public struct EnterCallbackData
     {
+		/// <summary>
+		/// Portal being entered (not exited).
+		/// </summary>
         public IPortal EntrancePortal;
+		/// <summary>
+		/// Instance entering portal.
+		/// </summary>
         public IPortalable Instance;
+		/// <summary>
+		/// Intersection t value for the portal.
+		/// </summary>
         public double PortalT;
 
         public EnterCallbackData(IPortal entrancePortal, IPortalable instance, double portalT)

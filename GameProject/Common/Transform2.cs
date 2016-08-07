@@ -138,7 +138,7 @@ namespace Game
 
         private Vector2 GetVector(Vector2 vector, bool normalize)
         {
-            Vector2[] v = new Vector2[2] {
+            Vector2[] v = new Vector2[2]  {
                 new Vector2(0, 0),
                 vector
             };

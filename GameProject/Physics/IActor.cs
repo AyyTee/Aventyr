@@ -12,7 +12,7 @@ namespace Game
     {
         Body Body { get; }
         void Remove();
-        Transform2 GetWorldTransform();
-        Transform2 GetWorldVelocity();
+        Transform2 GetWorldTransform(bool ignorePortals = false);
+        Transform2 GetWorldVelocity(bool ignorePortals = false);
     }
 }

@@ -31,12 +31,12 @@ namespace EditorLogic
             return Models;
         }
 
-        public Transform2 GetWorldTransform()
+        public Transform2 GetWorldTransform(bool ignorePortals = false)
         {
             return GetTransform();
         }
 
-        public Transform2 GetWorldVelocity()
+        public Transform2 GetWorldVelocity(bool ignorePortals = false)
         {
             return new Transform2();
         }

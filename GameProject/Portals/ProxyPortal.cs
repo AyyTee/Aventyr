@@ -42,12 +42,12 @@ namespace Game.Portals
             return Portal.GetCloneableRefs();
         }
 
-        public Transform2 GetWorldTransform()
+        public Transform2 GetWorldTransform(bool ignorePortals = false)
         {
             return WorldTransform.ShallowClone();
         }
 
-        public Transform2 GetWorldVelocity()
+        public Transform2 GetWorldVelocity(bool ignorePortals = false)
         {
             return WorldVelocity.ShallowClone();
         }
