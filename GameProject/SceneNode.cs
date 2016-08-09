@@ -5,6 +5,7 @@ using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml;
 
@@ -84,7 +85,7 @@ namespace Game
                     SetParent(Parent);
                 }
             }
-            
+
             List<SceneNode> children = Children;
             _children.Clear();
             foreach (SceneNode e in children)
@@ -134,10 +135,26 @@ namespace Game
             return new Transform2();
         }
 
+        /// <summary>
+        /// Set transform and update children.  This method is expected to only be called by classes extending SceneNode.
+        /// </summary>
+        /// <param name="transform"></param>
+        public virtual void SetTransform(Transform2 transform)
+        {
+            foreach (SceneNode s in Tree<SceneNode>.GetDescendents(this))
+            {
+                s.TransformUpdate();
+            }
+        }
+
+        public virtual void TransformUpdate()
+        {
+        }
+
         public Transform2 GetWorldTransform(bool ignorePortals = false)
         {
             Transform2 local = GetTransform();
-            if (local == null || IsRoot)
+            if (local == null || IsRoot || Parent.IsRoot)
             {
                 return local;
             }
@@ -150,8 +167,9 @@ namespace Game
                 IPortal portalCast = this as IPortal;
                 if (portalCast != null)
                 {
-                    //return portalCast.WorldTransformPrevious;
-                    return t.Transform(portalCast.Path.GetPortalTransform());
+                    //Debug.Assert(portalCast.WorldTransformPrevious != null);
+                    return portalCast.WorldTransformPrevious;
+                    //return t.Transform(portalCast.Path.GetPortalTransform());
                 }
                 else
                 {
@@ -160,6 +178,33 @@ namespace Game
                     Ray.RayCast(portalable, Scene.GetPortalList(), settings);
                     return portalable.GetTransform();
                 }
+            }
+            return t;
+        }
+
+        public Transform2 GetWorldTransformPortal(bool ignorePortals = false)
+        {
+            Debug.Assert(this is IPortal);
+            Transform2 local = GetTransform();
+            if (local == null || IsRoot || Parent.IsRoot)
+            {
+                return local;
+            }
+
+            Transform2 parent = Parent.GetWorldTransform(ignorePortals);
+            Transform2 t = local.Transform(parent);
+
+            if (!ignorePortals)
+            {
+                Ray.Settings settings = new Ray.Settings();
+                IPortalable portalable = new Portalable(new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
+
+                HashSet<IPortal> portalList = new HashSet<IPortal>(Scene.GetPortalList());
+                portalList.ExceptWith(Tree<SceneNode>.GetDescendents(this).OfType<IPortal>());
+                portalList.RemoveWhere(item => ReferenceEquals(item, Parent));
+
+                Ray.RayCast(portalable, portalList, settings);
+                return portalable.GetTransform();
             }
             return t;
         }

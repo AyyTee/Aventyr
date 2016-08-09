@@ -104,7 +104,7 @@ namespace Game
             return bodyTransform;
         }
 
-        public void SetTransform(Transform2 transform)
+        public override void SetTransform(Transform2 transform)
         {
             if (_scale != transform.Scale)
             {
@@ -135,6 +135,7 @@ namespace Game
                 }
             }
             BodyExt.SetTransform(Body, transform);
+            base.SetTransform(transform);
         }
 
         public override Transform2 GetVelocity()

@@ -24,7 +24,7 @@ namespace Game.Portals
         [DataMember]
         public bool OneSided { get; set; }
         [DataMember]
-        Transform2 _transform = new Transform2();
+        Transform2 Transform { get; set; } = new Transform2();
         [DataMember]
         Transform2 _velocity = Transform2.CreateVelocity();
         [DataMember]
@@ -38,6 +38,7 @@ namespace Game.Portals
         public FloatPortal(Scene scene)
             : base(scene)
         {
+            Portal.SetWorldTransform(this);
         }
 
         public override IDeepClone ShallowClone()
@@ -74,12 +75,19 @@ namespace Game.Portals
 
         public override Transform2 GetTransform()
         {
-            return _transform.ShallowClone();
+            return Transform.ShallowClone();
         }
 
-        public void SetTransform(Transform2 transform)
+        public override void SetTransform(Transform2 transform)
         {
-            _transform = transform.ShallowClone();
+            Transform = transform.ShallowClone();
+            base.SetTransform(transform);
+        }
+
+        public override void TransformUpdate()
+        {
+            Portal.SetWorldTransform(this);
+            base.TransformUpdate();
         }
 
         public void SetVelocity(Transform2 velocity)

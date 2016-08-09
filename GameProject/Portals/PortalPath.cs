@@ -42,7 +42,7 @@ namespace Game.Portals
         /// Add a portal to the portal list.  
         /// If the portal is the exit for the previous portal then the two are removed from the list.
         /// </summary>
-        public void Enter(IPortal portal)
+        public void Enter(IPortal portal, IPortal current)
         {
             ProxyPortal proxyPortal = portal as ProxyPortal;
             if (proxyPortal != null)
@@ -58,6 +58,7 @@ namespace Game.Portals
             {
                 Portals.Add(portal);
             }
+            current.WorldTransformPrevious = current.WorldTransformPrevious.Transform(Portal.GetLinkedTransform(portal));
         }
     }
 }

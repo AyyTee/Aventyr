@@ -124,33 +124,23 @@ namespace Game.Portals
             Debug.Assert(wall != null);
             Debug.Assert(wall is SceneNode);
             Debug.Assert(Position != null);
-            if (Position != null)
+            SetParent((SceneNode)wall);
+            //wake up all the bodies so that they will fall if there is now a portal entrance below them
+            foreach (Body b in Scene.World.BodyList)
             {
-                SetParent((SceneNode)wall);
-                //wake up all the bodies so that they will fall if there is now a portal entrance below them
-                foreach (Body b in Scene.World.BodyList)
-                {
-                    b.Awake = true;
-                }
+                b.Awake = true;
+            }
+
+            foreach (SceneNode s in Tree<SceneNode>.GetDescendents(this))
+            {
+                s.TransformUpdate();
             }
         }
 
-        public Vector2[] GetBounds(float margin)
+        public override void TransformUpdate()
         {
-            float width, height;
-            width = (float)Math.Abs(Math.Cos(GetTransform().Rotation) * GetWorldTransform().Scale.X) + margin * 2;
-            height = (float)Math.Abs(Math.Sin(GetTransform().Rotation) * GetWorldTransform().Scale.X) + margin * 2;
-            return new Vector2[] {
-                GetWorldTransform().Position + new Vector2(-width/2f, -height/2f),
-                GetWorldTransform().Position + new Vector2(-width/2f, height/2f),
-                GetWorldTransform().Position + new Vector2(width/2f, height/2f),
-                GetWorldTransform().Position + new Vector2(width/2f, -height/2f)
-            };
-        }
-
-        public Vector2[] GetBounds()
-        {
-            return GetBounds(0);
+            Portal.SetWorldTransform(this);
+            base.TransformUpdate();
         }
     }
 }

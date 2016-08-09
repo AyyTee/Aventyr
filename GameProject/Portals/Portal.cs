@@ -26,13 +26,10 @@ namespace Game.Portals
             return portal.Linked != null;
         }
 
-        /// <summary>
-        /// Call within portal constructor.
-        /// </summary>
-        /// <param name="portal"></param>
-        public static void Initialize(IPortal portal)
+        public static void SetWorldTransform(IPortal portal)
         {
-            portal.WorldTransformPrevious = portal.GetWorldTransform(true); 
+            portal.WorldTransformPrevious = (portal as SceneNode).GetWorldTransformPortal();
+            //portal.WorldTransformPrevious = portal.GetWorldTransform();
         }
 
         public static Transform2 Enter(IPortal portal, Transform2 transform)
@@ -93,7 +90,7 @@ namespace Game.Portals
             foreach (IPortal p in portalable.GetPortalChildren())
             {
                 p.WorldTransformPrevious = GetLinkedTransform(p);
-                p.Path.Enter(portal.Linked);
+                p.Path.Enter(portal.Linked, p);
             }
 
             portalable.EnterPortal?.Invoke(new EnterCallbackData(portal, portalable, intersectT), transform, velocity);

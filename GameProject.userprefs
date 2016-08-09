@@ -1,0 +1,12 @@
+﻿<Properties StartupItem="GameProject/Game.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="GameProject/Portals/EnterCallbackData.cs">
+    <Files>
+      <File FileName="GameProject/Portals/EnterCallbackData.cs" Line="24" Column="17" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

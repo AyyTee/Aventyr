@@ -134,7 +134,7 @@ namespace UnitTest
             p1.SetTransform(new Transform2(new Vector2(10, 0)));
             p2.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)Math.PI/2));
 
-            p0.Path.Enter(p2);
+            p0.Path.Enter(p2, p0);
 
             //Make sure this doesn't hang.
             p0.GetWorldTransform();
@@ -168,9 +168,10 @@ namespace UnitTest
                 return Velocity.ShallowClone();
             }
 
-            public void SetTransform(Transform2 transform)
+            public override void SetTransform(Transform2 transform)
             {
                 Transform = transform.ShallowClone();
+                base.SetTransform(transform);
             }
 
             public void SetVelocity(Transform2 velocity)
@@ -1103,14 +1104,14 @@ namespace UnitTest
             enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)Math.PI/2));
             exit.SetTransform(new Transform2(new Vector2(100, 0)));
 
-            childPortal.Path.Enter(enter);
+            childPortal.Path.Enter(enter, childPortal);
 
             Transform2 result = childPortal.GetWorldVelocity();
             Transform2 expected = ApproximateVelocity(childPortal);
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        //[TestMethod]
+        [TestMethod]
         public void GetWorldVelocityFixturePortalTest2()
         {
             Scene scene = new Scene();
@@ -1133,11 +1134,79 @@ namespace UnitTest
             enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)Math.PI / 2));
             exit.SetTransform(new Transform2(new Vector2(100, 0)));
 
-            childPortal.Path.Enter(enter);
+            childPortal.Path.Enter(enter, childPortal);
 
             Transform2 result = childPortal.GetWorldVelocity();
             Transform2 expected = ApproximateVelocity(childPortal);
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
+        }
+        #endregion
+
+        #region TransformUpdate tests
+        [TestMethod]
+        public void TransformUpdateTest0()
+        {
+            Scene scene = new Scene();
+            FloatPortal portal = new FloatPortal(scene);
+
+            FloatPortal child = new FloatPortal(scene);
+            portal.Linked = child;
+            child.Linked = portal;
+
+            child.SetParent(portal);
+
+            Transform2 begin = new Transform2(new Vector2(5, 0));
+            child.SetTransform(begin);
+
+            Assert.IsTrue(child.WorldTransformPrevious == begin);
+
+            Transform2 t = new Transform2(new Vector2(1, 1));
+            portal.SetTransform(t);
+
+            Assert.IsTrue(child.WorldTransformPrevious.AlmostEqual(begin.Transform(t)));
+        }
+
+        [TestMethod]
+        public void TransformUpdateTest1()
+        {
+            Scene scene = new Scene();
+            Wall wall = new Wall(scene);
+            wall.Vertices = PolygonFactory.CreateRectangle(2, 2);
+
+            FixturePortal child = new FixturePortal(scene, wall, new PolygonCoord(0, 0.5f));
+
+            Transform2 begin = child.GetTransform();
+            Assert.IsTrue(child.WorldTransformPrevious == begin);
+
+            child.SetPosition(wall, new PolygonCoord(1, 0.6f));
+            Transform2 moved = child.GetTransform();
+            Assert.IsTrue(child.WorldTransformPrevious == moved);
+
+            Transform2 t = new Transform2(new Vector2(1, 1));
+            wall.SetTransform(t);
+
+            Assert.IsTrue(child.WorldTransformPrevious.AlmostEqual(moved.Transform(t)));
+        }
+
+        [TestMethod]
+        public void TransformUpdateTest2()
+        {
+            Scene scene = new Scene();
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(2, 2));
+
+            FixturePortal child = new FixturePortal(scene, actor, new PolygonCoord(0, 0.5f));
+
+            Transform2 begin = child.GetTransform();
+            Assert.IsTrue(child.WorldTransformPrevious == begin);
+
+            child.SetPosition(actor, new PolygonCoord(1, 0.6f));
+            Transform2 moved = child.GetTransform();
+            Assert.IsTrue(child.WorldTransformPrevious == moved);
+
+            Transform2 t = new Transform2(new Vector2(1, 1));
+            actor.SetTransform(t);
+
+            Assert.IsTrue(child.WorldTransformPrevious.AlmostEqual(moved.Transform(t)));
         }
         #endregion
     }
