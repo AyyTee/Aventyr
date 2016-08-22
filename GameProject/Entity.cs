@@ -121,9 +121,10 @@ namespace Game
             return _velocity.ShallowClone();
         }
 
-        public void SetVelocity(Transform2 transform)
+        public override void SetVelocity(Transform2 velocity)
         {
-            _velocity = transform.ShallowClone();
+            _velocity = velocity.ShallowClone();
+            base.SetVelocity(velocity);
         }
 
         public List<IPortal> GetPortalChildren()

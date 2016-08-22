@@ -61,10 +61,10 @@ namespace Game
             Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
             World.ProcessChanges();
 
-            foreach (IPortal p in GetPortalList())
+            /*foreach (IPortal p in GetPortalList())
             {
                 p.WorldTransformPrevious = p.GetWorldTransform();
-            }
+            }*/
 
             foreach (IStep s in GetAll().OfType<IStep>())
             {
@@ -73,34 +73,6 @@ namespace Game
 
             if (World != null && stepSize > 0)
             {
-                /*List<ProxyPortalable> portalablePrevList = new List<ProxyPortalable>();
-                foreach (IPortalable s in SceneNodeList.OfType<IPortalable>())
-                {
-                    if (s is IPortal)
-                    {
-                        continue;
-                    }
-                    ProxyPortalable proxy = new ProxyPortalable(s);
-                    portalablePrevList.Add(proxy);
-                }
-
-                List<ProxyPortal> portalPrevList = Portal.CreateProxies(GetPortalList());
-
-                _contactListener.StepBegin();
-                InWorldStep = true;
-                World.Step(stepSize);
-                InWorldStep = false;
-                _contactListener.StepEnd();
-
-                foreach (ProxyPortalable s in portalablePrevList.FindAll(item => item.Portalable is Actor))
-                {
-                    s.TrueVelocity = s.Portalable.GetVelocity();
-                    s.Velocity = s.Portalable.GetTransform().Minus(s.Transform).Multiply(1 / stepSize);
-                }
-
-                //SimulationStep.Step(GetAll().OfType<IPortalable>(), GetAll().OfType<IPortal>(), stepSize);
-                SimulationStep.Step(portalPrevList, portalablePrevList, 10, stepSize);*/
-
                 List<ActorPrev> actorTemp = new List<ActorPrev>();
                 foreach (IActor actor in GetAll().OfType<IActor>())
                 {
@@ -125,6 +97,8 @@ namespace Game
                     prev.TrueVelocity = prev.Actor.GetVelocity();
                     Transform2 velocity = prev.Actor.GetTransform().Minus(prev.Previous).Multiply(1 / stepSize);
                     prev.Actor.SetVelocity(velocity);
+
+                    prev.Actor.SetTransform(prev.Previous);
                 }
 
                 SimulationStep.Step(GetAll().OfType<IPortalable>(), GetAll().OfType<IPortal>(), stepSize, (EnterCallbackData data) => {
@@ -132,7 +106,7 @@ namespace Game
                     if (actor != null)
                     {
                         ActorPrev prev = actorTemp.Find(item => item.Actor == actor);
-                        Portal.EnterVelocity(data.EntrancePortal, (float)data.PortalT, prev.TrueVelocity);
+                        prev.TrueVelocity = Portal.EnterVelocity(data.EntrancePortal, (float)data.PortalT, prev.TrueVelocity);
                     }
                 });
 

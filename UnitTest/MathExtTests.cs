@@ -656,6 +656,19 @@ namespace UnitTest
             Assert.AreEqual(0.5f, result[0].TimeProportion, 0.00001);
             Assert.AreEqual(0.1f, result[0].AcrossProportion, 0.00001);
         }
+
+        [TestMethod]
+        public void MovingPointLineIntersectTest5()
+        {
+            Line point = new Line(new Vector2(-1.965838f, 0.5397364f), new Vector2(-1.965838f, 0.4839308f));
+            //point = point.Reverse();
+            Line lineStart = new Line(new Vector2(-2.529442f, 0.5394384f), new Vector2(-1.530722f, 0.4888392f));
+            Line lineEnd = new Line(new Vector2(-2.529442f, 0.5394384f), new Vector2(-1.530722f, 0.4888392f));
+            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            Assert.AreEqual(1, result.Count);
+            /*Assert.AreEqual(0.5f, result[0].TimeProportion, 0.00001);
+            Assert.AreEqual(0.1f, result[0].AcrossProportion, 0.00001);*/
+        }
         #endregion
     }
 }

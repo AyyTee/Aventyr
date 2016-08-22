@@ -35,9 +35,6 @@ namespace Game
         #region Constructors
         public SceneNode(Scene scene)
         {
-            //Debug.Assert(scene != null);
-            //Scene = scene;
-            //if (Scene != null && Scene.Root != null)
             if (scene.Root != null)
             {
                 Name = "";
@@ -147,12 +144,29 @@ namespace Game
             }
         }
 
+        public virtual void SetVelocity(Transform2 transform)
+        {
+            foreach (SceneNode s in Tree<SceneNode>.GetDescendents(this))
+            {
+                s.TransformUpdate();
+            }
+        }
+
         public virtual void TransformUpdate()
         {
         }
 
         public Transform2 GetWorldTransform(bool ignorePortals = false)
         {
+            if (!ignorePortals)
+            {
+                IPortal portalCast = this as IPortal;
+                if (portalCast != null)
+                {
+                    return portalCast.WorldTransformPrevious;
+                }
+            }
+
             Transform2 local = GetTransform();
             if (local == null || IsRoot || Parent.IsRoot)
             {
@@ -164,20 +178,10 @@ namespace Game
 
             if (!ignorePortals)
             {
-                IPortal portalCast = this as IPortal;
-                if (portalCast != null)
-                {
-                    //Debug.Assert(portalCast.WorldTransformPrevious != null);
-                    return portalCast.WorldTransformPrevious;
-                    //return t.Transform(portalCast.Path.GetPortalTransform());
-                }
-                else
-                {
-                    Ray.Settings settings = new Ray.Settings();
-                    IPortalable portalable = new Portalable(new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
-                    Ray.RayCast(portalable, Scene.GetPortalList(), settings);
-                    return portalable.GetTransform();
-                }
+                Ray.Settings settings = new Ray.Settings();
+                IPortalable portalable = new Portalable(new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
+                Ray.RayCast(portalable, Scene.GetPortalList(), settings);
+                return portalable.GetTransform();
             }
             return t;
         }
@@ -199,11 +203,7 @@ namespace Game
                 Ray.Settings settings = new Ray.Settings();
                 IPortalable portalable = new Portalable(new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
 
-                HashSet<IPortal> portalList = new HashSet<IPortal>(Scene.GetPortalList());
-                portalList.ExceptWith(Tree<SceneNode>.GetDescendents(this).OfType<IPortal>());
-                portalList.RemoveWhere(item => ReferenceEquals(item, Parent));
-
-                Ray.RayCast(portalable, portalList, settings);
+                Ray.RayCast(portalable, GetPortalsForPortal(), settings);
                 return portalable.GetTransform();
             }
             return t;
@@ -219,6 +219,70 @@ namespace Game
         /// This takes into account portal teleporation.
         /// </summary>
         public Transform2 GetWorldVelocity(bool ignorePortals = false)
+        {
+            if (!ignorePortals)
+            {
+                IPortal portalCast = this as IPortal;
+                if (portalCast != null)
+                {
+                    return portalCast.WorldVelocityPrevious;
+                }
+            }
+
+            Transform2 local = GetTransform();
+            Transform2 velocity = GetVelocity();
+            if (local == null || velocity == null || IsRoot)
+            {
+                return velocity;
+            }
+
+            Transform2 parent = Parent.GetWorldTransform(ignorePortals);
+            Transform2 worldTransform = local.Transform(parent);
+            Transform2 parentVelocity = Parent.GetWorldVelocity(ignorePortals);
+
+            Vector2 positionDelta = (worldTransform.Position - parent.Position);
+
+            Transform2 worldVelocity = Transform2.CreateVelocity();
+
+
+            worldVelocity.Size = local.Size * parentVelocity.Size + velocity.Size * parent.Size;
+
+            worldVelocity.Rotation = (parent.MirrorX ? -velocity.Rotation : velocity.Rotation) + parentVelocity.Rotation;
+
+            Vector2 v = MathExt.AngularVelocity(positionDelta, parentVelocity.Rotation);
+            Vector2 scaleSpeed = positionDelta * parentVelocity.Size / parent.Size;
+
+            Matrix2 mat = Matrix2.CreateScale(parent.Scale) * Matrix2.CreateRotation(parent.Rotation);
+
+            worldVelocity.Position = Vector2Ext.Transform(velocity.Position, mat) + parentVelocity.Position + v + scaleSpeed;
+
+            IPortalable portalable = new Portalable(new Transform2(parent.Position, worldTransform.Size, worldTransform.Rotation, worldTransform.MirrorX), Transform2.CreateVelocity(positionDelta));
+            Ray.RayCast(portalable, Scene.GetPortalList(), new Ray.Settings(), (EnterCallbackData data, double movementT) => {
+                worldVelocity = TransformVelocity(data.Instance, data.EntrancePortal, worldVelocity, movementT);
+            });
+
+            return worldVelocity;
+        }
+
+        private Transform2 TransformVelocity(IPortalable portalable, IPortal portal, Transform2 velocity, double movementT)
+        {
+            velocity = velocity.ShallowClone();
+            velocity = Portal.EnterVelocity(portal, 0.5f, velocity);
+            Vector2 endPosition = portalable.GetTransform().Position + portalable.GetVelocity().Position * (float)(1 - movementT);
+            float angularVelocity = portal.Linked.GetWorldVelocity().Rotation;
+            if (portal.GetWorldTransform().MirrorX != portal.Linked.GetWorldTransform().MirrorX)
+            {
+                angularVelocity -= portal.GetWorldVelocity().Rotation;
+            }
+            else
+            {
+                angularVelocity += portal.GetWorldVelocity().Rotation;
+            }
+            velocity.Position += MathExt.AngularVelocity(endPosition, portal.Linked.GetWorldTransform().Position, angularVelocity);
+            return velocity;
+        }
+
+        public Transform2 GetWorldVelocityPortal(bool ignorePortals = false)
         {
             Transform2 local = GetTransform();
             Transform2 velocity = GetVelocity();
@@ -240,7 +304,6 @@ namespace Game
 
             worldVelocity.Rotation = (parent.MirrorX ? -velocity.Rotation : velocity.Rotation) + parentVelocity.Rotation;
 
-            //Vector2 v = positionDelta.PerpendicularLeft * parentVelocity.Rotation;
             Vector2 v = MathExt.AngularVelocity(positionDelta, parentVelocity.Rotation);
             Vector2 scaleSpeed = positionDelta * parentVelocity.Size / parent.Size;
 
@@ -248,58 +311,20 @@ namespace Game
 
             worldVelocity.Position = Vector2Ext.Transform(velocity.Position, mat) + parentVelocity.Position + v + scaleSpeed;
 
-
-            /*IPortal portalCast = this as IPortal;
-            if (portalCast != null)
-            {
-
-                for (int i = 0; i < portalCast.Path.Portals.Count; i++)
-                {
-                    IPortal p = portalCast.Path.Portals[i];
-                    worldVelocity = TransformVelocity(, p, worldVelocity, );
-                }
-                return worldVelocity.Transform(portalCast.Path.GetPortalTransform());
-            }
-            else*/
-            Queue<IPortal> path = null;
-            IPortal portalCast = this as IPortal;
-            if (portalCast != null)
-            {
-                path = new Queue<IPortal>(portalCast.Path.Portals);
-            }
-            /*Skip raycast if this SceneNode is exactly on top of the parent or there is no parent.  
-                * This is not just an optimisation step but also necessary to prevent the assert inside 
-                * the raycast callback from failing.*/
-            if (local.Position == Vector2.Zero || Parent.IsRoot)
-            {
-                return worldVelocity;
-            }
             IPortalable portalable = new Portalable(new Transform2(parent.Position, worldTransform.Size, worldTransform.Rotation, worldTransform.MirrorX), Transform2.CreateVelocity(positionDelta));
-            Ray.RayCast(portalable, Scene.GetPortalList(), new Ray.Settings(), (EnterCallbackData data, double movementT) => {
-                Debug.Assert(path == null || path.Dequeue() == data.EntrancePortal);
+            Ray.RayCast(portalable, GetPortalsForPortal(), new Ray.Settings(), (EnterCallbackData data, double movementT) => {
                 worldVelocity = TransformVelocity(data.Instance, data.EntrancePortal, worldVelocity, movementT);
             });
-            Debug.Assert(path == null || path.Count == 0);
 
             return worldVelocity;
         }
 
-        private Transform2 TransformVelocity(IPortalable portalable, IPortal portal, Transform2 velocity, double movementT)
+        private HashSet<IPortal> GetPortalsForPortal()
         {
-            velocity = velocity.ShallowClone();
-            velocity = Portal.EnterVelocity(portal, 0.5f, velocity);
-            Vector2 endPosition = portalable.GetTransform().Position + portalable.GetVelocity().Position * (float)(1 - movementT);
-            float angularVelocity = portal.Linked.GetWorldVelocity().Rotation;
-            if (portal.GetWorldTransform().MirrorX != portal.Linked.GetWorldTransform().MirrorX)
-            {
-                angularVelocity -= portal.GetWorldVelocity().Rotation;
-            }
-            else
-            {
-                angularVelocity += portal.GetWorldVelocity().Rotation;
-            }
-            velocity.Position += MathExt.AngularVelocity(endPosition, portal.Linked.GetWorldTransform().Position, angularVelocity);
-            return velocity;
+            HashSet<IPortal> portalList = new HashSet<IPortal>(Scene.GetPortalList());
+            portalList.ExceptWith(Tree<SceneNode>.GetDescendents(this).OfType<IPortal>());
+            portalList.RemoveWhere(item => ReferenceEquals(item, Parent));
+            return portalList;
         }
 
         public SceneNode FindByName(string name)

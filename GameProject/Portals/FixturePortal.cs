@@ -13,7 +13,18 @@ namespace Game.Portals
     public class FixturePortal : SceneNode, IPortal
     {
         [DataMember]
-        public Transform2 WorldTransformPrevious { get; set; }
+        Transform2 _worldTransformPrevious;
+        public Transform2 WorldTransformPrevious {
+            get { return _worldTransformPrevious.ShallowClone(); }
+            set { _worldTransformPrevious = value.ShallowClone(); }
+        }
+        [DataMember]
+        Transform2 _worldVelocityPrevious;
+        public Transform2 WorldVelocityPrevious
+        {
+            get { return _worldVelocityPrevious.ShallowClone(); }
+            set { _worldVelocityPrevious = value.ShallowClone(); }
+        }
         [DataMember]
         public IPortal Linked { get; set; }
         /// <summary>
@@ -137,9 +148,35 @@ namespace Game.Portals
             }
         }
 
+        public void SetPosition(IWall wall, IPolygonCoord position, float size, bool mirrorX)
+        {
+            MirrorX = mirrorX;
+            Size = size;
+            SetPosition(wall, position);
+        }
+
+        public void SetMirrorX(bool mirrorX)
+        {
+            MirrorX = mirrorX;
+            foreach (SceneNode s in Tree<SceneNode>.GetDescendents(this))
+            {
+                s.TransformUpdate();
+            }
+        }
+
+        public void SetSize(float size)
+        {
+            Size = size;
+            foreach (SceneNode s in Tree<SceneNode>.GetDescendents(this))
+            {
+                s.TransformUpdate();
+            }
+        }
+
         public override void TransformUpdate()
         {
             Portal.SetWorldTransform(this);
+            Portal.SetWorldVelocity(this);
             base.TransformUpdate();
         }
     }

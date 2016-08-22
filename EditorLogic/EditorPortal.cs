@@ -17,6 +17,8 @@ namespace EditorLogic
         [DataMember]
         public Transform2 WorldTransformPrevious { get; set; }
         [DataMember]
+        public Transform2 WorldVelocityPrevious { get; set; }
+        [DataMember]
         public IPortal Linked { get; set; }
         public bool OneSided { get { return false; } }
         public PortalPath Path { get; }

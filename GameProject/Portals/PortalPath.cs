@@ -59,6 +59,7 @@ namespace Game.Portals
                 Portals.Add(portal);
             }
             current.WorldTransformPrevious = current.WorldTransformPrevious.Transform(Portal.GetLinkedTransform(portal));
+            //current.WorldVelocityPrevious = SceneNode.TransformVelocity(current
         }
     }
 }

@@ -52,10 +52,10 @@
                 </MenuItem>
                 <MenuItem Header="Save As..." Click="Button_SaveAs">
                 </MenuItem>
-                <Separator Margin="0,-5,0,-3"/>
+                <Separator Padding="0,-5,0,-3"/>
                 <MenuItem Header="Recent" Name="filesRecent">
                 </MenuItem>
-                <Separator Margin="0,-5,0,-3"/>
+                <Separator Padding="0,-5,0,-3"/>
                 <MenuItem Command="self:WPFCommands.Exit">
                 </MenuItem>
             </MenuItem>

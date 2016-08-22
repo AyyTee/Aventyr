@@ -109,13 +109,14 @@ namespace Game
             }
             float intersectT = (float)earliest.Sweep.AcrossProportion;
             Portal.Enter(earliest.Portal.Portal, earliest.Portalable.Instance, intersectT);
+            portalEnter?.Invoke(new EnterCallbackData(earliest.Portal.Portal, earliest.Portalable.Instance, intersectT));
             Step(moving, portals, stepSize * (1 - tDelta), portalEnter, earliest);
         }
 
         private static PortalableSweep GetEarliestCollision(List<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, PortalableSweep previous)
         {
             double tMin = 1;
-            const double repeatIntersectionEpsilon = 0.00001;
+            const double repeatIntersectionEpsilon = 0.0005;
             PortalableSweep earliest = null;
             foreach (PortalableMovement move in pointMovement)
             {
@@ -124,11 +125,6 @@ namespace Game
                     Debug.Assert(!(move is IPortal), "Portals cannot do portal teleporation with other portals.");
                     foreach (PortalMovement portal in lineMovement)
                     {
-                        if (move.Instance == portal.Portal)
-                        {
-                            continue;
-                        }
-
                         var collisionList = MathExt.MovingPointLineIntersect(move.StartEnd, portal.Start, portal.End);
                         if (collisionList.Count == 0)
                         {
@@ -152,82 +148,6 @@ namespace Game
                 }
             }
             return earliest;
-        }
-
-        public static void Step(IList<ProxyPortal> portals, IList<ProxyPortalable> portalables, int iterations, float stepSize)
-        {
-            Debug.Assert(iterations > 0);
-            Debug.Assert(portals != null);
-            Debug.Assert(portalables != null);
-
-            float iterationLength = stepSize / iterations;
-            for (int i = 0; i < iterations; i++)
-            {
-                foreach (ProxyPortalable portalable in portalables)
-                {
-                    //Note that at very high iterations, portalable instance can fail to enter a portal 
-                    //due to their velocity being less than Portal.EnterMinDistance.
-                    portalable.Transform.Rotation += portalable.Velocity.Rotation * iterationLength;
-                    portalable.Transform.Size += portalable.Velocity.Size * iterationLength;
-                    Ray.Settings settings = new Ray.Settings();
-                    settings.TimeScale = iterationLength;
-                    Ray.RayCast(portalable, portals, settings, (EnterCallbackData data, double movementLeft) =>
-                    {
-                        portalable.TrueVelocity = Portal.EnterVelocity(data.EntrancePortal, (float)data.PortalT, portalable.TrueVelocity);
-                        portalable.Portalable.EnterPortal?.Invoke(data, null, null);
-                    });
-                }
-                foreach (ProxyPortal p in portals)
-                {
-                    if (!Portal.IsValid(p))
-                    {
-                        continue;
-                    }
-                    if (p.WorldVelocity == new Transform2())
-                    {
-                        continue;
-                    }
-                    List<Vector2> quad = new List<Vector2>();
-                    quad.AddRange(Portal.GetWorldVerts(p));
-
-                    p.WorldTransform = p.WorldTransform.Add(p.WorldVelocity.Multiply(iterationLength));
-
-                    //Make the size of the quad slightly larger than it really is to prevent a situation where the portal 
-                    //"pushes" away a portalable instance.
-                    //Note that there is still a failure case if the portal is rotating slowly but not translating.
-                    Vector2 margin = Vector2.Zero;
-                    if (p.WorldVelocity.Position != Vector2.Zero)
-                    {
-                        margin = p.WorldVelocity.Position.Normalized() * Portal.EnterMinDistance * 2;
-                    }
-                    p.WorldTransform.Position += margin;
-                    //Reverse the order of the next vertice pair so that this forms a quadrilateral.
-                    quad.AddRange(Portal.GetWorldVerts(p).Reverse());
-
-                    foreach (ProxyPortalable portalable in portalables)
-                    {
-                        if (MathExt.PointInPolygon(portalable.Transform.Position, quad))
-                        {
-                            Portal.Enter(p, portalable, 0.5f);
-                            portalable.TrueVelocity = Portal.EnterVelocity(p, 0.5f, portalable.TrueVelocity);
-                        }
-                    }
-                    p.WorldTransform.Position -= margin;
-                }
-            }
-
-            foreach (ProxyPortalable portalable in portalables)
-            {
-                portalable.Portalable.SetTransform(portalable.Transform);
-                if (portalable.Portalable is Actor)
-                {
-                    portalable.Portalable.SetVelocity(portalable.TrueVelocity);
-                }
-                else
-                {
-                    portalable.Portalable.SetVelocity(portalable.Velocity);
-                }
-            }
         }
     }
 }

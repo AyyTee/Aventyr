@@ -32,6 +32,11 @@ namespace Game.Portals
             //portal.WorldTransformPrevious = portal.GetWorldTransform();
         }
 
+        public static void SetWorldVelocity(IPortal portal)
+        {
+            portal.WorldVelocityPrevious = (portal as SceneNode).GetWorldVelocityPortal();
+        }
+
         public static Transform2 Enter(IPortal portal, Transform2 transform)
         {
             Debug.Assert(IsValid(portal));

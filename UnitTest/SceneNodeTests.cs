@@ -88,7 +88,7 @@ namespace UnitTest
             p0.GetWorldTransform();
         }
 
-        //[TestMethod]
+        [TestMethod]
         public void GetWorldTransformTest1()
         {
             Scene scene = new Scene();
@@ -111,7 +111,7 @@ namespace UnitTest
             p0.GetWorldTransform();
         }
 
-        //[TestMethod]
+        [TestMethod]
         public void GetWorldTransformTest2()
         {
             Scene scene = new Scene();
@@ -174,9 +174,10 @@ namespace UnitTest
                 base.SetTransform(transform);
             }
 
-            public void SetVelocity(Transform2 velocity)
+            public override void SetVelocity(Transform2 velocity)
             {
                 Velocity = velocity.ShallowClone();
+                base.SetVelocity(velocity);
             }
         }
 
@@ -1112,6 +1113,31 @@ namespace UnitTest
         }
 
         [TestMethod]
+        public void GetWorldVelocityFixturePortalTest1Temp()
+        {
+            Scene scene = new Scene();
+            Wall parent = new Wall(scene);
+            parent.Vertices = PolygonFactory.CreateRectangle(4, 4);
+            parent.SetVelocity(Transform2.CreateVelocity(new Vector2(1f, 0f), 0f, 0f));
+
+            FixturePortal childPortal = new FixturePortal(scene, parent, new PolygonCoord(0, 0.5f));
+
+            FloatPortal enter = new FloatPortal(scene);
+            FloatPortal exit = new FloatPortal(scene);
+            enter.Linked = exit;
+            exit.Linked = enter;
+
+            enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)Math.PI / 2));
+            exit.SetTransform(new Transform2(new Vector2(100, 0)));
+
+            childPortal.Path.Enter(enter, childPortal);
+
+            Transform2 result = childPortal.GetWorldVelocity();
+            Transform2 expected = ApproximateVelocity(childPortal);
+            Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
+        }
+
+        [TestMethod]
         public void GetWorldVelocityFixturePortalTest2()
         {
             Scene scene = new Scene();
@@ -1207,6 +1233,32 @@ namespace UnitTest
             actor.SetTransform(t);
 
             Assert.IsTrue(child.WorldTransformPrevious.AlmostEqual(moved.Transform(t)));
+        }
+
+        [TestMethod]
+        public void TransformUpdateTest3()
+        {
+            Scene scene = new Scene();
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(2, 2));
+            
+
+            FixturePortal p0 = new FixturePortal(scene);
+
+            FixturePortal p1 = new FixturePortal(scene, actor, new PolygonCoord(1, 0.5f));
+
+            p0.Linked = p1;
+            p1.Linked = p0;
+
+            p0.SetPosition(actor, new PolygonCoord(0, 0.5f), 1, true);
+            
+
+
+            actor.SetTransform(new Transform2(new Vector2(1, 2)));
+
+            p1.SetPosition(actor, new PolygonCoord(1, 0.5f), 1, true);
+
+            Assert.IsTrue(p0.WorldTransformPrevious.AlmostEqual(p0.GetWorldTransformPortal()));
+            Assert.IsTrue(p1.WorldTransformPrevious.AlmostEqual(p1.GetWorldTransformPortal()));
         }
         #endregion
     }

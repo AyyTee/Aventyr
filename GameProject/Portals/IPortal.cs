@@ -14,5 +14,6 @@ namespace Game.Portals
         bool OneSided { get; }
         PortalPath Path { get; }
         Transform2 WorldTransformPrevious { get; set; }
+        Transform2 WorldVelocityPrevious { get; set; }
     }
 }

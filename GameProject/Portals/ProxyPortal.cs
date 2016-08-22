@@ -13,6 +13,7 @@ namespace Game.Portals
     public class ProxyPortal : IPortal
     {
         public Transform2 WorldTransformPrevious { get; set; }
+        public Transform2 WorldVelocityPrevious { get; set; }
         public readonly IPortal Portal;
         public Transform2 WorldTransform;
         public Transform2 WorldVelocity;

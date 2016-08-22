@@ -13,7 +13,19 @@ namespace Game.Portals
     public class FloatPortal : SceneNode, IPortal, IPortalable
     {
         [DataMember]
-        public Transform2 WorldTransformPrevious { get; set; }
+        Transform2 _worldTransformPrevious;
+        public Transform2 WorldTransformPrevious
+        {
+            get { return _worldTransformPrevious.ShallowClone(); }
+            set { _worldTransformPrevious = value.ShallowClone(); }
+        }
+        [DataMember]
+        Transform2 _worldVelocityPrevious;
+        public Transform2 WorldVelocityPrevious
+        {
+            get { return _worldVelocityPrevious.ShallowClone(); }
+            set { _worldVelocityPrevious = value.ShallowClone(); }
+        }
         public bool IsPortalable { get { return false; } }
         [DataMember]
         public IPortal Linked { get; set; }
@@ -30,7 +42,7 @@ namespace Game.Portals
         [DataMember]
         public PortalPath Path { get; private set; } = new PortalPath();
 
-        public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set;}
+        public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 
         public const float EdgeMargin = 0.02f;
         public const float CollisionMargin = 0.1f;
@@ -38,7 +50,7 @@ namespace Game.Portals
         public FloatPortal(Scene scene)
             : base(scene)
         {
-            Portal.SetWorldTransform(this);
+            TransformUpdate();
         }
 
         public override IDeepClone ShallowClone()
@@ -87,12 +99,14 @@ namespace Game.Portals
         public override void TransformUpdate()
         {
             Portal.SetWorldTransform(this);
+            Portal.SetWorldVelocity(this);
             base.TransformUpdate();
         }
 
-        public void SetVelocity(Transform2 velocity)
+        public override void SetVelocity(Transform2 velocity)
         {
             _velocity = velocity.ShallowClone();
+            base.SetVelocity(velocity);
         }
 
         public List<IPortal> GetPortalChildren()

@@ -81,15 +81,15 @@ namespace Game
                 {
                     continue;
                 }
-                //ignore any portal attached to this entity on the first recursive iteration
-                /*if (portal.Parent == entity && count == 0)
-                {
-                    continue;
-                }*/
+
                 Line portalLine = new Line(Portal.GetWorldVerts(portal));
                 Vector2[] convexHull = Vector2Ext.Transform(model.GetWorldConvexHull(), entity.GetWorldTransform().GetMatrix() * modelMatrix);
 
-                if (MathExt.LinePolygonDistance(portalLine, convexHull) < PORTAL_CLIP_MARGIN)
+                /* Don't clip with portals unless part of the portal is slightly inside the model's convex hull.  
+                 * This is to prevent rounding errors from causing a portal to clip a model it isn't touching.*/
+                if (MathExt.LineInPolygon(portalLine, convexHull) && 
+                    (MathExt.PointPolygonDistance(portalLine[0], convexHull) > PORTAL_CLIP_MARGIN || 
+                    MathExt.PointPolygonDistance(portalLine[1], convexHull) > PORTAL_CLIP_MARGIN))
                 {
                     collisions.Add(portal);
                 }

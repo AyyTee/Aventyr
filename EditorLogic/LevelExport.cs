@@ -51,9 +51,9 @@ namespace EditorLogic
                     {
                         FixturePortal portal = new FixturePortal(scene);
                         portal.Name = cast.Name;
-                        Transform2 t = cast.GetTransform();
+                        /*Transform2 t = cast.GetTransform();
                         portal.Size = t.Size;
-                        portal.MirrorX = t.MirrorX;
+                        portal.MirrorX = t.MirrorX;*/
                         dictionary.Add(cast, portal);
                     }
                     else
@@ -155,7 +155,7 @@ namespace EditorLogic
                     {
                         FixturePortal cast = (FixturePortal)clone;
 
-                        cast.SetPosition((IWall)parent, ((EditorPortal)e).PolygonTransform);
+                        cast.SetPosition((IWall)parent, ((EditorPortal)e).PolygonTransform, e.GetTransform().Size, e.GetTransform().MirrorX);
                         Debug.Assert(((IWall)parent).Vertices.Count > 0);
 
                         IPortal portalEditor = (IPortal)e;

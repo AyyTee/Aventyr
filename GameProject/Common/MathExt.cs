@@ -87,7 +87,7 @@ namespace Game
         /// <summary>
         /// Find the nearest PolygonCoord on the polygon relative to provided point.
         /// </summary>
-        public static PolygonCoord PolygonCoordNearest(IList<Vector2> polygon, Vector2 point)
+        public static PolygonCoord PointPolygonNearest(IList<Vector2> polygon, Vector2 point)
         {
             PolygonCoord nearest = new PolygonCoord(0, 0);
             double distanceMin = -1;
@@ -105,26 +105,6 @@ namespace Game
             }
             return nearest;
         }
-
-        /// <summary>
-        /// Find the nearest PolygonCoord from a list of polygons relative to provided point.
-        /// </summary>
-        /*public static PolygonCoord PolygonCoordNearest(IList<IPolygon> polygons, Vector2 point)
-        {
-            PolygonCoord nearest = null;
-            double distanceMin = -1;
-            for (int i = 0; i < polygons.Count; i++)
-            {
-                PolygonCoord coord = PolygonCoordNearest(polygons[i], point);
-                double distance = (coord.GetTransform().Position - point).Length;
-                if (distanceMin == -1 || distance < distanceMin)
-                {
-                    distanceMin = distance;
-                    nearest = coord;
-                }
-            }
-            return nearest;
-        }*/
         #endregion
         #region Distance
         public static double PointLineDistance(Vector2 point, Line line, bool isSegment)
@@ -139,7 +119,7 @@ namespace Game
             {
                 float t = ((point.X - line[0].X) * VDelta.X + (point.Y - line[0].Y) * VDelta.Y) / (float)(Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
                 Debug.Assert(float.IsNaN(t) == false);
-                if (isSegment) { t = (float)MathHelper.Clamp(t, 0, 1); }
+                if (isSegment) { t = MathHelper.Clamp(t, 0, 1); }
                 V = line[0] + Vector2.Multiply(VDelta, t);
             }
             float distance = (point - V).Length;
@@ -190,7 +170,7 @@ namespace Game
 
         public static double LineLineDistance(Line line0, Line line1)
         {
-            if (MathExt.LineLineIntersect(line0, line1, true).Exists)
+            if (LineLineIntersect(line0, line1, true).Exists)
             {
                 return 0;
             }
@@ -219,11 +199,11 @@ namespace Game
         /// <returns></returns>
         public static bool LineInPolygon(Line line, IList<Vector2> polygon)
         {
-            if (MathExt.PointInPolygon(line[0], polygon))
+            if (PointInPolygon(line[0], polygon))
             {
                 return true;
             }
-            if (MathExt.PointInPolygon(line[1], polygon))
+            if (PointInPolygon(line[1], polygon))
             {
                 return true;
             }
@@ -578,7 +558,7 @@ namespace Game
             return GeometryUtil.WhenLineSweepsPoint(
                 point[0],
                 lineStart, 
-                lineEnd.Translate(-point[1]) 
+                lineEnd.Translate(-point.Delta) 
                 ).ToList();
         }
 

@@ -146,9 +146,10 @@ namespace Game
         /// <summary>
         /// Set Actor's velocity.  The scale component is ignored.
         /// </summary>
-        public void SetVelocity(Transform2 velocity)
+        public override void SetVelocity(Transform2 velocity)
         {
             BodyExt.SetVelocity(Body, velocity);
+            base.SetVelocity(velocity);
         }
 
         /// <summary>
