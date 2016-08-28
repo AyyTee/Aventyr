@@ -39,7 +39,8 @@ namespace EditorLogic
         [DataMember]
         public EditorObject Parent { get; private set; }
         [DataMember]
-        public Transform2 Transform = new Transform2();
+        public Transform2 Transform { get; set; } = new Transform2();
+        public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
         [DataMember]
         public CurveTransform2 AnimatedTransform;
         [DataMember]

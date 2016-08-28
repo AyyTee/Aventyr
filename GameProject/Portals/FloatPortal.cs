@@ -36,9 +36,9 @@ namespace Game.Portals
         [DataMember]
         public bool OneSided { get; set; }
         [DataMember]
-        Transform2 Transform { get; set; } = new Transform2();
+        public Transform2 Transform { get; set; } = new Transform2();
         [DataMember]
-        Transform2 _velocity = Transform2.CreateVelocity();
+        public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
         [DataMember]
         public PortalPath Path { get; private set; } = new PortalPath();
 
@@ -82,7 +82,7 @@ namespace Game.Portals
 
         public override Transform2 GetVelocity()
         {
-            return _velocity.ShallowClone();
+            return Velocity.ShallowClone();
         }
 
         public override Transform2 GetTransform()
@@ -105,7 +105,7 @@ namespace Game.Portals
 
         public override void SetVelocity(Transform2 velocity)
         {
-            _velocity = velocity.ShallowClone();
+            Velocity = velocity.ShallowClone();
             base.SetVelocity(velocity);
         }
 

@@ -32,7 +32,11 @@ namespace EditorLogic
         [DataMember]
         Queue<Vector2> lazyPan = new Queue<Vector2>();
         [DataMember]
-        Transform2 _transform = new Transform2();
+        public Transform2 Transform { get; set; } = new Transform2();
+        /// <summary>
+        /// This is not used for anything.
+        /// </summary>
+        public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
         const int QUEUE_SIZE = 3;
         [DataMember]
         public IScene Scene { get; set; }
@@ -73,7 +77,7 @@ namespace EditorLogic
             IsPortalable = true;
             Scene = scene;
             Controller = controller;
-            _transform.Size = 1;
+            Transform.Size = 1;
             ZoomScrollFactor = 1.2f;
             ZoomFactor = 1.5f;
             InputExt = inputExt;
@@ -100,12 +104,12 @@ namespace EditorLogic
 
         public Transform2 GetTransform()
         {
-            return _transform.ShallowClone();
+            return Transform.ShallowClone();
         }
 
         public void SetTransform(Transform2 transform)
         {
-            _transform = transform.ShallowClone();
+            Transform = transform.ShallowClone();
         }
 
         public bool IsLocked()
@@ -217,7 +221,7 @@ namespace EditorLogic
             }
             else
             {
-                _transform = _transform.Add(GetWorldVelocity());
+                Transform = Transform.Add(GetWorldVelocity());
             }
         }
 
@@ -244,7 +248,7 @@ namespace EditorLogic
             clone.ZoomMin = ZoomMin;
             clone.ZoomMax = ZoomMax;
             clone.KeyMoveSpeed = KeyMoveSpeed;
-            clone._transform = _transform;
+            clone.Transform = Transform;
             return clone;
         }
 

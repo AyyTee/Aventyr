@@ -264,7 +264,7 @@ namespace Game
             return worldVelocity;
         }
 
-        private Transform2 TransformVelocity(IPortalable portalable, IPortal portal, Transform2 velocity, double movementT)
+        public static Transform2 TransformVelocity(IGetTransformVelocity portalable, IPortal portal, Transform2 velocity, double movementT)
         {
             velocity = velocity.ShallowClone();
             velocity = Portal.EnterVelocity(portal, 0.5f, velocity);

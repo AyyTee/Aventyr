@@ -13,8 +13,8 @@ namespace Game.Portals
     {
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
         public bool IsPortalable { get; set; } = true;
-        Transform2 _transform = new Transform2();
-        Transform2 _velocity = Transform2.CreateVelocity();
+        public Transform2 Transform { get; set; } = new Transform2();
+        public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
 
         public Portalable()
         {
@@ -28,22 +28,22 @@ namespace Game.Portals
 
         public Transform2 GetTransform()
         {
-            return _transform.ShallowClone();
+            return Transform.ShallowClone();
         }
 
         public Transform2 GetVelocity()
         {
-            return _velocity.ShallowClone();
+            return Velocity.ShallowClone();
         }
 
         public void SetTransform(Transform2 transform)
         {
-            _transform = transform.ShallowClone();
+            Transform = transform.ShallowClone();
         }
 
         public void SetVelocity(Transform2 velocity)
         {
-            _velocity = velocity.ShallowClone();
+            Velocity = velocity.ShallowClone();
         }
 
         public List<IPortal> GetPortalChildren()

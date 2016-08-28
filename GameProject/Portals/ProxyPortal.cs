@@ -62,5 +62,15 @@ namespace Game.Portals
         {
             Portal.UpdateRefs(cloneMap);
         }
+
+        public Transform2 GetTransform()
+        {
+            return Portal.GetTransform();
+        }
+
+        public Transform2 GetVelocity()
+        {
+            return Portal.GetVelocity();
+        }
     }
 }

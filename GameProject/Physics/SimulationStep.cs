@@ -76,7 +76,10 @@ namespace Game
                 {
                     Transform2 transform = p.GetTransform();
                     Vector2 pointStart = transform.Position;
-                    p.SetTransform(transform.Add(p.GetVelocity().Multiply((float)stepSize)));
+
+                    Transform2 shift = p.GetVelocity().Multiply((float)stepSize);
+                    //p.SetTransform(transform.Add(shift));
+                    p.Transform = p.Transform.Add(shift);
                     Vector2 pointEnd = p.GetTransform().Position;
 
                     pointMovement.Add(new PortalableMovement(p, new Line(pointStart, pointEnd), transform));
@@ -86,20 +89,33 @@ namespace Game
                 {
                     line.End = new Line(Portal.GetWorldVerts(line.Portal));
                 }
+
+                //Move portalable instances back to their starting spots.
+                foreach (PortalableMovement p in pointMovement)
+                {
+                    p.Instance.Transform = p.Previous;
+                }
             }
 
             PortalableSweep earliest = GetEarliestCollision(pointMovement, lineMovement, previous);
 
             if (earliest == null)
             {
+                foreach (PortalableMovement p in pointMovement)
+                {
+                    IPortalable portalable = p.Instance;
+                    Transform2 shift = portalable.GetVelocity().Multiply((float)stepSize);
+                    portalable.SetTransform(portalable.GetTransform().Add(shift));
+                }
                 return;
             }
 
             //Move portalable instance back to their start positions so that portal teleportation can be done correctly.
-            foreach (PortalableMovement p in pointMovement)
+            /*foreach (PortalableMovement p in pointMovement)
             {
                 p.Instance.SetTransform(p.Previous);
-            }
+                
+            }*/
 
             double tDelta = earliest.Sweep.TimeProportion;
             foreach (PortalableMovement move in pointMovement)
@@ -111,6 +127,11 @@ namespace Game
             Portal.Enter(earliest.Portal.Portal, earliest.Portalable.Instance, intersectT);
             portalEnter?.Invoke(new EnterCallbackData(earliest.Portal.Portal, earliest.Portalable.Instance, intersectT));
             Step(moving, portals, stepSize * (1 - tDelta), portalEnter, earliest);
+        }
+
+        private static void Shift(IEnumerable<IPortalable> moving, IEnumerable<IPortal> portals)
+        {
+
         }
 
         private static PortalableSweep GetEarliestCollision(List<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, PortalableSweep previous)

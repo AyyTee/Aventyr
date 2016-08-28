@@ -17,6 +17,16 @@ namespace Game
     [DataContract, DebuggerDisplay("Actor {Name}")]
     public class Actor : SceneNode, IActor
     {
+        public Transform2 Transform
+        {
+            get { return GetTransform(); }
+            set { _setTransform(value); }
+        }
+        public Transform2 Velocity
+        {
+            get { return GetVelocity(); }
+            set { BodyExt.SetVelocity(Body, value); }
+        }
         [DataMember]
         public bool IsPortalable { get; set; } = true;
         /// <summary>
@@ -106,6 +116,12 @@ namespace Game
 
         public override void SetTransform(Transform2 transform)
         {
+            _setTransform(transform);
+            base.SetTransform(transform);
+        }
+
+        private void _setTransform(Transform2 transform)
+        {
             if (_scale != transform.Scale)
             {
                 Debug.Assert(!Scene.InWorldStep, "Scale cannot change during a physics step.");
@@ -135,7 +151,6 @@ namespace Game
                 }
             }
             BodyExt.SetTransform(Body, transform);
-            base.SetTransform(transform);
         }
 
         public override Transform2 GetVelocity()

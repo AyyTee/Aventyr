@@ -13,8 +13,8 @@ namespace Game.Portals
         /// Included as a hack to make the SimulationStep code work for physics bodies.
         /// </summary>
         public Transform2 TrueVelocity = new Transform2();
-        public Transform2 Transform = new Transform2();
-        public Transform2 Velocity = new Transform2();
+        public Transform2 Transform { get; set; } = new Transform2();
+        public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
         public bool IsPortalable { get { return Portalable.IsPortalable; } }
 

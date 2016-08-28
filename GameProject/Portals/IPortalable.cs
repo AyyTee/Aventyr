@@ -9,7 +9,7 @@ namespace Game.Portals
     /// <summary>
     /// An object that can travel through portals.
     /// </summary>
-    public interface IPortalable : ITransformable2
+    public interface IPortalable : ITransformable2, IGetTransformVelocity
     {
         /// <summary>
         /// Whether or not this instance can interact with portals.  
@@ -21,8 +21,14 @@ namespace Game.Portals
         /// EnterPortal(IPortal enter, Transform2 transform, Transform2 velocity)
         /// </summary>
         Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
-        /// <summary>Returns a copy of the local velocity.</summary>
-        Transform2 GetVelocity();
+        /// <summary>
+        /// Get/Set transform without any side effects.
+        /// </summary>
+        Transform2 Transform { get; set; }
+        /// <summary>
+        /// Get/Set velocity without any side effects.
+        /// </summary>
+        Transform2 Velocity { get; set; }
         /// <summary>Replaces the local velocity with a copy of the passed argument.</summary>
         void SetVelocity(Transform2 velocity);
         List<IPortal> GetPortalChildren();

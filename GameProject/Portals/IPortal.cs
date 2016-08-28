@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Game.Portals
 {
-    public interface IPortal : IDeepClone, ISceneObject
+    public interface IPortal : IDeepClone, ISceneObject, IGetTransformVelocity
     {
         IPortal Linked { get; }
         Transform2 GetWorldTransform(bool ignorePortals = false);

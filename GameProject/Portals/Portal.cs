@@ -56,12 +56,11 @@ namespace Game.Portals
             Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
             Transform2 velocityClone = velocity.ShallowClone();
 
-            //Transform2 portalVelocity = Transform2.CreateVelocity();
             if (!ignorePortalVelocity)
             {
                 velocityClone.Position -= portal.GetWorldVelocity().Position;
                 velocityClone.Rotation -= portal.GetWorldVelocity().Rotation;
-                //velocityClone.Position -= GetAngularVelocity(portal, intersectT);
+                velocityClone.Position -= GetAngularVelocity(portal, intersectT);
             }
             velocityClone.Position = Vector2Ext.Transform(velocityClone.Position, matrix);
             velocityClone.Position -= origin;
@@ -74,7 +73,7 @@ namespace Game.Portals
             {
                 velocityClone.Position += portal.Linked.GetWorldVelocity().Position;
                 velocityClone.Rotation += portal.Linked.GetWorldVelocity().Rotation;
-                //velocityClone.Position += GetAngularVelocity(portal.Linked, intersectT);
+                velocityClone.Position += GetAngularVelocity(portal.Linked, intersectT);
             }
             return velocityClone;
         }
@@ -94,8 +93,11 @@ namespace Game.Portals
 
             foreach (IPortal p in portalable.GetPortalChildren())
             {
-                p.WorldTransformPrevious = GetLinkedTransform(p);
-                p.Path.Enter(portal.Linked, p);
+                //p.WorldTransformPrevious = GetLinkedTransform(p);
+                p.Path.Enter(portal.Linked);
+
+                //p.WorldTransformPrevious = p.WorldTransformPrevious.Transform(GetLinkedTransform(portal.Linked));
+                //p.WorldVelocityPrevious = SceneNode.TransformVelocity(p, portal.Linked, p.GetVelocity(), intersectT);
             }
 
             portalable.EnterPortal?.Invoke(new EnterCallbackData(portal, portalable, intersectT), transform, velocity);
@@ -255,6 +257,42 @@ namespace Game.Portals
                 p.Linked = dictionary[p.Linked];
             }
             return dictionary.Values.ToList();
+        }
+
+        /// <summary>
+        /// Returns all the portal intersections for a line in this path.  
+        /// TFirst is the t value for the line intersection.  
+        /// TLast is the t value for the portal intersection.
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        public static IntersectCoord[] PathIntersections(PortalPath path, Line line)
+        {
+            IntersectCoord[] intersections = new IntersectCoord[path.Portals.Count];
+            line = line.ShallowClone();
+
+            Line[] portalLines = new Line[path.Portals.Count];
+            for (int i = 0; i < path.Portals.Count; i++)
+            {
+                portalLines[i] = new Line(GetWorldVerts(path.Portals[i]));
+            }
+
+            for (int i = path.Portals.Count - 1; i >= 0; i--)
+            {
+                Matrix4 mat = GetLinkedMatrix(path.Portals[i].Linked);
+                line[1] = line.Transform(mat)[1];
+                for (int j = i + 1; j < path.Portals.Count; j++)
+                {
+                    portalLines[j] = portalLines[j].Transform(mat);
+                }
+            }
+
+            for (int i = 0; i < path.Portals.Count; i++)
+            {
+                intersections[i] = MathExt.LineLineIntersect(portalLines[i], line, true);
+            }
+
+            return intersections;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,6 @@ namespace Game.Portals
             for (int i = 0; i < Portals.Count; i++)
             {
                 Transform2 portal = Portal.GetLinkedTransform(Portals[i]);
-                //t.MirrorX = !t.MirrorX;
                 t = t.Transform(portal);
             }
             return t;
@@ -42,7 +42,8 @@ namespace Game.Portals
         /// Add a portal to the portal list.  
         /// If the portal is the exit for the previous portal then the two are removed from the list.
         /// </summary>
-        public void Enter(IPortal portal, IPortal current)
+        /// <param name="current">Portal that contains this portal path.</param>
+        public void Enter(IPortal portal)
         {
             ProxyPortal proxyPortal = portal as ProxyPortal;
             if (proxyPortal != null)
@@ -58,8 +59,6 @@ namespace Game.Portals
             {
                 Portals.Add(portal);
             }
-            current.WorldTransformPrevious = current.WorldTransformPrevious.Transform(Portal.GetLinkedTransform(portal));
-            //current.WorldVelocityPrevious = SceneNode.TransformVelocity(current
         }
     }
 }

@@ -15,9 +15,9 @@ namespace Game
     {
         public bool IsPortalable { get; set; } = true;
         [DataMember]
-        Transform2 Transform { get; set; } = new Transform2();
+        public Transform2 Transform { get; set; } = new Transform2();
         [DataMember]
-        Transform2 _velocity = new Transform2();
+        public Transform2 Velocity { get; set; } = new Transform2();
         [DataMember]
         public float _aspect = 1;
         public float Aspect
@@ -90,12 +90,12 @@ namespace Game
 
         public override Transform2 GetVelocity()
         {
-            return _velocity.ShallowClone();
+            return Velocity.ShallowClone();
         }
 
         public override void SetVelocity(Transform2 velocity)
         {
-            _velocity = velocity.ShallowClone();
+            Velocity = velocity.ShallowClone();
             base.SetVelocity(velocity);
         }
 
