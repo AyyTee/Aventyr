@@ -9,7 +9,7 @@ namespace Game.Portals
     /// <summary>
     /// An object that can travel through portals.
     /// </summary>
-    public interface IPortalable : ITransformable2, IGetTransformVelocity
+    public interface IPortalable : ITransformable2, IGetTransformVelocity, IPortalCommon
     {
         /// <summary>
         /// Whether or not this instance can interact with portals.  
@@ -32,5 +32,6 @@ namespace Game.Portals
         /// <summary>Replaces the local velocity with a copy of the passed argument.</summary>
         void SetVelocity(Transform2 velocity);
         List<IPortal> GetPortalChildren();
+        
     }
 }

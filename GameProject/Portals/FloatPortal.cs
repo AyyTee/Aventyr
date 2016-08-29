@@ -12,20 +12,6 @@ namespace Game.Portals
     [DataContract, DebuggerDisplay("FloatPortal {Name}")]
     public class FloatPortal : SceneNode, IPortal, IPortalable
     {
-        [DataMember]
-        Transform2 _worldTransformPrevious;
-        public Transform2 WorldTransformPrevious
-        {
-            get { return _worldTransformPrevious.ShallowClone(); }
-            set { _worldTransformPrevious = value.ShallowClone(); }
-        }
-        [DataMember]
-        Transform2 _worldVelocityPrevious;
-        public Transform2 WorldVelocityPrevious
-        {
-            get { return _worldVelocityPrevious.ShallowClone(); }
-            set { _worldVelocityPrevious = value.ShallowClone(); }
-        }
         public bool IsPortalable { get { return false; } }
         [DataMember]
         public IPortal Linked { get; set; }
@@ -39,8 +25,6 @@ namespace Game.Portals
         public Transform2 Transform { get; set; } = new Transform2();
         [DataMember]
         public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
-        [DataMember]
-        public PortalPath Path { get; private set; } = new PortalPath();
 
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 

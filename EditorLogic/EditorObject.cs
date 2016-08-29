@@ -23,6 +23,22 @@ namespace EditorLogic
             private set { _scene = value; }
         }
         [DataMember]
+        public PortalPath Path { get; set; }
+        [DataMember]
+        Transform2 _worldTransformPrevious = new Transform2();
+        public Transform2 WorldTransformPrevious
+        {
+            get { return _worldTransformPrevious.ShallowClone(); }
+            set { _worldTransformPrevious = value.ShallowClone(); }
+        }
+        [DataMember]
+        Transform2 _worldVelocityPrevious = Transform2.CreateVelocity();
+        public Transform2 WorldVelocityPrevious
+        {
+            get { return _worldVelocityPrevious.ShallowClone(); }
+            set { _worldVelocityPrevious = value.ShallowClone(); }
+        }
+        [DataMember]
         public bool Visible { get; set; }
         [DataMember]
         public bool DrawOverPortals { get; set; }
@@ -38,6 +54,10 @@ namespace EditorLogic
         public List<EditorObject> Children { get { return new List<EditorObject>(_children); } }
         [DataMember]
         public EditorObject Parent { get; private set; }
+
+        IPortalCommon ITreeNode<IPortalCommon>.Parent { get { return Parent; } }
+        List<IPortalCommon> ITreeNode<IPortalCommon>.Children { get { return Children.ToList<IPortalCommon>(); } }
+
         [DataMember]
         public Transform2 Transform { get; set; } = new Transform2();
         public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();

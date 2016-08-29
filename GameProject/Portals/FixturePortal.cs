@@ -13,19 +13,6 @@ namespace Game.Portals
     public class FixturePortal : SceneNode, IPortal
     {
         [DataMember]
-        Transform2 _worldTransformPrevious;
-        public Transform2 WorldTransformPrevious {
-            get { return _worldTransformPrevious.ShallowClone(); }
-            set { _worldTransformPrevious = value.ShallowClone(); }
-        }
-        [DataMember]
-        Transform2 _worldVelocityPrevious;
-        public Transform2 WorldVelocityPrevious
-        {
-            get { return _worldVelocityPrevious.ShallowClone(); }
-            set { _worldVelocityPrevious = value.ShallowClone(); }
-        }
-        [DataMember]
         public IPortal Linked { get; set; }
         /// <summary>
         /// If OneSided is true then the portal can only be viewed through it's front side.
@@ -49,8 +36,6 @@ namespace Game.Portals
 
         [DataMember]
         public IPolygonCoord Position { get; private set; }
-        [DataMember]
-        public PortalPath Path { get; private set; } = new PortalPath();
         
         public const float EdgeMargin = 0.02f;
         public const float CollisionMargin = 0.1f;

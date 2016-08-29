@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Xml;
 
 namespace Game
 {
@@ -15,8 +14,27 @@ namespace Game
     /// Scene graph node.  All derived classes MUST override ShallowClone() and return an instance of the derived class.
     /// </summary>
     [DataContract, DebuggerDisplay("SceneNode {Name}")]
-    public class SceneNode : ITreeNode<SceneNode>, IDeepClone, ISceneObject
+    public class SceneNode : ITreeNode<SceneNode>, IDeepClone, ISceneObject, IPortalCommon
     {
+        [DataMember]
+        public PortalPath Path { get; set; }
+        [DataMember]
+        Transform2 _worldTransformPrevious = new Transform2();
+        public Transform2 WorldTransformPrevious
+        {
+            get { return _worldTransformPrevious.ShallowClone(); }
+            set { _worldTransformPrevious = value.ShallowClone(); }
+        }
+        [DataMember]
+        Transform2 _worldVelocityPrevious = Transform2.CreateVelocity();
+        public Transform2 WorldVelocityPrevious
+        {
+            get { return _worldVelocityPrevious.ShallowClone(); }
+            set { _worldVelocityPrevious = value.ShallowClone(); }
+        }
+        IPortalCommon ITreeNode<IPortalCommon>.Parent { get { return Parent; } }
+        List<IPortalCommon> ITreeNode<IPortalCommon>.Children { get { return Children.ToList<IPortalCommon>(); } }
+
         [DataMember]
         public string Name { get; set; }
         [DataMember]

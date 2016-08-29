@@ -15,13 +15,8 @@ namespace EditorLogic
     public sealed class EditorPortal : EditorObject, IPortal
     {
         [DataMember]
-        public Transform2 WorldTransformPrevious { get; set; }
-        [DataMember]
-        public Transform2 WorldVelocityPrevious { get; set; }
-        [DataMember]
         public IPortal Linked { get; set; }
         public bool OneSided { get { return false; } }
-        public PortalPath Path { get; }
         Model _portalModel;
 
         public EditorPortal(EditorScene editorScene)

@@ -12,8 +12,20 @@ namespace Game.Portals
     /// </summary>
     public class ProxyPortal : IPortal
     {
-        public Transform2 WorldTransformPrevious { get; set; }
-        public Transform2 WorldVelocityPrevious { get; set; }
+        Transform2 _worldTransformPrevious = new Transform2();
+        public Transform2 WorldTransformPrevious
+        {
+            get { return _worldTransformPrevious.ShallowClone(); }
+            set { _worldTransformPrevious = value.ShallowClone(); }
+        }
+        Transform2 _worldVelocityPrevious = Transform2.CreateVelocity();
+        public Transform2 WorldVelocityPrevious
+        {
+            get { return _worldVelocityPrevious.ShallowClone(); }
+            set { _worldVelocityPrevious = value.ShallowClone(); }
+        }
+        public IPortalCommon Parent { get; set; }
+        public List<IPortalCommon> Children { get; private set; } = new List<IPortalCommon>();
         public readonly IPortal Portal;
         public Transform2 WorldTransform;
         public Transform2 WorldVelocity;
@@ -22,7 +34,7 @@ namespace Game.Portals
 
         public bool OneSided { get { return Portal.OneSided; } }
         
-        public PortalPath Path { get { return Portal.Path; } }
+        public PortalPath Path { get { return Portal.Path; } set { Portal.Path = value; } }
 
         public ProxyPortal(IPortal portal)
             : this(portal, portal.GetWorldTransform(), portal.GetWorldVelocity())

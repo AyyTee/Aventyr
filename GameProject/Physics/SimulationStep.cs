@@ -129,9 +129,30 @@ namespace Game
             Step(moving, portals, stepSize * (1 - tDelta), portalEnter, earliest);
         }
 
-        private static void Shift(IEnumerable<IPortalable> moving, IEnumerable<IPortal> portals)
+        private class NextPosition
         {
+            public IPortalable Instance;
+            public Transform2 WorldTransformNext;
+            public Transform2 WorldVelocityNext;
 
+            public NextPosition(IPortalable instance, Transform2 worldTransformNext, Transform2 worldVelocityNext)
+            {
+                Instance = instance;
+                WorldTransformNext = worldTransformNext;
+                WorldVelocityNext = worldVelocityNext;
+            }
+        }
+
+        private static void SetNextVelocity(IEnumerable<IPortalCommon> moving)
+        {
+            List<NextPosition> nextList = new List<NextPosition>();
+            foreach (IPortalCommon p in moving)
+            {
+                Transform2 velocity = p.WorldVelocityPrevious;
+
+                for (int i = 0; i <)
+                //nextList.Add(new NextPosition(p));
+            }
         }
 
         private static PortalableSweep GetEarliestCollision(List<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, PortalableSweep previous)

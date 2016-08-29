@@ -21,6 +21,25 @@ namespace EditorLogic
         public event CameraObjectHandler CameraMoved;
         [DataMember]
         public bool IsPortalable { get; set; }
+        [DataMember]
+        public PortalPath Path { get; set; }
+        [DataMember]
+        Transform2 _worldTransformPrevious = new Transform2();
+        public Transform2 WorldTransformPrevious
+        {
+            get { return _worldTransformPrevious.ShallowClone(); }
+            set { _worldTransformPrevious = value.ShallowClone(); }
+        }
+        [DataMember]
+        Transform2 _worldVelocityPrevious = Transform2.CreateVelocity();
+        public Transform2 WorldVelocityPrevious
+        {
+            get { return _worldVelocityPrevious.ShallowClone(); }
+            set { _worldVelocityPrevious = value.ShallowClone(); }
+        }
+        public IPortalCommon Parent { get { return null; } }
+        public List<IPortalCommon> Children { get { return new List<IPortalCommon>(); } }
+
         public ControllerEditor Controller { get; set; }
         public InputExt InputExt { get; set; }
         [DataMember]
