@@ -15,14 +15,14 @@ namespace Game.Portals
         public bool IsPortalable { get; set; } = true;
         public Transform2 Transform { get; set; } = new Transform2();
         public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
-        public PortalPath Path { get; set; }
-        Transform2 _worldTransformPrevious = new Transform2();
+        public PortalPath Path { get; set; } = new PortalPath();
+        Transform2 _worldTransformPrevious = null;
         public Transform2 WorldTransformPrevious
         {
             get { return _worldTransformPrevious.ShallowClone(); }
             set { _worldTransformPrevious = value.ShallowClone(); }
         }
-        Transform2 _worldVelocityPrevious = Transform2.CreateVelocity();
+        Transform2 _worldVelocityPrevious = null;
         public Transform2 WorldVelocityPrevious
         {
             get { return _worldVelocityPrevious.ShallowClone(); }
@@ -30,6 +30,10 @@ namespace Game.Portals
         }
         public IPortalCommon Parent { get; set; }
         public List<IPortalCommon> Children { get; private set; } = new List<IPortalCommon>();
+        /// <summary>
+        /// For the time being the Scene is null.
+        /// </summary>
+        public IScene Scene { get { return null; } }
 
         public Portalable()
         {

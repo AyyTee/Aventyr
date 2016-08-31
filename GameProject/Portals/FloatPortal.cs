@@ -82,8 +82,8 @@ namespace Game.Portals
 
         public override void TransformUpdate()
         {
-            Portal.SetWorldTransform(this);
-            Portal.SetWorldVelocity(this);
+            //Portal.SetWorldTransform(this);
+            //Portal.SetWorldVelocity(this);
             base.TransformUpdate();
         }
 

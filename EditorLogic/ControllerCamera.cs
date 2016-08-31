@@ -22,7 +22,7 @@ namespace EditorLogic
         [DataMember]
         public bool IsPortalable { get; set; }
         [DataMember]
-        public PortalPath Path { get; set; }
+        public PortalPath Path { get; set; } = new PortalPath();
         [DataMember]
         Transform2 _worldTransformPrevious = new Transform2();
         public Transform2 WorldTransformPrevious
@@ -128,6 +128,7 @@ namespace EditorLogic
 
         public void SetTransform(Transform2 transform)
         {
+            PortalCommon.ResetWorldTransform(this);
             Transform = transform.ShallowClone();
         }
 

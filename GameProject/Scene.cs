@@ -151,6 +151,11 @@ namespace Game
             return GetAll().OfType<IPortal>().ToList();
         }
 
+        public List<IPortalable> GetPortalableList()
+        {
+            return GetAll().OfType<IPortalable>().ToList();
+        }
+
         public SceneNode FindByName(string name)
         {
             return Root.FindByName(name);

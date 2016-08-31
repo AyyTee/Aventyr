@@ -36,8 +36,10 @@ namespace Game.Portals
         
         public PortalPath Path { get { return Portal.Path; } set { Portal.Path = value; } }
 
+        public IScene Scene { get { return Portal.Scene; } }
+
         public ProxyPortal(IPortal portal)
-            : this(portal, portal.GetWorldTransform(), portal.GetWorldVelocity())
+            : this(portal, portal.WorldTransformPrevious, portal.WorldVelocityPrevious)
         {
         }
 

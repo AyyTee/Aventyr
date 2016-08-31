@@ -68,6 +68,11 @@ namespace EditorLogic
             return renderList;
         }
 
+        public List<IPortalable> GetPortalableList()
+        {
+            return GetAll().OfType<IPortalable>().ToList();
+        }
+
         public void AddKeyframe(EditorObject instance, Transform2 keyframe)
         {
             AddKeyframe(instance, keyframe, (float)Time);

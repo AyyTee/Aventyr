@@ -203,7 +203,7 @@ namespace Game
             Line portalLine = new Line(pv2);
             if (next.OneSided)
             {
-                if (portalLine.GetSideOf(pv2[0] + next.GetWorldTransform().GetRight()) != portalLine.GetSideOf(viewPos))
+                if (portalLine.GetSideOf(pv2[0] + next.WorldTransformPrevious.GetRight()) != portalLine.GetSideOf(viewPos))
                 {
                     return false;
                 }

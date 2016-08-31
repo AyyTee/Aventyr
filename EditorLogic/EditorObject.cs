@@ -22,17 +22,19 @@ namespace EditorLogic
             get { return _scene == null ? Parent.Scene : _scene; }
             private set { _scene = value; }
         }
+        IScene IPortalCommon.Scene { get { return Scene; } }
+
         [DataMember]
-        public PortalPath Path { get; set; }
+        public PortalPath Path { get; set; } = new PortalPath();
         [DataMember]
-        Transform2 _worldTransformPrevious = new Transform2();
+        Transform2 _worldTransformPrevious = null;
         public Transform2 WorldTransformPrevious
         {
             get { return _worldTransformPrevious.ShallowClone(); }
             set { _worldTransformPrevious = value.ShallowClone(); }
         }
         [DataMember]
-        Transform2 _worldVelocityPrevious = Transform2.CreateVelocity();
+        Transform2 _worldVelocityPrevious = null;
         public Transform2 WorldVelocityPrevious
         {
             get { return _worldVelocityPrevious.ShallowClone(); }

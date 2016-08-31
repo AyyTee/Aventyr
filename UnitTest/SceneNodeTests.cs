@@ -65,7 +65,7 @@ namespace UnitTest
             Assert.IsTrue(node2.Children.Count == 0);
         }
         #endregion
-        #region GetWorldTransform tests
+        /*#region GetWorldTransform tests
         [TestMethod]
         public void GetWorldTransformTest0()
         {
@@ -111,7 +111,7 @@ namespace UnitTest
             p0.GetWorldTransform();
         }
 
-        /*[TestMethod]
+        [TestMethod]
         public void GetWorldTransformTest2()
         {
             Scene scene = new Scene();
@@ -134,11 +134,11 @@ namespace UnitTest
             p1.SetTransform(new Transform2(new Vector2(10, 0)));
             p2.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)Math.PI/2));
 
-            p0.Path.Enter(p2, p0, );
+            //p0.Path.Enter(p2, p0, );
 
             //Make sure this doesn't hang.
             p0.GetWorldTransform();
-        }*/
+        }
         #endregion
         #region GetWorldVelocity tests
 
@@ -1032,7 +1032,7 @@ namespace UnitTest
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        /*[TestMethod]
+        [TestMethod]
         public void GetWorldVelocityFixturePortalTest1()
         {
             Scene scene = new Scene();
@@ -1110,7 +1110,7 @@ namespace UnitTest
             Transform2 result = childPortal.GetWorldVelocity();
             Transform2 expected = ApproximateVelocity(childPortal);
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
-        }*/
+        }
         #endregion
 
         #region TransformUpdate tests
@@ -1205,6 +1205,6 @@ namespace UnitTest
             Assert.IsTrue(p0.WorldTransformPrevious.AlmostEqual(p0.GetWorldTransformPortal()));
             Assert.IsTrue(p1.WorldTransformPrevious.AlmostEqual(p1.GetWorldTransformPortal()));
         }
-        #endregion
+        #endregion*/
     }
 }

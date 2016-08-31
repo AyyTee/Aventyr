@@ -17,7 +17,7 @@ namespace Game
     public class SceneNode : ITreeNode<SceneNode>, IDeepClone, ISceneObject, IPortalCommon
     {
         [DataMember]
-        public PortalPath Path { get; set; }
+        public PortalPath Path { get; set; } = new PortalPath();
         [DataMember]
         Transform2 _worldTransformPrevious = new Transform2();
         public Transform2 WorldTransformPrevious
@@ -49,6 +49,7 @@ namespace Game
         {
             get { return _scene == null ? Parent.Scene : _scene; }
         }
+        IScene IPortalCommon.Scene { get { return Scene; } }
 
         #region Constructors
         public SceneNode(Scene scene)
@@ -174,7 +175,22 @@ namespace Game
         {
         }
 
+        public virtual Transform2 GetVelocity()
+        {
+            return Transform2.CreateVelocity();
+        }
+
         public Transform2 GetWorldTransform(bool ignorePortals = false)
+        {
+            return WorldTransformPrevious;
+        }
+
+        public Transform2 GetWorldVelocity(bool ignorePortals = false)
+        {
+            return WorldVelocityPrevious;
+        }
+
+        /*public Transform2 GetWorldTransform(bool ignorePortals = false)
         {
             if (!ignorePortals)
             {
@@ -225,11 +241,6 @@ namespace Game
                 return portalable.GetTransform();
             }
             return t;
-        }
-
-        public virtual Transform2 GetVelocity()
-        {
-            return Transform2.CreateVelocity();
         }
 
         /// <summary>
@@ -343,7 +354,7 @@ namespace Game
             portalList.ExceptWith(Tree<SceneNode>.GetDescendents(this).OfType<IPortal>());
             portalList.RemoveWhere(item => ReferenceEquals(item, Parent));
             return portalList;
-        }
+        }*/
 
         public SceneNode FindByName(string name)
         {

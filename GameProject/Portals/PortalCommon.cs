@@ -10,6 +10,26 @@ namespace Game.Portals
 {
     public static class PortalCommon
     {
+        public static void ResetWorldTransform(IPortalCommon instance)
+        {
+            foreach (IPortalCommon p in Tree<IPortalCommon>.GetDescendents(instance))
+            {
+                p.WorldTransformPrevious = null;
+            }
+            _resetWorldTransform(instance);
+        }
+
+        private static void _resetWorldTransform(IPortalCommon instance)
+        {
+            instance.Path.Portals.Clear();
+
+            instance.WorldTransformPrevious = GetWorldTransformPortal(instance, instance.Scene.GetPortalList());
+            for (int i = 0; i < instance.Children.Count; i++)
+            {
+                _resetWorldTransform(instance.Children[i]);
+            }
+        }
+
         public static bool IsRoot(IPortalCommon instance)
         {
             return instance.Parent == null;
@@ -54,7 +74,7 @@ namespace Game.Portals
                 return local;
             }
 
-            Transform2 parent = instance.Parent.GetWorldTransform(ignorePortals);
+            Transform2 parent = GetWorldTransform(instance.Parent, portals, ignorePortals);
             Transform2 t = local.Transform(parent);
 
             if (!ignorePortals)
@@ -90,9 +110,9 @@ namespace Game.Portals
                 return velocity;
             }
 
-            Transform2 parent = instance.Parent.GetWorldTransform(ignorePortals);
+            Transform2 parent = GetWorldTransform(instance.Parent, portals, ignorePortals);
             Transform2 worldTransform = local.Transform(parent);
-            Transform2 parentVelocity = instance.Parent.GetWorldVelocity(ignorePortals);
+            Transform2 parentVelocity = GetWorldVelocity(instance.Parent, portals, ignorePortals);
 
             Vector2 positionDelta = (worldTransform.Position - parent.Position);
 
@@ -123,16 +143,16 @@ namespace Game.Portals
             velocity = velocity.ShallowClone();
             velocity = Portal.EnterVelocity(portal, 0.5f, velocity);
             Vector2 endPosition = portalable.GetTransform().Position + portalable.GetVelocity().Position * (float)(1 - movementT);
-            float angularVelocity = portal.Linked.GetWorldVelocity().Rotation;
-            if (portal.GetWorldTransform().MirrorX != portal.Linked.GetWorldTransform().MirrorX)
+            float angularVelocity = portal.Linked.WorldVelocityPrevious.Rotation;
+            if (portal.WorldTransformPrevious.MirrorX != portal.Linked.WorldTransformPrevious.MirrorX)
             {
-                angularVelocity -= portal.GetWorldVelocity().Rotation;
+                angularVelocity -= portal.WorldVelocityPrevious.Rotation;
             }
             else
             {
-                angularVelocity += portal.GetWorldVelocity().Rotation;
+                angularVelocity += portal.WorldVelocityPrevious.Rotation;
             }
-            velocity.Position += MathExt.AngularVelocity(endPosition, portal.Linked.GetWorldTransform().Position, angularVelocity);
+            velocity.Position += MathExt.AngularVelocity(endPosition, portal.Linked.WorldTransformPrevious.Position, angularVelocity);
             return velocity;
         }
 

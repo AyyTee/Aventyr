@@ -18,13 +18,13 @@ namespace Game.Portals
         public PortalPath Path { get; set; }
         public IPortalCommon Parent { get; set; }
         public List<IPortalCommon> Children { get; private set; } = new List<IPortalCommon>();
-        Transform2 _worldTransformPrevious = new Transform2();
+        Transform2 _worldTransformPrevious = null;
         public Transform2 WorldTransformPrevious
         {
             get { return _worldTransformPrevious.ShallowClone(); }
             set { _worldTransformPrevious = value.ShallowClone(); }
         }
-        Transform2 _worldVelocityPrevious = Transform2.CreateVelocity();
+        Transform2 _worldVelocityPrevious = null;
         public Transform2 WorldVelocityPrevious
         {
             get { return _worldVelocityPrevious.ShallowClone(); }
@@ -32,6 +32,8 @@ namespace Game.Portals
         }
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
         public bool IsPortalable { get { return Portalable.IsPortalable; } }
+
+        public IScene Scene { get { return Portalable.Scene; } }
 
         public ProxyPortalable(IPortalable portalable)
             : this(portalable, portalable.GetTransform(), portalable.GetVelocity())

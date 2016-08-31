@@ -8,15 +8,8 @@ namespace Game.Portals
 {
     public interface IPortalCommon : ITreeNode<IPortalCommon>, IGetTransformVelocity
     {
+        IScene Scene { get; }
         PortalPath Path { get; set; }
-        /// <summary>
-        /// Computes the world transform.
-        /// </summary>
-        Transform2 GetWorldTransform(bool ignorePortals = false);
-        /// <summary>
-        /// Computes the velocity transform.
-        /// </summary>
-        Transform2 GetWorldVelocity(bool ignorePortals = false);
         /// <summary>
         /// The previously set world transform.
         /// </summary>

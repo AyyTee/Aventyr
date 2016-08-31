@@ -150,7 +150,7 @@ namespace Game
             {
                 Transform2 velocity = p.WorldVelocityPrevious;
 
-                for (int i = 0; i <)
+                //for (int i = 0; i <)
                 //nextList.Add(new NextPosition(p));
             }
         }

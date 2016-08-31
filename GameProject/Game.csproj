@@ -149,6 +149,7 @@
     <Compile Include="Physics\SimulationStep.cs" />
     <Compile Include="Portals\EnterCallbackData.cs" />
     <Compile Include="Portals\IPortalCommon.cs" />
+    <Compile Include="Portals\PortalCommon.cs" />
     <Compile Include="Portals\PortalPath.cs" />
     <Compile Include="Portals\Portalable.cs" />
     <Compile Include="Portals\ProxyPortal.cs" />

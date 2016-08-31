@@ -43,7 +43,6 @@ namespace Game.Portals
         public FixturePortal(Scene scene)
             : this(scene, null, null)
         {
-            Path = new PortalPath();
         }
 
         public FixturePortal(Scene scene, IWall parent, IPolygonCoord position)
@@ -160,8 +159,8 @@ namespace Game.Portals
 
         public override void TransformUpdate()
         {
-            Portal.SetWorldTransform(this);
-            Portal.SetWorldVelocity(this);
+            //Portal.SetWorldTransform(this);
+            //Portal.SetWorldVelocity(this);
             base.TransformUpdate();
         }
     }

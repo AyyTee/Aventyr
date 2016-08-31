@@ -14,6 +14,7 @@ namespace Game
         /// <returns>Current time in the simulation.</returns>
         void Step(float stepSize);
         List<IPortal> GetPortalList();
+        List<IPortalable> GetPortalableList();
         /// <summary>Returns a list of all the objects that exist within an IScene.</summary>
         List<ISceneObject> GetAll();
     }
