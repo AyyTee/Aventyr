@@ -28,17 +28,17 @@ namespace EditorLogic
         public PortalPath Path { get; set; } = new PortalPath();
         [DataMember]
         Transform2 _worldTransformPrevious = null;
-        public Transform2 WorldTransformPrevious
+        public Transform2 WorldTransform
         {
-            get { return _worldTransformPrevious.ShallowClone(); }
-            set { _worldTransformPrevious = value.ShallowClone(); }
+            get { return _worldTransformPrevious?.ShallowClone(); }
+            set { _worldTransformPrevious = value?.ShallowClone(); }
         }
         [DataMember]
         Transform2 _worldVelocityPrevious = null;
-        public Transform2 WorldVelocityPrevious
+        public Transform2 WorldVelocity
         {
-            get { return _worldVelocityPrevious.ShallowClone(); }
-            set { _worldVelocityPrevious = value.ShallowClone(); }
+            get { return _worldVelocityPrevious?.ShallowClone(); }
+            set { _worldVelocityPrevious = value?.ShallowClone(); }
         }
         [DataMember]
         public bool Visible { get; set; }

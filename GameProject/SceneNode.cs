@@ -19,18 +19,18 @@ namespace Game
         [DataMember]
         public PortalPath Path { get; set; } = new PortalPath();
         [DataMember]
-        Transform2 _worldTransformPrevious = new Transform2();
-        public Transform2 WorldTransformPrevious
+        Transform2 _worldTransformPrevious = null;
+        public Transform2 WorldTransform
         {
-            get { return _worldTransformPrevious.ShallowClone(); }
-            set { _worldTransformPrevious = value.ShallowClone(); }
+            get { return _worldTransformPrevious?.ShallowClone(); }
+            set { _worldTransformPrevious = value?.ShallowClone(); }
         }
         [DataMember]
-        Transform2 _worldVelocityPrevious = Transform2.CreateVelocity();
-        public Transform2 WorldVelocityPrevious
+        Transform2 _worldVelocityPrevious = null;
+        public Transform2 WorldVelocity
         {
-            get { return _worldVelocityPrevious.ShallowClone(); }
-            set { _worldVelocityPrevious = value.ShallowClone(); }
+            get { return _worldVelocityPrevious?.ShallowClone(); }
+            set { _worldVelocityPrevious = value?.ShallowClone(); }
         }
         IPortalCommon ITreeNode<IPortalCommon>.Parent { get { return Parent; } }
         List<IPortalCommon> ITreeNode<IPortalCommon>.Children { get { return Children.ToList<IPortalCommon>(); } }
@@ -57,7 +57,9 @@ namespace Game
             if (scene.Root != null)
             {
                 Name = "";
-                SetParent(scene.Root);
+                //SetParent(scene.Root);
+                Parent = scene.Root;
+                Parent._children.Add(this);
             }
             else
             {
@@ -127,8 +129,10 @@ namespace Game
             Parent = parent;
 
             parent._children.Add(this);
+            
             Debug.Assert(Scene.SceneNodeList.FindAll(item => item == this).Count <= 1);
             Debug.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
+            PortalCommon.ResetWorldTransform(this);
         }
 
         public void RemoveChildren()
@@ -157,21 +161,10 @@ namespace Game
         /// <param name="transform"></param>
         public virtual void SetTransform(Transform2 transform)
         {
-            foreach (SceneNode s in Tree<SceneNode>.GetDescendents(this))
-            {
-                s.TransformUpdate();
-            }
+            PortalCommon.ResetWorldTransform(this);
         }
 
         public virtual void SetVelocity(Transform2 transform)
-        {
-            foreach (SceneNode s in Tree<SceneNode>.GetDescendents(this))
-            {
-                s.TransformUpdate();
-            }
-        }
-
-        public virtual void TransformUpdate()
         {
         }
 
@@ -182,12 +175,12 @@ namespace Game
 
         public Transform2 GetWorldTransform(bool ignorePortals = false)
         {
-            return WorldTransformPrevious;
+            return WorldTransform;
         }
 
         public Transform2 GetWorldVelocity(bool ignorePortals = false)
         {
-            return WorldVelocityPrevious;
+            return WorldVelocity;
         }
 
         /*public Transform2 GetWorldTransform(bool ignorePortals = false)

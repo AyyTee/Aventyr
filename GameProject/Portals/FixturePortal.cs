@@ -126,10 +126,7 @@ namespace Game.Portals
                 b.Awake = true;
             }
 
-            foreach (SceneNode s in Tree<SceneNode>.GetDescendents(this))
-            {
-                s.TransformUpdate();
-            }
+            PortalCommon.ResetWorldTransform(this);
         }
 
         public void SetPosition(IWall wall, IPolygonCoord position, float size, bool mirrorX)
@@ -142,26 +139,13 @@ namespace Game.Portals
         public void SetMirrorX(bool mirrorX)
         {
             MirrorX = mirrorX;
-            foreach (SceneNode s in Tree<SceneNode>.GetDescendents(this))
-            {
-                s.TransformUpdate();
-            }
+            PortalCommon.ResetWorldTransform(this);
         }
 
         public void SetSize(float size)
         {
             Size = size;
-            foreach (SceneNode s in Tree<SceneNode>.GetDescendents(this))
-            {
-                s.TransformUpdate();
-            }
-        }
-
-        public override void TransformUpdate()
-        {
-            //Portal.SetWorldTransform(this);
-            //Portal.SetWorldVelocity(this);
-            base.TransformUpdate();
+            PortalCommon.ResetWorldTransform(this);
         }
     }
 }

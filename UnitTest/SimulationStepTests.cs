@@ -14,11 +14,13 @@ namespace UnitTest
         [TestMethod]
         public void StepTest0()
         {
-            Portalable p = new Portalable();
+            Scene scene = new Scene();
+            Portalable p = new Portalable(scene);
             Transform2 start = new Transform2(new Vector2(1, 5), 2.3f, 3.9f);
             Transform2 velocity = Transform2.CreateVelocity(new Vector2(-3, 4), 23, 0.54f);
             p.SetTransform(start);
             p.SetVelocity(velocity);
+            PortalCommon.UpdateWorldTransform(new IPortalCommon[] { p });
             SimulationStep.Step(new IPortalable[] { p }, new IPortal[0], 1, null);
 
             Assert.IsTrue(p.GetTransform().AlmostEqual(start.Add(velocity)));
@@ -30,15 +32,16 @@ namespace UnitTest
         [TestMethod]
         public void StepTest1()
         {
-            Portalable p = new Portalable();
+            Scene scene = new Scene();
+            Portalable p = new Portalable(scene);
             Transform2 start = new Transform2(new Vector2(1, 5), 2.3f, 3.9f);
             Transform2 velocity = Transform2.CreateVelocity(new Vector2(-3, 4), 23, 0.54f);
             p.SetTransform(start);
             p.SetVelocity(velocity);
 
-            Scene scene = new Scene();
+            //Scene scene = new Scene();
             FloatPortal portal = new FloatPortal(scene);
-
+            PortalCommon.UpdateWorldTransform(new IPortalCommon[] { p, portal });
             SimulationStep.Step(new IPortalable[] { p }, new IPortal[] { portal }, 1, null);
 
             Assert.IsTrue(p.GetTransform().AlmostEqual(start.Add(velocity)));
@@ -47,13 +50,14 @@ namespace UnitTest
         [TestMethod]
         public void StepTest2()
         {
-            Portalable p = new Portalable();
+            Scene scene = new Scene();
+            Portalable p = new Portalable(scene);
             Transform2 start = new Transform2(new Vector2(0, 0));
             Transform2 velocity = Transform2.CreateVelocity(new Vector2(3, 0));
             p.SetTransform(start);
             p.SetVelocity(velocity);
 
-            Scene scene = new Scene();
+            //Scene scene = new Scene();
             FloatPortal enter = new FloatPortal(scene);
             enter.SetTransform(new Transform2(new Vector2(1, 0)));
 
@@ -62,7 +66,7 @@ namespace UnitTest
 
             enter.Linked = exit;
             exit.Linked = enter;
-
+            PortalCommon.UpdateWorldTransform(new IPortalCommon[] { p, enter, exit });
             SimulationStep.Step(new IPortalable[] { p, enter, exit }, new IPortal[] { enter, exit }, 1, null);
 
             Assert.IsTrue(p.GetTransform().Position == new Vector2(8, 10));
@@ -71,13 +75,14 @@ namespace UnitTest
         [TestMethod]
         public void StepTest3()
         {
-            Portalable p = new Portalable();
+            Scene scene = new Scene();
+            Portalable p = new Portalable(scene);
             Transform2 start = new Transform2(new Vector2(0, 0));
             Transform2 velocity = Transform2.CreateVelocity(new Vector2(3, 0));
             p.SetTransform(start);
             p.SetVelocity(velocity);
 
-            Scene scene = new Scene();
+            //Scene scene = new Scene();
             FloatPortal enter = new FloatPortal(scene);
             enter.SetTransform(new Transform2(new Vector2(1, 0)));
             enter.SetVelocity(Transform2.CreateVelocity(new Vector2(1, 0)));
@@ -88,8 +93,11 @@ namespace UnitTest
             enter.Linked = exit;
             exit.Linked = enter;
 
+            PortalCommon.UpdateWorldTransform(new IPortalCommon[] { p, enter, exit });
             SimulationStep.Step(new IPortalable[] { p, enter, exit }, new IPortal[] { enter, exit }, 1, null);
 
+            /*Assert.IsTrue(p.WorldTransform.Position == new Vector2(9, 10));
+            Assert.IsTrue(p.WorldVelocity.Position == new Vector2(-2, 0));*/
             Assert.IsTrue(p.GetTransform().Position == new Vector2(9, 10));
             Assert.IsTrue(p.GetVelocity().Position == new Vector2(-2, 0));
         }
@@ -97,13 +105,14 @@ namespace UnitTest
         [TestMethod]
         public void StepTest4()
         {
-            Portalable p = new Portalable();
+            Scene scene = new Scene();
+            Portalable p = new Portalable(scene);
             Transform2 start = new Transform2(new Vector2(0, 0));
             Transform2 velocity = Transform2.CreateVelocity(new Vector2(3, 0));
             p.SetTransform(start);
             p.SetVelocity(velocity);
 
-            Scene scene = new Scene();
+            //Scene scene = new Scene();
             FloatPortal enter = new FloatPortal(scene);
             enter.SetTransform(new Transform2(new Vector2(1, 0)));
             enter.SetVelocity(Transform2.CreateVelocity(new Vector2(1, 0)));
@@ -115,13 +124,14 @@ namespace UnitTest
             enter.Linked = exit;
             exit.Linked = enter;
 
+            PortalCommon.UpdateWorldTransform(new IPortalCommon[] { p, enter, exit });
             SimulationStep.Step(new IPortalable[] { p, enter, exit }, new IPortal[] { enter, exit }, 1, null);
 
             Assert.IsTrue(p.GetTransform().Position == new Vector2(19, 10));
             Assert.IsTrue(p.GetVelocity().Position == new Vector2(8, 0));
         }
 
-        /*[TestMethod]
+        [TestMethod]
         public void StepTest5()
         {
             Scene scene = new Scene();
@@ -145,11 +155,108 @@ namespace UnitTest
 
             FixturePortal child = new FixturePortal(scene, p, new PolygonCoord(0, 0.5f));
 
+            PortalCommon.UpdateWorldTransform(new IPortalCommon[] { p, enter, exit, child });
             SimulationStep.Step(scene.GetAll().OfType<IPortalable>(), scene.GetAll().OfType<IPortal>(), 1, null);
 
             Assert.IsTrue(p.GetTransform().Position == new Vector2(19, 10));
             Assert.IsTrue(p.GetVelocity().Position == new Vector2(8, 0));
-        }*/
+        }
+
+        [TestMethod]
+        public void StepTest6()
+        {
+            Scene scene = new Scene();
+
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(2, 2));
+            actor.SetTransform(new Transform2(new Vector2(1, 1)));
+            actor.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 3)));
+            Entity entity = new Entity(scene);
+            entity.SetParent(actor);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(1, 2), 1, (float)Math.PI/2));
+            //enter.SetVelocity(Transform2.CreateVelocity(new Vector2(1, 0)));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(10, 10)));
+            //exit.SetVelocity(Transform2.CreateVelocity(new Vector2(10, 0)));
+
+            enter.Linked = exit;
+            exit.Linked = enter;
+
+            PortalCommon.UpdateWorldTransform(scene);
+            SimulationStep.Step(scene.GetAll().OfType<IPortalable>(), scene.GetAll().OfType<IPortal>(), 1, null);
+
+            Transform2 expected = new Transform2(new Vector2(8, 10), 1, (float)Math.PI / 2, true);
+            Assert.IsTrue(actor.WorldTransform.AlmostEqual(expected));
+            Assert.IsTrue(entity.WorldTransform.AlmostEqual(expected));
+            Assert.IsTrue(entity.GetTransform() == new Transform2());
+            Assert.IsTrue(entity.GetVelocity() == Transform2.CreateVelocity());
+            Assert.IsTrue(actor.GetTransform() == actor.WorldTransform);
+        }
+
+        [TestMethod]
+        public void StepTest7()
+        {
+            Scene scene = new Scene();
+
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(2, 2));
+            actor.SetTransform(new Transform2(new Vector2(1, 1)));
+            actor.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 3)));
+            Entity entity = new Entity(scene);
+            entity.SetParent(actor);
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(1, 2), 1, (float)Math.PI / 2));
+            //enter.SetVelocity(Transform2.CreateVelocity(new Vector2(1, 0)));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(10, 10)));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(10, 0)));
+
+            enter.Linked = exit;
+            exit.Linked = enter;
+
+            PortalCommon.UpdateWorldTransform(scene);
+            SimulationStep.Step(scene.GetAll().OfType<IPortalable>(), scene.GetAll().OfType<IPortal>(), 1, null);
+
+            Assert.IsTrue(entity.GetTransform() == new Transform2());
+            Assert.IsTrue(entity.GetVelocity() == Transform2.CreateVelocity());
+
+            Assert.IsTrue(actor.GetTransform() == actor.WorldTransform);
+            Assert.IsTrue(actor.GetVelocity() == actor.WorldVelocity);
+        }
+
+        [TestMethod]
+        public void StepTest8()
+        {
+            Scene scene = new Scene();
+
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(2, 2));
+            actor.SetTransform(new Transform2(new Vector2(1, 1)));
+            actor.SetVelocity(Transform2.CreateVelocity(new Vector2(0, 3)));
+            FixturePortal fixture = new FixturePortal(scene, actor, new PolygonCoord(0, 0.5f));
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(1, 2), 1, (float)Math.PI / 2));
+            //enter.SetVelocity(Transform2.CreateVelocity(new Vector2(1, 0)));
+
+            FloatPortal exit = new FloatPortal(scene);
+            exit.SetTransform(new Transform2(new Vector2(10, 10)));
+            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(10, 0)));
+
+            enter.Linked = exit;
+            exit.Linked = enter;
+
+            PortalCommon.UpdateWorldTransform(scene);
+            SimulationStep.Step(scene.GetAll().OfType<IPortalable>(), scene.GetAll().OfType<IPortal>(), 1, null);
+
+            Assert.IsTrue(entity.GetTransform() == new Transform2());
+            Assert.IsTrue(entity.GetVelocity() == Transform2.CreateVelocity());
+
+            Assert.IsTrue(actor.GetTransform() == actor.WorldTransform);
+            Assert.IsTrue(actor.GetVelocity() == actor.WorldVelocity);
+        }
         #endregion
     }
 }

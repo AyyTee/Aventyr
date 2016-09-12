@@ -59,6 +59,7 @@ namespace Game
             _scale = transform.Scale;
             Body = ActorFactory.CreatePolygon(Scene.World, transform, Vertices);
             BodyExt.SetUserData(Body, this);
+            Body.IsStatic = false;
         }
 
         [OnDeserialized]

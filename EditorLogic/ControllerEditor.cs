@@ -80,6 +80,9 @@ namespace EditorLogic
             LevelCreate();
             Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
 
+            PortalCommon.UpdateWorldTransform(Hud);
+            PortalCommon.UpdateWorldTransform(Level);
+
             InitTools();
             SceneStop();
         }
@@ -183,7 +186,7 @@ namespace EditorLogic
             }
             Transform2 transform = CameraExt.GetWorldViewpoint(Level.ActiveCamera);
             Vector2 mousePos = CameraExt.ScreenToWorld(Level.ActiveCamera, InputExt.MousePos);
-            Portalable portalable = new Portalable(transform, Transform2.CreateVelocity(mousePos - transform.Position));
+            Portalable portalable = new Portalable(null, transform, Transform2.CreateVelocity(mousePos - transform.Position));
             Ray.RayCast(portalable, Level.GetPortalList(), new Ray.Settings());
             return portalable.GetTransform().Position;
         }
@@ -246,6 +249,7 @@ namespace EditorLogic
             {
                 _activeTool.Update();
                 Level.Step(1 / 60);
+                PortalCommon.UpdateWorldTransform(Level);
             }
 
             HashSet<EditorObject> modified = new HashSet<EditorObject>(Level._children.FindAll(item => item.IsModified));

@@ -34,7 +34,6 @@ namespace Game.Portals
         public FloatPortal(Scene scene)
             : base(scene)
         {
-            TransformUpdate();
         }
 
         public override IDeepClone ShallowClone()
@@ -78,13 +77,6 @@ namespace Game.Portals
         {
             Transform = transform.ShallowClone();
             base.SetTransform(transform);
-        }
-
-        public override void TransformUpdate()
-        {
-            //Portal.SetWorldTransform(this);
-            //Portal.SetWorldVelocity(this);
-            base.TransformUpdate();
         }
 
         public override void SetVelocity(Transform2 velocity)

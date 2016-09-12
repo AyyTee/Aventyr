@@ -4,6 +4,7 @@ using Game;
 using OpenTK;
 using FarseerPhysics.Collision.Shapes;
 using System.Collections.Generic;
+using Game.Portals;
 
 namespace UnitTest
 {
@@ -65,7 +66,9 @@ namespace UnitTest
                 new Vector2(0, 1)
             };
             vertices = PolygonExt.SetNormals(vertices);
-            Actor actor = new Actor(new Scene(), vertices);
+            Scene scene = new Scene();
+            Actor actor = new Actor(scene, vertices);
+            PortalCommon.UpdateWorldTransform(scene);
 
             actor.SetTransform(new Transform2(new Vector2(), 1, 0, false));
             Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));

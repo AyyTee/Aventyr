@@ -8,7 +8,7 @@ namespace Game.Portals
 {
     public interface IPortal : IDeepClone, ISceneObject, IPortalCommon
     {
-        IPortal Linked { get; }
+        IPortal Linked { get; set; }
         bool OneSided { get; }
     }
 }

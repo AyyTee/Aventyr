@@ -23,7 +23,31 @@ namespace Game.Portals
         /// </summary>
         public static bool IsValid(IPortal portal)
         {
-            return portal.Linked != null;
+            return portal.Linked != null &&
+                portal.WorldTransform != null &&
+                portal.WorldVelocity != null &&
+                portal.Linked.WorldTransform != null &&
+                portal.Linked.WorldVelocity != null;
+        }
+
+        public static void SetLinked(IPortal p0, IPortal p1)
+        {
+            if (p0 != null)
+            {
+                p0.Linked = p1;
+            }
+            if (p1 != null)
+            {
+                p1.Linked = p0;
+            }
+            if (p0 != null)
+            {
+                PortalCommon.ResetWorldTransform(p0);
+            }
+            if (p1 != null)
+            {
+                PortalCommon.ResetWorldTransform(p1);
+            }
         }
 
         /*public static void SetWorldTransform(IPortal portal)
@@ -58,21 +82,21 @@ namespace Game.Portals
 
             if (!ignorePortalVelocity)
             {
-                velocityClone.Position -= portal.WorldVelocityPrevious.Position;
-                velocityClone.Rotation -= portal.WorldVelocityPrevious.Rotation;
+                velocityClone.Position -= portal.WorldVelocity.Position;
+                velocityClone.Rotation -= portal.WorldVelocity.Rotation;
                 velocityClone.Position -= GetAngularVelocity(portal, intersectT);
             }
             velocityClone.Position = Vector2Ext.Transform(velocityClone.Position, matrix);
             velocityClone.Position -= origin;
 
-            if (portal.WorldTransformPrevious.MirrorX == portal.Linked.WorldTransformPrevious.MirrorX)
+            if (portal.WorldTransform.MirrorX == portal.Linked.WorldTransform.MirrorX)
             {
                 velocityClone.Rotation = -velocityClone.Rotation;
             }
             if (!ignorePortalVelocity)
             {
-                velocityClone.Position += portal.Linked.WorldVelocityPrevious.Position;
-                velocityClone.Rotation += portal.Linked.WorldVelocityPrevious.Rotation;
+                velocityClone.Position += portal.Linked.WorldVelocity.Position;
+                velocityClone.Rotation += portal.Linked.WorldVelocity.Rotation;
                 velocityClone.Position += GetAngularVelocity(portal.Linked, intersectT);
             }
             return velocityClone;
@@ -81,15 +105,24 @@ namespace Game.Portals
         private static Vector2 GetAngularVelocity(IPortal portal, float intersectT)
         {
             Vector2 intersect = new Line(GetWorldVerts(portal)).Lerp(intersectT);
-            return MathExt.AngularVelocity(intersect, portal.WorldTransformPrevious.Position, portal.WorldVelocityPrevious.Rotation);
+            return MathExt.AngularVelocity(intersect, portal.WorldTransform.Position, portal.WorldVelocity.Rotation);
         }
 
-        public static void Enter(IPortal portal, IPortalable portalable, float intersectT, bool ignorePortalVelocity = false)
+        public static void Enter(IPortal portal, IPortalable portalable, float intersectT, bool ignorePortalVelocity = false, bool worldOnly = false)
         {
             Transform2 transform = portalable.GetTransform();
             Transform2 velocity = portalable.GetVelocity();
-            portalable.SetTransform(Enter(portal, transform));
-            portalable.SetVelocity(EnterVelocity(portal, intersectT, velocity, ignorePortalVelocity));
+            if (!worldOnly)
+            {
+                portalable.SetTransform(Enter(portal, transform));
+                portalable.SetVelocity(EnterVelocity(portal, intersectT, velocity, ignorePortalVelocity));
+            }
+
+            if (portalable.WorldTransform != null)
+            {
+                portalable.WorldTransform = Enter(portal, portalable.WorldTransform);
+                portalable.WorldVelocity = EnterVelocity(portal, intersectT, portalable.WorldVelocity, ignorePortalVelocity);
+            }
 
             foreach (IPortal p in portalable.GetPortalChildren())
             {
@@ -128,7 +161,15 @@ namespace Game.Portals
         /// </summary>
         public static Vector2[] GetWorldVerts(IPortal portal)
         {
-            return Vector2Ext.Transform(GetVerts(portal), portal.WorldTransformPrevious.GetMatrix());
+            return GetWorldVerts(portal, portal.WorldTransform);
+        }
+
+        /// <summary>
+        /// Get the portal's vertices in world coordinates.
+        /// </summary>
+        public static Vector2[] GetWorldVerts(IPortal portal, Transform2 worldTransform)
+        {
+            return Vector2Ext.Transform(GetVerts(portal), worldTransform.GetMatrix());
         }
 
         /// <summary>
@@ -136,7 +177,7 @@ namespace Game.Portals
         /// </summary>
         public static Vector2[] GetWorldVerts(IPortal portal, float scalar)
         {
-            return Vector2Ext.Transform(Vector2Ext.Scale(GetVerts(portal), scalar), portal.WorldTransformPrevious.GetMatrix());
+            return Vector2Ext.Transform(Vector2Ext.Scale(GetVerts(portal), scalar), portal.WorldTransform.GetMatrix());
         }
 
         public static Matrix4 GetLinkedMatrix(IPortal portalEnter)
@@ -148,9 +189,9 @@ namespace Game.Portals
         /// <summary>Returns matrix to transform between one portals coordinate space to another.</summary>
         public static Matrix4 GetLinkedMatrix(IPortal portalEnter, IPortal portalExit)
         {
-            Transform2 transform = portalExit.WorldTransformPrevious;
+            Transform2 transform = portalExit.WorldTransform;
             transform.MirrorX = !transform.MirrorX;
-            Matrix4 m = portalEnter.WorldTransformPrevious.GetMatrix();
+            Matrix4 m = portalEnter.WorldTransform.GetMatrix();
             return m.Inverted() * transform.GetMatrix();
         }
 
@@ -162,15 +203,15 @@ namespace Game.Portals
 
         public static Transform2 GetLinkedTransform(IPortal portalEnter, IPortal portalExit)
         {
-            Transform2 tExit = portalExit.WorldTransformPrevious;
+            Transform2 tExit = portalExit.WorldTransform;
             tExit.MirrorX = !tExit.MirrorX;
-            Transform2 tEnter = portalEnter.WorldTransformPrevious;
+            Transform2 tEnter = portalEnter.WorldTransform;
             return tEnter.Inverted().Transform(tExit);
         }
 
         public static Line[] GetFovLines(IPortal portal, Vector2 origin, float distance)
         {
-            return GetFovLines(portal, origin, distance, portal.WorldTransformPrevious);
+            return GetFovLines(portal, origin, distance, portal.WorldTransform);
         }
 
         public static Line[] GetFovLines(IPortal portal, Vector2 origin, float distance, Transform2 transform)
@@ -194,7 +235,7 @@ namespace Game.Portals
 
         public static Vector2[] GetFov(IPortal portal, Vector2 origin, float distance, int detail)
         {
-            return GetFov(portal, origin, distance, detail, portal.WorldTransformPrevious);
+            return GetFov(portal, origin, distance, detail, portal.WorldTransform);
         }
 
         /// <summary>
@@ -236,27 +277,6 @@ namespace Game.Portals
                 verts[i] = Vector2Ext.Transform(verts[i - 1] - viewPoint, Rot) + viewPoint;
             }
             return verts;
-        }
-
-        /// <summary>
-        /// Create ProxyPortals for a list of portals that are linked to eachother.
-        /// </summary>
-        public static List<ProxyPortal> CreateProxies(IList<IPortal> portals)
-        {
-            Dictionary<IPortal, ProxyPortal> dictionary = new Dictionary<IPortal, ProxyPortal>();
-            foreach (IPortal p in portals)
-            {
-                dictionary.Add(p, new ProxyPortal(p));
-            }
-            foreach (ProxyPortal p in dictionary.Values)
-            {
-                if (p.Linked == null)
-                {
-                    continue;
-                }
-                p.Linked = dictionary[p.Linked];
-            }
-            return dictionary.Values.ToList();
         }
 
         /// <summary>

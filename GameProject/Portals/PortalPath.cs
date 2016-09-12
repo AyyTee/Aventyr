@@ -45,11 +45,6 @@ namespace Game.Portals
         /// <param name="current">Portal that contains this portal path.</param>
         public void Enter(IPortal portal)
         {
-            ProxyPortal proxyPortal = portal as ProxyPortal;
-            if (proxyPortal != null)
-            {
-                portal = proxyPortal.Portal;
-            }
             //If the last portal in the path is the same as this portal's exit portal then the two portals negate eachother.
             if (Portals.Count != 0 && portal == Portals.Last().Linked)
             {

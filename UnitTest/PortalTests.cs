@@ -19,6 +19,7 @@ namespace UnitTest
             p0.SetTransform(new Transform2(new Vector2(1, 2), 1, 0));
             FloatPortal p1 = new FloatPortal(scene);
             p1.SetTransform(new Transform2(new Vector2(0, 0), 1f, 0));
+            PortalCommon.UpdateWorldTransform(scene);
 
             Transform2 t = Portal.GetLinkedTransform(p0, p1);
             Matrix4 result = t.GetMatrix();
@@ -34,6 +35,7 @@ namespace UnitTest
             p0.SetTransform(new Transform2(new Vector2(1, 2), 4, 23));
             FloatPortal p1 = new FloatPortal(scene);
             p1.SetTransform(new Transform2(new Vector2(4, -1), 1.4f, -3));
+            PortalCommon.UpdateWorldTransform(scene);
 
             Transform2 t = Portal.GetLinkedTransform(p0, p1);
             Matrix4 result = t.GetMatrix();
@@ -49,6 +51,7 @@ namespace UnitTest
             p0.SetTransform(new Transform2(new Vector2(1, 2), 4, 23));
             FloatPortal p1 = new FloatPortal(scene);
             p1.SetTransform(new Transform2(new Vector2(4, -1), 1.4f, -3, true));
+            PortalCommon.UpdateWorldTransform(scene);
 
             Transform2 result = Portal.GetLinkedTransform(p0, p1);
             Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), Portal.GetLinkedMatrix(p0, p1)));
@@ -63,9 +66,10 @@ namespace UnitTest
             p0.SetTransform(new Transform2(new Vector2(1, 0)));
             FloatPortal p1 = new FloatPortal(scene);
             p1.SetTransform(new Transform2(new Vector2(10, -1)));
-            
             p0.Linked = p1;
             p1.Linked = p0;
+
+            PortalCommon.UpdateWorldTransform(scene);
 
             Line ray = new Line(new Vector2(0, 0), new Vector2(8, -1));
             PortalPath path = new PortalPath();
@@ -95,6 +99,8 @@ namespace UnitTest
 
             p2.Linked = p3;
             p3.Linked = p2;
+
+            PortalCommon.UpdateWorldTransform(scene);
 
             Line ray = new Line(new Vector2(0, 0), new Vector2(5, 0));
             PortalPath path = new PortalPath();
@@ -130,6 +136,8 @@ namespace UnitTest
             p2.Linked = p3;
             p3.Linked = p2;
 
+            PortalCommon.UpdateWorldTransform(scene);
+
             Line ray = new Line(new Vector2(0, 0), new Vector2(6, 2));
             PortalPath path = new PortalPath();
             path.Enter(p0);
@@ -164,9 +172,10 @@ namespace UnitTest
             enter.Linked = exit;
             exit.Linked = enter;
 
+            PortalCommon.UpdateWorldTransform(scene);
             Portal.Enter(enter, parent, 0.5f);
-
-            Assert.IsTrue(new Transform2(new Vector2(5, 0)).AlmostEqual(portal.WorldTransformPrevious));
+            PortalCommon.UpdateWorldTransform(scene);
+            Assert.IsTrue(new Transform2(new Vector2(5, 0)).AlmostEqual(portal.WorldTransform));
         }
         #endregion
     }

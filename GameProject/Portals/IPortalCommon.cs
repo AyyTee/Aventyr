@@ -13,10 +13,10 @@ namespace Game.Portals
         /// <summary>
         /// The previously set world transform.
         /// </summary>
-        Transform2 WorldTransformPrevious { get; set; }
+        Transform2 WorldTransform { get; set; }
         /// <summary>
         /// The previously set world velocity.
         /// </summary>
-        Transform2 WorldVelocityPrevious { get; set; }
+        Transform2 WorldVelocity { get; set; }
     }
 }

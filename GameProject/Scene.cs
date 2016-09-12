@@ -40,6 +40,8 @@ namespace Game
         public Scene()
         {
             Root = new SceneNode(this);
+            Root.WorldTransform = new Transform2();
+            Root.WorldVelocity = Transform2.CreateVelocity();
             SetWorld(new World(new Xna.Vector2(0f, 0f)));
         }
         #endregion
@@ -70,7 +72,7 @@ namespace Game
             {
                 s.StepBegin(this, stepSize);
             }
-
+            PortalCommon.UpdateWorldTransform(this, true);
             if (World != null && stepSize > 0)
             {
                 List<ActorPrev> actorTemp = new List<ActorPrev>();
@@ -89,6 +91,8 @@ namespace Game
                     World.Step(stepSize);
                     InWorldStep = false;
                     _contactListener.StepEnd();
+
+                    PortalCommon.UpdateWorldTransform(this, true);
                 }
 
                 //Replace each actor's velocity with the actor's displacement.
@@ -101,6 +105,8 @@ namespace Game
                     prev.Actor.SetTransform(prev.Previous);
                 }
 
+
+                PortalCommon.UpdateWorldTransform(this, false, true);
                 SimulationStep.Step(GetAll().OfType<IPortalable>(), GetAll().OfType<IPortal>(), stepSize, (EnterCallbackData data) => {
                     IActor actor = data.Instance as IActor;
                     if (actor != null)

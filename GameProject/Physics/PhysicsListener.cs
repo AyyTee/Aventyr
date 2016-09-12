@@ -46,7 +46,7 @@ namespace Game
             }
             foreach (IPortal portal in Scene.GetPortalList().OfType<IPortal>())
             {
-                if (portal.WorldTransformPrevious != null)
+                if (portal.WorldTransform != null)
                 {
                     Xna.Vector2[] verts = Vector2Ext.ConvertToXna(Portal.GetWorldVerts(portal));
                     Scene.World.RayCast(

@@ -127,7 +127,7 @@ namespace Game
                     double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
                     if (distanceToPortal < Portal.EnterMinDistance)
                     {
-                        Vector2 exitNormal = p.WorldTransformPrevious.GetRight();
+                        Vector2 exitNormal = p.WorldTransform.GetRight();
                         Side sideOf;
                         if (p == portalPrevious)
                         {
@@ -137,7 +137,7 @@ namespace Game
                         {
                             sideOf = exitLine.GetSideOf(position - velocity.Position);
                         }
-                        if (sideOf != exitLine.GetSideOf(exitNormal + p.WorldTransformPrevious.Position))
+                        if (sideOf != exitLine.GetSideOf(exitNormal + p.WorldTransform.Position))
                         {
                             exitNormal = -exitNormal;
                         }

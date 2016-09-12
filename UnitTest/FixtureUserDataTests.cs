@@ -36,7 +36,7 @@ namespace UnitTest
             FloatPortal portalExit = new FloatPortal(scene);
             portalExit.Linked = portal;
             portal.Linked = portal;
-
+            PortalCommon.UpdateWorldTransform(scene);
             FixtureExt.GetUserData(fixture).ProcessChanges();
             return scene;
         }
@@ -97,6 +97,7 @@ namespace UnitTest
             portal1.Linked = portal2;
             portal2.Linked = portal1;
             FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            PortalCommon.UpdateWorldTransform(scene);
             userData.ProcessChanges();
 
             int parentCount = 0;
@@ -125,6 +126,7 @@ namespace UnitTest
             portal1.Linked = portal2;
             portal2.Linked = portal1;
             FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            PortalCommon.UpdateWorldTransform(scene);
             userData.ProcessChanges();
 
             PolygonShape shape;
@@ -152,6 +154,7 @@ namespace UnitTest
             portal1.Linked = portal2;
             portal2.Linked = portal1;
             FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            PortalCommon.UpdateWorldTransform(scene);
             userData.ProcessChanges();
 
 
@@ -183,6 +186,7 @@ namespace UnitTest
             portal0.Linked = portal0;
             portal1.Linked = portal1;
             FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            PortalCommon.UpdateWorldTransform(scene);
             userData.ProcessChanges();
 
             Assert.IsFalse(userData.PartOfPortal(portal0));
@@ -246,9 +250,11 @@ namespace UnitTest
 
             FixturePortal portal0 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
             FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.7f));
-            portal0.Linked = portal0;
-            portal1.Linked = portal1;
-            
+            /*portal0.Linked = portal0;
+            portal1.Linked = portal1;*/
+            Portal.SetLinked(portal0, portal1);
+
+            PortalCommon.UpdateWorldTransform(scene);
             ProcessChangesAssert(ground);
         }
 
@@ -264,7 +270,7 @@ namespace UnitTest
             portal1.Linked = portal1;
 
             portal0.MirrorX = true;
-
+            PortalCommon.UpdateWorldTransform(scene);
             ProcessChangesAssert(ground);
         }
 
@@ -280,7 +286,7 @@ namespace UnitTest
             portal1.Linked = portal1;
 
             portal1.MirrorX = true;
-
+            PortalCommon.UpdateWorldTransform(scene);
             ProcessChangesAssert(ground);
         }
 
@@ -297,7 +303,7 @@ namespace UnitTest
 
             portal0.MirrorX = true;
             portal0.Size = -1;
-
+            PortalCommon.UpdateWorldTransform(scene);
             ProcessChangesAssert(ground);
         }
 
@@ -314,7 +320,7 @@ namespace UnitTest
 
             portal1.MirrorX = true;
             portal1.Size = -1;
-
+            PortalCommon.UpdateWorldTransform(scene);
             ProcessChangesAssert(ground);
         }
 
@@ -333,7 +339,7 @@ namespace UnitTest
             portal0.Size = -1;
             portal1.MirrorX = true;
             portal1.Size = -1;
-
+            PortalCommon.UpdateWorldTransform(scene);
             ProcessChangesAssert(ground);
         }
 
@@ -351,7 +357,7 @@ namespace UnitTest
             portal0.MirrorX = true;
             portal1.MirrorX = true;
             portal1.Size = -1;
-
+            PortalCommon.UpdateWorldTransform(scene);
             ProcessChangesAssert(ground);
         }
 
@@ -369,7 +375,7 @@ namespace UnitTest
             portal0.MirrorX = true;
             portal1.MirrorX = true;
             portal0.Size = -1;
-
+            PortalCommon.UpdateWorldTransform(scene);
             ProcessChangesAssert(ground);
         }
     }

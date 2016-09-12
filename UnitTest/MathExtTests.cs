@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Game.Portals;
 
 namespace UnitTest
 {
@@ -328,7 +329,9 @@ namespace UnitTest
 
         public Camera2 GetCamera()
         {
-            return new Camera2(new Scene(), new Transform2(), 1.3333f);
+            Camera2 camera = new Camera2(new Scene(), new Transform2(), 1.3333f);
+            camera.WorldTransform = PortalCommon.GetWorldTransformPortal(camera);
+            return camera;
         }
 
         [TestMethod]

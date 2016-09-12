@@ -95,7 +95,7 @@ namespace Game
                 }
             }
 
-            collisions = collisions.OrderBy(item => (item.WorldTransformPrevious.Position - centerPoint).Length).ToList();
+            collisions = collisions.OrderBy(item => (item.WorldTransform.Position - centerPoint).Length).ToList();
             for (int i = 0; i < collisions.Count; i++)
             {
                 IPortal portal = collisions[i];
@@ -118,13 +118,13 @@ namespace Game
                 Line clipLine = new Line(pv);
 
                 Line portalLine = new Line(pv);
-                Vector2 normal = portal.WorldTransformPrevious.GetRight();
-                if (portal.WorldTransformPrevious.MirrorX)
+                Vector2 normal = portal.WorldTransform.GetRight();
+                if (portal.WorldTransform.MirrorX)
                 {
                     normal = -normal;
                 }
 
-                Vector2 portalNormal = portal.WorldTransformPrevious.Position + normal;
+                Vector2 portalNormal = portal.WorldTransform.Position + normal;
                 if (portalLine.GetSideOf(centerPoint) != portalLine.GetSideOf(portalNormal))
                 {
                     normal *= Portal.EnterMinDistance;
@@ -138,7 +138,7 @@ namespace Game
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = Vector2Ext.Transform(portal.WorldTransformPrevious.Position + normal, Portal.GetLinkedMatrix(portal));
+                    Vector2 centerPointNext = Vector2Ext.Transform(portal.WorldTransform.Position + normal, Portal.GetLinkedMatrix(portal));
                     clipModels.AddRange(_getClipModels(entity, model, portalList, centerPointNext, portal, modelMatrix * Portal.GetLinkedMatrix(portal), depth - 1, count + 1));
                 }
             }
@@ -178,7 +178,7 @@ namespace Game
                 }
             }
 
-            collisions = collisions.OrderBy(item => (item.WorldTransformPrevious.Position - centerPoint).Length).ToList();
+            collisions = collisions.OrderBy(item => (item.WorldTransform.Position - centerPoint).Length).ToList();
             for (int i = 0; i < collisions.Count; i++)
             {
                 IPortal portal = collisions[i];
@@ -201,13 +201,13 @@ namespace Game
                 Line clipLine = new Line(pv);
 
                 Line portalLine = new Line(pv);
-                Vector2 normal = portal.WorldTransformPrevious.GetRight();
-                if (portal.WorldTransformPrevious.MirrorX)
+                Vector2 normal = portal.WorldTransform.GetRight();
+                if (portal.WorldTransform.MirrorX)
                 {
                     normal = -normal;
                 }
 
-                Vector2 portalNormal = portal.WorldTransformPrevious.Position + normal;
+                Vector2 portalNormal = portal.WorldTransform.Position + normal;
                 if (portalLine.GetSideOf(centerPoint) != portalLine.GetSideOf(portalNormal))
                 {
                     normal *= Portal.EnterMinDistance;
@@ -221,7 +221,7 @@ namespace Game
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = Vector2Ext.Transform(portal.WorldTransformPrevious.Position + normal, Portal.GetLinkedMatrix(portal));
+                    Vector2 centerPointNext = Vector2Ext.Transform(portal.WorldTransform.Position + normal, Portal.GetLinkedMatrix(portal));
                     clipModels.AddRange(_getClipModels(polygon, portalList, centerPointNext, portal, modelMatrix * Portal.GetLinkedMatrix(portal), depth - 1, count + 1));
                 }
             }
