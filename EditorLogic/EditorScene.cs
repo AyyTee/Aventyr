@@ -129,6 +129,8 @@ namespace EditorLogic
                     s.SetTransform(s.GetTransform().Add(s.GetVelocity().Multiply(stepSize)));
                 }
             }*/
+            PortalCommon.UpdateWorldTransform(this, true);
+            SimulationStep.Step(GetAll().OfType<IPortalCommon>(), GetAll().OfType<IPortal>(), stepSize, null);
             foreach (IStep s in GetAll().OfType<IStep>())
             {
                 s.StepEnd(this, stepSize);

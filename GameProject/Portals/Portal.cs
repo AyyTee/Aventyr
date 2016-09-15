@@ -108,14 +108,18 @@ namespace Game.Portals
             return MathExt.AngularVelocity(intersect, portal.WorldTransform.Position, portal.WorldVelocity.Rotation);
         }
 
-        public static void Enter(IPortal portal, IPortalable portalable, float intersectT, bool ignorePortalVelocity = false, bool worldOnly = false)
+        public static void Enter(IPortal portal, IPortalCommon portalable, float intersectT, bool ignorePortalVelocity = false, bool worldOnly = false)
         {
             Transform2 transform = portalable.GetTransform();
             Transform2 velocity = portalable.GetVelocity();
-            if (!worldOnly)
+            IPortalable cast = portalable as IPortalable;
+            if (cast != null)
             {
-                portalable.SetTransform(Enter(portal, transform));
-                portalable.SetVelocity(EnterVelocity(portal, intersectT, velocity, ignorePortalVelocity));
+                if (!worldOnly)
+                {
+                    cast.SetTransform(Enter(portal, transform));
+                    cast.SetVelocity(EnterVelocity(portal, intersectT, velocity, ignorePortalVelocity));
+                }
             }
 
             if (portalable.WorldTransform != null)
@@ -124,7 +128,7 @@ namespace Game.Portals
                 portalable.WorldVelocity = EnterVelocity(portal, intersectT, portalable.WorldVelocity, ignorePortalVelocity);
             }
 
-            foreach (IPortal p in portalable.GetPortalChildren())
+            foreach (IPortalCommon p in portalable.Children)
             {
                 //p.WorldTransformPrevious = GetLinkedTransform(p);
                 p.Path.Enter(portal.Linked);
@@ -133,7 +137,10 @@ namespace Game.Portals
                 //p.WorldVelocityPrevious = SceneNode.TransformVelocity(p, portal.Linked, p.GetVelocity(), intersectT);
             }
 
-            portalable.EnterPortal?.Invoke(new EnterCallbackData(portal, portalable, intersectT), transform, velocity);
+            if (cast != null)
+            {
+                cast.EnterPortal?.Invoke(new EnterCallbackData(portal, cast, intersectT), transform, velocity);
+            }
         }
 
         public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)

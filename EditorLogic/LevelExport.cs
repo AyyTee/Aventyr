@@ -107,6 +107,7 @@ namespace EditorLogic
                     if (e is EditorWall)
                     {
                         EditorWall castWall = (EditorWall)e;
+                        actor.Body.IsStatic = true;
                         //actor.Vertices = castWall.Vertices;
                         entity.AddModel(Game.ModelFactory.CreatePolygon(castWall.Vertices));
                         //entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));

@@ -107,7 +107,7 @@ namespace Game
 
 
                 PortalCommon.UpdateWorldTransform(this, false, true);
-                SimulationStep.Step(GetAll().OfType<IPortalable>(), GetAll().OfType<IPortal>(), stepSize, (EnterCallbackData data) => {
+                SimulationStep.Step(GetAll().OfType<IPortalCommon>(), GetAll().OfType<IPortal>(), stepSize, (EnterCallbackData data) => {
                     IActor actor = data.Instance as IActor;
                     if (actor != null)
                     {

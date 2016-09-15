@@ -18,13 +18,13 @@ namespace Game.Portals
 		/// <summary>
 		/// Instance entering portal.
 		/// </summary>
-        public IPortalable Instance;
+        public IPortalCommon Instance;
 		/// <summary>
 		/// Intersection t value for the portal.
 		/// </summary>
         public double PortalT;
 
-        public EnterCallbackData(IPortal entrancePortal, IPortalable instance, double portalT)
+        public EnterCallbackData(IPortal entrancePortal, IPortalCommon instance, double portalT)
         {
             EntrancePortal = entrancePortal;
             Instance = instance;

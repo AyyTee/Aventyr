@@ -126,7 +126,7 @@ namespace Game.Portals
         {
             List<IPortal> portals = instance.Scene.GetPortalList();
             Transform2 local = instance.GetTransform();
-            if (local == null || IsRoot(instance) || IsRoot(instance.Parent))
+            if (local == null || IsRoot(instance) || IsRoot(instance.Parent))//(IsRoot(instance.Parent) && instance is SceneNode))
             {
                 return local;
             }

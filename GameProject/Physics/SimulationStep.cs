@@ -15,8 +15,8 @@ namespace Game
         {
             public Transform2 Previous;
             public Line StartEnd;
-            public IPortalable Instance;
-            public PortalableMovement(IPortalable instance, Line startEnd, Transform2 previous)
+            public IPortalCommon Instance;
+            public PortalableMovement(IPortalCommon instance, Line startEnd, Transform2 previous)
             {
                 Instance = instance;
                 StartEnd = startEnd;
@@ -50,7 +50,7 @@ namespace Game
             }
         }
 
-        public static void Step(IEnumerable<IPortalable> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter)
+        public static void Step(IEnumerable<IPortalCommon> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter)
         {
             /*foreach (IPortalable p in moving)
             {
@@ -60,7 +60,7 @@ namespace Game
             Step(moving, portals, stepSize, portalEnter, new List<PortalableSweep>());
         }
 
-        private static void Step(IEnumerable<IPortalable> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter, List<PortalableSweep> previous)
+        private static void Step(IEnumerable<IPortalCommon> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter, List<PortalableSweep> previous)
         {
             List<PortalableMovement> pointMovement = new List<PortalableMovement>();
             List<PortalMovement> lineMovement = new List<PortalMovement>();
@@ -81,7 +81,7 @@ namespace Game
                     lineMovement.Add(new PortalMovement(p, lineStart, lineEnd));
                 }
 
-                foreach (IPortalable p in moving)
+                foreach (IPortalCommon p in moving)
                 {
                     if (p.WorldTransform == null || p.WorldVelocity == null)
                     {
@@ -102,10 +102,13 @@ namespace Game
             {
                 foreach (PortalableMovement p in pointMovement)
                 {
-                    IPortalable portalable = p.Instance;
-                    Transform2 shift = portalable.GetVelocity().Multiply((float)stepSize);
-                    portalable.SetTransform(portalable.GetTransform().Add(shift));
-
+                    IPortalable portalable = p.Instance as IPortalable;
+                    if (portalable != null)
+                    {
+                        Transform2 shift = portalable.GetVelocity().Multiply((float)stepSize);
+                        portalable.SetTransform(portalable.GetTransform().Add(shift));
+                    }
+                    
                     Transform2 worldVelocity = p.Instance.WorldVelocity.Multiply((float)stepSize);
                     p.Instance.WorldTransform = p.Instance.WorldTransform.Add(worldVelocity);
                 }
@@ -115,8 +118,12 @@ namespace Game
             double tDelta = earliest[0].Sweep.TimeProportion;
             foreach (PortalableMovement move in pointMovement)
             {
-                Transform2 velocity = move.Instance.GetVelocity().Multiply((float)(stepSize * tDelta));
-                move.Instance.SetTransform(move.Instance.GetTransform().Add(velocity));
+                IPortalable portalable = move.Instance as IPortalable;
+                if (portalable != null)
+                {
+                    Transform2 velocity = portalable.GetVelocity().Multiply((float)(stepSize * tDelta));
+                    portalable.SetTransform(portalable.GetTransform().Add(velocity));
+                }
 
                 Transform2 worldVelocity = move.Instance.WorldVelocity.Multiply((float)(stepSize * tDelta));
                 move.Instance.WorldTransform = move.Instance.WorldTransform.Add(worldVelocity);
@@ -125,7 +132,7 @@ namespace Game
             foreach (PortalableSweep sweep in earliest)
             {
                 float intersectT = (float)sweep.Sweep.AcrossProportion;
-                IPortalable instance = sweep.Portalable.Instance;
+                IPortalCommon instance = sweep.Portalable.Instance;
                 bool worldOnly = instance.Parent != null && !PortalCommon.IsRoot(instance.Parent);
                 Portal.Enter(sweep.Portal.Portal, instance, intersectT, false, worldOnly);
                 portalEnter?.Invoke(new EnterCallbackData(sweep.Portal.Portal, sweep.Portalable.Instance, intersectT));
@@ -141,11 +148,15 @@ namespace Game
             List<PortalableSweep> earliest = new List<PortalableSweep>();
             foreach (PortalableMovement move in pointMovement)
             {
-                if (move.Instance.IsPortalable)
+                //if (move.Instance.IsPortalable)
                 {
                     Debug.Assert(!(move is IPortal), "Portals cannot do portal teleporation with other portals.");
                     foreach (PortalMovement portal in lineMovement)
                     {
+                        if (move.Instance == portal.Portal)
+                        {
+                            continue;
+                        }
                         var collisionList = MathExt.MovingPointLineIntersect(move.StartEnd, portal.Start, portal.End);
                         if (collisionList.Count == 0)
                         {
