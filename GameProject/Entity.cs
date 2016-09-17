@@ -39,6 +39,15 @@ namespace Game
         public List<Model> ModelList { get { return new List<Model>(_models); } }
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
+        [DataMember]
+        private bool _isBackground = false;
+        public override bool IsBackground
+        {
+            get
+            {
+                return _isBackground;
+            }
+        }
 
         #region Constructors
         public Entity(Scene scene)
@@ -74,6 +83,7 @@ namespace Game
         {
             base.ShallowClone(destination);
             destination.IsPortalable = IsPortalable;
+            destination._isBackground = _isBackground;
             foreach (Model m in ModelList)
             {
                 destination._models.Add(m.ShallowClone());
@@ -130,6 +140,11 @@ namespace Game
         public List<IPortal> GetPortalChildren()
         {
             return Children.OfType<IPortal>().ToList();
+        }
+
+        public void SetBackground(bool isBackground)
+        {
+            _isBackground = isBackground;
         }
     }
 }

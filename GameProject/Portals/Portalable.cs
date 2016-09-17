@@ -30,11 +30,9 @@ namespace Game.Portals
         }
         public IPortalCommon Parent { get; set; }
         public List<IPortalCommon> Children { get; private set; } = new List<IPortalCommon>();
-        /// <summary>
-        /// For the time being the Scene is null.
-        /// </summary>
         public Scene Scene { get; private set; }
         IScene IPortalCommon.Scene { get { return Scene; } }
+        public bool IsBackground { get { return false; } }
 
         public Portalable(Scene scene)
         {

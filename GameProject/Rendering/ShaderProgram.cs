@@ -16,16 +16,16 @@ namespace Game
         public int AttributeCount = 0;
         public int UniformCount = 0;
 
-        public Dictionary<String, AttributeInfo> Attributes = new Dictionary<string, AttributeInfo>();
-        public Dictionary<String, UniformInfo> Uniforms = new Dictionary<string, UniformInfo>();
-        public Dictionary<String, uint> Buffers = new Dictionary<string, uint>();
+        public Dictionary<string, AttributeInfo> Attributes = new Dictionary<string, AttributeInfo>();
+        public Dictionary<string, UniformInfo> Uniforms = new Dictionary<string, UniformInfo>();
+        public Dictionary<string, uint> Buffers = new Dictionary<string, uint>();
 
         public ShaderProgram()
         {
             ProgramID = GL.CreateProgram();
         }
 
-        private void loadShader(String code, ShaderType type, out int address)
+        private void loadShader(string code, ShaderType type, out int address)
         {
             address = GL.CreateShader(type);
             GL.ShaderSource(address, code);
@@ -35,7 +35,7 @@ namespace Game
             Console.WriteLine(GL.GetShaderInfoLog(address));
         }
 
-        public void LoadShaderFromString(String code, ShaderType type)
+        public void LoadShaderFromString(string code, ShaderType type)
         {
             switch (type)
             {
@@ -51,7 +51,7 @@ namespace Game
             }
         }
 
-        public void LoadShaderFromFile(String filename, ShaderType type)
+        public void LoadShaderFromFile(string filename, ShaderType type)
         {
             using (StreamReader sr = new StreamReader(filename))
             {
@@ -179,7 +179,7 @@ namespace Game
             }
         }
 
-        public ShaderProgram(String vshader, String fshader, bool fromFile = false)
+        public ShaderProgram(string vshader, string fshader, bool fromFile = false)
         {
             ProgramID = GL.CreateProgram();
 
@@ -198,7 +198,7 @@ namespace Game
             GenBuffers();
         }
 
-        public ShaderProgram(String vshader, String gshader, String fshader, bool fromFile = false)
+        public ShaderProgram(string vshader, string gshader, string fshader, bool fromFile = false)
         {
             ProgramID = GL.CreateProgram();
 
@@ -221,7 +221,7 @@ namespace Game
 
         public class UniformInfo
         {
-            public String name = "";
+            public string name = "";
             public int address = -1;
             public int size = 0;
             public ActiveUniformType type;
@@ -229,7 +229,7 @@ namespace Game
 
         public class AttributeInfo
         {
-            public String name = "";
+            public string name = "";
             public int address = -1;
             public int size = 0;
             public ActiveAttribType type;

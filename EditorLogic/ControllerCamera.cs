@@ -27,18 +27,19 @@ namespace EditorLogic
         Transform2 _worldTransformPrevious = new Transform2();
         public Transform2 WorldTransform
         {
-            get { return _worldTransformPrevious.ShallowClone(); }
-            set { _worldTransformPrevious = value.ShallowClone(); }
+            get { return _worldTransformPrevious?.ShallowClone(); }
+            set { _worldTransformPrevious = value?.ShallowClone(); }
         }
         [DataMember]
         Transform2 _worldVelocityPrevious = Transform2.CreateVelocity();
         public Transform2 WorldVelocity
         {
-            get { return _worldVelocityPrevious.ShallowClone(); }
-            set { _worldVelocityPrevious = value.ShallowClone(); }
+            get { return _worldVelocityPrevious?.ShallowClone(); }
+            set { _worldVelocityPrevious = value?.ShallowClone(); }
         }
         public IPortalCommon Parent { get { return null; } }
         public List<IPortalCommon> Children { get { return new List<IPortalCommon>(); } }
+        public bool IsBackground { get { return false; } }
 
         public ControllerEditor Controller { get; set; }
         public InputExt InputExt { get; set; }
@@ -243,6 +244,7 @@ namespace EditorLogic
             {
                 Transform = Transform.Add(GetWorldVelocity());
             }
+            WorldTransform = GetTransform();
         }
 
         public Transform2 GetVelocity()

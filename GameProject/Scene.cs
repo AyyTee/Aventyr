@@ -23,25 +23,20 @@ namespace Game
         PhyicsListener _contactListener;
 
         public ICamera2 ActiveCamera { get; private set; }
-        public List<SceneNode> SceneNodeList { get { return Tree<SceneNode>.GetDescendents(Root); } }
+        [DataMember]
+        public List<SceneNode> SceneNodes { get; private set; } = new List<SceneNode>();
         [DataMember]
         public List<ISceneObject> SceneObjectList = new List<ISceneObject>();
         /// <summary>
         /// States whether the scene is currently performing a physics step.
         /// </summary>
         public bool InWorldStep { get; private set; }
-        /// <summary>Root node to the scene graph.</summary>
-        [DataMember]
-        public SceneNode Root { get; private set; }
         [DataMember]
         public double Time { get; private set; }
 
         #region Constructors
         public Scene()
         {
-            Root = new SceneNode(this);
-            Root.WorldTransform = new Transform2();
-            Root.WorldVelocity = Transform2.CreateVelocity();
             SetWorld(new World(new Xna.Vector2(0f, 0f)));
         }
         #endregion
@@ -139,7 +134,7 @@ namespace Game
         {
             HashSet<ISceneObject> set = new HashSet<ISceneObject>();
             set.UnionWith(SceneObjectList);
-            set.UnionWith(SceneNodeList);
+            set.UnionWith(SceneNodes);
             if (ActiveCamera != null)
             {
                 set.Add(ActiveCamera);
@@ -149,7 +144,7 @@ namespace Game
 
         public List<IRenderable> GetRenderList()
         {
-            return SceneNodeList.OfType<IRenderable>().ToList();
+            return SceneNodes.OfType<IRenderable>().ToList();
         }
 
         public List<IPortal> GetPortalList()
@@ -160,11 +155,6 @@ namespace Game
         public List<IPortalable> GetPortalableList()
         {
             return GetAll().OfType<IPortalable>().ToList();
-        }
-
-        public SceneNode FindByName(string name)
-        {
-            return Root.FindByName(name);
         }
 
         public void SetActiveCamera(ICamera2 camera)

@@ -18,5 +18,9 @@ namespace Game.Portals
         /// The previously set world velocity.
         /// </summary>
         Transform2 WorldVelocity { get; set; }
+        /// <summary>
+        /// If true, then this instance cannot enter portals.
+        /// </summary>
+        bool IsBackground { get; }
     }
 }

@@ -95,7 +95,7 @@ namespace Game
 
         public override void SetParent(SceneNode parent)
         {
-            Debug.Assert(parent.IsRoot);
+            Debug.Assert(parent == null, "Actor must be root SceneNode.");
             base.SetParent(parent);
         }
 

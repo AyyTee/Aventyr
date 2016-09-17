@@ -330,7 +330,7 @@ namespace UnitTest
         public Camera2 GetCamera()
         {
             Camera2 camera = new Camera2(new Scene(), new Transform2(), 1.3333f);
-            camera.WorldTransform = PortalCommon.GetWorldTransformPortal(camera);
+            camera.WorldTransform = PortalCommon.GetWorldTransform(camera);
             return camera;
         }
 

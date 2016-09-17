@@ -133,7 +133,7 @@ namespace Game
             {
                 float intersectT = (float)sweep.Sweep.AcrossProportion;
                 IPortalCommon instance = sweep.Portalable.Instance;
-                bool worldOnly = instance.Parent != null && !PortalCommon.IsRoot(instance.Parent);
+                bool worldOnly = !PortalCommon.IsRoot(instance);
                 Portal.Enter(sweep.Portal.Portal, instance, intersectT, false, worldOnly);
                 portalEnter?.Invoke(new EnterCallbackData(sweep.Portal.Portal, sweep.Portalable.Instance, intersectT));
             }
@@ -148,7 +148,7 @@ namespace Game
             List<PortalableSweep> earliest = new List<PortalableSweep>();
             foreach (PortalableMovement move in pointMovement)
             {
-                //if (move.Instance.IsPortalable)
+                if (!move.Instance.IsBackground)
                 {
                     Debug.Assert(!(move is IPortal), "Portals cannot do portal teleporation with other portals.");
                     foreach (PortalMovement portal in lineMovement)

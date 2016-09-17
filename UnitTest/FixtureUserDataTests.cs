@@ -26,10 +26,10 @@ namespace UnitTest
             return ground;
         }
 
-        public Scene CreateSceneWithPortal()
+        public Scene CreateSceneWithPortal(out Actor ground)
         {
             Scene scene = new Scene();
-            Actor ground = CreateGround(scene);
+            ground = CreateGround(scene);
             scene.World.ProcessChanges();
             Fixture fixture = ground.Body.FixtureList[0];
             FixturePortal portal = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
@@ -44,8 +44,8 @@ namespace UnitTest
         [TestMethod]
         public void PortalParentTest0()
         {
-            Scene scene = CreateSceneWithPortal();
-            Actor ground = (Actor)scene.FindByName("ground");
+            Actor ground = null;
+            Scene scene = CreateSceneWithPortal(out ground);
 
             Assert.IsTrue(ground.Body.FixtureList.Count == 3, "There should be three fixtures.  The original fixture and two fixtures that are a part of the FixturePortal.");
         }
@@ -53,8 +53,8 @@ namespace UnitTest
         [TestMethod]
         public void PortalParentTest1()
         {
-            Scene scene = CreateSceneWithPortal();
-            Actor ground = (Actor)scene.FindByName("ground");
+            Actor ground = null;
+            Scene scene = CreateSceneWithPortal(out ground);
             int parentCount = 0;
             foreach (Fixture f in ground.Body.FixtureList)
             {
@@ -70,8 +70,8 @@ namespace UnitTest
         [TestMethod]
         public void PortalParentTest2()
         {
-            Scene scene = CreateSceneWithPortal();
-            Actor ground = (Actor)scene.FindByName("ground");
+            Actor ground = null;
+            Scene scene = CreateSceneWithPortal(out ground);
             FixturePortal portal = scene.GetPortalList().OfType<FixturePortal>().First();
 
             FixtureUserData userData;
@@ -86,8 +86,8 @@ namespace UnitTest
         [TestMethod]
         public void PortalParentTest3()
         {
-            Scene scene = CreateSceneWithPortal();
-            Actor ground = (Actor)scene.FindByName("ground");
+            Actor ground = null;
+            Scene scene = CreateSceneWithPortal(out ground);
             FixturePortal portal0 = scene.GetPortalList().OfType<FixturePortal>().First();
 
             FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.6f));
@@ -115,8 +115,8 @@ namespace UnitTest
         [TestMethod]
         public void PortalParentTest4()
         {
-            Scene scene = CreateSceneWithPortal();
-            Actor ground = (Actor)scene.FindByName("ground");
+            Actor ground = null;
+            Scene scene = CreateSceneWithPortal(out ground);
             FixturePortal portal0 = scene.GetPortalList().OfType<FixturePortal>().First();
 
             FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.6f));
@@ -143,8 +143,8 @@ namespace UnitTest
         [TestMethod]
         public void PortalParentTest5()
         {
-            Scene scene = CreateSceneWithPortal();
-            Actor ground = (Actor)scene.FindByName("ground");
+            Actor ground = null;
+            Scene scene = CreateSceneWithPortal(out ground);
             FixturePortal portal0 = scene.GetPortalList().OfType<FixturePortal>().First();
 
             FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.6f));

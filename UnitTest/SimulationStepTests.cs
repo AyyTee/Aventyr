@@ -259,39 +259,6 @@ namespace UnitTest
             Transform2 expected = transformPrevious.Add(velocity);
             Assert.IsTrue(expected.AlmostEqual(fixture.WorldTransform));
         }
-
-        /*[TestMethod]
-        public void StepTest9()
-        {
-            Scene scene = new Scene();
-
-            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(2, 2));
-            actor.SetTransform(new Transform2(new Vector2(1, 1)));
-            Transform2 velocity = Transform2.CreateVelocity(new Vector2(0, 3));
-            actor.SetVelocity(velocity);
-            FixturePortal fixture = new FixturePortal(scene, actor, new PolygonCoord(0, 0.5f));
-
-            FloatPortal enter = new FloatPortal(scene);
-            enter.SetTransform(new Transform2(new Vector2(1, 2), 1, (float)Math.PI / 2));
-            //enter.SetVelocity(Transform2.CreateVelocity(new Vector2(1, 0)));
-
-            FloatPortal exit = new FloatPortal(scene);
-            exit.SetTransform(new Transform2(new Vector2(10, 10)));
-            exit.SetVelocity(Transform2.CreateVelocity(new Vector2(10, 0)));
-
-            enter.Linked = exit;
-            exit.Linked = enter;
-
-            PortalCommon.UpdateWorldTransform(scene);
-
-            Transform2 transformPrevious = fixture.WorldTransform.ShallowClone();
-            Transform2 actorPrevious = actor.WorldTransform.ShallowClone();
-
-            SimulationStep.Step(scene.GetAll().OfType<IPortalCommon>(), scene.GetAll().OfType<IPortal>(), 1, null);
-
-            Transform2 expected = transformPrevious.Add(velocity);
-            Assert.IsTrue(expected.AlmostEqual(fixture.WorldTransform));
-        }*/
         #endregion
     }
 }

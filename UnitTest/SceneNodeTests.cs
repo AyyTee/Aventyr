@@ -12,14 +12,15 @@ namespace UnitTest
     public class SceneNodeTests
     {
         #region SetScene tests
-        [TestMethod]
+        /*[TestMethod]
         public void SetSceneTest0()
         {
             Scene source = new Scene();
             Scene destination = new Scene();
             SceneNode node0 = new SceneNode(source);
 
-            node0.SetParent(destination.Root);
+            //node0.SetParent(destination.Root);
+            node0.Scene = destination;
 
             Assert.IsTrue(node0.Scene == destination);
             Assert.IsTrue(node0.Parent == destination.Root);
@@ -63,7 +64,7 @@ namespace UnitTest
             Assert.IsTrue(node2.Scene == source);
             Assert.IsTrue(node3.Scene == source);
             Assert.IsTrue(node2.Children.Count == 0);
-        }
+        }*/
         #endregion
         /*#region GetWorldTransform tests
         [TestMethod]

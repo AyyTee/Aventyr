@@ -70,6 +70,7 @@ namespace EditorLogic
         public bool IsModified { get; set; }
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
+        public virtual bool IsBackground { get { return false; } }
 
         public EditorObject(EditorScene editorScene)
         {

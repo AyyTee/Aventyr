@@ -105,5 +105,17 @@ namespace Game
             }
             return parents;
         }
+
+        /// <summary>
+        /// Find the number of parents this node has.
+        /// </summary>
+        public static int Depth(T node)
+        {
+            if (node.Parent == null)
+            {
+                return 0;
+            }
+            return Depth(node.Parent) + 1;
+        }
     }
 }

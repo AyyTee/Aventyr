@@ -33,6 +33,7 @@ namespace EditorLogic
             back.Name = "Background";
             back.AddModel(background);
             back.IsPortalable = false;
+            back.SetBackground(true);
             #endregion
 
             HashSet<IDeepClone> toClone = new HashSet<IDeepClone>();
@@ -147,7 +148,7 @@ namespace EditorLogic
 
             foreach (EditorObject e in editorObjects)
             {
-                SceneNode parent = e.Parent == null ? scene.Root : dictionary[e.Parent];
+                SceneNode parent = e.Parent == null ? null : dictionary[e.Parent];
                 SceneNode clone = dictionary[e];
                 clone.SetParent(parent);
                 if (clone is IPortal)
