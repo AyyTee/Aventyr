@@ -12,11 +12,6 @@ namespace Game.Portals
     public interface IPortalable : ITransformable2, IGetTransformVelocity, IPortalCommon
     {
         /// <summary>
-        /// Whether or not this instance can interact with portals.  
-        /// If false, EnterPortal will never be called and collisions with portals will be ignored.
-        /// </summary>
-        bool IsPortalable { get; }
-        /// <summary>
         /// Is called when entering a portal.  
         /// EnterPortal(IPortal enter, Transform2 transform, Transform2 velocity)
         /// </summary>

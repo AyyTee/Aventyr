@@ -66,7 +66,7 @@ namespace UnitTest
 
             enter.Linked = exit;
             exit.Linked = enter;
-            PortalCommon.UpdateWorldTransform(new IPortalCommon[] { p, enter, exit });
+            PortalCommon.UpdateWorldTransform(new IPortalCommon[] { p, enter,  exit });
             SimulationStep.Step(new IPortalCommon[] { p, enter, exit }, new IPortal[] { enter, exit }, 1, null);
 
             Assert.IsTrue(p.GetTransform().Position == new Vector2(8, 10));

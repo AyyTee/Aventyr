@@ -44,7 +44,7 @@ namespace Game
         [DataMember]
         public Scene Scene { get; private set; }
         IScene IPortalCommon.Scene { get { return Scene; } }
-        public virtual bool IsBackground { get { return false; } }
+        public virtual bool IsPortalable { get; set; } = true;
 
         #region Constructors
         public SceneNode(Scene scene)
@@ -69,6 +69,7 @@ namespace Game
             destination.Parent = Parent;
             destination._children = new HashSet<SceneNode>(Children);
             destination.Name = Name + " Clone";
+            destination.IsPortalable = IsPortalable;
         }
 
         public virtual HashSet<IDeepClone> GetCloneableRefs()

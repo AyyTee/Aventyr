@@ -13,7 +13,6 @@ namespace UnitTest
         public Transform2 Transform { get; set; } = new Transform2();
         public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
-        public bool IsPortalable { get { return true; } }
 
         public NodePortalable(Scene scene)
             : base(scene)

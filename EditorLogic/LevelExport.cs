@@ -33,7 +33,6 @@ namespace EditorLogic
             back.Name = "Background";
             back.AddModel(background);
             back.IsPortalable = false;
-            back.SetBackground(true);
             #endregion
 
             HashSet<IDeepClone> toClone = new HashSet<IDeepClone>();

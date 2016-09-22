@@ -70,7 +70,6 @@ namespace EditorLogic
         public bool IsModified { get; set; }
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
-        public virtual bool IsBackground { get { return false; } }
 
         public EditorObject(EditorScene editorScene)
         {
@@ -186,10 +185,10 @@ namespace EditorLogic
                 return PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform);
             }
             return _transform.ShallowClone();*/
-            /*if (PolygonTransform != null)
+            if (PolygonTransform != null)
             {
-                return _transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
-            }*/
+                return Transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
+            }
             return Transform.ShallowClone();
         }
 
@@ -267,6 +266,10 @@ namespace EditorLogic
 
         public virtual void Remove()
         {
+            foreach (EditorObject e in Children)
+            {
+                e.Remove();
+            }
             RemoveSelf();
         }
 

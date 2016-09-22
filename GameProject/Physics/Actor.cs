@@ -27,8 +27,6 @@ namespace Game
             get { return GetVelocity(); }
             set { BodyExt.SetVelocity(Body, value); }
         }
-        [DataMember]
-        public bool IsPortalable { get; set; } = true;
         /// <summary>
         /// Physics rigid body associated with this Actor.
         /// </summary>

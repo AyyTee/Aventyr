@@ -19,8 +19,9 @@ namespace Game.Portals
         /// </summary>
         Transform2 WorldVelocity { get; set; }
         /// <summary>
-        /// If true, then this instance cannot enter portals.
+        /// Whether or not this instance can interact with portals.  
+        /// If false, EnterPortal will never be called and collisions with portals will be ignored.
         /// </summary>
-        bool IsBackground { get; }
+        bool IsPortalable { get; }
     }
 }

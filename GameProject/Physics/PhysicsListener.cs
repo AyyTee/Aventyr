@@ -44,7 +44,7 @@ namespace Game
                 }
                 BodyExt.GetUserData(body).PreviousPosition = body.Position;
             }
-            foreach (IPortal portal in Scene.GetPortalList().OfType<IPortal>())
+            foreach (IPortal portal in Scene.GetPortalList())
             {
                 if (portal.WorldTransform != null)
                 {
@@ -259,7 +259,7 @@ namespace Game
                 FixturePortal portal = p as FixturePortal;
                 if (portal != null)
                 {
-                    //Don't consider this portal if its fixtures are in the contact.
+                    //Don't consider this portal if its fixtures are part of the contact.
                     if (userData[0].PartOfPortal(portal) || userData[1].PartOfPortal(portal))
                     {
                         continue;
@@ -294,15 +294,17 @@ namespace Game
             for (int i = 0; i < userData.Length; i++)
             {
                 int iNext = (i + 1) % userData.Length;
-                foreach (FixturePortal portal in userData[i].PortalCollisions.OfType<FixturePortal>())
+                foreach (IPortal portal in userData[i].PortalCollisions)
                 {
                     Line line = new Line(Portal.GetWorldVerts(portal));
 
-                    
-
-                    if (userData[i].PartOfPortal(portal) || userData[iNext].PartOfPortal(portal))
+                    FixturePortal cast = portal as FixturePortal;
+                    if (cast != null)
                     {
-                        continue;
+                        if (userData[i].PartOfPortal(cast) || userData[iNext].PartOfPortal(cast))
+                        {
+                            continue;
+                        }
                     }
 
                     //Contact is invalid if it the world normal is pushing into the portal.

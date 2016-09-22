@@ -39,7 +39,6 @@ namespace EditorLogic
         }
         public IPortalCommon Parent { get { return null; } }
         public List<IPortalCommon> Children { get { return new List<IPortalCommon>(); } }
-        public bool IsBackground { get { return false; } }
 
         public ControllerEditor Controller { get; set; }
         public InputExt InputExt { get; set; }

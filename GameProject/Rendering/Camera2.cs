@@ -13,7 +13,6 @@ namespace Game
     [DataContract]
     public class Camera2 : SceneNode, ICamera2, IPortalable
     {
-        public bool IsPortalable { get; set; } = true;
         [DataMember]
         public Transform2 Transform { get; set; } = new Transform2();
         [DataMember]

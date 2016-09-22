@@ -34,8 +34,8 @@ namespace EditorWindow
             AssetsDirectory = Path.Combine(WorkingDirectory, "editor assets");
             InitializeComponent();
             //Set the application window size here.  That way it can be super small in the editor!
-            Width = 1000;
-            Height = 650;
+            Width = 1920;
+            Height = 1080;
             CenterWindowOnScreen();
             _loadModelDialog.FileOk += _openFileDialog_FileOk;
 

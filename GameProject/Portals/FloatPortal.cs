@@ -12,7 +12,6 @@ namespace Game.Portals
     [DataContract, DebuggerDisplay("FloatPortal {Name}")]
     public class FloatPortal : SceneNode, IPortal, IPortalable
     {
-        public bool IsPortalable { get { return false; } }
         [DataMember]
         public IPortal Linked { get; set; }
         /// <summary>

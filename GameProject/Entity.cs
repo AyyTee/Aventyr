@@ -19,8 +19,6 @@ namespace Game
     public class Entity : SceneNode, IRenderable, IPortalable
     {
         [DataMember]
-        public bool IsPortalable { get; set; }
-        [DataMember]
         public Transform2 Transform { get; set; } = new Transform2();
         [DataMember]
         public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
@@ -39,15 +37,6 @@ namespace Game
         public List<Model> ModelList { get { return new List<Model>(_models); } }
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
-        [DataMember]
-        private bool _isBackground = false;
-        public override bool IsBackground
-        {
-            get
-            {
-                return _isBackground;
-            }
-        }
 
         #region Constructors
         public Entity(Scene scene)
@@ -56,7 +45,6 @@ namespace Game
             Transform2 transform = GetTransform();
             SetTransform(transform);
             Visible = true;
-            IsPortalable = true;
         }
 
         public Entity(Scene scene, Vector2 position)
@@ -82,8 +70,6 @@ namespace Game
         protected void ShallowClone(Entity destination)
         {
             base.ShallowClone(destination);
-            destination.IsPortalable = IsPortalable;
-            destination._isBackground = _isBackground;
             foreach (Model m in ModelList)
             {
                 destination._models.Add(m.ShallowClone());
@@ -140,11 +126,6 @@ namespace Game
         public List<IPortal> GetPortalChildren()
         {
             return Children.OfType<IPortal>().ToList();
-        }
-
-        public void SetBackground(bool isBackground)
-        {
-            _isBackground = isBackground;
         }
     }
 }

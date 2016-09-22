@@ -106,11 +106,11 @@ namespace Game
                     if (portalable != null)
                     {
                         Transform2 shift = portalable.GetVelocity().Multiply((float)stepSize);
-                        portalable.SetTransform(portalable.GetTransform().Add(shift));
+                        portalable.SetTransform(portalable.Transform.Add(shift));
                     }
                     
                     Transform2 worldVelocity = p.Instance.WorldVelocity.Multiply((float)stepSize);
-                    p.Instance.WorldTransform = p.Instance.WorldTransform.Add(worldVelocity);
+                    p.Instance.WorldTransform = p.Instance.WorldTransform.Add( worldVelocity);
                 }
                 return;
             }
@@ -148,7 +148,7 @@ namespace Game
             List<PortalableSweep> earliest = new List<PortalableSweep>();
             foreach (PortalableMovement move in pointMovement)
             {
-                if (!move.Instance.IsBackground)
+                if (move.Instance.IsPortalable)
                 {
                     Debug.Assert(!(move is IPortal), "Portals cannot do portal teleporation with other portals.");
                     foreach (PortalMovement portal in lineMovement)

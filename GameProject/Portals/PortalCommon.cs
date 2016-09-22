@@ -70,6 +70,11 @@ namespace Game.Portals
             return instance.Parent == null;
         }
 
+        /// <summary>
+        /// Calculates the world transform for a given instance.
+        /// </summary>
+        /// <param name="instance"></param>
+        /// <returns></returns>
         public static Transform2 GetWorldTransform(IPortalCommon instance)
         {
             List<IPortal> portals = instance.Scene.GetPortalList();
@@ -107,38 +112,48 @@ namespace Game.Portals
             return velocity;
         }
 
+        /// <summary>
+        /// Calculates the world velocity for a given instance.
+        /// </summary>
         public static Transform2 GetWorldVelocity(IPortalCommon instance)
         {
-            List<IPortal> portals = instance.Scene.GetPortalList();
+            
             Transform2 local = instance.GetTransform();
             Transform2 velocity = instance.GetVelocity();
-            if (local == null || velocity == null || IsRoot(instance))
+            if (local == null || velocity == null)
+            {
+                return null;
+            }
+            else if (IsRoot(instance))
             {
                 return velocity;
             }
 
-            Transform2 parent = instance.Parent.WorldTransform;
-            Transform2 worldTransform = local.Transform(parent);
+            Transform2 parentTransform = instance.Parent.WorldTransform;
             Transform2 parentVelocity = instance.Parent.WorldVelocity;
+            if (parentTransform == null || parentVelocity == null)
+            {
+                return null;
+            }
 
-            Vector2 positionDelta = (worldTransform.Position - parent.Position);
+            Transform2 worldTransform = local.Transform(parentTransform);
 
             Transform2 worldVelocity = Transform2.CreateVelocity();
+            worldVelocity.Size = local.Size * parentVelocity.Size + velocity.Size * parentTransform.Size;
+            worldVelocity.Rotation = (parentTransform.MirrorX ? -velocity.Rotation : velocity.Rotation) + parentVelocity.Rotation;
 
+            Matrix2 mat = Matrix2.CreateScale(parentTransform.Scale) * Matrix2.CreateRotation(parentTransform.Rotation);
+            Vector2 positionDelta = (worldTransform.Position - parentTransform.Position);
 
-            worldVelocity.Size = local.Size * parentVelocity.Size + velocity.Size * parent.Size;
+            worldVelocity.Position = 
+                Vector2Ext.Transform(velocity.Position, mat) + 
+                parentVelocity.Position + 
+                MathExt.AngularVelocity(positionDelta, parentVelocity.Rotation) + 
+                positionDelta * parentVelocity.Size / parentTransform.Size;
 
-            worldVelocity.Rotation = (parent.MirrorX ? -velocity.Rotation : velocity.Rotation) + parentVelocity.Rotation;
-
-            Vector2 v = MathExt.AngularVelocity(positionDelta, parentVelocity.Rotation);
-            Vector2 scaleSpeed = positionDelta * parentVelocity.Size / parent.Size;
-
-            Matrix2 mat = Matrix2.CreateScale(parent.Scale) * Matrix2.CreateRotation(parent.Rotation);
-
-            worldVelocity.Position = Vector2Ext.Transform(velocity.Position, mat) + parentVelocity.Position + v + scaleSpeed;
-
-            IPortalable portalable = new Portalable(null, new Transform2(parent.Position, worldTransform.Size, worldTransform.Rotation, worldTransform.MirrorX), Transform2.CreateVelocity(positionDelta));
-            Ray.RayCast(portalable, GetPortalsForPortal(instance, portals), new Ray.Settings(), (EnterCallbackData data, double movementT) => {
+            IPortalable portalable = new Portalable(null, new Transform2(parentTransform.Position, worldTransform.Size, worldTransform.Rotation, worldTransform.MirrorX), Transform2.CreateVelocity(positionDelta));
+            HashSet<IPortal> portals = GetPortalsForPortal(instance, instance.Scene.GetPortalList());
+            Ray.RayCast(portalable, portals, new Ray.Settings(), (EnterCallbackData data, double movementT) => {
                 worldVelocity = TransformVelocity(data.Instance, data.EntrancePortal, worldVelocity, movementT);
             });
 
