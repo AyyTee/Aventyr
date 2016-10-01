@@ -100,6 +100,11 @@ namespace Game.Portals
         public override void Remove()
         {
             RemoveFixture();
+            if (Linked != null)
+            {
+                Linked.Linked = null;
+                Linked = null;
+            }
             //SetLinked(null);
             base.Remove();
         }

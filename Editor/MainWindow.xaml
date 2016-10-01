@@ -29,8 +29,8 @@
 
     <Grid Name="MainGrid" KeyDown="MainGrid_KeyDown">
         <Grid.RowDefinitions>
-            <RowDefinition Height="22" />
-            <RowDefinition Height="27" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Menu>

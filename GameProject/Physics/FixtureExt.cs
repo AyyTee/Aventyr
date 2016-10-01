@@ -91,9 +91,9 @@ namespace Game
         }
 
         /// <summary>
-        /// Returns Fixture that FixturePortal is attached to, or null if none exists.
+        /// Returns the Fixture that FixturePortal is attached to, or null if none exists.
         /// </summary>
-        public static Fixture GetFixturePortalParent(FixturePortal portal)
+        public static Fixture GetFixtureAttached(FixturePortal portal)
         {
             if (portal.Parent == null)
             {

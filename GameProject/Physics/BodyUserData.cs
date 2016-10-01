@@ -20,8 +20,6 @@ namespace Game
         public readonly Body Body;
         public Xna.Vector2 PreviousPosition { get; set; }
         [XmlIgnore]
-        public HashSet<FixturePortal> PortalCollisions = new HashSet<FixturePortal>();
-        [XmlIgnore]
         public List<ChildBody> BodyChildren = new List<ChildBody>();
         [XmlIgnore]
         public ChildBody BodyParent = new ChildBody(null, null);
@@ -58,7 +56,7 @@ namespace Game
             {
                 Debug.Assert(child.Body != Body);
             }
-            HashSet<IPortal> collisionsNew = new HashSet<IPortal>();
+            /*HashSet<IPortal> collisionsNew = new HashSet<IPortal>();
             foreach (Fixture fixture in Body.FixtureList)
             {
                 FixtureUserData userData = FixtureExt.GetUserData(fixture);
@@ -85,7 +83,17 @@ namespace Game
 
                 RemoveChildBody(childBody, ref bodiesToRemove);
                 BodyChildren.Remove(childBody);
+            }*/
+        }
+
+        public HashSet<IPortal> GetPortalCollisions()
+        {
+            HashSet<IPortal> collisions = new HashSet<IPortal>();
+            foreach (Fixture f in Body.FixtureList)
+            {
+                collisions.UnionWith(FixtureExt.GetUserData(f).PortalCollisions);
             }
+            return collisions;
         }
 
         private void RemoveChildBody(ChildBody child, ref List<Body> bodiesToRemove)

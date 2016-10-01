@@ -142,6 +142,10 @@ namespace Game
         public virtual void Remove()
         {
             RemoveParent();
+            foreach (SceneNode child in Children.ToList())
+            {
+                child.Remove();
+            }
             Scene.SceneNodes.Remove(this);
             Scene = null;
         }

@@ -1,0 +1,435 @@
+﻿<Game xmlns:d1p1="http://schemas.datacontract.org/2004/07/EditorLogic" xmlns:i="http://www.w3.org/2001/XMLSchema-instance" z:Id="1" xmlns:z="http://schemas.microsoft.com/2003/10/Serialization/" xmlns="Game">
+  <d1p1:ActiveCamera z:Id="2">
+    <d1p1:EnterPortal xmlns:d3p1="http://schemas.datacontract.org/2004/07/System" i:nil="true" />
+    <d1p1:IsPortalable>true</d1p1:IsPortalable>
+    <d1p1:KeyMoveSpeed>0.013</d1p1:KeyMoveSpeed>
+    <d1p1:Path xmlns:d3p1="http://schemas.datacontract.org/2004/07/Game.Portals" z:Id="3">
+      <d3p1:Portals xmlns:d4p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="4" z:Size="0" />
+    </d1p1:Path>
+    <d1p1:Scene z:Ref="1" i:nil="true" />
+    <d1p1:Transform xmlns:d3p1="http://schemas.datacontract.org/2004/07/Game" z:Id="5">
+      <d3p1:MirrorX>false</d3p1:MirrorX>
+      <d3p1:_position xmlns:d4p1="http://schemas.datacontract.org/2004/07/OpenTK">
+        <d4p1:X>0.03390981</d4p1:X>
+        <d4p1:Y>-3.575562</d4p1:Y>
+      </d3p1:_position>
+      <d3p1:_rotation>0</d3p1:_rotation>
+      <d3p1:_size>9.999999</d3p1:_size>
+    </d1p1:Transform>
+    <d1p1:ZoomMax>1000</d1p1:ZoomMax>
+    <d1p1:ZoomMin>0.5</d1p1:ZoomMin>
+    <d1p1:_worldTransformPrevious xmlns:d3p1="http://schemas.datacontract.org/2004/07/Game" z:Id="6">
+      <d3p1:MirrorX>false</d3p1:MirrorX>
+      <d3p1:_position xmlns:d4p1="http://schemas.datacontract.org/2004/07/OpenTK">
+        <d4p1:X>0.03390981</d4p1:X>
+        <d4p1:Y>-3.575562</d4p1:Y>
+      </d3p1:_position>
+      <d3p1:_rotation>0</d3p1:_rotation>
+      <d3p1:_size>9.999999</d3p1:_size>
+    </d1p1:_worldTransformPrevious>
+    <d1p1:_worldVelocityPrevious xmlns:d3p1="http://schemas.datacontract.org/2004/07/Game" z:Id="7">
+      <d3p1:MirrorX>false</d3p1:MirrorX>
+      <d3p1:_position xmlns:d4p1="http://schemas.datacontract.org/2004/07/OpenTK">
+        <d4p1:X>0</d4p1:X>
+        <d4p1:Y>0</d4p1:Y>
+      </d3p1:_position>
+      <d3p1:_rotation>0</d3p1:_rotation>
+      <d3p1:_size>0</d3p1:_size>
+    </d1p1:_worldVelocityPrevious>
+    <d1p1:_zoomFactor>1.5</d1p1:_zoomFactor>
+    <d1p1:_zoomScrollFactor>1.2</d1p1:_zoomScrollFactor>
+    <d1p1:lazyPan xmlns:d3p1="http://schemas.datacontract.org/2004/07/System.Collections.Generic" z:Id="8">
+      <d3p1:_array xmlns:d4p1="http://schemas.datacontract.org/2004/07/OpenTK" z:Id="9" z:Size="4">
+        <d4p1:Vector2>
+          <d4p1:X>0</d4p1:X>
+          <d4p1:Y>0</d4p1:Y>
+        </d4p1:Vector2>
+        <d4p1:Vector2>
+          <d4p1:X>0</d4p1:X>
+          <d4p1:Y>0</d4p1:Y>
+        </d4p1:Vector2>
+        <d4p1:Vector2>
+          <d4p1:X>0</d4p1:X>
+          <d4p1:Y>0</d4p1:Y>
+        </d4p1:Vector2>
+        <d4p1:Vector2>
+          <d4p1:X>0</d4p1:X>
+          <d4p1:Y>0</d4p1:Y>
+        </d4p1:Vector2>
+      </d3p1:_array>
+      <d3p1:_head>3</d3p1:_head>
+      <d3p1:_size>3</d3p1:_size>
+      <d3p1:_tail>2</d3p1:_tail>
+      <d3p1:_version>4698</d3p1:_version>
+    </d1p1:lazyPan>
+  </d1p1:ActiveCamera>
+  <d1p1:Doodads z:Id="10" z:Size="2">
+    <d1p1:Doodad z:Id="11">
+      <d1p1:IsPortalable>false</d1p1:IsPortalable>
+      <d1p1:Models xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game" z:Id="12" z:Size="1">
+        <d4p1:Model z:Id="13">
+          <d4p1:Color xmlns:d6p1="http://schemas.datacontract.org/2004/07/OpenTK">
+            <d6p1:W>1</d6p1:W>
+            <d6p1:X>1</d6p1:X>
+            <d6p1:Y>1</d6p1:Y>
+            <d6p1:Z>0.5</d6p1:Z>
+          </d4p1:Color>
+          <d4p1:IsTransparent>false</d4p1:IsTransparent>
+          <d4p1:Mesh z:Id="14" i:type="d4p1:Mesh">
+            <d4p1:Indices xmlns:d7p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="15" z:Size="6">
+              <d7p1:int>0</d7p1:int>
+              <d7p1:int>2</d7p1:int>
+              <d7p1:int>1</d7p1:int>
+              <d7p1:int>0</d7p1:int>
+              <d7p1:int>3</d7p1:int>
+              <d7p1:int>2</d7p1:int>
+            </d4p1:Indices>
+            <d4p1:Vertices z:Id="16" z:Size="4">
+              <d4p1:Vertex z:Id="17">
+                <d4p1:Color xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0</d9p1:X>
+                  <d9p1:Y>0</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Color>
+                <d4p1:Normal xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0</d9p1:X>
+                  <d9p1:Y>0</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Normal>
+                <d4p1:Position xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>-0.5</d9p1:X>
+                  <d9p1:Y>0.5</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Position>
+                <d4p1:TextureCoord xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0</d9p1:X>
+                  <d9p1:Y>0</d9p1:Y>
+                </d4p1:TextureCoord>
+              </d4p1:Vertex>
+              <d4p1:Vertex z:Id="18">
+                <d4p1:Color xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0</d9p1:X>
+                  <d9p1:Y>0</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Color>
+                <d4p1:Normal xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0</d9p1:X>
+                  <d9p1:Y>0</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Normal>
+                <d4p1:Position xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0.5</d9p1:X>
+                  <d9p1:Y>0.5</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Position>
+                <d4p1:TextureCoord xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>1</d9p1:X>
+                  <d9p1:Y>0</d9p1:Y>
+                </d4p1:TextureCoord>
+              </d4p1:Vertex>
+              <d4p1:Vertex z:Id="19">
+                <d4p1:Color xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0</d9p1:X>
+                  <d9p1:Y>0</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Color>
+                <d4p1:Normal xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0</d9p1:X>
+                  <d9p1:Y>0</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Normal>
+                <d4p1:Position xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0.5</d9p1:X>
+                  <d9p1:Y>-0.5</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Position>
+                <d4p1:TextureCoord xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>1</d9p1:X>
+                  <d9p1:Y>1</d9p1:Y>
+                </d4p1:TextureCoord>
+              </d4p1:Vertex>
+              <d4p1:Vertex z:Id="20">
+                <d4p1:Color xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0</d9p1:X>
+                  <d9p1:Y>0</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Color>
+                <d4p1:Normal xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0</d9p1:X>
+                  <d9p1:Y>0</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Normal>
+                <d4p1:Position xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>-0.5</d9p1:X>
+                  <d9p1:Y>-0.5</d9p1:Y>
+                  <d9p1:Z>0</d9p1:Z>
+                </d4p1:Position>
+                <d4p1:TextureCoord xmlns:d9p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                  <d9p1:X>0</d9p1:X>
+                  <d9p1:Y>1</d9p1:Y>
+                </d4p1:TextureCoord>
+              </d4p1:Vertex>
+            </d4p1:Vertices>
+          </d4p1:Mesh>
+          <d4p1:Texture z:Id="21" i:type="d4p1:TextureFile">
+            <d4p1:Filename z:Id="22">assets\textures\grid.png</d4p1:Filename>
+          </d4p1:Texture>
+          <d4p1:Transform z:Id="23">
+            <d4p1:Position xmlns:d7p1="http://schemas.datacontract.org/2004/07/OpenTK">
+              <d7p1:X>0</d7p1:X>
+              <d7p1:Y>0</d7p1:Y>
+              <d7p1:Z>-5</d7p1:Z>
+            </d4p1:Position>
+            <d4p1:Rotation xmlns:d7p1="http://schemas.datacontract.org/2004/07/OpenTK">
+              <d7p1:w>0</d7p1:w>
+              <d7p1:xyz>
+                <d7p1:X>0</d7p1:X>
+                <d7p1:Y>0</d7p1:Y>
+                <d7p1:Z>1</d7p1:Z>
+              </d7p1:xyz>
+            </d4p1:Rotation>
+            <d4p1:Scale xmlns:d7p1="http://schemas.datacontract.org/2004/07/OpenTK">
+              <d7p1:X>50</d7p1:X>
+              <d7p1:Y>50</d7p1:Y>
+              <d7p1:Z>50</d7p1:Z>
+            </d4p1:Scale>
+          </d4p1:Transform>
+          <d4p1:TransformUv z:Id="24">
+            <d4p1:MirrorX>false</d4p1:MirrorX>
+            <d4p1:_position xmlns:d7p1="http://schemas.datacontract.org/2004/07/OpenTK">
+              <d7p1:X>0</d7p1:X>
+              <d7p1:Y>0</d7p1:Y>
+            </d4p1:_position>
+            <d4p1:_rotation>0</d4p1:_rotation>
+            <d4p1:_size>50</d4p1:_size>
+          </d4p1:TransformUv>
+          <d4p1:Wireframe>false</d4p1:Wireframe>
+        </d4p1:Model>
+      </d1p1:Models>
+      <d1p1:Visible>true</d1p1:Visible>
+    </d1p1:Doodad>
+    <d1p1:Doodad z:Id="25">
+      <d1p1:IsPortalable>false</d1p1:IsPortalable>
+      <d1p1:Models xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game" z:Id="26" z:Size="0" />
+      <d1p1:Visible>true</d1p1:Visible>
+    </d1p1:Doodad>
+  </d1p1:Doodads>
+  <d1p1:Time>0</d1p1:Time>
+  <d1p1:_children z:Id="27" z:Size="3">
+    <d1p1:EditorObject z:Id="28" i:type="d1p1:EditorWall">
+      <d1p1:AnimatedTransform xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game.Animation" i:nil="true" />
+      <d1p1:DrawOverPortals>false</d1p1:DrawOverPortals>
+      <d1p1:EnterPortal xmlns:d4p1="http://schemas.datacontract.org/2004/07/System" i:nil="true" />
+      <d1p1:IsPortalable>true</d1p1:IsPortalable>
+      <d1p1:IsSelected>false</d1p1:IsSelected>
+      <d1p1:Name z:Id="29"></d1p1:Name>
+      <d1p1:Parent i:nil="true" />
+      <d1p1:Path xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game.Portals" z:Id="30">
+        <d4p1:Portals xmlns:d5p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="31" z:Size="0" />
+      </d1p1:Path>
+      <d1p1:PolygonTransform i:nil="true" />
+      <d1p1:Transform xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game" z:Id="32">
+        <d4p1:MirrorX>false</d4p1:MirrorX>
+        <d4p1:_position xmlns:d5p1="http://schemas.datacontract.org/2004/07/OpenTK">
+          <d5p1:X>-0.979415655</d5p1:X>
+          <d5p1:Y>1.73776245</d5p1:Y>
+        </d4p1:_position>
+        <d4p1:_rotation>-0.264747173</d4p1:_rotation>
+        <d4p1:_size>1</d4p1:_size>
+      </d1p1:Transform>
+      <d1p1:Visible>true</d1p1:Visible>
+      <d1p1:_children z:Id="33" z:Size="1">
+        <d1p1:EditorObject z:Id="34" i:type="d1p1:EditorPortal">
+          <d1p1:AnimatedTransform xmlns:d6p1="http://schemas.datacontract.org/2004/07/Game.Animation" i:nil="true" />
+          <d1p1:DrawOverPortals>false</d1p1:DrawOverPortals>
+          <d1p1:EnterPortal xmlns:d6p1="http://schemas.datacontract.org/2004/07/System" i:nil="true" />
+          <d1p1:IsPortalable>false</d1p1:IsPortalable>
+          <d1p1:IsSelected>false</d1p1:IsSelected>
+          <d1p1:Name z:Ref="29" i:nil="true" />
+          <d1p1:Parent z:Ref="28" i:nil="true" />
+          <d1p1:Path xmlns:d6p1="http://schemas.datacontract.org/2004/07/Game.Portals" z:Id="35">
+            <d6p1:Portals xmlns:d7p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="36" z:Size="0" />
+          </d1p1:Path>
+          <d1p1:PolygonTransform z:Id="37" xmlns:d6p1="http://schemas.datacontract.org/2004/07/Game" i:type="d6p1:WallCoord">
+            <d6p1:EdgeIndex>2</d6p1:EdgeIndex>
+            <d6p1:EdgeT>0.09523636</d6p1:EdgeT>
+            <d6p1:Wall z:Ref="28" i:nil="true" />
+          </d1p1:PolygonTransform>
+          <d1p1:Transform xmlns:d6p1="http://schemas.datacontract.org/2004/07/Game" z:Id="38">
+            <d6p1:MirrorX>true</d6p1:MirrorX>
+            <d6p1:_position xmlns:d7p1="http://schemas.datacontract.org/2004/07/OpenTK">
+              <d7p1:X>0</d7p1:X>
+              <d7p1:Y>0</d7p1:Y>
+            </d6p1:_position>
+            <d6p1:_rotation>0</d6p1:_rotation>
+            <d6p1:_size>1</d6p1:_size>
+          </d1p1:Transform>
+          <d1p1:Visible>true</d1p1:Visible>
+          <d1p1:_children z:Id="39" z:Size="0" />
+          <d1p1:_scene i:nil="true" />
+          <d1p1:_worldTransformPrevious xmlns:d6p1="http://schemas.datacontract.org/2004/07/Game" z:Id="40">
+            <d6p1:MirrorX>true</d6p1:MirrorX>
+            <d6p1:_position xmlns:d7p1="http://schemas.datacontract.org/2004/07/OpenTK">
+              <d7p1:X>-0.477716982</d7p1:X>
+              <d7p1:Y>-1.06372547</d7p1:Y>
+            </d6p1:_position>
+            <d6p1:_rotation>-0.5371696</d6p1:_rotation>
+            <d6p1:_size>1</d6p1:_size>
+          </d1p1:_worldTransformPrevious>
+          <d1p1:_worldVelocityPrevious xmlns:d6p1="http://schemas.datacontract.org/2004/07/Game" z:Id="41">
+            <d6p1:MirrorX>false</d6p1:MirrorX>
+            <d6p1:_position xmlns:d7p1="http://schemas.datacontract.org/2004/07/OpenTK">
+              <d7p1:X>0.5016987</d7p1:X>
+              <d7p1:Y>-2.801488</d7p1:Y>
+            </d6p1:_position>
+            <d6p1:_rotation>0</d6p1:_rotation>
+            <d6p1:_size>2</d6p1:_size>
+          </d1p1:_worldVelocityPrevious>
+          <d1p1:Linked z:Id="42" i:type="d1p1:EditorPortal">
+            <d1p1:AnimatedTransform xmlns:d7p1="http://schemas.datacontract.org/2004/07/Game.Animation" i:nil="true" />
+            <d1p1:DrawOverPortals>false</d1p1:DrawOverPortals>
+            <d1p1:EnterPortal xmlns:d7p1="http://schemas.datacontract.org/2004/07/System" i:nil="true" />
+            <d1p1:IsPortalable>false</d1p1:IsPortalable>
+            <d1p1:IsSelected>false</d1p1:IsSelected>
+            <d1p1:Name z:Ref="29" i:nil="true" />
+            <d1p1:Parent i:nil="true" />
+            <d1p1:Path xmlns:d7p1="http://schemas.datacontract.org/2004/07/Game.Portals" z:Id="43">
+              <d7p1:Portals xmlns:d8p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="44" z:Size="0" />
+            </d1p1:Path>
+            <d1p1:PolygonTransform i:nil="true" />
+            <d1p1:Transform xmlns:d7p1="http://schemas.datacontract.org/2004/07/Game" z:Id="45">
+              <d7p1:MirrorX>true</d7p1:MirrorX>
+              <d7p1:_position xmlns:d8p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                <d8p1:X>7.73738337</d8p1:X>
+                <d8p1:Y>2.65034962</d8p1:Y>
+              </d7p1:_position>
+              <d7p1:_rotation>0</d7p1:_rotation>
+              <d7p1:_size>1</d7p1:_size>
+            </d1p1:Transform>
+            <d1p1:Visible>true</d1p1:Visible>
+            <d1p1:_children z:Id="46" z:Size="0" />
+            <d1p1:_scene z:Ref="1" i:nil="true" />
+            <d1p1:_worldTransformPrevious xmlns:d7p1="http://schemas.datacontract.org/2004/07/Game" z:Id="47">
+              <d7p1:MirrorX>true</d7p1:MirrorX>
+              <d7p1:_position xmlns:d8p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                <d8p1:X>7.73738337</d8p1:X>
+                <d8p1:Y>2.65034962</d8p1:Y>
+              </d7p1:_position>
+              <d7p1:_rotation>0</d7p1:_rotation>
+              <d7p1:_size>1</d7p1:_size>
+            </d1p1:_worldTransformPrevious>
+            <d1p1:_worldVelocityPrevious xmlns:d7p1="http://schemas.datacontract.org/2004/07/Game" z:Id="48">
+              <d7p1:MirrorX>false</d7p1:MirrorX>
+              <d7p1:_position xmlns:d8p1="http://schemas.datacontract.org/2004/07/OpenTK">
+                <d8p1:X>0</d8p1:X>
+                <d8p1:Y>0</d8p1:Y>
+              </d7p1:_position>
+              <d7p1:_rotation>0</d7p1:_rotation>
+              <d7p1:_size>1</d7p1:_size>
+            </d1p1:_worldVelocityPrevious>
+            <d1p1:Linked z:Ref="34" i:nil="true" />
+          </d1p1:Linked>
+        </d1p1:EditorObject>
+      </d1p1:_children>
+      <d1p1:_scene z:Ref="1" i:nil="true" />
+      <d1p1:_worldTransformPrevious xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game" z:Id="49">
+        <d4p1:MirrorX>false</d4p1:MirrorX>
+        <d4p1:_position xmlns:d5p1="http://schemas.datacontract.org/2004/07/OpenTK">
+          <d5p1:X>-0.979415655</d5p1:X>
+          <d5p1:Y>1.73776245</d5p1:Y>
+        </d4p1:_position>
+        <d4p1:_rotation>-0.264747173</d4p1:_rotation>
+        <d4p1:_size>1</d4p1:_size>
+      </d1p1:_worldTransformPrevious>
+      <d1p1:_worldVelocityPrevious xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game" z:Id="50">
+        <d4p1:MirrorX>false</d4p1:MirrorX>
+        <d4p1:_position xmlns:d5p1="http://schemas.datacontract.org/2004/07/OpenTK">
+          <d5p1:X>0</d5p1:X>
+          <d5p1:Y>0</d5p1:Y>
+        </d4p1:_position>
+        <d4p1:_rotation>0</d4p1:_rotation>
+        <d4p1:_size>1</d4p1:_size>
+      </d1p1:_worldVelocityPrevious>
+      <d1p1:Vertices xmlns:d4p1="http://schemas.datacontract.org/2004/07/OpenTK" z:Id="51" z:Size="4">
+        <d4p1:Vector2>
+          <d4p1:X>-0.5386784</d4p1:X>
+          <d4p1:Y>3.08741236</d4p1:Y>
+        </d4p1:Vector2>
+        <d4p1:Vector2>
+          <d4p1:X>-3.08515859</d4p1:X>
+          <d4p1:Y>-2.19930077</d4p1:Y>
+        </d4p1:Vector2>
+        <d4p1:Vector2>
+          <d4p1:X>1.07735693</d4p1:X>
+          <d4p1:Y>-3.07342649</d4p1:Y>
+        </d4p1:Vector2>
+        <d4p1:Vector2>
+          <d4p1:X>2.54648018</d4p1:X>
+          <d4p1:Y>2.18531466</d4p1:Y>
+        </d4p1:Vector2>
+      </d1p1:Vertices>
+    </d1p1:EditorObject>
+    <d1p1:EditorObject z:Ref="42" i:nil="true" />
+    <d1p1:EditorObject z:Id="52" i:type="d1p1:EditorActor">
+      <d1p1:AnimatedTransform xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game.Animation" i:nil="true" />
+      <d1p1:DrawOverPortals>false</d1p1:DrawOverPortals>
+      <d1p1:EnterPortal xmlns:d4p1="http://schemas.datacontract.org/2004/07/System" i:nil="true" />
+      <d1p1:IsPortalable>true</d1p1:IsPortalable>
+      <d1p1:IsSelected>true</d1p1:IsSelected>
+      <d1p1:Name z:Ref="29" i:nil="true" />
+      <d1p1:Parent i:nil="true" />
+      <d1p1:Path xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game.Portals" z:Id="53">
+        <d4p1:Portals xmlns:d5p1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" z:Id="54" z:Size="0" />
+      </d1p1:Path>
+      <d1p1:PolygonTransform i:nil="true" />
+      <d1p1:Transform xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game" z:Id="55">
+        <d4p1:MirrorX>false</d4p1:MirrorX>
+        <d4p1:_position xmlns:d5p1="http://schemas.datacontract.org/2004/07/OpenTK">
+          <d5p1:X>-0.403327018</d5p1:X>
+          <d5p1:Y>-1.14837456</d5p1:Y>
+        </d4p1:_position>
+        <d4p1:_rotation>0</d4p1:_rotation>
+        <d4p1:_size>1</d4p1:_size>
+      </d1p1:Transform>
+      <d1p1:Visible>true</d1p1:Visible>
+      <d1p1:_children z:Id="56" z:Size="0" />
+      <d1p1:_scene z:Ref="1" i:nil="true" />
+      <d1p1:_worldTransformPrevious xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game" z:Id="57">
+        <d4p1:MirrorX>false</d4p1:MirrorX>
+        <d4p1:_position xmlns:d5p1="http://schemas.datacontract.org/2004/07/OpenTK">
+          <d5p1:X>-0.403327018</d5p1:X>
+          <d5p1:Y>-1.14837456</d5p1:Y>
+        </d4p1:_position>
+        <d4p1:_rotation>0</d4p1:_rotation>
+        <d4p1:_size>1</d4p1:_size>
+      </d1p1:_worldTransformPrevious>
+      <d1p1:_worldVelocityPrevious xmlns:d4p1="http://schemas.datacontract.org/2004/07/Game" z:Id="58">
+        <d4p1:MirrorX>false</d4p1:MirrorX>
+        <d4p1:_position xmlns:d5p1="http://schemas.datacontract.org/2004/07/OpenTK">
+          <d5p1:X>0</d5p1:X>
+          <d5p1:Y>0</d5p1:Y>
+        </d4p1:_position>
+        <d4p1:_rotation>0</d4p1:_rotation>
+        <d4p1:_size>1</d4p1:_size>
+      </d1p1:_worldVelocityPrevious>
+      <d1p1:Vertices xmlns:d4p1="http://schemas.datacontract.org/2004/07/OpenTK" z:Id="59" z:Size="4">
+        <d4p1:Vector2>
+          <d4p1:X>2</d4p1:X>
+          <d4p1:Y>0.25</d4p1:Y>
+        </d4p1:Vector2>
+        <d4p1:Vector2>
+          <d4p1:X>-2</d4p1:X>
+          <d4p1:Y>0.25</d4p1:Y>
+        </d4p1:Vector2>
+        <d4p1:Vector2>
+          <d4p1:X>-2</d4p1:X>
+          <d4p1:Y>-0.25</d4p1:Y>
+        </d4p1:Vector2>
+        <d4p1:Vector2>
+          <d4p1:X>2</d4p1:X>
+          <d4p1:Y>-0.25</d4p1:Y>
+        </d4p1:Vector2>
+      </d1p1:Vertices>
+    </d1p1:EditorObject>
+  </d1p1:_children>
+</Game>

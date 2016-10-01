@@ -40,13 +40,14 @@ namespace Game
                 foreach (Fixture f in fixtures)
                 {
                     FixtureExt.GetUserData(f).ProcessChanges();
-                    FixtureExt.GetUserData(f).PortalCollisions.Clear();
+                    //FixtureExt.GetUserData(f).PortalCollisions.Clear();
+                    FixtureExt.GetUserData(f).PortalCollisionsClear();
                 }
                 BodyExt.GetUserData(body).PreviousPosition = body.Position;
             }
             foreach (IPortal portal in Scene.GetPortalList())
             {
-                if (portal.WorldTransform != null)
+                if (Portal.IsValid(portal))
                 {
                     Xna.Vector2[] verts = Vector2Ext.ConvertToXna(Portal.GetWorldVerts(portal));
                     Scene.World.RayCast(
@@ -56,15 +57,17 @@ namespace Game
                             if (fixturePortal != null)
                             {
                                 //Ignore any fixtures that are attached to the same body as the portal fixture.
-                                if (fixture.Body != FixtureExt.GetFixturePortalParent(fixturePortal).Body)
+                                if (fixture.Body != FixtureExt.GetFixtureAttached(fixturePortal).Body)
                                 {
-                                    FixtureExt.GetUserData(fixture).PortalCollisions.Add(portal);
+                                    //FixtureExt.GetUserData(fixture).PortalCollisions.Add(portal);
+                                    FixtureExt.GetUserData(fixture).PortalCollisionAdd(portal);
                                 }
                             }
                             else
                             {
                                 //Other portal types don't have fixtures so there is no need to check.
-                                FixtureExt.GetUserData(fixture).PortalCollisions.Add(portal);
+                                //FixtureExt.GetUserData(fixture).PortalCollisions.Add(portal);
+                                FixtureExt.GetUserData(fixture).PortalCollisionAdd(portal);
                             }
                             return -1;
                         },
@@ -150,12 +153,19 @@ namespace Game
 
         private void PreSolveListener(Contact contact, ref Manifold oldManifold)
         {
+            
+            if (FixtureExt.GetUserData(contact.FixtureA).IsPortalParentless() && FixtureExt.GetUserData(contact.FixtureB).IsPortalParentless())
+            {
+                /*contact.Enabled = false;
+                return;*/
+            }
             if (contact.IsTouching)
             {
                 Debug.Assert(contact.Manifold.PointCount > 0);
                 if (!IsContactValid(contact))
                 {
                     contact.Enabled = false;
+                    return;
                 }
                 #region Debug
                 if (DebugMode)
@@ -216,6 +226,10 @@ namespace Game
                             model.SetColor(new Vector3(0.5f, 0.5f, 0));
                             arrow.SetColor(new Vector3(0.5f, 0.5f, 0));
                         }
+                        if (userData[0].IsPortalParentless() && userData[1].IsPortalParentless())
+                        {
+                            arrow.SetColor(new Vector3(0.7f, 0.5f, 0.2f));
+                        }
                         model.Transform.Position = pos;
 
                         if (!userData[i].IsPortalParentless())
@@ -247,8 +261,22 @@ namespace Game
             Xna.Vector2 normal;
             FixedArray2<Xna.Vector2> vList;
             contact.GetWorldManifold(out normal, out vList);
-            
-            
+
+            //Contact is invalid if it is between two fixtures where one fixture is colliding with a portal on the other fixture.
+            if (userData[0].IsPortalParentless() && userData[1].IsPortalParentless())
+            {
+                for (int i = 0; i < userData.Length; i++)
+                {
+                    int iNext = (i + 1) % userData.Length;
+                    var intersection = userData[iNext].GetPortalChildren().Intersect(userData[i].PortalCollisions);
+                    if (intersection.Count() > 0)
+                    {
+                        Debug.Fail("Fixtures with portal collisions should be filtered.");
+                        return false;
+                    }
+                }
+            }
+
             //Contact is invalid if it is too close to a portal.
             foreach (IPortal p in Scene.GetPortalList())
             {
@@ -271,9 +299,8 @@ namespace Game
                         MathExt.PointLineDistance(vList[1], line, true)
                     };
                     //Only consider contacts that are between the fixture this portal is parented too and some other fixture.
-                    if (contact.FixtureA == FixtureExt.GetFixturePortalParent(portal) || contact.FixtureB == FixtureExt.GetFixturePortalParent(portal))
+                    if (contact.FixtureA == FixtureExt.GetFixtureAttached(portal) || contact.FixtureB == FixtureExt.GetFixtureAttached(portal))
                     {
-                        //Debug.Assert(!(contact.FixtureA == portal.FixtureParent && contact.FixtureB == portal.FixtureParent));
                         if (contact.Manifold.PointCount == 1)
                         {
                             if (vDist[0] < FixturePortal.CollisionMargin)
@@ -282,7 +309,6 @@ namespace Game
                             }
                         }
                         else if (vDist[0] < FixturePortal.CollisionMargin || vDist[1] < FixturePortal.CollisionMargin)
-                        //else if ((vDist[0] + vDist[1])/2 < FixturePortal.CollisionMargin)
                         {
                             return false;
                         }
@@ -290,7 +316,7 @@ namespace Game
                 }
             }
 
-            
+            //Contact is invalid if it is on the opposite side of a colliding portal.
             for (int i = 0; i < userData.Length; i++)
             {
                 int iNext = (i + 1) % userData.Length;
@@ -325,8 +351,8 @@ namespace Game
                             return false;
                         }
                     }
-                    //else if (sideOf || line.GetSideOf(vList[1]) != line.GetSideOf(pos))
-                    else if (line.GetSideOf((vList[0] + vList[1])/2) != line.GetSideOf(pos))
+                    else if (sideOf || line.GetSideOf(vList[1]) != line.GetSideOf(pos))
+                    //else if (line.GetSideOf((vList[0] + vList[1])/2) != line.GetSideOf(pos))
                     {
                         return false;
                     }

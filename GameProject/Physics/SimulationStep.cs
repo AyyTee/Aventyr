@@ -52,11 +52,6 @@ namespace Game
 
         public static void Step(IEnumerable<IPortalCommon> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter)
         {
-            /*foreach (IPortalable p in moving)
-            {
-                Transform2 shift = p.GetVelocity().Multiply((float)stepSize);
-                p.SetTransform(p.GetTransform().Add(shift));
-            }*/
             Step(moving, portals, stepSize, portalEnter, new List<PortalableSweep>());
         }
 
@@ -172,13 +167,7 @@ namespace Game
                                 {
                                     earliest.Clear();
                                 }
-                                //Prevent rounding portalable instance for immediately entering the portal it exited.
-                                /*if (previous?.Portal.Portal.Linked == portal.Portal && 
-                                    previous?.Portalable.Instance == move.Instance && 
-                                    time < repeatIntersectionEpsilon)
-                                {
-                                    continue;
-                                }*/
+                                //Prevent precision errors from causing a portalable instance from immediately reentering a portal.
                                 if (time < repeatIntersectionEpsilon)
                                 {
                                     if (previous.Exists(item =>

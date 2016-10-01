@@ -41,7 +41,6 @@ namespace EditorLogic
 
         public delegate void UpdateHandler(ControllerEditor controller);
         public event UpdateHandler Update;
-        public delegate void EditorObjectHandler(ControllerEditor controller, EditorObject entity);
         public delegate void SceneEventHandler(ControllerEditor controller);
         public event SceneEventHandler ScenePauseEvent;
         public event SceneEventHandler ScenePlayEvent;

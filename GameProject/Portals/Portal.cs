@@ -50,17 +50,6 @@ namespace Game.Portals
             }
         }
 
-        /*public static void SetWorldTransform(IPortal portal)
-        {
-            portal.WorldTransformPrevious = (portal as SceneNode).GetWorldTransformPortal();
-            //portal.WorldTransformPrevious = portal.GetWorldTransform();
-        }
-
-        public static void SetWorldVelocity(IPortal portal)
-        {
-            portal.WorldVelocityPrevious = (portal as SceneNode).GetWorldVelocityPortal();
-        }*/
-
         public static Transform2 Enter(IPortal portal, Transform2 transform)
         {
             Debug.Assert(IsValid(portal));

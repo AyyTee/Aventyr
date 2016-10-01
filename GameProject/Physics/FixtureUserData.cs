@@ -13,6 +13,7 @@ namespace Game
     public class FixtureUserData
     {
         public readonly Fixture Fixture;
+
         /// <summary>
         /// All FixturePortals that this fixture is colliding with.
         /// </summary>
@@ -82,6 +83,40 @@ namespace Game
         public bool IsPortalParentless()
         {
             return PortalParents[0] == null && PortalParents[1] == null;
+        }
+
+        public List<FixturePortal> GetPortalChildren()
+        {
+            return Actor.Children.OfType<FixturePortal>().Where(
+                item => FixtureExt.GetFixtureAttached(item) == Fixture).ToList();
+        }
+
+        public void PortalCollisionsClear()
+        {
+            foreach (IPortal portal in PortalCollisions)
+            {
+                FixturePortal fixturePortal = portal as FixturePortal;
+                if (fixturePortal != null)
+                {
+                    Fixture other = FixtureExt.GetFixtureAttached(fixturePortal);
+                    other.RestoreCollisionWith(Fixture);
+                    Fixture.RestoreCollisionWith(other);
+                }
+            }
+            PortalCollisions.Clear();
+        }
+
+        public void PortalCollisionAdd(IPortal portal)
+        {
+            
+            FixturePortal fixturePortal = portal as FixturePortal;
+            if (fixturePortal != null)
+            {
+                Fixture other = FixtureExt.GetFixtureAttached(fixturePortal);
+                other.IgnoreCollisionWith(Fixture);
+                Fixture.IgnoreCollisionWith(other);
+            }
+            PortalCollisions.Add(portal);
         }
 
         /// <summary>
@@ -159,7 +194,7 @@ namespace Game
         {
             Vector2[] verts = new Vector2[3];
             
-            PolygonShape shape = (PolygonShape)FixtureExt.GetFixturePortalParent(portal).Shape;
+            PolygonShape shape = (PolygonShape)FixtureExt.GetFixtureAttached(portal).Shape;
             int i = 1;
             if (previousVertex)
             {
@@ -175,7 +210,7 @@ namespace Game
             verts[0] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext], t.GetMatrix());
             verts[1] = ActorExt.GetFixtureContour(Actor)[index];
             verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix());
-            verts = (Vector2[])MathExt.SetWinding(verts, false);
+            verts = MathExt.SetWinding(verts, false);
 
             return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
         }
@@ -185,8 +220,8 @@ namespace Game
         /// </summary>
         private List<FixturePortal> GetChildPortals()
         {
-            List<FixturePortal> portals = ((SceneNode)Actor).Children.OfType<FixturePortal>().ToList();
-            return portals.FindAll(item => FixtureExt.GetFixturePortalParent(item) == Fixture);
+            List<FixturePortal> portals = Actor.Children.OfType<FixturePortal>().ToList();
+            return portals.FindAll(item => FixtureExt.GetFixtureAttached(item) == Fixture);
         }
     }
 }

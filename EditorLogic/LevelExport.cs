@@ -23,7 +23,7 @@ namespace EditorLogic
 
             #region create background
             Model background = Game.ModelFactory.CreatePlane();
-            background.Texture = Renderer.Textures["grid.png"];
+            background.Texture = Renderer.GetTexture("grid.png");
             background.SetColor(new Vector3(1, 1, 0.5f));
             background.Transform.Position = new Vector3(0, 0, -5f);
             float size = 50;
@@ -36,7 +36,7 @@ namespace EditorLogic
             #endregion
 
             HashSet<IDeepClone> toClone = new HashSet<IDeepClone>();
-            
+
             Dictionary<EditorObject, SceneNode> dictionary = new Dictionary<EditorObject, SceneNode>();
             AnimationDriver animation = new AnimationDriver();
             scene.SceneObjectList.Add(animation);
@@ -80,7 +80,7 @@ namespace EditorLogic
                     Entity clone = new Entity(scene);
                     clone.Name = cast.Name;
                     clone.AddModelRange(cast.Models);
-                    
+
                     dictionary.Add(cast, clone);
 
                     if (cast.AnimatedTransform != null)
@@ -184,9 +184,14 @@ namespace EditorLogic
             /*List<SceneNode> cloned = dictionary.Values.Cast<SceneNode>().ToList();
 
             SceneNode.SetScene(cloned, scene);*/
-            ControllerCamera camera = level.ActiveCamera.ShallowClone();
-            camera.Scene = scene;
-            scene.SetActiveCamera(camera);
+            if (level.ActiveCamera != null)
+            {
+                ControllerCamera camera = level.ActiveCamera.ShallowClone();
+                camera.Scene = scene;
+                scene.SetActiveCamera(camera);
+            }
+            PortalCommon.UpdateWorldTransform(scene);
+
             return scene;
         }
     }
