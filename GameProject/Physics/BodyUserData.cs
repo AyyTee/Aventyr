@@ -11,23 +11,33 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
-    public class BodyUserData
+    public class BodyUserData : ITreeNode<BodyUserData>
     {
         public int BodyId;
-        [XmlIgnore]
         public readonly IActor Actor;
-        [XmlIgnore]
         public readonly Body Body;
         public Xna.Vector2 PreviousPosition { get; set; }
-        [XmlIgnore]
         public List<ChildBody> BodyChildren = new List<ChildBody>();
-        [XmlIgnore]
-        public ChildBody BodyParent = new ChildBody(null, null);
+        public ChildBody BodyParent { get; private set; } = new ChildBody(null, null);
+
+        public BodyUserData Parent {
+            get
+            {
+                return BodyParent.Body == null ? null : BodyExt.GetUserData(BodyParent.Body);
+            }
+        }
+        public List<BodyUserData> Children {
+            get
+            {
+                return BodyChildren.Select(
+                    item => item.Body == null ? null : BodyExt.GetUserData(item.Body)).ToList();
+            }
+        }
 
         public class ChildBody
         {
-            public Body Body;
-            public IPortal Portal;
+            public readonly Body Body;
+            public readonly IPortal Portal;
             public ChildBody(Body body, IPortal portal)
             {
                 Body = body;
@@ -50,28 +60,41 @@ namespace Game
         }
         #endregion
 
-        public void UpdatePortalCollisions(ref List<Body> bodiesToRemove)
+        public void UpdatePortalCollisions()
         {
             foreach (ChildBody child in BodyChildren)
             {
                 Debug.Assert(child.Body != Body);
-            }
-            /*HashSet<IPortal> collisionsNew = new HashSet<IPortal>();
-            foreach (Fixture fixture in Body.FixtureList)
-            {
-                FixtureUserData userData = FixtureExt.GetUserData(fixture);
-                collisionsNew.UnionWith(userData.PortalCollisions);
-            }
-            var collisionsRemoved = PortalCollisions.Except(collisionsNew).ToList();
-            var collisionsAdded = collisionsNew.Except(PortalCollisions).ToList();
-            //PortalCollisions = collisionsNew;
-
-            foreach (FixturePortal portal in collisionsAdded)
-            {
-                AddChildBody(portal);
+                child.Body.LinearVelocity = Body.LinearVelocity;
+                child.Body.AngularVelocity = Body.AngularVelocity;
+                child.Body.Position = Body.Position;
+                child.Body.Rotation = Body.Rotation;
+                Portal.Enter(child.Portal, child.Body);
             }
 
-            foreach (FixturePortal portal in collisionsRemoved)
+            foreach (IPortal portal in PortalCollisionsNew())
+            {
+                if (BodyParent.Portal?.Linked == portal)
+                {
+                    continue;
+                }
+
+                Body bodyClone = Body.DeepClone();
+                BodyUserData userData = BodyExt.SetUserData(bodyClone, Actor);
+                userData.BodyParent = new ChildBody(Body, portal);
+                foreach (Fixture f in bodyClone.FixtureList)
+                {
+                    FixtureExt.SetUserData(f);
+                }
+
+                Portal.Enter(portal, bodyClone);
+
+                BodyChildren.Add(new ChildBody(bodyClone, portal));
+
+                userData.UpdatePortalCollisions();
+            }
+
+            /*foreach (FixturePortal portal in PortalCollisionsRemoved())
             {
                 if (BodyParent != null && portal == BodyParent.Portal)
                 {
@@ -86,14 +109,36 @@ namespace Game
             }*/
         }
 
-        public HashSet<IPortal> GetPortalCollisions()
+        public HashSet<IPortal> PortalCollisions()
         {
             HashSet<IPortal> collisions = new HashSet<IPortal>();
             foreach (Fixture f in Body.FixtureList)
             {
                 collisions.UnionWith(FixtureExt.GetUserData(f).PortalCollisions);
             }
+            Debug.Assert(!collisions.Contains(null));
             return collisions;
+        }
+
+        private HashSet<IPortal> PortalCollisionsPrevious()
+        {
+            HashSet<IPortal> collisionsPrevious = new HashSet<IPortal>();
+            foreach (Fixture f in Body.FixtureList)
+            {
+                collisionsPrevious.UnionWith(FixtureExt.GetUserData(f).PortalCollisionsPrevious);
+            }
+            Debug.Assert(!collisionsPrevious.Contains(null));
+            return collisionsPrevious;
+        }
+
+        private HashSet<IPortal> PortalCollisionsNew()
+        {
+            return new HashSet<IPortal>(PortalCollisions().Except(PortalCollisionsPrevious()));
+        }
+
+        private HashSet<IPortal> PortalCollisionsRemoved()
+        {
+            return new HashSet<IPortal>(PortalCollisionsPrevious().Except(PortalCollisions()));
         }
 
         private void RemoveChildBody(ChildBody child, ref List<Body> bodiesToRemove)
@@ -106,28 +151,6 @@ namespace Game
                 userData.RemoveChildBody(subchild, ref bodiesToRemove);
             }
             bodiesToRemove.Add(child.Body);
-        }
-
-        private void AddChildBody(FixturePortal portal)
-        {
-            BodyUserData userData = BodyExt.GetUserData(Body);
-            if (userData.Actor == null)
-            {
-                return;
-            }
-            if (userData.BodyParent.Portal != portal)
-            {
-                Debug.Assert(!userData.BodyChildren.Exists(item => item.Portal == portal));
-                Body bodyClone = Body.DeepClone();
-                BodyUserData userDataClone = BodyExt.SetUserData(bodyClone, null);
-                userDataClone.BodyParent = new ChildBody(Body, portal.Linked);
-                Portal.Enter(portal, bodyClone);
-
-                ChildBody childBody = new ChildBody(bodyClone, portal);
-                userData.BodyChildren.Add(childBody);
-
-                Debug.Assert(childBody.Body != Body);
-            }
         }
     }
 }

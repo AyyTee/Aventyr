@@ -78,6 +78,19 @@ namespace Game
             return list;
         }
 
+        /// <summary>
+        /// Returns all nodes in a tree.
+        /// </summary>
+        public static List<T> GetAll(T node)
+        {
+            return GetDescendents(FindRoot(node), true);
+        }
+
+        public static T FindRoot(T node)
+        {
+            return node.Parent == null ? node : FindRoot(node.Parent);
+        }
+
         public static List<S> FindByType<S>(T root) where S : class, T
         {
             List<S> list = new List<S>();

@@ -17,23 +17,8 @@ namespace Game
         /// <summary>
         /// All FixturePortals that this fixture is colliding with.
         /// </summary>
-        public List<IPortal> PortalCollisions = new List<IPortal>();
-        /*public List<FixturePortal> PortalCollisions {
-            get
-            {
-                List<IPortal> portals = ((SceneNode)Entity).Scene.GetPortalList();
-                List<FixturePortal> collisions = new List<FixturePortal>();
-                foreach (FixturePortal p in portals.OfType<FixturePortal>())
-                {
-                    Line portalEdge = new Line(Portal.GetWorldVerts(p));
-                    if (MathExt.LinePolygonIntersect(portalEdge, Entity.GetWorldVertices()).Count == 0)
-                    {
-                        collisions.Add(p);
-                    }
-                }
-                return collisions;
-            }
-        }*/
+        public HashSet<IPortal> PortalCollisions = new HashSet<IPortal>();
+        public HashSet<IPortal> PortalCollisionsPrevious = new HashSet<IPortal>();
         private FixturePortal[] _portalParents = new FixturePortal[2];
         /// <summary>
         /// The portals this fixture is a collision edge for (a maximum of 2). 

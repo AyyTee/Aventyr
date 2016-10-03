@@ -39,8 +39,10 @@ namespace Game
                 fixtures.RemoveAll(item => !FixtureExt.GetUserData(item).IsPortalParentless());
                 foreach (Fixture f in fixtures)
                 {
-                    FixtureExt.GetUserData(f).ProcessChanges();
-                    FixtureExt.GetUserData(f).PortalCollisions.Clear();
+                    FixtureUserData userData = FixtureExt.GetUserData(f);
+                    userData.ProcessChanges();
+                    userData.PortalCollisionsPrevious = new HashSet<IPortal>(userData.PortalCollisions);
+                    userData.PortalCollisions.Clear();
                     //FixtureExt.GetUserData(f).PortalCollisionsClear();
                 }
                 BodyExt.GetUserData(body).PreviousPosition = body.Position;
@@ -75,7 +77,6 @@ namespace Game
                         verts[1]);
                 }
             }
-            //List<Body> bodiesToRemove = new List<Body>();
 
             foreach (Body b in Scene.World.BodyList)
             {
@@ -83,11 +84,10 @@ namespace Game
                 b.ApplyForce(new Xna.Vector2(0, -9.8f / 2) * b.Mass);
 
                 ActorExt.GetGravity(BodyExt.GetUserData(b).Actor, Scene.GetPortalList(), new Vector2(0, -9.8f / 2));
+
+                BodyExt.GetUserData(b).UpdatePortalCollisions();
             }
-            /*foreach (Body b in bodiesToRemove)
-            {
-                Scene.World.RemoveBody(b);
-            }*/
+            
 
             if (DebugEntity != null)
             {
