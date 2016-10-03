@@ -2,6 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
 using OpenTK;
+using FarseerPhysics.Collision.Shapes;
+using Game.Portals;
 
 namespace UnitTest
 {
@@ -94,6 +96,80 @@ namespace UnitTest
             FixtureCoord fixtureCoord = FixtureExt.GetFixtureEdgeCoord(actor, polyCoord);
 
             Assert.IsTrue(PolygonExt.GetTransform(vertices, polyCoord) == PolygonExt.GetTransform(fixtureCoord));
+        }
+
+        [TestMethod]
+        public void GetWorldPointsTest0()
+        {
+            Scene scene = new Scene();
+            Vector2[] vertices = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(2.2f, 0),
+                new Vector2(1, 1),
+                new Vector2(0, 1)
+            };
+            Actor actor = new Actor(scene, vertices);
+            PortalCommon.UpdateWorldTransform(scene);
+
+            Vector2[] fixtureVertices = Vector2Ext.ConvertTo(((PolygonShape)actor.Body.FixtureList[0].Shape).Vertices);
+            Assert.IsTrue(MathExt.IsIsomorphic<Vector2>(actor.GetWorldVertices(), fixtureVertices));
+        }
+
+        [TestMethod]
+        public void GetWorldPointsTest1()
+        {
+            Scene scene = new Scene();
+            Vector2[] vertices = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(2.2f, 0),
+                new Vector2(1, 1),
+                new Vector2(0, 1)
+            };
+            Actor actor = new Actor(scene, vertices);
+            actor.SetTransform(new Transform2(new Vector2(4, 5.5f)));
+            PortalCommon.UpdateWorldTransform(scene);
+            scene.World.ProcessChanges();
+
+            Vector2[] fixtureVertices = FixtureExt.GetWorldPoints(actor.Body.FixtureList[0]);
+            Assert.IsTrue(MathExt.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
+        }
+
+        [TestMethod]
+        public void GetWorldPointsTest2()
+        {
+            Scene scene = new Scene();
+            Vector2[] vertices = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(2.2f, 0),
+                new Vector2(1, 1),
+                new Vector2(0, 1)
+            };
+            Actor actor = new Actor(scene, vertices);
+            actor.SetTransform(new Transform2(new Vector2(4.2f, -5.5f), 2.2f, -2f));
+            PortalCommon.UpdateWorldTransform(scene);
+            scene.World.ProcessChanges();
+
+            Vector2[] fixtureVertices = FixtureExt.GetWorldPoints(actor.Body.FixtureList[0]);
+            Assert.IsTrue(MathExt.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
+        }
+
+        [TestMethod]
+        public void GetWorldPointsTest3()
+        {
+            Scene scene = new Scene();
+            Vector2[] vertices = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(2.2f, 0),
+                new Vector2(1, 1),
+                new Vector2(0, 1)
+            };
+            Actor actor = new Actor(scene, vertices);
+            actor.SetTransform(new Transform2(new Vector2(4.2f, -5.5f), -2f, -2f, true));
+            PortalCommon.UpdateWorldTransform(scene);
+            scene.World.ProcessChanges();
+
+            Vector2[] fixtureVertices = FixtureExt.GetWorldPoints(actor.Body.FixtureList[0]);
+            Assert.IsTrue(MathExt.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices, (item0, item1) => (item0 - item1).Length < 0.001f));
         }
     }
 }

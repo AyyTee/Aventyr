@@ -40,8 +40,8 @@ namespace Game
                 foreach (Fixture f in fixtures)
                 {
                     FixtureExt.GetUserData(f).ProcessChanges();
-                    //FixtureExt.GetUserData(f).PortalCollisions.Clear();
-                    FixtureExt.GetUserData(f).PortalCollisionsClear();
+                    FixtureExt.GetUserData(f).PortalCollisions.Clear();
+                    //FixtureExt.GetUserData(f).PortalCollisionsClear();
                 }
                 BodyExt.GetUserData(body).PreviousPosition = body.Position;
             }
@@ -59,15 +59,15 @@ namespace Game
                                 //Ignore any fixtures that are attached to the same body as the portal fixture.
                                 if (fixture.Body != FixtureExt.GetFixtureAttached(fixturePortal).Body)
                                 {
-                                    //FixtureExt.GetUserData(fixture).PortalCollisions.Add(portal);
-                                    FixtureExt.GetUserData(fixture).PortalCollisionAdd(portal);
+                                    FixtureExt.GetUserData(fixture).PortalCollisions.Add(portal);
+                                    //FixtureExt.GetUserData(fixture).PortalCollisionAdd(portal);
                                 }
                             }
                             else
                             {
                                 //Other portal types don't have fixtures so there is no need to check.
-                                //FixtureExt.GetUserData(fixture).PortalCollisions.Add(portal);
-                                FixtureExt.GetUserData(fixture).PortalCollisionAdd(portal);
+                                FixtureExt.GetUserData(fixture).PortalCollisions.Add(portal);
+                                //FixtureExt.GetUserData(fixture).PortalCollisionAdd(portal);
                             }
                             return -1;
                         },
@@ -153,15 +153,30 @@ namespace Game
 
         private void PreSolveListener(Contact contact, ref Manifold oldManifold)
         {
-            
-            if (FixtureExt.GetUserData(contact.FixtureA).IsPortalParentless() && FixtureExt.GetUserData(contact.FixtureB).IsPortalParentless())
-            {
-                /*contact.Enabled = false;
-                return;*/
-            }
             if (contact.IsTouching)
             {
                 Debug.Assert(contact.Manifold.PointCount > 0);
+
+                /* Sometimes a body will tunnel through a portal fixture.  
+                 * The circumstances aren't well understood but checking if the contact normal 
+                 * is facing from fixtureB to fixtureA (it should always face from A to B 
+                 * according to the Box2D documentation) and then reversing the normal if it is  
+                 * helps prevent tunneling from occuring.*/
+                if (!FixtureExt.GetUserData(contact.FixtureA).IsPortalParentless() || !FixtureExt.GetUserData(contact.FixtureB).IsPortalParentless())
+                {
+                    Xna.Vector2 normal;
+                    FixedArray2<Xna.Vector2> vList;
+                    contact.GetWorldManifold(out normal, out vList);
+
+                    Vector2 center0 = FixtureExt.GetCenterWorld(contact.FixtureA);
+                    Vector2 center1 = FixtureExt.GetCenterWorld(contact.FixtureB);
+
+                    if (Math.Abs(MathExt.AngleDiff(center1 - center0, Vector2Ext.ConvertTo(normal))) > Math.PI / 2)
+                    {
+                        contact.Manifold.LocalNormal *= -1;
+                    }
+                }
+
                 if (!IsContactValid(contact))
                 {
                     contact.Enabled = false;
@@ -271,7 +286,7 @@ namespace Game
                     var intersection = userData[iNext].GetPortalChildren().Intersect(userData[i].PortalCollisions);
                     if (intersection.Count() > 0)
                     {
-                        Debug.Fail("Fixtures with portal collisions should be filtered.");
+                        //Debug.Fail("Fixtures with portal collisions should be filtered.");
                         return false;
                     }
                 }
@@ -332,13 +347,6 @@ namespace Game
                             continue;
                         }
                     }
-
-                    //Contact is invalid if it the world normal is pushing into the portal.
-                    /*double angleDiff = MathExt.AngleDiff(Vector2Ext.ConvertTo(normal), line.GetNormal());
-                    if (!(angleDiff < Math.PI / 4 && angleDiff > -Math.PI / 4))
-                    {
-                        return false;
-                    }*/
 
                     //Contact is invalid if it is on the opposite side of the portal from its body origin.
                     Xna.Vector2 pos = BodyExt.GetUserData(userData[i].Fixture.Body).PreviousPosition;

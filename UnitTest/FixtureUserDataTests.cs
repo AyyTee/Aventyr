@@ -238,7 +238,7 @@ namespace UnitTest
             Assert.IsTrue(verticeArray.Length == verticeExpected.Length);
             for (int i = 0; i < verticeArray.Length; i++)
             {
-                Assert.IsTrue(MathExt.IsIsomorphic(verticeArray[i], verticeExpected[i], (first, second) => (first - second).Length < 0.0001));
+                Assert.IsTrue(MathExt.IsIsomorphic(verticeArray[i], verticeExpected[i], (first, second) => (first - second).Length < 0.0001, true));
             }
         }
 

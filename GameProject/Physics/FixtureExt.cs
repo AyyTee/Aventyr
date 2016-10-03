@@ -51,7 +51,7 @@ namespace Game
             }
 
             List<Vector2> fixtureContour = ActorExt.GetFixtureContour(actor);
-            
+
             Line edge = PolygonExt.GetEdge(fixtureContour, coord);
             Debug.Assert(
                 edge[0] == fixtureContour[coord.EdgeIndex] &&
@@ -72,7 +72,7 @@ namespace Game
                         for (int i = 0; i < polygon.Vertices.Count; i++)
                         {
                             int iNext = (i + 1) % polygon.Vertices.Count;
-                            if ((edge[0] - Vector2Ext.ConvertTo(polygon.Vertices[i])).Length < ERROR_MARGIN && 
+                            if ((edge[0] - Vector2Ext.ConvertTo(polygon.Vertices[i])).Length < ERROR_MARGIN &&
                                 (edge[1] - Vector2Ext.ConvertTo(polygon.Vertices[iNext])).Length < ERROR_MARGIN)
                             {
                                 //float edgeT = PolygonExt.IsInterior(fixtureContour) ? coord.EdgeT : 1 - coord.EdgeT;
@@ -147,6 +147,36 @@ namespace Game
                 }
             }
             return collisions.ToArray();
+        }
+
+        public static Vector2[] GetWorldPoints(Fixture fixture)
+        {
+            PolygonShape shape = (PolygonShape)fixture.Shape;
+            Vector2[] v = new Vector2[shape.Vertices.Count];
+            for (int i = 0; i < v.Length; i++)
+            {
+                v[i] = Vector2Ext.ConvertTo(fixture.Body.GetWorldPoint(shape.Vertices[i]));
+            }
+            return v;
+        }
+
+        public static Vector2 GetCenterLocal(Fixture fixture)
+        {
+            PolygonShape shape = (PolygonShape)fixture.Shape;
+            var vertices = shape.Vertices;
+            return new Vector2(
+                vertices.Average(vert => vert.X), 
+                vertices.Average(vert => vert.Y));
+        }
+
+        public static Vector2 GetCenterWorld(Fixture fixture)
+        {
+            PolygonShape shape = (PolygonShape)fixture.Shape;
+            var vertices = shape.Vertices;
+            return Vector2Ext.ConvertTo(
+                fixture.Body.GetWorldPoint(new Xna.Vector2(
+                vertices.Average(vert => vert.X),
+                vertices.Average(vert => vert.Y))));
         }
     }
 }

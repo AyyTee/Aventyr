@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Game.Common
 {
-    interface IAlmostEqual<T> where T : IAlmostEqual<T>
+    public interface IAlmostEqual<T> where T : IAlmostEqual<T>
     {
         /// <summary>
         /// Check if this instance is within a delta of a comparison instance.

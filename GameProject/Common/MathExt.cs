@@ -1,4 +1,5 @@
 ﻿using ClipperLib;
+using Game.Common;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -928,7 +929,13 @@ namespace Game
             return true;
         }
 
-        public static bool IsIsomorphic<T>(IList<T> first, IList<T> second, Func<T, T, bool> equality)
+        /// <summary>
+        /// Check if two lists are isomorphic. In otherwords, they are equal if they contain the same 
+        /// elements in the same order but potentially with an index offset.
+        /// </summary>
+        /// <param name="equality">Method that tests the equality of elements in first and second.</param>
+        /// <param name="noReversing">First and second are not equal if they are in reverse order.</param>
+        public static bool IsIsomorphic<T>(IList<T> first, IList<T> second, Func<T, T, bool> equality, bool noReversing = false)
         {
             Debug.Assert(first != null);
             Debug.Assert(second != null);
@@ -947,7 +954,11 @@ namespace Game
                     offset++;
                     if (offset > first.Count)
                     {
-                        return false;
+                        if (noReversing)
+                        {
+                            return false;
+                        }
+                        return IsIsomorphic(first.Reverse().ToList(), second, equality, true);
                     }
                 }
             }
@@ -958,9 +969,10 @@ namespace Game
         /// Check if two lists are isomorphic. In otherwords, they are equal if they contain the same 
         /// elements in the same order but potentially with an index offset.
         /// </summary>
-        public static bool IsIsomorphic<T>(IList<T> first, IList<T> second)
+        /// <param name="noReversing">First and second are not equal if they are in reverse order.</param>
+        public static bool IsIsomorphic<T>(IList<T> first, IList<T> second, bool noReversing = false)
         {
-            return IsIsomorphic(first, second, (itemFirst, itemSecond) => itemFirst.Equals(itemSecond));
+            return IsIsomorphic(first, second, (itemFirst, itemSecond) => itemFirst.Equals(itemSecond), noReversing);
         }
     }
 }
