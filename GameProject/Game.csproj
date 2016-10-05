@@ -146,6 +146,7 @@
     <Compile Include="Physics\ActorExt.cs" />
     <Compile Include="Physics\BodyMemento.cs" />
     <Compile Include="Physics\BodyUserData.cs" />
+    <Compile Include="Physics\PortalJoint.cs" />
     <Compile Include="Physics\SimulationStep.cs" />
     <Compile Include="Portals\EnterCallbackData.cs" />
     <Compile Include="Portals\IPortalCommon.cs" />
@@ -183,7 +184,7 @@
     <Compile Include="EdgeData.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Rendering\Camera.cs" />
-    <Compile Include="Physics\ActorFactory.cs" />
+    <Compile Include="Physics\Factory.cs" />
     <Compile Include="Physics\FixtureExt.cs" />
     <Compile Include="Physics\FixtureUserData.cs" />
     <Compile Include="Portals\FloatPortal.cs" />

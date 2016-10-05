@@ -42,17 +42,33 @@ namespace FarseerPhysics.Dynamics
         public float inv_dt;
     }
 
+    /// <summary>
     /// This is an internal structure.
+    /// </summary>
     public struct Position
     {
+        /// <summary>
+        /// Center point.
+        /// </summary>
         public Vector2 c;
+        /// <summary>
+        /// Angle.
+        /// </summary>
         public float a;
     }
 
+    /// <summary>
     /// This is an internal structure.
+    /// </summary>
     public struct Velocity
     {
+        /// <summary>
+        /// Linear velocity.
+        /// </summary>
         public Vector2 v;
+        /// <summary>
+        /// Angular velocity.
+        /// </summary>
         public float w;
     }
 

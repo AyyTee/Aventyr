@@ -1,6 +1,7 @@
 ﻿using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
+using Game.Portals;
 using OpenTK;
 //using Poly2Tri.Triangulation.Polygon;
 using System;
@@ -11,9 +12,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Physics
 {
-    public static class ActorFactory
+    public static class Factory
     {
         public static Actor CreateEntityBox(Scene scene, Transform2 transform)
         {
@@ -146,6 +147,13 @@ namespace Game
                 Fixture fixture = body.CreateFixture(shape);
                 FixtureUserData userData = FixtureExt.SetUserData(fixture);
             }
+        }
+
+        public static PortalJoint CreatePortalJoint(World world, Body parentBody, Body childBody, IPortal enterPortal)
+        {
+            PortalJoint portalJoint = new PortalJoint(parentBody, childBody, enterPortal);
+            world.AddJoint(portalJoint);
+            return portalJoint;
         }
     }
 }

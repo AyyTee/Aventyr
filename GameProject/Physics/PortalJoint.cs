@@ -1,30 +1,15 @@
-/*
-* Farseer Physics Engine:
-* Copyright (c) 2012 Ian Qvist
-* 
-* Original source Box2D:
-* Copyright (c) 2006-2011 Erin Catto http://www.box2d.org 
-* 
-* This software is provided 'as-is', without any express or implied 
-* warranty.  In no event will the authors be held liable for any damages 
-* arising from the use of this software. 
-* Permission is granted to anyone to use this software for any purpose, 
-* including commercial applications, and to alter it and redistribute it 
-* freely, subject to the following restrictions: 
-* 1. The origin of this software must not be misrepresented; you must not 
-* claim that you wrote the original software. If you use this software 
-* in a product, an acknowledgment in the product documentation would be 
-* appreciated but is not required. 
-* 2. Altered source versions must be plainly marked as such, and must not be 
-* misrepresented as being the original software. 
-* 3. This notice may not be removed or altered from any source distribution. 
-*/
-
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using FarseerPhysics.Common;
 using Microsoft.Xna.Framework;
+using FarseerPhysics.Dynamics.Joints;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics;
+using Game.Portals;
 
-namespace FarseerPhysics.Dynamics.Joints
+namespace Game.Physics
 {
     // Point-to-point constraint
     // C = p2 - p1
@@ -48,8 +33,10 @@ namespace FarseerPhysics.Dynamics.Joints
     /// relative to each other, when a force is applied. To combine two bodies
     /// in a rigid fashion, combine the fixtures to a single body instead.
     /// </summary>
-    public class WeldJoint : Joint
+    public class PortalJoint : Joint
     {
+        public IPortal PortalEnter;
+         
         // Solver shared
         private Vector3 _impulse;
         private float _gamma;
@@ -68,37 +55,30 @@ namespace FarseerPhysics.Dynamics.Joints
         private float _invIB;
         private Mat33 _mass;
 
-        internal WeldJoint()
+        internal PortalJoint()
         {
-            JointType = JointType.Weld;
+            JointType = JointType.Portal;
         }
 
         /// <summary>
         /// You need to specify an anchor point where they are attached.
         /// The position of the anchor point is important for computing the reaction torque.
         /// </summary>
-        /// <param name="bodyA">The first body</param>
-        /// <param name="bodyB">The second body</param>
+        /// <param name="parentBody">The first body</param>
+        /// <param name="childBody">The second body</param>
         /// <param name="anchorA">The first body anchor.</param>
         /// <param name="anchorB">The second body anchor.</param>
         /// <param name="useWorldCoordinates">Set to true if you are using world coordinates as anchors.</param>
-        public WeldJoint(Body bodyA, Body bodyB, Vector2 anchorA, Vector2 anchorB, bool useWorldCoordinates = false)
-            : base(bodyA, bodyB)
+        public PortalJoint(Body parentBody, Body childBody, IPortal portalEnter)
+            : base(parentBody, childBody)
         {
-            JointType = JointType.Weld;
+            JointType = JointType.Portal;
 
-            if (useWorldCoordinates)
-            {
-                LocalAnchorA = bodyA.GetLocalPoint(anchorA);
-                LocalAnchorB = bodyB.GetLocalPoint(anchorB);
-            }
-            else
-            {
-                LocalAnchorA = anchorA;
-                LocalAnchorB = anchorB;
-            }
+            PortalEnter = portalEnter;
+            LocalAnchorA = new Vector2(0, 0);
+            LocalAnchorB = new Vector2(0, 0);
 
-            ReferenceAngle = BodyB.Rotation - BodyA.Rotation;
+            CollideConnected = true;
         }
 
         /// <summary>
@@ -124,11 +104,6 @@ namespace FarseerPhysics.Dynamics.Joints
         }
 
         /// <summary>
-        /// The bodyB angle minus bodyA angle in the reference state (radians).
-        /// </summary>
-        public float ReferenceAngle { get; set; }
-
-        /// <summary>
         /// The frequency of the joint. A higher frequency means a stiffer joint, but
         /// a too high value can cause the joint to oscillate.
         /// Default is 0, which means the joint does no spring calculations.
@@ -151,8 +126,50 @@ namespace FarseerPhysics.Dynamics.Joints
             return invDt * _impulse.Z;
         }
 
+        private void TransformOrientation(SolverData data)
+        {
+            int indexA = BodyA.IslandIndex;
+            int indexB = BodyB.IslandIndex;
+
+            Position positionA = data.positions[indexA];
+            Position positionB = data.positions[indexB];
+            Velocity velocityA = data.velocities[indexA];
+            Velocity velocityB = data.velocities[indexB];
+
+            var t = Portal.Enter(PortalEnter.Linked, new Transform2(positionB.c, 1, positionB.a));
+            var v = Portal.EnterVelocity(PortalEnter.Linked, 0.5f, new Transform2(velocityB.v, 1, velocityB.w));
+
+            data.positions[indexB].c = Vector2Ext.ConvertToXna(t.Position);
+            data.positions[indexB].a = t.Rotation;
+
+            data.velocities[indexB].v = Vector2Ext.ConvertToXna(v.Position);
+            data.velocities[indexB].w = v.Rotation;
+        }
+
+        private void UndoTransformOrientation(SolverData data)
+        {
+            int indexA = BodyA.IslandIndex;
+            int indexB = BodyB.IslandIndex;
+
+            Position positionA = data.positions[indexA];
+            Position positionB = data.positions[indexB];
+            Velocity velocityA = data.velocities[indexA];
+            Velocity velocityB = data.velocities[indexB];
+
+            var t = Portal.Enter(PortalEnter, new Transform2(positionB.c, 1, positionB.a));
+            var v = Portal.EnterVelocity(PortalEnter, 0.5f, new Transform2(velocityB.v, 1, velocityB.w));
+
+            data.positions[indexB].c = Vector2Ext.ConvertToXna(t.Position);
+            data.positions[indexB].a = t.Rotation;
+
+            data.velocities[indexB].v = Vector2Ext.ConvertToXna(v.Position);
+            data.velocities[indexB].w = v.Rotation;
+        }
+
         public override void InitVelocityConstraints(ref SolverData data)
         {
+            TransformOrientation(data);
+
             _indexA = BodyA.IslandIndex;
             _indexB = BodyB.IslandIndex;
             _localCenterA = BodyA._sweep.LocalCenter;
@@ -205,7 +222,7 @@ namespace FarseerPhysics.Dynamics.Joints
                 float invM = iA + iB;
                 float m = invM > 0.0f ? 1.0f / invM : 0.0f;
 
-                float C = aB - aA - ReferenceAngle;
+                float C = aB - aA;
 
                 // Frequency
                 float omega = 2.0f * Settings.Pi * FrequencyHz;
@@ -256,10 +273,14 @@ namespace FarseerPhysics.Dynamics.Joints
             data.velocities[_indexA].w = wA;
             data.velocities[_indexB].v = vB;
             data.velocities[_indexB].w = wB;
+
+            UndoTransformOrientation(data);
         }
 
         public override void SolveVelocityConstraints(ref SolverData data)
         {
+            TransformOrientation(data);
+
             Vector2 vA = data.velocities[_indexA].v;
             float wA = data.velocities[_indexA].w;
             Vector2 vB = data.velocities[_indexB].v;
@@ -314,10 +335,14 @@ namespace FarseerPhysics.Dynamics.Joints
             data.velocities[_indexA].w = wA;
             data.velocities[_indexB].v = vB;
             data.velocities[_indexB].w = wB;
+
+            UndoTransformOrientation(data);
         }
 
         public override bool SolvePositionConstraints(ref SolverData data)
         {
+            TransformOrientation(data);
+
             Vector2 cA = data.positions[_indexA].c;
             float aA = data.positions[_indexA].a;
             Vector2 cB = data.positions[_indexB].c;
@@ -362,7 +387,7 @@ namespace FarseerPhysics.Dynamics.Joints
             else
             {
                 Vector2 C1 = cB + rB - cA - rA;
-                float C2 = aB - aA - ReferenceAngle;
+                float C2 = aB - aA;
 
                 positionError = C1.Length();
                 angularError = Math.Abs(C2);
@@ -383,6 +408,8 @@ namespace FarseerPhysics.Dynamics.Joints
             data.positions[_indexA].a = aA;
             data.positions[_indexB].c = cB;
             data.positions[_indexB].a = aB;
+
+            UndoTransformOrientation(data);
 
             return positionError <= Settings.LinearSlop && angularError <= Settings.AngularSlop;
         }

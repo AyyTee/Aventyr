@@ -50,6 +50,9 @@ namespace FarseerPhysics.Dynamics.Joints
         FixedPrismatic,
         FixedAngle,
         FixedFriction,
+
+        //Project specific joints
+        Portal,
     }
 
     public enum LimitState
@@ -223,7 +226,7 @@ namespace FarseerPhysics.Dynamics.Joints
                    JointType == JointType.FixedFriction;
         }
 
-        internal abstract void InitVelocityConstraints(ref SolverData data);
+        public abstract void InitVelocityConstraints(ref SolverData data);
 
         internal void Validate(float invDt)
         {
@@ -241,13 +244,13 @@ namespace FarseerPhysics.Dynamics.Joints
                 Broke(this, (float)Math.Sqrt(jointErrorSquared));
         }
 
-        internal abstract void SolveVelocityConstraints(ref SolverData data);
+        public abstract void SolveVelocityConstraints(ref SolverData data);
 
         /// <summary>
         /// Solves the position constraints.
         /// </summary>
         /// <param name="data"></param>
         /// <returns>returns true if the position errors are within tolerance.</returns>
-        internal abstract bool SolvePositionConstraints(ref SolverData data);
+        public abstract bool SolvePositionConstraints(ref SolverData data);
     }
 }

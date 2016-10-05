@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using OpenTK;
 using FarseerPhysics.Collision.Shapes;
 using Game.Portals;
+using Game.Physics;
 
 namespace Game
 {
@@ -55,7 +56,7 @@ namespace Game
         {
             _vertices = vertices.ToArray();
             _scale = transform.Scale;
-            Body = ActorFactory.CreatePolygon(Scene.World, transform, Vertices);
+            Body = Factory.CreatePolygon(Scene.World, transform, Vertices);
             BodyExt.SetUserData(Body, this);
             Body.IsStatic = false;
             //Body.IsBullet = true;
@@ -64,7 +65,7 @@ namespace Game
         [OnDeserialized]
         public void Deserialize(StreamingContext context)
         {
-            Body = ActorFactory.CreatePolygon(Scene.World, _body.Transform, Vertices);
+            Body = Factory.CreatePolygon(Scene.World, _body.Transform, Vertices);
             BodyExt.SetUserData(Body, this);
             BodyExt.SetVelocity(Body, _body.Velocity);
         }

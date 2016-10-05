@@ -95,7 +95,7 @@ namespace FarseerPhysics.Dynamics.Joints
             return 0;
         }
 
-        internal override void InitVelocityConstraints(ref SolverData data)
+        public override void InitVelocityConstraints(ref SolverData data)
         {
             int indexA = BodyA.IslandIndex;
             int indexB = BodyB.IslandIndex;
@@ -108,7 +108,7 @@ namespace FarseerPhysics.Dynamics.Joints
             _massFactor = (1 - Softness) / (BodyA._invI + BodyB._invI);
         }
 
-        internal override void SolveVelocityConstraints(ref SolverData data)
+        public override void SolveVelocityConstraints(ref SolverData data)
         {
             int indexA = BodyA.IslandIndex;
             int indexB = BodyB.IslandIndex;
@@ -119,7 +119,7 @@ namespace FarseerPhysics.Dynamics.Joints
             data.velocities[indexB].w += BodyB._invI * Math.Sign(p) * Math.Min(Math.Abs(p), MaxImpulse);
         }
 
-        internal override bool SolvePositionConstraints(ref SolverData data)
+        public override bool SolvePositionConstraints(ref SolverData data)
         {
             //no position solving for this joint
             return true;

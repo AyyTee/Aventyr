@@ -99,6 +99,7 @@
     <Compile Include="SimulationStepTests.cs" />
     <Compile Include="PortalCommonTests.cs" />
     <Compile Include="SceneTests.cs" />
+    <Compile Include="PortalJointTests.cs" />
     <Compile Include="VertexTests.cs" />
   </ItemGroup>
   <ItemGroup>

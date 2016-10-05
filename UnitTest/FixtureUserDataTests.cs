@@ -6,6 +6,7 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
 using System.Linq;
 using Game.Portals;
+using Game.Physics;
 
 namespace UnitTest
 {
@@ -21,7 +22,7 @@ namespace UnitTest
                 new Vector2(2.5f, 4),
                 new Vector2(0, 3),
             };
-            Actor ground = ActorFactory.CreateEntityPolygon(scene, new Transform2(), verts);
+            Actor ground = Factory.CreateEntityPolygon(scene, new Transform2(), verts);
             ground.Name = "ground";
             return ground;
         }

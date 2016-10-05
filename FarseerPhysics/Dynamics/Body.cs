@@ -72,10 +72,10 @@ namespace FarseerPhysics.Dynamics
         internal float _angularVelocity;
         internal Vector2 _linearVelocity;
         internal Vector2 _force;
-        internal float _invI;
-        internal float _invMass;
+        public float _invI;
+        public float _invMass;
         internal float _sleepTime;
-        internal Sweep _sweep; // the swept motion for CCD
+        public Sweep _sweep; // the swept motion for CCD
         internal float _torque;
         internal World _world;
         internal Transform _xf; // the body origin transform

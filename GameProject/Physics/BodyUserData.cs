@@ -19,6 +19,7 @@ namespace Game
         public Xna.Vector2 PreviousPosition { get; set; }
         public List<ChildBody> BodyChildren = new List<ChildBody>();
         public ChildBody BodyParent { get; private set; } = new ChildBody(null, null);
+        public bool IsChild { get { return BodyParent.Body != null; } }
 
         public BodyUserData Parent {
             get
@@ -90,6 +91,8 @@ namespace Game
                 Portal.Enter(portal, bodyClone);
 
                 BodyChildren.Add(new ChildBody(bodyClone, portal));
+
+                Physics.Factory.CreatePortalJoint(((Scene)Actor.Scene).World, Body, bodyClone, portal);
 
                 userData.UpdatePortalCollisions();
             }
