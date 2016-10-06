@@ -17,24 +17,24 @@ namespace Game
     {
         const float ERROR_MARGIN = 0.0001f;
 
-        public static FixtureUserData SetUserData(Fixture fixture)
+        public static FixtureData SetData(Fixture fixture)
         {
-            FixtureUserData userData = new FixtureUserData(fixture);
+            FixtureData userData = new FixtureData(fixture);
             fixture.UserData = userData;
             return userData;
         }
 
-        public static FixtureUserData GetUserData(Fixture fixture)
+        public static FixtureData GetData(Fixture fixture)
         {
             Debug.Assert(fixture != null);
             Debug.Assert(fixture.UserData != null);
-            return (FixtureUserData)fixture.UserData;
+            return (FixtureData)fixture.UserData;
         }
 
         public static Fixture CreateFixture(Body body, Shape shape)
         {
             Fixture fixture = body.CreateFixture(shape);
-            SetUserData(fixture);
+            SetData(fixture);
             return fixture;
         }
 
@@ -72,8 +72,8 @@ namespace Game
                         for (int i = 0; i < polygon.Vertices.Count; i++)
                         {
                             int iNext = (i + 1) % polygon.Vertices.Count;
-                            if ((edge[0] - Vector2Ext.ConvertTo(polygon.Vertices[i])).Length < ERROR_MARGIN &&
-                                (edge[1] - Vector2Ext.ConvertTo(polygon.Vertices[iNext])).Length < ERROR_MARGIN)
+                            if ((edge[0] - Vector2Ext.ToOtk(polygon.Vertices[i])).Length < ERROR_MARGIN &&
+                                (edge[1] - Vector2Ext.ToOtk(polygon.Vertices[iNext])).Length < ERROR_MARGIN)
                             {
                                 //float edgeT = PolygonExt.IsInterior(fixtureContour) ? coord.EdgeT : 1 - coord.EdgeT;
                                 float edgeT = coord.EdgeT;
@@ -155,7 +155,7 @@ namespace Game
             Vector2[] v = new Vector2[shape.Vertices.Count];
             for (int i = 0; i < v.Length; i++)
             {
-                v[i] = Vector2Ext.ConvertTo(fixture.Body.GetWorldPoint(shape.Vertices[i]));
+                v[i] = Vector2Ext.ToOtk(fixture.Body.GetWorldPoint(shape.Vertices[i]));
             }
             return v;
         }
@@ -173,10 +173,23 @@ namespace Game
         {
             PolygonShape shape = (PolygonShape)fixture.Shape;
             var vertices = shape.Vertices;
-            return Vector2Ext.ConvertTo(
+            return Vector2Ext.ToOtk(
                 fixture.Body.GetWorldPoint(new Xna.Vector2(
                 vertices.Average(vert => vert.X),
                 vertices.Average(vert => vert.Y))));
+        }
+
+        public static List<IPortal> GetPortalCollisions(Fixture fixture, IList<IPortal> portals, bool ignoreAttachedPortals = true)
+        {
+            Vector2[] vertices = GetWorldPoints(fixture);
+            var collisions = portals.Where(
+                item => MathExt.LineInPolygon(new Line(Portal.GetWorldVerts(item)), vertices));
+            if (ignoreAttachedPortals)
+            {
+                var attached = GetData(fixture).GetPortalChildren();
+                return collisions.Except(attached).ToList();
+            }
+            return collisions.ToList();
         }
     }
 }

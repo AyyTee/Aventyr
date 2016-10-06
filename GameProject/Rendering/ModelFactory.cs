@@ -375,7 +375,7 @@ namespace Game
             foreach (FarseerPhysics.Dynamics.Fixture f in actor.Body.FixtureList)
             {
                 PolygonShape polygon = (PolygonShape)f.Shape;
-                var vertices = Vector2Ext.ConvertTo(polygon.Vertices);
+                var vertices = Vector2Ext.ToOtk(polygon.Vertices);
                 AddLineStripWidth(mesh, vertices, 0.05f, true);
             }
             model.Mesh = mesh;

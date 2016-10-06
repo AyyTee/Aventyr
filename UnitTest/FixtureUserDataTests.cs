@@ -38,7 +38,7 @@ namespace UnitTest
             portalExit.Linked = portal;
             portal.Linked = portal;
             PortalCommon.UpdateWorldTransform(scene);
-            FixtureExt.GetUserData(fixture).ProcessChanges();
+            FixtureExt.GetData(fixture).ProcessChanges();
             return scene;
         }
 
@@ -59,7 +59,7 @@ namespace UnitTest
             int parentCount = 0;
             foreach (Fixture f in ground.Body.FixtureList)
             {
-                FixtureUserData userData = FixtureExt.GetUserData(f);
+                FixtureData userData = FixtureExt.GetData(f);
                 if (userData.IsPortalParentless() == false)
                 {
                     parentCount++;
@@ -75,12 +75,12 @@ namespace UnitTest
             Scene scene = CreateSceneWithPortal(out ground);
             FixturePortal portal = scene.GetPortalList().OfType<FixturePortal>().First();
 
-            FixtureUserData userData;
-            userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            FixtureData userData;
+            userData = FixtureExt.GetData(ground.Body.FixtureList[0]);
             Assert.IsTrue(userData.PortalParents[0] == null && userData.PortalParents[1] == null);
-            userData = FixtureExt.GetUserData(ground.Body.FixtureList[1]);
+            userData = FixtureExt.GetData(ground.Body.FixtureList[1]);
             Assert.IsTrue(userData.PartOfPortal(portal));
-            userData = FixtureExt.GetUserData(ground.Body.FixtureList[2]);
+            userData = FixtureExt.GetData(ground.Body.FixtureList[2]);
             Assert.IsTrue(userData.PartOfPortal(portal));
         }
 
@@ -97,14 +97,14 @@ namespace UnitTest
             portal2.SetTransform(new Transform2(new Vector2(5, 0)));
             portal1.Linked = portal2;
             portal2.Linked = portal1;
-            FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            FixtureData userData = FixtureExt.GetData(ground.Body.FixtureList[0]);
             PortalCommon.UpdateWorldTransform(scene);
             userData.ProcessChanges();
 
             int parentCount = 0;
             foreach (Fixture f in ground.Body.FixtureList)
             {
-                userData = FixtureExt.GetUserData(f);
+                userData = FixtureExt.GetData(f);
                 if (userData.IsPortalParentless() == false)
                 {
                     parentCount++;
@@ -126,7 +126,7 @@ namespace UnitTest
             portal2.SetTransform(new Transform2(new Vector2(5, 0)));
             portal1.Linked = portal2;
             portal2.Linked = portal1;
-            FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            FixtureData userData = FixtureExt.GetData(ground.Body.FixtureList[0]);
             PortalCommon.UpdateWorldTransform(scene);
             userData.ProcessChanges();
 
@@ -154,24 +154,24 @@ namespace UnitTest
             portal2.SetTransform(new Transform2(new Vector2(5, 0)));
             portal1.Linked = portal2;
             portal2.Linked = portal1;
-            FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            FixtureData userData = FixtureExt.GetData(ground.Body.FixtureList[0]);
             PortalCommon.UpdateWorldTransform(scene);
             userData.ProcessChanges();
 
 
-            FixtureUserData userData0 = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            FixtureData userData0 = FixtureExt.GetData(ground.Body.FixtureList[0]);
             Assert.IsFalse(userData0.PartOfPortal(portal0));
             Assert.IsFalse(userData0.PartOfPortal(portal1));
 
-            FixtureUserData userData1 = FixtureExt.GetUserData(ground.Body.FixtureList[1]);
+            FixtureData userData1 = FixtureExt.GetData(ground.Body.FixtureList[1]);
             Assert.IsTrue(userData1.PartOfPortal(portal0));
             Assert.IsFalse(userData1.PartOfPortal(portal1));
 
-            FixtureUserData userData2 = FixtureExt.GetUserData(ground.Body.FixtureList[2]);
+            FixtureData userData2 = FixtureExt.GetData(ground.Body.FixtureList[2]);
             Assert.IsTrue(userData2.PartOfPortal(portal0));
             Assert.IsTrue(userData2.PartOfPortal(portal1));
 
-            FixtureUserData userData3 = FixtureExt.GetUserData(ground.Body.FixtureList[3]);
+            FixtureData userData3 = FixtureExt.GetData(ground.Body.FixtureList[3]);
             Assert.IsFalse(userData3.PartOfPortal(portal0));
             Assert.IsTrue(userData3.PartOfPortal(portal1));
         }
@@ -186,7 +186,7 @@ namespace UnitTest
             FixturePortal portal1 = new FixturePortal(scene, ground, new PolygonCoord(0, 0.6f));
             portal0.Linked = portal0;
             portal1.Linked = portal1;
-            FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            FixtureData userData = FixtureExt.GetData(ground.Body.FixtureList[0]);
             PortalCommon.UpdateWorldTransform(scene);
             userData.ProcessChanges();
 
@@ -196,7 +196,7 @@ namespace UnitTest
             Assert.IsTrue(ground.Body.FixtureList.Count == 5);
             for (int i = 1; i < ground.Body.FixtureList.Count; i++)
             {
-                FixtureUserData childUserData = FixtureExt.GetUserData(ground.Body.FixtureList[i]);
+                FixtureData childUserData = FixtureExt.GetData(ground.Body.FixtureList[i]);
                 if (i < 3)
                 {
                     Assert.IsFalse(childUserData.PartOfPortal(portal0));
@@ -212,20 +212,20 @@ namespace UnitTest
 
         public Vector2[][] GetPortalFixtures(Actor ground)
         {
-            FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            FixtureData userData = FixtureExt.GetData(ground.Body.FixtureList[0]);
             userData.ProcessChanges();
 
             Vector2[][] verticeArray = new Vector2[userData.FixtureChildren.Count][];
             for (int i = 0; i < verticeArray.Length; i++)
             {
-                verticeArray[i] = Vector2Ext.ConvertTo(((PolygonShape)userData.FixtureChildren[i].Shape).Vertices);
+                verticeArray[i] = Vector2Ext.ToOtk(((PolygonShape)userData.FixtureChildren[i].Shape).Vertices);
             }
             return verticeArray;
         }
 
         public void ProcessChangesAssert(Actor ground)
         {
-            FixtureUserData userData = FixtureExt.GetUserData(ground.Body.FixtureList[0]);
+            FixtureData userData = FixtureExt.GetData(ground.Body.FixtureList[0]);
             userData.ProcessChanges();
 
             Vector2[][] verticeArray = GetPortalFixtures(ground);

@@ -135,12 +135,12 @@ namespace Game.Portals
         public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)
         {
             Transform2 transform = new Transform2(body.Position, 1, body.Rotation);
-            Transform2 velocity = Transform2.CreateVelocity(Vector2Ext.ConvertTo(body.LinearVelocity), body.AngularVelocity);
+            Transform2 velocity = Transform2.CreateVelocity(Vector2Ext.ToOtk(body.LinearVelocity), body.AngularVelocity);
             velocity = EnterVelocity(portal, 0.5f, velocity, ignorePortalVelocity);
             transform = Enter(portal, transform);
-            body.Position = Vector2Ext.ConvertToXna(transform.Position);
+            body.Position = Vector2Ext.ToXna(transform.Position);
             body.Rotation = transform.Rotation;
-            body.LinearVelocity = Vector2Ext.ConvertToXna(velocity.Position);
+            body.LinearVelocity = Vector2Ext.ToXna(velocity.Position);
             body.AngularVelocity = velocity.Rotation;
         }
 

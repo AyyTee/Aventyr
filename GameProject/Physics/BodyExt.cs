@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xna = Microsoft.Xna.Framework;
+using ClipperLib;
 
 namespace Game
 {
@@ -30,107 +31,149 @@ namespace Game
             Debug.Assert(actor.Body == null);
             Debug.Assert(world != null);
             Body body = CreateBody(world);
-            BodyExt.SetUserData(body, actor);
+            SetData(body, actor);
             return body;
         }
 
-        public static BodyUserData SetUserData(Body body, IActor entity)
+        public static BodyData SetData(Body body, IActor entity)
         {
-            BodyUserData userData = new BodyUserData(entity, body);
+            BodyData userData = new BodyData(entity, body);
             body.UserData = userData;
             return userData;
         }
 
-        public static BodyUserData GetUserData(Body body)
+        public static BodyData GetData(Body body)
         {
             Debug.Assert(body != null);
             Debug.Assert(body.UserData != null);
-            return (BodyUserData)body.UserData;
+            return (BodyData)body.UserData;
         }
 
         public static Transform2 GetTransform(Body body)
         {
-            return new Transform2(Vector2Ext.ConvertTo(body.Position), 1, body.Rotation);
+            return new Transform2(Vector2Ext.ToOtk(body.Position), 1, body.Rotation);
         }
 
         public static void SetTransform(Body body, Transform2 transform)
         {
-            body.SetTransform(Vector2Ext.ConvertToXna(transform.Position), transform.Rotation);
+            body.SetTransform(Vector2Ext.ToXna(transform.Position), transform.Rotation);
         }
 
         public static Transform2 GetVelocity(Body body)
         {
-            return Transform2.CreateVelocity(Vector2Ext.ConvertTo(body.LinearVelocity), body.AngularVelocity);
+            return Transform2.CreateVelocity(Vector2Ext.ToOtk(body.LinearVelocity), body.AngularVelocity);
         }
 
         public static void SetVelocity(Body body, Transform2 velocity)
         {
-            body.LinearVelocity = Vector2Ext.ConvertToXna(velocity.Position);
+            body.LinearVelocity = Vector2Ext.ToXna(velocity.Position);
             body.AngularVelocity = velocity.Rotation;
         }
 
+        public struct MassData
+        {
+            public float Mass;
+            public Vector2 Centroid;
+
+            public MassData(float mass, Vector2 centroid)
+            {
+                Mass = mass;
+                Centroid = centroid;
+            }
+        }
+
         /// <summary>
-        /// Returns the area of non-portal fixtures that are in the same coordinate space as localPoint. 
-        /// In other words, find the area not on other other side of a portal relative to localPoint.
+        /// Returns the centroid and mass of a body exclusing parts of the body that are in a portal.
         /// </summary>
-        public static float GetLocalMass(Body body, Vector2 localPoint)
+        public static MassData GetLocalMassData(Body body)
         {
-            //Transform2D bodyTransform = GetTransform(body);
-            FarseerPhysics.Common.Transform bodyTransform;
-            body.GetTransform(out bodyTransform);
-            Vector3 offset = new Vector3(-body.Position.X, -body.Position.Y, 0);
-            Matrix4 bodyMatrix = Matrix4.CreateTranslation(offset);//bodyTransform.GetMatrix().Inverted();
-            float totalMass = body.Mass;
-            foreach (Fixture f in body.FixtureList)
+            var clipped = GetClippedFixtures(body);
+            float totalMass = 0;
+            Vector2 centroid = new Vector2();
+            foreach (Tuple<Fixture, Vector2[]> tuple in clipped)
             {
-                FixtureUserData userData = FixtureExt.GetUserData(f);
-                float area = 0;
-                foreach (FixturePortal portal in userData.PortalCollisions)
-                {
-                    Vector2[] verts = Portal.GetWorldVerts(portal);
-                    //verts = Vector2Ext.Transform(verts, bodyMatrix);
-                    Line line = new Line(verts);
-                    Vector2 normal = line.GetNormal();
-                    if (line.GetSideOf(localPoint) == Side.Left)
-                    {
-                        normal = -normal;
-                    }
-
-                    Xna.Vector2 v, xnaNormal;
-                    xnaNormal = Vector2Ext.ConvertToXna(normal);
-                    area += f.Shape.ComputeSubmergedArea(ref xnaNormal, (float)line.GetOffset(), ref bodyTransform, out v);
-                }
-                totalMass -= f.Shape.Density * area;
+                float mass = tuple.Item1.Shape.Density * (float)MathExt.GetArea(tuple.Item2);
+                totalMass += mass;
+                centroid += PolygonExt.GetCentroid(tuple.Item2) * mass;
             }
-            return totalMass;
+            centroid /= totalMass;
+
+            return new MassData(totalMass, centroid);
         }
 
-        public static float GetLocalMass(Body body, Xna.Vector2 localPoint)
+        private static List<Tuple<Fixture, Vector2[]>> GetClippedFixtures(Body body)
         {
-            return GetLocalMass(body, Vector2Ext.ConvertTo(localPoint));
-        }
+            BodyData data = GetData(body);
 
-        public static void Mirror(Body body, bool xMirror, bool yMirror)
-        {
+            List<List<IntPoint>> clipPaths = new List<List<IntPoint>>();
+            foreach (IPortal p in data.PortalCollisions())
+            {
+                Vector2[] verts = Portal.GetWorldVerts(p);
+                float scale = 100;
+
+                Vector2 v0 = verts[0] + (verts[1] - verts[0]).Normalized() * scale;
+                Vector2 v1 = verts[1] - (verts[1] - verts[0]).Normalized() * scale;
+                Vector2 depth = (verts[1] - verts[0]).PerpendicularLeft.Normalized() * scale;
+                if (p == data.BodyParent.Portal)
+                {
+                    depth *= -1;
+                }
+
+                Vector2[] box = new Vector2[]
+                {
+                    v0, v1, v1 + depth, v0 + depth
+                };
+                box = MathExt.SetWinding(box, true);
+
+                clipPaths.Add(ClipperConvert.ToIntPoint(box));
+            }
+
+            List<Tuple<Fixture, Vector2[]>> clippedFixtures = new List<Tuple<Fixture, Vector2[]>>();
+
+            Clipper clipper = new Clipper();
             foreach (Fixture f in body.FixtureList)
             {
-                Shape mirrorShape = null;
-                switch (f.Shape.ShapeType)
+                if (!FixtureExt.GetData(f).IsPortalParentless())
                 {
-                    case ShapeType.Polygon:
-                        break;
-
-                    case ShapeType.Edge:
-                        EdgeShape mirrorTemp = (EdgeShape)mirrorShape;
-                        break;
-
-                    case ShapeType.Circle:
-                        mirrorShape = f.Shape.Clone();
-                        break;
+                    continue;
                 }
-                //Shape mirrorShape = new Shape();
-                //Fixture mirrorFixture = new Fixture(body, )
+
+                clipper.Clear();
+                clipper.AddPaths(clipPaths, PolyType.ptClip, true);
+
+                clipper.AddPath(
+                    ClipperConvert.ToIntPoint(FixtureExt.GetWorldPoints(f)),
+                    PolyType.ptSubject,
+                    true);
+
+                List<List<IntPoint>> result = new List<List<IntPoint>>();
+                clipper.Execute(ClipType.ctDifference, result, PolyFillType.pftEvenOdd, PolyFillType.pftNonZero);
+                Debug.Assert(
+                    result.Count <= 1,
+                    "This fixture is too large for the portal masking or something has gone wrong with the clipper.");
+
+                clippedFixtures.Add(new Tuple<Fixture, Vector2[]>(f, ClipperConvert.ToVector2(result[0])));
             }
+
+            return clippedFixtures;
+        }
+
+        public static void Remove(Body body)
+        {
+            BodyData data = GetData(body);
+            _remove(data);
+            int removed = data.Parent.BodyChildren.RemoveAll(item => GetData(item.Body) == data);
+            Debug.Assert(removed == 1);
+            data.Actor.SetMass(data.Actor.Mass);
+        }
+
+        private static void _remove(BodyData bodyData)
+        {
+            foreach (BodyData data in bodyData.Children)
+            {
+                _remove(data);
+            }
+            ((Scene)bodyData.Actor.Scene).World.RemoveBody(bodyData.Body);
         }
     }
 }

@@ -51,14 +51,14 @@ namespace Game
                 if (polygon != null)
                 {
                     Clipper clipper = new Clipper();
-                    clipper.AddPath(ClipperConvert.ToIntPoint(Vector2Ext.ConvertTo(polygon.Vertices)), PolyType.ptSubject, true);
+                    clipper.AddPath(ClipperConvert.ToIntPoint(Vector2Ext.ToOtk(polygon.Vertices)), PolyType.ptSubject, true);
                     foreach (IPortal p in portals)
                     {
                         if (!Portal.IsValid(p))
                         {
                             continue;
                         }
-                        Transform2 t = FixtureExt.GetUserData(f).Actor.GetWorldTransform();
+                        Transform2 t = FixtureExt.GetData(f).Actor.GetWorldTransform();
                         t.SetScale(Vector2.One);
                         Vector2[] vertices = Vector2Ext.Transform(Portal.GetWorldVerts(p, 10000), t.GetMatrix().Inverted());
                         Vector2[] mask = new Vector2[]

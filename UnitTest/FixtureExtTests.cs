@@ -111,8 +111,8 @@ namespace UnitTest
             Actor actor = new Actor(scene, vertices);
             PortalCommon.UpdateWorldTransform(scene);
 
-            Vector2[] fixtureVertices = Vector2Ext.ConvertTo(((PolygonShape)actor.Body.FixtureList[0].Shape).Vertices);
-            Assert.IsTrue(MathExt.IsIsomorphic<Vector2>(actor.GetWorldVertices(), fixtureVertices));
+            Vector2[] fixtureVertices = Vector2Ext.ToOtk(((PolygonShape)actor.Body.FixtureList[0].Shape).Vertices);
+            Assert.IsTrue(MathExt.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
         }
 
         [TestMethod]

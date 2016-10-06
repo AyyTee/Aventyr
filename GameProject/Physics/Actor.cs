@@ -33,6 +33,8 @@ namespace Game
         /// </summary>
         public Body Body { get; private set; }
         [DataMember]
+        public float Mass { get; private set; } = 1;
+        [DataMember]
         Vector2 _scale = new Vector2(1, 1);
         /// <summary>
         /// Used for storing body data when serialized.
@@ -57,16 +59,16 @@ namespace Game
             _vertices = vertices.ToArray();
             _scale = transform.Scale;
             Body = Factory.CreatePolygon(Scene.World, transform, Vertices);
-            BodyExt.SetUserData(Body, this);
+            BodyExt.SetData(Body, this);
             Body.IsStatic = false;
-            //Body.IsBullet = true;
+            SetMass(Body.Mass);
         }
 
         [OnDeserialized]
         public void Deserialize(StreamingContext context)
         {
             Body = Factory.CreatePolygon(Scene.World, _body.Transform, Vertices);
-            BodyExt.SetUserData(Body, this);
+            BodyExt.SetData(Body, this);
             BodyExt.SetVelocity(Body, _body.Velocity);
         }
 
@@ -86,17 +88,29 @@ namespace Game
         protected void ShallowClone(Actor destination)
         {
             base.ShallowClone(destination);
-            BodyUserData bodyData = BodyExt.SetUserData(destination.Body, destination);
+            BodyData bodyData = BodyExt.SetData(destination.Body, destination);
             foreach (Fixture f in destination.Body.FixtureList)
             {
-                FixtureUserData fixtureData = FixtureExt.SetUserData(f);
+                FixtureData fixtureData = FixtureExt.SetData(f);
             }
         }
 
         public override void SetParent(SceneNode parent)
         {
-            Debug.Assert(parent == null, "Actor must be root SceneNode.");
+            Debug.Assert(parent == null, "Actor must be the root SceneNode.");
             base.SetParent(parent);
+        }
+
+        public void SetMass(float mass)
+        {
+            Mass = mass;
+            BodyExt.GetData(Body).SetMass(mass);
+        }
+
+        public void Update()
+        {
+            BodyExt.GetData(Body).Update();
+            SetMass(Mass);
         }
 
         public override void Remove()
@@ -106,6 +120,39 @@ namespace Game
                 Scene.World.RemoveBody(Body);
             }
             base.Remove();
+        }
+
+        /// <summary>
+        /// Applies a force at the center of mass.
+        /// </summary>
+        /// <param name="force">The force.</param>
+        public void ApplyForce(Vector2 force)
+        {
+            _applyForce(force, Vector2Ext.ToOtk(Body.GetWorldPoint(new Xna.Vector2())));
+        }
+
+        /// <summary>
+        /// Apply a force at a world point. If the force is not
+        /// applied at the center of mass, it will generate a torque and
+        /// affect the angular velocity. This wakes up the body.
+        /// </summary>
+        /// <param name="force">The world force vector, usually in Newtons (N).</param>
+        /// <param name="point">The world position of the point of application.</param>
+        public void ApplyForce(Vector2 force, Vector2 point)
+        {
+            _applyForce(force, point);
+        }
+
+        private void _applyForce(Vector2 force, Vector2 point)
+        {
+            var local = Body.GetLocalPoint(Vector2Ext.ToXna(point));
+            var bodyTree = Tree<BodyData>.GetAll(BodyExt.GetData(Body));
+            foreach (BodyData data in bodyTree)
+            {
+                data.Body.ApplyForce(
+                    Vector2Ext.ToXna(force * bodyTree.Count / Mass),
+                    data.Body.GetWorldPoint(local));
+            }
         }
 
         public override Transform2 GetTransform()
@@ -127,13 +174,13 @@ namespace Game
             {
                 Debug.Assert(!Scene.InWorldStep, "Scale cannot change during a physics step.");
 
-                List<Xna.Vector2> contourPrev = Vector2Ext.ConvertToXna(ActorExt.GetFixtureContour(Vertices, GetTransform().Scale));
+                List<Xna.Vector2> contourPrev = Vector2Ext.ToXna(ActorExt.GetFixtureContour(Vertices, GetTransform().Scale));
                 _scale = transform.Scale;
-                List<Xna.Vector2> contour = Vector2Ext.ConvertToXna(ActorExt.GetFixtureContour(Vertices, transform.Scale));
+                List<Xna.Vector2> contour = Vector2Ext.ToXna(ActorExt.GetFixtureContour(Vertices, transform.Scale));
 
                 foreach (Fixture f in Body.FixtureList)
                 {
-                    if (!FixtureExt.GetUserData(f).IsPortalParentless())
+                    if (!FixtureExt.GetData(f).IsPortalParentless())
                     {
                         continue;
                     }

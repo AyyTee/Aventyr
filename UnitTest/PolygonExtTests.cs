@@ -10,6 +10,62 @@ namespace UnitTest
     [TestClass]
     public class PolygonExtTests
     {
+        #region GetCentroid tests
+        [TestMethod]
+        public void GetCentroidTest0()
+        {
+            Vector2[] vertices = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(1, 1),
+                new Vector2(0, 1)
+            };
+
+            Assert.IsTrue(PolygonExt.GetCentroid(vertices) == new Vector2(0.5f, 0.5f));
+        }
+
+        [TestMethod]
+        public void GetCentroidTest1()
+        {
+            Vector2[] vertices = new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(1, 2),
+                new Vector2(0, 2)
+            };
+            vertices = vertices.Reverse().ToArray();
+
+            Assert.IsTrue(PolygonExt.GetCentroid(vertices) == new Vector2(0.5f, 1f));
+        }
+
+        [TestMethod]
+        public void GetCentroidTest2()
+        {
+            Vector2[] vertices = new Vector2[] {
+                new Vector2(1, -1),
+                new Vector2(-2, -1),
+                new Vector2(-2, 1),
+                new Vector2(1, 1)
+            };
+
+            Assert.IsTrue(PolygonExt.GetCentroid(vertices) == new Vector2(-0.5f, 0f));
+        }
+
+        /*[TestMethod]
+        public void GetCentroidTest3()
+        {
+            Vector2[] vertices = new Vector2[] {
+                new Vector2(1, -1),
+                new Vector2(-2, -1),
+                new Vector2(-2, 1),
+                new Vector2(1, 1)
+            };
+
+            Assert.IsTrue(PolygonExt.GetCentroid(vertices) == new Vector2(-0.5f, 0f));
+        }*/
+        #endregion
+
+        #region DecomposeConcave tests
         [TestMethod]
         public void DecomposeConcaveTest0()
         {
@@ -208,5 +264,6 @@ namespace UnitTest
                 Assert.IsTrue(MathExt.IsConvex(concave));
             }
         }
+        #endregion
     }
 }

@@ -21,7 +21,7 @@ namespace Game
         /// <summary>
         /// Return the Actor linked to the Body that is linked to the Fixture being intersected.
         /// </summary>
-        public IActor Actor { get { return BodyExt.GetUserData(Fixture.Body).Actor; } }
+        public IActor Actor { get { return BodyExt.GetData(Fixture.Body).Actor; } }
         private int _edgeIndex;
         /// <summary>Index value of edge in Fixture's Shape.</summary>
         public int EdgeIndex
@@ -84,8 +84,8 @@ namespace Game
         {
             PolygonShape shape = (PolygonShape)Fixture.Shape;
             Vector2 v0, v1, scaleFactor;
-            v0 = Vector2Ext.ConvertTo(shape.Vertices[EdgeIndex]);
-            v1 = Vector2Ext.ConvertTo(shape.Vertices[(EdgeIndex + 1) % shape.Vertices.Count]);
+            v0 = Vector2Ext.ToOtk(shape.Vertices[EdgeIndex]);
+            v1 = Vector2Ext.ToOtk(shape.Vertices[(EdgeIndex + 1) % shape.Vertices.Count]);
             scaleFactor = Actor.GetTransform().Scale;
             return new Line(v0, v1);
         }

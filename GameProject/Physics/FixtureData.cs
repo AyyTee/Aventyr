@@ -10,7 +10,7 @@ using System.Xml.Serialization;
 
 namespace Game
 {
-    public class FixtureUserData
+    public class FixtureData
     {
         public readonly Fixture Fixture;
 
@@ -44,17 +44,17 @@ namespace Game
             get
             {
                 Debug.Assert(Fixture.Body.UserData != null, "Body UserData does not exist.");
-                BodyUserData userData = (BodyUserData)BodyExt.GetUserData(Fixture.Body);
+                BodyData userData = BodyExt.GetData(Fixture.Body);
                 return userData.Actor;
             }
         }
 
         #region Constructors
-        public FixtureUserData()
+        public FixtureData()
         {
         }
 
-        public FixtureUserData(Fixture fixture)
+        public FixtureData(Fixture fixture)
         {
             Fixture = fixture;
         }
@@ -76,34 +76,6 @@ namespace Game
                 item => FixtureExt.GetFixtureAttached(item) == Fixture).ToList();
         }
 
-        public void PortalCollisionsClear()
-        {
-            foreach (IPortal portal in PortalCollisions)
-            {
-                FixturePortal fixturePortal = portal as FixturePortal;
-                if (fixturePortal != null)
-                {
-                    Fixture other = FixtureExt.GetFixtureAttached(fixturePortal);
-                    other.RestoreCollisionWith(Fixture);
-                    Fixture.RestoreCollisionWith(other);
-                }
-            }
-            PortalCollisions.Clear();
-        }
-
-        public void PortalCollisionAdd(IPortal portal)
-        {
-            
-            FixturePortal fixturePortal = portal as FixturePortal;
-            if (fixturePortal != null)
-            {
-                Fixture other = FixtureExt.GetFixtureAttached(fixturePortal);
-                other.IgnoreCollisionWith(Fixture);
-                Fixture.IgnoreCollisionWith(other);
-            }
-            PortalCollisions.Add(portal);
-        }
-
         /// <summary>
         /// Updates the Fixtures used for FixturePortal collisions.
         /// </summary>
@@ -123,7 +95,7 @@ namespace Game
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], true));
                     _fixtureChildren.Add(fixture);
-                    FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
+                    FixtureExt.GetData(fixture).PortalParents = new FixturePortal[] {
                         sortedPortals[i],
                         null
                     };
@@ -132,7 +104,7 @@ namespace Game
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], sortedPortals[i + 1]));
                     _fixtureChildren.Add(fixture);
-                    FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
+                    FixtureExt.GetData(fixture).PortalParents = new FixturePortal[] {
                         sortedPortals[i],
                         sortedPortals[i+1]
                     };
@@ -141,7 +113,7 @@ namespace Game
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], false));
                     _fixtureChildren.Add(fixture);
-                    FixtureExt.GetUserData(fixture).PortalParents = new FixturePortal[] {
+                    FixtureExt.GetData(fixture).PortalParents = new FixturePortal[] {
                         sortedPortals[i],
                         null
                     };
@@ -172,7 +144,7 @@ namespace Game
             }
             verts = (Vector2[])MathExt.SetWinding(verts, false);
 
-            return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
+            return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ToXna(verts)), 0);
         }
 
         private PolygonShape CreatePortalShape(FixturePortal portal, bool previousVertex)
@@ -197,7 +169,7 @@ namespace Game
             verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix());
             verts = MathExt.SetWinding(verts, false);
 
-            return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ConvertToXna(verts)), 0);
+            return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ToXna(verts)), 0);
         }
 
         /// <summary>

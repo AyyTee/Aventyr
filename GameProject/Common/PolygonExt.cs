@@ -23,7 +23,7 @@ namespace Game
 
         public static Transform2 GetTransform(FixtureCoord fixtureCoord)
         {
-            Vector2[] vertices = Vector2Ext.ConvertTo(((PolygonShape)fixtureCoord.Fixture.Shape).Vertices);
+            Vector2[] vertices = Vector2Ext.ToOtk(((PolygonShape)fixtureCoord.Fixture.Shape).Vertices);
             return GetTransform(vertices, fixtureCoord);
         }
 
@@ -94,6 +94,38 @@ namespace Game
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Returns the center of mass of a polygon.
+        /// </summary>
+        /// <returns></returns>
+        public static Vector2 GetCentroid(IList<Vector2> polygon)
+        {
+            Vector2 centroid = new Vector2();
+            double atmp = 0;
+            double xtmp = 0;
+            double ytmp = 0;
+            int j = polygon.Count;
+            for (int i = 0; i < j; i += 1) 
+            {
+                int iNext = (i + 1) % j;
+                double x1 = polygon[i].X;
+                double y1 = polygon[i].Y;
+                double x2 = polygon[iNext].X;
+                double y2 = polygon[iNext].Y;
+                double ai = x1 * y2 - x2 * y1;
+                atmp += ai;
+                xtmp += (x2 + x1) * ai;
+                ytmp += (y2 + y1) * ai;
+            }
+            if (atmp != 0)
+            {
+                atmp *= 3;
+                centroid.X = (float)(xtmp / atmp);
+                centroid.Y = (float)(ytmp / atmp);
+            }
+            return centroid;
         }
 
         private class ConvexVert
@@ -206,7 +238,7 @@ namespace Game
             List<ConvexVert> verts = new List<ConvexVert>();
             for (int i = 0; i < tris.Points.Count; i++)
             {
-                verts.Add(new ConvexVert(Vector2Ext.ConvertTo(tris.Points[i])));
+                verts.Add(new ConvexVert(Vector2Ext.ToOtk(tris.Points[i])));
             }
 
             for (int i = 0; i < tris.Triangles.Count; i++)
@@ -218,8 +250,8 @@ namespace Game
                     if (!tri.EdgeIsConstrained[(j + 2) % 3])
                     {
                         int jNext = (j + 1) % 3;
-                        var v0 = Vector2Ext.ConvertTo(tri.Points[j]);
-                        var v1 = Vector2Ext.ConvertTo(tri.Points[jNext]);
+                        var v0 = Vector2Ext.ToOtk(tri.Points[j]);
+                        var v1 = Vector2Ext.ToOtk(tri.Points[jNext]);
                         ConvexVert vert0 = verts.Find(item => item.V == v0);
                         ConvexVert vert1 = verts.Find(item => item.V == v1);
 

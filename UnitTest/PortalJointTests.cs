@@ -19,8 +19,8 @@ namespace UnitTest
         public void AssertPortalJoint(Body enterBody, Body exitBody, IPortal portalEnter)
         {
             Portal.Enter(portalEnter, enterBody);
-            Assert.IsTrue(Vector2Ext.ConvertTo(exitBody.Position - enterBody.Position).Length < Delta);
-            Assert.IsTrue(Vector2Ext.ConvertTo(exitBody.LinearVelocity - enterBody.LinearVelocity).Length < Delta);
+            Assert.IsTrue(Vector2Ext.ToOtk(exitBody.Position - enterBody.Position).Length < Delta);
+            Assert.IsTrue(Vector2Ext.ToOtk(exitBody.LinearVelocity - enterBody.LinearVelocity).Length < Delta);
             Assert.AreEqual(exitBody.Rotation, enterBody.Rotation, Delta);
             Assert.AreEqual(exitBody.AngularVelocity, enterBody.AngularVelocity, Delta);
         }

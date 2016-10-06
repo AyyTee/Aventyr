@@ -140,12 +140,12 @@ namespace Game.Physics
             for (int i = 0; i < convexList.Count; i++)
             {
                 var v1 = new FarseerPhysics.Common.Vertices();
-                v1.AddRange(Vector2Ext.ConvertToXna(convexList[i]));
+                v1.AddRange(Vector2Ext.ToXna(convexList[i]));
 
                 vList.Add(v1);
                 PolygonShape shape = new PolygonShape(v1, 1);
                 Fixture fixture = body.CreateFixture(shape);
-                FixtureUserData userData = FixtureExt.SetUserData(fixture);
+                FixtureData userData = FixtureExt.SetData(fixture);
             }
         }
 

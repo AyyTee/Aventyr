@@ -11,7 +11,7 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
-    public class BodyUserData : ITreeNode<BodyUserData>
+    public class BodyData : ITreeNode<BodyData>
     {
         public int BodyId;
         public readonly IActor Actor;
@@ -21,17 +21,17 @@ namespace Game
         public ChildBody BodyParent { get; private set; } = new ChildBody(null, null);
         public bool IsChild { get { return BodyParent.Body != null; } }
 
-        public BodyUserData Parent {
+        public BodyData Parent {
             get
             {
-                return BodyParent.Body == null ? null : BodyExt.GetUserData(BodyParent.Body);
+                return BodyParent.Body == null ? null : BodyExt.GetData(BodyParent.Body);
             }
         }
-        public List<BodyUserData> Children {
+        public List<BodyData> Children {
             get
             {
                 return BodyChildren.Select(
-                    item => item.Body == null ? null : BodyExt.GetUserData(item.Body)).ToList();
+                    item => item.Body == null ? null : BodyExt.GetData(item.Body)).ToList();
             }
         }
 
@@ -47,11 +47,11 @@ namespace Game
         }
 
         #region Constructors
-        public BodyUserData()
+        public BodyData()
         {
         }
 
-        public BodyUserData(IActor actor, Body body)
+        public BodyData(IActor actor, Body body)
         {
             Debug.Assert(body != null);
             Debug.Assert(actor != null);
@@ -61,9 +61,12 @@ namespace Game
         }
         #endregion
 
-        public void UpdatePortalCollisions()
+        /// <summary>
+        /// This should only be called by IActor.
+        /// </summary>
+        public void Update()
         {
-            foreach (ChildBody child in BodyChildren)
+            /*foreach (ChildBody child in BodyChildren)
             {
                 Debug.Assert(child.Body != Body);
                 child.Body.LinearVelocity = Body.LinearVelocity;
@@ -71,7 +74,7 @@ namespace Game
                 child.Body.Position = Body.Position;
                 child.Body.Rotation = Body.Rotation;
                 Portal.Enter(child.Portal, child.Body);
-            }
+            }*/
 
             foreach (IPortal portal in PortalCollisionsNew())
             {
@@ -81,35 +84,40 @@ namespace Game
                 }
 
                 Body bodyClone = Body.DeepClone();
-                BodyUserData userData = BodyExt.SetUserData(bodyClone, Actor);
+                BodyData userData = BodyExt.SetData(bodyClone, Actor);
                 userData.BodyParent = new ChildBody(Body, portal);
-                foreach (Fixture f in bodyClone.FixtureList)
-                {
-                    FixtureExt.SetUserData(f);
-                }
 
                 Portal.Enter(portal, bodyClone);
+                foreach (Fixture f in bodyClone.FixtureList)
+                {
+                    FixtureData fixtureData = FixtureExt.SetData(f);
+                    fixtureData.PortalCollisions.UnionWith(FixtureExt.GetPortalCollisions(f, Actor.Scene.GetPortalList()));
+                }
 
                 BodyChildren.Add(new ChildBody(bodyClone, portal));
 
                 Physics.Factory.CreatePortalJoint(((Scene)Actor.Scene).World, Body, bodyClone, portal);
-
-                userData.UpdatePortalCollisions();
             }
 
-            /*foreach (FixturePortal portal in PortalCollisionsRemoved())
+            foreach (IPortal portal in PortalCollisionsRemoved())
             {
-                if (BodyParent != null && portal == BodyParent.Portal)
-                {
-                    continue;
-                }
-                ChildBody childBody = BodyChildren.Find(item => item.Portal == portal);
-                Debug.Assert(childBody != null);
-                Debug.Assert(childBody.Body != Body);
+                ChildBody child = BodyChildren.Find(item => item.Portal == portal);
+                BodyExt.Remove(child.Body);
+            }
 
-                RemoveChildBody(childBody, ref bodiesToRemove);
-                BodyChildren.Remove(childBody);
-            }*/
+            foreach (BodyData data in Children)
+            {
+                data.Update();
+            }
+        }
+
+        public void SetMass(float mass)
+        {
+            var nodes = Tree<BodyData>.GetAll(this);
+            foreach (BodyData data in nodes)
+            {
+                data.Body.Mass = Actor.Mass / nodes.Count;
+            }
         }
 
         public HashSet<IPortal> PortalCollisions()
@@ -117,7 +125,7 @@ namespace Game
             HashSet<IPortal> collisions = new HashSet<IPortal>();
             foreach (Fixture f in Body.FixtureList)
             {
-                collisions.UnionWith(FixtureExt.GetUserData(f).PortalCollisions);
+                collisions.UnionWith(FixtureExt.GetData(f).PortalCollisions);
             }
             Debug.Assert(!collisions.Contains(null));
             return collisions;
@@ -128,7 +136,7 @@ namespace Game
             HashSet<IPortal> collisionsPrevious = new HashSet<IPortal>();
             foreach (Fixture f in Body.FixtureList)
             {
-                collisionsPrevious.UnionWith(FixtureExt.GetUserData(f).PortalCollisionsPrevious);
+                collisionsPrevious.UnionWith(FixtureExt.GetData(f).PortalCollisionsPrevious);
             }
             Debug.Assert(!collisionsPrevious.Contains(null));
             return collisionsPrevious;
@@ -142,18 +150,6 @@ namespace Game
         private HashSet<IPortal> PortalCollisionsRemoved()
         {
             return new HashSet<IPortal>(PortalCollisionsPrevious().Except(PortalCollisions()));
-        }
-
-        private void RemoveChildBody(ChildBody child, ref List<Body> bodiesToRemove)
-        {
-            BodyUserData userData = BodyExt.GetUserData(child.Body);
-            foreach (ChildBody subchild in userData.BodyChildren)
-            {
-                Debug.Assert(subchild != child);
-                Debug.Assert(subchild.Body != child.Body);
-                userData.RemoveChildBody(subchild, ref bodiesToRemove);
-            }
-            bodiesToRemove.Add(child.Body);
         }
     }
 }

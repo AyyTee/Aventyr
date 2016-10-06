@@ -100,6 +100,7 @@
     <Compile Include="PortalCommonTests.cs" />
     <Compile Include="SceneTests.cs" />
     <Compile Include="PortalJointTests.cs" />
+    <Compile Include="BodyExtTests.cs" />
     <Compile Include="VertexTests.cs" />
   </ItemGroup>
   <ItemGroup>

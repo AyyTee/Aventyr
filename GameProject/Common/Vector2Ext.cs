@@ -103,17 +103,17 @@ namespace Game
             return vList;
         }
 
-        public static Vector2 ConvertTo(Point2D v)
+        public static Vector2 ToOtk(Point2D v)
         {
             return new Vector2(v.Xf, v.Yf);
         }
 
-        public static Vector2 ConvertTo(Vector3 v)
+        public static Vector2 ToOtk(Vector3 v)
         {
             return new Vector2(v.X, v.Y);
         }
 
-        public static Vector2[] ConvertTo(FarseerPhysics.Common.Vertices v)
+        public static Vector2[] ToOtk(FarseerPhysics.Common.Vertices v)
         {
             Vector2[] vList = new Vector2[v.Count];
             for (int i = 0; i < vList.Length; i++)
@@ -123,71 +123,71 @@ namespace Game
             return vList;
         }
 
-        public static Vector2[] ConvertTo(Vector3[] v)
+        public static Vector2[] ToOtk(Vector3[] v)
         {
             Debug.Assert(v != null);
             Vector2[] vNew = new Vector2[v.Length];
             for (int i = 0; i < v.Length; i++)
             {
-                vNew[i] = ConvertTo(v[i]);
+                vNew[i] = ToOtk(v[i]);
             }
             return vNew;
         }
 
-        public static Vector2 ConvertTo(TriangulationPoint v)
+        public static Vector2 ToOtk(TriangulationPoint v)
         {
             return new Vector2((float)v.X, (float)v.Y);
         }
 
-        public static Vector2 ConvertTo(PolygonPoint v)
+        public static Vector2 ToOtk(PolygonPoint v)
         {
             return new Vector2((float)v.X, (float)v.Y);
         }
 
-        public static Vector2 ConvertTo(Xna.Vector2 v)
+        public static Vector2 ToOtk(Xna.Vector2 v)
         {
             return new Vector2(v.X, v.Y);
         }
 
-        public static Vector2[] ConvertTo(Xna.Vector2[] v)
+        public static Vector2[] ToOtk(Xna.Vector2[] v)
         {
             Debug.Assert(v != null);
             Vector2[] vNew = new Vector2[v.Length];
             for (int i = 0; i < v.Length; i++)
             {
-                vNew[i] = ConvertTo(v[i]);
+                vNew[i] = ToOtk(v[i]);
             }
             return vNew;
         }
 
-        public static Xna.Vector2 ConvertToXna(Vector2 v)
+        public static Xna.Vector2 ToXna(Vector2 v)
         {
             return new Xna.Vector2(v.X, v.Y);
         }
 
-        public static Xna.Vector2[] ConvertToXna(Vector2[] v)
+        public static Xna.Vector2[] ToXna(Vector2[] v)
         {
             Debug.Assert(v != null);
             Xna.Vector2[] vNew = new Xna.Vector2[v.Length];
             for (int i = 0; i < v.Length; i++)
             {
-                vNew[i] = ConvertToXna(v[i]);
+                vNew[i] = ToXna(v[i]);
             }
             return vNew;
         }
 
-        public static List<Xna.Vector2> ConvertToXna(List<Vector2> v)
+        public static List<Xna.Vector2> ToXna(List<Vector2> v)
         {
             Debug.Assert(v != null);
             List<Xna.Vector2> vNew = new List<Xna.Vector2>();
             for (int i = 0; i < v.Count; i++)
             {
-                vNew.Add(ConvertToXna(v[i]));
+                vNew.Add(ToXna(v[i]));
             }
             return vNew;
         }
 
-        public static Xna.Vector2 ConvertToXna(TriangulationPoint v)
+        public static Xna.Vector2 ToXna(TriangulationPoint v)
         {
             return new Xna.Vector2((float)v.X, (float)v.Y);
         }

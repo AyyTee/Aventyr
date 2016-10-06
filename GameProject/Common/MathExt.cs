@@ -130,7 +130,7 @@ namespace Game
 
         public static double PointLineDistance(Xna.Vector2 point, Line line, bool isSegment)
         {
-            return PointLineDistance(Vector2Ext.ConvertTo(point), line, isSegment);
+            return PointLineDistance(Vector2Ext.ToOtk(point), line, isSegment);
         }
 
         static public double PointPolygonDistance(Vector2 point, IList<Vector2> polygon)
@@ -194,7 +194,7 @@ namespace Game
         }
 
         /// <summary>
-        /// Checks if the line is at least partially contained in a polygon
+        /// Checks if the line segment is at least partially contained in a polygon
         /// </summary>
         /// <param name="polygon">A closed polygon</param>
         /// <returns></returns>
@@ -871,10 +871,10 @@ namespace Game
         /// <remarks>Original code was found here 
         /// http://csharphelper.com/blog/2014/07/calculate-the-area-of-a-polygon-in-c/
         /// </remarks>
-        public static double GetArea(Vector2[] polygon)
+        public static double GetArea(IList<Vector2> polygon)
         {
             // Add the first point to the end.
-            int num_points = polygon.Length;
+            int num_points = polygon.Count;
             Vector2[] pts = new Vector2[num_points + 1];
             polygon.CopyTo(pts, 0);
             pts[num_points] = polygon[0];
