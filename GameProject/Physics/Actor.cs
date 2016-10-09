@@ -35,6 +35,8 @@ namespace Game
         [DataMember]
         public float Mass { get; private set; } = 1;
         [DataMember]
+        public BodyType BodyType { get; private set; }
+        [DataMember]
         Vector2 _scale = new Vector2(1, 1);
         /// <summary>
         /// Used for storing body data when serialized.
@@ -60,7 +62,7 @@ namespace Game
             _scale = transform.Scale;
             Body = Factory.CreatePolygon(Scene.World, transform, Vertices);
             BodyExt.SetData(Body, this);
-            Body.IsStatic = false;
+            SetBodyType(BodyType.Dynamic);
             SetMass(Body.Mass);
         }
 
@@ -107,6 +109,22 @@ namespace Game
             BodyExt.GetData(Body).SetMass(mass);
         }
 
+        public void SetBodyType(BodyType type)
+        {
+            BodyType = type;
+            _setBodyType(Body, type);
+        }
+
+        private void _setBodyType(Body body, BodyType type)
+        {
+            Debug.Assert(!Scene.InWorldStep);
+            body.BodyType = type;
+            foreach (var b in BodyExt.GetData(body).BodyChildren)
+            {
+                _setBodyType(b.Body, BodyType.Dynamic);
+            }
+        }
+
         public void Update()
         {
             BodyExt.GetData(Body).Update();
@@ -145,13 +163,26 @@ namespace Game
 
         private void _applyForce(Vector2 force, Vector2 point)
         {
-            var local = Body.GetLocalPoint(Vector2Ext.ToXna(point));
-            var bodyTree = Tree<BodyData>.GetAll(BodyExt.GetData(Body));
-            foreach (BodyData data in bodyTree)
+            //var local = Body.GetLocalPoint(Vector2Ext.ToXna(point));
+            //var bodyTree = Tree<BodyData>.GetAll(BodyExt.GetData(Body));
+            /*foreach (BodyData data in bodyTree)
             {
                 data.Body.ApplyForce(
                     Vector2Ext.ToXna(force * bodyTree.Count / Mass),
                     data.Body.GetWorldPoint(local));
+            }*/
+        }
+
+        public void ApplyGravity(Vector2 force)
+        {
+            var bodyTree = Tree<BodyData>.GetAll(BodyExt.GetData(Body));
+            foreach (BodyData data in bodyTree)
+            {
+                var massData = BodyExt.GetLocalMassData(data.Body);
+                
+                data.Body.ApplyForce(
+                    Vector2Ext.ToXna(force * massData.Mass),
+                    Vector2Ext.ToXna(massData.Centroid));
             }
         }
 

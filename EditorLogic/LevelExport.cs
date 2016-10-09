@@ -107,7 +107,7 @@ namespace EditorLogic
                     if (e is EditorWall)
                     {
                         EditorWall castWall = (EditorWall)e;
-                        actor.Body.IsStatic = true;
+                        actor.SetBodyType(BodyType.Static);
                         //actor.Vertices = castWall.Vertices;
                         entity.AddModel(Game.ModelFactory.CreatePolygon(castWall.Vertices));
                         //entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
@@ -115,7 +115,6 @@ namespace EditorLogic
                     }
                     else if (e is EditorActor)
                     {
-                        actor.Body.IsStatic = false;
                         //actor.SetVelocity(new Transform2(new Vector2(0.2f, 0)));
                         EditorActor castActor = (EditorActor)e;
                         //actor.Vertices = castActor.Vertices;
@@ -132,7 +131,7 @@ namespace EditorLogic
                     {
                         animation.Add(actor, cast.AnimatedTransform);
                         actor.SetTransform(cast.AnimatedTransform.GetTransform(0));
-                        actor.Body.IsKinematic = true;
+                        actor.SetBodyType(BodyType.Kinematic);
                     }
                     else
                     {

@@ -31,8 +31,14 @@ namespace Game.Portals
         public const float CollisionMargin = 0.1f;
 
         public FloatPortal(Scene scene)
+            : this(scene, new Transform2())
+        {
+        }
+
+        public FloatPortal(Scene scene, Transform2 transform)
             : base(scene)
         {
+            SetTransform(transform);
         }
 
         public override IDeepClone ShallowClone()

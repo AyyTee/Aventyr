@@ -66,16 +66,6 @@ namespace Game
         /// </summary>
         public void Update()
         {
-            /*foreach (ChildBody child in BodyChildren)
-            {
-                Debug.Assert(child.Body != Body);
-                child.Body.LinearVelocity = Body.LinearVelocity;
-                child.Body.AngularVelocity = Body.AngularVelocity;
-                child.Body.Position = Body.Position;
-                child.Body.Rotation = Body.Rotation;
-                Portal.Enter(child.Portal, child.Body);
-            }*/
-
             foreach (IPortal portal in PortalCollisionsNew())
             {
                 if (BodyParent.Portal?.Linked == portal)
@@ -84,6 +74,7 @@ namespace Game
                 }
 
                 Body bodyClone = Body.DeepClone();
+                bodyClone.BodyType = BodyType.Dynamic;
                 BodyData userData = BodyExt.SetData(bodyClone, Actor);
                 userData.BodyParent = new ChildBody(Body, portal);
 
@@ -102,7 +93,10 @@ namespace Game
             foreach (IPortal portal in PortalCollisionsRemoved())
             {
                 ChildBody child = BodyChildren.Find(item => item.Portal == portal);
-                BodyExt.Remove(child.Body);
+                if (child != null)
+                {
+                    BodyExt.Remove(child.Body);
+                }
             }
 
             foreach (BodyData data in Children)

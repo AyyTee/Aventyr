@@ -20,5 +20,7 @@ namespace Game
         void Update();
         void ApplyForce(Vector2 force);
         void ApplyForce(Vector2 force, Vector2 point);
+        void SetBodyType(BodyType type);
+        BodyType BodyType { get; }
     }
 }

@@ -50,10 +50,8 @@ namespace Game
 
             foreach (Actor actor in Scene.GetAll().OfType<Actor>())
             {
-                actor.ApplyForce(new Vector2(0, -9.8f / 2) * actor.Mass);
-                //ActorExt.GetGravity(BodyExt.GetUserData(actor.Body).Actor, Scene.GetPortalList(), new Vector2(0, -9.8f / 2));
-                //actor.Body.ApplyForce();
                 actor.Update();
+                actor.ApplyGravity(Scene.Gravity);
             }
 
             if (DebugEntity != null)
@@ -62,6 +60,11 @@ namespace Game
             }
             DebugEntity = new Entity(Scene);
             DebugEntity.IsPortalable = false;
+
+            foreach (Actor actor in Scene.GetAll().OfType<Actor>())
+            {
+                ActorExt.AssertBodyType(actor);
+            }
         }
 
         public void StepEnd()
@@ -224,7 +227,7 @@ namespace Game
             {
                 if (bodyData[0].IsChild && bodyData[1].IsChild)
                 {
-                    return true;
+                    //return true;
                 }
 
                 int childIndex = bodyData[0].IsChild ? 0 : 1;
@@ -234,22 +237,6 @@ namespace Game
                 FixtureData fixtureDataChild = fixtureData[childIndex];
                 FixtureData fixtureDataOther = fixtureData[otherIndex];
 
-                //Contact is invalid if it is between two fixtures where one fixture is colliding with a portal on the other fixture.
-                if (fixtureData[0].IsPortalParentless() && fixtureData[1].IsPortalParentless())
-                {
-                    for (int i = 0; i < fixtureData.Length; i++)
-                    {
-                        int iNext = (i + 1) % fixtureData.Length;
-                        var intersection = fixtureData[iNext].GetPortalChildren().Intersect(fixtureData[i].PortalCollisions);
-                        if (intersection.Count() > 0)
-                        {
-                            //Debug.Fail("Fixtures with portal collisions should be filtered.");
-                            return false;
-                        }
-                    }
-                }
-
-                return true;
             }
 
             //Contact is invalid if it is between two fixtures where one fixture is colliding with a portal on the other fixture.
@@ -324,7 +311,8 @@ namespace Game
                     }
 
                     //Contact is invalid if it is on the opposite side of the portal from its body origin.
-                    Xna.Vector2 pos = BodyExt.GetData(fixtureData[i].Fixture.Body).PreviousPosition;
+                    //Xna.Vector2 pos = BodyExt.GetData(fixtureData[i].Fixture.Body).PreviousPosition;
+                    Vector2 pos = BodyExt.GetLocalOrigin(fixtureData[i].Fixture.Body);
                     bool sideOf = line.GetSideOf(vList[0]) != line.GetSideOf(pos);
                     Debug.Assert(contact.Manifold.PointCount > 0);
                     if (contact.Manifold.PointCount == 1)

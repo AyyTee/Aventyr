@@ -259,6 +259,50 @@ namespace UnitTest
             Transform2 expected = transformPrevious.Add(velocity);
             Assert.IsTrue(expected.AlmostEqual(fixture.WorldTransform));
         }
+
+        /// <summary>
+        /// Make sure that an Actor travelling through a portal attached to itself doesn't have the portal detach.
+        /// </summary>
+        [TestMethod]
+        public void StepTest9()
+        {
+            Scene scene = new Scene();
+
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(4, 1));
+            actor.SetVelocity(Transform2.CreateVelocity(new Vector2(0.1f, 0)));
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(2, 0)));
+            FixturePortal exit = new FixturePortal(scene, actor, new PolygonCoord(0, 0.5f));
+
+            PortalCommon.UpdateWorldTransform(scene);
+            SimulationStep.Step(scene.GetAll().OfType<IPortalCommon>(), scene.GetAll().OfType<IPortal>(), 1, null);
+
+            Assert.IsTrue(PortalCommon.GetWorldTransform(exit) == exit.WorldTransform);
+        }
+
+        /*[TestMethod]
+        public void StepTest10()
+        {
+            Scene scene = new Scene();
+            scene.Gravity = new Vector2(0, -4.9f);
+
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(1, 4));
+
+            FloatPortal enter = new FloatPortal(scene);
+            enter.SetTransform(new Transform2(new Vector2(0, -6), 1, (float)(Math.PI / 2)));
+            FixturePortal exit = new FixturePortal(scene, actor, new PolygonCoord(1, 0.5f));
+            Portal.SetLinked(enter, exit);
+
+            PortalCommon.UpdateWorldTransform(scene);
+            for (int i = 0; i < 500; i++)
+            {
+                scene.Step(1.0f / 60.0f);
+            }
+            
+
+            Assert.IsTrue(PortalCommon.GetWorldTransform(exit) == exit.WorldTransform);
+        }*/
         #endregion
     }
 }

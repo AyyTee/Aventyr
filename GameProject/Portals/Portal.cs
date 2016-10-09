@@ -32,22 +32,16 @@ namespace Game.Portals
 
         public static void SetLinked(IPortal p0, IPortal p1)
         {
-            if (p0 != null)
+            if (p0.Linked != null)
             {
-                p0.Linked = p1;
+                p0.Linked.Linked = null;
             }
-            if (p1 != null)
+            if (p1.Linked != null)
             {
-                p1.Linked = p0;
+                p1.Linked.Linked = null;
             }
-            if (p0 != null)
-            {
-                PortalCommon.ResetWorldTransform(p0);
-            }
-            if (p1 != null)
-            {
-                PortalCommon.ResetWorldTransform(p1);
-            }
+            p0.Linked = p1;
+            p1.Linked = p0;
         }
 
         public static Transform2 Enter(IPortal portal, Transform2 transform)
@@ -309,6 +303,17 @@ namespace Game.Portals
             }
 
             return intersections;
+        }
+
+        /// <summary>
+        /// Get all the portals that collide with a polygon.  Valid portals can occlude other portals.
+        /// </summary>
+        public static List<IPortal> GetCollisions(IList<Vector2> polygon, IList<IPortal> portals)
+        {
+            //TODO remove portals that are occluded by valid portals.
+            var collisions = portals.Where(
+                item => MathExt.LineInPolygon(new Line(GetWorldVerts(item)), polygon));
+            return collisions.ToList();
         }
     }
 }

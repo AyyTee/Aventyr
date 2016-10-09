@@ -50,19 +50,6 @@ namespace UnitTest
 
             Assert.IsTrue(PolygonExt.GetCentroid(vertices) == new Vector2(-0.5f, 0f));
         }
-
-        /*[TestMethod]
-        public void GetCentroidTest3()
-        {
-            Vector2[] vertices = new Vector2[] {
-                new Vector2(1, -1),
-                new Vector2(-2, -1),
-                new Vector2(-2, 1),
-                new Vector2(1, 1)
-            };
-
-            Assert.IsTrue(PolygonExt.GetCentroid(vertices) == new Vector2(-0.5f, 0f));
-        }*/
         #endregion
 
         #region DecomposeConcave tests

@@ -28,11 +28,14 @@ namespace Game
         [DataMember]
         public List<ISceneObject> SceneObjectList = new List<ISceneObject>();
         /// <summary>
-        /// States whether the scene is currently performing a physics step.
+        /// Whether the scene is currently performing a physics step.  
+        /// This is useful in cases where changing physics state can break FSE.
         /// </summary>
         public bool InWorldStep { get; private set; }
         [DataMember]
         public double Time { get; private set; }
+        [DataMember]
+        public Vector2 Gravity { get; set; } = new Vector2(0, -4.9f);
 
         #region Constructors
         public Scene()
@@ -57,11 +60,6 @@ namespace Game
         {
             Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
             World.ProcessChanges();
-
-            /*foreach (IPortal p in GetPortalList())
-            {
-                p.WorldTransformPrevious = p.GetWorldTransform();
-            }*/
 
             foreach (IStep s in GetAll().OfType<IStep>())
             {

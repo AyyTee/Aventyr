@@ -14,6 +14,7 @@ namespace Game
         public float Length { get { return Delta.Length; } }
         Vector2[] _vertices = new Vector2[2];
         public Vector2 Delta { get { return this[1] - this[0]; } }
+        public Vector2 Center { get { return (this[1] + this[0]) / 2; } }
         public Vector2 this[int index]
         {
             get { return _vertices[index]; }

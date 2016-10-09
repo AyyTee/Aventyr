@@ -73,5 +73,30 @@ namespace Game
             }
             return impulses;
         }
+
+        /// <summary>
+        /// Verifies the BodyType for Actor bodies is correct.
+        /// </summary>
+        /// <returns></returns>
+        public static void AssertBodyType(IActor actor)
+        {
+            if (actor.Body.BodyType != actor.BodyType)
+            {
+                Debug.Fail("");
+            }
+            foreach (BodyData data in BodyExt.GetData(actor.Body).Children)
+            {
+                _assertBodyType(data);
+            }
+        }
+
+        private static void _assertBodyType(BodyData bodyData)
+        {
+            Debug.Assert(bodyData.Body.BodyType == BodyType.Dynamic);
+            foreach (BodyData data in bodyData.Children)
+            {
+                _assertBodyType(data);
+            }
+        }
     }
 }

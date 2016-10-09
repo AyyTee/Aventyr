@@ -15,7 +15,7 @@ namespace EditorWindow
     /// <summary>
     /// Handles the UI side of saving and loading levels.
     /// </summary>
-    public class ControllerFiles
+    public class ControllerFiles : IDisposable
     {
         SaveFileDialog _saveFileDialog;
         OpenFileDialog _loadFileDialog;
@@ -36,8 +36,8 @@ namespace EditorWindow
             _loadFileDialog = new OpenFileDialog();
             _saveFileDialog.FileOk += _saveFileDialog_FileOk;
             _loadFileDialog.FileOk += _loadFileDialog_FileOk;
-            _saveFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension;
-            _loadFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension;
+            _saveFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension + "|TXT|*.txt";
+            _loadFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension + "|TXT|*.txt";
             //TODO: Figure out how to add callback for user pressing the cancel button in file dialog window.
 
             FilepathCurrent = null;
@@ -179,6 +179,12 @@ namespace EditorWindow
                     ControllerEditor.LevelLoad(filepath);
                 });
             }
+        }
+
+        public void Dispose()
+        {
+            _saveFileDialog.Dispose();
+            _loadFileDialog.Dispose();
         }
     }
 }
