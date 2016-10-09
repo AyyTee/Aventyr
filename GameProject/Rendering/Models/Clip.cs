@@ -74,42 +74,13 @@ namespace Game
             {
                 return clipModels;
             }
-            List<IPortal> collisions = new List<IPortal>();
-            foreach (IPortal portal in portalList)
-            {
-                if (!Portal.IsValid(portal))
-                {
-                    continue;
-                }
-
-                Line portalLine = new Line(Portal.GetWorldVerts(portal));
-                Vector2[] convexHull = Vector2Ext.Transform(model.GetWorldConvexHull(), entity.GetWorldTransform().GetMatrix() * modelMatrix);
-
-                /* Don't clip with portals unless part of the portal is slightly inside the model's convex hull.  
-                 * This is to prevent rounding errors from causing a portal to clip a model it isn't touching.*/
-                if (MathExt.LineInPolygon(portalLine, convexHull) && 
-                    (MathExt.PointPolygonDistance(portalLine[0], convexHull) > PORTAL_CLIP_MARGIN || 
-                    MathExt.PointPolygonDistance(portalLine[1], convexHull) > PORTAL_CLIP_MARGIN))
-                {
-                    collisions.Add(portal);
-                }
-            }
-
-            collisions = collisions.OrderBy(item => (item.WorldTransform.Position - centerPoint).Length).ToList();
-            for (int i = 0; i < collisions.Count; i++)
-            {
-                IPortal portal = collisions[i];
-                for (int j = collisions.Count - 1; j > i; j--)
-                {
-                    Line currentLine = new Line(Portal.GetWorldVerts(collisions[i]));
-                    Line checkLine = new Line(Portal.GetWorldVerts(collisions[j]));
-                    Side checkSide = currentLine.GetSideOf(checkLine);
-                    if (checkSide != currentLine.GetSideOf(centerPoint))
-                    {
-                        collisions.RemoveAt(j);
-                    }
-                }
-            }
+            
+            List<IPortal> collisions = Portal.GetCollisions(
+                centerPoint, 
+                Vector2Ext.Transform(model.GetWorldConvexHull(), 
+                entity.GetWorldTransform().GetMatrix() * modelMatrix), 
+                portalList, 
+                PORTAL_CLIP_MARGIN);
 
             List<Line> clipLines = new List<Line>();
             foreach (IPortal portal in collisions)

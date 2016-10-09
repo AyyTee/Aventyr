@@ -182,11 +182,8 @@ namespace Game
         public static List<IPortal> GetPortalCollisions(Fixture fixture, IList<IPortal> portals, bool ignoreAttachedPortals = true)
         {
             Vector2[] vertices = GetWorldPoints(fixture);
-            List<IPortal> collisions = Portal.GetCollisions(vertices, portals);
-            if (collisions.Count > 0 && BodyExt.GetData(fixture.Body).IsChild)
-            {
+            List<IPortal> collisions = Portal.GetCollisions(BodyExt.GetLocalOrigin(fixture.Body), vertices, portals);
 
-            }
             if (ignoreAttachedPortals)
             {
                 var attached = GetData(fixture).GetPortalChildren();

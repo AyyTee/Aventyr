@@ -13,7 +13,7 @@ namespace Game.Portals
     public static class Portal
     {
         /// <summary>
-        /// The distance at which an entity enters and exits a portal.  
+        /// The minimum distance something can be to a portal.
         /// It is used to avoid situations where an entity can skip over a portal by sitting exactly on top of it.
         /// </summary>
         public const float EnterMinDistance = 0.001f;
@@ -306,14 +306,41 @@ namespace Game.Portals
         }
 
         /// <summary>
-        /// Get all the portals that collide with a polygon.  Valid portals can occlude other portals.
+        /// Get all valid portals that collide with a polygon.  Portals can occlude eachother.
         /// </summary>
-        public static List<IPortal> GetCollisions(IList<Vector2> polygon, IList<IPortal> portals)
+        /// <param name="margin">Minimum distance inside of polygon for a portal collision to count.  
+        /// Useful for avoiding round off errors.</param>
+        public static List<IPortal> GetCollisions(Vector2 center, IList<Vector2> polygon, IList<IPortal> portals, double margin = 0)
         {
-            //TODO remove portals that are occluded by valid portals.
-            var collisions = portals.Where(
-                item => MathExt.LineInPolygon(new Line(GetWorldVerts(item)), polygon));
-            return collisions.ToList();
+            List<IPortal> collisions = new List<IPortal>();
+            foreach (IPortal p in portals.Where(item => IsValid(item)))
+            {
+                Line portalLine = new Line(GetWorldVerts(p));
+                if (MathExt.LineInPolygon(portalLine, polygon) && 
+                    (margin == 0 || 
+                    MathExt.PointPolygonDistance(portalLine[0], polygon) > margin ||
+                    MathExt.PointPolygonDistance(portalLine[1], polygon) > margin))
+                {
+                    collisions.Add(p);
+                }
+            }
+
+            var ordered = collisions.OrderBy(item => (item.WorldTransform.Position - center).Length).ToList();
+            for (int i = 0; i < ordered.Count; i++)
+            {
+                IPortal portal = ordered[i];
+                for (int j = ordered.Count - 1; j > i; j--)
+                {
+                    Line currentLine = new Line(GetWorldVerts(ordered[i]));
+                    Line checkLine = new Line(GetWorldVerts(ordered[j]));
+                    Side checkSide = currentLine.GetSideOf(checkLine);
+                    if (checkSide != currentLine.GetSideOf(center))
+                    {
+                        ordered.RemoveAt(j);
+                    }
+                }
+            }
+            return ordered.ToList();
         }
     }
 }

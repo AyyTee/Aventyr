@@ -27,9 +27,6 @@ namespace Game.Portals
 
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 
-        public const float EdgeMargin = 0.02f;
-        public const float CollisionMargin = 0.1f;
-
         public FloatPortal(Scene scene)
             : this(scene, new Transform2())
         {
