@@ -92,7 +92,9 @@ namespace Game
 
         private static void _assertBodyType(BodyData bodyData)
         {
-            Debug.Assert(bodyData.Body.BodyType == BodyType.Dynamic);
+            Debug.Assert(
+                (bodyData.Body.BodyType == BodyType.Dynamic && bodyData.Actor.BodyType == BodyType.Dynamic) ||
+                (bodyData.Body.BodyType == BodyType.Kinematic && bodyData.Actor.BodyType != BodyType.Dynamic));
             foreach (BodyData data in bodyData.Children)
             {
                 _assertBodyType(data);

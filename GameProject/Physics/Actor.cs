@@ -121,7 +121,7 @@ namespace Game
             body.BodyType = type;
             foreach (var b in BodyExt.GetData(body).BodyChildren)
             {
-                _setBodyType(b.Body, BodyType.Dynamic);
+                _setBodyType(b.Body, BodyType == BodyType.Dynamic ? BodyType.Dynamic : BodyType.Kinematic);
             }
         }
 
@@ -206,29 +206,7 @@ namespace Game
             {
                 Debug.Assert(!Scene.InWorldStep, "Scale cannot change during a physics step.");
 
-                List<Xna.Vector2> contourPrev = Vector2Ext.ToXna(ActorExt.GetFixtureContour(Vertices, GetTransform().Scale));
-                
-                List<Xna.Vector2> contour = Vector2Ext.ToXna(ActorExt.GetFixtureContour(Vertices, transform.Scale));
-
-                foreach (Fixture f in body.FixtureList)
-                {
-                    if (!FixtureExt.GetData(f).IsPortalParentless())
-                    {
-                        continue;
-                    }
-                    PolygonShape shape = (PolygonShape)f.Shape;
-                    //Make a copy of the vertices and manipulate those before assigning it back to the fixture.
-                    //Modifying the vertices directly causes Farseer to not update internal values.
-                    FarseerPhysics.Common.Vertices vertices = new FarseerPhysics.Common.Vertices(shape.Vertices);
-                    for (int i = 0; i < shape.Vertices.Count; i++)
-                    {
-                        int verticeIndex = contourPrev.FindIndex(item => item == vertices[i]);
-                        Debug.Assert(verticeIndex != -1);
-                        vertices[i] = contour[verticeIndex];
-                    }
-                    shape.Vertices = vertices;
-                    PolygonExt.SetInterior(shape.Vertices);
-                }
+                BodyExt.ScaleFixtures(body, transform.Scale);
             }
             BodyExt.SetTransform(body, transform);
 

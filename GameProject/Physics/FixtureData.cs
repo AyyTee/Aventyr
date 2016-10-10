@@ -20,6 +20,7 @@ namespace Game
         public HashSet<IPortal> PortalCollisions = new HashSet<IPortal>();
         public HashSet<IPortal> PortalCollisionsPrevious = new HashSet<IPortal>();
         private FixturePortal[] _portalParents = new FixturePortal[2];
+        public Vector2[] DefaultShape;
         /// <summary>
         /// The portals this fixture is a collision edge for (a maximum of 2). 
         /// Both array indices are null if this fixture does not belong to a portal.
@@ -57,6 +58,7 @@ namespace Game
         public FixtureData(Fixture fixture)
         {
             Fixture = fixture;
+            DefaultShape = Vector2Ext.ToOtk(((PolygonShape)fixture.Shape).Vertices);
         }
         #endregion
 

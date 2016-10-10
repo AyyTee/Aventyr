@@ -74,19 +74,17 @@ namespace Game
         {
             foreach (Fixture f in body.FixtureList)
             {
-                if (!FixtureExt.GetData(f).IsPortalParentless())
-                {
-                    continue;
-                }
+                FixtureData data = FixtureExt.GetData(f);
                 PolygonShape shape = (PolygonShape)f.Shape;
-                //Make a copy of the vertices and manipulate those before assigning it back to the fixture.
-                //Modifying the vertices directly causes Farseer to not update internal values.
-                FarseerPhysics.Common.Vertices vertices = new FarseerPhysics.Common.Vertices(shape.Vertices);
+                Debug.Assert(data.DefaultShape.Length == shape.Vertices.Count);
+
+                FarseerPhysics.Common.Vertices vertices = new FarseerPhysics.Common.Vertices();
                 for (int i = 0; i < shape.Vertices.Count; i++)
                 {
-                    vertices[i] = new Xna.Vector2(vertices[i].X * scale.X, vertices[i].Y * scale.Y);
+                    vertices.Add(Vector2Ext.ToXna(data.DefaultShape[i] * scale));
                 }
-                shape.Vertices = new FarseerPhysics.Common.Vertices(PolygonExt.SetInterior(vertices));
+                //FPE will ensure the polygon is c. clockwise so we don't need to check that here.
+                shape.Vertices = vertices;
             }
         }
 

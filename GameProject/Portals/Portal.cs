@@ -111,6 +111,13 @@ namespace Game.Portals
                 portalable.WorldVelocity = EnterVelocity(portal, intersectT, portalable.WorldVelocity, ignorePortalVelocity);
             }
 
+            //If a static actor enters a portal then it's no longer static.
+            IActor actorCast = portalable as IActor;
+            if (actorCast != null && actorCast.BodyType == BodyType.Static)
+            {
+                actorCast.SetBodyType(BodyType.Kinematic);
+            }
+
             foreach (IPortalCommon p in portalable.Children)
             {
                 //p.WorldTransformPrevious = GetLinkedTransform(p);
@@ -137,7 +144,7 @@ namespace Game.Portals
             body.LinearVelocity = Vector2Ext.ToXna(velocity.Position);
             body.AngularVelocity = velocity.Rotation;
 
-            //BodyExt.ScaleFixtures(body, transform.Scale);
+            BodyExt.ScaleFixtures(body, transform.Scale);
         }
 
         /// <summary>
