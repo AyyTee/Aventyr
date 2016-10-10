@@ -47,8 +47,6 @@ namespace EditorLogic
             settings.OmitXmlDeclaration = true;
             using (XmlWriter writer = XmlWriter.Create(filename, settings))
             {
-                /*EditorScene saveScene = new EditorScene();
-                EditorClone.Clone(scene, saveScene);*/
                 GetSerializer().WriteObject(writer, scene);
             }
         }

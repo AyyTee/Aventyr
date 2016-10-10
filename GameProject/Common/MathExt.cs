@@ -399,7 +399,7 @@ namespace Game
         {
             if (IsClockwise(polygon) != clockwise)
             {
-                return (IList<Xna.Vector2>)polygon.Reverse();
+                return polygon.Reverse().ToList();
             }
             return polygon;
         }

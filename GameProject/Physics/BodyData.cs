@@ -83,6 +83,7 @@ namespace Game
                 {
                     FixtureData fixtureData = FixtureExt.SetData(f);
                     fixtureData.PortalCollisions.UnionWith(FixtureExt.GetPortalCollisions(f, Actor.Scene.GetPortalList()));
+                    fixtureData.ProcessChanges();
                 }
 
                 BodyChildren.Add(new ChildBody(bodyClone, portal));

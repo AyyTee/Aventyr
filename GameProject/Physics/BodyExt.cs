@@ -70,6 +70,26 @@ namespace Game
             body.AngularVelocity = velocity.Rotation;
         }
 
+        public static void ScaleFixtures(Body body, Vector2 scale)
+        {
+            foreach (Fixture f in body.FixtureList)
+            {
+                if (!FixtureExt.GetData(f).IsPortalParentless())
+                {
+                    continue;
+                }
+                PolygonShape shape = (PolygonShape)f.Shape;
+                //Make a copy of the vertices and manipulate those before assigning it back to the fixture.
+                //Modifying the vertices directly causes Farseer to not update internal values.
+                FarseerPhysics.Common.Vertices vertices = new FarseerPhysics.Common.Vertices(shape.Vertices);
+                for (int i = 0; i < shape.Vertices.Count; i++)
+                {
+                    vertices[i] = new Xna.Vector2(vertices[i].X * scale.X, vertices[i].Y * scale.Y);
+                }
+                shape.Vertices = new FarseerPhysics.Common.Vertices(PolygonExt.SetInterior(vertices));
+            }
+        }
+
         public struct MassData
         {
             public float Mass;

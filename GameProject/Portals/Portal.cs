@@ -136,6 +136,8 @@ namespace Game.Portals
             body.Rotation = transform.Rotation;
             body.LinearVelocity = Vector2Ext.ToXna(velocity.Position);
             body.AngularVelocity = velocity.Rotation;
+
+            //BodyExt.ScaleFixtures(body, transform.Scale);
         }
 
         /// <summary>

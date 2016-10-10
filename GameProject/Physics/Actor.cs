@@ -21,7 +21,7 @@ namespace Game
         public Transform2 Transform
         {
             get { return GetTransform(); }
-            set { _setTransform(value); }
+            set { SetTransform(value); }
         }
         public Transform2 Velocity
         {
@@ -195,21 +195,22 @@ namespace Game
 
         public override void SetTransform(Transform2 transform)
         {
-            _setTransform(transform);
+            _setTransform(Body, transform);
+            _scale = transform.Scale;
             base.SetTransform(transform);
         }
 
-        private void _setTransform(Transform2 transform)
+        private void _setTransform(Body body, Transform2 transform, bool checkScale = true)
         {
-            if (_scale != transform.Scale)
+            if (checkScale && _scale != transform.Scale)
             {
                 Debug.Assert(!Scene.InWorldStep, "Scale cannot change during a physics step.");
 
                 List<Xna.Vector2> contourPrev = Vector2Ext.ToXna(ActorExt.GetFixtureContour(Vertices, GetTransform().Scale));
-                _scale = transform.Scale;
+                
                 List<Xna.Vector2> contour = Vector2Ext.ToXna(ActorExt.GetFixtureContour(Vertices, transform.Scale));
 
-                foreach (Fixture f in Body.FixtureList)
+                foreach (Fixture f in body.FixtureList)
                 {
                     if (!FixtureExt.GetData(f).IsPortalParentless())
                     {
@@ -229,7 +230,12 @@ namespace Game
                     PolygonExt.SetInterior(shape.Vertices);
                 }
             }
-            BodyExt.SetTransform(Body, transform);
+            BodyExt.SetTransform(body, transform);
+
+            foreach (BodyData data in BodyExt.GetData(body).Children)
+            {
+                _setTransform(data.Body, Portal.Enter(data.BodyParent.Portal, transform));
+            }
         }
 
         public override Transform2 GetVelocity()
