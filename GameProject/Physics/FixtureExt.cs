@@ -95,7 +95,7 @@ namespace Game
         /// </summary>
         public static Fixture GetFixtureAttached(FixturePortal portal)
         {
-            if (portal.Parent == null)
+            if (portal == null || portal.Parent == null)
             {
                 return null;
             }
@@ -182,7 +182,10 @@ namespace Game
         public static List<IPortal> GetPortalCollisions(Fixture fixture, IList<IPortal> portals, bool ignoreAttachedPortals = true)
         {
             Vector2[] vertices = GetWorldPoints(fixture);
-            List<IPortal> collisions = Portal.GetCollisions(BodyExt.GetLocalOrigin(fixture.Body), vertices, portals);
+            List<IPortal> collisions = Portal.GetCollisions(
+                BodyExt.GetLocalOrigin(fixture.Body), 
+                vertices, 
+                portals.Where(item => !ignoreAttachedPortals || GetFixtureAttached(item as FixturePortal) != fixture).ToList());
 
             if (ignoreAttachedPortals)
             {

@@ -163,14 +163,7 @@ namespace Game
 
         private void _applyForce(Vector2 force, Vector2 point)
         {
-            //var local = Body.GetLocalPoint(Vector2Ext.ToXna(point));
-            //var bodyTree = Tree<BodyData>.GetAll(BodyExt.GetData(Body));
-            /*foreach (BodyData data in bodyTree)
-            {
-                data.Body.ApplyForce(
-                    Vector2Ext.ToXna(force * bodyTree.Count / Mass),
-                    data.Body.GetWorldPoint(local));
-            }*/
+            Body.ApplyForce(Vector2Ext.ToXna(force), Vector2Ext.ToXna(point));
         }
 
         public void ApplyGravity(Vector2 force)

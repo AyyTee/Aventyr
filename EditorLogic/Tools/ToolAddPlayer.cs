@@ -1,19 +1,18 @@
 ﻿using Game;
+using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenTK.Input;
-using OpenTK;
 
-namespace EditorLogic
+namespace EditorLogic.Tools
 {
-    public class ToolAddActor : Tool
+    public class ToolAddPlayer : Tool
     {
         Doodad _mouseFollow;
 
-        public ToolAddActor(ControllerEditor controller)
+        public ToolAddPlayer(ControllerEditor controller)
             : base(controller)
         {
         }
@@ -33,12 +32,9 @@ namespace EditorLogic
             }
             else if (_input.MousePress(MouseButton.Left))
             {
-                EditorActor editorActor = new EditorActor(Controller.Level, PolygonFactory.CreateRectangle(4, 0.5f));
+                EditorPlayer editorActor = new EditorPlayer(Controller.Level);
                 Transform2.SetPosition(editorActor, Controller.GetMouseWorld());
-                if (!_input.KeyDown(InputExt.KeyBoth.Shift))
-                {
-                    Controller.SetTool(null);
-                }
+                Controller.SetTool(null);
             }
         }
 

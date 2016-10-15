@@ -148,6 +148,7 @@
     <Compile Include="Physics\BodyData.cs" />
     <Compile Include="Physics\PortalJoint.cs" />
     <Compile Include="Physics\SimulationStep.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Portals\EnterCallbackData.cs" />
     <Compile Include="Portals\IPortalCommon.cs" />
     <Compile Include="Portals\PortalCommon.cs" />

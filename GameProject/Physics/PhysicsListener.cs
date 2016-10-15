@@ -12,7 +12,6 @@ using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Collision;
 using OpenTK;
 using FarseerPhysics.Common;
-using ClipperLib;
 using Game.Portals;
 
 namespace Game
@@ -121,7 +120,7 @@ namespace Game
                 if (!IsContactValid(contact))
                 {
                     contact.Enabled = false;
-                    return;
+                    //return;
                 }
                 #region Debug
                 if (DebugMode)
@@ -285,7 +284,7 @@ namespace Game
                                 return false;
                             }
                         }
-                        else if (vDist[0] < FixturePortal.CollisionMargin || vDist[1] < FixturePortal.CollisionMargin)
+                        else if (vDist[0] < FixturePortal.CollisionMargin && vDist[1] < FixturePortal.CollisionMargin)
                         {
                             return false;
                         }
@@ -313,19 +312,38 @@ namespace Game
                     //Contact is invalid if it is on the opposite side of the portal from its body origin.
                     //Xna.Vector2 pos = BodyExt.GetData(fixtureData[i].Fixture.Body).PreviousPosition;
                     Vector2 pos = BodyExt.GetLocalOrigin(fixtureData[i].Fixture.Body);
-                    bool sideOf = line.GetSideOf(vList[0]) != line.GetSideOf(pos);
+                    bool oppositeSides0 = line.GetSideOf(vList[0]) != line.GetSideOf(pos);
                     Debug.Assert(contact.Manifold.PointCount > 0);
                     if (contact.Manifold.PointCount == 1)
                     {
-                        if (sideOf)
+                        if (oppositeSides0)
                         {
                             return false;
                         }
                     }
-                    else if (sideOf || line.GetSideOf(vList[1]) != line.GetSideOf(pos))
+                    else 
                     //else if (line.GetSideOf((vList[0] + vList[1])/2) != line.GetSideOf(pos))
                     {
-                        return false;
+                        bool oppositeSides1 = line.GetSideOf(vList[1]) != line.GetSideOf(pos);
+                        /*if (oppositeSides0 && oppositeSides1)
+                        {
+                            return false;
+                        }
+                        if (oppositeSides0)
+                        {
+                            contact.Manifold.Points[0] = contact.Manifold.Points[1];
+                        }
+                        contact.Manifold.PointCount = 1;
+                        
+                        return true;*/
+                        if (!oppositeSides0 && !oppositeSides1)
+                        {
+                            continue;
+                        }
+                        if (!fixtureData[iNext].PortalCollisions.Contains(portal) || !(oppositeSides0 || oppositeSides1))
+                        {
+                            return false;
+                        }
                     }
                 }
             }

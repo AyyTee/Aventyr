@@ -18,7 +18,7 @@ namespace UnitTest
         {
             EditorScene editorScene = EditorLogic.Serializer.Deserialize(@"Data\cornerFallThrough.xml");
             editorScene.ActiveCamera = null;
-            Scene scene = LevelExport.Export(editorScene);
+            Scene scene = LevelExport.Export(editorScene, null);
             float stepSize = 1 / (float)60;
 
             Actor actor = scene.SceneNodes.OfType<Actor>().Where(item => item.Body.IsStatic).First();

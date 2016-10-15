@@ -335,7 +335,7 @@ namespace EditorLogic
         {
             if (ActiveLevel == null)
             {
-                ActiveLevel = LevelExport.Export(Level);
+                ActiveLevel = LevelExport.Export(Level, InputExt);
                 renderer.AddLayer(ActiveLevel);
                 renderer.RemoveLayer(Level);
                 renderer.RemoveLayer(Hud);

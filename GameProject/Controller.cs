@@ -68,7 +68,7 @@ namespace Game
         {
             _time.Start();
 
-            renderer = new Renderer(this);
+            renderer = new Renderer();
 
             SoundEnabled = false;
             if (SoundEnabled)

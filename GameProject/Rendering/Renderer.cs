@@ -22,7 +22,6 @@ namespace Game
     {
         public readonly static GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
         List<IRenderLayer> _layers = new List<IRenderLayer>();
-        readonly Controller _controller;
         public bool PortalRenderEnabled { get; set; } = true;
         public int PortalRenderMax { get; set; } = 50;
         public int PortalClipDepth { get; set; } = 4;
@@ -39,13 +38,12 @@ namespace Game
 
         private static int IboElements;
 
-        public Renderer(Controller controller)
+        public Renderer()
         {
             foreach (EnableCap e in Enum.GetValues(typeof(EnableCap)))
             {
                 _enableCap[e] = null;
             }
-            _controller = controller;
 
             GL.ClearColor(Color.HotPink);
             GL.CullFace(CullFaceMode.Back);
@@ -169,7 +167,8 @@ namespace Game
 
             int stencilValueMax = 1 << StencilBits;
             int stencilMask = stencilValueMax - 1;
-            //Draw portal FOVs to the stencil buffer.
+
+            #region Draw portal FOVs to the stencil buffer.
             {
                 GL.ColorMask(false, false, false, false);
                 GL.DepthMask(false);
@@ -188,10 +187,11 @@ namespace Game
                     RenderModel(new Model(mesh), cam.GetViewMatrix(), Matrix4.Identity);
                 }
             }
-
+            #endregion
 
             List<DrawData> drawData = new List<DrawData>();
-            //Get models.
+
+            #region Get models.
             {
                 HashSet<Model> models = new HashSet<Model>();
                 List<IRenderable> renderList = layer.GetRenderList();
@@ -232,8 +232,9 @@ namespace Game
                     d.Index = indexList[d.Model];
                 }
             }
+            #endregion
 
-            //Draw the scenes within each portal's FOV.
+            #region Draw the scenes within each portal's FOV.
             {
                 GL.ColorMask(true, true, true, true);
                 GL.DepthMask(true);
@@ -247,8 +248,9 @@ namespace Game
                 }
                 ResetScissor();
             }
-            
-            //Draw the portal edges.
+            #endregion
+
+            #region Draw the portal edges.
             {
                 GL.Clear(ClearBufferMask.DepthBufferBit);
                 SetEnable(EnableCap.StencilTest, false);
@@ -318,8 +320,6 @@ namespace Game
                             Vertex vertex = mesh.GetVertices()[k];
                             Vector3 pos = Vector3Ext.Transform(vertex.Position, homography);
                             pos.Z = CameraExt.UnitZToWorld(cam, pos.Z);
-                            /*vertex.Position = Vector3Ext.Transform(vertex.Position, homography);
-                            vertex.Position.Z = cam.UnitZToWorld(vertex.Position.Z);*/
 
                             Vector2 texCoord;
                             Vector2 v = new Vector2(vertex.Position.X, vertex.Position.Y);
@@ -340,6 +340,7 @@ namespace Game
                 SetEnable(EnableCap.Blend, false);
                 GL.Enable(EnableCap.DepthTest);
             }
+            #endregion
         }
 
         private float GetLineBlurAngle(Line line, Line linePrev)

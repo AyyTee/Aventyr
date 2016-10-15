@@ -77,6 +77,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CameraExtTests.cs" />
     <Compile Include="EditorCommandTests.cs" />
     <Compile Include="MathExtTests.cs" />
     <Compile Include="NodePortalable.cs" />

@@ -74,6 +74,7 @@ namespace Game
                 }
 
                 Body bodyClone = Body.DeepClone();
+
                 bodyClone.BodyType = Actor.BodyType == BodyType.Dynamic ? BodyType.Dynamic : BodyType.Kinematic;
                 BodyData userData = BodyExt.SetData(bodyClone, Actor);
                 userData.BodyParent = new ChildBody(Body, portal);

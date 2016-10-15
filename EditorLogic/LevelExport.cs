@@ -17,9 +17,16 @@ namespace EditorLogic
         /// <summary>
         /// Creates a Scene from an EditorScene.  Scene is intended for gameplay use.
         /// </summary>
-        public static Scene Export(EditorScene level)
+        public static Scene Export(EditorScene level, InputExt input)
         {
             Scene scene = new Scene();
+            Camera2 camera = new Camera2(scene);
+            camera.SetTransform(new Transform2(new Vector2(), 10, 0));
+            scene.SetActiveCamera(camera);
+            if (level.ActiveCamera != null)
+            {
+                camera.Aspect = level.ActiveCamera.Aspect;
+            }
 
             #region create background
             Model background = Game.ModelFactory.CreatePlane();
@@ -138,6 +145,25 @@ namespace EditorLogic
                         actor.SetTransform(cast.GetTransform());
                     }
                 }
+                else if (e is EditorPlayer)
+                {
+                    EditorPlayer cast = (EditorPlayer)e;
+                    Player player = new Player(input);
+                    Vector2[] polygon = PolygonFactory.CreateNGon(6, 0.5f, new Vector2());
+                    Actor actor = new Actor(scene, polygon);
+                    player.SetActor(actor);
+                    actor.SetTransform(new Transform2(cast.GetWorldTransform().Position));
+
+                    player.Camera = (Camera2)scene.ActiveCamera;
+
+                    Entity entity = new Entity(scene, new Transform2());
+                    entity.Name = cast.Name;
+                    entity.SetParent(actor);
+                    entity.AddModel(Game.ModelFactory.CreatePolygon(polygon));
+
+                    scene.SceneObjectList.Add(player);
+                    dictionary.Add(cast, player.Actor);
+                }
                 else
                 {
                     Debug.Assert(false);
@@ -177,18 +203,12 @@ namespace EditorLogic
                 }
             }
 
-            //Dictionary<IDeepClone, IDeepClone> dictionary = DeepClone.Clone(toClone);
-            /*Cast all the cloned instances to SceneNode.  
-            There should not be any types other than SceneNode or its derived types.*/
-            /*List<SceneNode> cloned = dictionary.Values.Cast<SceneNode>().ToList();
-
-            SceneNode.SetScene(cloned, scene);*/
-            if (level.ActiveCamera != null)
+            /*if (level.ActiveCamera != null)
             {
                 ControllerCamera camera = level.ActiveCamera.ShallowClone();
                 camera.Scene = scene;
                 scene.SetActiveCamera(camera);
-            }
+            }*/
             PortalCommon.UpdateWorldTransform(scene);
 
             return scene;

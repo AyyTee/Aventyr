@@ -38,8 +38,8 @@ namespace UnitTest
             PortalCommon.UpdateWorldTransform(scene);
 
             World world = new World(new Xna.Vector2(0, 0f));
-            Body body0 = BodyFactory.CreateRectangle(world, 1, 2, 1, new Xna.Vector2(), 0, BodyType.Dynamic);
-            Body body1 = BodyFactory.CreateRectangle(world, 1, 2, 1, new Xna.Vector2(), 0, BodyType.Dynamic);
+            Body body0 = Factory.CreateBox(world, new Vector2(1, 2));
+            Body body1 = Factory.CreateBox(world, new Vector2(1, 2));
             body0.IgnoreCollisionWith(body1);
             PortalJoint portalJoint = Factory.CreatePortalJoint(world, body0, body1, portal0);
 
@@ -62,13 +62,12 @@ namespace UnitTest
             PortalCommon.UpdateWorldTransform(scene);
 
             World world = new World(new Xna.Vector2(0, 0f));
-            Body body0 = BodyFactory.CreateRectangle(world, 1, 2, 1, new Xna.Vector2(), 0, BodyType.Dynamic);
-            Body body1 = BodyFactory.CreateRectangle(world, 1, 2, 1, new Xna.Vector2(), 0, BodyType.Dynamic);
+            Body body0 = Factory.CreateBox(world, new Vector2(1, 2));
+            Body body1 = Factory.CreateBox(world, new Vector2(1, 2));
             Portal.Enter(portal0, body1);
-            //body0.IgnoreCollisionWith(body1);
+
             PortalJoint portalJoint = Factory.CreatePortalJoint(world, body0, body1, portal0);
 
-            //body0.ApplyLinearImpulse(new Xna.Vector2(1, 0), new Xna.Vector2(0, 0));
             world.Step(1 / (float)60);
 
             AssertPortalJoint(body0, body1, portal0);
@@ -87,13 +86,12 @@ namespace UnitTest
             PortalCommon.UpdateWorldTransform(scene);
 
             World world = new World(new Xna.Vector2(0, 0f));
-            Body body0 = BodyFactory.CreateRectangle(world, 1, 2, 1, new Xna.Vector2(), 0, BodyType.Dynamic);
-            Body body1 = BodyFactory.CreateRectangle(world, 1, 2, 1, new Xna.Vector2(), 0, BodyType.Dynamic);
+            Body body0 = Factory.CreateBox(world, new Vector2(1, 2));
+            Body body1 = Factory.CreateBox(world, new Vector2(1, 2));
             Portal.Enter(portal0, body1);
-            //body0.IgnoreCollisionWith(body1);
+
             PortalJoint portalJoint = Factory.CreatePortalJoint(world, body0, body1, portal0);
 
-            //body0.ApplyLinearImpulse(new Xna.Vector2(1, 0), new Xna.Vector2(0, 0));
             world.Step(1 / (float)60);
 
             AssertPortalJoint(body0, body1, portal0);
@@ -112,13 +110,12 @@ namespace UnitTest
             PortalCommon.UpdateWorldTransform(scene);
 
             World world = new World(new Xna.Vector2(0, 0f));
-            Body body0 = BodyFactory.CreateRectangle(world, 1, 2, 1, new Xna.Vector2(), 0, BodyType.Dynamic);
-            Body body1 = BodyFactory.CreateRectangle(world, 1, 2, 1, new Xna.Vector2(), 0, BodyType.Dynamic);
+            Body body0 = Factory.CreateBox(world, new Vector2(1, 2));
+            Body body1 = Factory.CreateBox(world, new Vector2(1, 2));
             Portal.Enter(portal0, body1);
-            //body0.IgnoreCollisionWith(body1);
+
             PortalJoint portalJoint = Factory.CreatePortalJoint(world, body0, body1, portal0);
 
-            //body0.ApplyLinearImpulse(new Xna.Vector2(1, 0), new Xna.Vector2(0, 0));
             world.Step(1 / (float)60);
 
             AssertPortalJoint(body0, body1, portal0);
@@ -137,13 +134,12 @@ namespace UnitTest
             PortalCommon.UpdateWorldTransform(scene);
 
             World world = new World(new Xna.Vector2(0, 0f));
-            Body body0 = BodyFactory.CreateRectangle(world, 1, 2, 1, new Xna.Vector2(), 0, BodyType.Dynamic);
-            Body body1 = BodyFactory.CreateRectangle(world, 1, 2, 1, new Xna.Vector2(), 0, BodyType.Dynamic);
+            Body body0 = Factory.CreateBox(world, new Vector2(1, 2));
+            Body body1 = Factory.CreateBox(world, new Vector2(1, 2));
             Portal.Enter(portal0, body1);
-            //body0.IgnoreCollisionWith(body1);
+
             PortalJoint portalJoint = Factory.CreatePortalJoint(world, body0, body1, portal0);
 
-            //body0.ApplyLinearImpulse(new Xna.Vector2(1, 0), new Xna.Vector2(0, 0));
             world.Step(1 / (float)60);
 
             AssertPortalJoint(body0, body1, portal0);

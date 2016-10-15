@@ -393,7 +393,7 @@ namespace EditorWindow
                     tempFile = Controller.tempLevelPrefix + GenerateRandomString(8) + ".xml";
                 } while (File.Exists(tempFile));
 
-                Scene scene = LevelExport.Export(ControllerEditor.Level);
+                Scene scene = LevelExport.Export(ControllerEditor.Level, ControllerEditor.InputExt);
                 Game.Serializer serializer = new Game.Serializer();
                 serializer.Serialize(scene, tempFile);
 
@@ -403,8 +403,6 @@ namespace EditorWindow
                 process.StartInfo.Arguments = tempFile;
                 process.Start();
             });
-            
-
         }
 
         private string GenerateRandomString(int length)

@@ -104,15 +104,11 @@ namespace Game.Physics
             Debug.Assert(transform != null);
             Debug.Assert(vertices != null && vertices.Count >= 3);
             List<Vector2> fixtureContour = ActorExt.GetFixtureContour(vertices, transform.Scale);
-            fixtureContour = (List<Vector2>)MathExt.SetWinding(fixtureContour, false);
+            fixtureContour = MathExt.SetWinding(fixtureContour, false);
 
-            //verticesCopy = (List<Vector2>)Vector2Ext.Transform(verticesCopy, Matrix4.CreateScale(new Vector3(transform.Scale)));
-            //Poly2Tri.Polygon polygon = PolygonFactory.CreatePolygon(fixtureContour);
             var convexList = PolygonExt.DecomposeConcave(fixtureContour);
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
-
-            //Body body = BodyExt.CreateBody(world);
 
             BodyExt.SetTransform(body, transform);
 

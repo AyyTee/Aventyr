@@ -1,4 +1,5 @@
 ﻿using EditorLogic;
+using EditorLogic.Tools;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -59,6 +60,10 @@ namespace EditorWindow
                 },
                 new {
                     tool = (Tool)new ToolAddWall(controller),
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "polygonIcon.png")))
+                },
+                new {
+                    tool = (Tool)new ToolAddPlayer(controller),
                     image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "polygonIcon.png")))
                 }
             };

@@ -75,6 +75,7 @@
     <Compile Include="EditorClone.cs" />
     <Compile Include="EditorEntity.cs" />
     <Compile Include="EditorObject.cs" />
+    <Compile Include="EditorPlayer.cs" />
     <Compile Include="EditorPortal.cs" />
     <Compile Include="EditorScene.cs" />
     <Compile Include="EditorWall.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Tools\Tool.cs" />
     <Compile Include="Tools\ToolAddActor.cs" />
     <Compile Include="Tools\ToolAddEntity.cs" />
+    <Compile Include="Tools\ToolAddPlayer.cs" />
     <Compile Include="Tools\ToolAddPortal.cs" />
     <Compile Include="Tools\ToolAddWall.cs" />
     <Compile Include="Tools\ToolDefault.cs" />

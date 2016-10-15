@@ -95,6 +95,11 @@ namespace Game.Portals
         {
             Transform2 transform = portalable.GetTransform();
             Transform2 velocity = portalable.GetVelocity();
+
+            //Copies are made just for debug purposes.  The originals should not change before the EnterPortal callback.
+            Transform2 transformCopy = transform.ShallowClone();
+            Transform2 velocityCopy = velocity.ShallowClone();
+
             IPortalable cast = portalable as IPortalable;
             if (cast != null)
             {
@@ -120,12 +125,10 @@ namespace Game.Portals
 
             foreach (IPortalCommon p in portalable.Children)
             {
-                //p.WorldTransformPrevious = GetLinkedTransform(p);
                 p.Path.Enter(portal.Linked);
-
-                //p.WorldTransformPrevious = p.WorldTransformPrevious.Transform(GetLinkedTransform(portal.Linked));
-                //p.WorldVelocityPrevious = SceneNode.TransformVelocity(p, portal.Linked, p.GetVelocity(), intersectT);
             }
+
+            Debug.Assert(transform == transformCopy && velocity == velocityCopy);
 
             if (cast != null)
             {

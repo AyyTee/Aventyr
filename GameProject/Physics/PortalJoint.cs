@@ -128,12 +128,9 @@ namespace Game.Physics
 
         private void TransformOrientation(SolverData data)
         {
-            int indexA = BodyA.IslandIndex;
             int indexB = BodyB.IslandIndex;
 
-            Position positionA = data.positions[indexA];
             Position positionB = data.positions[indexB];
-            Velocity velocityA = data.velocities[indexA];
             Velocity velocityB = data.velocities[indexB];
 
             var t = Portal.Enter(PortalEnter.Linked, new Transform2(positionB.c, 1, positionB.a));
@@ -148,12 +145,9 @@ namespace Game.Physics
 
         private void UndoTransformOrientation(SolverData data)
         {
-            int indexA = BodyA.IslandIndex;
             int indexB = BodyB.IslandIndex;
 
-            Position positionA = data.positions[indexA];
             Position positionB = data.positions[indexB];
-            Velocity velocityA = data.velocities[indexA];
             Velocity velocityB = data.velocities[indexB];
 
             var t = Portal.Enter(PortalEnter, new Transform2(positionB.c, 1, positionB.a));

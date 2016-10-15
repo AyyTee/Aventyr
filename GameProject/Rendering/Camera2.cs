@@ -16,7 +16,7 @@ namespace Game
         [DataMember]
         public Transform2 Transform { get; set; } = new Transform2();
         [DataMember]
-        public Transform2 Velocity { get; set; } = new Transform2();
+        public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
         [DataMember]
         public float _aspect = 1;
         public float Aspect

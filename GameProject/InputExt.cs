@@ -59,7 +59,7 @@ namespace Game
 
         private void control_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            _mousePos = new Vector2((float)e.X, (float)e.Y);
+            _mousePos = new Vector2(e.X, e.Y);
         }
 
         public void Update(bool hasFocus)

@@ -219,7 +219,7 @@ namespace Game
             Vector2[] vertices = new Vector2[sides];
             for (int i = 0; i < sides; i++)
             {
-                double angle = i / (MathExt.TAU * sides);
+                double angle = (MathExt.TAU * i) / sides;
                 float x, y;
                 x = (float)Math.Cos(angle);
                 y = (float)Math.Sin(angle);
