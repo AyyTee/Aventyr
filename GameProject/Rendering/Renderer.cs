@@ -340,11 +340,6 @@ namespace Game
                 SetEnable(EnableCap.Blend, false);
                 GL.Enable(EnableCap.DepthTest);
             }
-
-            Model m = ModelFactory.CreateCube();
-            m.Transform.Position += new Vector3(0, 0, 0.5f);
-            m.SetTexture(Textures["default.png"]);
-            RenderModel(m, CameraExt.GetViewMatrix(cam, false));
             #endregion
         }
 
