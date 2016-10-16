@@ -184,7 +184,7 @@ namespace Game
                         Vector2[] a = ClipperConvert.ToVector2(portalViewList[i].Paths[j]);
                         ModelFactory.AddPolygon(mesh, a);
                     }
-                    RenderModel(new Model(mesh), cam.GetViewMatrix(), Matrix4.Identity);
+                    RenderModel(new Model(mesh), CameraExt.GetViewMatrix(cam));
                 }
             }
             #endregion
@@ -242,7 +242,7 @@ namespace Game
                 GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
                 for (int i = 0; i < Math.Min(portalViewList.Count, stencilValueMax); i++)
                 {
-                    SetScissor(portalViewList[i], cam.GetViewMatrix());
+                    SetScissor(portalViewList[i], CameraExt.GetViewMatrix(cam));
                     GL.StencilFunc(StencilFunction.Equal, i, stencilMask);
                     Draw(drawData.ToArray(), portalViewList[i].ViewMatrix);
                 }
@@ -336,10 +336,15 @@ namespace Game
                         }
                     }
                 }
-                RenderModel(portalEdges, cam.GetViewMatrix(false), Matrix4.Identity);
+                RenderModel(portalEdges, CameraExt.GetViewMatrix(cam, false));
                 SetEnable(EnableCap.Blend, false);
                 GL.Enable(EnableCap.DepthTest);
             }
+
+            Model m = ModelFactory.CreateCube();
+            m.Transform.Position += new Vector3(0, 0, 0.5f);
+            m.SetTexture(Textures["default.png"]);
+            RenderModel(m, CameraExt.GetViewMatrix(cam, false));
             #endregion
         }
 
@@ -451,7 +456,7 @@ namespace Game
             }
         }
 
-        public void RenderModel(Model model, Matrix4 viewMatrix, Matrix4 offset)
+        public void RenderModel(Model model, Matrix4 viewMatrix)
         {
             Debug.Assert(model != null);
             if (!RenderEnabled)
@@ -488,7 +493,7 @@ namespace Game
                 SetEnable(EnableCap.Blend, true);
             }
 
-            RenderSetTransformMatrix(offset, model, viewMatrix);
+            RenderSetTransformMatrix(Matrix4.Identity, model, viewMatrix);
             GL.DrawElements(PrimitiveType.Triangles, model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
 
             if (model.Wireframe)

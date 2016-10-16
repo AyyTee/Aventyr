@@ -72,14 +72,14 @@ namespace Game
             List<IntPoint> view = ClipperConvert.ToIntPoint(CameraExt.GetWorldVerts(camera));
             List<List<IntPoint>> paths = new List<List<IntPoint>>();
             paths.Add(view);
-            PortalView portalView = new PortalView(null, camera.GetViewMatrix(), view, new Line[0], new Line[0]);
+            PortalView portalView = new PortalView(null, CameraExt.GetViewMatrix(camera), view, new Line[0], new Line[0]);
             Vector2 camPos = camera.GetWorldTransform().Position;
 
             List<Func<bool>> actionList = new List<Func<bool>>();
 
             foreach (IPortal p in portals)
             {
-                actionList.Add(() => CalculatePortalViews(p, null, portals, camera.GetViewMatrix(), camPos, camPos - camera.GetWorldVelocity().Position / Controller.DrawsPerSecond, portalView, Matrix4.Identity, actionList));
+                actionList.Add(() => CalculatePortalViews(p, null, portals, CameraExt.GetViewMatrix(camera), camPos, camPos - camera.GetWorldVelocity().Position / Controller.DrawsPerSecond, portalView, Matrix4.Identity, actionList));
             }
 
             while (actionList.Count > 0 && depth > 0)

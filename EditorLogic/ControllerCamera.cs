@@ -106,11 +106,6 @@ namespace EditorLogic
             }
         }
 
-        public Matrix4 GetViewMatrix(bool isOrtho = true)
-        {
-            return CameraExt.GetViewMatrix(this, isOrtho);
-        }
-
         public Transform2 GetWorldVelocity(bool ignorePortals = false)
         {
             return GetVelocity();

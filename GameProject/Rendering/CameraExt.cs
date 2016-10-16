@@ -12,38 +12,32 @@ namespace Game
         /// <summary>
         /// Create a view matrix for this Camera
         /// </summary>
-        /// <returns>A view matrix to look in the camera's direction</returns>
         public static Matrix4 GetViewMatrix(ICamera2 camera, bool isOrtho = true)
         {
             Transform2 transform = camera.GetWorldTransform();
             Matrix4 m = Matrix4.CreateRotationZ(transform.Rotation);
-            Vector3 lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
+            Vector3 lookat = new Vector3(transform.Position) + Vector3.Transform(new Vector3(0, 0, -1), m);
             Vector3 eye;
             Matrix4 perspective;
 
-            float x, y;
-            x = camera.ViewOffset.X / 2;
-            y = camera.ViewOffset.Y / 2;
             if (isOrtho)
             {
-                float width, height;
-                width = transform.Scale.X * camera.Aspect;
-                height = transform.Scale.Y;
+                float x = camera.ViewOffset.X / 2;
+                float y = camera.ViewOffset.Y / 2;
+
+                float width = transform.Scale.X * camera.Aspect;
+                float height = transform.Scale.Y;
                 x *= transform.Scale.X * camera.Aspect;
                 y *= transform.Scale.Y;
                 perspective = Matrix4.CreateOrthographicOffCenter(x - width / 2, x + width / 2, y - height / 2, y + height / 2, camera.ZNear, camera.ZFar);
                 eye = new Vector3(transform.Position) + new Vector3(0, 0, 50);
+                return Matrix4.LookAt(eye, lookat, new Vector3(GetUp(camera))) * perspective;
             }
-            else
-            {
-                //For some reason things don't line up unless we scale by this value.
-                float a = (float)(Math.Tan(camera.Fov / 2) / 50);
-                x *= camera.Aspect / a;
-                perspective = Matrix4.CreatePerspectiveOffCenter(-camera.Aspect * a / 2 + x, camera.Aspect * a / 2 + x, -a / 2 + y, a / 2 + y, 0.01f, camera.ZFar);
-                perspective = Matrix4.CreateScale(transform.Scale.X, transform.Scale.Y, Math.Abs(transform.Size)) * perspective;
-                eye = new Vector3(transform.Position) + new Vector3(0, 0, (float)GetWorldZ(camera));
-            }
-            return Matrix4.LookAt(eye, new Vector3(transform.Position) + lookat, new Vector3(GetUp(camera))) * perspective;
+            
+            perspective = Matrix4.CreatePerspectiveFieldOfView((float)camera.Fov, camera.Aspect, 0.01f, 10000f);
+            perspective = Matrix4.CreateScale(transform.Scale.X, transform.Scale.Y, Math.Abs(transform.Size)) * perspective;
+            eye = new Vector3(transform.Position) + new Vector3(0, 0, (float)GetWorldZ(camera));
+            return Matrix4.LookAt(eye, lookat, new Vector3(GetUp(camera))) * perspective * Matrix4.CreateTranslation(new Vector3(-camera.ViewOffset.X, -camera.ViewOffset.Y, 0));
         }
 
         public static float UnitZToWorld(ICamera2 camera, float z)
@@ -87,14 +81,14 @@ namespace Game
         {
             Matrix4 scale = Matrix4.CreateScale(Controller.CanvasSize.Width / 2, -Controller.CanvasSize.Height / 2, 1);
             Matrix4 translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
-            return camera.GetViewMatrix() * translation * scale;
+            return GetViewMatrix(camera) * translation * scale;
         }
 
         private static Matrix4 WorldToClipMatrix(ICamera2 camera)
         {
             Matrix4 scale = Matrix4.CreateScale(1, -1, 1);
             Matrix4 translation = Matrix4.CreateTranslation(new Vector3(0f, 0f, 0f));
-            return camera.GetViewMatrix() * translation * scale;
+            return GetViewMatrix(camera) * translation * scale;
         }
 
         public static Vector2 WorldToScreen(ICamera2 camera, Vector2 worldCoord)
@@ -119,12 +113,22 @@ namespace Game
 
         public static Vector2 ScreenToClip(ICamera2 camera, Vector2 screenCoord)
         {
-            return Vector2Ext.Transform(screenCoord, WorldToScreenMatrix(camera).Inverted() * WorldToClipMatrix(camera));
+            return Vector2Ext.Transform(screenCoord, WorldToScreenMatrix(camera).Inverted() * GetViewMatrix(camera));
         }
 
         public static Vector2[] ScreenToClip(ICamera2 camera, IList<Vector2> screenCoord)
         {
-            return Vector2Ext.Transform(screenCoord, WorldToScreenMatrix(camera).Inverted() * WorldToClipMatrix(camera)).ToArray();
+            return Vector2Ext.Transform(screenCoord, WorldToScreenMatrix(camera).Inverted() * GetViewMatrix(camera)).ToArray();
+        }
+
+        public static Vector2 ClipToWorld(ICamera2 camera, Vector2 screenCoord)
+        {
+            return Vector2Ext.Transform(screenCoord, GetViewMatrix(camera).Inverted());
+        }
+
+        public static Vector2[] ClipToWorld(ICamera2 camera, IList<Vector2> screenCoord)
+        {
+            return Vector2Ext.Transform(screenCoord, GetViewMatrix(camera).Inverted()).ToArray();
         }
 
         private static Vector2 GetUp(ICamera2 camera)

@@ -28,7 +28,6 @@ namespace Game
                 _aspect = value;
             }
         }
-        /// <summary>View offset in clip space coordinates [-1,1].</summary>
         [DataMember]
         public Vector2 ViewOffset { get; set; }
         public float ZNear { get { return -10000f; } }
@@ -69,11 +68,6 @@ namespace Game
             base.ShallowClone(destination);
             destination.Aspect = Aspect;
             destination.ViewOffset = ViewOffset;
-        }
-
-        public Matrix4 GetViewMatrix(bool isOrtho = true)
-        {
-            return CameraExt.GetViewMatrix(this, isOrtho);
         }
 
         public override void SetTransform(Transform2 transform)

@@ -12,62 +12,37 @@ namespace UnitTest
     [TestClass]
     public class CameraExtTests
     {
+        /// <summary>
+        /// Simple ICamera2 implementation for unit testing.
+        /// </summary>
         private class SimpleCamera2 : ICamera2
         {
-            public float Aspect
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            public double Fov
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            public Vector2 ViewOffset
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            public float ZFar
-            {
-                get
-                {
-                    return 10000;
-                }
-            }
-
-            public float ZNear
-            {
-                get
-                {
-                    return 0.01f;
-                }
-            }
-
-            public Matrix4 GetViewMatrix(bool isOrtho = true)
-            {
-                throw new NotImplementedException();
-            }
+            public float Aspect { get; set; } = 1;
+            public double Fov { get; set; } = Math.PI / 4;
+            public Vector2 ViewOffset { get; set; }
+            public float ZFar { get; set; } = 10000;
+            public float ZNear { get; set; } = 0.1f;
+            public Transform2 WorldTransform { get; set; } = new Transform2();
+            public Transform2 WorldVelocity { get; set; } = Transform2.CreateVelocity();
 
             public Transform2 GetWorldTransform(bool ignorePortals = false)
             {
-                throw new NotImplementedException();
+                return WorldTransform.ShallowClone();
             }
 
             public Transform2 GetWorldVelocity(bool ignorePortals = false)
             {
-                throw new NotImplementedException();
+                return WorldVelocity.ShallowClone();
             }
+        }
+
+        /// <summary>
+        /// In case another unit test relies on canvasSize having its default value we reset it here.
+        /// </summary>
+        [TestCleanup]
+        public void ResetController()
+        {
+            Controller.CanvasSize = default(System.Drawing.Size);
         }
 
         [TestMethod]
@@ -75,7 +50,28 @@ namespace UnitTest
         {
             Controller.CanvasSize = new System.Drawing.Size(800, 600);
 
-            
+            SimpleCamera2 camera = new SimpleCamera2();
+
+            Vector2 result;
+            result = CameraExt.ScreenToWorld(camera, new Vector2());
+            Assert.IsTrue(result == new Vector2(-0.5f, 0.5f));
+
+            result = CameraExt.ScreenToWorld(camera, new Vector2(400, 300));
+            Assert.IsTrue(Vector2Ext.AlmostEqual(result, new Vector2(), 0.00001f));
+
+            result = CameraExt.ScreenToWorld(camera, new Vector2(800, 600));
+            Assert.IsTrue(Vector2Ext.AlmostEqual(result, new Vector2(0.5f, -0.5f), 0.00001f));
+        }
+
+        [TestMethod]
+        public void ScreenToWorldTest1()
+        {
+            Controller.CanvasSize = new System.Drawing.Size(800, 600);
+
+            SimpleCamera2 camera = new SimpleCamera2();
+
+            Vector2 result = CameraExt.ScreenToClip(camera, new Vector2());
+            Assert.IsTrue(result == new Vector2(-1f, 1f));
         }
     }
 }
