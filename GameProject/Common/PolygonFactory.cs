@@ -161,12 +161,12 @@ namespace Game
             }
         }
 
-        public static Vector2[] CreateLineWidth(Line line, float width)
+        public static Vector2[] CreateLineWidth(LineF line, float width)
         {
             return CreateLineWidth(line, width, width);
         }
 
-        public static Vector2[] CreateLineWidth(Line line, float widthStart, float widthEnd)
+        public static Vector2[] CreateLineWidth(LineF line, float widthStart, float widthEnd)
         {
             Debug.Assert(widthStart > 0 && widthEnd > 0, "Line must have positive width.");
             Vector2 offsetStart = (line[0] - line[1]).PerpendicularLeft.Normalized() * widthStart / 2;

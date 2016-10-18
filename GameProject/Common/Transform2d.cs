@@ -353,5 +353,15 @@ namespace Game.Common
                 MirrorX.GetHashCode() ^
                 Position.GetHashCode();
         }
+
+        public static explicit operator Transform2d(Transform2 t)
+        {
+            return new Transform2d((Vector2d)t.Position, t.Size, t.Rotation, t.MirrorX);
+        }
+
+        public static explicit operator Transform2(Transform2d t)
+        {
+            return new Transform2((Vector2)t.Position, (float)t.Size, (float)t.Rotation, t.MirrorX);
+        }
     }
 }

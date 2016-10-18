@@ -70,7 +70,7 @@ namespace Game
             double distanceMin = movementLeft;
             IPortal portalNearest = null;
             IntersectCoord intersectNearest = new IntersectCoord();
-            Line ray = new Line(begin.Position, begin.Position + velocity.Position);
+            LineF ray = new LineF(begin.Position, begin.Position + velocity.Position);
             foreach (IPortal p in portals)
             {
                 if (!Portal.IsValid(p) || portalPrevious == p)
@@ -78,7 +78,7 @@ namespace Game
                     continue;
                 }
 
-                Line portalLine = new Line(Portal.GetWorldVerts(p));
+                LineF portalLine = new LineF(Portal.GetWorldVerts(p));
                 IntersectCoord intersect = MathExt.LineLineIntersect(portalLine, ray, true);
                 double distance = ((Vector2d)begin.Position - intersect.Position).Length;
                 if (intersect.Exists && distance < distanceMin)
@@ -138,7 +138,7 @@ namespace Game
                 {
                     continue;
                 }
-                Line exitLine = new Line(Portal.GetWorldVerts(p));
+                LineF exitLine = new LineF(Portal.GetWorldVerts(p));
                 Vector2 position = transform.Position;
                 double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
                 if (distanceToPortal < Portal.EnterMinDistance)

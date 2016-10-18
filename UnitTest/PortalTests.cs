@@ -71,7 +71,7 @@ namespace UnitTest
 
             PortalCommon.UpdateWorldTransform(scene);
 
-            Line ray = new Line(new Vector2(0, 0), new Vector2(8, -1));
+            LineF ray = new LineF(new Vector2(0, 0), new Vector2(8, -1));
             PortalPath path = new PortalPath();
             path.Enter(p0);
             var intersections = Portal.PathIntersections(path, ray);
@@ -102,7 +102,7 @@ namespace UnitTest
 
             PortalCommon.UpdateWorldTransform(scene);
 
-            Line ray = new Line(new Vector2(0, 0), new Vector2(5, 0));
+            LineF ray = new LineF(new Vector2(0, 0), new Vector2(5, 0));
             PortalPath path = new PortalPath();
             path.Enter(p0);
             path.Enter(p2);
@@ -138,7 +138,7 @@ namespace UnitTest
 
             PortalCommon.UpdateWorldTransform(scene);
 
-            Line ray = new Line(new Vector2(0, 0), new Vector2(6, 2));
+            LineF ray = new LineF(new Vector2(0, 0), new Vector2(6, 2));
             PortalPath path = new PortalPath();
             path.Enter(p0);
             path.Enter(p2);

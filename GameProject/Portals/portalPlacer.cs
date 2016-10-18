@@ -19,7 +19,7 @@ namespace Game.Portals
         /// <param name="portal">Portal that will potentially be attached to a wall edge.</param>
         /// <param name="ray">Portal ray cast.  ray[0] is the begin point and ray[1] is the end point.</param>
         /// <returns>True if a valid edge was found, otherwise false.</returns>
-        public static bool PortalPlace(FixturePortal portal, Line ray)
+        public static bool PortalPlace(FixturePortal portal, LineF ray)
         {
             WallCoord intersection = RayCast(portal.Scene, ray);
             if (intersection != null)
@@ -34,7 +34,7 @@ namespace Game.Portals
             return false;
         }
 
-        public static WallCoord RayCast(IScene scene, Line ray)
+        public static WallCoord RayCast(IScene scene, LineF ray)
         {
             WallCoord wallCoord = null;
             float minDist = -1;
@@ -44,7 +44,7 @@ namespace Game.Portals
                 for (int i = 0; i < vertices.Length; i++)
                 {
                     int iNext = (i + 1) % vertices.Length;
-                    IntersectCoord coord = MathExt.LineLineIntersect(ray, new Line(vertices[i], vertices[iNext]), false);
+                    IntersectCoord coord = MathExt.LineLineIntersect(ray, new LineF(vertices[i], vertices[iNext]), false);
                     if (coord.Exists)
                     {
                         float dist = ((Vector2)coord.Position - ray[0]).Length;
@@ -66,7 +66,7 @@ namespace Game.Portals
         /// <param name="portalSize">Size of portal.</param>
         private static WallCoord AdjustCoord(WallCoord coord, float portalSize)
         {
-            Line edge = PolygonExt.GetEdge(coord.Wall.GetWorldVertices(), coord);
+            LineF edge = PolygonExt.GetEdge(coord.Wall.GetWorldVertices(), coord);
             if (!EdgeValidLength(edge.Length, portalSize))
             {
                 return null;
@@ -75,7 +75,7 @@ namespace Game.Portals
             return intersectValid;
         }
 
-        private static float GetValidT(float t, Line edge, float portalSize)
+        private static float GetValidT(float t, LineF edge, float portalSize)
         {
             Debug.Assert(EdgeValidLength(edge.Length, portalSize));
             float portalSizeT = (portalSize + FixturePortal.EdgeMargin * 2) / edge.Length;
@@ -100,7 +100,7 @@ namespace Game.Portals
                 for (int edgeIndex = 0; edgeIndex < walls[i].Vertices.Count; edgeIndex++)
                 {
                     int edgeIndexNext = (edgeIndex + 1) % vertices.Count;
-                    Line edge = new Line(vertices[edgeIndex], vertices[edgeIndexNext]);
+                    LineF edge = new LineF(vertices[edgeIndex], vertices[edgeIndexNext]);
                     if (!EdgeValidLength(edge.Length, portalSize))
                     {
                         continue;

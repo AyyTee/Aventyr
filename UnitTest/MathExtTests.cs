@@ -262,34 +262,34 @@ namespace UnitTest
         public void LineCircleIntersectTest0()
         {
             //test degernate line outside of circle
-            Line line = new Line(new Vector2(1, 0), new Vector2(1, 0));
+            LineF line = new LineF(new Vector2(1, 0), new Vector2(1, 0));
             Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, true).Length == 0);
         }
         [TestMethod]
         public void LineCircleIntersectTest1()
         {
             //test degenerate line inside of circle
-            Line line = new Line(new Vector2(1, 0), new Vector2(1f, 0));
+            LineF line = new LineF(new Vector2(1, 0), new Vector2(1f, 0));
             Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, true).Length == 0);
         }
         [TestMethod]
         public void LineCircleIntersectTest2()
         {
             //test degernate line outside of circle
-            Line line = new Line(new Vector2(1, 0), new Vector2(1, 0));
+            LineF line = new LineF(new Vector2(1, 0), new Vector2(1, 0));
             Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, false).Length == 0);
         }
         [TestMethod]
         public void LineCircleIntersectTest3()
         {
             //test degenerate line inside of circle
-            Line line = new Line(new Vector2(1, 0), new Vector2(1f, 0));
+            LineF line = new LineF(new Vector2(1, 0), new Vector2(1f, 0));
             Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, false).Length == 0);
         }
         [TestMethod]
         public void LineCircleIntersectTest4()
         {
-            Line line = new Line(new Vector2(-1f, 1f), new Vector2(2f, 1f));
+            LineF line = new LineF(new Vector2(-1f, 1f), new Vector2(2f, 1f));
             IntersectCoord[] intersects = MathExt.LineCircleIntersect(new Vector2(1, 1), 0.1f, line, true);
             Assert.IsTrue(intersects[0].Exists == true && intersects[1].Exists == true);
             Assert.IsTrue(
@@ -303,7 +303,7 @@ namespace UnitTest
         [TestMethod]
         public void LineCircleIntersectTest5()
         {
-            Line line = new Line(new Vector2(-100f, 1f), new Vector2(20f, 100f));
+            LineF line = new LineF(new Vector2(-100f, 1f), new Vector2(20f, 100f));
             IntersectCoord[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1f, line, true);
             Assert.IsTrue(intersections.Length == 0);
         }
@@ -311,7 +311,7 @@ namespace UnitTest
         [TestMethod]
         public void LineCircleIntersectTest6()
         {
-            Line line = new Line(new Vector2(-100f, 1f), new Vector2(20f, 100f));
+            LineF line = new LineF(new Vector2(-100f, 1f), new Vector2(20f, 100f));
             IntersectCoord[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1000f, line, true);
             Assert.IsTrue(intersections.Length == 0);
         }
@@ -470,9 +470,9 @@ namespace UnitTest
             return new Triangle(new Vertex(0.5f, 0.5f), new Vertex(0, 1), new Vertex(0, 0.5f));
         }
 
-        private Line GetDefaultBisector()
+        private LineF GetDefaultBisector()
         {
-            return new Line(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
+            return new LineF(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
         }
         
         [TestMethod]
@@ -523,7 +523,7 @@ namespace UnitTest
         public void BisectTriangleTest4()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, new Line(new Vector2(-1, 1), new Vector2(1, 1)));
+            Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(-1, 1), new Vector2(1, 1)));
 
             Assert.IsTrue(result.Length == 0);
         }
@@ -532,7 +532,7 @@ namespace UnitTest
         public void BisectTriangleTest5()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, new Line(new Vector2(1, 1), new Vector2(-1, 1)), Side.Right);
+            Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(1, 1), new Vector2(-1, 1)), Side.Right);
 
             Assert.IsTrue(result.Length == 0);
         }
@@ -541,7 +541,7 @@ namespace UnitTest
         public void BisectTriangleTest6()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, new Line(new Vector2(-1, 1), new Vector2(1, 1)), Side.Right);
+            Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(-1, 1), new Vector2(1, 1)), Side.Right);
 
             Assert.IsTrue(result.Length == 1);
             Assert.IsTrue(result[0].Equals(triangle));
@@ -551,7 +551,7 @@ namespace UnitTest
         public void BisectTriangleTest7()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, new Line(new Vector2(1, 1), new Vector2(-1, 1)));
+            Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(1, 1), new Vector2(-1, 1)));
 
             Assert.IsTrue(result.Length == 1);
             Assert.IsTrue(result[0].Equals(triangle));
@@ -561,7 +561,7 @@ namespace UnitTest
         public void BisectTriangleTest8()
         {
             Triangle triangle = new Triangle(new Vertex(0, 0, 5f), new Vertex(1, 0, 0), new Vertex(0, 1, 2f));
-            Triangle[] result = MathExt.BisectTriangle(triangle, new Line(new Vector2(-1, 0.6f), new Vector2(1, 0.6f)));
+            Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(-1, 0.6f), new Vector2(1, 0.6f)));
 
             Assert.IsTrue(result.Length == 1);
             Triangle comparison = new Triangle(new Vertex(0.399999976f, 0.6f, 1.2f), new Vertex(0f, 1f, 2f), new Vertex(0f, 0.6f, 3.19999981f));
@@ -573,7 +573,7 @@ namespace UnitTest
         public void BisectMestTest0()
         {
             Model m = ModelFactory.CreatePlane();
-            Line bisector = new Line(new Vector2(0.4f, -1f), new Vector2(0.4f, 0));
+            LineF bisector = new LineF(new Vector2(0.4f, -1f), new Vector2(0.4f, 0));
             Mesh mesh = MathExt.BisectMesh(m.Mesh, bisector);
         }
         #endregion
@@ -581,7 +581,7 @@ namespace UnitTest
         [TestMethod]
         public void LinePolygonDistanceTest0()
         {
-            Line line = new Line(new Vector2(), new Vector2(4, 0));
+            LineF line = new LineF(new Vector2(), new Vector2(4, 0));
             Vector2[] polygon = PolygonFactory.CreateRectangle(2, 2);
             double distance = MathExt.LinePolygonDistance(line, polygon);
             Assert.IsTrue(distance == 0);
@@ -590,7 +590,7 @@ namespace UnitTest
         [TestMethod]
         public void LinePolygonDistanceTest1()
         {
-            Line line = new Line(new Vector2(), new Vector2(0.5f, 0.5f));
+            LineF line = new LineF(new Vector2(), new Vector2(0.5f, 0.5f));
             Vector2[] polygon = PolygonFactory.CreateRectangle(2, 2);
             double distance = MathExt.LinePolygonDistance(line, polygon);
             Assert.IsTrue(Math.Abs(distance + 0.5) <= ErrorMargin);
@@ -599,7 +599,7 @@ namespace UnitTest
         [TestMethod]
         public void LinePolygonDistanceTest2()
         {
-            Line line = new Line(new Vector2(0f, 3f), new Vector2(3f, 0f));
+            LineF line = new LineF(new Vector2(0f, 3f), new Vector2(3f, 0f));
             Vector2[] polygon = PolygonFactory.CreateRectangle(2, 2);
             double distance = MathExt.LinePolygonDistance(line, polygon);
             Assert.IsTrue(Math.Abs(distance - Math.Sqrt(0.5)) <= ErrorMargin);
@@ -609,9 +609,9 @@ namespace UnitTest
         [TestMethod]
         public void MovingPointLineIntersectTest0()
         {
-            Line point = new Line(Vector2.Zero, Vector2.Zero);
-            Line lineStart = new Line(new Vector2(-1, -1), new Vector2(1, -1));
-            Line lineEnd = new Line(new Vector2(-1, 1), new Vector2(1, 1));
+            LineF point = new LineF(Vector2.Zero, Vector2.Zero);
+            LineF lineStart = new LineF(new Vector2(-1, -1), new Vector2(1, -1));
+            LineF lineEnd = new LineF(new Vector2(-1, 1), new Vector2(1, 1));
             var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.IsTrue(result.Count == 1);
             Assert.AreEqual(result[0].AcrossProportion, 0.5, 0.000001);
@@ -621,9 +621,9 @@ namespace UnitTest
         [TestMethod]
         public void MovingPointLineIntersectTest1()
         {
-            Line point = new Line(Vector2.Zero, new Vector2(3, 0));
-            Line lineStart = new Line(new Vector2(-1, -1), new Vector2(1, -1));
-            Line lineEnd = new Line(new Vector2(-1, 1), new Vector2(1, 1));
+            LineF point = new LineF(Vector2.Zero, new Vector2(3, 0));
+            LineF lineStart = new LineF(new Vector2(-1, -1), new Vector2(1, -1));
+            LineF lineEnd = new LineF(new Vector2(-1, 1), new Vector2(1, 1));
             var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.IsTrue(result.Count == 0);
         }
@@ -631,9 +631,9 @@ namespace UnitTest
         [TestMethod]
         public void MovingPointLineIntersectTest2()
         {
-            Line point = new Line(Vector2.Zero, new Vector2(-3, 0));
-            Line lineStart = new Line(new Vector2(-1, -1), new Vector2(1, -1));
-            Line lineEnd = new Line(new Vector2(-1, 1), new Vector2(1, 1));
+            LineF point = new LineF(Vector2.Zero, new Vector2(-3, 0));
+            LineF lineStart = new LineF(new Vector2(-1, -1), new Vector2(1, -1));
+            LineF lineEnd = new LineF(new Vector2(-1, 1), new Vector2(1, 1));
             var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.IsTrue(result.Count == 0);
         }
@@ -641,9 +641,9 @@ namespace UnitTest
         [TestMethod]
         public void MovingPointLineIntersectTest3()
         {
-            Line point = new Line(Vector2.Zero, new Vector2(0, 1.5f));
-            Line lineStart = new Line(new Vector2(-1, -1), new Vector2(1, -1));
-            Line lineEnd = new Line(new Vector2(-1, 1), new Vector2(1, 1));
+            LineF point = new LineF(Vector2.Zero, new Vector2(0, 1.5f));
+            LineF lineStart = new LineF(new Vector2(-1, -1), new Vector2(1, -1));
+            LineF lineEnd = new LineF(new Vector2(-1, 1), new Vector2(1, 1));
             var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.IsTrue(result.Count == 0);
         }
@@ -651,9 +651,9 @@ namespace UnitTest
         [TestMethod]
         public void MovingPointLineIntersectTest4()
         {
-            Line point = new Line(Vector2.Zero, new Vector2(10f, 0));
-            Line lineStart = new Line(new Vector2(5, -1), new Vector2(5, 9));
-            Line lineEnd = new Line(new Vector2(5, -1), new Vector2(5, 9));
+            LineF point = new LineF(Vector2.Zero, new Vector2(10f, 0));
+            LineF lineStart = new LineF(new Vector2(5, -1), new Vector2(5, 9));
+            LineF lineEnd = new LineF(new Vector2(5, -1), new Vector2(5, 9));
             var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(0.5f, result[0].TimeProportion, 0.00001);
@@ -663,10 +663,10 @@ namespace UnitTest
         [TestMethod]
         public void MovingPointLineIntersectTest5()
         {
-            Line point = new Line(new Vector2(-1.965838f, 0.5397364f), new Vector2(-1.965838f, 0.4839308f));
+            LineF point = new LineF(new Vector2(-1.965838f, 0.5397364f), new Vector2(-1.965838f, 0.4839308f));
             //point = point.Reverse();
-            Line lineStart = new Line(new Vector2(-2.529442f, 0.5394384f), new Vector2(-1.530722f, 0.4888392f));
-            Line lineEnd = new Line(new Vector2(-2.529442f, 0.5394384f), new Vector2(-1.530722f, 0.4888392f));
+            LineF lineStart = new LineF(new Vector2(-2.529442f, 0.5394384f), new Vector2(-1.530722f, 0.4888392f));
+            LineF lineEnd = new LineF(new Vector2(-2.529442f, 0.5394384f), new Vector2(-1.530722f, 0.4888392f));
             var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.AreEqual(1, result.Count);
             /*Assert.AreEqual(0.5f, result[0].TimeProportion, 0.00001);

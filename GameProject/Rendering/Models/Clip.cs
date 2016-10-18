@@ -14,14 +14,14 @@ namespace Game
 
         public class ClipModel
         {
-            readonly Line[] _clipLines;
-            public Line[] ClipLines { get { return _clipLines; } }
+            readonly LineF[] _clipLines;
+            public LineF[] ClipLines { get { return _clipLines; } }
             readonly Matrix4 _transform;
             public Matrix4 Transform { get { return _transform; } }
             public readonly Model Model;
             public readonly IRenderable Entity;
 
-            public ClipModel(IRenderable entity, Model model, Line[] clipLines, Matrix4 transform)
+            public ClipModel(IRenderable entity, Model model, LineF[] clipLines, Matrix4 transform)
             {
                 Entity = entity;
                 Model = model;
@@ -32,11 +32,11 @@ namespace Game
 
         public class ClipPolygon
         {
-            public IList<Line> ClipLines { get; set; }
+            public IList<LineF> ClipLines { get; set; }
             public Matrix4 Transform { get; set; }
             public IList<Vector2> Polygon { get; set; }
 
-            public ClipPolygon(IList<Vector2> polygon, IList<Line> clipLines, Matrix4 transform)
+            public ClipPolygon(IList<Vector2> polygon, IList<LineF> clipLines, Matrix4 transform)
             {
                 Polygon = polygon;
                 ClipLines = clipLines;
@@ -59,7 +59,7 @@ namespace Game
             {
                 foreach (Model m in entity.GetModels())
                 {
-                    clipModels.Add(new ClipModel(entity, m, new Line[0], Matrix4.Identity));
+                    clipModels.Add(new ClipModel(entity, m, new LineF[0], Matrix4.Identity));
                 }
             }
             return clipModels;
@@ -82,13 +82,13 @@ namespace Game
                 portalList, 
                 PORTAL_CLIP_MARGIN);
 
-            List<Line> clipLines = new List<Line>();
+            List<LineF> clipLines = new List<LineF>();
             foreach (IPortal portal in collisions)
             {
                 Vector2[] pv = Portal.GetWorldVerts(portal);
-                Line clipLine = new Line(pv);
+                LineF clipLine = new LineF(pv);
 
-                Line portalLine = new Line(pv);
+                LineF portalLine = new LineF(pv);
                 Vector2 normal = portal.WorldTransform.GetRight();
                 if (portal.WorldTransform.MirrorX)
                 {
@@ -137,7 +137,7 @@ namespace Game
                     continue;
                 }
 
-                Line portalLine = new Line(Portal.GetWorldVerts(portal));
+                LineF portalLine = new LineF(Portal.GetWorldVerts(portal));
 
                 List<Vector2> convexHull = new List<Vector2>(polygon);
                 convexHull.Add(centerPoint);
@@ -155,8 +155,8 @@ namespace Game
                 IPortal portal = collisions[i];
                 for (int j = collisions.Count - 1; j > i; j--)
                 {
-                    Line currentLine = new Line(Portal.GetWorldVerts(collisions[i]));
-                    Line checkLine = new Line(Portal.GetWorldVerts(collisions[j]));
+                    LineF currentLine = new LineF(Portal.GetWorldVerts(collisions[i]));
+                    LineF checkLine = new LineF(Portal.GetWorldVerts(collisions[j]));
                     Side checkSide = currentLine.GetSideOf(checkLine);
                     if (checkSide != currentLine.GetSideOf(centerPoint))
                     {
@@ -165,13 +165,13 @@ namespace Game
                 }
             }
 
-            List<Line> clipLines = new List<Line>();
+            List<LineF> clipLines = new List<LineF>();
             foreach (IPortal portal in collisions)
             {
                 Vector2[] pv = Portal.GetWorldVerts(portal);
-                Line clipLine = new Line(pv);
+                LineF clipLine = new LineF(pv);
 
-                Line portalLine = new Line(pv);
+                LineF portalLine = new LineF(pv);
                 Vector2 normal = portal.WorldTransform.GetRight();
                 if (portal.WorldTransform.MirrorX)
                 {

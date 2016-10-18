@@ -14,7 +14,7 @@ namespace Game
         /// The line's endpoints move at a constant rate along their linear paths.
         /// </summary>
         /// <remarks>Original code found here https://github.com/Strilanc/Methods/blob/master/Methods/Methods/LineSweepPoint/GeometryUtil.cs </remarks>
-        public static IEnumerable<Sweep> WhenLineSweepsPoint(Vector2 point, Line pathOfLineStartPoint, Line pathOfLineEndPoint)
+        public static IEnumerable<Sweep> WhenLineSweepsPoint(Vector2d point, Line pathOfLineStartPoint, Line pathOfLineEndPoint)
         {
             var a = point - pathOfLineStartPoint[0];
             var b = -pathOfLineStartPoint.Delta;
@@ -24,8 +24,8 @@ namespace Game
             //return from t in QuadraticRoots(b.Cross(d), a.Cross(d) + b.Cross(c), a.Cross(c))
             return from across in QuadraticRoots(Vector2Ext.Cross(b, d), Vector2Ext.Cross(a, d) + Vector2Ext.Cross(b, c), Vector2Ext.Cross(a, c))
                     where across >= 0 && across <= 1
-                    let start = pathOfLineStartPoint.Lerp((float)across)
-                    let end = pathOfLineEndPoint.Lerp((float)across)
+                    let start = pathOfLineStartPoint.Lerp(across)
+                    let end = pathOfLineEndPoint.Lerp(across)
                     let time = point.LerpProjectOnto(new Line(start, end))
                     where time >= 0 && time <= 1
                     orderby time
@@ -47,7 +47,7 @@ namespace Game
         ///The proportion that, when lerped across the given line, results in the given point.
         ///If the point is not on the line segment, the result is the closest point on the extended line.
         ///</summary>
-        public static double LerpProjectOnto(this Vector2 point, Line line)
+        public static double LerpProjectOnto(this Vector2d point, Line line)
         {
             return line.NearestT(point, false);
             /*var b = point - line[0];

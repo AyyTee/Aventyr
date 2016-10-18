@@ -128,7 +128,7 @@ namespace Game
             //If this isn't the root body then the center point will be just outside of the parent portal.
             if (data.IsChild)
             {
-                Line portalLine = new Line(Portal.GetWorldVerts(data.BodyParent.Portal.Linked));
+                LineF portalLine = new LineF(Portal.GetWorldVerts(data.BodyParent.Portal.Linked));
                 Vector2 offset = portalLine.Delta.PerpendicularLeft.Normalized() * 0.01f;
                 center = portalLine.Center + offset;
                 if (portalLine.GetSideOf(center + offset) == portalLine.GetSideOf(body.Position))
@@ -176,7 +176,7 @@ namespace Game
                 Vector2 v0 = verts[0] + (verts[1] - verts[0]).Normalized() * scale;
                 Vector2 v1 = verts[1] - (verts[1] - verts[0]).Normalized() * scale;
                 Vector2 depth = (verts[1] - verts[0]).PerpendicularLeft.Normalized() * scale;
-                if (new Line(v0, v1).GetSideOf(v1 + depth) == new Line(v0, v1).GetSideOf(center))
+                if (new LineF(v0, v1).GetSideOf(v1 + depth) == new LineF(v0, v1).GetSideOf(center))
                 {
                     depth *= -1;
                 }

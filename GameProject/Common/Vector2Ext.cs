@@ -18,6 +18,11 @@ namespace Game
             return v0.X * v1.Y - v0.Y * v1.X;
         }
 
+        public static double Cross(Vector2d v0, Vector2d v1)
+        {
+            return v0.X * v1.Y - v0.Y * v1.X;
+        }
+
         public static Vector2[] Scale(Vector2[] vectors, float scalar)
         {
             Debug.Assert(vectors != null);

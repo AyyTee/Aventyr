@@ -15,7 +15,7 @@ namespace Game
         public static Transform2 GetTransform(IList<Vector2> vertices, IPolygonCoord coord)
         {
             Transform2 transform = new Transform2();
-            Line line = GetEdge(vertices, coord);
+            LineF line = GetEdge(vertices, coord);
             transform.Position = line.Lerp(coord.EdgeT);
             transform.Rotation = -(float)MathExt.AngleVector(GetEdge(vertices, coord).GetNormal());
             return transform;
@@ -27,10 +27,10 @@ namespace Game
             return GetTransform(vertices, fixtureCoord);
         }
 
-        public static Line GetEdge(IList<Vector2> vertices, IPolygonCoord coord)
+        public static LineF GetEdge(IList<Vector2> vertices, IPolygonCoord coord)
         {
             Debug.Assert(vertices.Count >= 1, "Polygon must have at least 1 vertex.");
-            return new Line(vertices[coord.EdgeIndex], vertices[(coord.EdgeIndex + 1) % vertices.Count]);
+            return new LineF(vertices[coord.EdgeIndex], vertices[(coord.EdgeIndex + 1) % vertices.Count]);
         }
 
         public static float EdgeIndexT(IPolygonCoord coord)
@@ -77,7 +77,7 @@ namespace Game
             //Using the really slow but easy to implement O(n^2) algorithm for now.
             for (int i = 0; i < polygon.Count; i++)
             {
-                Line line = new Line(polygon[i], polygon[(i + 1) % polygon.Count]);
+                LineF line = new LineF(polygon[i], polygon[(i + 1) % polygon.Count]);
                 for (int j = 0; j < polygon.Count; j++)
                 {
                     int jNext = (j + 1) % polygon.Count;
@@ -86,7 +86,7 @@ namespace Game
                     {
                         continue;
                     }
-                    var intersect = MathExt.LineLineIntersect(line, new Line(polygon[j], polygon[jNext]), true);
+                    var intersect = MathExt.LineLineIntersect(line, new LineF(polygon[j], polygon[jNext]), true);
                     if (intersect.Exists)
                     {
                         return false;

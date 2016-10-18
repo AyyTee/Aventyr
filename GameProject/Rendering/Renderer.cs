@@ -266,7 +266,7 @@ namespace Game
                 {
                     for (int j = 0; j < 2; j++)
                     {
-                        Line line = portalViewList[i].FovLines[j];
+                        LineF line = portalViewList[i].FovLines[j];
                         float minWidth = Math.Abs(cam.GetWorldTransform().Size) / 300;
                         double angleDiff = GetLineBlurAngle(line, portalViewList[i].FovLinesPrevious[j]);
                         float widthEnd = (float)Math.Tan(angleDiff) * line.Length;
@@ -343,7 +343,7 @@ namespace Game
             #endregion
         }
 
-        private float GetLineBlurAngle(Line line, Line linePrev)
+        private float GetLineBlurAngle(LineF line, LineF linePrev)
         {
             const float angleMax = (float)(1f * Math.PI / 4);
             float angleScale = 80f;

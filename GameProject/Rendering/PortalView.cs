@@ -16,9 +16,9 @@ namespace Game
         public List<List<IntPoint>> Paths { get; private set; }
         public List<PortalView> Children { get; private set; }
         public PortalView Parent { get; private set; }
-        public Line[] FovLines { get; private set; }
-        public Line[] FovLinesPrevious { get; private set; }
-        public Line PortalLine { get; private set; }
+        public LineF[] FovLines { get; private set; }
+        public LineF[] FovLinesPrevious { get; private set; }
+        public LineF PortalLine { get; private set; }
         public int Count
         {
             get
@@ -32,13 +32,13 @@ namespace Game
             }
         }
 
-        public PortalView(PortalView parent, Matrix4 viewMatrix, List<IntPoint> path, Line[] fovLines, Line[] fovLinesPrevious)
+        public PortalView(PortalView parent, Matrix4 viewMatrix, List<IntPoint> path, LineF[] fovLines, LineF[] fovLinesPrevious)
             : this(parent, viewMatrix, new List<List<IntPoint>>(), fovLines, fovLinesPrevious, null)
         {
             Paths.Add(path);
         }
 
-        public PortalView(PortalView parent, Matrix4 viewMatrix, List<List<IntPoint>> path, Line[] fovLines, Line[] fovLinesPrevious, Line portalLine)
+        public PortalView(PortalView parent, Matrix4 viewMatrix, List<List<IntPoint>> path, LineF[] fovLines, LineF[] fovLinesPrevious, LineF portalLine)
         {
             PortalLine = portalLine;
             FovLines = fovLines;
@@ -72,7 +72,7 @@ namespace Game
             List<IntPoint> view = ClipperConvert.ToIntPoint(CameraExt.GetWorldVerts(camera));
             List<List<IntPoint>> paths = new List<List<IntPoint>>();
             paths.Add(view);
-            PortalView portalView = new PortalView(null, CameraExt.GetViewMatrix(camera), view, new Line[0], new Line[0]);
+            PortalView portalView = new PortalView(null, CameraExt.GetViewMatrix(camera), view, new LineF[0], new LineF[0]);
             Vector2 camPos = camera.GetWorldTransform().Position;
 
             List<Func<bool>> actionList = new List<Func<bool>>();
@@ -137,8 +137,8 @@ namespace Game
                     continue;
                 }
                 //Skip this portal if it's inside the current portal's FOV.
-                Line portalLine = new Line(Portal.GetWorldVerts(portal));
-                Line portalOtherLine = new Line(Portal.GetWorldVerts(other));
+                LineF portalLine = new LineF(Portal.GetWorldVerts(portal));
+                LineF portalOtherLine = new LineF(Portal.GetWorldVerts(other));
                 if (portalLine.IsInsideFOV(viewPos, portalOtherLine))
                 {
                     continue;
@@ -166,14 +166,14 @@ namespace Game
             Matrix4 portalMatrixNew = Portal.GetLinkedMatrix(portal.Linked, portal) * portalMatrix;
             Matrix4 viewMatrixNew = portalMatrixNew * viewMatrix;
 
-            Line[] lines = Portal.GetFovLines(portal, viewPos, 500);
+            LineF[] lines = Portal.GetFovLines(portal, viewPos, 500);
             lines[0] = lines[0].Transform(portalMatrix);
             lines[1] = lines[1].Transform(portalMatrix);
-            Line[] linesPrevious = Portal.GetFovLines(portal, viewPosPrevious, 500);
+            LineF[] linesPrevious = Portal.GetFovLines(portal, viewPosPrevious, 500);
             linesPrevious[0] = linesPrevious[0].Transform(portalMatrix);
             linesPrevious[1] = linesPrevious[1].Transform(portalMatrix);
 
-            Line portalWorldLine = new Line(Portal.GetWorldVerts(portal));
+            LineF portalWorldLine = new LineF(Portal.GetWorldVerts(portal));
             portalWorldLine = portalWorldLine.Transform(portalMatrix);
             PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNewer, lines, linesPrevious, portalWorldLine);
 
@@ -200,7 +200,7 @@ namespace Game
             }
             //or if the portal is one sided and the view point is on the wrong side
             Vector2[] pv2 = Portal.GetWorldVerts(next);
-            Line portalLine = new Line(pv2);
+            LineF portalLine = new LineF(pv2);
             if (next.OneSided)
             {
                 if (portalLine.GetSideOf(pv2[0] + next.WorldTransform.GetRight()) != portalLine.GetSideOf(viewPos))
@@ -211,7 +211,7 @@ namespace Game
             //or if this portal isn't inside the fov of the exit portal
             if (previous != null)
             {
-                Line portalEnterLine = new Line(Portal.GetWorldVerts(previous.Linked));
+                LineF portalEnterLine = new LineF(Portal.GetWorldVerts(previous.Linked));
                 if (!portalEnterLine.IsInsideFOV(viewPos, portalLine))
                 {
                     return false;

@@ -95,7 +95,7 @@ namespace Game
             for (int i = 0; i < polygon.Count; i++)
             {
                 int iNext = (i + 1) % polygon.Count;
-                Line edge = new Line(polygon[i], polygon[iNext]);
+                LineF edge = new LineF(polygon[i], polygon[iNext]);
                 double distance = PointLineDistance(point, edge, true);
                 if (distanceMin == -1 || distance < distanceMin)
                 {
@@ -108,38 +108,43 @@ namespace Game
         }
         #endregion
         #region Distance
-        public static double PointLineDistance(Vector2 point, Line line, bool isSegment)
+        public static double PointLineDistance(Vector2d point, Line line, bool isSegment)
         {
-            Vector2 V;
-            Vector2 VDelta = line[1] - line[0];
+            Vector2d V;
+            Vector2d VDelta = line[1] - line[0];
             if ((VDelta.X == 0) && (VDelta.Y == 0))
             {
                 V = line[0];
             }
             else
             {
-                float t = ((point.X - line[0].X) * VDelta.X + (point.Y - line[0].Y) * VDelta.Y) / (float)(Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
-                Debug.Assert(float.IsNaN(t) == false);
+                double t = ((point.X - line[0].X) * VDelta.X + (point.Y - line[0].Y) * VDelta.Y) / (Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
+                Debug.Assert(double.IsNaN(t) == false);
                 if (isSegment) { t = MathHelper.Clamp(t, 0, 1); }
-                V = line[0] + Vector2.Multiply(VDelta, t);
+                V = line[0] + Vector2d.Multiply(VDelta, t);
             }
-            float distance = (point - V).Length;
+            double distance = (point - V).Length;
             Debug.Assert(distance >= 0);
             return distance;
         }
 
-        public static double PointLineDistance(Xna.Vector2 point, Line line, bool isSegment)
+        public static double PointLineDistance(Xna.Vector2 point, LineF line, bool isSegment)
         {
             return PointLineDistance(Vector2Ext.ToOtk(point), line, isSegment);
         }
 
+        public static double PointLineDistance(Vector2 point, LineF line, bool isSegment)
+        {
+            return PointLineDistance((Vector2d)point, (Line)line, isSegment);
+        }
+
         static public double PointPolygonDistance(Vector2 point, IList<Vector2> polygon)
         {
-            Line edge = new Line(polygon[0], polygon[1]);
+            LineF edge = new LineF(polygon[0], polygon[1]);
             double distMin = PointLineDistance(point, edge, true);
             for (int i = 1; i < polygon.Count; i++)
             {
-                edge = new Line(polygon[i], polygon[(i + 1) % polygon.Count]);
+                edge = new LineF(polygon[i], polygon[(i + 1) % polygon.Count]);
                 distMin = Math.Min(distMin, PointLineDistance(point, edge, true));
             }
             if (PointInPolygon(point, polygon))
@@ -153,13 +158,13 @@ namespace Game
         /// Returns the distance between a line and polygon. 
         /// If the line is contained in the polygon then the distance will be negative value.
         /// </summary>
-        public static double LinePolygonDistance(Line line, IList<Vector2> polygon)
+        public static double LinePolygonDistance(LineF line, IList<Vector2> polygon)
         {
-            Line edge = new Line(polygon[0], polygon[1]);
+            LineF edge = new LineF(polygon[0], polygon[1]);
             double distMin = LineLineDistance(line, edge);
             for (int i = 1; i < polygon.Count; i++)
             {
-                edge = new Line(polygon[i], polygon[(i + 1) % polygon.Count]);
+                edge = new LineF(polygon[i], polygon[(i + 1) % polygon.Count]);
                 distMin = Math.Min(distMin, LineLineDistance(line, edge));
             }
             if (PointInPolygon(line[0], polygon))
@@ -169,7 +174,7 @@ namespace Game
             return distMin;
         }
 
-        public static double LineLineDistance(Line line0, Line line1)
+        public static double LineLineDistance(LineF line0, LineF line1)
         {
             if (LineLineIntersect(line0, line1, true).Exists)
             {
@@ -198,7 +203,7 @@ namespace Game
         /// </summary>
         /// <param name="polygon">A closed polygon</param>
         /// <returns></returns>
-        public static bool LineInPolygon(Line line, IList<Vector2> polygon)
+        public static bool LineInPolygon(LineF line, IList<Vector2> polygon)
         {
             if (PointInPolygon(line[0], polygon))
             {
@@ -255,7 +260,7 @@ namespace Game
             };
             for (int i = 0; i < v.Length; i++)
             {
-                if (LineLineIntersect(new Line(v[i], v[(i+1) % v.Length]), new Line(lineBegin, lineEnd), true).Exists)
+                if (LineLineIntersect(new LineF(v[i], v[(i+1) % v.Length]), new LineF(lineBegin, lineEnd), true).Exists)
                 {
                     return true;
                 }
@@ -451,13 +456,13 @@ namespace Game
             {
                 for (int j = i + 2; j < vertices.Length - 1; j++)
                 {
-                    IntersectCoord first = LineLineIntersect(new Line(vertices[i], vertices[i + 1]), new Line(vertices[j], vertices[j + 1]), true);
+                    IntersectCoord first = LineLineIntersect(new LineF(vertices[i], vertices[i + 1]), new LineF(vertices[j], vertices[j + 1]), true);
                     if (first.Exists && first.TFirst < 1)
                     {
                         intersections.Add(new PolygonCoord(i, (float)first.TFirst));
                         if (includeTwice)
                         {
-                            IntersectCoord second = LineLineIntersect(new Line(vertices[i], vertices[i + 1]), new Line(vertices[j], vertices[j + 1]), true);
+                            IntersectCoord second = LineLineIntersect(new LineF(vertices[i], vertices[i + 1]), new LineF(vertices[j], vertices[j + 1]), true);
                             Debug.Assert(second.Exists);
                             intersections.Add(new PolygonCoord(j, (float)second.TFirst));
                         }
@@ -472,13 +477,13 @@ namespace Game
         /// </summary>
         /// <param name="polygon">A closed polygon</param>
         /// <returns>An intersection point</returns>
-        public static List<PolygonCoord> LinePolygonIntersect(Line line, IList<Vector2> polygon)
+        public static List<PolygonCoord> LinePolygonIntersect(LineF line, IList<Vector2> polygon)
         {
             List<PolygonCoord> points = new List<PolygonCoord>();
             for (int i0 = 0; i0 < polygon.Count; i0++)
             {
                 int i1 = (i0 + 1) % polygon.Count;
-                IntersectCoord intersect = MathExt.LineLineIntersect(line, new Line(polygon[i0], polygon[i1]), true);
+                IntersectCoord intersect = LineLineIntersect(line, new LineF(polygon[i0], polygon[i1]), true);
                 
                 if (intersect.Exists)
                 {
@@ -496,7 +501,7 @@ namespace Game
         /// <remarks>Original code was found here 
         /// http://csharphelper.com/blog/2014/09/determine-where-a-line-intersects-a-circle-in-c/
         /// </remarks>
-        public static IntersectCoord[] LineCircleIntersect(Vector2 circle, float radius, Line line, bool isSegment)
+        public static IntersectCoord[] LineCircleIntersect(Vector2 circle, float radius, LineF line, bool isSegment)
         {
             IntersectCoord intersect0 = new IntersectCoord();
             IntersectCoord intersect1 = new IntersectCoord();
@@ -656,7 +661,7 @@ namespace Game
         /// <param name="bisector">Bisection plane defined by a line on the xy-plane.</param>
         /// <param name="keepSide">Which side of the bisector to not remove from the triangle.</param>
         /// <returns>Triangles not removed by the bisection.  Will either be 0,1,2 triangles.</returns>
-        public static Triangle[] BisectTriangle(Triangle triangle, Line bisector, Side keepSide = Side.Left)
+        public static Triangle[] BisectTriangle(Triangle triangle, LineF bisector, Side keepSide = Side.Left)
         {
             Debug.Assert(triangle != null);
             Debug.Assert(bisector != null);
@@ -677,7 +682,7 @@ namespace Game
                 {
                     keep.Add(triangle[i]);
                 }
-                Line edge = new Line(vertices[i], vertices[(i + 1) % Triangle.VERTEX_COUNT]);
+                LineF edge = new LineF(vertices[i], vertices[(i + 1) % Triangle.VERTEX_COUNT]);
                 IntersectCoord intersect = MathExt.LineLineIntersect(edge, bisector, false);
                 if (intersect.Exists && intersect.TFirst > 0 && intersect.TFirst < 1)
                 {
@@ -710,12 +715,12 @@ namespace Game
             }
         }
 
-        public static Mesh BisectMesh(IMesh mesh, Line bisector, Side keepSide = Side.Left)
+        public static Mesh BisectMesh(IMesh mesh, LineF bisector, Side keepSide = Side.Left)
         {
             return BisectMesh(mesh, bisector, Matrix4.Identity, keepSide);
         }
 
-        public static Mesh BisectMesh(IMesh mesh, Line bisector, Matrix4 transform, Side keepSide = Side.Left)
+        public static Mesh BisectMesh(IMesh mesh, LineF bisector, Matrix4 transform, Side keepSide = Side.Left)
         {
             Debug.Assert(mesh != null);
             Debug.Assert(bisector != null);
@@ -853,7 +858,7 @@ namespace Game
         /// <summary>
         /// Find the bounding box for an array of lines.  A mimimum of one line is required.
         /// </summary>
-        public static void GetBBox(Line[] lines, out Vector2 vMin, out Vector2 vMax)
+        public static void GetBBox(LineF[] lines, out Vector2 vMin, out Vector2 vMax)
         {
             Debug.Assert(lines.Length > 0, "A minimum of one line is needed for there to be a bounding box.");
             vMin = lines[0][0];

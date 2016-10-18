@@ -52,7 +52,7 @@ namespace Game
 
             List<Vector2> fixtureContour = ActorExt.GetFixtureContour(actor);
 
-            Line edge = PolygonExt.GetEdge(fixtureContour, coord);
+            LineF edge = PolygonExt.GetEdge(fixtureContour, coord);
             Debug.Assert(
                 edge[0] == fixtureContour[coord.EdgeIndex] &&
                 edge[1] == fixtureContour[(coord.EdgeIndex + 1) % fixtureContour.Count]
@@ -128,7 +128,7 @@ namespace Game
                         for (int i = 0; i < polygon.Vertices.Count; i++)
                         {
                             int iNext = (i + 1) % polygon.Vertices.Count;
-                            Line edge = new Line(polygon.Vertices[i], polygon.Vertices[iNext]);
+                            LineF edge = new LineF(polygon.Vertices[i], polygon.Vertices[iNext]);
                             IntersectCoord[] intersects = MathExt.LineCircleIntersect(new Vector2(relativePoint.X, relativePoint.Y), radius, edge, true);
                             for (int j = 0; i < intersects.Length; i++)
                             {

@@ -198,7 +198,7 @@ namespace Game
             return indexFirst;
         }
 
-        public static Model CreateLines(IList<Line> lines)
+        public static Model CreateLines(IList<LineF> lines)
         {
             Mesh mesh = new Mesh();
             AddLines(mesh, lines);
@@ -207,7 +207,7 @@ namespace Game
             return model;
         }
 
-        public static void AddLines(Mesh mesh, IList<Line> lines)
+        public static void AddLines(Mesh mesh, IList<LineF> lines)
         {
             for (int i = 0; i < lines.Count; i++)
             {
@@ -220,7 +220,7 @@ namespace Game
             }
         }
 
-        public static Model CreateLinesWidth(Line[] lines, float width)
+        public static Model CreateLinesWidth(LineF[] lines, float width)
         {
             Mesh mesh = new Mesh();
             AddLinesWidth(mesh, lines, width);
@@ -228,7 +228,7 @@ namespace Game
             return model;
         }
 
-        public static void AddLinesWidth(Mesh mesh, Line[] lines, float width)
+        public static void AddLinesWidth(Mesh mesh, LineF[] lines, float width)
         {
             for (int i = 0; i < lines.Length; i++)
             {
@@ -261,7 +261,7 @@ namespace Game
 
         private static void AddLineWidth(Mesh mesh, Vector2 v0, Vector2 v1, float width)
         {
-            Vector2[] vectors = PolygonFactory.CreateLineWidth(new Line(v0, v1), width);
+            Vector2[] vectors = PolygonFactory.CreateLineWidth(new LineF(v0, v1), width);
             Vertex[] vertices = new Vertex[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {

@@ -8,14 +8,14 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game
 {
-    [DebuggerDisplay("Line {this[0]}, {this[1]}")]
-    public class Line : IShallowClone<Line>
+    [DebuggerDisplay("LineF {this[0]}, {this[1]}")]
+    public class LineF : IShallowClone<LineF>
     {
-        public double Length { get { return Delta.Length; } }
-        Vector2d[] _vertices = new Vector2d[2];
-        public Vector2d Delta { get { return this[1] - this[0]; } }
-        public Vector2d Center { get { return (this[1] + this[0]) / 2; } }
-        public Vector2d this[int index]
+        public float Length { get { return Delta.Length; } }
+        Vector2[] _vertices = new Vector2[2];
+        public Vector2 Delta { get { return this[1] - this[0]; } }
+        public Vector2 Center { get { return (this[1] + this[0]) / 2; } }
+        public Vector2 this[int index]
         {
             get { return _vertices[index]; }
             set
@@ -26,25 +26,37 @@ namespace Game
         }
 
         #region Constructors
-        public Line()
+        public LineF()
         {
         }
 
-        public Line(Vector2d lineStart, Vector2d lineEnd)
+        public LineF(Vector2 lineStart, Vector2 lineEnd)
         {
             this[0] = lineStart;
             this[1] = lineEnd;
         }
 
-        public Line(IList<Vector2d> line)
+        public LineF(Vector2d lineStart, Vector2d lineEnd)
+        {
+            this[0] = new Vector2((float)lineStart.X, (float)lineStart.Y);
+            this[1] = new Vector2((float)lineEnd.X, (float)lineEnd.Y);
+        }
+
+        public LineF(Xna.Vector2 lineStart, Xna.Vector2 lineEnd)
+        {
+            this[0] = Vector2Ext.ToOtk(lineStart);
+            this[1] = Vector2Ext.ToOtk(lineEnd);
+        }
+
+        public LineF(IList<Vector2> line)
         {
             Debug.Assert(line.Count == 2);
             _vertices = line.ToArray();
         }
 
-        public Line(Vector2d center, double rotation, double length)
+        public LineF(Vector2 center, float rotation, float length)
         {
-            Vector2d offset = new Vector2d((double)Math.Cos(rotation), (double)Math.Sin(rotation)) * length;
+            Vector2 offset = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * length;
             this[0] = center + offset;
             this[1] = center - offset;
         }
@@ -54,7 +66,7 @@ namespace Game
         /// Returns whether a point is left or right of this line.
         /// </summary>
         /// <param name="ignoreEdgeCase">Whether or not to treat points exactly on the line as to the right of it instead.</param>
-        public Side GetSideOf(Vector2d point, bool ignoreEdgeCase = true)
+        public Side GetSideOf(Vector2 point, bool ignoreEdgeCase = true)
         {
             double p = (this[1].X - this[0].X) * (point.Y - this[0].Y) - (this[1].Y - this[0].Y) * (point.X - this[0].X);
             if (p > 0)
@@ -69,11 +81,19 @@ namespace Game
         }
 
         /// <summary>
+        /// Returns whether a point is left or right of the line.
+        /// </summary>
+        public Side GetSideOf(Xna.Vector2 point)
+        {
+            return GetSideOf(Vector2Ext.ToOtk(point));
+        }
+
+        /// <summary>
         /// Returns whether a line is left, right, or inbetween the line.
         /// </summary>
         /// <param name="line"></param>
         /// <returns></returns>
-        public Side GetSideOf(Line line)
+        public Side GetSideOf(LineF line)
         {
             Side side0 = GetSideOf(line[0]);
             Side side1 = GetSideOf(line[1]);
@@ -84,15 +104,15 @@ namespace Game
             return Side.Neither;
         }
 
-        public Vector2d GetNormal()
+        public Vector2 GetNormal()
         {
             return (_vertices[1] - _vertices[0]).PerpendicularRight.Normalized();
         }
 
         /// <summary>
-        /// Check if a Vector2d is inside the FOV of this line.
+        /// Check if a Vector2 is inside the FOV of this line.
         /// </summary>
-        public bool IsInsideFOV(Vector2d viewPoint, Vector2d v)
+        public bool IsInsideFOV(Vector2 viewPoint, Vector2 v)
         {
             //Check if the lookPoint is on the opposite side of the line from the viewPoint.
             if (GetSideOf(viewPoint) == GetSideOf(v))
@@ -115,7 +135,7 @@ namespace Game
         /// <summary>
         /// Check if a line is at least partially inside the FOV of this line.
         /// </summary>
-        public bool IsInsideFOV(Vector2d viewPoint, Line line)
+        public bool IsInsideFOV(Vector2 viewPoint, LineF line)
         {
             //Check if there is an intersection between the two lines.
             if (MathExt.LineLineIntersect(this, line, true).Exists)
@@ -123,13 +143,13 @@ namespace Game
                 return true;
             }
             //Check if there is an intersection between the first FOV line and line.
-            IntersectCoord intersect0 = MathExt.LineLineIntersect(new Line(_vertices[0], 2 * _vertices[0] - viewPoint), line, false);
+            IntersectCoord intersect0 = MathExt.LineLineIntersect(new LineF(_vertices[0], 2 * _vertices[0] - viewPoint), line, false);
             if (intersect0.TFirst >= 0 && intersect0.TLast >= 0 && intersect0.TLast < 1)
             {
                 return true;
             }
             //Check if there is an intersection between the second FOV line and line.
-            IntersectCoord intersect1 = MathExt.LineLineIntersect(new Line(_vertices[1], 2 * _vertices[1] - viewPoint), line, false);
+            IntersectCoord intersect1 = MathExt.LineLineIntersect(new LineF(_vertices[1], 2 * _vertices[1] - viewPoint), line, false);
             if (intersect1.TFirst >= 0 && intersect1.TLast >= 0 && intersect1.TLast < 1)
             {
                 return true;
@@ -162,30 +182,30 @@ namespace Game
             return false;
         }
 
-        public Line Translate(Vector2d offset)
+        public LineF Translate(Vector2 offset)
         {
-            return new Line(this[0] + offset, this[1] + offset);
+            return new LineF(this[0] + offset, this[1] + offset);
         }
 
         public double GetOffset()
         {
-            return MathExt.PointLineDistance(new Vector2d(), this, false);
+            return MathExt.PointLineDistance(new Vector2(), this, false);
         }
 
         /// <summary>
         /// Swaps the start and end vertice for the line.
         /// </summary>
-        public Line Reverse()
+        public LineF Reverse()
         {
-            return new Line(this[1], this[0]);
+            return new LineF(this[1], this[0]);
         }
 
-        public Line Transform(Matrix4d transformMatrix)
+        public LineF Transform(Matrix4 transformMatrix)
         {
-            return new Line(Vector2Ext.Transform(_vertices, transformMatrix));
+            return new LineF(Vector2Ext.Transform(_vertices, transformMatrix));
         }
 
-        public Vector2d Lerp(double t)
+        public Vector2 Lerp(float t)
         {
             return MathExt.Lerp(_vertices[0], _vertices[1], t);
         }
@@ -195,37 +215,48 @@ namespace Game
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public double NearestT(Vector2d v, bool isSegment)
+        public float NearestT(Vector2 v, bool isSegment)
         {
-            Vector2d VDelta = _vertices[1] - _vertices[0];
+            Vector2 VDelta = _vertices[1] - _vertices[0];
             double t = ((v.X - _vertices[0].X) * VDelta.X + (v.Y - _vertices[0].Y) * VDelta.Y) / (Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
             if (isSegment)
             {
                 t = MathHelper.Clamp(t, 0, 1);
             }
-            return (double)t;        
-            //return Vector2d.Dot(v - Vertices[0], Vertices[1] - Vertices[0]);
+            return (float)t;        
+            //return Vector2.Dot(v - Vertices[0], Vertices[1] - Vertices[0]);
         }
 
-        public Vector2d Nearest(Vector2d v, bool isSegment)
+        public float NearestT(Xna.Vector2 v, bool isSegment)
         {
-            double t = NearestT(v, isSegment);
+            return NearestT(Vector2Ext.ToOtk(v), isSegment);
+        }
+
+        public Vector2 Nearest(Vector2 v, bool isSegment)
+        {
+            float t = NearestT(v, isSegment);
             return _vertices[0] + (_vertices[1] - _vertices[0]) * t;
         }
 
-        public double Angle()
+        public Vector2 Nearest(Xna.Vector2 v, bool isSegment)
         {
-            return MathExt.AngleLine(_vertices[0], _vertices[1]);
+            float t = NearestT(v, isSegment);
+            return _vertices[0] + (_vertices[1] - _vertices[0]) * t;
         }
 
-        public Line ShallowClone()
+        public float Angle()
         {
-            return new Line(_vertices);
+            return (float)MathExt.AngleLine(_vertices[0], _vertices[1]);
         }
 
-        public Line GetPerpendicularLeft(bool normalize = true)
+        public LineF ShallowClone()
         {
-            Line p = new Line(_vertices[0], (_vertices[1] - _vertices[0]).PerpendicularLeft + _vertices[0]);
+            return new LineF(_vertices);
+        }
+
+        public LineF GetPerpendicularLeft(bool normalize = true)
+        {
+            LineF p = new LineF(_vertices[0], (_vertices[1] - _vertices[0]).PerpendicularLeft + _vertices[0]);
             if (normalize)
             {
                 p.Normalize();
@@ -233,9 +264,9 @@ namespace Game
             return p;
         }
 
-        public Line GetPerpendicularRight(bool normalize = true)
+        public LineF GetPerpendicularRight(bool normalize = true)
         {
-            Line p = new Line(_vertices[0], (_vertices[1] - _vertices[0]).PerpendicularRight + _vertices[0]);
+            LineF p = new LineF(_vertices[0], (_vertices[1] - _vertices[0]).PerpendicularRight + _vertices[0]);
             if (normalize)
             {
                 p.Normalize();
@@ -246,19 +277,9 @@ namespace Game
         /// <summary>Normalize this Line by moving its end point.</summary>
         public void Normalize()
         {
-            Vector2d normal = (_vertices[1] - _vertices[0]).Normalized();
+            Vector2 normal = (_vertices[1] - _vertices[0]).Normalized();
             Debug.Assert(Vector2Ext.IsReal(normal), "Unable to normalize 0 length vector.");
             this[1] = normal + _vertices[0];
-        }
-
-        public static implicit operator Line(LineF line)
-        {
-            return new Line((Vector2d)line[0], (Vector2d)line[1]);
-        }
-
-        public static explicit operator LineF(Line line)
-        {
-            return new LineF(line[0], line[1]);
         }
     }
 }

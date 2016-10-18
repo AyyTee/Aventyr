@@ -87,7 +87,7 @@ namespace Game.Portals
 
         private static Vector2 GetAngularVelocity(IPortal portal, float intersectT)
         {
-            Vector2 intersect = new Line(GetWorldVerts(portal)).Lerp(intersectT);
+            Vector2 intersect = new LineF(GetWorldVerts(portal)).Lerp(intersectT);
             return MathExt.AngularVelocity(intersect, portal.WorldTransform.Position, portal.WorldVelocity.Rotation);
         }
 
@@ -211,17 +211,17 @@ namespace Game.Portals
             return tEnter.Inverted().Transform(tExit);
         }
 
-        public static Line[] GetFovLines(IPortal portal, Vector2 origin, float distance)
+        public static LineF[] GetFovLines(IPortal portal, Vector2 origin, float distance)
         {
             return GetFovLines(portal, origin, distance, portal.WorldTransform);
         }
 
-        public static Line[] GetFovLines(IPortal portal, Vector2 origin, float distance, Transform2 transform)
+        public static LineF[] GetFovLines(IPortal portal, Vector2 origin, float distance, Transform2 transform)
         {
             Vector2[] vertices = GetFov(portal, origin, distance);
-            Line[] lines = new Line[] {
-                new Line(vertices[1], vertices[2]),
-                new Line(vertices[0], vertices[vertices.Length-1])
+            LineF[] lines = new LineF[] {
+                new LineF(vertices[1], vertices[2]),
+                new LineF(vertices[0], vertices[vertices.Length-1])
             };
             return lines;
         }
@@ -288,15 +288,15 @@ namespace Game.Portals
         /// </summary>
         /// <param name="line"></param>
         /// <returns></returns>
-        public static IntersectCoord[] PathIntersections(PortalPath path, Line line)
+        public static IntersectCoord[] PathIntersections(PortalPath path, LineF line)
         {
             IntersectCoord[] intersections = new IntersectCoord[path.Portals.Count];
             line = line.ShallowClone();
 
-            Line[] portalLines = new Line[path.Portals.Count];
+            LineF[] portalLines = new LineF[path.Portals.Count];
             for (int i = 0; i < path.Portals.Count; i++)
             {
-                portalLines[i] = new Line(GetWorldVerts(path.Portals[i]));
+                portalLines[i] = new LineF(GetWorldVerts(path.Portals[i]));
             }
 
             for (int i = path.Portals.Count - 1; i >= 0; i--)
@@ -327,7 +327,7 @@ namespace Game.Portals
             List<IPortal> collisions = new List<IPortal>();
             foreach (IPortal p in portals.Where(item => IsValid(item)))
             {
-                Line portalLine = new Line(GetWorldVerts(p));
+                LineF portalLine = new LineF(GetWorldVerts(p));
                 if (MathExt.LineInPolygon(portalLine, polygon) && 
                     (margin == 0 || 
                     MathExt.PointPolygonDistance(portalLine[0], polygon) > margin ||
@@ -343,8 +343,8 @@ namespace Game.Portals
                 IPortal portal = ordered[i];
                 for (int j = ordered.Count - 1; j > i; j--)
                 {
-                    Line currentLine = new Line(GetWorldVerts(ordered[i]));
-                    Line checkLine = new Line(GetWorldVerts(ordered[j]));
+                    LineF currentLine = new LineF(GetWorldVerts(ordered[i]));
+                    LineF checkLine = new LineF(GetWorldVerts(ordered[j]));
                     Side checkSide = currentLine.GetSideOf(checkLine);
                     if (checkSide != currentLine.GetSideOf(center))
                     {

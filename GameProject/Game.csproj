@@ -137,6 +137,7 @@
     <Compile Include="Animation\Curve2.cs" />
     <Compile Include="Animation\CurveTransform2.cs" />
     <Compile Include="Common\IAlmostEqual.cs" />
+    <Compile Include="Common\Line.cs" />
     <Compile Include="Common\Transform2d.cs" />
     <Compile Include="IGetTransform.cs" />
     <Compile Include="IGetTransformVelocity.cs" />
@@ -193,7 +194,7 @@
     <Compile Include="Rendering\FontRenderer.cs" />
     <Compile Include="InputExt.cs" />
     <Compile Include="Physics\FixtureCoord.cs" />
-    <Compile Include="Common\Line.cs" />
+    <Compile Include="Common\LineF.cs" />
     <Compile Include="Common\MathExt.cs" />
     <Compile Include="Common\Matrix4Ext.cs" />
     <Compile Include="Physics\BodyExt.cs" />

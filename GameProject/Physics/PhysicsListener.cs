@@ -135,8 +135,8 @@ namespace Game
                     if (contact.Manifold.PointCount == 2)
                     {
                         Model line = ModelFactory.CreateLines(
-                           new Line[] {
-                            new Line(Vector2Ext.ToOtk(vList[0]), Vector2Ext.ToOtk(vList[1]))
+                           new LineF[] {
+                            new LineF(Vector2Ext.ToOtk(vList[0]), Vector2Ext.ToOtk(vList[1]))
                            });
                         if (contact.Enabled)
                         {
@@ -269,7 +269,7 @@ namespace Game
                         continue;
                     }
 
-                    Line line = new Line(Portal.GetWorldVerts(portal));
+                    LineF line = new LineF(Portal.GetWorldVerts(portal));
                     double[] vDist = new double[] {
                         MathExt.PointLineDistance(vList[0], line, true),
                         MathExt.PointLineDistance(vList[1], line, true)
@@ -298,7 +298,7 @@ namespace Game
                 int iNext = (i + 1) % fixtureData.Length;
                 foreach (IPortal portal in fixtureData[i].PortalCollisions)
                 {
-                    Line line = new Line(Portal.GetWorldVerts(portal));
+                    LineF line = new LineF(Portal.GetWorldVerts(portal));
 
                     FixturePortal cast = portal as FixturePortal;
                     if (cast != null)

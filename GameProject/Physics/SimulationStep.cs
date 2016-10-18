@@ -1,4 +1,5 @@
-﻿using Game.Portals;
+﻿using Game.Common;
+using Game.Portals;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,10 @@ namespace Game
     {
         private class PortalableMovement
         {
-            public Transform2 Previous;
-            public Line StartEnd;
+            public Transform2d Previous;
+            public LineF StartEnd;
             public IPortalCommon Instance;
-            public PortalableMovement(IPortalCommon instance, Line startEnd, Transform2 previous)
+            public PortalableMovement(IPortalCommon instance, LineF startEnd, Transform2d previous)
             {
                 Instance = instance;
                 StartEnd = startEnd;
@@ -26,10 +27,10 @@ namespace Game
 
         private class PortalMovement
         {
-            public Line Start;
-            public Line End;
+            public LineF Start;
+            public LineF End;
             public IPortal Portal;
-            public PortalMovement(IPortal portal, Line start, Line end)
+            public PortalMovement(IPortal portal, LineF start, LineF end)
             {
                 Portal = portal;
                 Start = start;
@@ -72,10 +73,10 @@ namespace Game
                     {
                         continue;
                     }
-                    Line lineStart = new Line(Portal.GetWorldVerts(p));
+                    LineF lineStart = new LineF(Portal.GetWorldVerts(p));
 
-                    Transform2 t = p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
-                    Line lineEnd = new Line(Portal.GetWorldVerts(p, t));
+                    Transform2d t = (Transform2d)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
+                    LineF lineEnd = new LineF(Portal.GetWorldVerts(p, (Transform2)t));
 
                     lineMovement.Add(new PortalMovement(p, lineStart, lineEnd));
                 }
@@ -86,12 +87,12 @@ namespace Game
                     {
                         continue;
                     }
-                    Transform2 shift = p.WorldVelocity.Multiply((float)stepSize);
-                    Transform2 t = p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
+                    Transform2d shift = (Transform2d)p.WorldVelocity.Multiply((float)stepSize);
+                    Transform2d t = (Transform2d)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
 
-                    Line movement = new Line(p.WorldTransform.Position, t.Position);
+                    LineF movement = new LineF(p.WorldTransform.Position, (Vector2)t.Position);
 
-                    pointMovement.Add(new PortalableMovement(p, movement, p.WorldTransform));
+                    pointMovement.Add(new PortalableMovement(p, movement, (Transform2d)p.WorldTransform));
                 }
             }
 
@@ -104,12 +105,12 @@ namespace Game
                     IPortalable portalable = p.Instance as IPortalable;
                     if (portalable != null)
                     {
-                        Transform2 shift = portalable.GetVelocity().Multiply((float)stepSize);
-                        portalable.SetTransform(portalable.Transform.Add(shift));
+                        Transform2d shift = (Transform2d)portalable.GetVelocity().Multiply((float)stepSize);
+                        portalable.SetTransform(portalable.Transform.Add((Transform2)shift));
                     }
                     
-                    Transform2 worldVelocity = p.Instance.WorldVelocity.Multiply((float)stepSize);
-                    p.Instance.WorldTransform = p.Instance.WorldTransform.Add( worldVelocity);
+                    Transform2d worldVelocity = (Transform2d)p.Instance.WorldVelocity.Multiply((float)stepSize);
+                    p.Instance.WorldTransform = p.Instance.WorldTransform.Add((Transform2)worldVelocity);
                 }
                 return;
             }
@@ -120,12 +121,12 @@ namespace Game
                 IPortalable portalable = move.Instance as IPortalable;
                 if (portalable != null)
                 {
-                    Transform2 velocity = portalable.GetVelocity().Multiply((float)(stepSize * tDelta));
-                    portalable.SetTransform(portalable.GetTransform().Add(velocity));
+                    Transform2d velocity = (Transform2d)portalable.GetVelocity().Multiply((float)(stepSize * tDelta));
+                    portalable.SetTransform(portalable.GetTransform().Add((Transform2)velocity));
                 }
 
-                Transform2 worldVelocity = move.Instance.WorldVelocity.Multiply((float)(stepSize * tDelta));
-                move.Instance.WorldTransform = move.Instance.WorldTransform.Add(worldVelocity);
+                Transform2d worldVelocity = (Transform2d)move.Instance.WorldVelocity.Multiply((float)(stepSize * tDelta));
+                move.Instance.WorldTransform = move.Instance.WorldTransform.Add((Transform2)worldVelocity);
             }
 
             foreach (PortalableSweep sweep in earliest)
@@ -151,10 +152,10 @@ namespace Game
 
         private static void PlaceOnPortal(IPortalCommon instance, IPortal portal, float t)
         {
-            Line portalLine = new Line(Portal.GetWorldVerts(portal));
-            Transform2 transform = instance.WorldTransform;
-            transform.Position = portalLine.Lerp(t);
-            instance.WorldTransform = transform;
+            LineF portalLine = new LineF(Portal.GetWorldVerts(portal));
+            Transform2d transform = (Transform2d)instance.WorldTransform;
+            transform.Position = (Vector2d)portalLine.Lerp(t);
+            instance.WorldTransform = (Transform2)transform;
         }
 
         /// <param name="previous">A list of the previous earliest portal collisions.  This is used to 
@@ -214,19 +215,19 @@ namespace Game
 
         private static void AddMargin(IEnumerable<IPortal> portals, IPortalCommon instance)
         {
-            Transform2 transform = instance.WorldTransform;
+            Transform2d transform = (Transform2d)instance.WorldTransform;
             foreach (IPortal p in portals.Where(item => item.OneSided && Portal.IsValid(item)))
             {
-                Line exitLine = new Line(Portal.GetWorldVerts(p));
-                Vector2 position = transform.Position;
-                double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
+                LineF exitLine = new LineF(Portal.GetWorldVerts(p));
+                Vector2d position = transform.Position;
+                double distanceToPortal = MathExt.PointLineDistance((Vector2)position, exitLine, true);
                 if (distanceToPortal < Portal.EnterMinDistance)
                 {
-                    Vector2 exitNormal = p.WorldTransform.GetRight();
+                    Vector2d exitNormal = (Vector2d)p.WorldTransform.GetRight();
 
-                    Vector2 pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
+                    Vector2d pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
                     transform.Position += pos;
-                    instance.WorldTransform = transform;
+                    instance.WorldTransform = (Transform2)transform;
                     /*We return now rather than look for more portals that are too close because it is assumed that 
                      * portals will never be closer than 2 * Portal.EnterMinDistance*/
                     return;
