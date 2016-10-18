@@ -19,7 +19,7 @@ namespace Game.Portals
         /// Entities can still travel though the portal in both directions however.
         /// </summary>
         [DataMember]
-        public bool OneSided { get; set; }
+        public bool OneSided { get; set; } = true;
         [DataMember]
         public bool MirrorX { get; set; }
         [DataMember]

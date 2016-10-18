@@ -33,7 +33,10 @@ namespace Game
 
         private void EnterPortal(EnterCallbackData data, Transform2 transformPrevious, Transform2 velocityPrevious)
         {
-            Camera.WorldTransform = Portal.Enter(data.EntrancePortal, Camera.WorldTransform);
+            if (Camera != null)
+            {
+                Camera.WorldTransform = Portal.Enter(data.EntrancePortal, Camera.WorldTransform);
+            }
         }
 
         public void StepBegin(IScene scene, float stepSize)
@@ -42,9 +45,9 @@ namespace Game
             {
                 if (FollowPlayer)
                 {
-                    if (Input.KeyDown(Key.Left) != Input.KeyDown(Key.Right))
+                    if (KeyLeftDown() != KeyRightDown())
                     {
-                        if (Input.KeyDown(Key.Left))
+                        if (KeyLeftDown())
                         {
                             Actor.ApplyForce(new Vector2(-10, 0));
                         }
@@ -54,16 +57,26 @@ namespace Game
                         }
                     }
 
-                    Camera.ViewOffset = CameraExt.ScreenToClip(Camera, Input.MousePos);
+                    if (Camera != null)
+                    {
+                        Camera.ViewOffset = CameraExt.ScreenToClip(Camera, Input.MousePos) * 0.8f;
+                    }
                 }
                 else
                 {
 
                 }
-
-
-
             }
+        }
+
+        public bool KeyLeftDown()
+        {
+            return Input.KeyDown(Key.Left) || Input.KeyDown(Key.A);
+        }
+
+        public bool KeyRightDown()
+        {
+            return Input.KeyDown(Key.Right) || Input.KeyDown(Key.D);
         }
 
         public void StepEnd(IScene scene, float stepSize)

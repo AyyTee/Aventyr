@@ -31,7 +31,10 @@ namespace EditorWindow
                 "Stop",
                 "TimerStop",
                 typeof(WPFCommands),
-                null
+                new InputGestureCollection()
+                {
+                    new KeyGesture(Key.Escape)
+                }
             );
 
         public static readonly RoutedUICommand TimerPlay = new RoutedUICommand

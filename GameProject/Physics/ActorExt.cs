@@ -35,45 +35,6 @@ namespace Game
             return contour;
         }
 
-        public static List<Vector2> GetGravity(IActor actor, IList<IPortal> portals, Vector2 gravity)
-        {
-            Debug.Assert(actor != null);
-            Debug.Assert(portals != null);
-            List<Vector2> impulses = new List<Vector2>();
-            if (gravity == Vector2.Zero)
-            {
-                return impulses;
-            }
-            Vector2 impulse = Vector2.Zero;
-            foreach (Fixture f in actor.Body.FixtureList)
-            {
-                PolygonShape polygon = f.Shape as PolygonShape;
-                if (polygon != null)
-                {
-                    Clipper clipper = new Clipper();
-                    clipper.AddPath(ClipperConvert.ToIntPoint(Vector2Ext.ToOtk(polygon.Vertices)), PolyType.ptSubject, true);
-                    foreach (IPortal p in portals)
-                    {
-                        if (!Portal.IsValid(p))
-                        {
-                            continue;
-                        }
-                        Transform2 t = FixtureExt.GetData(f).Actor.GetWorldTransform();
-                        t.SetScale(Vector2.One);
-                        Vector2[] vertices = Vector2Ext.Transform(Portal.GetWorldVerts(p, 10000), t.GetMatrix().Inverted());
-                        Vector2[] mask = new Vector2[]
-                        {
-                                vertices[0],
-                                vertices[1],
-                                vertices[0] + vertices[1]
-                        };
-                        clipper.AddPath(ClipperConvert.ToIntPoint(mask), PolyType.ptClip, true);
-                    }
-                }
-            }
-            return impulses;
-        }
-
         /// <summary>
         /// Verifies the BodyType for Actor bodies is correct.
         /// </summary>

@@ -53,6 +53,10 @@ namespace Game
         public static void Step(IEnumerable<IPortalCommon> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter)
         {
             Step(moving, portals, stepSize, portalEnter, new List<PortalableSweep>());
+            foreach (IPortalable instance in moving.OfType<IPortalable>())
+            {
+                AddMargin(portals, instance);
+            }
         }
 
         private static void Step(IEnumerable<IPortalCommon> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter, List<PortalableSweep> previous)
@@ -91,7 +95,7 @@ namespace Game
                 }
             }
 
-            List<PortalableSweep> earliest = GetEarliestCollision(pointMovement, lineMovement, previous);
+            List<PortalableSweep> earliest = GetEarliestCollision(pointMovement, lineMovement, previous, stepSize);
 
             if (earliest.Count == 0)
             {
@@ -128,18 +132,39 @@ namespace Game
             {
                 float intersectT = (float)sweep.Sweep.AcrossProportion;
                 IPortalCommon instance = sweep.Portalable.Instance;
+
+                /*Before this instance enters the portal we place it exactly on the portal to reduce 
+                 * precision errors.*/
+                PlaceOnPortal(instance, sweep.Portal.Portal, intersectT);
+
                 bool worldOnly = !PortalCommon.IsRoot(instance);
                 Portal.Enter(sweep.Portal.Portal, instance, intersectT, false, worldOnly);
                 portalEnter?.Invoke(new EnterCallbackData(sweep.Portal.Portal, sweep.Portalable.Instance, intersectT));
+
+                /*After this instance has entered the portal we again go ahead and place it exactly on the 
+                 * portal (this time on the exit) to reduce precision errors.*/
+                PlaceOnPortal(instance, sweep.Portal.Portal.Linked, intersectT);
             }
 
             Step(moving, portals, stepSize * (1 - tDelta), portalEnter, earliest);
         }
 
-        private static List<PortalableSweep> GetEarliestCollision(List<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, List<PortalableSweep> previous)
+        private static void PlaceOnPortal(IPortalCommon instance, IPortal portal, float t)
+        {
+            Line portalLine = new Line(Portal.GetWorldVerts(portal));
+            Transform2 transform = instance.WorldTransform;
+            transform.Position = portalLine.Lerp(t);
+            instance.WorldTransform = transform;
+        }
+
+        /// <param name="previous">A list of the previous earliest portal collisions.  This is used to 
+        /// detect repeat portal entry.</param>
+        /// <param name="timeSpan">This is purely used for determining what t value exceeds the minimum 
+        /// amount of time allowed for repeat portal entry.</param>
+        private static List<PortalableSweep> GetEarliestCollision(List<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, List<PortalableSweep> previous, double timeSpan)
         {
             double tMin = 1;
-            const double repeatIntersectionEpsilon = 0.0005;
+            double repeatIntersectionEpsilon = 0.00005 / timeSpan;
             List<PortalableSweep> earliest = new List<PortalableSweep>();
             foreach (PortalableMovement move in pointMovement)
             {
@@ -185,6 +210,28 @@ namespace Game
                 }
             }
             return earliest;
+        }
+
+        private static void AddMargin(IEnumerable<IPortal> portals, IPortalCommon instance)
+        {
+            Transform2 transform = instance.WorldTransform;
+            foreach (IPortal p in portals.Where(item => item.OneSided && Portal.IsValid(item)))
+            {
+                Line exitLine = new Line(Portal.GetWorldVerts(p));
+                Vector2 position = transform.Position;
+                double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
+                if (distanceToPortal < Portal.EnterMinDistance)
+                {
+                    Vector2 exitNormal = p.WorldTransform.GetRight();
+
+                    Vector2 pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
+                    transform.Position += pos;
+                    instance.WorldTransform = transform;
+                    /*We return now rather than look for more portals that are too close because it is assumed that 
+                     * portals will never be closer than 2 * Portal.EnterMinDistance*/
+                    return;
+                }
+            }
         }
     }
 }

@@ -114,41 +114,56 @@ namespace Game
             begin.Position += velocity.Position.Normalized() * (float)movementLeft;
             if (settings.AdjustEndpoint)
             {
-                /*After the end position of the ray has been determined, adjust it's position so that it isn't too close to any portal.  
-                Otherwise there is a risk of ambiguity as to which side of a portal the end point is on.*/
-                foreach (IPortal p in portals)
-                {
-                    if (!Portal.IsValid(p))
-                    {
-                        continue;
-                    }
-                    Line exitLine = new Line(Portal.GetWorldVerts(p));
-                    Vector2 position = begin.Position;
-                    double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
-                    if (distanceToPortal < Portal.EnterMinDistance)
-                    {
-                        Vector2 exitNormal = p.WorldTransform.GetRight();
-                        Side sideOf;
-                        if (p == portalPrevious)
-                        {
-                            sideOf = exitLine.GetSideOf(position + velocity.Position);
-                        }
-                        else
-                        {
-                            sideOf = exitLine.GetSideOf(position - velocity.Position);
-                        }
-                        if (sideOf != exitLine.GetSideOf(exitNormal + p.WorldTransform.Position))
-                        {
-                            exitNormal = -exitNormal;
-                        }
-
-                        Vector2 pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
-                        begin.Position += pos;
-                        break;
-                    }
-                }
+                /*After the end position of the ray has been determined, adjust it's position so that it isn't too close to 
+                 * any portal.  Otherwise there is a risk of ambiguity as to which side of a portal the end point is on.*/
+                begin = AddMargin(portals, portalPrevious, begin, velocity);
             }
             placeable.SetTransform(begin);
+        }
+
+        /// <summary>
+        /// Determine a position that is sufficiently far away from all portals so that it isn't ambiguous which side of a 
+        /// portal the position is at.
+        /// </summary>
+        /// <param name="portals"></param>
+        /// <param name="portalPrevious">The last portal that was exited.</param>
+        /// <param name="transform"></param>
+        /// <param name="velocity"></param>
+        private static Transform2 AddMargin(IEnumerable<IPortal> portals, IPortal portalPrevious, Transform2 transform, Transform2 velocity)
+        {
+            transform = transform.ShallowClone();
+            foreach (IPortal p in portals)
+            {
+                if (!Portal.IsValid(p))
+                {
+                    continue;
+                }
+                Line exitLine = new Line(Portal.GetWorldVerts(p));
+                Vector2 position = transform.Position;
+                double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
+                if (distanceToPortal < Portal.EnterMinDistance)
+                {
+                    Vector2 exitNormal = p.WorldTransform.GetRight();
+                    Side sideOf;
+                    if (p == portalPrevious)
+                    {
+                        sideOf = exitLine.GetSideOf(position + velocity.Position);
+                    }
+                    else
+                    {
+                        sideOf = exitLine.GetSideOf(position - velocity.Position);
+                    }
+                    if (sideOf != exitLine.GetSideOf(exitNormal + p.WorldTransform.Position))
+                    {
+                        exitNormal = -exitNormal;
+                    }
+
+                    Vector2 pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
+                    transform.Position += pos;
+                    break;
+                }
+            }
+            return transform;
         }
     }
 }

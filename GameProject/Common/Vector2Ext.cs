@@ -75,7 +75,7 @@ namespace Game
             return vList;
         }
 
-        public static List<Vector2> Transform(IList<Vector2> vectors, Matrix4 matrix)
+        public static List<Vector2> Transform(IEnumerable<Vector2> vectors, Matrix4 matrix)
         {
             Debug.Assert(vectors != null);
             List<Vector2> vList = new List<Vector2>();
@@ -98,7 +98,24 @@ namespace Game
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
-                vList[i] = Vector2Ext.Transform(vectors[i], matrix);
+                vList[i] = Transform(vectors[i], matrix);
+            }
+            return vList;
+        }
+
+        public static Vector2d Transform(Vector2d vector, Matrix4d matrix)
+        {
+            Vector3d v = Vector3d.Transform(new Vector3d(vector), matrix);
+            return new Vector2d(v.X, v.Y);
+        }
+
+        public static Vector2d[] Transform(Vector2d[] vectors, Matrix4d matrix)
+        {
+            Debug.Assert(vectors != null);
+            Vector2d[] vList = new Vector2d[vectors.Length];
+            for (int i = 0; i < vectors.Length; i++)
+            {
+                vList[i] = Transform(vectors[i], matrix);
             }
             return vList;
         }
@@ -197,6 +214,11 @@ namespace Game
             return double.IsNaN(v.X) || double.IsNaN(v.Y);
         }
 
+        public static bool IsNaN(Vector2d v)
+        {
+            return double.IsNaN(v.X) || double.IsNaN(v.Y);
+        }
+
         public static bool IsReal(Vector2 v)
         {
             return !IsNaN(v) && !float.IsPositiveInfinity(v.X) && 
@@ -205,12 +227,30 @@ namespace Game
                 !float.IsNegativeInfinity(v.Y);
         }
 
+        public static bool IsReal(Vector2d v)
+        {
+            return !IsNaN(v) && !double.IsPositiveInfinity(v.X) &&
+                !double.IsNegativeInfinity(v.X) &&
+                !double.IsPositiveInfinity(v.Y) &&
+                !double.IsNegativeInfinity(v.Y);
+        }
+
         public static bool AlmostEqual(Vector2 v0, Vector2 v1, float delta)
         {
             return Math.Abs(v0.X - v1.X) <= delta && Math.Abs(v0.X - v1.X) <= delta;
         }
 
         public static bool AlmostEqual(Vector2 v0, Vector2 v1)
+        {
+            return AlmostEqual(v0, v1, EQUALITY_EPSILON);
+        }
+
+        public static bool AlmostEqual(Vector2d v0, Vector2d v1, double delta)
+        {
+            return Math.Abs(v0.X - v1.X) <= delta && Math.Abs(v0.X - v1.X) <= delta;
+        }
+
+        public static bool AlmostEqual(Vector2d v0, Vector2d v1)
         {
             return AlmostEqual(v0, v1, EQUALITY_EPSILON);
         }

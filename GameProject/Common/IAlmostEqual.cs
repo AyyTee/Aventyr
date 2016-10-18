@@ -11,11 +11,11 @@ namespace Game.Common
         /// <summary>
         /// Check if this instance is within a delta of a comparison instance.
         /// </summary>
-        bool AlmostEqual(T comparison, float delta);
+        bool AlmostEqual(T comparison, double delta);
         /// <summary>
         /// Check if this instance is within a delta of a comparison instance 
         /// or if the ratio between comparison and this instance is less than a given percentage.
         /// </summary>
-        bool AlmostEqual(T comparison, float delta, float percentage);
+        bool AlmostEqual(T comparison, double delta, double percentage);
     }
 }

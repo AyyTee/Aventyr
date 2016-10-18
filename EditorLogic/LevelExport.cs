@@ -20,12 +20,24 @@ namespace EditorLogic
         public static Scene Export(EditorScene level, InputExt input)
         {
             Scene scene = new Scene();
-            Camera2 camera = new Camera2(scene);
-            camera.SetTransform(new Transform2(new Vector2(), 10, 0));
-            scene.SetActiveCamera(camera);
-            if (level.ActiveCamera != null)
+            /*if (level.GetAll().OfType<EditorPlayer>().Count() > 0)
             {
-                camera.Aspect = level.ActiveCamera.Aspect;
+                Camera2 camera = new Camera2(scene);
+                camera.SetTransform(new Transform2(new Vector2(), 10, 0));
+                scene.SetActiveCamera(camera);
+                if (level.ActiveCamera != null)
+                {
+                    camera.Aspect = level.ActiveCamera.Aspect;
+                }
+            }
+            else*/
+            {
+                if (level.ActiveCamera != null)
+                {
+                    ControllerCamera camera = level.ActiveCamera.ShallowClone();
+                    camera.Scene = scene;
+                    scene.SetActiveCamera(camera);
+                }
             }
 
             #region create background
@@ -42,7 +54,6 @@ namespace EditorLogic
             back.IsPortalable = false;
             #endregion
 
-            HashSet<IDeepClone> toClone = new HashSet<IDeepClone>();
 
             Dictionary<EditorObject, SceneNode> dictionary = new Dictionary<EditorObject, SceneNode>();
             AnimationDriver animation = new AnimationDriver();
@@ -54,14 +65,19 @@ namespace EditorLogic
                 if (e is EditorPortal)
                 {
                     EditorPortal cast = (EditorPortal)e;
+
+                    Entity entity = new Entity(scene);
+                    entity.IsPortalable = false;
+                    entity.AddModel(ModelFactory.CreatePortal());
+                    entity.ModelList[0].Transform.Position += new Vector3(0, 0, -2);
+
                     if (cast.OnEdge)
                     {
                         FixturePortal portal = new FixturePortal(scene);
                         portal.Name = cast.Name;
-                        /*Transform2 t = cast.GetTransform();
-                        portal.Size = t.Size;
-                        portal.MirrorX = t.MirrorX;*/
                         dictionary.Add(cast, portal);
+
+                        entity.SetParent(portal);
                     }
                     else
                     {
@@ -69,6 +85,8 @@ namespace EditorLogic
                         portal.Name = cast.Name;
                         portal.SetTransform(cast.GetTransform());
                         dictionary.Add(cast, portal);
+
+                        entity.SetParent(portal);
 
                         if (cast.AnimatedTransform != null)
                         {
@@ -154,7 +172,7 @@ namespace EditorLogic
                     player.SetActor(actor);
                     actor.SetTransform(new Transform2(cast.GetWorldTransform().Position));
 
-                    player.Camera = (Camera2)scene.ActiveCamera;
+                    //player.Camera = (Camera2)scene.ActiveCamera;
 
                     Entity entity = new Entity(scene, new Transform2());
                     entity.Name = cast.Name;
@@ -203,12 +221,7 @@ namespace EditorLogic
                 }
             }
 
-            /*if (level.ActiveCamera != null)
-            {
-                ControllerCamera camera = level.ActiveCamera.ShallowClone();
-                camera.Scene = scene;
-                scene.SetActiveCamera(camera);
-            }*/
+            
             PortalCommon.UpdateWorldTransform(scene);
 
             return scene;
