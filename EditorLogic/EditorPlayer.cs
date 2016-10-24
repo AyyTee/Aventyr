@@ -20,8 +20,7 @@ namespace EditorLogic
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
-            models.Add(Game.ModelFactory.CreateCircle(new Vector3(), 0.5f, 16));
-
+            models.Add(ModelFactory.CreatePlayer());
             return models;
         }
     }

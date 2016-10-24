@@ -38,6 +38,9 @@ namespace Game
         public class ChildBody
         {
             public readonly Body Body;
+            /// <summary>
+            /// Entrance portal for the parent.
+            /// </summary>
             public readonly IPortal Portal;
             public ChildBody(Body body, IPortal portal)
             {

@@ -293,13 +293,13 @@ namespace Game
             return false;
         }
 
-        public bool AlmostEqual(Transform2 transform, double delta, double percent)
+        public bool AlmostEqual(Transform2 transform, double delta, double ratioDelta)
         {
-            if ((Math.Abs(1 - transform.Rotation / Rotation) <= percent || Math.Abs(transform.Rotation - Rotation) <= delta) &&
-                (Math.Abs(1 - transform.Scale.X / Scale.X) <= percent || Math.Abs(transform.Scale.X - Scale.X) <= delta) &&
-                (Math.Abs(1 - transform.Scale.Y / Scale.Y) <= percent || Math.Abs(transform.Scale.Y - Scale.Y) <= delta) &&
-                (Math.Abs(1 - transform.Position.X / Position.X) <= percent || Math.Abs(transform.Position.X - Position.X) <= delta) &&
-                (Math.Abs(1 - transform.Position.Y / Position.Y) <= percent || Math.Abs(transform.Position.Y - Position.Y) <= delta))
+            if ((Math.Abs(1 - transform.Rotation / Rotation) <= ratioDelta || Math.Abs(transform.Rotation - Rotation) <= delta) &&
+                (Math.Abs(1 - transform.Scale.X / Scale.X) <= ratioDelta || Math.Abs(transform.Scale.X - Scale.X) <= delta) &&
+                (Math.Abs(1 - transform.Scale.Y / Scale.Y) <= ratioDelta || Math.Abs(transform.Scale.Y - Scale.Y) <= delta) &&
+                (Math.Abs(1 - transform.Position.X / Position.X) <= ratioDelta || Math.Abs(transform.Position.X - Position.X) <= delta) &&
+                (Math.Abs(1 - transform.Position.Y / Position.Y) <= ratioDelta || Math.Abs(transform.Position.Y - Position.Y) <= delta))
             {
                 return true;
             }

@@ -35,6 +35,33 @@ namespace Game
             return contour;
         }
 
+        public static void AssertTransform(IActor actor)
+        {
+            /*Bodies don't have a scale component so we use the default scale when comparing the Actor's
+             * scale to that of the child bodies.*/
+            Transform2 actorTransform = actor.WorldTransform;
+            actorTransform.SetScale(Vector2.One);
+
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+            {
+                Transform2 bodyTransform = UndoPortalTransform(data, BodyExt.GetTransform(data.Body));
+                bodyTransform.SetScale(Vector2.One);
+                Debug.Assert(bodyTransform.AlmostEqual(actorTransform, 0.01f, 0.01f));
+            }
+        }
+
+        private static Transform2 UndoPortalTransform(BodyData data, Transform2 transform)
+        {
+            Transform2 copy = transform.ShallowClone();
+            if (data.Parent == null)
+            {
+                return copy;
+            }
+            return UndoPortalTransform(
+                data.Parent, 
+                copy.Transform(Portal.GetLinkedTransform(data.BodyParent.Portal).Inverted()));
+        }
+
         /// <summary>
         /// Verifies the BodyType for Actor bodies is correct.
         /// </summary>

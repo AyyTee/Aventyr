@@ -21,5 +21,10 @@ namespace EditorLogic
             arrowModel.SetColor(ColorPortalDefault);
             return arrowModel;
         }
+
+        public static Model CreatePlayer()
+        {
+            return Game.ModelFactory.CreateCircle(new Vector3(), 0.5f, 16);
+        }
     }
 }

@@ -105,8 +105,6 @@ namespace Game
         /// </summary>
         public static MassData GetLocalMassData(Body body)
         {
-            //return new MassData(body.Mass, Vector2Ext.ToOtk(body.Position));
-
             var clipped = GetClippedFixtures(body);
             float totalMass = 0;
             Vector2 centroid = new Vector2();

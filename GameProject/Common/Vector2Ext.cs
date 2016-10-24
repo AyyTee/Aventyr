@@ -259,5 +259,25 @@ namespace Game
         {
             return AlmostEqual(v0, v1, EQUALITY_EPSILON);
         }
+
+        public static Vector2d[] ToDouble(Vector2[] v)
+        {
+            Vector2d[] vArray = new Vector2d[v.Length];
+            for (int i = 0; i < v.Length; i++)
+            {
+                vArray[i] = (Vector2d)v[i];
+            }
+            return vArray;
+        }
+
+        public static Vector2[] ToSingle(Vector2d[] v)
+        {
+            Vector2[] vArray = new Vector2[v.Length];
+            for (int i = 0; i < v.Length; i++)
+            {
+                vArray[i] = (Vector2)v[i];
+            }
+            return vArray;
+        }
     }
 }

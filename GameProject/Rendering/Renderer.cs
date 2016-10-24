@@ -157,12 +157,10 @@ namespace Game
             {
                 return;
             }
-            int depth = 0;
-            if (PortalRenderEnabled)
-            {
-                depth = PortalRenderMax;
-            }
-            PortalView portalView = PortalView.CalculatePortalViews(layer.GetPortalList().ToArray(), cam, depth);
+            PortalView portalView = PortalView.CalculatePortalViews(
+                layer.GetPortalList().ToArray(), 
+                cam, 
+                PortalRenderEnabled ? PortalRenderMax : 0);
             List<PortalView> portalViewList = portalView.GetPortalViewList();
 
             int stencilValueMax = 1 << StencilBits;

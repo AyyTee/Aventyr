@@ -62,6 +62,7 @@ namespace Game
 
             foreach (Actor actor in Scene.GetAll().OfType<Actor>())
             {
+                ActorExt.AssertTransform(actor);
                 ActorExt.AssertBodyType(actor);
             }
         }
