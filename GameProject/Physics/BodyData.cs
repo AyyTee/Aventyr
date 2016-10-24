@@ -14,7 +14,7 @@ namespace Game
     public class BodyData : ITreeNode<BodyData>
     {
         public int BodyId;
-        public readonly IActor Actor;
+        public readonly Actor Actor;
         public readonly Body Body;
         public Xna.Vector2 PreviousPosition { get; set; }
         public List<ChildBody> BodyChildren = new List<ChildBody>();
@@ -54,7 +54,7 @@ namespace Game
         {
         }
 
-        public BodyData(IActor actor, Body body)
+        public BodyData(Actor actor, Body body)
         {
             Debug.Assert(body != null);
             Debug.Assert(actor != null);

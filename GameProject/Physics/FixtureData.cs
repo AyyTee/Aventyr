@@ -40,7 +40,7 @@ namespace Game
         
         private List<Fixture> _fixtureChildren = new List<Fixture>();
         public List<Fixture> FixtureChildren { get { return new List<Fixture>(_fixtureChildren); } }
-        public IActor Actor
+        public Actor Actor
         {
             get
             {

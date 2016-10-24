@@ -163,7 +163,6 @@
     <Compile Include="Serialization\DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="GlobalEnums.cs" />
-    <Compile Include="Physics\IActor.cs" />
     <Compile Include="Rendering\ICamera2.cs" />
     <Compile Include="Serialization\IDeepClone.cs" />
     <Compile Include="Common\IPolygonCoord.cs" />

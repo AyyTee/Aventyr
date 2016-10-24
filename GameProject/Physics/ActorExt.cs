@@ -18,7 +18,7 @@ namespace Game
         /// Returns polygon that is the local polygon with only the local transforms Scale component applied. 
         /// This is useful because the vertices should match up with vertices in the physics fixtures for this Actor's body (within rounding errors).
         /// </summary>
-        public static List<Vector2> GetFixtureContour(IActor actor)
+        public static List<Vector2> GetFixtureContour(Actor actor)
         {
             return GetFixtureContour(actor.Vertices, actor.GetTransform().Scale);
         }
@@ -35,7 +35,7 @@ namespace Game
             return contour;
         }
 
-        public static void AssertTransform(IActor actor)
+        public static void AssertTransform(Actor actor)
         {
             /*Bodies don't have a scale component so we use the default scale when comparing the Actor's
              * scale to that of the child bodies.*/
@@ -66,7 +66,7 @@ namespace Game
         /// Verifies the BodyType for Actor bodies is correct.
         /// </summary>
         /// <returns></returns>
-        public static void AssertBodyType(IActor actor)
+        public static void AssertBodyType(Actor actor)
         {
             if (actor.Body.BodyType != actor.BodyType)
             {

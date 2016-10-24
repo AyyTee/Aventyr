@@ -16,7 +16,7 @@ namespace Game
 {
     /// <summary>A SceneNode with rigid body physics.</summary>
     [DataContract, DebuggerDisplay("Actor {Name}")]
-    public class Actor : SceneNode, IActor
+    public class Actor : SceneNode, IWall, ISceneObject, IPortalable
     {
         public Transform2 Transform
         {

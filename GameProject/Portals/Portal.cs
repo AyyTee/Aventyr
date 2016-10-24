@@ -117,7 +117,7 @@ namespace Game.Portals
             }
 
             //If a static actor enters a portal then it's no longer static.
-            IActor actorCast = portalable as IActor;
+            Actor actorCast = portalable as Actor;
             if (actorCast != null && actorCast.BodyType == BodyType.Static)
             {
                 actorCast.SetBodyType(BodyType.Kinematic);

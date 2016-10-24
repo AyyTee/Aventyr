@@ -23,9 +23,9 @@ namespace Game
         }
 
         /// <summary>
-        /// Create body and assign it to an IActor instance.
+        /// Create body and assign it to an Actor instance.
         /// </summary>
-        public static Body CreateBody(World world, IActor actor)
+        public static Body CreateBody(World world, Actor actor)
         {
             Debug.Assert(actor != null);
             Debug.Assert(actor.Body == null);
@@ -35,7 +35,7 @@ namespace Game
             return body;
         }
 
-        public static BodyData SetData(Body body, IActor entity)
+        public static BodyData SetData(Body body, Actor entity)
         {
             BodyData userData = new BodyData(entity, body);
             body.UserData = userData;

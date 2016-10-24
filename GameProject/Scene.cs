@@ -51,7 +51,7 @@ namespace Game
 
         class ActorPrev
         {
-            public IActor Actor;
+            public Actor Actor;
             public Transform2 Previous;
             public Transform2 TrueVelocity;
         }
@@ -69,7 +69,7 @@ namespace Game
             if (World != null && stepSize > 0)
             {
                 List<ActorPrev> actorTemp = new List<ActorPrev>();
-                foreach (IActor actor in GetAll().OfType<IActor>())
+                foreach (Actor actor in GetAll().OfType<Actor>())
                 {
                     ActorPrev actorPrev = new ActorPrev();
                     actorTemp.Add(actorPrev);
@@ -101,7 +101,7 @@ namespace Game
 
                 PortalCommon.UpdateWorldTransform(this, false, true);
                 SimulationStep.Step(GetAll().OfType<IPortalCommon>(), GetAll().OfType<IPortal>(), stepSize, (EnterCallbackData data) => {
-                    IActor actor = data.Instance as IActor;
+                    Actor actor = data.Instance as Actor;
                     if (actor != null)
                     {
                         ActorPrev prev = actorTemp.Find(item => item.Actor == actor);

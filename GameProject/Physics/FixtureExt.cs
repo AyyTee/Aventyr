@@ -38,7 +38,7 @@ namespace Game
             return fixture;
         }
 
-        public static FixtureCoord GetFixtureEdgeCoord(IActor actor, IPolygonCoord coord)
+        public static FixtureCoord GetFixtureEdgeCoord(Actor actor, IPolygonCoord coord)
         {
             Debug.Assert(actor.Body != null);
             Debug.Assert(coord != null);
@@ -99,7 +99,7 @@ namespace Game
             {
                 return null;
             }
-            IActor parent = portal.Parent as IActor;
+            Actor parent = portal.Parent as Actor;
             if (parent != null)
             {
                 return GetFixtureEdgeCoord(parent, portal.Position).Fixture;
