@@ -228,7 +228,6 @@ namespace Game
             _remove(data);
             int removed = data.Parent.BodyChildren.RemoveAll(item => GetData(item.Body) == data);
             Debug.Assert(removed == 1);
-            data.Actor.SetMass(data.Actor.Mass);
         }
 
         private static void _remove(BodyData bodyData)
@@ -237,7 +236,7 @@ namespace Game
             {
                 _remove(data);
             }
-            ((Scene)bodyData.Actor.Scene).World.RemoveBody(bodyData.Body);
+            bodyData.Actor.Scene.World.RemoveBody(bodyData.Body);
         }
     }
 }

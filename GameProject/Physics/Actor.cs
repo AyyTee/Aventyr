@@ -63,7 +63,6 @@ namespace Game
             Body = Factory.CreatePolygon(Scene.World, transform, Vertices);
             BodyExt.SetData(Body, this);
             SetBodyType(BodyType.Dynamic);
-            SetMass(Body.Mass);
         }
 
         [OnDeserialized]
@@ -103,10 +102,29 @@ namespace Game
             base.SetParent(parent);
         }
 
-        public void SetMass(float mass)
+        public float GetMass()
         {
-            Mass = mass;
-            BodyExt.GetData(Body).SetMass(mass);
+            float mass = 0;
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            {
+                mass += BodyExt.GetLocalMassData(data.Body).Mass;
+            }
+            return mass;
+        }
+
+        public Vector2 GetCentroid()
+        {
+            Vector2 centroid = new Vector2();
+            float massTotal = 0;
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            {
+                var massData = BodyExt.GetLocalMassData(data.Body);
+                centroid += massData.Centroid * massData.Mass;
+                massTotal += massData.Mass;
+            }
+            Debug.Assert(massTotal == GetMass());
+            centroid /= massTotal;
+            return centroid;
         }
 
         public void SetBodyType(BodyType type)
@@ -128,7 +146,6 @@ namespace Game
         public void Update()
         {
             BodyExt.GetData(Body).Update();
-            SetMass(Mass);
         }
 
         public override void Remove()

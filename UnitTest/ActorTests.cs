@@ -82,5 +82,19 @@ namespace UnitTest
             actor.SetTransform(new Transform2(new Vector2(), -1, 0, true));
             Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));
         }
+
+        [TestMethod]
+        public void UpdateCentroidTest0()
+        {
+            /*Scene scene = new Scene();
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(0.5f, 3f));
+            Vector2 centroid = actor.GetCentroid();
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+            {
+                data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
+            }
+
+            */
+        }
     }
 }

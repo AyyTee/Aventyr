@@ -71,7 +71,7 @@ namespace Game
 
         public bool KeyLeftDown()
         {
-            return Input.KeyDown(Key.Left) || Input.KeyDown(Key.A);
+            return Input.KeyDown(Key.Left) || Input.KeyDown(Key.A); 
         }
 
         public bool KeyRightDown()

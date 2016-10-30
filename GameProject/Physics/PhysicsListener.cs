@@ -49,6 +49,12 @@ namespace Game
 
             foreach (Actor actor in Scene.GetAll().OfType<Actor>())
             {
+                Vector2 centroid = actor.GetCentroid();
+                foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+                {
+                    data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
+                }
+
                 actor.Update();
                 actor.ApplyGravity(Scene.Gravity);
             }

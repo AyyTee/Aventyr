@@ -110,15 +110,6 @@ namespace Game
             }
         }
 
-        public void SetMass(float mass)
-        {
-            var nodes = Tree<BodyData>.GetAll(this);
-            foreach (BodyData data in nodes)
-            {
-                data.Body.Mass = Actor.Mass / nodes.Count;
-            }
-        }
-
         public HashSet<IPortal> PortalCollisions()
         {
             HashSet<IPortal> collisions = new HashSet<IPortal>();
