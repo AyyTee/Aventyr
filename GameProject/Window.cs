@@ -17,7 +17,7 @@ namespace Game
     {
         public Controller controller;
         public InputExt InputExt;
-        public Window(string[] args)
+        public Window()
             : base(800, 600, Renderer.DefaultGraphics, "Game", GameWindowFlags.FixedWindow)
         {
             InputExt = new InputExt(this);

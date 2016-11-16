@@ -6,7 +6,7 @@ namespace Game
     {
         static void Main(string[] args)
         {
-            using (Window Window = new Window(args))
+            using (Window Window = new Window())
             {
                 Window.controller = new Controller(Window, args);
                 Window.Run(Controller.StepsPerSecond, Controller.DrawsPerSecond);

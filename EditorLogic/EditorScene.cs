@@ -16,6 +16,7 @@ namespace EditorLogic
     [DataContract]
     public class EditorScene : IRenderLayer, IScene
     {
+        public Renderer Renderer { get; private set; }
         [DataMember]
         public List<EditorObject> _children = new List<EditorObject>();
         [DataMember]
@@ -25,11 +26,13 @@ namespace EditorLogic
         [DataMember]
         public double Time { get; private set; }
 
-        public EditorScene()
+        public EditorScene(Renderer renderer = null)
         {
+            Renderer = renderer;
+
             #region create background
             Model background = Game.ModelFactory.CreatePlane();
-            background.Texture = Renderer.GetTexture("grid.png");
+            background.Texture = Renderer?.GetTexture("grid.png");
             background.SetColor(new Vector3(1, 1, 0.5f));
             background.Transform.Position = new Vector3(0, 0, -5f);
             float size = 50;

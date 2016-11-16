@@ -10,10 +10,10 @@ namespace TankGame
     {
         public static void Main(string[] args)
         {
-            using (Game.Window Window = new Game.Window(args))
+            using (Game.Window Window = new Game.Window())
             {
                 Window.controller = new Controller(Window, args);
-                Window.Run(Controller.StepsPerSecond, Controller.DrawsPerSecond);
+                Window.Run(Game.Controller.StepsPerSecond, Game.Controller.DrawsPerSecond);
             }
         }
     }

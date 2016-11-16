@@ -22,7 +22,7 @@ namespace Game
         public static StreamWriter TrashLog = new StreamWriter(Stream.Null);
         public const int MICROSECONDS_IN_SECOND = 1000000;
         public float TimeFixedStep = 0.0f;
-        public static Size CanvasSize;
+        public Size CanvasSize;
         public const int StepsPerSecond = 60;
         public const int DrawsPerSecond = 60;
         public const string tempLevelPrefix = "temp_level_";
@@ -30,7 +30,6 @@ namespace Game
         public string[] programArgs = new string[0];
         public SoundSystem SoundSystem { get; private set; }
 
-        public static List<int> iboGarbage = new List<int>();
         public static List<int> textureGarbage = new List<int>();
 
         public static string fontFolder = Path.Combine(new string[2] { "assets", "fonts" });
@@ -69,7 +68,7 @@ namespace Game
         {
             _time.Start();
 
-            renderer = new Renderer();
+            renderer = new Renderer(CanvasSize);
 
             SoundEnabled = false;
             if (SoundEnabled)
@@ -77,14 +76,12 @@ namespace Game
                 SoundSystem = new SoundSystem();
                 SoundSystem.Initialize();
                 SoundSystem.Start();
-                //SoundSystem.Instance.Initialize();
-                //SoundSystem.Instance.Start();
             }
 
             // Load textures from file
-            Renderer.Textures.Add("default.png", new TextureFile(Path.Combine(textureFolder, "default.png")));
-            Renderer.Textures.Add("grid.png", new TextureFile(Path.Combine(textureFolder, "grid.png")));
-            Renderer.Textures.Add("lineBlur.png", new TextureFile(Path.Combine(textureFolder, "lineBlur.png")));
+            renderer.Textures.Add("default.png", new TextureFile(Path.Combine(textureFolder, "default.png")));
+            renderer.Textures.Add("grid.png", new TextureFile(Path.Combine(textureFolder, "grid.png")));
+            renderer.Textures.Add("lineBlur.png", new TextureFile(Path.Combine(textureFolder, "lineBlur.png")));
 
             //Create the default font
             System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
@@ -93,7 +90,7 @@ namespace Game
             FontRenderer = new FontRenderer(Default);
 
             // Load shaders from file
-            Renderer.Shaders.Add("uber", new ShaderProgram(
+            renderer.Shaders.Add("uber", new ShaderProgram(
                 Path.Combine(shaderFolder, "vs_uber.glsl"),
                 Path.Combine(shaderFolder, "fs_uber.glsl"),
                 true));
@@ -124,16 +121,7 @@ namespace Game
 
             TimeFixedStep += MICROSECONDS_IN_SECOND / (float)StepsPerSecond;
             TimeRenderDelta = 0;
-            //get rid of all ibo elements no longer used
-            lock (Model.LockDelete)
-            {
-                foreach (int iboElement in iboGarbage.ToArray())
-                {
-                    int a = iboElement;
-                    GL.DeleteBuffers(1, ref a);
-                }
-                iboGarbage.Clear();
-            }
+
             lock (Texture.LockDelete)
             {
                 foreach (int iboElement in textureGarbage.ToArray())

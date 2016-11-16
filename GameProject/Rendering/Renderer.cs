@@ -33,15 +33,19 @@ namespace Game
         public bool RenderEnabled { get; set; } = true;
         ShaderProgram _activeShader;
         Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
+        public Size CanvasSize { get; private set; }
 
-        public static Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
-        public static Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
-        public static bool IsInitialized { get; private set; }
 
-        private static int IboElements;
+        public Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
+        public Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
+        public bool IsInitialized { get; private set; }
 
-        public Renderer()
+        private int IboElements;
+
+        public Renderer(Size canvasSize)
         {
+            CanvasSize = canvasSize;
+
             foreach (EnableCap e in Enum.GetValues(typeof(EnableCap)))
             {
                 _enableCap[e] = null;
@@ -61,7 +65,7 @@ namespace Game
             GL.GenBuffers(1, out IboElements);
         }
 
-        public static TextureFile GetTexture(string name)
+        public TextureFile GetTexture(string name)
         {
             if (Textures.ContainsKey(name))
             {
@@ -110,7 +114,7 @@ namespace Game
 
         public void Render()
         {
-            GL.Viewport(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
+            GL.Viewport(0, 0, CanvasSize.Width, CanvasSize.Height);
             ResetScissor();
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit | ClearBufferMask.ColorBufferBit);
 
@@ -426,7 +430,7 @@ namespace Game
             }
             Matrix4 ScaleMatrix;
             ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
-            ScaleMatrix = ScaleMatrix * Matrix4.CreateScale(new Vector3(Controller.CanvasSize.Width / (float)2, Controller.CanvasSize.Height / (float)2, 0));
+            ScaleMatrix = ScaleMatrix * Matrix4.CreateScale(new Vector3(CanvasSize.Width / (float)2, CanvasSize.Height / (float)2, 0));
 
             Vector2 vMin, vMax;
             vMin = ClipperConvert.ToVector2(view.Paths[0][0]);
@@ -446,7 +450,7 @@ namespace Game
 
         private void ResetScissor()
         {
-            GL.Scissor(0, 0, Controller.CanvasSize.Width, Controller.CanvasSize.Height);
+            GL.Scissor(0, 0, CanvasSize.Width, CanvasSize.Height);
         }
 
         private void UpdateCullFace(Matrix4 viewMatrix)

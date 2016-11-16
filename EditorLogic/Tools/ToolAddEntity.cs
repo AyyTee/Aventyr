@@ -34,16 +34,9 @@ namespace EditorLogic
             }
             else if (_input.MousePress(MouseButton.Left))
             {
-                /*EditorEntity entity = Controller.CreateLevelEntity();
-                entity.SetPosition(Controller.GetMouseWorldPosition());
-                EntityFactory.CreateEntityBox(entity.Entity, new Vector2());*/
-                /*Entity entity = new Entity(Controller.Level.Scene);
-                entity.AddModel(ModelFactory.CreateCube());
-                entity.ModelList[0].SetTexture(Renderer.Textures["default.png"]);
-                entity.IsPortalable = true;*/
                 EditorEntity editorEntity = new EditorEntity(Controller.Level);
                 Model m = Game.ModelFactory.CreateCube();
-                m.SetTexture(Renderer.Textures["default.png"]);
+                m.SetTexture(Controller.renderer.Textures["default.png"]);
                 editorEntity.AddModel(m);
                 editorEntity.Name = "Editor Entity";
                 
@@ -65,7 +58,7 @@ namespace EditorLogic
             base.Enable();
             _mouseFollow = new Doodad(Controller.Level);
             _mouseFollow.Models.Add(Game.ModelFactory.CreateCube());
-            _mouseFollow.Models[0].SetTexture(Renderer.Textures["default.png"]);
+            _mouseFollow.Models[0].SetTexture(Controller.renderer.Textures["default.png"]);
             _mouseFollow.IsPortalable = true;
         }
 
