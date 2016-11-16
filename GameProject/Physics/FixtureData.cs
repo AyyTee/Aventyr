@@ -167,7 +167,7 @@ namespace Game
 
             int index = (portal.Position.EdgeIndex + i) % Actor.Vertices.Count;
             verts[0] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext], t.GetMatrix());
-            verts[1] = ActorExt.GetFixtureContour(Actor)[index];
+            verts[1] = Actor.GetFixtureContour(Actor)[index];
             verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix());
             verts = MathExt.SetWinding(verts, false);
 

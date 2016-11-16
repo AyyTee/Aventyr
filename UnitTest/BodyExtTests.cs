@@ -22,7 +22,7 @@ namespace UnitTest
 
             MassData result = GetLocalMassData(actor.Body);
 
-            Assert.AreEqual(actor.Mass, result.Mass);
+            Assert.AreEqual(actor.GetMass(), result.Mass);
             Assert.AreEqual(new Vector2(), result.Centroid);
         }
 
@@ -44,7 +44,7 @@ namespace UnitTest
 
             MassData result = GetLocalMassData(actor.Body);
 
-            Assert.AreEqual(actor.Mass * 3.0f / 4.0f, result.Mass, Delta);
+            Assert.AreEqual(actor.GetMass() * 3.0f / 4.0f, result.Mass, Delta);
             Assert.IsTrue((new Vector2(-0.5f, 0) - result.Centroid).Length < Delta);
         }
 
@@ -73,7 +73,7 @@ namespace UnitTest
 
             MassData result = GetLocalMassData(actor.Body);
 
-            Assert.AreEqual(actor.Mass / 2.0f, result.Mass, Delta);
+            Assert.AreEqual(actor.GetMass() / 2.0f, result.Mass, Delta);
             Assert.IsTrue((new Vector2() - result.Centroid).Length < Delta);
         }
 
@@ -95,7 +95,7 @@ namespace UnitTest
 
             MassData result = GetLocalMassData(actor.Body);
 
-            Assert.AreEqual(actor.Mass * 3.0f / 4.0f, result.Mass, Delta);
+            Assert.AreEqual(actor.GetMass() * 3.0f / 4.0f, result.Mass, Delta);
             Assert.IsTrue((new Vector2(-0.5f, 0) - result.Centroid).Length < Delta);
         }
 
@@ -117,7 +117,7 @@ namespace UnitTest
 
             MassData result = GetLocalMassData(GetData(actor.Body).BodyChildren[0].Body);
 
-            Assert.AreEqual(actor.Mass / 4.0f, result.Mass, Delta);
+            Assert.AreEqual(actor.GetMass() / 4.0f, result.Mass, Delta);
             Assert.IsTrue((new Vector2(50.5f, 0) - result.Centroid).Length < Delta);
         }
     }

@@ -5,6 +5,8 @@ using OpenTK;
 using FarseerPhysics.Collision.Shapes;
 using System.Collections.Generic;
 using Game.Portals;
+using System.Linq;
+using Xna = Microsoft.Xna.Framework;
 
 namespace UnitTest
 {
@@ -83,10 +85,11 @@ namespace UnitTest
             Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));
         }
 
+        #region GetCentroid tests
         [TestMethod]
-        public void UpdateCentroidTest0()
+        public void GetCentroidTest0()
         {
-            /*Scene scene = new Scene();
+            Scene scene = new Scene();
             Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(0.5f, 3f));
             Vector2 centroid = actor.GetCentroid();
             foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
@@ -94,7 +97,166 @@ namespace UnitTest
                 data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
             }
 
-            */
+            //LocalCenter and centroid should be the same since the actor is on the origin with no rotation.
+            Assert.IsTrue(actor.Body.LocalCenter == Vector2Ext.ToXna(centroid));
+            Assert.IsTrue(centroid == new Vector2());
+        }
+
+        [TestMethod]
+        public void GetCentroidTest1()
+        {
+            Scene scene = new Scene();
+            scene.Gravity = new Vector2();
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(0.5f, 3f));
+
+            FloatPortal enter = new FloatPortal(scene);
+            FloatPortal exit = new FloatPortal(scene);
+            Portal.SetLinked(enter, exit);
+            enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)(Math.PI / 2)));
+            exit.SetTransform(new Transform2(new Vector2(5, 0)));
+
+            scene.Step();
+
+            Vector2 centroid = actor.GetCentroid();
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+            {
+                data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
+            }
+
+            Assert.IsTrue((actor.Body.LocalCenter - Vector2Ext.ToXna(centroid)).Length() < 0.0001f);
+            Assert.IsTrue((centroid - new Vector2()).Length < 0.0001f);
+        }
+
+        [TestMethod]
+        public void GetCentroidTest2()
+        {
+            Scene scene = new Scene();
+            scene.Gravity = new Vector2();
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(0.5f, 3f));
+
+            FloatPortal enter = new FloatPortal(scene);
+            FloatPortal exit = new FloatPortal(scene);
+            Portal.SetLinked(enter, exit);
+            enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)(Math.PI / 2)));
+            exit.SetTransform(new Transform2(new Vector2(5, 0), 2));
+
+            scene.Step();
+
+            Vector2 centroid = actor.GetCentroid();
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+            {
+                data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
+            }
+
+            Assert.IsTrue((actor.Body.LocalCenter - Vector2Ext.ToXna(centroid)).Length() < 0.0001f);
+            Assert.IsTrue((centroid - new Vector2(0, 1.6959f)).Length < 0.0001f);
+        }
+
+        [TestMethod]
+        public void GetCentroidTest3()
+        {
+            Scene scene = new Scene();
+            scene.Gravity = new Vector2();
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(0.5f, 3f));
+
+            FloatPortal enter = new FloatPortal(scene);
+            FloatPortal exit = new FloatPortal(scene);
+            Portal.SetLinked(enter, exit);
+            enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)(Math.PI / 2), true));
+            exit.SetTransform(new Transform2(new Vector2(5, 0), 2));
+
+            scene.Step();
+
+            Vector2 centroid = actor.GetCentroid();
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+            {
+                data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
+            }
+
+            Assert.IsTrue((actor.Body.LocalCenter - Vector2Ext.ToXna(centroid)).Length() < 0.0001f);
+            Assert.IsTrue((centroid - new Vector2(0, 1.6959f)).Length < 0.0001f);
+        }
+
+        [TestMethod]
+        public void GetCentroidTest4()
+        {
+            Scene scene = new Scene();
+            scene.Gravity = new Vector2();
+            Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(0.5f, 3f));
+            Vector2 offset = new Vector2(2, 5);
+            actor.SetTransform(new Transform2(offset));
+
+            FloatPortal enter = new FloatPortal(scene);
+            FloatPortal exit = new FloatPortal(scene);
+            Portal.SetLinked(enter, exit);
+            enter.SetTransform(new Transform2(new Vector2(0, 1) + offset, 1, (float)(Math.PI / 2), true));
+            exit.SetTransform(new Transform2(new Vector2(5, 0) + offset, 2));
+
+            scene.Step();
+
+            Vector2 centroid = actor.GetCentroid();
+            Assert.IsTrue((centroid - new Vector2(0, 1.6959f) - offset).Length < 0.001f);
+        }
+        #endregion
+
+        public Vector2[] GetVertices()
+        {
+            return new Vector2[] {
+                new Vector2(0, 0),
+                new Vector2(1, 0),
+                new Vector2(1, 1),
+                new Vector2(0, 1)
+            };
+        }
+
+        public void GetFixtureContourAssert(Actor actor)
+        {
+            Vector2[] worldVertices = actor.GetWorldVertices().ToArray();
+            List<Vector2> fixtureVertices = Actor.GetFixtureContour(actor);
+            Assert.IsTrue(worldVertices.SequenceEqual(fixtureVertices));
+        }
+
+        /// <summary>
+        /// Fixture contour and world vertices should be equal if rotation and position are 0.
+        /// </summary>
+        [TestMethod]
+        public void GetFixtureContourTest0()
+        {
+            Actor actor = new Actor(new Scene(), GetVertices());
+
+            GetFixtureContourAssert(actor);
+        }
+        [TestMethod]
+        public void GetFixtureContourTest1()
+        {
+            Actor actor = new Actor(new Scene(), GetVertices());
+            actor.SetTransform(new Transform2(new Vector2(), 2.2f));
+
+            GetFixtureContourAssert(actor);
+        }
+        [TestMethod]
+        public void GetFixtureContourTest2()
+        {
+            Actor actor = new Actor(new Scene(), GetVertices());
+            actor.SetTransform(new Transform2(new Vector2(), -3.2f));
+
+            GetFixtureContourAssert(actor);
+        }
+        [TestMethod]
+        public void GetFixtureContourTest3()
+        {
+            Actor actor = new Actor(new Scene(), GetVertices());
+            actor.SetTransform(new Transform2(new Vector2(), 2.2f, 0, true));
+
+            GetFixtureContourAssert(actor);
+        }
+        [TestMethod]
+        public void GetFixtureContourTest4()
+        {
+            Actor actor = new Actor(new Scene(), GetVertices());
+            actor.SetTransform(new Transform2(new Vector2(), -2.2f, 0, true));
+
+            GetFixtureContourAssert(actor);
         }
     }
 }

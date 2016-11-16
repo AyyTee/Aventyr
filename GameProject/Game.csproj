@@ -145,7 +145,6 @@
     <Compile Include="ITime.cs" />
     <Compile Include="Keyframe.cs" />
     <Compile Include="Keyframe2.cs" />
-    <Compile Include="Physics\ActorExt.cs" />
     <Compile Include="Physics\BodyMemento.cs" />
     <Compile Include="Physics\BodyData.cs" />
     <Compile Include="Physics\PortalJoint.cs" />

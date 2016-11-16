@@ -24,12 +24,12 @@ namespace Game
             get { return _aspect; }
             set
             {
-                Debug.Assert(value >= 0);
+                Debug.Assert(value > 0);
                 _aspect = value;
             }
         }
         [DataMember]
-        public Vector2 ViewOffset { get; set; }
+        public Vector2 ViewOffset { get; set; } = new Vector2();
         public float ZNear { get { return -10000f; } }
         public float ZFar { get { return 10000f; } }
         public double Fov { get { return Math.PI / 4; } }
@@ -52,7 +52,6 @@ namespace Game
         {
             SetTransform(transform);
             Aspect = aspectRatio;
-            ViewOffset = new Vector2();
         }
         #endregion
 

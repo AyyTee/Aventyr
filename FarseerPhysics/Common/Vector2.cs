@@ -84,7 +84,7 @@ namespace Microsoft.Xna.Framework
 #region Constructors
 
         /// <summary>
-        /// Constructor foe standard 2D vector.
+        /// Constructor for standard 2D vector.
         /// </summary>
         /// <param name="x">
         /// A <see cref="System.Single"/>

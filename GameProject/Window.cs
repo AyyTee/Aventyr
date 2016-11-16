@@ -15,13 +15,12 @@ namespace Game
 {
     public class Window : GameWindow
     {
-        Controller controller;
+        public Controller controller;
         public InputExt InputExt;
         public Window(string[] args)
             : base(800, 600, Renderer.DefaultGraphics, "Game", GameWindowFlags.FixedWindow)
         {
             InputExt = new InputExt(this);
-            controller = new Controller(this, args);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -34,7 +33,7 @@ namespace Game
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            controller.OnRenderFrame(e);
+            controller?.OnRenderFrame(e);
             SwapBuffers();
         }
 
@@ -50,19 +49,19 @@ namespace Game
             {
                 Exit();
             }
-            controller.OnUpdateFrame(e);
+            controller?.OnUpdateFrame(e);
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            controller.OnClosing(e);
+            controller?.OnClosing(e);
         }
 
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            controller.OnResize(e, ClientSize);
+            controller?.OnResize(e, ClientSize);
         }
 
         private void ToggleFullScreen()

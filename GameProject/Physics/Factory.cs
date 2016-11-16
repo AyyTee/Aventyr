@@ -103,7 +103,7 @@ namespace Game.Physics
             Debug.Assert(body != null);
             Debug.Assert(transform != null);
             Debug.Assert(vertices != null && vertices.Count >= 3);
-            List<Vector2> fixtureContour = ActorExt.GetFixtureContour(vertices, transform.Scale);
+            List<Vector2> fixtureContour = Actor.GetFixtureContour(vertices, transform.Scale);
             fixtureContour = MathExt.SetWinding(fixtureContour, false);
 
             var convexList = PolygonExt.DecomposeConcave(fixtureContour);

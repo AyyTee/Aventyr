@@ -144,5 +144,37 @@ namespace UnitTest
 
             AssertPortalJoint(body0, body1, portal0);
         }
+
+        [TestMethod]
+        public void ChangeCentroidTest0()
+        {
+            Scene scene = new Scene();
+            FloatPortal portal0 = new FloatPortal(scene);
+            FloatPortal portal1 = new FloatPortal(scene);
+            portal0.SetTransform(new Transform2(new Vector2(0, 0), 1, (float)Math.PI / 2));
+            portal1.SetTransform(new Transform2(new Vector2(10, 0), 2, (float)Math.PI / 2));
+            Portal.SetLinked(portal0, portal1);
+            PortalCommon.UpdateWorldTransform(scene);
+
+            World world = new World(new Xna.Vector2(0, 0f));
+            Body body0 = Factory.CreateBox(world, new Vector2(1, 2));
+            Body body1 = Factory.CreateBox(world, new Vector2(1, 2));
+
+            Xna.Vector2 startPos = new Xna.Vector2(0, 1);
+            body0.Position = startPos;
+            body1.Position = startPos;
+            Portal.Enter(portal0, body1);
+
+            PortalJoint portalJoint = Factory.CreatePortalJoint(world, body0, body1, portal0);
+
+            for (int i = 0; i < 10; i++)
+            {
+                body0.LocalCenter += new Xna.Vector2(0, 0.1f);
+                body1.LocalCenter += new Xna.Vector2(0, 0.1f);
+
+                world.Step(1 / (float)60);
+                Assert.IsTrue(body0.Position == startPos);
+            }
+        }
     }
 }

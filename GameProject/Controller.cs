@@ -28,6 +28,7 @@ namespace Game
         public const string tempLevelPrefix = "temp_level_";
         public int RenderCount = 0;
         public string[] programArgs = new string[0];
+        public SoundSystem SoundSystem { get; private set; }
 
         public static List<int> iboGarbage = new List<int>();
         public static List<int> textureGarbage = new List<int>();
@@ -73,8 +74,11 @@ namespace Game
             SoundEnabled = false;
             if (SoundEnabled)
             {
-                SoundSystem.Instance.Initialize();
-                SoundSystem.Instance.Start();
+                SoundSystem = new SoundSystem();
+                SoundSystem.Initialize();
+                SoundSystem.Start();
+                //SoundSystem.Instance.Initialize();
+                //SoundSystem.Instance.Start();
             }
 
             // Load textures from file
@@ -100,6 +104,7 @@ namespace Game
                 Scene scene = serializer.Deserialize(programArgs[0]);
                 scene.SetActiveCamera(new Camera2(scene, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height));
                 renderer.AddLayer(scene);
+                Portals.PortalCommon.UpdateWorldTransform(scene);
                 if (programArgs[0].StartsWith(tempLevelPrefix))
                 {
                     File.Delete(programArgs[0]);
@@ -116,6 +121,7 @@ namespace Game
 
         public virtual void OnUpdateFrame(FrameEventArgs e)
         {
+
             TimeFixedStep += MICROSECONDS_IN_SECOND / (float)StepsPerSecond;
             TimeRenderDelta = 0;
             //get rid of all ibo elements no longer used

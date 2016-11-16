@@ -91,6 +91,9 @@ namespace Game
         public struct MassData
         {
             public float Mass;
+            /// <summary>
+            /// Center of mass in world coordinates.
+            /// </summary>
             public Vector2 Centroid;
 
             public MassData(float mass, Vector2 centroid)
@@ -143,7 +146,8 @@ namespace Game
         }
 
         /// <summary>
-        /// Returns a list of fixtures and their shapes with regions inside portals clipped away.  This excludes portal fixtures.
+        /// Returns a list of fixtures and their shapes with regions inside portals clipped away.  
+        /// This excludes portal fixtures and the shapes are in world coordinates.
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>

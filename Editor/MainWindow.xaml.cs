@@ -394,6 +394,7 @@ namespace EditorWindow
                 } while (File.Exists(tempFile));
 
                 Scene scene = LevelExport.Export(ControllerEditor.Level, ControllerEditor.InputExt);
+                Game.Portals.PortalCommon.UpdateWorldTransform(scene);
                 Game.Serializer serializer = new Game.Serializer();
                 serializer.Serialize(scene, tempFile);
 

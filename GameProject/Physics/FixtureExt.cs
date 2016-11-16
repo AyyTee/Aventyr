@@ -50,7 +50,7 @@ namespace Game
                 return fixtureCoord;
             }
 
-            List<Vector2> fixtureContour = ActorExt.GetFixtureContour(actor);
+            List<Vector2> fixtureContour = Actor.GetFixtureContour(actor);
 
             LineF edge = PolygonExt.GetEdge(fixtureContour, coord);
             Debug.Assert(
