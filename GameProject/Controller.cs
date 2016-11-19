@@ -32,10 +32,10 @@ namespace Game
 
         public static List<int> textureGarbage = new List<int>();
 
-        public static string fontFolder = Path.Combine(new string[2] { "assets", "fonts" });
-        public static string shaderFolder = Path.Combine(new string[2] { "assets", "shaders" });
-        public static string textureFolder = Path.Combine(new string[2] { "assets", "textures" });
-        public static string soundFolder = Path.Combine(new string[2] { "assets", "sounds" });
+        public static string fontFolder { get; private set; } = Path.Combine(new string[2] { "assets", "fonts" });
+        public static string shaderFolder { get; private set; } = Path.Combine(new string[2] { "assets", "shaders" });
+        public static string textureFolder { get; private set; } = Path.Combine(new string[2] { "assets", "textures" });
+        public static string soundFolder { get; private set; } = Path.Combine(new string[2] { "assets", "sounds" });
 
         /// <summary>
         /// Records time elapsed since the program start.
@@ -46,74 +46,83 @@ namespace Game
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
         float TimeRenderDelta = 0.0f;
-        public Renderer renderer;
-        public FontRenderer FontRenderer;
+        public Renderer Renderer { get; private set; }
+        public FontRenderer FontRenderer { get; private set; }
         public Font Default;
         public bool SoundEnabled { get; private set; }
+        public readonly bool IsHeadless;
 
-        public Controller(Window window, string[] args)
+        public Controller()
+        {
+            IsHeadless = true;
+        }
+
+        public Controller(Window window)
             : this(window.ClientSize, window.InputExt)
         {
-            programArgs = args;
-            Debug.Assert(programArgs.Length <= 1);
         }
 
         public Controller(Size canvasSize, InputExt input)
         {
             CanvasSize = canvasSize;
             InputExt = input;
+            IsHeadless = false;
         }
 
         public virtual void OnLoad(EventArgs e)
         {
             _time.Start();
 
-            renderer = new Renderer(CanvasSize);
-
-            SoundEnabled = false;
-            if (SoundEnabled)
+            if (!IsHeadless)
             {
-                SoundSystem = new SoundSystem();
-                SoundSystem.Initialize();
-                SoundSystem.Start();
+                Renderer = new Renderer(CanvasSize);
+
+                // Load textures from file
+                Renderer.Textures.Add("default.png", new TextureFile(Path.Combine(textureFolder, "default.png")));
+                Renderer.Textures.Add("grid.png", new TextureFile(Path.Combine(textureFolder, "grid.png")));
+                Renderer.Textures.Add("lineBlur.png", new TextureFile(Path.Combine(textureFolder, "lineBlur.png")));
+
+                //Create the default font
+                System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
+                privateFonts.AddFontFile(Path.Combine(fontFolder, "times.ttf"));
+                Default = new Font(privateFonts.Families[0], 14);
+                FontRenderer = new FontRenderer(Default);
+
+                // Load shaders from file
+                Renderer.Shaders.Add("uber", new Shader(
+                    Path.Combine(shaderFolder, "vs_uber.glsl"),
+                    Path.Combine(shaderFolder, "fs_uber.glsl"),
+                    true));
+
+                SoundEnabled = false;
+                if (SoundEnabled)
+                {
+                    SoundSystem = new SoundSystem();
+                    SoundSystem.Initialize();
+                    SoundSystem.Start();
+                }
             }
+            
 
-            // Load textures from file
-            renderer.Textures.Add("default.png", new TextureFile(Path.Combine(textureFolder, "default.png")));
-            renderer.Textures.Add("grid.png", new TextureFile(Path.Combine(textureFolder, "grid.png")));
-            renderer.Textures.Add("lineBlur.png", new TextureFile(Path.Combine(textureFolder, "lineBlur.png")));
-
-            //Create the default font
-            System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
-            privateFonts.AddFontFile(Path.Combine(fontFolder, "times.ttf"));
-            Default = new Font(privateFonts.Families[0], 14);
-            FontRenderer = new FontRenderer(Default);
-
-            // Load shaders from file
-            renderer.Shaders.Add("uber", new ShaderProgram(
-                Path.Combine(shaderFolder, "vs_uber.glsl"),
-                Path.Combine(shaderFolder, "fs_uber.glsl"),
-                true));
-
-            if (programArgs.Length == 1)
+            /*if (programArgs.Length == 1)
             {
                 Serializer serializer = new Serializer();
                 Scene scene = serializer.Deserialize(programArgs[0]);
                 scene.SetActiveCamera(new Camera2(scene, new Transform2(new Vector2(), 10), CanvasSize.Width / (float)CanvasSize.Height));
-                renderer.AddLayer(scene);
+                Renderer.AddLayer(scene);
                 Portals.PortalCommon.UpdateWorldTransform(scene);
                 if (programArgs[0].StartsWith(tempLevelPrefix))
                 {
                     File.Delete(programArgs[0]);
                 }
-            }
+            }*/
         }
 
         public virtual void OnRenderFrame(FrameEventArgs e)
         {
             RenderCount++;
             TimeRenderDelta += (float)e.Time;
-            renderer.Render();
+            Renderer.Render();
         }
 
         public virtual void OnUpdateFrame(FrameEventArgs e)
@@ -146,6 +155,7 @@ namespace Game
             if (canvasSize.Width > 0 && canvasSize.Height > 0)
             {
                 CanvasSize = canvasSize;
+                Renderer.SetCanvasSize(CanvasSize);
             }
         }
     }

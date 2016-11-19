@@ -31,14 +31,12 @@ namespace Game
         public int StencilMask { get { return StencilMaxValue - 1; } }
         /// <summary>Flag for preventing rendering occuring.  Intended for benchmarking purposes.</summary>
         public bool RenderEnabled { get; set; } = true;
-        ShaderProgram _activeShader;
+        Shader _activeShader;
         Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
         public Size CanvasSize { get; private set; }
 
-
         public Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
-        public Dictionary<string, ShaderProgram> Shaders = new Dictionary<string, ShaderProgram>();
-        public bool IsInitialized { get; private set; }
+        public Dictionary<string, Shader> Shaders = new Dictionary<string, Shader>();
 
         private int IboElements;
 
@@ -58,7 +56,6 @@ namespace Game
             GL.PointSize(15f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Enable(EnableCap.ScissorTest);
-            IsInitialized = true;
             StencilBits = GL.GetInteger(GetPName.StencilBits);
             Debug.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
 
@@ -74,6 +71,11 @@ namespace Game
             return null;
         }
 
+        public void SetCanvasSize(Size canvasSize)
+        {
+            CanvasSize = canvasSize;
+        }
+
         public void AddLayer(IRenderLayer layer)
         {
             _layers.Add(layer);
@@ -86,7 +88,7 @@ namespace Game
             return _layers.Remove(layer);
         }
 
-        private void SetShader(ShaderProgram shader)
+        private void SetShader(Shader shader)
         {
             if (shader != _activeShader)
             {

@@ -62,6 +62,11 @@ namespace Game
             _mousePos = new Vector2(e.X, e.Y);
         }
 
+        public Vector2 GetMouseWorldPos(ICamera2 camera, Vector2 canvasSize)
+        {
+            return CameraExt.ScreenToWorld(camera, MousePos, canvasSize);
+        }
+
         public void Update(bool hasFocus)
         {
             Focus = hasFocus;

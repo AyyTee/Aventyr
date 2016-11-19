@@ -87,20 +87,20 @@ namespace Game
             return Vector3.Transform(new Vector3(1, 0, 0), m);
         }
 
-        public Vector2 WorldToScreen(Vector2 worldCoord)
+        public Vector2 WorldToScreen(Vector2 worldCoord, Vector2 canvasSize)
         {
-            return Vector2Ext.Transform(worldCoord, GetWorldToScreenMatrix());
+            return Vector2Ext.Transform(worldCoord, GetWorldToScreenMatrix(canvasSize));
         }
 
-        public Vector2 ScreenToWorld(Vector2 screenCoord)
+        public Vector2 ScreenToWorld(Vector2 screenCoord, Vector2 canvasSize)
         {
-            return Vector2Ext.Transform(screenCoord, GetWorldToScreenMatrix().Inverted());
+            return Vector2Ext.Transform(screenCoord, GetWorldToScreenMatrix(canvasSize).Inverted());
         }
 
-        private Matrix4 GetWorldToScreenMatrix()
+        private Matrix4 GetWorldToScreenMatrix(Vector2 canvasSize)
         {
             Debug.Assert(Orthographic, "Only ortho projection is allowed for now.");
-            Matrix4 scale = Matrix4.CreateScale((float)(Controller.CanvasSize.Width / 2), -(float)(Controller.CanvasSize.Height / 2), 1);
+            Matrix4 scale = Matrix4.CreateScale((float)(canvasSize.X / 2), -(float)(canvasSize.Y / 2), 1);
             Matrix4 translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
             return GetViewMatrix() * translation * scale;
         }

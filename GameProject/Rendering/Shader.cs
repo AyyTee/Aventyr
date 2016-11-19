@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Game
 {
-    public class ShaderProgram
+    public class Shader
     {
         public int ProgramID = -1;
         public int VShaderID = -1;
@@ -20,7 +20,7 @@ namespace Game
         public Dictionary<string, UniformInfo> Uniforms = new Dictionary<string, UniformInfo>();
         public Dictionary<string, uint> Buffers = new Dictionary<string, uint>();
 
-        public ShaderProgram()
+        public Shader()
         {
             ProgramID = GL.CreateProgram();
         }
@@ -31,8 +31,7 @@ namespace Game
             GL.ShaderSource(address, code);
             GL.CompileShader(address);
             GL.AttachShader(ProgramID, address);
-            Console.WriteLine(type.ToString());
-            Console.WriteLine(GL.GetShaderInfoLog(address));
+            //Console.WriteLine(GL.GetShaderInfoLog(address));
         }
 
         public void LoadShaderFromString(string code, ShaderType type)
@@ -179,7 +178,7 @@ namespace Game
             }
         }
 
-        public ShaderProgram(string vshader, string fshader, bool fromFile = false)
+        public Shader(string vshader, string fshader, bool fromFile = false)
         {
             ProgramID = GL.CreateProgram();
 
@@ -198,7 +197,7 @@ namespace Game
             GenBuffers();
         }
 
-        public ShaderProgram(string vshader, string gshader, string fshader, bool fromFile = false)
+        public Shader(string vshader, string gshader, string fshader, bool fromFile = false)
         {
             ProgramID = GL.CreateProgram();
 

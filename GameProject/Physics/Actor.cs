@@ -185,6 +185,11 @@ namespace Game
             Body.ApplyForce(Vector2Ext.ToXna(force), Vector2Ext.ToXna(point));
         }
 
+        public void ApplyTorque(float torque)
+        {
+            Body.ApplyTorque(torque);
+        }
+
         public void ApplyGravity(Vector2 force)
         {
             var bodyTree = Tree<BodyData>.GetAll(BodyExt.GetData(Body));

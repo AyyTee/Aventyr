@@ -12,13 +12,13 @@ namespace Game
     public class Player : IStep, ISceneObject
     {
         public Actor Actor { get; private set; }
-        public InputExt Input;
+        public Controller Controller;
         public Camera2 Camera;
         public bool FollowPlayer = true;
 
-        public Player(InputExt input)
+        public Player(Controller controller)
         {
-            Input = input;
+            Controller = controller;
         }
 
         public void SetActor(Actor actor)
@@ -41,7 +41,7 @@ namespace Game
 
         public void StepBegin(IScene scene, float stepSize)
         {
-            if (Input != null)
+            if (Controller.InputExt != null)
             {
                 if (FollowPlayer)
                 {
@@ -59,7 +59,7 @@ namespace Game
 
                     if (Camera != null)
                     {
-                        Camera.ViewOffset = CameraExt.ScreenToClip(Camera, Input.MousePos) * 0.8f;
+                        Camera.ViewOffset = CameraExt.ScreenToClip(Camera, Controller.InputExt.MousePos, Vector2Ext.ToOtk(Controller.CanvasSize)) * 0.8f;
                     }
                 }
                 else
@@ -71,12 +71,12 @@ namespace Game
 
         public bool KeyLeftDown()
         {
-            return Input.KeyDown(Key.Left) || Input.KeyDown(Key.A); 
+            return Controller.InputExt.KeyDown(Key.Left) || Controller.InputExt.KeyDown(Key.A); 
         }
 
         public bool KeyRightDown()
         {
-            return Input.KeyDown(Key.Right) || Input.KeyDown(Key.D);
+            return Controller.InputExt.KeyDown(Key.Right) || Controller.InputExt.KeyDown(Key.D);
         }
 
         public void StepEnd(IScene scene, float stepSize)

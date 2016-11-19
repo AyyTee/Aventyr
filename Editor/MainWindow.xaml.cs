@@ -251,7 +251,7 @@ namespace EditorWindow
                 (Keyboard.IsKeyDown(Key.LeftCtrl) ||
                 Keyboard.IsKeyDown(Key.RightCtrl)))
             {
-                SetPortalRendering(!ControllerEditor.renderer.PortalRenderEnabled);
+                SetPortalRendering(!ControllerEditor.Renderer.PortalRenderEnabled);
             }
         }
 
@@ -268,7 +268,7 @@ namespace EditorWindow
             toolPortalsVisible.IsChecked = visible;
             ControllerEditor.AddAction(() =>
             {
-                ControllerEditor.renderer.PortalRenderEnabled = visible;
+                ControllerEditor.Renderer.PortalRenderEnabled = visible;
             });
         }
 
@@ -380,7 +380,7 @@ namespace EditorWindow
         {
             ControllerEditor.AddAction(() => 
             {
-                ControllerEditor.renderer.PortalRenderMax = (int)e.NewValue;
+                ControllerEditor.Renderer.PortalRenderMax = (int)e.NewValue;
             });
         }
 
@@ -393,7 +393,7 @@ namespace EditorWindow
                     tempFile = Controller.tempLevelPrefix + GenerateRandomString(8) + ".xml";
                 } while (File.Exists(tempFile));
 
-                Scene scene = LevelExport.Export(ControllerEditor.Level, ControllerEditor.InputExt);
+                Scene scene = LevelExport.Export(ControllerEditor.Level, ControllerEditor);
                 Game.Portals.PortalCommon.UpdateWorldTransform(scene);
                 Game.Serializer serializer = new Game.Serializer();
                 serializer.Serialize(scene, tempFile);

@@ -8,7 +8,7 @@ namespace Game
         {
             using (Window Window = new Window())
             {
-                Window.controller = new Controller(Window, args);
+                Window.controller = new Controller(Window);
                 Window.Run(Controller.StepsPerSecond, Controller.DrawsPerSecond);
             }
         }

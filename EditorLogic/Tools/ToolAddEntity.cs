@@ -36,7 +36,7 @@ namespace EditorLogic
             {
                 EditorEntity editorEntity = new EditorEntity(Controller.Level);
                 Model m = Game.ModelFactory.CreateCube();
-                m.SetTexture(Controller.renderer.Textures["default.png"]);
+                m.SetTexture(Controller.Renderer.Textures["default.png"]);
                 editorEntity.AddModel(m);
                 editorEntity.Name = "Editor Entity";
                 
@@ -58,7 +58,7 @@ namespace EditorLogic
             base.Enable();
             _mouseFollow = new Doodad(Controller.Level);
             _mouseFollow.Models.Add(Game.ModelFactory.CreateCube());
-            _mouseFollow.Models[0].SetTexture(Controller.renderer.Textures["default.png"]);
+            _mouseFollow.Models[0].SetTexture(Controller.Renderer.Textures["default.png"]);
             _mouseFollow.IsPortalable = true;
         }
 

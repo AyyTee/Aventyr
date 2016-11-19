@@ -90,12 +90,12 @@ namespace EditorLogic
         {
             //SceneStop();
             SetTool(null);
-            renderer.RemoveLayer(Hud);
-            renderer.RemoveLayer(Level);
+            Renderer.RemoveLayer(Hud);
+            Renderer.RemoveLayer(Level);
             Hud = new Scene();
-            Level = new EditorScene(renderer);
-            renderer.AddLayer(Level);
-            renderer.AddLayer(Hud);
+            Level = new EditorScene(Renderer);
+            Renderer.AddLayer(Level);
+            Renderer.AddLayer(Hud);
 
             selection = new Selection(Level);
             StateList = new StateList();
@@ -117,8 +117,8 @@ namespace EditorLogic
             EditorScene load = Serializer.Deserialize(filepath);
             load.ActiveCamera.Controller = this;
             load.ActiveCamera.InputExt = InputExt;
-            renderer.AddLayer(load);
-            renderer.RemoveLayer(Level);
+            Renderer.AddLayer(load);
+            Renderer.RemoveLayer(Level);
             Level = load;
             selection = new Selection(Level);
 
@@ -179,7 +179,7 @@ namespace EditorLogic
             {
                 return Vector2.Zero;
             }
-            if (!renderer.PortalRenderEnabled)
+            if (!Renderer.PortalRenderEnabled)
             {
                 return GetMouseWorld();
             }
@@ -335,10 +335,10 @@ namespace EditorLogic
         {
             if (ActiveLevel == null)
             {
-                ActiveLevel = LevelExport.Export(Level, InputExt);
-                renderer.AddLayer(ActiveLevel);
-                renderer.RemoveLayer(Level);
-                renderer.RemoveLayer(Hud);
+                ActiveLevel = LevelExport.Export(Level, this);
+                Renderer.AddLayer(ActiveLevel);
+                Renderer.RemoveLayer(Level);
+                Renderer.RemoveLayer(Hud);
             }
             _stepsPending = 0;
             IsPaused = false;
@@ -355,9 +355,9 @@ namespace EditorLogic
         {
             if (ActiveLevel != null)
             {
-                renderer.RemoveLayer(ActiveLevel);
-                renderer.AddLayer(Level);
-                renderer.AddLayer(Hud);
+                Renderer.RemoveLayer(ActiveLevel);
+                Renderer.AddLayer(Level);
+                Renderer.AddLayer(Hud);
             }
 
             ActiveLevel = null;

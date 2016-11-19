@@ -232,7 +232,7 @@ namespace EditorLogic
 
         public void StepEnd(IScene scene, float stepSize)
         {
-            if (Controller.renderer.PortalRenderEnabled)
+            if (Controller.Renderer.PortalRenderEnabled)
             {
                 Ray.Settings settings = new Ray.Settings();
                 //settings.IgnorePortalVelocity = true;

@@ -216,7 +216,7 @@
     <Compile Include="Portals\FixturePortal.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rendering\ShaderProgram.cs" />
+    <Compile Include="Rendering\Shader.cs" />
     <Compile Include="Rendering\Models\Model.cs" />
     <Compile Include="Common\Transform2.cs" />
     <Compile Include="Animation\BezierCurve.cs" />

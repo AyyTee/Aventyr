@@ -17,7 +17,7 @@ namespace EditorLogic
         /// <summary>
         /// Creates a Scene from an EditorScene.  Scene is intended for gameplay use.
         /// </summary>
-        public static Scene Export(EditorScene level, InputExt input)
+        public static Scene Export(EditorScene level, Controller controller)
         {
             Scene scene = new Scene();
             /*if (level.GetAll().OfType<EditorPlayer>().Count() > 0)
@@ -166,7 +166,7 @@ namespace EditorLogic
                 else if (e is EditorPlayer)
                 {
                     EditorPlayer cast = (EditorPlayer)e;
-                    Player player = new Player(input);
+                    Player player = new Player(controller);
                     Vector2[] polygon = PolygonFactory.CreateNGon(6, 0.5f, new Vector2());
                     Actor actor = new Actor(scene, polygon);
                     player.SetActor(actor);
