@@ -43,10 +43,12 @@ namespace TankGame
                 if (Input.MoveFoward)
                 {
                     velocity.Position += up * accel;
+                    //velocity.Position = up;
                 }
                 else
                 {
                     velocity.Position -= up * accel;
+                    //velocity.Position = -up;
                 }
             }
 

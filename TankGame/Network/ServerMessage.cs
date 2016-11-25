@@ -15,7 +15,5 @@ namespace TankGame.Network
     {
         [DataMember]
         public TankData[] TankData;
-        [DataMember]
-        public long ClientId;
     }
 }

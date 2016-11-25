@@ -21,9 +21,12 @@ namespace TankGameTestFramework
             server.Name = "Server";
             server.Start();
 
-            int clientCount = 1;
+            
+
+            int clientCount = 2;
             for (int i = 0; i < clientCount; i++)
             {
+                Thread.Sleep(1000);
                 int clientPort = serverPort + 1 + i;
                 Thread client = new Thread(new ThreadStart(() =>
                 {

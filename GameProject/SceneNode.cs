@@ -127,7 +127,6 @@ namespace Game
             
             Debug.Assert(Scene.SceneNodes.FindAll(item => item == this).Count <= 1);
             Debug.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
-            PortalCommon.ResetWorldTransform(this);
         }
 
         public void RemoveChildren()
@@ -161,7 +160,7 @@ namespace Game
         /// <param name="transform"></param>
         public virtual void SetTransform(Transform2 transform)
         {
-            PortalCommon.ResetWorldTransform(this);
+            
         }
 
         public virtual void SetVelocity(Transform2 transform)

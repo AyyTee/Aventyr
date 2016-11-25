@@ -123,7 +123,6 @@ namespace EditorLogic
 
         public void SetTransform(Transform2 transform)
         {
-            PortalCommon.ResetWorldTransform(this);
             Transform = transform.ShallowClone();
         }
 

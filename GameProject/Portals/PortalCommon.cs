@@ -10,14 +10,6 @@ namespace Game.Portals
 {
     public static class PortalCommon
     {
-        public static void ResetWorldTransform(IPortalCommon instance)
-        {
-            /*foreach (IPortalCommon p in Tree<IPortalCommon>.GetDescendents(instance))
-            {
-                p.WorldTransformPrevious = null;
-            }
-            _resetWorldTransform(instance);*/
-        }
 
         public static void UpdateWorldTransform(IScene scene, bool onlyNullTransforms = false, bool onlyVelocity = false)
         {

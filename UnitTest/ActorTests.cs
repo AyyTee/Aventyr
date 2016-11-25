@@ -55,6 +55,11 @@ namespace UnitTest
             }
         }
 
+        [TestMethod]
+        public void SetTransformTest2()
+        {
+        }
+
         /// <summary>
         /// If local vertices are interior then the world verticies should also be interior even when the actor is mirrored.
         /// </summary>

@@ -130,8 +130,6 @@ namespace Game.Portals
             {
                 b.Awake = true;
             }
-
-            PortalCommon.ResetWorldTransform(this);
         }
 
         public void SetPosition(IWall wall, IPolygonCoord position, float size, bool mirrorX)
@@ -144,13 +142,11 @@ namespace Game.Portals
         public void SetMirrorX(bool mirrorX)
         {
             MirrorX = mirrorX;
-            PortalCommon.ResetWorldTransform(this);
         }
 
         public void SetSize(float size)
         {
             Size = size;
-            PortalCommon.ResetWorldTransform(this);
         }
     }
 }

@@ -10,10 +10,11 @@ namespace TankGame.Network
     [DataContract]
     public abstract class Message
     {
-        /// <summary>
-        /// Used to keep track of message order.  Newer messages have larger ids than older messages.
-        /// </summary>
         [DataMember]
         public int MessageId;
+        [DataMember]
+        public int StepCount;
+        [DataMember]
+        public double LocalSendTime;
     }
 }

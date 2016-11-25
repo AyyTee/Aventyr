@@ -284,12 +284,12 @@ namespace Game
             Transform2 actorTransform = actor.WorldTransform;
             actorTransform.SetScale(Vector2.One);
 
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+            /*foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
             {
                 Transform2 bodyTransform = UndoPortalTransform(data, BodyExt.GetTransform(data.Body));
                 bodyTransform.SetScale(Vector2.One);
                 Debug.Assert(bodyTransform.AlmostEqual(actorTransform, 0.01f, 0.01f));
-            }
+            }*/
         }
 
         private static Transform2 UndoPortalTransform(BodyData data, Transform2 transform)
