@@ -37,8 +37,8 @@
       <HintPath>..\packages\Cgen.Audio.0.8.5.0\lib\net20\Cgen.Audio.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Lidgren.Network, Version=2012.1.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\LidgrenIdHere.3.0.0\lib\Lidgren.Network.dll</HintPath>
+    <Reference Include="clipper_library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\clipper_library.6.2.1\lib\net40\clipper_library.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
@@ -65,8 +65,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bullet.cs" />
     <Compile Include="Network\INetController.cs" />
     <Compile Include="Network\Client.cs" />
+    <Compile Include="Network\IServer.cs" />
     <Compile Include="Network\NetworkHelper.cs" />
     <Compile Include="Network\ClientMessage.cs" />
     <Compile Include="Controller.cs" />
@@ -80,11 +82,12 @@
     <Compile Include="TankAction.cs" />
     <Compile Include="Network\TankData.cs" />
     <Compile Include="TankCamera.cs" />
+    <Compile Include="Wall.cs" />
+    <Compile Include="Network\WallAdded.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FarseerPhysics\Farseer Physics.csproj">
@@ -95,9 +98,10 @@
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
       <Name>Game</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="LICENSE.txt" />
+    <ProjectReference Include="..\Lidgren.Network\Lidgren.Network.csproj">
+      <Project>{49ba1c69-6104-41ac-a5d8-b54fa9f696e8}</Project>
+      <Name>Lidgren.Network</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

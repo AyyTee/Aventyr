@@ -139,9 +139,11 @@
     <Compile Include="Common\IAlmostEqual.cs" />
     <Compile Include="Common\Line.cs" />
     <Compile Include="Common\Transform2d.cs" />
+    <Compile Include="IController.cs" />
     <Compile Include="IGetTransform.cs" />
     <Compile Include="IGetTransformVelocity.cs" />
     <Compile Include="IGetVelocity.cs" />
+    <Compile Include="IInput.cs" />
     <Compile Include="ITime.cs" />
     <Compile Include="Keyframe.cs" />
     <Compile Include="Keyframe2.cs" />

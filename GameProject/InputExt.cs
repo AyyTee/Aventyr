@@ -9,7 +9,7 @@ using OpenTK;
 
 namespace Game
 {
-    public class InputExt
+    public class InputExt : IInput
     {
         KeyboardState KeyCurrent, KeyPrevious;
         MouseState MouseCurrent, MousePrevious;

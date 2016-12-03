@@ -41,7 +41,7 @@ namespace EditorLogic
         public List<IPortalCommon> Children { get { return new List<IPortalCommon>(); } }
 
         public ControllerEditor Controller { get; set; }
-        public InputExt InputExt { get; set; }
+        public IInput InputExt { get; set; }
         [DataMember]
         public float ZoomMin = 0.5f;
         [DataMember]
@@ -91,7 +91,7 @@ namespace EditorLogic
         public float ZNear { get { return -1000f; } }
         public float ZFar { get { return 1000f; } }
 
-        public ControllerCamera(ControllerEditor controller, InputExt inputExt, IScene scene)
+        public ControllerCamera(ControllerEditor controller, IInput inputExt, IScene scene)
         {
             IsPortalable = true;
             Scene = scene;

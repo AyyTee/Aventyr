@@ -41,7 +41,7 @@ namespace Game
 
         public void StepBegin(IScene scene, float stepSize)
         {
-            if (Controller.InputExt != null)
+            if (Controller.Input != null)
             {
                 if (FollowPlayer)
                 {
@@ -59,7 +59,7 @@ namespace Game
 
                     if (Camera != null)
                     {
-                        Camera.ViewOffset = CameraExt.ScreenToClip(Camera, Controller.InputExt.MousePos, Vector2Ext.ToOtk(Controller.CanvasSize)) * 0.8f;
+                        Camera.ViewOffset = CameraExt.ScreenToClip(Camera, Controller.Input.MousePos, Vector2Ext.ToOtk(Controller.CanvasSize)) * 0.8f;
                     }
                 }
                 else
@@ -71,12 +71,12 @@ namespace Game
 
         public bool KeyLeftDown()
         {
-            return Controller.InputExt.KeyDown(Key.Left) || Controller.InputExt.KeyDown(Key.A); 
+            return Controller.Input.KeyDown(Key.Left) || Controller.Input.KeyDown(Key.A); 
         }
 
         public bool KeyRightDown()
         {
-            return Controller.InputExt.KeyDown(Key.Right) || Controller.InputExt.KeyDown(Key.D);
+            return Controller.Input.KeyDown(Key.Right) || Controller.Input.KeyDown(Key.D);
         }
 
         public void StepEnd(IScene scene, float stepSize)

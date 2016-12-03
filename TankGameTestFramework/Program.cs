@@ -23,7 +23,7 @@ namespace TankGameTestFramework
 
             
 
-            int clientCount = 2;
+            int clientCount = 1;
             for (int i = 0; i < clientCount; i++)
             {
                 Thread.Sleep(1000);

@@ -13,16 +13,16 @@ using System.Diagnostics;
 
 namespace Game
 {
-    public class Controller : ITime
+    public class Controller : ITime, IController
     {
-        public InputExt InputExt;
+        public IInput Input { get; private set; }
         /// <summary>
         /// Keep pointless messages from the Poly2Tri library out of the console window.
         /// </summary>
         public static StreamWriter TrashLog = new StreamWriter(Stream.Null);
         public const int MICROSECONDS_IN_SECOND = 1000000;
         public float TimeFixedStep = 0.0f;
-        public Size CanvasSize;
+        public Size CanvasSize { get; set; }
         public const int StepsPerSecond = 60;
         public const int DrawsPerSecond = 60;
         public const string tempLevelPrefix = "temp_level_";
@@ -65,7 +65,7 @@ namespace Game
         public Controller(Size canvasSize, InputExt input)
         {
             CanvasSize = canvasSize;
-            InputExt = input;
+            Input = input;
             IsHeadless = false;
         }
 

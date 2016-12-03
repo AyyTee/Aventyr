@@ -23,6 +23,14 @@ namespace Game
             return v0.X * v1.Y - v0.Y * v1.X;
         }
 
+        public static Vector2 LengthDir(double length, double direction)
+        {
+            return new Vector2(
+                (float)(Math.Cos(direction) * length), 
+                (float)(Math.Sin(direction) * length)
+                );
+        }
+
         public static Vector2[] Scale(Vector2[] vectors, float scalar)
         {
             Debug.Assert(vectors != null);

@@ -33,7 +33,7 @@ namespace Game
         /// </summary>
         public bool InWorldStep { get; private set; }
         [DataMember]
-        public double Time { get; private set; }
+        public double Time { get; set; }
         [DataMember]
         public Vector2 Gravity { get; set; } = new Vector2(0, -4.9f);
 

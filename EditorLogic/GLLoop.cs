@@ -99,7 +99,7 @@ namespace EditorLogic
                         _loopControl.OnResize(new EventArgs(), _control.ClientSize);
                         _resize = false;
                     }
-                    _loopControl.InputExt.Update(_focused);
+                    _loopControl.Input.Update(_focused);
                     _loopControl.OnUpdateFrame(new FrameEventArgs());
                     _loopControl.OnRenderFrame(new FrameEventArgs());
 

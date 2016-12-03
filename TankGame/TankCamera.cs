@@ -11,9 +11,9 @@ namespace TankGame
     {
         public Camera2 Camera { get; private set; }
         public Tank Tank { get; private set; }
-        public Controller Controller { get; private set; }
+        public IController Controller { get; private set; }
 
-        public TankCamera(Camera2 camera, Tank tank, Controller controller)
+        public TankCamera(Camera2 camera, Tank tank, IController controller)
         {
             Camera = camera;
             SetTank(tank);
@@ -33,8 +33,8 @@ namespace TankGame
         {
             if (Tank != null)
             {
-                Camera.ViewOffset = CameraExt.ScreenToClip(Camera, Controller.InputExt.MousePos, Vector2Ext.ToOtk(Controller.CanvasSize)) * 0.4f;
-                Transform2 t = new Transform2(Tank.Actor.WorldTransform.Position, Camera.WorldTransform.Size, Camera.WorldTransform.Rotation, Camera.WorldTransform.MirrorX);
+                //Camera.ViewOffset = CameraExt.ScreenToClip(Camera, Controller.InputExt.MousePos, Vector2Ext.ToOtk(Controller.CanvasSize)) * 0.4f;
+                Transform2 t = new Transform2(Tank.Actor.WorldTransform.Position, Camera.WorldTransform.Size, Camera.WorldTransform.Rotation,  Camera.WorldTransform.MirrorX);
                 Camera.WorldTransform = t;
             }
             else

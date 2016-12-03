@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -15,5 +16,9 @@ namespace TankGame.Network
     {
         [DataMember]
         public TankData[] TankData;
+        [DataMember]
+        public double SceneTime;
+        [DataMember]
+        public WallAdded[] WallsAdded;
     }
 }

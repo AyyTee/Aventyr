@@ -23,7 +23,7 @@ namespace TankGame.Network
             NetPeerConfiguration config = new NetPeerConfiguration("Portal Tank Game");
             config.ConnectionTimeout = 10000;
             config.SimulatedMinimumLatency = 0.1f;
-            config.SimulatedRandomLatency = 0.05f;
+            config.SimulatedRandomLatency = 0.02f;
             config.SimulatedDuplicatesChance = 0.005f;
             config.SimulatedLoss = 0.005f;
             //Prevent sent and recieved messages from overwriting eachother in the buffer.

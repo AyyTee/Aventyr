@@ -26,7 +26,7 @@ namespace TankGame.Network
         public bool IsConnected { get { return _client.ServerConnection != null; } }
         Queue<InputTime> _inputQueue = new Queue<InputTime>();
         Scene _scene;
-        Controller _controller;
+        IController _controller;
         Renderer _renderer;
         public string Name { get { return "Client"; } }
         double _lastTimestamp;
@@ -75,11 +75,6 @@ namespace TankGame.Network
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
             entity2.ModelList[0].SetTexture(_renderer?.Textures["default.png"]);
 
-            /*Actor actor = new Actor(_scene, PolygonFactory.CreateRectangle(0.8f, 1));
-            Entity entity = new Entity(_scene);
-            entity.SetParent(actor);
-            entity.AddModel(ModelFactory.CreateCube(new Vector3(0.8f, 1, 1)));*/
-
             PortalCommon.UpdateWorldTransform(_scene);
             _renderer?.AddLayer(_scene);
         }
@@ -91,11 +86,14 @@ namespace TankGame.Network
             Tank tank = GetTank();
             TankInput input = new TankInput
             {
-                MoveFoward = _controller.InputExt.KeyDown(Key.W),
-                MoveBackward = _controller.InputExt.KeyDown(Key.S),
-                TurnLeft = _controller.InputExt.KeyDown(Key.A),
-                TurnRight = _controller.InputExt.KeyDown(Key.D),
-                ReticlePos = new Vector2(),
+                MoveFoward = _controller.Input.KeyDown(Key.W),
+                MoveBackward = _controller.Input.KeyDown(Key.S),
+                TurnLeft = _controller.Input.KeyDown(Key.A),
+                TurnRight = _controller.Input.KeyDown(Key.D),
+                ReticlePos = _controller.Input.GetMouseWorldPos(_tankCamera.Camera, Vector2Ext.ToOtk(_controller.CanvasSize)),
+                FireGun = _controller.Input.KeyPress(Key.Space),
+                FirePortal0 = _controller.Input.MousePress(MouseButton.Left),
+                FirePortal1 = _controller.Input.MousePress(MouseButton.Right),
             };
             
             if (IsConnected)
@@ -109,18 +107,13 @@ namespace TankGame.Network
                 SendMessage(new ClientMessage { Input = input });
             }
 
-            /*if (IsConnected)
-                Console.Out.WriteLine(_client.ServerConnection.AverageRoundtripTime + " " + (NetTime.Now - _client.ServerConnection.GetRemoteTime(NetTime.Now)));
-                */
             if (_sceneUpdated)
             {
                 while (_inputQueue.Count > 0 && _client.ServerConnection.GetRemoteTime(_inputQueue.Peek().Timestamp) < _lastTimestamp - _client.ServerConnection.AverageRoundtripTime/2)
                 {
                     _inputQueue.Dequeue();
                 }
-                //Debug.Assert(_inputQueue.Count < 20);
                 var inputArray = _inputQueue.ToArray();
-                //Console.WriteLine(_inputQueue.Count);
                 for (int i = 0; i < inputArray.Length; i++)
                 {
                     tank?.SetInput(inputArray[i].Input);
@@ -169,44 +162,62 @@ namespace TankGame.Network
                         Console.WriteLine(Name + "Status Changed: " + Encoding.Default.GetString(msg.Data));
                         break;
                     case NetIncomingMessageType.Data:
-                        ServerMessage data = NetworkHelper.ReadMessage<ServerMessage>(msg);
-                        if (data.LocalSendTime <= _lastTimestamp)
-                        {
-                            continue;
-                        }
-                        _lastTimestamp = data.LocalSendTime;
-
-                        foreach (TankData tankData in data.TankData)
-                        {
-                            Tank tank;
-                            Tanks.TryGetValue(tankData.ClientId, out tank);
-
-                            if (tank == null)
-                            {
-                                tank = tank ?? new Tank(_scene);
-                                Tanks.Add(tankData.ClientId, tank);
-
-                                if (tankData.ClientId == RemoteId)
-                                {
-                                    _tankCamera.SetTank(tank);
-                                }
-                            }
-
-                            tank.Actor.SetTransform(tankData.Transform);
-                            tank.Actor.SetVelocity(tankData.Velocity);
-                            tank.Actor.WorldTransform = tankData.Transform;
-                            tank.Actor.WorldVelocity = tankData.Velocity;
-                            tank.Actor.Children[0].WorldTransform = tankData.Transform;
-                            tank.Actor.Children[0].WorldVelocity = tankData.Velocity;
-
-                            _sceneUpdated = true;
-                        }
+                        HandleData(msg);
                         break;
                     default:
                         Console.WriteLine(Name + "Unhandled type: " + msg.MessageType);
                         break;
                 }
                 _client.Recycle(msg);
+            }
+        }
+
+        private void HandleData(NetIncomingMessage msg)
+        {
+            ServerMessage data = NetworkHelper.ReadMessage<ServerMessage>(msg);
+            bool outOfDate = data.LocalSendTime <= _lastTimestamp;
+            if (!outOfDate)
+            {
+                _lastTimestamp = data.LocalSendTime;
+            }
+            
+
+            if (data.WallsAdded != null)
+            {
+                foreach (WallAdded added in data.WallsAdded)
+                {
+                    added.WallCreate(_scene);
+                }
+                PortalCommon.UpdateWorldTransform(_scene, true);
+            }
+
+
+            if (!outOfDate)
+            {
+                _scene.Time = data.SceneTime;
+                if (data.TankData != null)
+                {
+                    foreach (TankData tankData in data.TankData)
+                    {
+                        Tank tank;
+                        Tanks.TryGetValue(tankData.ClientId, out tank);
+
+                        if (tank == null)
+                        {
+                            tank = tank ?? new Tank(_scene);
+                            Tanks.Add(tankData.ClientId, tank);
+
+                            if (tankData.ClientId == RemoteId)
+                            {
+                                _tankCamera.SetTank(tank);
+                            }
+                        }
+
+                        tankData.UpdateTank(tank);
+
+                        _sceneUpdated = true;
+                    }
+                }
             }
         }
     }
