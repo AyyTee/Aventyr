@@ -10,7 +10,7 @@ using NetEndPoint = System.Net.IPEndPoint;
 namespace Lidgren.Network
 {
 	public partial class NetConnection
-	{
+    {
 		internal bool m_connectRequested;
 		internal bool m_disconnectRequested;
 		internal bool m_disconnectReqSendBye;
@@ -136,7 +136,7 @@ namespace Lidgren.Network
 			int preAllocate = 13 + m_peerConfiguration.AppIdentifier.Length;
 			preAllocate += (m_localHailMessage == null ? 0 : m_localHailMessage.LengthBytes);
 
-			NetOutgoingMessage om = m_peer.CreateMessage(preAllocate);
+			NetOutgoingMessage om = (NetOutgoingMessage)m_peer.CreateMessage(preAllocate);
 			om.m_messageType = NetMessageType.Connect;
 			om.Write(m_peerConfiguration.AppIdentifier);
 			om.Write(m_peer.m_uniqueIdentifier);
@@ -160,7 +160,7 @@ namespace Lidgren.Network
 			if (onLibraryThread)
 				m_peer.VerifyNetworkThread();
 
-			NetOutgoingMessage om = m_peer.CreateMessage(m_peerConfiguration.AppIdentifier.Length + 13 + (m_localHailMessage == null ? 0 : m_localHailMessage.LengthBytes));
+			NetOutgoingMessage om = (NetOutgoingMessage)m_peer.CreateMessage(m_peerConfiguration.AppIdentifier.Length + 13 + (m_localHailMessage == null ? 0 : m_localHailMessage.LengthBytes));
 			om.m_messageType = NetMessageType.ConnectResponse;
 			om.Write(m_peerConfiguration.AppIdentifier);
 			om.Write(m_peer.m_uniqueIdentifier);
@@ -187,7 +187,7 @@ namespace Lidgren.Network
 			if (onLibraryThread)
 				m_peer.VerifyNetworkThread();
 
-			NetOutgoingMessage om = m_peer.CreateMessage(reason);
+			NetOutgoingMessage om = (NetOutgoingMessage)m_peer.CreateMessage(reason);
 			om.m_messageType = NetMessageType.Disconnect;
 			Interlocked.Increment(ref om.m_recyclingCount);
 			if (onLibraryThread)
@@ -212,7 +212,7 @@ namespace Lidgren.Network
 
 		internal void SendConnectionEstablished()
 		{
-			NetOutgoingMessage om = m_peer.CreateMessage(4);
+			NetOutgoingMessage om = (NetOutgoingMessage)m_peer.CreateMessage(4);
 			om.m_messageType = NetMessageType.ConnectionEstablished;
 			om.Write((float)NetTime.Now);
 			m_peer.SendLibrary(om, m_remoteEndPoint);
@@ -244,7 +244,7 @@ namespace Lidgren.Network
 		/// Approves this connection; sending a connection response to the remote host
 		/// </summary>
 		/// <param name="localHail">The local hail message that will be set as RemoteHailMessage on the remote host</param>
-		public void Approve(NetOutgoingMessage localHail)
+		public void Approve(INetOutgoingMessage localHail)
 		{
 			if (m_status != NetConnectionStatus.RespondedAwaitingApproval)
 			{
@@ -252,7 +252,7 @@ namespace Lidgren.Network
 				return;
 			}
 
-			m_localHailMessage = localHail;
+			m_localHailMessage = (NetOutgoingMessage)localHail;
 			m_handshakeAttempts = 0;
 			SendConnectResponse(NetTime.Now, false);
 		}

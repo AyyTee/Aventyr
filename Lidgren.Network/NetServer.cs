@@ -22,12 +22,13 @@ namespace Lidgren.Network
 		/// </summary>
 		/// <param name="msg">The message to send</param>
 		/// <param name="method">How to deliver the message</param>
-		public void SendToAll(NetOutgoingMessage msg, NetDeliveryMethod method)
+		public void SendToAll(INetOutgoingMessage msg, NetDeliveryMethod method)
 		{
-			var all = this.Connections;
+            NetOutgoingMessage _msg = (NetOutgoingMessage)msg;
+            var all = this.Connections;
 			if (all.Count <= 0) {
-				if (msg.m_isSent == false)
-					Recycle(msg);
+				if (_msg.m_isSent == false)
+					Recycle(_msg);
 				return;
 			}
 
@@ -41,7 +42,7 @@ namespace Lidgren.Network
 		/// <param name="method">How to deliver the message</param>
 		/// <param name="except">Don't send to this particular connection</param>
 		/// <param name="sequenceChannel">Which sequence channel to use for the message</param>
-		public void SendToAll(NetOutgoingMessage msg, NetConnection except, NetDeliveryMethod method, int sequenceChannel)
+		public void SendToAll(NetOutgoingMessage msg, INetConnection except, NetDeliveryMethod method, int sequenceChannel)
 		{
 			var all = this.Connections;
 			if (all.Count <= 0) {
@@ -56,7 +57,7 @@ namespace Lidgren.Network
 				return;
 			}
 
-			List<NetConnection> recipients = new List<NetConnection>(all.Count - 1);
+			List<INetConnection> recipients = new List<INetConnection>(all.Count - 1);
 			foreach (var conn in all)
 				if (conn != except)
 					recipients.Add(conn);

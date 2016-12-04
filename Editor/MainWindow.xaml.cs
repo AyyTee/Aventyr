@@ -65,7 +65,7 @@ namespace EditorWindow
 
         public void GLControl_Load(object sender, EventArgs e)
         {
-            ControllerEditor = new ControllerEditor(glControl.ClientSize, new InputExt(glControl));
+            ControllerEditor = new ControllerEditor(glControl.ClientSize, new Input(glControl));
             ControllerEditor.ScenePlayEvent += ControllerEditor_ScenePlayed;
             ControllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;
             ControllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;

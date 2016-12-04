@@ -15,7 +15,7 @@ namespace Lidgren.Network
 		/// </summary>
 		public void DiscoverLocalPeers(int serverPort)
 		{
-			NetOutgoingMessage um = CreateMessage(0);
+			NetOutgoingMessage um = (NetOutgoingMessage)CreateMessage(0);
 			um.m_messageType = NetMessageType.Discovery;
 			Interlocked.Increment(ref um.m_recyclingCount);
 
@@ -39,7 +39,7 @@ namespace Lidgren.Network
 		/// </summary>
 		public void DiscoverKnownPeer(NetEndPoint endPoint)
 		{
-			NetOutgoingMessage om = CreateMessage(0);
+			NetOutgoingMessage om = (NetOutgoingMessage)CreateMessage(0);
 			om.m_messageType = NetMessageType.Discovery;
 			om.m_recyclingCount = 1;
 			m_unsentUnconnectedMessages.Enqueue(new NetTuple<NetEndPoint, NetOutgoingMessage>(endPoint, om));
@@ -48,22 +48,23 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Send a discovery response message
 		/// </summary>
-		public void SendDiscoveryResponse(NetOutgoingMessage msg, NetEndPoint recipient)
+		public void SendDiscoveryResponse(INetOutgoingMessage msg, NetEndPoint recipient)
 		{
-			if (recipient == null)
+            NetOutgoingMessage _msg = (NetOutgoingMessage)msg;
+            if (recipient == null)
 				throw new ArgumentNullException("recipient");
 
 			if (msg == null)
 				msg = CreateMessage(0);
-			else if (msg.m_isSent)
+			else if (_msg.m_isSent)
 				throw new NetException("Message has already been sent!");
 
 			if (msg.LengthBytes >= m_configuration.MaximumTransmissionUnit)
 				throw new NetException("Cannot send discovery message larger than MTU (currently " + m_configuration.MaximumTransmissionUnit + " bytes)");
 
-			msg.m_messageType = NetMessageType.DiscoveryResponse;
-			Interlocked.Increment(ref msg.m_recyclingCount);
-			m_unsentUnconnectedMessages.Enqueue(new NetTuple<NetEndPoint, NetOutgoingMessage>(recipient, msg));
+            _msg.m_messageType = NetMessageType.DiscoveryResponse;
+			Interlocked.Increment(ref _msg.m_recyclingCount);
+			m_unsentUnconnectedMessages.Enqueue(new NetTuple<NetEndPoint, NetOutgoingMessage>(recipient, _msg));
 		}
 	}
 }

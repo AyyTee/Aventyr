@@ -28,12 +28,12 @@ namespace Lidgren.Network
 	/// <summary>
 	/// Specialized version of NetPeer used for a "client" connection. It does not accept any incoming connections and maintains a ServerConnection property
 	/// </summary>
-	public class NetClient : NetPeer
-	{
+	public class NetClient : NetPeer, INetClient
+    {
 		/// <summary>
 		/// Gets the connection to the server, if any
 		/// </summary>
-		public NetConnection ServerConnection
+		public INetConnection ServerConnection
 		{
 			get
 			{
@@ -84,7 +84,7 @@ namespace Lidgren.Network
 		/// <param name="remoteEndPoint">The remote endpoint to connect to</param>
 		/// <param name="hailMessage">The hail message to pass</param>
 		/// <returns>server connection, or null if already connected</returns>
-		public override NetConnection Connect(NetEndPoint remoteEndPoint, NetOutgoingMessage hailMessage)
+		public override INetConnection Connect(NetEndPoint remoteEndPoint, INetOutgoingMessage hailMessage)
 		{
 			lock (m_connections)
 			{
@@ -113,7 +113,7 @@ namespace Lidgren.Network
 		/// <param name="byeMessage">reason for disconnect</param>
 		public void Disconnect(string byeMessage)
 		{
-			NetConnection serverConnection = ServerConnection;
+			INetConnection serverConnection = ServerConnection;
 			if (serverConnection == null)
 			{
 				lock (m_handshakes)
@@ -136,9 +136,9 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Sends message to server
 		/// </summary>
-		public NetSendResult SendMessage(NetOutgoingMessage msg, NetDeliveryMethod method)
+		public NetSendResult SendMessage(INetOutgoingMessage msg, NetDeliveryMethod method)
 		{
-			NetConnection serverConnection = ServerConnection;
+			INetConnection serverConnection = ServerConnection;
 			if (serverConnection == null)
 			{
 				LogWarning("Cannot send message, no server connection!");
@@ -151,13 +151,13 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Sends message to server
 		/// </summary>
-		public NetSendResult SendMessage(NetOutgoingMessage msg, NetDeliveryMethod method, int sequenceChannel)
+		public NetSendResult SendMessage(INetOutgoingMessage msg, NetDeliveryMethod method, int sequenceChannel)
 		{
-			NetConnection serverConnection = ServerConnection;
+			INetConnection serverConnection = ServerConnection;
 			if (serverConnection == null)
 			{
 				LogWarning("Cannot send message, no server connection!");
-				Recycle(msg);
+				Recycle((NetOutgoingMessage)msg);
 				return NetSendResult.FailedNotConnected;
 			}
 

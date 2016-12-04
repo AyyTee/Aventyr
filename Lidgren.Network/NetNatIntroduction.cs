@@ -24,7 +24,7 @@ namespace Lidgren.Network
 			string token)
 		{
 			// send message to client
-			NetOutgoingMessage um = CreateMessage(10 + token.Length + 1);
+			NetOutgoingMessage um = (NetOutgoingMessage)CreateMessage(10 + token.Length + 1);
 			um.m_messageType = NetMessageType.NatIntroduction;
 			um.Write((byte)0);
 			um.Write(hostInternal);
@@ -34,7 +34,7 @@ namespace Lidgren.Network
 			m_unsentUnconnectedMessages.Enqueue(new NetTuple<NetEndPoint, NetOutgoingMessage>(clientExternal, um));
 
 			// send message to host
-			um = CreateMessage(10 + token.Length + 1);
+			um = (NetOutgoingMessage)CreateMessage(10 + token.Length + 1);
 			um.m_messageType = NetMessageType.NatIntroduction;
 			um.Write((byte)1);
 			um.Write(clientInternal);
@@ -68,7 +68,7 @@ namespace Lidgren.Network
 				return; // no need to punch - we're not listening for nat intros!
 
 			// send internal punch
-			punch = CreateMessage(1);
+			punch = (NetOutgoingMessage)CreateMessage(1);
 			punch.m_messageType = NetMessageType.NatPunchMessage;
 			punch.Write(hostByte);
 			punch.Write(token);
@@ -77,7 +77,7 @@ namespace Lidgren.Network
 			LogDebug("NAT punch sent to " + remoteInternal);
 
 			// send external punch
-			punch = CreateMessage(1);
+			punch = (NetOutgoingMessage)CreateMessage(1);
 			punch.m_messageType = NetMessageType.NatPunchMessage;
 			punch.Write(hostByte);
 			punch.Write(token);
@@ -100,7 +100,7 @@ namespace Lidgren.Network
 			{
 				LogDebug("NAT punch received from " + senderEndPoint + " we're host, so we send a NatIntroductionConfirmed message - token is " + token);
 
-				var confirmResponse = CreateMessage(1);
+				var confirmResponse = (NetOutgoingMessage)CreateMessage(1);
 				confirmResponse.m_messageType = NetMessageType.NatIntroductionConfirmed;
 				confirmResponse.Write(HostByte);
 				confirmResponse.Write(token);
@@ -111,7 +111,7 @@ namespace Lidgren.Network
 			{
 				LogDebug("NAT punch received from " + senderEndPoint + " we're client, so we send a NatIntroductionConfirmRequest - token is " + token);
 
-				var confirmRequest = CreateMessage(1);
+				var confirmRequest = (NetOutgoingMessage)CreateMessage(1);
 				confirmRequest.m_messageType = NetMessageType.NatIntroductionConfirmRequest;
 				confirmRequest.Write(ClientByte);
 				confirmRequest.Write(token);
@@ -128,7 +128,7 @@ namespace Lidgren.Network
 
 			LogDebug("Received NAT punch confirmation from " + senderEndPoint + " sending NatIntroductionConfirmed - token is " + token);
 
-			var confirmResponse = CreateMessage(1);
+			var confirmResponse = (NetOutgoingMessage)CreateMessage(1);
 			confirmResponse.m_messageType = NetMessageType.NatIntroductionConfirmed;
 			confirmResponse.Write(isFromClient ? HostByte : ClientByte);
 			confirmResponse.Write(token);

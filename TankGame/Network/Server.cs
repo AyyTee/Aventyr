@@ -15,7 +15,7 @@ namespace TankGame.Network
     {
         Dictionary<long, Tank> Tanks = new Dictionary<long, Tank>();
         NetServer _server;
-        public NetPeer Peer { get { return _server; } }
+        public INetPeer Peer { get { return _server; } }
         Scene _scene;
         Renderer _renderer;
         public string Name { get { return "Server"; } }
@@ -76,7 +76,7 @@ namespace TankGame.Network
         /// <param name="data"></param>
         /// <param name="connection">Client to send the message to.  
         /// If null then the message will be sent to every client.</param>
-        public void SendMessage(ServerMessage data, NetConnection connection = null)
+        public void SendMessage(ServerMessage data, INetConnection connection = null)
         {
             if (connection != null)
             {
@@ -107,7 +107,7 @@ namespace TankGame.Network
                     {
                         WallsAdded = Walls.Select(wall => new WallAdded(wall)).ToArray()
                     };
-                    NetConnection client = _server.Connections.First(item => item.RemoteUniqueIdentifier == clientId);
+                    INetConnection client = _server.Connections.First(item => item.RemoteUniqueIdentifier == clientId);
                     SendMessage(message, client);
                     loading.Remove(clientId);
                 }
@@ -153,7 +153,7 @@ namespace TankGame.Network
             }
         }
 
-        private void HandleStatusChanged(NetIncomingMessage msg)
+        private void HandleStatusChanged(INetIncomingMessage msg)
         {
             Console.WriteLine(Name + "Status Changed: " + Encoding.Default.GetString(msg.Data));
 
@@ -166,7 +166,7 @@ namespace TankGame.Network
             PortalCommon.UpdateWorldTransform(_scene, true);
         }
 
-        private void HandleData(NetIncomingMessage msg)
+        private void HandleData(INetIncomingMessage msg)
         {
             ClientMessage data = NetworkHelper.ReadMessage<ClientMessage>(msg);
             ClientInstance client = clients.First(item => item.Id == msg.SenderConnection.RemoteUniqueIdentifier);

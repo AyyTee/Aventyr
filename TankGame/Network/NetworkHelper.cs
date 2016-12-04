@@ -31,7 +31,7 @@ namespace TankGame.Network
             return config;
         }
 
-        public static NetOutgoingMessage PrepareMessage<T>(INetController sender, T data) where T : Message
+        public static INetOutgoingMessage PrepareMessage<T>(INetController sender, T data) where T : Message
         {
             data.MessageId = sender.Peer.Statistics.SentMessages;
             data.StepCount = sender.StepCount;
@@ -46,7 +46,7 @@ namespace TankGame.Network
             return message;
         }
 
-        public static T ReadMessage<T>(NetIncomingMessage message)
+        public static T ReadMessage<T>(INetIncomingMessage message)
         {
             //sendTime = message.ReadTime(true);
             int length = message.ReadInt32();

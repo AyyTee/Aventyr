@@ -197,11 +197,13 @@ namespace Lidgren.Network
 			return true;
 		}
 
-		/// <summary>
-		/// Reads a signed integer stored in 1 to 32 bits, written using Write(Int32, Int32)
-		/// </summary>
-		public Int32 ReadInt32(int numberOfBits)
-		{
+        #pragma warning disable CS3006 // Overloaded method differing only in ref or out, or in array rank, is not CLS-compliant
+        /// <summary>
+        /// Reads a signed integer stored in 1 to 32 bits, written using Write(Int32, Int32)
+        /// </summary>
+        public Int32 ReadInt32(int numberOfBits)
+        #pragma warning restore CS3006 // Overloaded method differing only in ref or out, or in array rank, is not CLS-compliant
+        {
 			NetException.Assert(numberOfBits > 0 && numberOfBits <= 32, "ReadInt32(bits) can only read between 1 and 32 bits");
 			NetException.Assert(m_bitLength - m_readPosition >= numberOfBits, c_readOverflowError);
 

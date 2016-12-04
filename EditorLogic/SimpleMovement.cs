@@ -15,9 +15,9 @@ namespace EditorLogic
         public float Acceleration { get; set; }
         /// <summary>Friction coefficient.</summary>
         public float Friction { get; set; }
-        public InputExt Input { get; set; }
+        public Input Input { get; set; }
 
-        public SimpleMovement(InputExt input, float acceleration, float friction)
+        public SimpleMovement(Input input, float acceleration, float friction)
         {
             Acceleration = acceleration;
             Friction = friction;

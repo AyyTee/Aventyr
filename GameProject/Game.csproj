@@ -192,7 +192,7 @@
     <Compile Include="Physics\FixtureData.cs" />
     <Compile Include="Portals\FloatPortal.cs" />
     <Compile Include="Rendering\FontRenderer.cs" />
-    <Compile Include="InputExt.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="Physics\FixtureCoord.cs" />
     <Compile Include="Common\LineF.cs" />
     <Compile Include="Common\MathExt.cs" />

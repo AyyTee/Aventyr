@@ -13,8 +13,8 @@ namespace Lidgren.Network
 	/// Represents a connection to a remote peer
 	/// </summary>
 	[DebuggerDisplay("RemoteUniqueIdentifier={RemoteUniqueIdentifier} RemoteEndPoint={m_remoteEndPoint}")]
-	public partial class NetConnection
-	{
+	public partial class NetConnection : INetConnection
+    {
 		private const int m_infrequentEventsSkipFrames = 8; // number of heartbeats to skip checking for infrequent events (ping, timeout etc)
 		private const int m_messageCoalesceFrames = 3; // number of heartbeats to wait for more incoming messages before sending packet
 
@@ -72,7 +72,7 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Gets the local hail message that was sent as part of the handshake
 		/// </summary>
-		public NetOutgoingMessage LocalHailMessage { get { return m_localHailMessage; } }
+		public INetOutgoingMessage LocalHailMessage { get { return m_localHailMessage; } }
 
 		// gets the time before automatically resending an unacked message
 		internal double GetResendDelay()
@@ -339,7 +339,7 @@ namespace Lidgren.Network
 		/// <param name="msg">The message to send</param>
 		/// <param name="method">How to deliver the message</param>
 		/// <param name="sequenceChannel">Sequence channel within the delivery method</param>
-		public NetSendResult SendMessage(NetOutgoingMessage msg, NetDeliveryMethod method, int sequenceChannel)
+		public NetSendResult SendMessage(INetOutgoingMessage msg, NetDeliveryMethod method, int sequenceChannel)
 		{
 			return m_peer.SendMessage(msg, this, method, sequenceChannel);
 		}

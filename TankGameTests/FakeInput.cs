@@ -1,65 +1,32 @@
-﻿using System;
-using System.Windows;
+﻿using Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenTK.Input;
 using OpenTK;
+using OpenTK.Input;
 
-namespace Game
+namespace TankGameTests
 {
-    public class InputExt : IInput
+    public class FakeInput : IInput
     {
-        KeyboardState KeyCurrent, KeyPrevious;
-        MouseState MouseCurrent, MousePrevious;
+        public KeyboardState KeyCurrent;
+        KeyboardState KeyPrevious;
+        public MouseState MouseCurrent;
+        MouseState MousePrevious;
         public Vector2 _mousePos;
-        float wheelDelta = 0;
+        public float wheelDelta = 0;
         float wheelDeltaPrev = 0;
-        public Vector2 MousePos { get; private set; }
+        public Vector2 MousePos { get; set; }
         public Vector2 MousePosPrev { get; private set; }
         bool _mouseInside;
-        public bool Focus { get; private set; }
+        public bool Focus { get; set; }
 
-        public enum KeyBoth { Control, Shift, Alt }
+        public bool MouseInside { get; set; }
 
-        GameWindow Ctx;
-        GLControl Control;
-        public bool MouseInside { get; private set; }
-        public InputExt(GameWindow ctx)
+        public FakeInput()
         {
-            Ctx = ctx;
-            Update(true);
-            Ctx.MouseEnter += delegate { _mouseInside = true; };
-            Ctx.MouseLeave += delegate { _mouseInside = false; };
-            Ctx.MouseWheel += Ctx_MouseWheel;
-        }
-
-        public InputExt(GLControl control)
-        {
-            Control = control;
-            control.MouseMove += control_MouseMove;
-            control.MouseLeave += delegate { _mouseInside = false; };
-            control.MouseEnter += delegate { _mouseInside = true; };
-            control.MouseWheel += control_MouseWheel;
-        }
-
-        private void Ctx_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            wheelDelta += e.DeltaPrecise;
-        }
-
-        private void control_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            if (((GLControl)sender).Focus())
-            {
-                wheelDelta += (float)e.Delta / 120;
-            }
-        }
-
-        private void control_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            _mousePos = new Vector2(e.X, e.Y);
         }
 
         public Vector2 GetMouseWorldPos(ICamera2 camera, Vector2 canvasSize)
@@ -79,10 +46,6 @@ namespace Game
             MousePos = _mousePos;
             wheelDeltaPrev = wheelDelta;
             wheelDelta = 0;
-            if (Ctx != null)
-            {
-                MousePos = new Vector2(Ctx.Mouse.X, Ctx.Mouse.Y);
-            }
         }
 
         public bool KeyDown(Key input)
@@ -107,11 +70,9 @@ namespace Game
 
         public bool KeyPress(Key input)
         {
-            if (KeyCurrent.IsKeyDown(input) && !KeyPrevious.IsKeyDown(input) && Focus)
-            {
-                return true;
-            }
-            return false;
+            return KeyCurrent.IsKeyDown(input) && 
+                !KeyPrevious.IsKeyDown(input) && 
+                Focus;
         }
 
         public bool KeyPress(KeyBoth input)
@@ -131,11 +92,9 @@ namespace Game
 
         public bool KeyRelease(Key input)
         {
-            if (!KeyCurrent.IsKeyDown(input) && KeyPrevious.IsKeyDown(input) && Focus)
-            {
-                return true;
-            }
-            return false;
+            return !KeyCurrent.IsKeyDown(input) &&
+                KeyPrevious.IsKeyDown(input) &&
+                Focus;
         }
 
         public bool KeyRelease(KeyBoth input)
@@ -160,20 +119,16 @@ namespace Game
 
         public bool MousePress(MouseButton Input)
         {
-            if (MouseCurrent.IsButtonDown(Input) && !MousePrevious.IsButtonDown(Input) && Focus)
-            {
-                return true;
-            }
-            return false;
+            return MouseCurrent.IsButtonDown(Input) &&
+                !MousePrevious.IsButtonDown(Input) &&
+                Focus;
         }
 
         public bool MouseRelease(MouseButton Input)
         {
-            if (!MouseCurrent.IsButtonDown(Input) && MousePrevious.IsButtonDown(Input) && Focus)
-            {
-                return true;
-            }
-            return false;
+            return !MouseCurrent.IsButtonDown(Input) &&
+                MousePrevious.IsButtonDown(Input) &&
+                Focus;
         }
 
         public float MouseWheelDelta()

@@ -16,11 +16,11 @@ namespace Game
     public class Window : GameWindow
     {
         public Controller controller;
-        public InputExt InputExt;
+        public Input InputExt;
         public Window()
             : base(800, 600, Renderer.DefaultGraphics, "Game", GameWindowFlags.FixedWindow)
         {
-            InputExt = new InputExt(this);
+            InputExt = new Input(this);
         }
 
         protected override void OnLoad(EventArgs e)

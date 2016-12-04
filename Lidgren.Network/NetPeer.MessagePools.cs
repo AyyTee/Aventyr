@@ -98,7 +98,7 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Creates a new message for sending
 		/// </summary>
-		public NetOutgoingMessage CreateMessage()
+		public INetOutgoingMessage CreateMessage()
 		{
 			return CreateMessage(m_configuration.m_defaultOutgoingMessageCapacity);
 		}
@@ -106,29 +106,29 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Creates a new message for sending and writes the provided string to it
 		/// </summary>
-	        public NetOutgoingMessage CreateMessage(string content)
+	    public INetOutgoingMessage CreateMessage(string content)
+	    {
+	        INetOutgoingMessage om;
+	
+	        // Since this could be null.
+	        if (string.IsNullOrEmpty(content))
 	        {
-	            NetOutgoingMessage om;
-	
-	            // Since this could be null.
-	            if (string.IsNullOrEmpty(content))
-	            {
-	                om = CreateMessage(1); // One byte for the internal variable-length zero byte.
-	            }
-	            else
-	            {
-	                om = CreateMessage(2 + content.Length); // Fair guess.
-	            }
-	
-	            om.Write(content);
-	            return om;
+	            om = CreateMessage(1); // One byte for the internal variable-length zero byte.
 	        }
+	        else
+	        {
+	            om = CreateMessage(2 + content.Length); // Fair guess.
+	        }
+	
+	        om.Write(content);
+	        return om;
+	    }
 
 		/// <summary>
 		/// Creates a new message for sending
 		/// </summary>
 		/// <param name="initialCapacity">initial capacity in bytes</param>
-		public NetOutgoingMessage CreateMessage(int initialCapacity)
+		public INetOutgoingMessage CreateMessage(int initialCapacity)
 		{
 			NetOutgoingMessage retval;
 			if (m_outgoingMessagesPool == null || !m_outgoingMessagesPool.TryDequeue(out retval))

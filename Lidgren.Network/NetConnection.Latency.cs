@@ -57,7 +57,7 @@ namespace Lidgren.Network
 			m_sentPingNumber++;
 
 			m_sentPingTime = NetTime.Now;
-			NetOutgoingMessage om = m_peer.CreateMessage(1);
+			NetOutgoingMessage om = (NetOutgoingMessage)m_peer.CreateMessage(1);
 			om.Write((byte)m_sentPingNumber); // truncating to 0-255
 			om.m_messageType = NetMessageType.Ping;
 
@@ -73,7 +73,7 @@ namespace Lidgren.Network
 		{
 			m_peer.VerifyNetworkThread();
 
-			NetOutgoingMessage om = m_peer.CreateMessage(5);
+			NetOutgoingMessage om = (NetOutgoingMessage)m_peer.CreateMessage(5);
 			om.Write((byte)pingNumber);
 			om.Write((float)NetTime.Now); // we should update this value to reflect the exact point in time the packet is SENT
 			om.m_messageType = NetMessageType.Pong;

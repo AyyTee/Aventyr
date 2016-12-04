@@ -30,8 +30,8 @@ namespace Lidgren.Network
 	/// Incoming message either sent from a remote peer or generated within the library
 	/// </summary>
 	[DebuggerDisplay("Type={MessageType} LengthBits={LengthBits}")]
-	public sealed class NetIncomingMessage : NetBuffer
-	{
+	public sealed class NetIncomingMessage : NetBuffer, INetIncomingMessage
+    {
 		internal NetIncomingMessageType m_incomingMessageType;
 		internal NetEndPoint m_senderEndPoint;
 		internal NetConnection m_senderConnection;

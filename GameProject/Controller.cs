@@ -62,7 +62,7 @@ namespace Game
         {
         }
 
-        public Controller(Size canvasSize, InputExt input)
+        public Controller(Size canvasSize, Input input)
         {
             CanvasSize = canvasSize;
             Input = input;

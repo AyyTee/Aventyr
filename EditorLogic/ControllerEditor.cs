@@ -62,7 +62,7 @@ namespace EditorLogic
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
         public event ToolEventHandler ToolChanged;
 
-        public ControllerEditor(Size canvasSize, InputExt input)
+        public ControllerEditor(Size canvasSize, Input input)
             : base(canvasSize, input)
         {
             IsPaused = true;

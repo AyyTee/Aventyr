@@ -684,7 +684,7 @@ namespace Lidgren.Network
 					if (reservedSlots >= m_configuration.m_maximumConnections)
 					{
 						// server full
-						NetOutgoingMessage full = CreateMessage("Server full");
+						NetOutgoingMessage full = (NetOutgoingMessage)CreateMessage("Server full");
 						full.m_messageType = NetMessageType.Disconnect;
 						SendLibrary(full, senderEndPoint);
 						return;

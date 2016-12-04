@@ -685,14 +685,15 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Append all the bits of message to this message
 		/// </summary>
-		public void Write(NetBuffer buffer)
+		public void Write(INetBuffer buffer)
 		{
+            NetBuffer _buffer = (NetBuffer)buffer;
 			EnsureBufferSize(m_bitLength + (buffer.LengthBytes * 8));
 
-			Write(buffer.m_data, 0, buffer.LengthBytes);
+			Write(_buffer.m_data, 0, buffer.LengthBytes);
 
 			// did we write excessive bits?
-			int bitsInLastByte = (buffer.m_bitLength % 8);
+			int bitsInLastByte = (_buffer.m_bitLength % 8);
 			if (bitsInLastByte != 0)
 			{
 				int excessBits = 8 - bitsInLastByte;

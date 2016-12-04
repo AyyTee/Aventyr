@@ -63,7 +63,7 @@ namespace EditorLogic
                     }
                     Controller.StateList.Add(command, true);
                     
-                    if (!_input.KeyDown(InputExt.KeyBoth.Shift))
+                    if (!_input.KeyDown(Input.KeyBoth.Shift))
                     {
                         Controller.SetTool(null);
                     }

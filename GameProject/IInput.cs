@@ -11,11 +11,11 @@ namespace Game
         Vector2 MousePosPrev { get; }
 
         Vector2 GetMouseWorldPos(ICamera2 camera, Vector2 canvasSize);
-        bool KeyDown(InputExt.KeyBoth input);
+        bool KeyDown(KeyBoth input);
         bool KeyDown(Key input);
-        bool KeyPress(InputExt.KeyBoth input);
+        bool KeyPress(KeyBoth input);
         bool KeyPress(Key input);
-        bool KeyRelease(InputExt.KeyBoth input);
+        bool KeyRelease(KeyBoth input);
         bool KeyRelease(Key input);
         bool MouseDown(MouseButton Input);
         bool MousePress(MouseButton Input);
@@ -23,4 +23,9 @@ namespace Game
         float MouseWheelDelta();
         void Update(bool hasFocus);
     }
+}
+
+namespace OpenTK.Input
+{
+    public enum KeyBoth { Control, Shift, Alt }
 }

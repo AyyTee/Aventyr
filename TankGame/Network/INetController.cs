@@ -14,7 +14,7 @@ namespace TankGame.Network
         void Init(Renderer renderer, Size canvasSize);
         void Step();
         string Name { get; }
-        NetPeer Peer { get; }
+        INetPeer Peer { get; }
         int StepCount { get; }
     }
 }

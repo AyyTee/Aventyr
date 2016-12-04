@@ -35,7 +35,7 @@ namespace EditorLogic
             {
                 EditorActor editorActor = new EditorActor(Controller.Level, PolygonFactory.CreateRectangle(4, 0.5f));
                 Transform2.SetPosition(editorActor, Controller.GetMouseWorld());
-                if (!_input.KeyDown(InputExt.KeyBoth.Shift))
+                if (!_input.KeyDown(KeyBoth.Shift))
                 {
                     Controller.SetTool(null);
                 }

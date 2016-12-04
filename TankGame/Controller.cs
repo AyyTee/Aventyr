@@ -30,12 +30,19 @@ namespace TankGame
                 }
                 else if (args[0] == "client")
                 {
-                    _netController = new Client(int.Parse(args[1]), int.Parse(args[2]), this);
+                    var config = NetworkHelper.GetDefaultConfig();
+                    config.Port = int.Parse(args[1]);
+
+                    NetClient client = new NetClient(config);
+
+                    var serverAddress = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), int.Parse(args[2]));
+
+                    _netController = new Client(serverAddress, this, client);
                 }
             }
             else
             {
-                _netController = new Client(111, 112, this);
+                //_netController = new Client(111, 112, this);
             }
         }
 

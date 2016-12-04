@@ -43,7 +43,7 @@ namespace EditorLogic
                         _portalPrevious.Linked = portal;
 
                         Transform2 t = portal.GetTransform();
-                        if (_input.KeyDown(InputExt.KeyBoth.Control))
+                        if (_input.KeyDown(Input.KeyBoth.Control))
                         {
                             /*portal.IsMirrored = true;
                             _portalPrevious.IsMirrored = false;*/

@@ -21,8 +21,8 @@ namespace TankGame.Network
         /// </summary>
         public long RemoteId { get { return _client.UniqueIdentifier; } }
         Dictionary<long, Tank> Tanks = new Dictionary<long, Tank>();
-        NetClient _client;
-        public NetPeer Peer { get { return _client; } }
+        INetClient _client;
+        public INetPeer Peer { get { return _client; } }
         public bool IsConnected { get { return _client.ServerConnection != null; } }
         Queue<InputTime> _inputQueue = new Queue<InputTime>();
         Scene _scene;
@@ -40,19 +40,14 @@ namespace TankGame.Network
             public double Timestamp;
         }
 
-        public Client(int port, int serverPort, Controller controller)
+        public Client(IPEndPoint serverAddress, IController controller, INetClient client)
         {
             _controller = controller;
 
-            var config = NetworkHelper.GetDefaultConfig();
-            config.Port = port;
-
-            _client = new NetClient(config);
+            _client = client;
             _client.Start();
 
-            _client.Connect(
-                new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), serverPort)
-                );
+            _client.Connect(serverAddress);
 
             _scene = new Scene();
             _scene.Gravity = new Vector2();
@@ -172,7 +167,7 @@ namespace TankGame.Network
             }
         }
 
-        private void HandleData(NetIncomingMessage msg)
+        private void HandleData(INetIncomingMessage msg)
         {
             ServerMessage data = NetworkHelper.ReadMessage<ServerMessage>(msg);
             bool outOfDate = data.LocalSendTime <= _lastTimestamp;

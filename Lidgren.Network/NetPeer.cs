@@ -12,8 +12,8 @@ namespace Lidgren.Network
 	/// <summary>
 	/// Represents a local peer capable of holding zero, one or more connections to remote peers
 	/// </summary>
-	public partial class NetPeer
-	{
+	public partial class NetPeer : INetPeer
+    {
 		private static int s_initializedPeersCount;
 
 		private int m_listenPort;
@@ -79,12 +79,12 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Gets a copy of the list of connections
 		/// </summary>
-		public List<NetConnection> Connections
+		public List<INetConnection> Connections
 		{
 			get
 			{
 				lock (m_connections)
-					return new List<NetConnection>(m_connections);
+					return new List<INetConnection>(m_connections);
 			}
 		}
 
@@ -166,7 +166,7 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Get the connection, if any, for a certain remote endpoint
 		/// </summary>
-		public NetConnection GetConnection(NetEndPoint ep)
+		public INetConnection GetConnection(NetEndPoint ep)
 		{
 			NetConnection retval;
 
@@ -275,7 +275,7 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Create a connection to a remote endpoint
 		/// </summary>
-		public NetConnection Connect(string host, int port)
+		public INetConnection Connect(string host, int port)
 		{
 			return Connect(GetNetEndPoint(host, port), null);
 		}
@@ -283,7 +283,7 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Create a connection to a remote endpoint
 		/// </summary>
-		public NetConnection Connect(string host, int port, NetOutgoingMessage hailMessage)
+		public INetConnection Connect(string host, int port, INetOutgoingMessage hailMessage)
 		{
 			return Connect(GetNetEndPoint(host, port), hailMessage);
 		}
@@ -291,7 +291,7 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Create a connection to a remote endpoint
 		/// </summary>
-		public NetConnection Connect(NetEndPoint remoteEndPoint)
+		public INetConnection Connect(NetEndPoint remoteEndPoint)
 		{
 			return Connect(remoteEndPoint, null);
 		}
@@ -299,7 +299,7 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Create a connection to a remote endpoint
 		/// </summary>
-		public virtual NetConnection Connect(NetEndPoint remoteEndPoint, NetOutgoingMessage hailMessage)
+		public virtual INetConnection Connect(NetEndPoint remoteEndPoint, INetOutgoingMessage hailMessage)
 		{
 			if (remoteEndPoint == null)
 				throw new ArgumentNullException("remoteEndPoint");
@@ -336,7 +336,7 @@ namespace Lidgren.Network
 
 				NetConnection conn = new NetConnection(this, remoteEndPoint);
 				conn.m_status = NetConnectionStatus.InitiatedConnect;
-				conn.m_localHailMessage = hailMessage;
+				conn.m_localHailMessage = (NetOutgoingMessage)hailMessage;
 
 				// handle on network thread
 				conn.m_connectRequested = true;

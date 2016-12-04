@@ -38,7 +38,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Debug\Lidgren.Network.XML</DocumentationFile>
+    <DocumentationFile>
+    </DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -78,6 +79,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Encryption\NetXteaEncryption.cs" />
+    <Compile Include="INetBuffer.cs" />
+    <Compile Include="INetClient.cs" />
+    <Compile Include="INetConnection.cs" />
+    <Compile Include="INetIncomingMessage.cs" />
+    <Compile Include="INetOutgoingMessage.cs" />
+    <Compile Include="INetPeer.cs" />
     <Compile Include="NamespaceDoc.cs" />
     <Compile Include="NetBigInteger.cs" />
     <Compile Include="NetBitVector.cs" />

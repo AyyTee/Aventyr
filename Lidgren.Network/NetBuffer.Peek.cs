@@ -24,7 +24,7 @@ using System.Net;
 namespace Lidgren.Network
 {
 	public partial class NetBuffer
-	{
+    {
 		/// <summary>
 		/// Gets the internal data buffer
 		/// </summary>
