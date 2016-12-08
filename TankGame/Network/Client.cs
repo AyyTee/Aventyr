@@ -25,7 +25,7 @@ namespace TankGame.Network
         public INetPeer Peer { get { return _client; } }
         public bool IsConnected { get { return _client.ServerConnection != null; } }
         Queue<InputTime> _inputQueue = new Queue<InputTime>();
-        Scene _scene;
+        public Scene Scene { get; private set; }
         IController _controller;
         Renderer _renderer;
         public string Name { get { return "Client"; } }
@@ -49,8 +49,8 @@ namespace TankGame.Network
 
             _client.Connect(serverAddress);
 
-            _scene = new Scene();
-            _scene.Gravity = new Vector2();
+            Scene = new Scene();
+            Scene.Gravity = new Vector2();
         }
 
         public void Init(Renderer renderer, Size canvasSize)
@@ -58,20 +58,20 @@ namespace TankGame.Network
             _renderer = renderer;
 
             Camera2 camera = new Camera2(
-                _scene,
+                Scene,
                 new Transform2(new Vector2(), 10),
                 canvasSize.Width / (float)canvasSize.Height);
 
-            _scene.SetActiveCamera(camera);
+            Scene.SetActiveCamera(camera);
 
             _tankCamera = new TankCamera(camera, null, _controller);
 
-            Entity entity2 = new Entity(_scene);
+            Entity entity2 = new Entity(Scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
             entity2.ModelList[0].SetTexture(_renderer?.Textures["default.png"]);
 
-            PortalCommon.UpdateWorldTransform(_scene);
-            _renderer?.AddLayer(_scene);
+            PortalCommon.UpdateWorldTransform(Scene);
+            _renderer?.AddLayer(Scene);
         }
 
         public void Step()
@@ -112,14 +112,14 @@ namespace TankGame.Network
                 for (int i = 0; i < inputArray.Length; i++)
                 {
                     tank?.SetInput(inputArray[i].Input);
-                    _scene.Step();
+                    Scene.Step();
                 }
                 _sceneUpdated = false;
             }
             else
             {
                 tank?.SetInput(input);
-                _scene.Step();
+                Scene.Step();
             }
             StepCount++;
         }
@@ -141,7 +141,7 @@ namespace TankGame.Network
 
         public void NetworkStep()
         {
-            NetIncomingMessage msg;
+            INetIncomingMessage msg;
 
             while ((msg = _client.ReadMessage()) != null)
             {
@@ -181,15 +181,15 @@ namespace TankGame.Network
             {
                 foreach (WallAdded added in data.WallsAdded)
                 {
-                    added.WallCreate(_scene);
+                    added.WallCreate(Scene);
                 }
-                PortalCommon.UpdateWorldTransform(_scene, true);
+                PortalCommon.UpdateWorldTransform(Scene, true);
             }
 
 
             if (!outOfDate)
             {
-                _scene.Time = data.SceneTime;
+                Scene.Time = data.SceneTime;
                 if (data.TankData != null)
                 {
                     foreach (TankData tankData in data.TankData)
@@ -199,7 +199,7 @@ namespace TankGame.Network
 
                         if (tank == null)
                         {
-                            tank = tank ?? new Tank(_scene);
+                            tank = tank ?? new Tank(Scene);
                             Tanks.Add(tankData.ClientId, tank);
 
                             if (tankData.ClientId == RemoteId)

@@ -21,8 +21,6 @@ namespace TankGameTestFramework
             server.Name = "Server";
             server.Start();
 
-            
-
             int clientCount = 1;
             for (int i = 0; i < clientCount; i++)
             {

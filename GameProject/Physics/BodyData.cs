@@ -92,7 +92,7 @@ namespace Game
 
                 BodyChildren.Add(new ChildBody(bodyClone, portal));
 
-                Physics.Factory.CreatePortalJoint(((Scene)Actor.Scene).World, Body, bodyClone, portal);
+                Physics.Factory.CreatePortalJoint((Actor.Scene).World, Body, bodyClone, portal);
             }
 
             foreach (IPortal portal in PortalCollisionsRemoved())

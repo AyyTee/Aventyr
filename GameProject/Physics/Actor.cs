@@ -33,6 +33,8 @@ namespace Game
         /// </summary>
         public Body Body { get; private set; }
         [DataMember]
+        public bool IsSensor { get; private set; }
+        [DataMember]
         public BodyType BodyType { get; private set; }
         [DataMember]
         Vector2 _scale = new Vector2(1, 1);
@@ -192,14 +194,21 @@ namespace Game
 
         public void ApplyGravity(Vector2 force)
         {
-            var bodyTree = Tree<BodyData>.GetAll(BodyExt.GetData(Body));
-            foreach (BodyData data in bodyTree)
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
             {
                 var massData = BodyExt.GetLocalMassData(data.Body);
-                
                 data.Body.ApplyForce(
                     Vector2Ext.ToXna(force * massData.Mass),
                     Vector2Ext.ToXna(massData.Centroid));
+            }
+        }
+
+        public void SetSensor(bool isSensor)
+        {
+            IsSensor = isSensor;
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            {
+                data.Body.IsSensor = isSensor;
             }
         }
 

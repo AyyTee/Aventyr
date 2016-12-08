@@ -13,7 +13,7 @@ namespace Lidgren.Network
         AutoResetEvent MessageReceivedEvent { get; }
         int Port { get; }
         Socket Socket { get; }
-        NetPeerStatistics Statistics { get; }
+        INetPeerStatistics Statistics { get; }
         NetPeerStatus Status { get; }
         object Tag { get; set; }
         long UniqueIdentifier { get; }
@@ -33,11 +33,11 @@ namespace Lidgren.Network
         INetConnection GetConnection(IPEndPoint ep);
         void Introduce(IPEndPoint hostInternal, IPEndPoint hostExternal, IPEndPoint clientInternal, IPEndPoint clientExternal, string token);
         void RawSend(byte[] arr, int offset, int length, IPEndPoint destination);
-        NetIncomingMessage ReadMessage();
-        bool ReadMessage(out NetIncomingMessage message);
-        int ReadMessages(IList<NetIncomingMessage> addTo);
-        void Recycle(NetIncomingMessage msg);
-        void Recycle(IEnumerable<NetIncomingMessage> toRecycle);
+        INetIncomingMessage ReadMessage();
+        bool ReadMessage(out INetIncomingMessage message);
+        int ReadMessages(IList<INetIncomingMessage> addTo);
+        void Recycle(INetIncomingMessage msg);
+        void Recycle(IEnumerable<INetIncomingMessage> toRecycle);
         void RegisterReceivedCallback(SendOrPostCallback callback, SynchronizationContext syncContext = null);
         void SendDiscoveryResponse(INetOutgoingMessage msg, IPEndPoint recipient);
         NetSendResult SendMessage(INetOutgoingMessage msg, INetConnection recipient, NetDeliveryMethod method);
@@ -50,6 +50,6 @@ namespace Lidgren.Network
         void Shutdown(string bye);
         void Start();
         void UnregisterReceivedCallback(SendOrPostCallback callback);
-        NetIncomingMessage WaitMessage(int maxMillis);
+        INetIncomingMessage WaitMessage(int maxMillis);
     }
 }

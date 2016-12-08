@@ -8,16 +8,18 @@ using System.Threading.Tasks;
 
 namespace TankGame
 {
-    public class Bullet : IStep, ISceneObject
+    public class Bullet : Actor, IStep, ISceneObject
     {
-        public Scene Scene { get; private set; }
         public Entity Entity { get; private set; }
 
         public Bullet(Scene scene, Vector2 position, Vector2 velocity)
+            : base(scene, PolygonFactory.CreateNGon(3, 0.1f, new Vector2()), new Transform2(position))
         {
-            Scene = scene;
-            Entity = new Entity(Scene, position);
-            Entity.SetVelocity(Transform2.CreateVelocity(velocity));
+
+            Entity = new Entity(Scene);
+            SetVelocity(Transform2.CreateVelocity(velocity));
+            SetSensor(true);
+            Entity.SetParent(this);
 
             Model model = ModelFactory.CreateArrow(new Vector3(0f, 0f, 1f), velocity.Normalized() * 0.1f, 0.1f, 0.3f, 0.15f);
             model.SetColor(new Vector3(1, 1, 0));
@@ -30,7 +32,6 @@ namespace TankGame
 
         public void StepEnd(IScene scene, float stepSize)
         {
-            
         }
     }
 }

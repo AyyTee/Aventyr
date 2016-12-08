@@ -6,13 +6,7 @@ namespace TankGameTests
 {
     internal class FakeNetConnection : INetConnection
     {
-        public float AverageRoundtripTime
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public float AverageRoundtripTime { get; set; }
 
         public int CurrentMTU
         {
@@ -144,12 +138,12 @@ namespace TankGameTests
 
         public double GetLocalTime(double remoteTimestamp)
         {
-            throw new NotImplementedException();
+            return remoteTimestamp;
         }
 
         public double GetRemoteTime(double localTimestamp)
         {
-            throw new NotImplementedException();
+            return localTimestamp;
         }
 
         public void GetSendQueueInfo(NetDeliveryMethod method, int sequenceChannel, out int windowSize, out int freeWindowSlots)
@@ -159,12 +153,7 @@ namespace TankGameTests
 
         public NetSendResult SendMessage(INetOutgoingMessage msg, NetDeliveryMethod method, int sequenceChannel)
         {
-            throw new NotImplementedException();
-        }
-
-        public NetSendResult SendMessage(NetOutgoingMessage msg, NetDeliveryMethod method, int sequenceChannel)
-        {
-            throw new NotImplementedException();
+            return NetSendResult.Sent;
         }
     }
 }

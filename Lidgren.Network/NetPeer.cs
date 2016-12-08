@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Collections.Generic;
 using System.Net;
+using System.Linq;
 
 #if !__NOIPENDPOINT__
 using NetEndPoint = System.Net.IPEndPoint;
@@ -99,7 +100,7 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Statistics on this NetPeer since it was initialized
 		/// </summary>
-		public NetPeerStatistics Statistics
+		public INetPeerStatistics Statistics
 		{
 			get { return m_statistics; }
 		}
@@ -180,29 +181,29 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Read a pending message from any connection, blocking up to maxMillis if needed
 		/// </summary>
-	        public NetIncomingMessage WaitMessage(int maxMillis)
+	    public INetIncomingMessage WaitMessage(int maxMillis)
+	    {
+	        INetIncomingMessage msg = ReadMessage();
+	
+	        while (msg == null)
 	        {
-	            NetIncomingMessage msg = ReadMessage();
-	
-	            while (msg == null)
+	            // This could return true...
+	            if (!MessageReceivedEvent.WaitOne(maxMillis))
 	            {
-	                // This could return true...
-	                if (!MessageReceivedEvent.WaitOne(maxMillis))
-	                {
-	                    return null;
-	                }
-	
-	                // ... while this will still returns null. That's why we need to cycle.
-	                msg = ReadMessage();
+	                return null;
 	            }
 	
-	            return msg;
-        	}
+	            // ... while this will still returns null. That's why we need to cycle.
+	            msg = ReadMessage();
+	        }
+	
+	        return msg;
+        }
 
 		/// <summary>
 		/// Read a pending message from any connection, if any
 		/// </summary>
-		public NetIncomingMessage ReadMessage()
+		public INetIncomingMessage ReadMessage()
 		{
 			NetIncomingMessage retval;
 			if (m_releasedIncomingMessages.TryDequeue(out retval))
@@ -216,23 +217,24 @@ namespace Lidgren.Network
 			return retval;
 		}
 		
-        	/// <summary>
-	        /// Reads a pending message from any connection, if any.
-	        /// Returns true if message was read, otherwise false.
-	        /// </summary>
-	        /// <returns>True, if message was read.</returns>
-	        public bool ReadMessage(out NetIncomingMessage message)
-	        {
-	            message = ReadMessage();
-	            return message != null;
-	        }
+        /// <summary>
+	    /// Reads a pending message from any connection, if any.
+	    /// Returns true if message was read, otherwise false.
+	    /// </summary>
+	    /// <returns>True, if message was read.</returns>
+	    public bool ReadMessage(out INetIncomingMessage message)
+	    {
+	        message = ReadMessage();
+	        return message != null;
+	    }
 
 		/// <summary>
 		/// Read a pending message from any connection, if any
 		/// </summary>
-		public int ReadMessages(IList<NetIncomingMessage> addTo)
+		public int ReadMessages(IList<INetIncomingMessage> addTo)
 		{
-			int added = m_releasedIncomingMessages.TryDrain(addTo);
+            var _addTo = addTo.Cast<NetIncomingMessage>().ToList();
+            int added = m_releasedIncomingMessages.TryDrain(_addTo);
 			if (added > 0)
 			{
 				for (int i = 0; i < added; i++)

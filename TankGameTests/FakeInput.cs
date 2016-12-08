@@ -11,19 +11,18 @@ namespace TankGameTests
 {
     public class FakeInput : IInput
     {
-        public KeyboardState KeyCurrent;
-        KeyboardState KeyPrevious;
-        public MouseState MouseCurrent;
-        MouseState MousePrevious;
+        public HashSet<Key> KeyCurrent = new HashSet<Key>();
+        HashSet<Key> KeyPrevious = new HashSet<Key>();
+        public HashSet<MouseButton> MouseCurrent = new HashSet<MouseButton>();
+        HashSet<MouseButton> MousePrevious = new HashSet<MouseButton>();
         public Vector2 _mousePos;
         public float wheelDelta = 0;
         float wheelDeltaPrev = 0;
         public Vector2 MousePos { get; set; }
         public Vector2 MousePosPrev { get; private set; }
-        bool _mouseInside;
-        public bool Focus { get; set; }
 
-        public bool MouseInside { get; set; }
+        public bool Focus { get; set; } = true;
+        public bool MouseInside { get; set; } = true;
 
         public FakeInput()
         {
@@ -37,11 +36,10 @@ namespace TankGameTests
         public void Update(bool hasFocus)
         {
             Focus = hasFocus;
-            KeyPrevious = KeyCurrent;
-            KeyCurrent = Keyboard.GetState();
-            MousePrevious = MouseCurrent;
-            MouseCurrent = Mouse.GetState();
-            MouseInside = _mouseInside;
+            KeyPrevious = new HashSet<Key>(KeyCurrent);
+            KeyCurrent = new HashSet<Key>();
+            MousePrevious = new HashSet<MouseButton>(MouseCurrent);
+            MouseCurrent = new HashSet<MouseButton>();
             MousePosPrev = MousePos;
             MousePos = _mousePos;
             wheelDeltaPrev = wheelDelta;
@@ -50,7 +48,7 @@ namespace TankGameTests
 
         public bool KeyDown(Key input)
         {
-            return KeyCurrent.IsKeyDown(input) && Focus;
+            return KeyCurrent.Contains(input) && Focus;
         }
 
         public bool KeyDown(KeyBoth input)
@@ -70,8 +68,8 @@ namespace TankGameTests
 
         public bool KeyPress(Key input)
         {
-            return KeyCurrent.IsKeyDown(input) && 
-                !KeyPrevious.IsKeyDown(input) && 
+            return KeyCurrent.Contains(input) && 
+                !KeyPrevious.Contains(input) && 
                 Focus;
         }
 
@@ -92,8 +90,8 @@ namespace TankGameTests
 
         public bool KeyRelease(Key input)
         {
-            return !KeyCurrent.IsKeyDown(input) &&
-                KeyPrevious.IsKeyDown(input) &&
+            return !KeyCurrent.Contains(input) &&
+                KeyPrevious.Contains(input) &&
                 Focus;
         }
 
@@ -114,20 +112,20 @@ namespace TankGameTests
 
         public bool MouseDown(MouseButton Input)
         {
-            return MouseCurrent.IsButtonDown(Input) && Focus;
+            return MouseCurrent.Contains(Input) && Focus;
         }
 
         public bool MousePress(MouseButton Input)
         {
-            return MouseCurrent.IsButtonDown(Input) &&
-                !MousePrevious.IsButtonDown(Input) &&
+            return MouseCurrent.Contains(Input) &&
+                !MousePrevious.Contains(Input) &&
                 Focus;
         }
 
         public bool MouseRelease(MouseButton Input)
         {
-            return !MouseCurrent.IsButtonDown(Input) &&
-                MousePrevious.IsButtonDown(Input) &&
+            return !MouseCurrent.Contains(Input) &&
+                MousePrevious.Contains(Input) &&
                 Focus;
         }
 

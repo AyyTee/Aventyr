@@ -59,6 +59,10 @@
     <Compile Include="FakeInput.cs" />
     <Compile Include="FakeNetClient.cs" />
     <Compile Include="FakeNetConnection.cs" />
+    <Compile Include="FakeNetIncomingMessage.cs" />
+    <Compile Include="FakeNetMessage.cs" />
+    <Compile Include="FakeNetOutgoingMessage.cs" />
+    <Compile Include="FakeNetPeerStatistics.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

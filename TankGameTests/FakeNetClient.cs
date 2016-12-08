@@ -4,11 +4,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Lidgren.Network;
+using System.Linq;
+using Game;
 
 namespace TankGameTests
 {
     internal class FakeNetClient : INetClient
     {
+        public Queue<FakeNetIncomingMessage> Messages = new Queue<FakeNetIncomingMessage>();
+
         public NetPeerConfiguration Configuration
         {
             get
@@ -17,21 +21,9 @@ namespace TankGameTests
             }
         }
 
-        public List<INetConnection> Connections
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public List<INetConnection> Connections { get; set; } = new List<INetConnection>();
 
-        public int ConnectionsCount
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public int ConnectionsCount { get { return Connections.Count; } }
 
         public NetConnectionStatus ConnectionStatus
         {
@@ -57,13 +49,7 @@ namespace TankGameTests
             }
         }
 
-        public INetConnection ServerConnection
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public INetConnection ServerConnection { get { return Connections.FirstOrDefault(); } }
 
         public Socket Socket
         {
@@ -73,13 +59,7 @@ namespace TankGameTests
             }
         }
 
-        public NetPeerStatistics Statistics
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public INetPeerStatistics Statistics { get; set; } = new FakeNetPeerStatistics();
 
         public NetPeerStatus Status
         {
@@ -102,13 +82,7 @@ namespace TankGameTests
             }
         }
 
-        public long UniqueIdentifier
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public long UniqueIdentifier { get; set; } = new Random().NextLong();
 
         public NetUPnP UPnP
         {
@@ -120,37 +94,37 @@ namespace TankGameTests
 
         public INetConnection Connect(IPEndPoint remoteEndPoint)
         {
-            throw new NotImplementedException();
+            return new FakeNetConnection();
         }
 
         public INetConnection Connect(string host, int port)
         {
-            throw new NotImplementedException();
+            return new FakeNetConnection();
         }
 
         public INetConnection Connect(IPEndPoint remoteEndPoint, INetOutgoingMessage hailMessage)
         {
-            throw new NotImplementedException();
+            return new FakeNetConnection();
         }
 
         public INetConnection Connect(string host, int port, INetOutgoingMessage hailMessage)
         {
-            throw new NotImplementedException();
+            return new FakeNetConnection();
         }
 
         public INetOutgoingMessage CreateMessage()
         {
-            throw new NotImplementedException();
+            return new FakeNetOutgoingMessage();
         }
 
         public INetOutgoingMessage CreateMessage(int initialCapacity)
         {
-            throw new NotImplementedException();
+            return new FakeNetOutgoingMessage();
         }
 
         public INetOutgoingMessage CreateMessage(string content)
         {
-            throw new NotImplementedException();
+            return new FakeNetOutgoingMessage();
         }
 
         public void Disconnect(string byeMessage)
@@ -193,29 +167,32 @@ namespace TankGameTests
             throw new NotImplementedException();
         }
 
-        public NetIncomingMessage ReadMessage()
+        public INetIncomingMessage ReadMessage()
+        {
+            if (Messages.Count == 0)
+            {
+                return null;
+            }
+            return Messages.Dequeue();
+        }
+
+        public bool ReadMessage(out INetIncomingMessage message)
+        {
+            message = Messages.Dequeue();
+            return Messages.Count <= 0;
+        }
+
+        public int ReadMessages(IList<INetIncomingMessage> addTo)
         {
             throw new NotImplementedException();
         }
 
-        public bool ReadMessage(out NetIncomingMessage message)
+        public void Recycle(IEnumerable<INetIncomingMessage> toRecycle)
         {
-            throw new NotImplementedException();
         }
 
-        public int ReadMessages(IList<NetIncomingMessage> addTo)
+        public void Recycle(INetIncomingMessage msg)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Recycle(IEnumerable<NetIncomingMessage> toRecycle)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Recycle(NetIncomingMessage msg)
-        {
-            throw new NotImplementedException();
         }
 
         public void RegisterReceivedCallback(SendOrPostCallback callback, SynchronizationContext syncContext = null)
@@ -230,32 +207,30 @@ namespace TankGameTests
 
         public NetSendResult SendMessage(INetOutgoingMessage msg, NetDeliveryMethod method)
         {
-            throw new NotImplementedException();
+            return NetSendResult.Sent;
         }
 
         public NetSendResult SendMessage(INetOutgoingMessage msg, INetConnection recipient, NetDeliveryMethod method)
         {
-            throw new NotImplementedException();
+            return NetSendResult.Sent;
         }
 
         public NetSendResult SendMessage(INetOutgoingMessage msg, NetDeliveryMethod method, int sequenceChannel)
         {
-            throw new NotImplementedException();
+            return NetSendResult.Sent;
         }
 
         public void SendMessage(INetOutgoingMessage msg, IList<INetConnection> recipients, NetDeliveryMethod method, int sequenceChannel)
         {
-            throw new NotImplementedException();
         }
 
         public NetSendResult SendMessage(INetOutgoingMessage msg, INetConnection recipient, NetDeliveryMethod method, int sequenceChannel)
         {
-            throw new NotImplementedException();
+            return NetSendResult.Sent;
         }
 
         public void SendUnconnectedMessage(INetOutgoingMessage msg, IList<IPEndPoint> recipients)
         {
-            throw new NotImplementedException();
         }
 
         public void SendUnconnectedMessage(INetOutgoingMessage msg, IPEndPoint recipient)
@@ -280,7 +255,6 @@ namespace TankGameTests
 
         public void Start()
         {
-            throw new NotImplementedException();
         }
 
         public void UnregisterReceivedCallback(SendOrPostCallback callback)
@@ -288,7 +262,7 @@ namespace TankGameTests
             throw new NotImplementedException();
         }
 
-        public NetIncomingMessage WaitMessage(int maxMillis)
+        public INetIncomingMessage WaitMessage(int maxMillis)
         {
             throw new NotImplementedException();
         }

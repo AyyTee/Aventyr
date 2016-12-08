@@ -127,7 +127,7 @@ namespace TankGame.Network
 
         public void NetworkStep()
         {
-            NetIncomingMessage msg;
+            INetIncomingMessage msg;
 
             while ((msg = _server.ReadMessage()) != null)
             {

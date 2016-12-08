@@ -167,26 +167,27 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Recycles a NetIncomingMessage instance for reuse; taking pressure off the garbage collector
 		/// </summary>
-		public void Recycle(NetIncomingMessage msg)
+		public void Recycle(INetIncomingMessage msg)
 		{
+            NetIncomingMessage _msg = (NetIncomingMessage)msg;
 			if (m_incomingMessagesPool == null || msg == null)
 				return;
 
-			NetException.Assert(m_incomingMessagesPool.Contains(msg) == false, "Recyling already recycled incoming message! Thread race?");
+			NetException.Assert(m_incomingMessagesPool.Contains(_msg) == false, "Recyling already recycled incoming message! Thread race?");
 
-			byte[] storage = msg.m_data;
-			msg.m_data = null;
+			byte[] storage = _msg.m_data;
+            _msg.m_data = null;
 			Recycle(storage);
-			msg.Reset();
+            _msg.Reset();
 
 			if (m_incomingMessagesPool.Count < m_maxCacheCount)
-				m_incomingMessagesPool.Enqueue(msg);
+				m_incomingMessagesPool.Enqueue(_msg);
 		}
 
 		/// <summary>
 		/// Recycles a list of NetIncomingMessage instances for reuse; taking pressure off the garbage collector
 		/// </summary>
-		public void Recycle(IEnumerable<NetIncomingMessage> toRecycle)
+		public void Recycle(IEnumerable<INetIncomingMessage> toRecycle)
 		{
 			if (m_incomingMessagesPool == null)
 				return;

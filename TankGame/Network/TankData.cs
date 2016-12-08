@@ -31,6 +31,10 @@ namespace TankGame
         [DataMember]
         public double GunFiredTime;
 
+        public TankData()
+        {
+        }
+
         public TankData(long clientId, Tank tank)
         {
             ClientId = clientId;

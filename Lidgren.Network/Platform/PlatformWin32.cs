@@ -146,11 +146,28 @@ namespace Lidgren.Network
 	{
 		private static readonly long s_timeInitialized = Stopwatch.GetTimestamp();
 		private static readonly double s_dInvFreq = 1.0 / (double)Stopwatch.Frequency;
+
+        private static double _time;
+
+        /// <summary>
+        /// If true, the current time will automatically be updated.  If false, the current time will be manually set.
+        /// </summary>
+        public static bool AutomaticTimeKeeping { get; set; } = true;
+        public static void SetTime(double time)
+        {
+            _time = time;
+        }
 		
 		/// <summary>
 		/// Get number of seconds since the application started
 		/// </summary>
-		public static double Now { get { return (double)(Stopwatch.GetTimestamp() - s_timeInitialized) * s_dInvFreq; } }
+		public static double Now {
+            get
+            {
+                return AutomaticTimeKeeping ? 
+                    (double)(Stopwatch.GetTimestamp() - s_timeInitialized) * s_dInvFreq : _time;
+            }
+        }
 	}
 }
 #endif

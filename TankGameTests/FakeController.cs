@@ -10,7 +10,9 @@ namespace TankGameTests
 {
     public class FakeController : IController
     {
+        Size IController.CanvasSize { get { return CanvasSize; } }
         public Size CanvasSize { get { return new Size(800, 600); } }
-        public IInput Input { get; private set; } = new FakeInput();
+        IInput IController.Input { get { return Input; } }
+        public FakeInput Input { get; private set; } = new FakeInput();
     }
 }

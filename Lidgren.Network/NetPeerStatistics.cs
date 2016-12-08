@@ -30,8 +30,8 @@ namespace Lidgren.Network
 	/// <summary>
 	/// Statistics for a NetPeer instance
 	/// </summary>
-	public sealed class NetPeerStatistics
-	{
+	public sealed class NetPeerStatistics : INetPeerStatistics
+    {
 		private readonly NetPeer m_peer;
 
 		internal int m_sentPackets;

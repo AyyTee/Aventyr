@@ -38,7 +38,6 @@ namespace TankGame.Network
             data.LocalSendTime = NetTime.Now;
 
             var message = sender.Peer.CreateMessage();
-            //message.WriteTime(true);
             byte[] serializedData = NetworkSerializer.Serialize(data).ToArray();
             message.Write(serializedData.Length);
             message.Write(serializedData);
@@ -48,10 +47,9 @@ namespace TankGame.Network
 
         public static T ReadMessage<T>(INetIncomingMessage message)
         {
-            //sendTime = message.ReadTime(true);
             int length = message.ReadInt32();
             byte[] serializedData = new byte[length];
-            message.ReadBytes(serializedData, 0, length);
+            serializedData = message.ReadBytes(length);
             return NetworkSerializer.Deserialize<T>(serializedData);
         }
     }

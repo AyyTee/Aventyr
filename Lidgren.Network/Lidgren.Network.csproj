@@ -85,6 +85,7 @@
     <Compile Include="INetIncomingMessage.cs" />
     <Compile Include="INetOutgoingMessage.cs" />
     <Compile Include="INetPeer.cs" />
+    <Compile Include="INetPeerStatistics.cs" />
     <Compile Include="NamespaceDoc.cs" />
     <Compile Include="NetBigInteger.cs" />
     <Compile Include="NetBitVector.cs" />
