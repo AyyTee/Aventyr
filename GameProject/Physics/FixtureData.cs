@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Serialization;
+using Xna = Microsoft.Xna;
 
 namespace Game
 {
@@ -144,9 +145,8 @@ namespace Game
                 verts[2] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[1] + new Vector2(-FixturePortal.EdgeMargin, 0), t1.GetMatrix());
                 verts[3] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[1], t1.GetMatrix());
             }
-            verts = (Vector2[])MathExt.SetWinding(verts, false);
-
-            return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ToXna(verts)), 0);
+            verts = MathExt.SetWinding(verts, false);
+            return new PolygonShape(new FarseerPhysics.Common.Vertices(verts.Select(v => (Xna.Framework.Vector2)v)), 0);
         }
 
         private PolygonShape CreatePortalShape(FixturePortal portal, bool previousVertex)
@@ -171,7 +171,7 @@ namespace Game
             verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix());
             verts = MathExt.SetWinding(verts, false);
 
-            return new PolygonShape(new FarseerPhysics.Common.Vertices(Vector2Ext.ToXna(verts)), 0);
+            return new PolygonShape(new FarseerPhysics.Common.Vertices(verts.Select(v => (Xna.Framework.Vector2)v)), 0);
         }
 
         /// <summary>

@@ -84,8 +84,8 @@ namespace Game
         {
             PolygonShape shape = (PolygonShape)Fixture.Shape;
             Vector2 v0, v1, scaleFactor;
-            v0 = Vector2Ext.ToOtk(shape.Vertices[EdgeIndex]);
-            v1 = Vector2Ext.ToOtk(shape.Vertices[(EdgeIndex + 1) % shape.Vertices.Count]);
+            v0 = (Vector2)shape.Vertices[EdgeIndex];
+            v1 = (Vector2)shape.Vertices[(EdgeIndex + 1) % shape.Vertices.Count];
             scaleFactor = Actor.GetTransform().Scale;
             return new LineF(v0, v1);
         }

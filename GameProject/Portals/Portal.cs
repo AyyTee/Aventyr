@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Portals
 {
@@ -139,12 +140,12 @@ namespace Game.Portals
         public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)
         {
             Transform2 transform = new Transform2(body.Position, 1, body.Rotation);
-            Transform2 velocity = Transform2.CreateVelocity(Vector2Ext.ToOtk(body.LinearVelocity), body.AngularVelocity);
+            Transform2 velocity = Transform2.CreateVelocity((Vector2)body.LinearVelocity, body.AngularVelocity);
             velocity = EnterVelocity(portal, 0.5f, velocity, ignorePortalVelocity);
             transform = Enter(portal, transform);
-            body.Position = Vector2Ext.ToXna(transform.Position);
+            body.Position = (Xna.Vector2)transform.Position;
             body.Rotation = transform.Rotation;
-            body.LinearVelocity = Vector2Ext.ToXna(velocity.Position);
+            body.LinearVelocity = (Xna.Vector2)velocity.Position;
             body.AngularVelocity = velocity.Rotation;
 
             BodyExt.ScaleFixtures(body, transform.Scale);

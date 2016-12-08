@@ -167,7 +167,7 @@ namespace Game
         /// <param name="force">The force.</param>
         public void ApplyForce(Vector2 force)
         {
-            _applyForce(force, Vector2Ext.ToOtk(Body.GetWorldPoint(new Xna.Vector2())));
+            _applyForce(force, (Vector2)Body.GetWorldPoint(new Xna.Vector2()));
         }
 
         /// <summary>
@@ -184,7 +184,7 @@ namespace Game
 
         private void _applyForce(Vector2 force, Vector2 point)
         {
-            Body.ApplyForce(Vector2Ext.ToXna(force), Vector2Ext.ToXna(point));
+            Body.ApplyForce((Xna.Vector2)force, (Xna.Vector2)point);
         }
 
         public void ApplyTorque(float torque)
@@ -198,8 +198,8 @@ namespace Game
             {
                 var massData = BodyExt.GetLocalMassData(data.Body);
                 data.Body.ApplyForce(
-                    Vector2Ext.ToXna(force * massData.Mass),
-                    Vector2Ext.ToXna(massData.Centroid));
+                    (Xna.Vector2)force * massData.Mass,
+                    (Xna.Vector2)massData.Centroid);
             }
         }
 

@@ -136,10 +136,10 @@ namespace Game.Physics
             var t = Portal.Enter(PortalEnter.Linked, new Transform2(positionB.c, 1, positionB.a));
             var v = Portal.EnterVelocity(PortalEnter.Linked, 0.5f, new Transform2(velocityB.v, 1, velocityB.w));
 
-            data.positions[indexB].c = Vector2Ext.ToXna(t.Position);
+            data.positions[indexB].c = (Vector2)t.Position;
             data.positions[indexB].a = t.Rotation;
 
-            data.velocities[indexB].v = Vector2Ext.ToXna(v.Position);
+            data.velocities[indexB].v = (Vector2)v.Position;
             data.velocities[indexB].w = v.Rotation;
         }
 
@@ -153,10 +153,10 @@ namespace Game.Physics
             var t = Portal.Enter(PortalEnter, new Transform2(positionB.c, 1, positionB.a));
             var v = Portal.EnterVelocity(PortalEnter, 0.5f, new Transform2(velocityB.v, 1, velocityB.w));
 
-            data.positions[indexB].c = Vector2Ext.ToXna(t.Position);
+            data.positions[indexB].c = (Vector2)t.Position;
             data.positions[indexB].a = t.Rotation;
 
-            data.velocities[indexB].v = Vector2Ext.ToXna(v.Position);
+            data.velocities[indexB].v = (Vector2)v.Position;
             data.velocities[indexB].w = v.Rotation;
         }
 

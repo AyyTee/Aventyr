@@ -72,8 +72,8 @@ namespace Game
                         for (int i = 0; i < polygon.Vertices.Count; i++)
                         {
                             int iNext = (i + 1) % polygon.Vertices.Count;
-                            if ((edge[0] - Vector2Ext.ToOtk(polygon.Vertices[i])).Length < ERROR_MARGIN &&
-                                (edge[1] - Vector2Ext.ToOtk(polygon.Vertices[iNext])).Length < ERROR_MARGIN)
+                            if ((edge[0] - (Vector2)polygon.Vertices[i]).Length < ERROR_MARGIN &&
+                                (edge[1] - (Vector2)polygon.Vertices[iNext]).Length < ERROR_MARGIN)
                             {
                                 //float edgeT = PolygonExt.IsInterior(fixtureContour) ? coord.EdgeT : 1 - coord.EdgeT;
                                 float edgeT = coord.EdgeT;
@@ -155,7 +155,7 @@ namespace Game
             Vector2[] v = new Vector2[shape.Vertices.Count];
             for (int i = 0; i < v.Length; i++)
             {
-                v[i] = Vector2Ext.ToOtk(fixture.Body.GetWorldPoint(shape.Vertices[i]));
+                v[i] = (Vector2)fixture.Body.GetWorldPoint(shape.Vertices[i]);
             }
             return v;
         }
@@ -173,10 +173,10 @@ namespace Game
         {
             PolygonShape shape = (PolygonShape)fixture.Shape;
             var vertices = shape.Vertices;
-            return Vector2Ext.ToOtk(
-                fixture.Body.GetWorldPoint(new Xna.Vector2(
+            return
+                (Vector2)fixture.Body.GetWorldPoint(new Xna.Vector2(
                 vertices.Average(vert => vert.X),
-                vertices.Average(vert => vert.Y))));
+                vertices.Average(vert => vert.Y)));
         }
 
         public static List<IPortal> GetPortalCollisions(Fixture fixture, IList<IPortal> portals, bool ignoreAttachedPortals = true)

@@ -50,7 +50,6 @@ namespace TankGameTests
                 NetTime.SetTime(i / 60f);
 
                 ServerMessage data = new ServerMessage();
-                data.LocalSendTime = i / 60f;
                 data.TankData = new TankData[]
                 {
                     new TankData

@@ -99,11 +99,11 @@ namespace UnitTest
             Vector2 centroid = actor.GetCentroid();
             foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
             {
-                data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
+                data.Body.LocalCenter = actor.Body.GetLocalPoint((Xna.Vector2)centroid);
             }
 
             //LocalCenter and centroid should be the same since the actor is on the origin with no rotation.
-            Assert.IsTrue(actor.Body.LocalCenter == Vector2Ext.ToXna(centroid));
+            Assert.IsTrue((Xna.Vector2)actor.Body.LocalCenter == (Xna.Vector2)centroid);
             Assert.IsTrue(centroid == new Vector2());
         }
 
@@ -125,10 +125,10 @@ namespace UnitTest
             Vector2 centroid = actor.GetCentroid();
             foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
             {
-                data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
+                data.Body.LocalCenter = actor.Body.GetLocalPoint((Xna.Vector2)centroid);
             }
 
-            Assert.IsTrue((actor.Body.LocalCenter - Vector2Ext.ToXna(centroid)).Length() < 0.0001f);
+            Assert.IsTrue((actor.Body.LocalCenter - (Xna.Vector2)centroid).Length() < 0.0001f);
             Assert.IsTrue((centroid - new Vector2()).Length < 0.0001f);
         }
 
@@ -150,10 +150,10 @@ namespace UnitTest
             Vector2 centroid = actor.GetCentroid();
             foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
             {
-                data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
+                data.Body.LocalCenter = actor.Body.GetLocalPoint((Xna.Vector2)centroid);
             }
 
-            Assert.IsTrue((actor.Body.LocalCenter - Vector2Ext.ToXna(centroid)).Length() < 0.0001f);
+            Assert.IsTrue((actor.Body.LocalCenter - (Xna.Vector2)centroid).Length() < 0.0001f);
             Assert.IsTrue((centroid - new Vector2(0, 1.6959f)).Length < 0.0001f);
         }
 
@@ -175,10 +175,10 @@ namespace UnitTest
             Vector2 centroid = actor.GetCentroid();
             foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
             {
-                data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
+                data.Body.LocalCenter = actor.Body.GetLocalPoint((Xna.Vector2)centroid);
             }
 
-            Assert.IsTrue((actor.Body.LocalCenter - Vector2Ext.ToXna(centroid)).Length() < 0.0001f);
+            Assert.IsTrue((actor.Body.LocalCenter - (Xna.Vector2)centroid).Length() < 0.0001f);
             Assert.IsTrue((centroid - new Vector2(0, 1.6959f)).Length < 0.0001f);
         }
 

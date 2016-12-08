@@ -56,7 +56,7 @@ namespace Game
 
                 foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
                 {
-                    data.Body.LocalCenter = actor.Body.GetLocalPoint(Vector2Ext.ToXna(centroid));
+                    data.Body.LocalCenter = actor.Body.GetLocalPoint((Xna.Vector2)centroid);
                 }
                 actor.ApplyGravity(Scene.Gravity);
             }
@@ -120,7 +120,7 @@ namespace Game
                     Vector2 center0 = FixtureExt.GetCenterWorld(contact.FixtureA);
                     Vector2 center1 = FixtureExt.GetCenterWorld(contact.FixtureB);
 
-                    if (Math.Abs(MathExt.AngleDiff(center1 - center0, Vector2Ext.ToOtk(normal))) > Math.PI / 2)
+                    if (Math.Abs(MathExt.AngleDiff(center1 - center0, (Vector2)normal)) > Math.PI / 2)
                     {
                         contact.Manifold.LocalNormal *= -1;
                     }
@@ -145,7 +145,7 @@ namespace Game
                     {
                         Model line = ModelFactory.CreateLines(
                            new LineF[] {
-                            new LineF(Vector2Ext.ToOtk(vList[0]), Vector2Ext.ToOtk(vList[1]))
+                            new LineF(vList[0], vList[1])
                            });
                         if (contact.Enabled)
                         {
@@ -169,7 +169,7 @@ namespace Game
                         {
                             continue;
                         }
-                        Vector2 arrowNormal = Vector2Ext.ToOtk(normal) * 0.2f * scale;
+                        Vector2 arrowNormal = (Vector2)normal * 0.2f * scale;
                         if (i == 0)
                         {
                             arrowNormal *= -1;

@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bullet.cs" />
+    <Compile Include="Network\INetObject.cs" />
     <Compile Include="Network\INetController.cs" />
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\IServer.cs" />

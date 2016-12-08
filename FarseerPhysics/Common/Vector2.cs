@@ -582,6 +582,16 @@ namespace Microsoft.Xna.Framework
         }
 
         #endregion Operators
+
+        public static explicit operator Vector2(OpenTK.Vector2 v)
+        {
+            return new Vector2(v.X, v.Y);
+        }
+
+        public static explicit operator OpenTK.Vector2(Vector2 v)
+        {
+            return new OpenTK.Vector2(v.X, v.Y);
+        }
     }
 }
 

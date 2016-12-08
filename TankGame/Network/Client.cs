@@ -104,6 +104,10 @@ namespace TankGame.Network
 
             if (_sceneUpdated)
             {
+                foreach (Bullet b in Scene.GetAll().OfType<Bullet>())
+                {
+                    b.Remove();
+                }
                 while (_inputQueue.Count > 0 && _client.ServerConnection.GetRemoteTime(_inputQueue.Peek().Timestamp) < _lastTimestamp - _client.ServerConnection.AverageRoundtripTime/2)
                 {
                     _inputQueue.Dequeue();

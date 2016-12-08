@@ -179,49 +179,6 @@ namespace Game
             return new Vector2((float)v.X, (float)v.Y);
         }
 
-        public static Vector2 ToOtk(Xna.Vector2 v)
-        {
-            return new Vector2(v.X, v.Y);
-        }
-
-        public static Vector2[] ToOtk(Xna.Vector2[] v)
-        {
-            Debug.Assert(v != null);
-            Vector2[] vNew = new Vector2[v.Length];
-            for (int i = 0; i < v.Length; i++)
-            {
-                vNew[i] = ToOtk(v[i]);
-            }
-            return vNew;
-        }
-
-        public static Xna.Vector2 ToXna(Vector2 v)
-        {
-            return new Xna.Vector2(v.X, v.Y);
-        }
-
-        public static Xna.Vector2[] ToXna(Vector2[] v)
-        {
-            Debug.Assert(v != null);
-            Xna.Vector2[] vNew = new Xna.Vector2[v.Length];
-            for (int i = 0; i < v.Length; i++)
-            {
-                vNew[i] = ToXna(v[i]);
-            }
-            return vNew;
-        }
-
-        public static List<Xna.Vector2> ToXna(List<Vector2> v)
-        {
-            Debug.Assert(v != null);
-            List<Xna.Vector2> vNew = new List<Xna.Vector2>();
-            for (int i = 0; i < v.Count; i++)
-            {
-                vNew.Add(ToXna(v[i]));
-            }
-            return vNew;
-        }
-
         public static Xna.Vector2 ToXna(TriangulationPoint v)
         {
             return new Xna.Vector2((float)v.X, (float)v.Y);
