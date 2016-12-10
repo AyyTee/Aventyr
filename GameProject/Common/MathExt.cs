@@ -130,7 +130,7 @@ namespace Game
 
         public static double PointLineDistance(Xna.Vector2 point, LineF line, bool isSegment)
         {
-            return PointLineDistance(Vector2Ext.ToOtk(point), line, isSegment);
+            return PointLineDistance((Vector2)point, line, isSegment);
         }
 
         public static double PointLineDistance(Vector2 point, LineF line, bool isSegment)

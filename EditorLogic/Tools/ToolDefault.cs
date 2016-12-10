@@ -65,7 +65,7 @@ namespace EditorLogic
                         }
                     }
                 }*/
-                if (_input.KeyDown(Input.KeyBoth.Control))
+                if (_input.KeyDown(KeyBoth.Control))
                 {
                     if (_input.KeyPress(Key.C))
                     {
@@ -98,7 +98,7 @@ namespace EditorLogic
                     {
                         DragBegin(selected, false, Mode.Position);
                     }
-                    else if (!_input.KeyDown(Input.KeyBoth.Control))
+                    else if (!_input.KeyDown(KeyBoth.Control))
                     {
                         if (_input.KeyPress(Key.G))
                         {
@@ -145,7 +145,7 @@ namespace EditorLogic
             {
                 nearest = null;
             }
-            if (_input.KeyDown(Input.KeyBoth.Shift))
+            if (_input.KeyDown(KeyBoth.Shift))
             {
                 Controller.selection.Toggle(nearest);
             }
@@ -277,7 +277,7 @@ namespace EditorLogic
                 angle = MathExt.AngleVector(mousePos - _translator.GetTransform().Position);
                 anglePrev = MathExt.AngleVector(mousePosPrev - _translator.GetTransform().Position);
                 
-                if (_input.KeyDown(Input.KeyBoth.Control))
+                if (_input.KeyDown(KeyBoth.Control))
                 {
                     angle = MathExt.Round(angle, _rotateIncrementSize);
                     _dragAmount.Rotation = (float)MathExt.Round(_dragAmount.Rotation + MathExt.AngleDiff(angle, anglePrev), _rotateIncrementSize);

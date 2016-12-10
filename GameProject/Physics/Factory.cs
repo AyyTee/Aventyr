@@ -136,7 +136,7 @@ namespace Game.Physics
             for (int i = 0; i < convexList.Count; i++)
             {
                 var v1 = new FarseerPhysics.Common.Vertices();
-                v1.AddRange(Vector2Ext.ToXna(convexList[i]));
+                v1.AddRange(convexList[i].Select(v => (Xna.Vector2)v));
 
                 vList.Add(v1);
                 PolygonShape shape = new PolygonShape(v1, 1);

@@ -36,41 +36,30 @@ namespace UnitTest
             }
         }
 
-        /// <summary>
-        /// In case another unit test relies on canvasSize having its default value we reset it here.
-        /// </summary>
-        [TestCleanup]
-        public void ResetController()
-        {
-            Controller.CanvasSize = default(System.Drawing.Size);
-        }
-
         [TestMethod]
         public void ScreenToWorldTest0()
         {
-            Controller.CanvasSize = new System.Drawing.Size(800, 600);
+            var canvasSize = new Vector2(800, 600);
 
             SimpleCamera2 camera = new SimpleCamera2();
 
             Vector2 result;
-            result = CameraExt.ScreenToWorld(camera, new Vector2());
+            result = CameraExt.ScreenToWorld(camera, new Vector2(), canvasSize);
             Assert.IsTrue(result == new Vector2(-0.5f, 0.5f));
 
-            result = CameraExt.ScreenToWorld(camera, new Vector2(400, 300));
+            result = CameraExt.ScreenToWorld(camera, new Vector2(400, 300), canvasSize);
             Assert.IsTrue(Vector2Ext.AlmostEqual(result, new Vector2(), 0.00001f));
 
-            result = CameraExt.ScreenToWorld(camera, new Vector2(800, 600));
+            result = CameraExt.ScreenToWorld(camera, new Vector2(800, 600), canvasSize);
             Assert.IsTrue(Vector2Ext.AlmostEqual(result, new Vector2(0.5f, -0.5f), 0.00001f));
         }
 
         [TestMethod]
         public void ScreenToWorldTest1()
         {
-            Controller.CanvasSize = new System.Drawing.Size(800, 600);
-
             SimpleCamera2 camera = new SimpleCamera2();
 
-            Vector2 result = CameraExt.ScreenToClip(camera, new Vector2());
+            Vector2 result = CameraExt.ScreenToClip(camera, new Vector2(), new Vector2(800, 600));
             Assert.IsTrue(result == new Vector2(-1f, 1f));
         }
     }

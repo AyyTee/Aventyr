@@ -44,8 +44,8 @@ namespace Game
 
         public LineF(Xna.Vector2 lineStart, Xna.Vector2 lineEnd)
         {
-            this[0] = Vector2Ext.ToOtk(lineStart);
-            this[1] = Vector2Ext.ToOtk(lineEnd);
+            this[0] = (Vector2)lineStart;
+            this[1] = (Vector2)lineEnd;
         }
 
         public LineF(IList<Vector2> line)
@@ -85,7 +85,7 @@ namespace Game
         /// </summary>
         public Side GetSideOf(Xna.Vector2 point)
         {
-            return GetSideOf(Vector2Ext.ToOtk(point));
+            return GetSideOf((Vector2)point);
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Game
 
         public float NearestT(Xna.Vector2 v, bool isSegment)
         {
-            return NearestT(Vector2Ext.ToOtk(v), isSegment);
+            return NearestT((Vector2)v, isSegment);
         }
 
         public Vector2 Nearest(Vector2 v, bool isSegment)

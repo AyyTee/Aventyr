@@ -51,22 +51,22 @@ namespace Game
 
         public static Transform2 GetTransform(Body body)
         {
-            return new Transform2(Vector2Ext.ToOtk(body.Position), 1, body.Rotation);
+            return new Transform2((Vector2)body.Position, 1, body.Rotation);
         }
 
         public static void SetTransform(Body body, Transform2 transform)
         {
-            body.SetTransform(Vector2Ext.ToXna(transform.Position), transform.Rotation);
+            body.SetTransform((Xna.Vector2)transform.Position, transform.Rotation);
         }
 
         public static Transform2 GetVelocity(Body body)
         {
-            return Transform2.CreateVelocity(Vector2Ext.ToOtk(body.LinearVelocity), body.AngularVelocity);
+            return Transform2.CreateVelocity((Vector2)body.LinearVelocity, body.AngularVelocity);
         }
 
         public static void SetVelocity(Body body, Transform2 velocity)
         {
-            body.LinearVelocity = Vector2Ext.ToXna(velocity.Position);
+            body.LinearVelocity = (Xna.Vector2)velocity.Position;
             body.AngularVelocity = velocity.Rotation;
         }
 
@@ -81,7 +81,7 @@ namespace Game
                 FarseerPhysics.Common.Vertices vertices = new FarseerPhysics.Common.Vertices();
                 for (int i = 0; i < shape.Vertices.Count; i++)
                 {
-                    vertices.Add(Vector2Ext.ToXna(data.DefaultShape[i] * scale));
+                    vertices.Add((Xna.Vector2)(data.DefaultShape[i] * scale));
                 }
                 //FPE will ensure the polygon is c. clockwise so we don't need to check that here.
                 shape.Vertices = vertices;
@@ -139,7 +139,7 @@ namespace Game
             }
             else
             {
-                center = Vector2Ext.ToOtk(body.Position);
+                center = (Vector2)body.Position;
             }
             
             return center;

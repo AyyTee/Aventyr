@@ -46,7 +46,7 @@ namespace EditorLogic
                 AddEntity command = new AddEntity(Controller, editorEntity);
                 Controller.StateList.Add(command, true);
 
-                if (!_input.KeyDown(Input.KeyBoth.Shift))
+                if (!_input.KeyDown(KeyBoth.Shift))
                 {
                     Controller.SetTool(null);
                 }

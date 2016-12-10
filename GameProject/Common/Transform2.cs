@@ -88,12 +88,12 @@ namespace Game
         }
 
         public Transform2(Xna.Vector2 position)
-            : this(Vector2Ext.ToOtk(position))
+            : this((Vector2)position)
         {
         }
 
         public Transform2(Xna.Vector2 position, float scale, float rotation)
-            : this(Vector2Ext.ToOtk(position), scale, rotation)
+            : this((Vector2)position, scale, rotation)
         {
         }
 
