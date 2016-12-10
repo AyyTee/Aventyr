@@ -4,6 +4,7 @@ using Lidgren.Network;
 using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -21,8 +22,8 @@ namespace TankGame.Network
         public string Name { get { return "Server"; } }
         public int StepCount { get; private set; }
         List<Wall> Walls = new List<Wall>();
-        int SceneIds = 0;
         HashSet<long> loading = new HashSet<long>();
+        int _idCount;
 
         HashSet<ClientInstance> clients = new HashSet<ClientInstance>();
 
@@ -59,15 +60,24 @@ namespace TankGame.Network
             Entity serverMarker = new Entity(_scene);
             serverMarker.AddModel(ModelFactory.CreateCircle(new Vector3(-3, -3, 1), 0.5f, 10));
 
-            Walls.Add(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2), SceneIds));
+
+            Walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
             Walls[0].Actor.SetTransform(new Transform2(new Vector2(3, 0)));
-            SceneIds++;
-            Walls.Add(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2), SceneIds));
+            Walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
             Walls[1].Actor.SetTransform(new Transform2(new Vector2(1, 3)));
-            SceneIds++;
 
             PortalCommon.UpdateWorldTransform(_scene);
             _renderer?.AddLayer(_scene);
+        }
+
+        public T InitNetObject<T>(T netObject) where T : INetObject
+        {
+            if (netObject.ServerId == null)
+            {
+                NetworkHelper.SetServerId(netObject, _idCount);
+                _idCount++;
+            }
+            return netObject;
         }
 
         /// <summary>
@@ -117,9 +127,16 @@ namespace TankGame.Network
                 {
                     tankData.Add(new TankData(id, Tanks[id]));
                 }
+
+                List<BulletData> bulletData = new List<BulletData>();
+                foreach (Bullet bullet in _scene.GetAll().OfType<Bullet>())
+                {
+                    bulletData.Add(new BulletData(InitNetObject(bullet)));
+                }
                 SendMessage(new ServerMessage
                 {
                     TankData = tankData.ToArray(),
+                    BulletData = bulletData.ToArray(),
                     SceneTime = _scene.Time,
                 });
             }
@@ -160,7 +177,7 @@ namespace TankGame.Network
             if (msg.SenderConnection.Status == NetConnectionStatus.Connected)
             {
                 clients.Add(new ClientInstance(msg.SenderConnection.RemoteUniqueIdentifier));
-                Tanks.Add(msg.SenderConnection.RemoteUniqueIdentifier, new Tank(_scene));
+                Tanks.Add(msg.SenderConnection.RemoteUniqueIdentifier, InitNetObject(new Tank(_scene)));
                 loading.Add(msg.SenderConnection.RemoteUniqueIdentifier);
             }
             PortalCommon.UpdateWorldTransform(_scene, true);

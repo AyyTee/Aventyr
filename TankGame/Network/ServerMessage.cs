@@ -15,10 +15,12 @@ namespace TankGame.Network
     public class ServerMessage : Message
     {
         [DataMember]
-        public TankData[] TankData;
+        public TankData[] TankData = new TankData[0];
         [DataMember]
         public double SceneTime;
         [DataMember]
-        public WallAdded[] WallsAdded;
+        public WallAdded[] WallsAdded = new WallAdded[0];
+        [DataMember]
+        public BulletData[] BulletData = new BulletData[0];
     }
 }

@@ -13,22 +13,23 @@ namespace TankGame.Network
     public class WallAdded
     {
         [DataMember]
-        public int WallServerId { get; set; }
+        public int ServerId;
         [DataMember]
-        public Vector2[] Vertices { get; set; }
+        public Vector2[] Vertices;
         [DataMember]
-        public Transform2 Transform { get; set; }
+        public Transform2 Transform;
 
         public WallAdded(Wall wall)
         {
-            WallServerId = wall.ServerId;
+            ServerId = (int)wall.ServerId;
             Vertices = wall.Actor.Vertices.ToArray();
             Transform = wall.Actor.GetTransform();
         }
 
         public Wall WallCreate(Scene scene)
         {
-            Wall wall = new Wall(scene, Vertices, WallServerId);
+            Wall wall = new Wall(scene, Vertices);
+            NetworkHelper.SetServerId(wall, ServerId);
             wall.Actor.SetTransform(Transform);
             return wall;
         }

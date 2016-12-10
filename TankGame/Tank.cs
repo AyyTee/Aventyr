@@ -7,15 +7,17 @@ using System.Threading.Tasks;
 using OpenTK.Input;
 using OpenTK;
 using Lidgren.Network;
+using TankGame.Network;
 
 namespace TankGame
 {
-    public class Tank : IStep, ISceneObject
+    public class Tank : IStep, ISceneObject, INetObject
     {
         public Actor Actor { get; private set; }
         public TankInput Input { get; private set; } = new TankInput();
         public Entity Turret { get; private set; }
         public double GunFiredTime { get; set; } = -1;
+        public int? ServerId { get; set; }
 
         public Tank(Scene scene)
         {
@@ -44,7 +46,7 @@ namespace TankGame
             StepTurret(stepSize);
             StepMovement(stepSize);
 
-            double gunReloadTime = 20;
+            double gunReloadTime = 2;
             if ((GunFiredTime + gunReloadTime <= scene.Time || GunFiredTime == -1) && Input.FireGun)
             {
                 Transform2 t = Turret.GetWorldTransform();
@@ -108,12 +110,10 @@ namespace TankGame
 
             Transform2 t = Turret.GetWorldTransform();
             double angle = MathExt.AngleDiff(t.Rotation, -MathExt.AngleVector(Input.ReticlePos - t.Position));
-            //if (angle > 0)
-            {
-                Transform2 tLocal = Turret.GetVelocity();
-                tLocal.Rotation = Math.Sign(angle) * (float)Math.Min(turretSpeed, Math.Abs(angle / stepSize));
-                Turret.SetVelocity(tLocal);
-            }
+
+            Transform2 tLocal = Turret.GetVelocity();
+            tLocal.Rotation = Math.Sign(angle) * (float)Math.Min(turretSpeed, Math.Abs(angle / stepSize));
+            Turret.SetVelocity(tLocal);
         }
 
         public void StepEnd(IScene scene, float stepSize)

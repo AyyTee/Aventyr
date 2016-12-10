@@ -6,17 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using FarseerPhysics.Dynamics;
+using TankGame.Network;
 
 namespace TankGame
 {
-    public class Wall
+    public class Wall : INetObject
     {
         public Actor Actor { get; private set; }
-        public readonly int ServerId;
+        public int? ServerId { get; set; }
 
-        public Wall(Scene scene, IList<Vector2> vertices, int serverId)
+        public Wall(Scene scene, IList<Vector2> vertices)
         {
-            ServerId = serverId;
             Actor = new Actor(scene, vertices);
             Actor.SetBodyType(BodyType.Static);
             Entity entity = new Entity(scene);

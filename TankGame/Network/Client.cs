@@ -19,7 +19,7 @@ namespace TankGame.Network
         /// <summary>
         /// This client's id.
         /// </summary>
-        public long RemoteId { get { return _client.UniqueIdentifier; } }
+        public long ServerId { get { return _client.UniqueIdentifier; } }
         Dictionary<long, Tank> Tanks = new Dictionary<long, Tank>();
         INetClient _client;
         public INetPeer Peer { get { return _client; } }
@@ -104,7 +104,7 @@ namespace TankGame.Network
 
             if (_sceneUpdated)
             {
-                foreach (Bullet b in Scene.GetAll().OfType<Bullet>())
+                foreach (Bullet b in Scene.GetAll().OfType<Bullet>().Where(item => item.ServerId == null))
                 {
                     b.Remove();
                 }
@@ -131,7 +131,7 @@ namespace TankGame.Network
         public Tank GetTank()
         {
             Tank tank;
-            Tanks.TryGetValue(RemoteId, out tank);
+            Tanks.TryGetValue(ServerId, out tank);
             return tank;
         }
 
@@ -180,44 +180,50 @@ namespace TankGame.Network
                 _lastTimestamp = data.LocalSendTime;
             }
             
-
-            if (data.WallsAdded != null)
+            foreach (WallAdded added in data.WallsAdded)
             {
-                foreach (WallAdded added in data.WallsAdded)
-                {
-                    added.WallCreate(Scene);
-                }
-                PortalCommon.UpdateWorldTransform(Scene, true);
+                added.WallCreate(Scene);
             }
 
+            
 
             if (!outOfDate)
             {
                 Scene.Time = data.SceneTime;
-                if (data.TankData != null)
+
+                foreach (TankData tankData in data.TankData)
                 {
-                    foreach (TankData tankData in data.TankData)
+                    Tank tank;
+                    Tanks.TryGetValue(tankData.OwnerId, out tank);
+
+                    if (tank == null)
                     {
-                        Tank tank;
-                        Tanks.TryGetValue(tankData.ClientId, out tank);
+                        tank = tank ?? new Tank(Scene);
+                        Tanks.Add(tankData.OwnerId, tank);
 
-                        if (tank == null)
+                        if (tankData.OwnerId == ServerId)
                         {
-                            tank = tank ?? new Tank(Scene);
-                            Tanks.Add(tankData.ClientId, tank);
-
-                            if (tankData.ClientId == RemoteId)
-                            {
-                                _tankCamera.SetTank(tank);
-                            }
+                            _tankCamera.SetTank(tank);
                         }
-
-                        tankData.UpdateTank(tank);
-
-                        _sceneUpdated = true;
                     }
+
+                    tankData.UpdateTank(tank);
+
+                    _sceneUpdated = true;
+                }
+
+                foreach (BulletData bulletData in data.BulletData)
+                {
+                    Bullet bullet = (Bullet)Scene.GetAll().OfType<INetObject>().FirstOrDefault(item => item.ServerId == bulletData.ServerId);
+                    if (bullet == null)
+                    {
+                        bullet = new Bullet(Scene, new Vector2(), new Vector2());
+                    }
+                    bulletData.UpdateBullet(bullet);
                 }
             }
+
+            PortalCommon.UpdateWorldTransform(Scene, true);
         }
     }
 }

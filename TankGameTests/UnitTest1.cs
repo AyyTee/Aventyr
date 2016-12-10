@@ -54,7 +54,7 @@ namespace TankGameTests
                 {
                     new TankData
                     {
-                        ClientId = Client.RemoteId,
+                        OwnerId = Client.ServerId,
                         GunFiredTime = -1,
                         Transform = new Transform2(),
                         WorldTransform = new Transform2(),

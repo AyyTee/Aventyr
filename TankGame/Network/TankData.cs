@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TankGame
+namespace TankGame.Network
 {
     [DataContract]
     public class TankData
@@ -15,7 +15,9 @@ namespace TankGame
         /// Remote id of the client.
         /// </summary>
         [DataMember]
-        public long ClientId;
+        public long OwnerId;
+        [DataMember]
+        public int ServerId;
         [DataMember]
         public Transform2 Transform;
         [DataMember]
@@ -35,9 +37,10 @@ namespace TankGame
         {
         }
 
-        public TankData(long clientId, Tank tank)
+        public TankData(long ownerId, Tank tank)
         {
-            ClientId = clientId;
+            OwnerId = ownerId;
+            ServerId = (int)tank.ServerId;
             Transform = tank.Actor.GetTransform();
             WorldTransform = tank.Actor.WorldTransform;
             Velocity = tank.Actor.Velocity;
@@ -50,6 +53,7 @@ namespace TankGame
 
         public void UpdateTank(Tank tank)
         {
+            NetworkHelper.SetServerId(tank, ServerId);
             tank.Actor.SetTransform(Transform);
             tank.Actor.SetVelocity(Velocity);
             tank.Actor.WorldTransform = WorldTransform;

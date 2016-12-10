@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Lidgren.Network;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace TankGame.Network
 {
@@ -51,6 +52,12 @@ namespace TankGame.Network
             byte[] serializedData = new byte[length];
             serializedData = message.ReadBytes(length);
             return NetworkSerializer.Deserialize<T>(serializedData);
+        }
+
+        public static void SetServerId(INetObject netObject, int serverId)
+        {
+            Debug.Assert(netObject.ServerId == null || netObject.ServerId == serverId);
+            netObject.ServerId = serverId;
         }
     }
 }

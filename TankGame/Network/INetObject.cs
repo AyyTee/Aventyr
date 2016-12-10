@@ -8,7 +8,6 @@ namespace TankGame.Network
 {
     public interface INetObject
     {
-        int ServerId { get; set; }
-        int LocalId { get; set; }
+        int? ServerId { get; set; }
     }
 }
