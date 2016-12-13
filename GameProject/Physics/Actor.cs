@@ -18,6 +18,9 @@ namespace Game
     [DataContract, DebuggerDisplay("Actor {Name}")]
     public class Actor : SceneNode, IWall, ISceneObject, IPortalable
     {
+        public delegate void OnCollisionHandler(Actor collidingWith, bool firstEvent);
+        public event OnCollisionHandler OnCollision;
+
         public Transform2 Transform
         {
             get { return GetTransform(); }
@@ -102,6 +105,27 @@ namespace Game
             base.SetParent(parent);
         }
 
+        public void SetCollisionCategory(Category category)
+        {
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            {
+                data.Body.CollisionCategories = category;
+            }
+        }
+
+        public void SetCollidesWith(Category category)
+        {
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            {
+                data.Body.CollidesWith = category;
+            }
+        }
+
+        public void CallOnCollision(Actor collidingWith, bool firstEvent)
+        {
+            OnCollision?.Invoke(collidingWith, firstEvent);
+        }
+
         public float GetMass()
         {
             float mass = 0;
@@ -156,6 +180,7 @@ namespace Game
         {
             if (Body != null)
             {
+                Body = null;
                 Scene.World.RemoveBody(Body);
             }
             base.Remove();

@@ -24,6 +24,7 @@ namespace TankGame.Network
         List<Wall> Walls = new List<Wall>();
         HashSet<long> loading = new HashSet<long>();
         int _idCount;
+        public int MessagesSent { get; set; }
 
         HashSet<ClientInstance> clients = new HashSet<ClientInstance>();
 
@@ -62,9 +63,9 @@ namespace TankGame.Network
 
 
             Walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
-            Walls[0].Actor.SetTransform(new Transform2(new Vector2(3, 0)));
+            Walls[0].SetTransform(new Transform2(new Vector2(3, 0)));
             Walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
-            Walls[1].Actor.SetTransform(new Transform2(new Vector2(1, 3)));
+            Walls[1].SetTransform(new Transform2(new Vector2(1, 3)));
 
             PortalCommon.UpdateWorldTransform(_scene);
             _renderer?.AddLayer(_scene);
@@ -80,9 +81,6 @@ namespace TankGame.Network
             return netObject;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         /// <param name="data"></param>
         /// <param name="connection">Client to send the message to.  
         /// If null then the message will be sent to every client.</param>

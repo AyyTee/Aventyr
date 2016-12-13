@@ -41,10 +41,10 @@ namespace TankGame.Network
         {
             OwnerId = ownerId;
             ServerId = (int)tank.ServerId;
-            Transform = tank.Actor.GetTransform();
-            WorldTransform = tank.Actor.WorldTransform;
-            Velocity = tank.Actor.Velocity;
-            WorldVelocity = tank.Actor.WorldVelocity;
+            Transform = tank.GetTransform();
+            WorldTransform = tank.WorldTransform;
+            Velocity = tank.GetVelocity();
+            WorldVelocity = tank.WorldVelocity;
             TurretTransform = tank.Turret.GetTransform();
             TurretWorldTransform = tank.Turret.GetWorldTransform();
 
@@ -54,12 +54,12 @@ namespace TankGame.Network
         public void UpdateTank(Tank tank)
         {
             NetworkHelper.SetServerId(tank, ServerId);
-            tank.Actor.SetTransform(Transform);
-            tank.Actor.SetVelocity(Velocity);
-            tank.Actor.WorldTransform = WorldTransform;
-            tank.Actor.WorldVelocity = WorldVelocity;
+            tank.SetTransform(Transform);
+            tank.SetVelocity(Velocity);
+            tank.WorldTransform = WorldTransform;
+            tank.WorldVelocity = WorldVelocity;
 
-            foreach (SceneNode node in tank.Actor.Children)
+            foreach (SceneNode node in tank.Children)
             {
                 node.WorldTransform = WorldTransform;
                 node.WorldVelocity = WorldVelocity;

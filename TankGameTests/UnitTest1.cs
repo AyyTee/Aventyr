@@ -73,9 +73,6 @@ namespace TankGameTests
 
                 Assert.IsTrue(Client.Scene.GetAll().OfType<Bullet>().Count() <= 1);
             }
-            
-
-            Client.Step();
         }
     }
 }

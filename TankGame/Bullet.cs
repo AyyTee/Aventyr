@@ -1,4 +1,5 @@
-﻿using Game;
+﻿using FarseerPhysics.Dynamics;
+using Game;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -19,13 +20,25 @@ namespace TankGame
         {
             Entity = new Entity(Scene);
             SetVelocity(Transform2.CreateVelocity(velocity));
-            SetSensor(true);
             Entity.SetParent(this);
 
             Model model = ModelFactory.CreatePolygon(Vertices, new Vector3(0, 0, 1));
             //Model model = ModelFactory.CreateArrow(new Vector3(0f, 0f, 1f), velocity.Normalized() * 0.1f, 0.1f, 0.3f, 0.15f);
             model.SetColor(new Vector3(1, 1, 0));
             Entity.AddModel(model);
+
+            OnCollision += Bullet_OnCollision;
+
+            SetCollisionCategory(Category.Cat1);
+            SetCollidesWith(~Category.Cat1);
+        }
+
+        private void Bullet_OnCollision(Actor collidingWith, bool firstEvent)
+        {
+            if (collidingWith is Wall)
+            {
+                Remove();
+            }
         }
 
         public void StepBegin(IScene scene, float stepSize)

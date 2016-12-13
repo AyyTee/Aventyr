@@ -16,5 +16,6 @@ namespace TankGame.Network
         string Name { get; }
         INetPeer Peer { get; }
         int StepCount { get; }
+        int MessagesSent { get; set; }
     }
 }

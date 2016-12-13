@@ -22,15 +22,15 @@ namespace TankGame.Network
         public WallAdded(Wall wall)
         {
             ServerId = (int)wall.ServerId;
-            Vertices = wall.Actor.Vertices.ToArray();
-            Transform = wall.Actor.GetTransform();
+            Vertices = wall.Vertices.ToArray();
+            Transform = wall.GetTransform();
         }
 
         public Wall WallCreate(Scene scene)
         {
             Wall wall = new Wall(scene, Vertices);
             NetworkHelper.SetServerId(wall, ServerId);
-            wall.Actor.SetTransform(Transform);
+            wall.SetTransform(Transform);
             return wall;
         }
     }

@@ -131,6 +131,13 @@ namespace Game
                     contact.Enabled = false;
                     //return;
                 }
+                else
+                {
+                    Actor actor0 = BodyExt.GetData(contact.FixtureA.Body).Actor;
+                    Actor actor1 = BodyExt.GetData(contact.FixtureB.Body).Actor;
+                    actor0.CallOnCollision(actor1, true);
+                    actor1.CallOnCollision(actor0, false);
+                }
                 #region Debug
                 if (DebugMode)
                 {

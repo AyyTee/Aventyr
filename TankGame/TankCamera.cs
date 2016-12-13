@@ -18,15 +18,13 @@ namespace TankGame
             Camera = camera;
             SetTank(tank);
             Controller = controller;
-            
         }
 
         public void SetTank(Tank tank)
         {
-            Tank?.Actor.Scene.SceneObjectList.Remove(this);
+            Tank?.Scene.SceneObjectList.Remove(this);
             Tank = tank;
-            Tank?.Actor.Scene.SceneObjectList.Add(this);
-            //Camera.SetParent(Tank?.Actor);
+            Tank?.Scene.SceneObjectList.Add(this);
         }
 
         public void StepBegin(IScene scene, float stepSize)
@@ -34,7 +32,7 @@ namespace TankGame
             if (Tank != null)
             {
                 //Camera.ViewOffset = CameraExt.ScreenToClip(Camera, Controller.InputExt.MousePos, Vector2Ext.ToOtk(Controller.CanvasSize)) * 0.4f;
-                Transform2 t = new Transform2(Tank.Actor.WorldTransform.Position, Camera.WorldTransform.Size, Camera.WorldTransform.Rotation,  Camera.WorldTransform.MirrorX);
+                Transform2 t = new Transform2(Tank.WorldTransform.Position, Camera.WorldTransform.Size, Camera.WorldTransform.Rotation,  Camera.WorldTransform.MirrorX);
                 Camera.WorldTransform = t;
             }
             else

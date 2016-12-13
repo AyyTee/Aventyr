@@ -11,12 +11,11 @@ namespace TankGame.Network
     public abstract class Message
     {
         /// <summary>
-        /// A unique incrementing id.  A message with a larger id than another message from the same source will be more recent.
+        /// A unique incrementing id.  A message will be more recent than another message if it has 
+        /// a larger id and they are from the same source.
         /// </summary>
         [DataMember]
         public int MessageId;
-        [DataMember]
-        public int StepCount;
         [DataMember]
         public double LocalSendTime;
     }

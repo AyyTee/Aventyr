@@ -34,8 +34,8 @@ namespace TankGame.Network
 
         public static INetOutgoingMessage PrepareMessage<T>(INetController sender, T data) where T : Message
         {
-            data.MessageId = sender.Peer.Statistics.SentMessages;
-            data.StepCount = sender.StepCount;
+            data.MessageId = sender.MessagesSent;
+            sender.MessagesSent++;
             data.LocalSendTime = NetTime.Now;
 
             var message = sender.Peer.CreateMessage();

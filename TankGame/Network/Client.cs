@@ -33,6 +33,7 @@ namespace TankGame.Network
         bool _sceneUpdated = false;
         public int StepCount { get; private set; }
         TankCamera _tankCamera;
+        public int MessagesSent { get; set; }
 
         struct InputTime
         {

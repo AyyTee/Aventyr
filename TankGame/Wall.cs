@@ -10,18 +10,19 @@ using TankGame.Network;
 
 namespace TankGame
 {
-    public class Wall : INetObject
+    public class Wall : Actor, INetObject
     {
-        public Actor Actor { get; private set; }
         public int? ServerId { get; set; }
 
         public Wall(Scene scene, IList<Vector2> vertices)
+            : base(scene, vertices)
         {
-            Actor = new Actor(scene, vertices);
-            Actor.SetBodyType(BodyType.Static);
+            SetBodyType(BodyType.Static);
             Entity entity = new Entity(scene);
-            entity.AddModel(ModelFactory.CreatePolygon(Actor.Vertices, new Vector3(0, 0, 1)));
-            entity.SetParent(Actor);
+            entity.AddModel(ModelFactory.CreatePolygon(vertices, new Vector3(0, 0, 1)));
+            entity.SetParent(this);
+
+            SetCollisionCategory(Category.All);
         }
     }
 }
