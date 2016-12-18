@@ -5,7 +5,7 @@ using Lidgren.Network;
 
 namespace TankGameTests
 {
-    internal class FakeNetIncomingMessage : FakeNetMessage, INetIncomingMessage
+    public class FakeNetIncomingMessage : FakeNetMessage, INetIncomingMessage
     {
         public FakeNetIncomingMessage()
         {

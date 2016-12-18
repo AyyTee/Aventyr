@@ -16,7 +16,7 @@ namespace Game
 {
     /// <summary>A SceneNode with rigid body physics.</summary>
     [DataContract, DebuggerDisplay("Actor {Name}")]
-    public class Actor : SceneNode, IWall, ISceneObject, IPortalable
+    public class Actor : SceneNode, IWall, IPortalable
     {
         public delegate void OnCollisionHandler(Actor collidingWith, bool firstEvent);
         public event OnCollisionHandler OnCollision;
@@ -180,8 +180,8 @@ namespace Game
         {
             if (Body != null)
             {
-                Body = null;
                 Scene.World.RemoveBody(Body);
+                Body = null;
             }
             base.Remove();
         }

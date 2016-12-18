@@ -21,6 +21,11 @@ namespace Game
             Controller = controller;
         }
 
+        public void Remove()
+        {
+            Actor.Remove();
+        }
+
         public void SetActor(Actor actor)
         {
             if (Actor != null)

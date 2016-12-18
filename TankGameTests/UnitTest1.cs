@@ -14,37 +14,48 @@ namespace TankGameTests
     public class UnitTest1
     {
         Client Client;
-        FakeController Controller;
         FakeNetClient NetClient;
+        Server Server;
+        FakeNetServer NetServer;
 
         [TestInitialize]
         public void Initialize()
         {
             NetTime.AutomaticTimeKeeping = false;
             NetClient = new FakeNetClient();
-            Controller = new FakeController();
-            Client = new Client(null, Controller, NetClient);
-            Client.Init(null, Controller.CanvasSize);
+            FakeController controller = new FakeController();
+            Client = new Client(null, controller, NetClient);
+            Client.Init(null, controller.CanvasSize);
 
-            var connections = new List<INetConnection>();
-            var c = new FakeNetConnection();
-            c.AverageRoundtripTime = 0.2f;
-            connections.Add(c);
-            NetClient.Connections = connections;
+            NetServer = new FakeNetServer();
+            FakeController controllerServer = new FakeController();
+            Server = new Server(NetServer);
+            Server.Init(null, controllerServer.CanvasSize);
+
+            NetServer.Connections.Add(new FakeNetConnection
+            {
+                EndPoint = NetClient,
+                AverageRoundtripTime = 0.2f
+            });
+            NetClient.Connections.Add(new FakeNetConnection
+            {
+                EndPoint = NetServer,
+                AverageRoundtripTime = 0.2f
+            });
         }
 
         [TestCleanup]
         public void Cleanup()
         {
             Client = null;
-            Controller = null;
             NetClient = null;
+            Server = null;
+            NetServer = null;
         }
 
         [TestMethod]
         public void ClientTankFiresOnce()
         {
-
             for (int i = 0; i < 60; i++)
             {
                 NetTime.SetTime(i / 60f);
@@ -68,11 +79,26 @@ namespace TankGameTests
                 message.MessageType = NetIncomingMessageType.Data;
                 NetClient.Messages.Enqueue(message);
 
-                Controller.Input.KeyCurrent.Add(Key.Space);
+                ((FakeController)Client.Controller).Input.KeyCurrent.Add(Key.Space);
                 Client.Step();
 
                 Assert.IsTrue(Client.Scene.GetAll().OfType<Bullet>().Count() <= 1);
             }
+        }
+
+        /// <summary>
+        /// See if the fake net implementation can pass messages.
+        /// </summary>
+        [TestMethod]
+        public void FakeNetTest0()
+        {
+            Client.SendMessage(new ClientMessage { Input = new TankInput { FireGun = true } });
+            ClientMessage clientMessage = NetworkHelper.ReadMessage<ClientMessage>(NetServer.ReadMessage());
+            Assert.IsTrue(clientMessage.Input.FireGun);
+
+            Server.SendMessage(new ServerMessage { SceneTime = 1 });
+            ServerMessage serverMessage = NetworkHelper.ReadMessage<ServerMessage>(NetClient.ReadMessage());
+            Assert.IsTrue(serverMessage.SceneTime == 1);
         }
     }
 }

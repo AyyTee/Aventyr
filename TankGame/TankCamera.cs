@@ -45,5 +45,9 @@ namespace TankGame
         {
             
         }
+
+        public void Remove()
+        {
+        }
     }
 }

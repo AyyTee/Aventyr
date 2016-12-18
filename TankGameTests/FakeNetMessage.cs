@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace TankGameTests
 {
-    internal class FakeNetMessage
+    public class FakeNetMessage
     {
         List<byte> _data = new List<byte>();
 

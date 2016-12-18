@@ -26,7 +26,9 @@ namespace TankGame
             {
                 if (args[0] == "server")
                 {
-                    _netController = new Server(int.Parse(args[1]));
+                    var config = NetworkHelper.GetDefaultConfig();
+                    config.Port = int.Parse(args[1]);
+                    _netController = new Server(new NetServer(config));
                 }
                 else if (args[0] == "client")
                 {

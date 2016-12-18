@@ -6,6 +6,8 @@ namespace TankGameTests
 {
     internal class FakeNetConnection : INetConnection
     {
+        public FakeNetPeer EndPoint { get; set; }
+
         public float AverageRoundtripTime { get; set; }
 
         public int CurrentMTU
@@ -153,6 +155,7 @@ namespace TankGameTests
 
         public NetSendResult SendMessage(INetOutgoingMessage msg, NetDeliveryMethod method, int sequenceChannel)
         {
+            EndPoint.Messages.Enqueue(((FakeNetOutgoingMessage)msg).ToIncomingMessage());
             return NetSendResult.Sent;
         }
     }

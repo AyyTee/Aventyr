@@ -15,7 +15,7 @@ namespace TankGame.Network
     public class Server : INetController
     {
         Dictionary<long, Tank> Tanks = new Dictionary<long, Tank>();
-        NetServer _server;
+        INetServer _server;
         public INetPeer Peer { get { return _server; } }
         Scene _scene;
         Renderer _renderer;
@@ -39,11 +39,9 @@ namespace TankGame.Network
             }
         }
 
-        public Server(int port)
+        public Server(INetServer netServer)
         {
-            var config = NetworkHelper.GetDefaultConfig();
-            config.Port = port;
-            _server = new NetServer(config);
+            _server = netServer;
             _server.Start();
         }
 

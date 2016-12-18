@@ -6,8 +6,8 @@ namespace Lidgren.Network
 	/// <summary>
 	/// Specialized version of NetPeer used for "server" peers
 	/// </summary>
-	public class NetServer : NetPeer
-	{
+	public class NetServer : NetPeer, INetServer
+    {
 		/// <summary>
 		/// NetServer constructor
 		/// </summary>
@@ -42,12 +42,13 @@ namespace Lidgren.Network
 		/// <param name="method">How to deliver the message</param>
 		/// <param name="except">Don't send to this particular connection</param>
 		/// <param name="sequenceChannel">Which sequence channel to use for the message</param>
-		public void SendToAll(NetOutgoingMessage msg, INetConnection except, NetDeliveryMethod method, int sequenceChannel)
+		public void SendToAll(INetOutgoingMessage msg, INetConnection except, NetDeliveryMethod method, int sequenceChannel)
 		{
-			var all = this.Connections;
+            NetOutgoingMessage _msg = (NetOutgoingMessage)msg;
+            var all = this.Connections;
 			if (all.Count <= 0) {
-				if (msg.m_isSent == false)
-					Recycle(msg);
+				if (_msg.m_isSent == false)
+					Recycle(_msg);
 				return;
 			}
 

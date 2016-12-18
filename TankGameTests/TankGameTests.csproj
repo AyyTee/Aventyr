@@ -62,7 +62,9 @@
     <Compile Include="FakeNetIncomingMessage.cs" />
     <Compile Include="FakeNetMessage.cs" />
     <Compile Include="FakeNetOutgoingMessage.cs" />
+    <Compile Include="FakeNetPeer.cs" />
     <Compile Include="FakeNetPeerStatistics.cs" />
+    <Compile Include="FakeNetServer.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

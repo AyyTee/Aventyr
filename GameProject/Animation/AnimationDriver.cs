@@ -40,5 +40,10 @@ namespace Game.Animation
         public void StepEnd(IScene scene, float stepSize)
         {
         }
+
+        public void Remove()
+        {
+
+        }
     }
 }

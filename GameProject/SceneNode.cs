@@ -99,7 +99,7 @@ namespace Game
             }
         }
 
-        private void RemoveParent()
+        private void RemoveFromParent()
         {
             if (Parent != null)
             {
@@ -117,7 +117,7 @@ namespace Game
                 Scene.SceneNodes.Add(this);
             }
 
-            RemoveParent();
+            RemoveFromParent();
             Parent = parent;
 
             if (parent != null)
@@ -140,12 +140,12 @@ namespace Game
         /// <summary>Remove from scene.</summary>
         public virtual void Remove()
         {
-            RemoveParent();
+            RemoveFromParent();
             foreach (SceneNode child in Children.ToList())
             {
                 child.Remove();
             }
-            Scene.SceneNodes.Remove(this);
+            //Scene.SceneNodes.Remove(this);
             Scene = null;
         }
 

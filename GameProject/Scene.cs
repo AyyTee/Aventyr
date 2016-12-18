@@ -27,6 +27,7 @@ namespace Game
         public List<SceneNode> SceneNodes { get; private set; } = new List<SceneNode>();
         [DataMember]
         public List<ISceneObject> SceneObjectList = new List<ISceneObject>();
+        public HashSet<ISceneObject> ToBeRemoved = new HashSet<ISceneObject>();
         /// <summary>
         /// Whether the scene is currently performing a physics step.  
         /// This is useful in cases where changing physics state can break FSE.
@@ -54,6 +55,11 @@ namespace Game
             public Actor Actor;
             public Transform2 Previous;
             public Transform2 TrueVelocity;
+        }
+
+        public void MarkForRemoval(ISceneObject sceneObject)
+        {
+            ToBeRemoved.Add(sceneObject);
         }
 
         public void Step(float stepSize)
@@ -119,6 +125,12 @@ namespace Game
             foreach (IStep s in GetAll().OfType<IStep>())
             {
                 s.StepEnd(this, stepSize);
+            }
+
+            foreach (ISceneObject s in ToBeRemoved)
+            {
+                s.Remove();
+                SceneObjectList.Remove(s);
             }
             Time += stepSize;
         }

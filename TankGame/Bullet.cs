@@ -37,7 +37,7 @@ namespace TankGame
         {
             if (collidingWith is Wall)
             {
-                Remove();
+                Scene.MarkForRemoval(this);
             }
         }
 

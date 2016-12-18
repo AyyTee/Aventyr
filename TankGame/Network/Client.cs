@@ -26,7 +26,7 @@ namespace TankGame.Network
         public bool IsConnected { get { return _client.ServerConnection != null; } }
         Queue<InputTime> _inputQueue = new Queue<InputTime>();
         public Scene Scene { get; private set; }
-        IController _controller;
+        public IController Controller;
         Renderer _renderer;
         public string Name { get { return "Client"; } }
         double _lastTimestamp;
@@ -43,7 +43,7 @@ namespace TankGame.Network
 
         public Client(IPEndPoint serverAddress, IController controller, INetClient client)
         {
-            _controller = controller;
+            Controller = controller;
 
             _client = client;
             _client.Start();
@@ -65,7 +65,7 @@ namespace TankGame.Network
 
             Scene.SetActiveCamera(camera);
 
-            _tankCamera = new TankCamera(camera, null, _controller);
+            _tankCamera = new TankCamera(camera, null, Controller);
 
             Entity entity2 = new Entity(Scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
@@ -82,14 +82,14 @@ namespace TankGame.Network
             Tank tank = GetTank();
             TankInput input = new TankInput
             {
-                MoveFoward = _controller.Input.KeyDown(Key.W),
-                MoveBackward = _controller.Input.KeyDown(Key.S),
-                TurnLeft = _controller.Input.KeyDown(Key.A),
-                TurnRight = _controller.Input.KeyDown(Key.D),
-                ReticlePos = _controller.Input.GetMouseWorldPos(_tankCamera.Camera, Vector2Ext.ToOtk(_controller.CanvasSize)),
-                FireGun = _controller.Input.KeyPress(Key.Space),
-                FirePortal0 = _controller.Input.MousePress(MouseButton.Left),
-                FirePortal1 = _controller.Input.MousePress(MouseButton.Right),
+                MoveFoward = Controller.Input.KeyDown(Key.W),
+                MoveBackward = Controller.Input.KeyDown(Key.S),
+                TurnLeft = Controller.Input.KeyDown(Key.A),
+                TurnRight = Controller.Input.KeyDown(Key.D),
+                ReticlePos = Controller.Input.GetMouseWorldPos(_tankCamera.Camera, Vector2Ext.ToOtk(Controller.CanvasSize)),
+                FireGun = Controller.Input.KeyPress(Key.Space),
+                FirePortal0 = Controller.Input.MousePress(MouseButton.Left),
+                FirePortal1 = Controller.Input.MousePress(MouseButton.Right),
             };
             
             if (IsConnected)
