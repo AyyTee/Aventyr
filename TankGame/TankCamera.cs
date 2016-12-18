@@ -22,9 +22,9 @@ namespace TankGame
 
         public void SetTank(Tank tank)
         {
-            Tank?.Scene.SceneObjectList.Remove(this);
+            Tank?.Scene.SceneObjects.Remove(this);
             Tank = tank;
-            Tank?.Scene.SceneObjectList.Add(this);
+            Tank?.Scene.SceneObjects.Add(this);
         }
 
         public void StepBegin(IScene scene, float stepSize)
@@ -43,7 +43,6 @@ namespace TankGame
 
         public void StepEnd(IScene scene, float stepSize)
         {
-            
         }
 
         public void Remove()

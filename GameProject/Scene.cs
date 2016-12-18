@@ -24,15 +24,14 @@ namespace Game
 
         public ICamera2 ActiveCamera { get; private set; }
         [DataMember]
-        public List<SceneNode> SceneNodes { get; private set; } = new List<SceneNode>();
-        [DataMember]
-        public List<ISceneObject> SceneObjectList = new List<ISceneObject>();
+        public List<ISceneObject> SceneObjects = new List<ISceneObject>();
         public HashSet<ISceneObject> ToBeRemoved = new HashSet<ISceneObject>();
         /// <summary>
         /// Whether the scene is currently performing a physics step.  
         /// This is useful in cases where changing physics state can break FSE.
         /// </summary>
         public bool InWorldStep { get; private set; }
+        public bool InStep { get; private set; }
         [DataMember]
         public double Time { get; set; }
         [DataMember]
@@ -65,6 +64,7 @@ namespace Game
         public void Step(float stepSize)
         {
             Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
+            InStep = true;
             World.ProcessChanges();
 
             foreach (IStep s in GetAll().OfType<IStep>())
@@ -127,11 +127,19 @@ namespace Game
                 s.StepEnd(this, stepSize);
             }
 
+            InStep = false;
+
             foreach (ISceneObject s in ToBeRemoved)
             {
                 s.Remove();
-                SceneObjectList.Remove(s);
+                SceneObjects.Remove(s);
+                if (ActiveCamera == s)
+                {
+                    ActiveCamera = null;
+                }
             }
+            ToBeRemoved.Clear();
+
             Time += stepSize;
         }
 
@@ -143,8 +151,7 @@ namespace Game
         public List<ISceneObject> GetAll()
         {
             HashSet<ISceneObject> set = new HashSet<ISceneObject>();
-            set.UnionWith(SceneObjectList);
-            set.UnionWith(SceneNodes);
+            set.UnionWith(SceneObjects);
             if (ActiveCamera != null)
             {
                 set.Add(ActiveCamera);
@@ -154,7 +161,7 @@ namespace Game
 
         public List<IRenderable> GetRenderList()
         {
-            return SceneNodes.OfType<IRenderable>().ToList();
+            return SceneObjects.OfType<IRenderable>().ToList();
         }
 
         public List<IPortal> GetPortalList()

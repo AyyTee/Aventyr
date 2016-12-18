@@ -57,7 +57,7 @@ namespace EditorLogic
 
             Dictionary<EditorObject, SceneNode> dictionary = new Dictionary<EditorObject, SceneNode>();
             AnimationDriver animation = new AnimationDriver();
-            scene.SceneObjectList.Add(animation);
+            scene.SceneObjects.Add(animation);
 
             List<EditorObject> editorObjects = level.GetAll().OfType<EditorObject>().ToList();
             foreach (EditorObject e in editorObjects)
@@ -179,7 +179,7 @@ namespace EditorLogic
                     entity.SetParent(actor);
                     entity.AddModel(Game.ModelFactory.CreatePolygon(polygon));
 
-                    scene.SceneObjectList.Add(player);
+                    scene.SceneObjects.Add(player);
                     dictionary.Add(cast, player.Actor);
                 }
                 else

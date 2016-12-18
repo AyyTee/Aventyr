@@ -23,7 +23,6 @@ namespace Game
 
         public void Remove()
         {
-            Actor.Remove();
         }
 
         public void SetActor(Actor actor)

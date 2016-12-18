@@ -63,7 +63,7 @@ namespace Game
 
             if (DebugEntity != null)
             {
-                DebugEntity.Remove();
+                Scene.MarkForRemoval(DebugEntity);
             }
             DebugEntity = new Entity(Scene);
             DebugEntity.IsPortalable = false;

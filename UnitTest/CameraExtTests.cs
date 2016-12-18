@@ -34,6 +34,10 @@ namespace UnitTest
             {
                 return WorldVelocity.ShallowClone();
             }
+
+            public void Remove()
+            {
+            }
         }
 
         [TestMethod]

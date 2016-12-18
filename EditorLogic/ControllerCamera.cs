@@ -106,6 +106,10 @@ namespace EditorLogic
             }
         }
 
+        public void Remove()
+        {
+        }
+
         public Transform2 GetWorldVelocity(bool ignorePortals = false)
         {
             return GetVelocity();

@@ -22,8 +22,8 @@ namespace UnitTest
             Scene scene = LevelExport.Export(editorScene, null);
             float stepSize = 1 / (float)60;
 
-            Actor actor = scene.SceneNodes.OfType<Actor>().Where(item => item.Body.IsStatic).First();
-            Actor box = scene.SceneNodes.OfType<Actor>().Where(item => !item.Body.IsStatic).First();
+            Actor actor = scene.SceneObjects.OfType<Actor>().Where(item => item.Body.IsStatic).First();
+            Actor box = scene.SceneObjects.OfType<Actor>().Where(item => !item.Body.IsStatic).First();
 
             Transform2 transformPrevious = box.GetTransform();
 

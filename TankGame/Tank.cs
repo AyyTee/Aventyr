@@ -23,7 +23,7 @@ namespace TankGame
         public Tank(Scene scene)
             : base(scene, PolygonFactory.CreateRectangle(0.8f, 1))
         {
-            scene.SceneObjectList.Add(this);
+            scene.SceneObjects.Add(this);
 
             //Actor = new Actor(scene, PolygonFactory.CreateRectangle(0.8f, 1));
             Entity entity = new Entity(scene);
