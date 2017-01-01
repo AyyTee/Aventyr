@@ -15,16 +15,16 @@ namespace Lidgren.Network
 	/// </summary>
 	public partial class NetPeer : INetPeer
     {
-		private static int s_initializedPeersCount;
+        static int s_initializedPeersCount;
 
-		private int m_listenPort;
-		private object m_tag;
-		private object m_messageReceivedEventCreationLock = new object();
+        int m_listenPort;
+        object m_tag;
+        object m_messageReceivedEventCreationLock = new object();
 
 		internal readonly List<NetConnection> m_connections;
-		private readonly Dictionary<NetEndPoint, NetConnection> m_connectionLookup;
+        readonly Dictionary<NetEndPoint, NetConnection> m_connectionLookup;
 
-		private string m_shutdownReason;
+        string m_shutdownReason;
 
 		/// <summary>
 		/// Gets the NetPeerStatus of the NetPeer

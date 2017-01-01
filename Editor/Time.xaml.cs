@@ -37,7 +37,7 @@ namespace EditorWindow
             _controllerEditor.SceneStopEvent += _controllerEditor_SceneStopEvent;
         }
 
-        private void _controllerEditor_SceneStopEvent(ControllerEditor controller)
+        void _controllerEditor_SceneStopEvent(ControllerEditor controller)
         {
             MainWindow.Invoke(() => {
                 TimeValue.IsEnabled = true;
@@ -45,7 +45,7 @@ namespace EditorWindow
             });
         }
 
-        private void _controllerEditor_ScenePlayEvent(ControllerEditor controller)
+        void _controllerEditor_ScenePlayEvent(ControllerEditor controller)
         {
             MainWindow.Invoke(() => {
                 TimeValue.IsEnabled = false;
@@ -53,7 +53,7 @@ namespace EditorWindow
             });
         }
 
-        private void TimeValue_LostKeyboardFocus(object sender, RoutedEventArgs e)
+        void TimeValue_LostKeyboardFocus(object sender, RoutedEventArgs e)
         {
             double result;
             if (double.TryParse(TimeValue.Text, out result) && result >= 0)
@@ -66,14 +66,14 @@ namespace EditorWindow
             }
         }
 
-        private void Update(ControllerEditor controllerEditor, double time)
+        void Update(ControllerEditor controllerEditor, double time)
         {
             MainWindow.Invoke(() => {
                 _update(time);
             });
         }
 
-        private void _update(double time)
+        void _update(double time)
         {
             _time = time;
             TimeValue.Text = _time.ToString("0.00");
@@ -94,7 +94,7 @@ namespace EditorWindow
             }
         }
 
-        private void TimeValue_KeyDown(object sender, KeyEventArgs e)
+        void TimeValue_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {

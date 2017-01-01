@@ -93,7 +93,7 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
             return verts;
         }
 
-        private Point LineIntersect(Edge edge, float x)
+        Point LineIntersect(Edge edge, float x)
         {
             float y = edge.Slope * x + edge.B;
             return new Point(x, y);

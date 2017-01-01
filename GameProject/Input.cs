@@ -43,12 +43,12 @@ namespace Game
             control.MouseWheel += control_MouseWheel;
         }
 
-        private void Ctx_MouseWheel(object sender, MouseWheelEventArgs e)
+        void Ctx_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             _wheelDelta += e.DeltaPrecise;
         }
 
-        private void control_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        void control_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (((GLControl)sender).Focus())
             {
@@ -56,7 +56,7 @@ namespace Game
             }
         }
 
-        private void control_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        void control_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             _mousePos = new Vector2(e.X, e.Y);
         }

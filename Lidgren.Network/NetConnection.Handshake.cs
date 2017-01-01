@@ -196,7 +196,7 @@ namespace Lidgren.Network
 				m_peer.m_unsentUnconnectedMessages.Enqueue(new NetTuple<NetEndPoint, NetOutgoingMessage>(m_remoteEndPoint, om));
 		}
 
-		private void WriteLocalHail(NetOutgoingMessage om)
+        void WriteLocalHail(NetOutgoingMessage om)
 		{
 			if (m_localHailMessage != null)
 			{
@@ -400,7 +400,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private void HandleConnectResponse(double now, NetMessageType tp, int ptr, int payloadLength)
+        void HandleConnectResponse(double now, NetMessageType tp, int ptr, int payloadLength)
 		{
 			byte[] hail;
 			switch (m_status)
@@ -441,7 +441,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private bool ValidateHandshakeData(int ptr, int payloadLength, out byte[] hail)
+        bool ValidateHandshakeData(int ptr, int payloadLength, out byte[] hail)
 		{
 			hail = null;
 

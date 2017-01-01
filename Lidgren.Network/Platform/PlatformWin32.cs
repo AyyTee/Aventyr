@@ -11,8 +11,8 @@ namespace Lidgren.Network
 {
 	public static partial class NetUtility
 	{
-		private static readonly long s_timeInitialized = Stopwatch.GetTimestamp();
-		private static readonly double s_dInvFreq = 1.0 / (double)Stopwatch.Frequency;
+	    static readonly long s_timeInitialized = Stopwatch.GetTimestamp();
+	    static readonly double s_dInvFreq = 1.0 / (double)Stopwatch.Frequency;
 		
 		[CLSCompliant(false)]
 		public static ulong GetPlatformSeed(int seedInc)
@@ -23,7 +23,7 @@ namespace Lidgren.Network
 
 		public static double Now { get { return (double)(Stopwatch.GetTimestamp() - s_timeInitialized) * s_dInvFreq; } }
 
-		private static NetworkInterface GetNetworkInterface()
+	    static NetworkInterface GetNetworkInterface()
 		{
 			var computerProperties = IPGlobalProperties.GetIPGlobalProperties();
 			if (computerProperties == null)
@@ -134,8 +134,8 @@ namespace Lidgren.Network
 		{
 			return new IPAddress(bytes);
 		}
-		
-		private static readonly SHA256 s_sha = SHA256.Create();
+
+	    static readonly SHA256 s_sha = SHA256.Create();
 		public static byte[] ComputeSHAHash(byte[] bytes, int offset, int count)
 		{
 			return s_sha.ComputeHash(bytes, offset, count);
@@ -144,10 +144,10 @@ namespace Lidgren.Network
 
 	public static partial class NetTime
 	{
-		private static readonly long s_timeInitialized = Stopwatch.GetTimestamp();
-		private static readonly double s_dInvFreq = 1.0 / (double)Stopwatch.Frequency;
+	    static readonly long s_timeInitialized = Stopwatch.GetTimestamp();
+	    static readonly double s_dInvFreq = 1.0 / (double)Stopwatch.Frequency;
 
-        private static double _time;
+	    static double _time;
 
         /// <summary>
         /// If true, the current time will automatically be updated.  If false, the current time will be manually set.

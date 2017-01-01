@@ -58,39 +58,39 @@ namespace FarseerPhysics.Dynamics.Joints
     /// </summary>
     public class GearJoint : Joint
     {
-        private JointType _typeA;
-        private JointType _typeB;
+        JointType _typeA;
+        JointType _typeB;
 
-        private Body _bodyA;
-        private Body _bodyB;
-        private Body _bodyC;
-        private Body _bodyD;
+        Body _bodyA;
+        Body _bodyB;
+        Body _bodyC;
+        Body _bodyD;
 
         // Solver shared
-        private Vector2 _localAnchorA;
-        private Vector2 _localAnchorB;
-        private Vector2 _localAnchorC;
-        private Vector2 _localAnchorD;
+        Vector2 _localAnchorA;
+        Vector2 _localAnchorB;
+        Vector2 _localAnchorC;
+        Vector2 _localAnchorD;
 
-        private Vector2 _localAxisC;
-        private Vector2 _localAxisD;
+        Vector2 _localAxisC;
+        Vector2 _localAxisD;
 
-        private float _referenceAngleA;
-        private float _referenceAngleB;
+        float _referenceAngleA;
+        float _referenceAngleB;
 
-        private float _constant;
-        private float _ratio;
+        float _constant;
+        float _ratio;
 
-        private float _impulse;
+        float _impulse;
 
         // Solver temp
-        private int _indexA, _indexB, _indexC, _indexD;
-        private Vector2 _lcA, _lcB, _lcC, _lcD;
-        private float _mA, _mB, _mC, _mD;
-        private float _iA, _iB, _iC, _iD;
-        private Vector2 _JvAC, _JvBD;
-        private float _JwA, _JwB, _JwC, _JwD;
-        private float _mass;
+        int _indexA, _indexB, _indexC, _indexD;
+        Vector2 _lcA, _lcB, _lcC, _lcD;
+        float _mA, _mB, _mC, _mD;
+        float _iA, _iB, _iC, _iD;
+        Vector2 _JvAC, _JvBD;
+        float _JwA, _JwB, _JwC, _JwD;
+        float _mass;
 
         /// <summary>
         /// Requires two existing revolute or prismatic joints (any combination will work).

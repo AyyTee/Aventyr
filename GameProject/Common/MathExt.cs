@@ -180,7 +180,7 @@ namespace Game.Common
             {
                 return 0;
             }
-            return new double[] {
+            return new[] {
                 PointLineDistance(line1[0], line0, true),
                 PointLineDistance(line1[1], line0, true),
                 PointLineDistance(line0[0], line1, true),
@@ -325,10 +325,12 @@ namespace Game.Common
         }
         #endregion
         #region Polygon Winding Order
+
         /// <summary>
         /// Returns true if vertices are ordered clockwise, false they are counter-clockwise.  It is assumed that the polygon they form is simple.
         /// </summary>
         /// <param name="v">Array of vertices that form a polygon</param>
+        /// <param name="polygon"></param>
         public static bool IsClockwise(IList<Vector2> polygon)
         {
             Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
@@ -476,6 +478,7 @@ namespace Game.Common
         /// <summary>
         /// Checks if the line intersects the edges of a polygon.  This does not test if the line is contained in the polygon.
         /// </summary>
+        /// <param name="line"></param>
         /// <param name="polygon">A closed polygon</param>
         /// <returns>An intersection point</returns>
         public static List<PolygonCoord> LinePolygonIntersect(LineF line, IList<Vector2> polygon)
@@ -507,18 +510,17 @@ namespace Game.Common
         {
             var intersect0 = new IntersectCoord();
             var intersect1 = new IntersectCoord();
-            double dx, dy, a, b, c, det, t;
 
-            dx = line[1].X - line[0].X;
-            dy = line[1].Y - line[0].Y;
+            double dx = line[1].X - line[0].X;
+            double dy = line[1].Y - line[0].Y;
 
-            a = dx * dx + dy * dy;
-            b = 2 * (dx * (line[0].X - circle.X) + dy * (line[0].Y - circle.Y));
-            c = (line[0].X - circle.X) * (line[0].X - circle.X) +
-                (line[0].Y - circle.Y) * (line[0].Y - circle.Y) -
-                radius * radius;
+            double a = dx * dx + dy * dy;
+            double b = 2 * (dx * (line[0].X - circle.X) + dy * (line[0].Y - circle.Y));
+            double c = (line[0].X - circle.X) * (line[0].X - circle.X) +
+                       (line[0].Y - circle.Y) * (line[0].Y - circle.Y) -
+                       radius * radius;
 
-            det = b * b - 4 * a * c;
+            double det = b * b - 4 * a * c;
             if ((a <= 0.0000001) || (det < 0))
             {
                 // No real solutions.
@@ -526,7 +528,7 @@ namespace Game.Common
             else if (det == 0)
             {
                 // One solution.
-                t = -b / (2 * a);
+                double t = -b / (2 * a);
                 if (t >= 0 && t < 1 || !isSegment)
                 {
                     intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
@@ -539,7 +541,7 @@ namespace Game.Common
             {
                 // Two solutions.
                 var list = new List<IntersectCoord>();
-                t = (float)((-b + Math.Sqrt(det)) / (2 * a));
+                double t = (float)((-b + Math.Sqrt(det)) / (2 * a));
                 if (t >= 0 && t < 1 || !isSegment)
                 {
                     intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
@@ -628,7 +630,7 @@ namespace Game.Common
             return mat;
         }
 
-        private static Matrix4d QuadToSquare(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3)
+        static Matrix4d QuadToSquare(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3)
         {
             Matrix4d mat = SquareToQuad(v0, v1, v2, v3);
 
@@ -670,14 +672,13 @@ namespace Game.Common
             Debug.Assert(triangle != null);
             Debug.Assert(bisector != null);
             Debug.Assert(keepSide != Side.Neither);
-            Vector2[] vertices = new Vector2[]
-            {
+            Vector2[] vertices = {
                 new Vector2(triangle[0].Position.X, triangle[0].Position.Y),
                 new Vector2(triangle[1].Position.X, triangle[1].Position.Y),
                 new Vector2(triangle[2].Position.X, triangle[2].Position.Y)
             };
 
-            List<Vertex> keep = new List<Vertex>();
+            var keep = new List<Vertex>();
             int intersectCount = 0;
             for (int i = 0; i < Triangle.VertexCount; i++)
             {
@@ -686,8 +687,8 @@ namespace Game.Common
                 {
                     keep.Add(triangle[i]);
                 }
-                LineF edge = new LineF(vertices[i], vertices[(i + 1) % Triangle.VertexCount]);
-                IntersectCoord intersect = MathExt.LineLineIntersect(edge, bisector, false);
+                var edge = new LineF(vertices[i], vertices[(i + 1) % Triangle.VertexCount]);
+                IntersectCoord intersect = LineLineIntersect(edge, bisector, false);
                 if (intersect.Exists && intersect.First > 0 && intersect.First < 1)
                 {
                     intersectCount++;
@@ -700,23 +701,20 @@ namespace Game.Common
             Debug.Assert(keep.Count <= 4);
             if (keep.Count == 3)
             {
-                return new Triangle[]
+                return new[]
                 {
                     new Triangle(keep[0], keep[1], keep[2])
                 };
             }
-            else if (keep.Count == 4)
+            if (keep.Count == 4)
             {
-                return new Triangle[]
+                return new[]
                 {
                     new Triangle(keep[0], keep[1], keep[2]),
                     new Triangle(keep[0], keep[2], keep[3])
                 };
             }
-            else
-            {
-                return new Triangle[0];
-            }
+            return new Triangle[0];
         }
 
         public static Mesh BisectMesh(IMesh mesh, LineF bisector, Side keepSide = Side.Left)
@@ -731,7 +729,7 @@ namespace Game.Common
             Debug.Assert(keepSide != Side.Neither);
             Triangle[] triangles = GetTriangles(mesh);
 
-            Mesh meshBisected = new Mesh();
+            var meshBisected = new Mesh();
             for (int i = 0; i < triangles.Length; i++)
             {
                 Triangle[] bisected = BisectTriangle(triangles[i].Transform(transform), bisector, keepSide);
@@ -751,10 +749,10 @@ namespace Game.Common
             Triangle[] triangles = new Triangle[indices.Count / 3];
             for (int i = 0; i < triangles.Length; i++)
             {
-                Vertex v0 = vertices[indices[i * 3]];
-                Vertex v1 = vertices[indices[i * 3 + 1]];
-                Vertex v2 = vertices[indices[i * 3 + 2]];
-                triangles[i] = new Triangle(v0, v1, v2);
+                triangles[i] = new Triangle(
+                    vertices[indices[i * 3]], 
+                    vertices[indices[i * 3 + 1]], 
+                    vertices[indices[i * 3 + 2]]);
             }
             return triangles;
         }
@@ -807,7 +805,7 @@ namespace Game.Common
             return ((val1 - val0) % (wrapSize) + (wrapSize * 3)/2) % (wrapSize) - wrapSize/2;
         }
 
-        static public double ValueWrap(double value, double mod)
+        public static double ValueWrap(double value, double mod)
         {
             value = value % mod;
             if (value < 0)
@@ -817,12 +815,12 @@ namespace Game.Common
             return value;
         }
 
-        static public double Round(double value, double size)
+        public static double Round(double value, double size)
         {
             return Math.Round(value / size) * size;
         }
 
-        static public double AngleWrap(double value)
+        public static double AngleWrap(double value)
         {
             return ((value % Tau) + Tau) % Tau;
         }
@@ -842,7 +840,7 @@ namespace Game.Common
         /// </summary>
         /// <param name="v0"></param>
         /// <param name="v1"></param>
-        static public Vector2d VectorProject(Vector2d v0, Vector2d v1)
+        public static Vector2d VectorProject(Vector2d v0, Vector2d v1)
         {
             return v1.Normalized() * v0;
         }
@@ -853,7 +851,7 @@ namespace Game.Common
         /// <param name="v0"></param>
         /// <param name="v1"></param>
         /// <returns></returns>
-        static public Vector2d VectorMirror(Vector2d v0, Vector2d v1)
+        public static Vector2d VectorMirror(Vector2d v0, Vector2d v1)
         {
             return -v0 + 2 * (v0 - VectorProject(v0, v1));
         }
@@ -941,8 +939,10 @@ namespace Game.Common
         /// Check if two lists are isomorphic. In otherwords, they are equal if they contain the same 
         /// elements in the same order but potentially with an index offset.
         /// </summary>
+        /// <param name="second"></param>
         /// <param name="equality">Method that tests the equality of elements in first and second.</param>
         /// <param name="noReversing">First and second are not equal if they are in reverse order.</param>
+        /// <param name="first"></param>
         public static bool IsIsomorphic<T>(IList<T> first, IList<T> second, Func<T, T, bool> equality, bool noReversing = false)
         {
             Debug.Assert(first != null);
@@ -977,7 +977,9 @@ namespace Game.Common
         /// Check if two lists are isomorphic. In otherwords, they are equal if they contain the same 
         /// elements in the same order but potentially with an index offset.
         /// </summary>
+        /// <param name="second"></param>
         /// <param name="noReversing">First and second are not equal if they are in reverse order.</param>
+        /// <param name="first"></param>
         public static bool IsIsomorphic<T>(IList<T> first, IList<T> second, bool noReversing = false)
         {
             return IsIsomorphic(first, second, (itemFirst, itemSecond) => itemFirst.Equals(itemSecond), noReversing);

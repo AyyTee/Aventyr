@@ -8,13 +8,13 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
         public HashSet<Trapezoid> Map;
 
         // Bottom segment that spans multiple trapezoids
-        private Edge _bCross;
+        Edge _bCross;
 
         // Top segment that spans multiple trapezoids
-        private Edge _cross;
+        Edge _cross;
 
         // AABB margin
-        private float _margin;
+        float _margin;
 
         public TrapezoidalMap()
         {

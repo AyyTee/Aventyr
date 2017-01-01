@@ -26,7 +26,7 @@ namespace EditorLogic
             get { return _scene == null ? Parent.Scene : _scene; }
             private set { _scene = value; }
         }
-        IScene IPortalCommon.Scene { get { return Scene; } }
+        IScene IPortalCommon.Scene => Scene;
 
         [DataMember]
         public PortalPath Path { get; set; } = new PortalPath();
@@ -52,17 +52,19 @@ namespace EditorLogic
         public bool IsPortalable { get; set; }
         [DataMember]
         public bool IsSelected { get; private set; }
-        public bool OnEdge { get { return PolygonTransform != null; } }
+        public bool OnEdge => PolygonTransform != null;
+
         [DataMember]
         public string Name { get; set; }
         [DataMember]
         List<EditorObject> _children = new List<EditorObject>();
-        public List<EditorObject> Children { get { return new List<EditorObject>(_children); } }
+        public List<EditorObject> Children => new List<EditorObject>(_children);
+
         [DataMember]
         public EditorObject Parent { get; private set; }
 
-        IPortalCommon ITreeNode<IPortalCommon>.Parent { get { return Parent; } }
-        List<IPortalCommon> ITreeNode<IPortalCommon>.Children { get { return Children.ToList<IPortalCommon>(); } }
+        IPortalCommon ITreeNode<IPortalCommon>.Parent => Parent;
+        List<IPortalCommon> ITreeNode<IPortalCommon>.Children => Children.ToList<IPortalCommon>();
 
         [DataMember]
         public Transform2 Transform { get; set; } = new Transform2();
@@ -254,7 +256,7 @@ namespace EditorLogic
             return new Transform2();
         }
 
-        private void RemoveSelf()
+        void RemoveSelf()
         {
             if (Parent != null)
             {

@@ -6,11 +6,11 @@ namespace Game.Common
 {
     public class Transform3
     {
-        private Matrix4 _matrix;
-        private bool _matrixUpdate = true;
-        private Vector3 _position = new Vector3();
-        private Quaternion _rotation = new Quaternion(0, 0, 1, 0);
-        private Vector3 _scale = new Vector3(1, 1, 1);
+        Matrix4 _matrix;
+        bool _matrixUpdate = true;
+        Vector3 _position = new Vector3();
+        Quaternion _rotation = new Quaternion(0, 0, 1, 0);
+        Vector3 _scale = new Vector3(1, 1, 1);
 
         public bool FixedScale { get; private set; }
 

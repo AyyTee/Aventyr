@@ -2,7 +2,7 @@
 {
     internal class YNode : Node
     {
-        private Edge _edge;
+        Edge _edge;
 
         public YNode(Edge edge, Node lChild, Node rChild)
             : base(lChild, rChild)

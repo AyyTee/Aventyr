@@ -9,9 +9,9 @@ namespace Game
 {
     public class EdgeData<T>
     {
-        private SortedList<float, Segment> _segments = new SortedList<float, Segment>();
+        SortedList<float, Segment> _segments = new SortedList<float, Segment>();
 
-        private class Segment
+        class Segment
         {
             public float Begin { get; private set; }
             public float End { get; private set; }

@@ -1,26 +1,20 @@
-﻿using Game;
-using System;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Input;
-using OpenTK;
-using System.Drawing;
-using System.Diagnostics;
 using EditorLogic.Command;
+using Game;
 using Game.Common;
 using Game.Portals;
+using OpenTK.Input;
 
-namespace EditorLogic
+namespace EditorLogic.Tools
 {
     public class ToolAddPortal : Tool
     {
         Doodad _mouseFollow;
         float _snapDistance = 0.2f;
-        bool _isSecondPortal = false;
-        EditorPortal _portalPrevious = null;
-        float _unsnapAngle = 0;
+        bool _isSecondPortal;
+        EditorPortal _portalPrevious;
+        float _unsnapAngle;
 
         public ToolAddPortal(ControllerEditor controller)
             : base(controller)
@@ -40,11 +34,10 @@ namespace EditorLogic
             {
                 if (Input.MousePress(MouseButton.Left))
                 {
-                    EditorPortal portal = new EditorPortal(Controller.Level);
-                    var coord = GetEdgeCoord();
+                    var portal = new EditorPortal(Controller.Level);
+                    WallCoord coord = GetEdgeCoord();
                     if (coord != null)
                     {
-                        //portal.SetParent((EditorObject)coord.Actor);
                         portal.SetTransform(coord.Wall, coord);
                     }
                     else
@@ -62,7 +55,7 @@ namespace EditorLogic
                     {
                         command = new AddPortal(Controller, portal);
                     }
-                    Controller.StateList.Add(command, true);
+                    Controller.StateList.Add(command);
                     
                     if (!Input.KeyDown(KeyBoth.Shift))
                     {
@@ -74,16 +67,19 @@ namespace EditorLogic
             }
         }
 
-        private WallCoord GetEdgeCoord()
+        WallCoord GetEdgeCoord()
         {
-            float size = Transform2.GetSize(_mouseFollow);
             IWall[] walls = Controller.Level.GetAll().OfType<IWall>().ToArray();
-            return PortalPlacer.GetNearestPortalableEdge(walls, Controller.GetMouseWorld(), _snapDistance, size);
+            return PortalPlacer.GetNearestPortalableEdge(
+                walls, 
+                Controller.GetMouseWorld(), 
+                _snapDistance, 
+                _mouseFollow.GetTransform().Size);
         }
 
-        private Transform2 GetPortalTransform()
+        Transform2 GetPortalTransform()
         {
-            var coord = GetEdgeCoord();
+            WallCoord coord = GetEdgeCoord();
             if (coord != null)
             {
                 Transform2 transform = PolygonExt.GetTransform(coord.Wall.GetWorldVertices(), coord);

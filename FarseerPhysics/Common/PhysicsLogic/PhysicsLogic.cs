@@ -46,7 +46,7 @@ namespace FarseerPhysics.Common.PhysicsLogic
 
     public abstract class PhysicsLogic : FilterData
     {
-        private PhysicsLogicType _type;
+        PhysicsLogicType _type;
         public World World;
 
         public override bool IsActiveOn(Body body)

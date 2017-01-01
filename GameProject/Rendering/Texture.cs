@@ -9,7 +9,7 @@ namespace Game.Rendering
         public static object LockDelete { get; } = new object();
 
         /// <summary>GL texture id.</summary>
-        private readonly int _id;
+        readonly int _id;
 
         #region Constructors
         public Texture(int id)

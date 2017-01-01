@@ -42,7 +42,7 @@ namespace EditorWindow
             SetSelected(null);
         }
 
-        private void Selection_SelectionChanged(List<EditorObject> selection)
+        void Selection_SelectionChanged(List<EditorObject> selection)
         {
             MainWindow.Invoke(() =>
             {
@@ -57,7 +57,7 @@ namespace EditorWindow
             });
         }
 
-        private void _controller_SceneModified(HashSet<EditorObject> modified)
+        void _controller_SceneModified(HashSet<EditorObject> modified)
         {
             MainWindow.Invoke(() =>
             {
@@ -89,7 +89,7 @@ namespace EditorWindow
             }
         }
 
-        private void ObjectName_LostFocus(object sender, RoutedEventArgs e)
+        void ObjectName_LostFocus(object sender, RoutedEventArgs e)
         {
             Debug.Assert(_selected != null);
             //Make a copy of the textbox text so we don't try accessing it from the OGL thread.
@@ -97,7 +97,7 @@ namespace EditorWindow
             _controller.AddAction(() => { _controller.StateList.Add(new Rename(_selected, text), true); });
         }
 
-        private void ObjectName_KeyDown(object sender, KeyEventArgs e)
+        void ObjectName_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {

@@ -98,31 +98,31 @@ namespace FarseerPhysics.Dynamics.Joints
     /// </summary>
     public class PrismaticJoint : Joint
     {
-        private Vector2 _localYAxisA;
-        private Vector3 _impulse;
-        private float _lowerTranslation;
-        private float _upperTranslation;
-        private float _maxMotorForce;
-        private float _motorSpeed;
-        private bool _enableLimit;
-        private bool _enableMotor;
-        private LimitState _limitState;
+        Vector2 _localYAxisA;
+        Vector3 _impulse;
+        float _lowerTranslation;
+        float _upperTranslation;
+        float _maxMotorForce;
+        float _motorSpeed;
+        bool _enableLimit;
+        bool _enableMotor;
+        LimitState _limitState;
 
         // Solver temp
-        private int _indexA;
-        private int _indexB;
-        private Vector2 _localCenterA;
-        private Vector2 _localCenterB;
-        private float _invMassA;
-        private float _invMassB;
-        private float _invIA;
-        private float _invIB;
-        private Vector2 _axis, _perp;
-        private float _s1, _s2;
-        private float _a1, _a2;
-        private Mat33 _K;
-        private float _motorMass;
-        private Vector2 _axis1;
+        int _indexA;
+        int _indexB;
+        Vector2 _localCenterA;
+        Vector2 _localCenterB;
+        float _invMassA;
+        float _invMassB;
+        float _invIA;
+        float _invIB;
+        Vector2 _axis, _perp;
+        float _s1, _s2;
+        float _a1, _a2;
+        Mat33 _K;
+        float _motorMass;
+        Vector2 _axis1;
 
         internal PrismaticJoint()
         {
@@ -155,7 +155,7 @@ namespace FarseerPhysics.Dynamics.Joints
             Initialize(anchor, anchor, axis, useWorldCoordinates);
         }
 
-        private void Initialize(Vector2 localAnchorA, Vector2 localAnchorB, Vector2 axis, bool useWorldCoordinates)
+        void Initialize(Vector2 localAnchorA, Vector2 localAnchorB, Vector2 axis, bool useWorldCoordinates)
         {
             JointType = JointType.Prismatic;
 

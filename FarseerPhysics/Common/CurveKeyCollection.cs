@@ -42,8 +42,8 @@ namespace Microsoft.Xna.Framework
     {
 #region Private Fields
 
-        private List<CurveKey> innerlist;
-        private bool isReadOnly = false;
+        List<CurveKey> innerlist;
+        bool isReadOnly = false;
 
 #endregion Private Fields
 

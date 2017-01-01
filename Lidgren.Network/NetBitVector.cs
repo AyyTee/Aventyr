@@ -27,9 +27,9 @@ namespace Lidgren.Network
 	/// </summary>
 	public sealed class NetBitVector
 	{
-		private readonly int m_capacity;
-		private readonly int[] m_data;
-		private int m_numBitsSet;
+	    readonly int m_capacity;
+	    readonly int[] m_data;
+	    int m_numBitsSet;
 
 		/// <summary>
 		/// Gets the number of bits/booleans stored in this vector

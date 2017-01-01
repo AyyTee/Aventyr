@@ -1,22 +1,18 @@
 ﻿using OpenTK;
 using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using Xna = Microsoft.Xna.Framework;
-using System.ComponentModel;
-using System.Xml;
 using System.Runtime.Serialization;
 using Game.Serialization;
 
 namespace Game.Common
 {
     [DataContract]
-    public class Transform2D : IShallowClone<Transform2D>, IAlmostEqual<Transform2D>
+    public class Transform2D : IShallowClone<Transform2D>, IAlmostEqual<Transform2D>, IEquatable<Transform2D>
     {
         [DataMember]
-        Vector2d _position = new Vector2d();
+        Vector2d _position;
         [DataMember]
-        double _rotation = 0;
+        double _rotation;
         /// <summary>
         /// X-axis mirroring.
         /// </summary>
@@ -45,17 +41,7 @@ namespace Game.Common
             }
         }
 
-        public Vector2d Scale
-        {
-            get 
-            { 
-                if (MirrorX)
-                {
-                    return new Vector2d(-Size, Size); 
-                }
-                return new Vector2d(Size, Size); 
-            }
-        }
+        public Vector2d Scale => MirrorX ? new Vector2d(-Size, Size) : new Vector2d(Size, Size);
 
         public Vector2d Position 
         { 
@@ -98,12 +84,13 @@ namespace Game.Common
 
         public Transform2D ShallowClone()
         {
-            Transform2D clone = new Transform2D();
-            clone.Position = Position;
-            clone.Size = Size;
-            clone.MirrorX = MirrorX;
-            clone.Rotation = Rotation;
-            return clone;
+            return new Transform2D
+            {
+                Position = Position,
+                Size = Size,
+                MirrorX = MirrorX,
+                Rotation = Rotation
+            };
         }
         
         public Matrix4d GetMatrix()
@@ -121,9 +108,9 @@ namespace Game.Common
             return GetVector(new Vector2d(1, 0), normalize);
         }
 
-        private Vector2d GetVector(Vector2d vector, bool normalize)
+        Vector2d GetVector(Vector2d vector, bool normalize)
         {
-            Vector2d[] v = new Vector2d[2]  {
+            Vector2d[] v = {
                 new Vector2d(0, 0),
                 vector
             };
@@ -235,11 +222,7 @@ namespace Game.Common
                 scale.Y = -Math.Abs(scale.X);
             }
 
-            MirrorX = false;
-            if (Math.Sign(scale.X) != Math.Sign(scale.Y))
-            {
-                MirrorX = true;
-            }
+            MirrorX = Math.Sign(scale.X) != Math.Sign(scale.Y);
             Size = scale.Y;
             Debug.Assert(Scale == scale);
         }
@@ -323,20 +306,21 @@ namespace Game.Common
 
         public override bool Equals(object obj)
         {
-            if (obj is Transform2D)
+            var cast = obj as Transform2D;
+            if (cast != null)
             {
-                return Equals(this, (Transform2D)obj);
+                return Equals(this, cast);
             }
             return false;
         }
 
         public static bool Equals(Transform2D t0, Transform2D t1)
         {
-            if (((object)t0) == null && ((object)t1) == null)
+            if ((object)t0 == null && (object)t1 == null)
             {
                 return true;
             }
-            else if (((object)t0) == null || ((object)t1) == null)
+            if ((object)t0 == null || (object)t1 == null)
             {
                 return false;
             }
@@ -348,11 +332,12 @@ namespace Game.Common
 
         public override int GetHashCode()
         {
-            return base.GetHashCode() ^ 
-                Rotation.GetHashCode() ^ 
-                Size.GetHashCode() ^ 
-                MirrorX.GetHashCode() ^
-                Position.GetHashCode();
+            return base.GetHashCode();
+        }
+
+        public bool Equals(Transform2D other)
+        {
+            return Equals(this, other);
         }
 
         public static explicit operator Transform2D(Transform2 t)

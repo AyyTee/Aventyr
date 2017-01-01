@@ -65,7 +65,7 @@ namespace Game
             Controller?.OnResize(e, ClientSize);
         }
 
-        private void ToggleFullScreen()
+        void ToggleFullScreen()
         {
             if (WindowState == WindowState.Normal)
             {

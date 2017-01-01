@@ -38,7 +38,7 @@ namespace Game.Portals
             }
         }
 
-        private static void _resetWorldTransform(IPortalCommon instance)
+        static void _resetWorldTransform(IPortalCommon instance)
         {
             instance.Path.Portals.Clear();
 
@@ -165,7 +165,7 @@ namespace Game.Portals
             return worldVelocity;
         }
 
-        private static HashSet<IPortal> GetPortalsForPortal(IPortalCommon instance, IEnumerable<IPortal> portals)
+        static HashSet<IPortal> GetPortalsForPortal(IPortalCommon instance, IEnumerable<IPortal> portals)
         {
             var portalSet = new HashSet<IPortal>(portals);
             portalSet.ExceptWith(Tree<IPortalCommon>.GetDescendents(instance).OfType<IPortal>());

@@ -14,10 +14,10 @@ namespace FarseerPhysics.Dynamics.Joints
     /// </summary>
     public class AngleJoint : Joint
     {
-        private float _bias;
-        private float _jointError;
-        private float _massFactor;
-        private float _targetAngle;
+        float _bias;
+        float _jointError;
+        float _massFactor;
+        float _targetAngle;
 
         internal AngleJoint()
         {

@@ -95,8 +95,8 @@ namespace FarseerPhysics.Dynamics.Joints
 
     public abstract class Joint
     {
-        private float _breakpoint;
-        private double _breakpointSquared;
+        float _breakpoint;
+        double _breakpointSquared;
 
         /// <summary>
         /// Indicate if this join is enabled or not. Disabling a joint

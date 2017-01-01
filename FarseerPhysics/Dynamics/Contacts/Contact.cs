@@ -67,11 +67,11 @@ namespace FarseerPhysics.Dynamics.Contacts
     /// </summary>
     public class Contact
     {
-        private ContactType _type;
+        ContactType _type;
 
-        private static EdgeShape _edge = new EdgeShape();
+        static EdgeShape _edge = new EdgeShape();
 
-        private static ContactType[,] _registers = new[,]
+        static ContactType[,] _registers = new[,]
                                                        {
                                                            {
                                                                ContactType.Circle,
@@ -164,7 +164,7 @@ namespace FarseerPhysics.Dynamics.Contacts
             Friction = Settings.MixFriction(FixtureA.Friction, FixtureB.Friction);
         }
 
-        private Contact(Fixture fA, int indexA, Fixture fB, int indexB)
+        Contact(Fixture fA, int indexA, Fixture fB, int indexB)
         {
             Reset(fA, indexA, fB, indexB);
         }
@@ -182,7 +182,7 @@ namespace FarseerPhysics.Dynamics.Contacts
             ContactSolver.WorldManifold.Initialize(ref Manifold, ref bodyA._xf, shapeA.Radius, ref bodyB._xf, shapeB.Radius, out normal, out points);
         }
 
-        private void Reset(Fixture fA, int indexA, Fixture fB, int indexB)
+        void Reset(Fixture fA, int indexA, Fixture fB, int indexB)
         {
             Enabled = true;
             IsTouching = false;
@@ -375,7 +375,7 @@ namespace FarseerPhysics.Dynamics.Contacts
         /// <param name="manifold">The manifold.</param>
         /// <param name="transformA">The first transform.</param>
         /// <param name="transformB">The second transform.</param>
-        private void Evaluate(ref Manifold manifold, ref Transform transformA, ref Transform transformB)
+        void Evaluate(ref Manifold manifold, ref Transform transformA, ref Transform transformB)
         {
             switch (_type)
             {
@@ -465,7 +465,7 @@ namespace FarseerPhysics.Dynamics.Contacts
 
         #region Nested type: ContactType
 
-        private enum ContactType
+        enum ContactType
         {
             NotSupported,
             Polygon,

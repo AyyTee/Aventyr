@@ -14,7 +14,7 @@ namespace EditorLogic.Command
         string _namePrevious;
         string _name;
 
-        private Rename()
+        Rename()
         {
 
         }

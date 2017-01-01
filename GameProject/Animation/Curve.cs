@@ -66,7 +66,7 @@ namespace Game.Animation
             return 0;
         }
 
-        private float _getValue(int index, float time)
+        float _getValue(int index, float time)
         {
             Keyframe current = Keyframes.ElementAt(index).Value;
             if (IsLoop || (index >= 0 && index + 1 < Keyframes.Count))
@@ -126,7 +126,7 @@ namespace Game.Animation
             return 0;
         }
 
-        private float _getDerivative(int index, float time)
+        float _getDerivative(int index, float time)
         {
             Keyframe current = Keyframes.ElementAt(index).Value;
             if (IsLoop || (index >= 0 && index + 1 < Keyframes.Count))

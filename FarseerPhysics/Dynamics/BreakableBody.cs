@@ -13,10 +13,10 @@ namespace FarseerPhysics.Dynamics
     /// </summary>
     public class BreakableBody
     {
-        private float[] _angularVelocitiesCache = new float[8];
-        private bool _break;
-        private Vector2[] _velocitiesCache = new Vector2[8];
-        private World _world;
+        float[] _angularVelocitiesCache = new float[8];
+        bool _break;
+        Vector2[] _velocitiesCache = new Vector2[8];
+        World _world;
 
         public BreakableBody(World world, IEnumerable<Vertices> vertices, float density, Vector2 position = new Vector2(), float rotation = 0)
         {
@@ -55,7 +55,7 @@ namespace FarseerPhysics.Dynamics
         /// </summary>
         public float Strength = 500.0f;
 
-        private void PostSolve(Contact contact, ContactVelocityConstraint impulse)
+        void PostSolve(Contact contact, ContactVelocityConstraint impulse)
         {
             if (!Broken)
             {
@@ -106,7 +106,7 @@ namespace FarseerPhysics.Dynamics
             }
         }
 
-        private void Decompose()
+        void Decompose()
         {
             //Unsubsribe from the PostSolve delegate
             _world.ContactManager.PostSolve -= PostSolve;

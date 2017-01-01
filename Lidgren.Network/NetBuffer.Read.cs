@@ -15,7 +15,7 @@ namespace Lidgren.Network
 	/// </summary>
 	public partial class NetBuffer
 	{
-		private const string c_readOverflowError = "Trying to read past the buffer size - likely caused by mismatching Write/Reads, different size or order.";
+	    const string c_readOverflowError = "Trying to read past the buffer size - likely caused by mismatching Write/Reads, different size or order.";
 
 		/// <summary>
 		/// Reads a boolean value (stored as a single bit) written using Write(bool)

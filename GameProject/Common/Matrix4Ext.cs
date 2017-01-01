@@ -5,8 +5,8 @@ namespace Game.Common
 {
     public static class Matrix4Ext
     {
-        private const float EqualityEpsilon = 0.0001f;
-        private const int Matrix4Size = 4;
+        const float EqualityEpsilon = 0.0001f;
+        const int Matrix4Size = 4;
         public static Matrix4 ConvertTo(FarseerPhysics.Common.Transform transform)
         {
             Matrix4 matrix = Matrix4.CreateRotationZ(transform.q.GetAngle());

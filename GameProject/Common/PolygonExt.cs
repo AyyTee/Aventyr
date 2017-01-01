@@ -126,7 +126,7 @@ namespace Game.Common
             return centroid;
         }
 
-        private class ConvexVert
+        class ConvexVert
         {
             public Vector2 V;
             public HashSet<ConvexVert> Diagonals = new HashSet<ConvexVert>();
@@ -137,7 +137,7 @@ namespace Game.Common
             }
         }
 
-        private static List<List<Vector2>> DecomposeConcave(List<ConvexVert> polygon, bool isClockwise)
+        static List<List<Vector2>> DecomposeConcave(List<ConvexVert> polygon, bool isClockwise)
         {
             List<List<Vector2>> concaveList = new List<List<Vector2>>();
             List<Vector2> vertices = new List<Vector2>();
@@ -208,7 +208,7 @@ namespace Game.Common
             return concaveList;
         }
 
-        private static bool IsReflex(Vector2 prev, Vector2 current, Vector2 next, bool isClockwise)
+        static bool IsReflex(Vector2 prev, Vector2 current, Vector2 next, bool isClockwise)
         {
             double angleNext = MathExt.AngleVector(next - current);
             double anglePrev = MathExt.AngleVector(prev - current);

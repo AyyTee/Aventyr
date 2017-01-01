@@ -10,7 +10,7 @@ namespace Game.Physics
 {
     public static class SimulationStep
     {
-        private class PortalableMovement
+        class PortalableMovement
         {
             public Transform2D Previous;
             public Line StartEnd;
@@ -23,7 +23,7 @@ namespace Game.Physics
             }
         }
 
-        private class PortalMovement
+        class PortalMovement
         {
             public Line Start;
             public Line End;
@@ -36,7 +36,7 @@ namespace Game.Physics
             }
         }
 
-        private class PortalableSweep
+        class PortalableSweep
         {
             public GeometryUtil.Sweep Sweep;
             public PortalableMovement Portalable;
@@ -61,7 +61,7 @@ namespace Game.Physics
             }
         }
 
-        private static void Step(IEnumerable<IPortalCommon> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter, List<PortalableSweep> previous)
+        static void Step(IEnumerable<IPortalCommon> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter, List<PortalableSweep> previous)
         {
             List<PortalableMovement> pointMovement = new List<PortalableMovement>();
             List<PortalMovement> lineMovement = new List<PortalMovement>();
@@ -151,7 +151,7 @@ namespace Game.Physics
             Step(moving, portals, stepSize * (1 - tDelta), portalEnter, earliest);
         }
 
-        private static void PlaceOnPortal(IPortalCommon instance, IPortal portal, float t)
+        static void PlaceOnPortal(IPortalCommon instance, IPortal portal, float t)
         {
             Line portalLine = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(portal)));
             Transform2D transform = (Transform2D)instance.WorldTransform;
@@ -163,7 +163,7 @@ namespace Game.Physics
         /// detect repeat portal entry.</param>
         /// <param name="timeSpan">This is purely used for determining what t value exceeds the minimum 
         /// amount of time allowed for repeat portal entry.</param>
-        private static List<PortalableSweep> GetEarliestCollision(List<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, List<PortalableSweep> previous, double timeSpan)
+        static List<PortalableSweep> GetEarliestCollision(List<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, List<PortalableSweep> previous, double timeSpan)
         {
             double tMin = 1;
             double repeatIntersectionEpsilon = 0.00005 / timeSpan;
@@ -214,7 +214,7 @@ namespace Game.Physics
             return earliest;
         }
 
-        private static void AddMargin(IEnumerable<IPortal> portals, IPortalCommon instance)
+        static void AddMargin(IEnumerable<IPortal> portals, IPortalCommon instance)
         {
             Transform2D transform = (Transform2D)instance.WorldTransform;
             foreach (IPortal p in portals.Where(item => item.OneSided && Portal.IsValid(item)))

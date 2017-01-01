@@ -43,7 +43,7 @@ namespace Game.Rendering
             return (1 - z) * (float)GetWorldZ(camera);
         }
 
-        private static double GetWorldZ(ICamera2 camera)
+        static double GetWorldZ(ICamera2 camera)
         {
             return Math.Abs(camera.GetWorldTransform().Size / (2 * Math.Tan(camera.Fov / 2)));
         }
@@ -75,14 +75,14 @@ namespace Game.Rendering
             return Vector2Ext.Transform(GetVerts(), WorldToClipMatrix(camera).Inverted());
         }
 
-        private static Matrix4 WorldToScreenMatrix(ICamera2 camera, Vector2 canvasSize)
+        static Matrix4 WorldToScreenMatrix(ICamera2 camera, Vector2 canvasSize)
         {
             Matrix4 scale = Matrix4.CreateScale(canvasSize.X / 2, -canvasSize.Y / 2, 1);
             Matrix4 translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
             return GetViewMatrix(camera) * translation * scale;
         }
 
-        private static Matrix4 WorldToClipMatrix(ICamera2 camera)
+        static Matrix4 WorldToClipMatrix(ICamera2 camera)
         {
             Matrix4 scale = Matrix4.CreateScale(1, -1, 1);
             Matrix4 translation = Matrix4.CreateTranslation(new Vector3(0f, 0f, 0f));
@@ -129,7 +129,7 @@ namespace Game.Rendering
             return Vector2Ext.Transform(screenCoord, GetViewMatrix(camera).Inverted()).ToArray();
         }
 
-        private static Vector2 GetUp(ICamera2 camera)
+        static Vector2 GetUp(ICamera2 camera)
         {
             Matrix4 m = Matrix4.CreateRotationZ(camera.GetWorldTransform().Rotation);
             return Vector2Ext.Transform(new Vector2(0, 1), m);

@@ -63,19 +63,19 @@ namespace FarseerPhysics.Common.TextureTools
         /// <summary>
         /// Point cloud defining the terrain.
         /// </summary>
-        private sbyte[,] _terrainMap;
+        sbyte[,] _terrainMap;
 
         /// <summary>
         /// Generated bodies.
         /// </summary>
-        private List<Body>[,] _bodyMap;
+        List<Body>[,] _bodyMap;
 
-        private float _localWidth;
-        private float _localHeight;
-        private int _xnum;
-        private int _ynum;
-        private AABB _dirtyArea;
-        private Vector2 _topLeft;
+        float _localWidth;
+        float _localHeight;
+        int _xnum;
+        int _ynum;
+        AABB _dirtyArea;
+        Vector2 _topLeft;
 
         /// <summary>
         /// Creates a new terrain.
@@ -207,7 +207,7 @@ namespace FarseerPhysics.Common.TextureTools
             _dirtyArea = new AABB(new Vector2(float.MaxValue, float.MaxValue), new Vector2(float.MinValue, float.MinValue));
         }
 
-        private void RemoveOldData(int xStart, int xEnd, int yStart, int yEnd)
+        void RemoveOldData(int xStart, int xEnd, int yStart, int yEnd)
         {
             for (int x = xStart; x < xEnd; x++)
             {
@@ -230,7 +230,7 @@ namespace FarseerPhysics.Common.TextureTools
             }
         }
 
-        private void GenerateTerrain(int gx, int gy)
+        void GenerateTerrain(int gx, int gy)
         {
             float ax = gx * CellSize;
             float ay = gy * CellSize;

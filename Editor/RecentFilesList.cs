@@ -50,7 +50,7 @@ namespace EditorWindow
             Update();
         }
 
-        private void InsertNewButton(string filepath)
+        void InsertNewButton(string filepath)
         {
             MenuItem buttonNew = new MenuItem();
             buttonNew.Click += Button_Click;
@@ -58,7 +58,7 @@ namespace EditorWindow
             RecentFilesDropdown.Items.Insert(0, buttonNew);
         }
 
-        private void Update()
+        void Update()
         {
             for (int i = 0; i < ButtonList.Count; i++)
             {
@@ -67,7 +67,7 @@ namespace EditorWindow
             Properties.Settings.Default.RecentFilepaths = GetStringList();
         }
 
-        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        void Button_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             var button = ButtonList.Find(item => item.Item1 == sender);
 
@@ -88,7 +88,7 @@ namespace EditorWindow
             Update();
         }
 
-        private System.Collections.Specialized.StringCollection GetStringList()
+        System.Collections.Specialized.StringCollection GetStringList()
         {
             var stringList = new System.Collections.Specialized.StringCollection();
             for (int i = 0; i < ButtonList.Count; i++)

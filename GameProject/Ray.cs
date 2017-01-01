@@ -53,7 +53,7 @@ namespace Game
                 0);
         }
 
-        private static void _rayCast(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Action<EnterCallbackData, double> portalEnter, Settings settings, int count)
+        static void _rayCast(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Action<EnterCallbackData, double> portalEnter, Settings settings, int count)
         {
             Transform2 begin = placeable.GetTransform();
             Transform2 velocity = placeable.GetVelocity().Multiply(settings.TimeScale);
@@ -110,7 +110,7 @@ namespace Game
             }
         }
 
-        private static void _rayEnd(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Settings settings, Transform2 begin, Transform2 velocity)
+        static void _rayEnd(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Settings settings, Transform2 begin, Transform2 velocity)
         {
             begin.Position += velocity.Position.Normalized() * (float)movementLeft;
             if (settings.AdjustEndpoint)
@@ -130,7 +130,7 @@ namespace Game
         /// <param name="portalPrevious">The last portal that was exited.</param>
         /// <param name="transform"></param>
         /// <param name="velocity"></param>
-        private static Transform2 AddMargin(IEnumerable<IPortal> portals, IPortal portalPrevious, Transform2 transform, Transform2 velocity)
+        static Transform2 AddMargin(IEnumerable<IPortal> portals, IPortal portalPrevious, Transform2 transform, Transform2 velocity)
         {
             transform = transform.ShallowClone();
             foreach (IPortal p in portals)

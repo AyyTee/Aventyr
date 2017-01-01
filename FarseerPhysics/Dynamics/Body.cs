@@ -56,17 +56,16 @@ namespace FarseerPhysics.Dynamics
 
     public class Body : IDisposable
     {
-        [ThreadStatic]
-        private static int _bodyIdCounter;
+        [ThreadStatic] static int _bodyIdCounter;
 
-        private float _angularDamping;
-        private BodyType _bodyType;
-        private float _inertia;
-        private float _linearDamping;
-        private float _mass;
-        private bool _sleepingAllowed;
-        private bool _awake;
-        private bool _fixedRotation;
+        float _angularDamping;
+        BodyType _bodyType;
+        float _inertia;
+        float _linearDamping;
+        float _mass;
+        bool _sleepingAllowed;
+        bool _awake;
+        bool _fixedRotation;
 
         internal bool _enabled;
         internal float _angularVelocity;

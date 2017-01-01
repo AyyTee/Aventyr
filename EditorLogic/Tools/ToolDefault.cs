@@ -1,20 +1,18 @@
-﻿using Game;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Input;
-using System.IO;
-using OpenTK;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using EditorLogic.Command;
+using Game;
 using Game.Common;
 using Game.Models;
 using Game.Rendering;
 using Game.Serialization;
+using OpenTK;
+using OpenTK.Input;
 
-namespace EditorLogic
+namespace EditorLogic.Tools
 {
     public class ToolDefault : Tool
     {
@@ -141,7 +139,7 @@ namespace EditorLogic
             TranslatorUpdate();
         }
 
-        private void Select()
+        void Select()
         {
             Vector2 mousePos = Controller.GetMouseWorld();
             EditorObject nearest = Controller.GetNearestObject(mousePos);
@@ -159,7 +157,7 @@ namespace EditorLogic
             }
         }
 
-        private void TranslatorUpdate()
+        void TranslatorUpdate()
         {
             List<EditorObject> selection = Controller.Selection.GetAll();
             if (selection.Count > 0)
@@ -177,7 +175,7 @@ namespace EditorLogic
             }
         }
 
-        private void DragSet(IList<EditorObject> selected, Mode mode, DragState state)
+        void DragSet(IList<EditorObject> selected, Mode mode, DragState state)
         {
             _dragState = state;
             _mode = mode;
@@ -196,7 +194,7 @@ namespace EditorLogic
             return _dragState != DragState.Neither;
         }
 
-        private void DragBegin(List<EditorObject> selected, bool toggleMode, Mode mode)
+        void DragBegin(List<EditorObject> selected, bool toggleMode, Mode mode)
         {
             Debug.Assert(selected != null);
             if (selected.Count <= 0)
@@ -231,7 +229,7 @@ namespace EditorLogic
             }
         }
 
-        private void DragEnd(bool reset)
+        void DragEnd(bool reset)
         {
             if (reset)
             {
@@ -250,7 +248,7 @@ namespace EditorLogic
             Active = false;
         }
 
-        private void DragUpdate()
+        void DragUpdate()
         {
             Transform2 dragAmount = Transform2.CreateVelocity();
             Vector2 mousePos;
@@ -341,7 +339,7 @@ namespace EditorLogic
             Controller.Level.Doodads.Remove(_translator);
         }
 
-        private void UpdateTranslation(ControllerCamera camera)
+        void UpdateTranslation(ControllerCamera camera)
         {
             Transform2 transform = _translator.GetTransform();
             Transform2 camT = camera.GetWorldTransform();

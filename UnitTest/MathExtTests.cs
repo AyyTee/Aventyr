@@ -463,17 +463,18 @@ namespace UnitTest
         }
         #endregion
         #region BisectTriangle tests
-        private Triangle GetDefaultTriangle()
+
+        Triangle GetDefaultTriangle()
         {
             return new Triangle(new Vertex(0, 0), new Vertex(1, 0), new Vertex(0, 1));
         }
 
-        private Triangle GetDefaultComparison()
+        Triangle GetDefaultComparison()
         {
             return new Triangle(new Vertex(0.5f, 0.5f), new Vertex(0, 1), new Vertex(0, 0.5f));
         }
 
-        private LineF GetDefaultBisector()
+        LineF GetDefaultBisector()
         {
             return new LineF(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
         }

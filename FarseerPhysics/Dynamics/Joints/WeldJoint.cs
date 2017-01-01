@@ -51,22 +51,22 @@ namespace FarseerPhysics.Dynamics.Joints
     public class WeldJoint : Joint
     {
         // Solver shared
-        private Vector3 _impulse;
-        private float _gamma;
-        private float _bias;
+        Vector3 _impulse;
+        float _gamma;
+        float _bias;
 
         // Solver temp
-        private int _indexA;
-        private int _indexB;
-        private Vector2 _rA;
-        private Vector2 _rB;
-        private Vector2 _localCenterA;
-        private Vector2 _localCenterB;
-        private float _invMassA;
-        private float _invMassB;
-        private float _invIA;
-        private float _invIB;
-        private Mat33 _mass;
+        int _indexA;
+        int _indexB;
+        Vector2 _rA;
+        Vector2 _rB;
+        Vector2 _localCenterA;
+        Vector2 _localCenterB;
+        float _invMassA;
+        float _invMassB;
+        float _invIA;
+        float _invIB;
+        Mat33 _mass;
 
         internal WeldJoint()
         {

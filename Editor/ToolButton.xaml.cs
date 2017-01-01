@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using EditorLogic.Tools;
 
 namespace EditorWindow
 {
@@ -42,7 +43,7 @@ namespace EditorWindow
             Button.Click += Button_Click;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        void Button_Click(object sender, RoutedEventArgs e)
         {
             _controller.AddAction(() => { _controller.SetTool(_tool); });
         }

@@ -36,9 +36,9 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Util
 {
     internal class PolygonGenerator
     {
-        private static readonly Random RNG = new Random();
+        static readonly Random RNG = new Random();
 
-        private static double PI_2 = 2.0*Math.PI;
+        static double PI_2 = 2.0*Math.PI;
 
         public static Polygon.Polygon RandomCircleSweep(double scale, int vertexCount)
         {

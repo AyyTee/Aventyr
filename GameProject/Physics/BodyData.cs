@@ -117,7 +117,7 @@ namespace Game.Physics
             return collisions;
         }
 
-        private HashSet<IPortal> PortalCollisionsPrevious()
+        HashSet<IPortal> PortalCollisionsPrevious()
         {
             HashSet<IPortal> collisionsPrevious = new HashSet<IPortal>();
             foreach (Fixture f in Body.FixtureList)
@@ -128,12 +128,12 @@ namespace Game.Physics
             return collisionsPrevious;
         }
 
-        private HashSet<IPortal> PortalCollisionsNew()
+        HashSet<IPortal> PortalCollisionsNew()
         {
             return new HashSet<IPortal>(PortalCollisions().Except(PortalCollisionsPrevious()));
         }
 
-        private HashSet<IPortal> PortalCollisionsRemoved()
+        HashSet<IPortal> PortalCollisionsRemoved()
         {
             return new HashSet<IPortal>(PortalCollisionsPrevious().Except(PortalCollisions()));
         }

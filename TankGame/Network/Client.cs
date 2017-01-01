@@ -174,7 +174,7 @@ namespace TankGame.Network
             }
         }
 
-        private void HandleData(INetIncomingMessage msg)
+        void HandleData(INetIncomingMessage msg)
         {
             ServerMessage data = NetworkHelper.ReadMessage<ServerMessage>(msg);
             bool outOfDate = data.LocalSendTime <= _lastTimestamp;

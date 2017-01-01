@@ -4,8 +4,8 @@ namespace Lidgren.Network
 {
 	internal sealed class NetReliableSequencedReceiver : NetReceiverChannelBase
 	{
-		private int m_windowStart;
-		private int m_windowSize;
+	    int m_windowStart;
+	    int m_windowSize;
 
 		public NetReliableSequencedReceiver(NetConnection connection, int windowSize)
 			: base(connection)
@@ -13,7 +13,7 @@ namespace Lidgren.Network
 			m_windowSize = windowSize;
 		}
 
-		private void AdvanceWindow()
+	    void AdvanceWindow()
 		{
 			m_windowStart = (m_windowStart + 1) % NetConstants.NumSequenceNumbers;
 		}

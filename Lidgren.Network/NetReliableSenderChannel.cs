@@ -8,14 +8,14 @@ namespace Lidgren.Network
 	/// </summary>
 	internal sealed class NetReliableSenderChannel : NetSenderChannelBase
 	{
-		private NetConnection m_connection;
-		private int m_windowStart;
-		private int m_windowSize;
-		private int m_sendStart;
+	    NetConnection m_connection;
+	    int m_windowStart;
+	    int m_windowSize;
+	    int m_sendStart;
 
-		private bool m_anyStoredResends;
+	    bool m_anyStoredResends;
 
-		private NetBitVector m_receivedAcks;
+	    NetBitVector m_receivedAcks;
 		internal NetStoredReliableMessage[] m_storedMessages;
 
 		internal double m_resendDelay;
@@ -125,7 +125,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private void ExecuteSend(double now, NetOutgoingMessage message)
+	    void ExecuteSend(double now, NetOutgoingMessage message)
 		{
 			int seqNr = m_sendStart;
 			m_sendStart = (m_sendStart + 1) % NetConstants.NumSequenceNumbers;
@@ -148,7 +148,7 @@ namespace Lidgren.Network
 			return;
 		}
 
-		private void DestoreMessage(double now, int storeIndex, out bool resetTimeout)
+	    void DestoreMessage(double now, int storeIndex, out bool resetTimeout)
 		{
 			// reset timeout if we receive ack within kThreshold of sending it
 			const double kThreshold = 2.0;

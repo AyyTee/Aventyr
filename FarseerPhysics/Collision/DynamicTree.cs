@@ -62,13 +62,13 @@ namespace FarseerPhysics.Collision
     /// </summary>
     public class DynamicTree<T>
     {
-        private Stack<int> _raycastStack = new Stack<int>(256);
-        private Stack<int> _queryStack = new Stack<int>(256);
-        private int _freeList;
-        private int _nodeCapacity;
-        private int _nodeCount;
-        private TreeNode<T>[] _nodes;
-        private int _root;
+        Stack<int> _raycastStack = new Stack<int>(256);
+        Stack<int> _queryStack = new Stack<int>(256);
+        int _freeList;
+        int _nodeCapacity;
+        int _nodeCount;
+        TreeNode<T>[] _nodes;
+        int _root;
         internal const int NullNode = -1;
 
         /// <summary>
@@ -420,7 +420,7 @@ namespace FarseerPhysics.Collision
             }
         }
 
-        private int AllocateNode()
+        int AllocateNode()
         {
             // Expand the node pool as needed.
             if (_freeList == NullNode)
@@ -459,7 +459,7 @@ namespace FarseerPhysics.Collision
             return nodeId;
         }
 
-        private void FreeNode(int nodeId)
+        void FreeNode(int nodeId)
         {
             Debug.Assert(0 <= nodeId && nodeId < _nodeCapacity);
             Debug.Assert(0 < _nodeCount);
@@ -469,7 +469,7 @@ namespace FarseerPhysics.Collision
             --_nodeCount;
         }
 
-        private void InsertLeaf(int leaf)
+        void InsertLeaf(int leaf)
         {
             if (_root == NullNode)
             {
@@ -607,7 +607,7 @@ namespace FarseerPhysics.Collision
             //Validate();
         }
 
-        private void RemoveLeaf(int leaf)
+        void RemoveLeaf(int leaf)
         {
             if (leaf == _root)
             {
@@ -671,7 +671,7 @@ namespace FarseerPhysics.Collision
         /// </summary>
         /// <param name="iA"></param>
         /// <returns>the new root index.</returns>
-        private int Balance(int iA)
+        int Balance(int iA)
         {
             Debug.Assert(iA != NullNode);
 

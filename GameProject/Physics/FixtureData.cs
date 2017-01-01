@@ -20,7 +20,7 @@ namespace Game.Physics
         /// </summary>
         public HashSet<IPortal> PortalCollisions = new HashSet<IPortal>();
         public HashSet<IPortal> PortalCollisionsPrevious = new HashSet<IPortal>();
-        private FixturePortal[] _portalParents = new FixturePortal[2];
+        FixturePortal[] _portalParents = new FixturePortal[2];
         public Vector2[] DefaultShape;
         /// <summary>
         /// The portals this fixture is a collision edge for (a maximum of 2). 
@@ -38,8 +38,8 @@ namespace Game.Physics
                 _portalParents = value;
             }
         }
-        
-        private List<Fixture> _fixtureChildren = new List<Fixture>();
+
+        List<Fixture> _fixtureChildren = new List<Fixture>();
         public List<Fixture> FixtureChildren { get { return new List<Fixture>(_fixtureChildren); } }
         public Actor Actor
         {
@@ -124,7 +124,7 @@ namespace Game.Physics
             }
         }
 
-        private PolygonShape CreatePortalShape(FixturePortal portal, FixturePortal portalNext)
+        PolygonShape CreatePortalShape(FixturePortal portal, FixturePortal portalNext)
         {
             Debug.Assert(portal.Position.EdgeIndex == portalNext.Position.EdgeIndex);
             Debug.Assert(portal.Position.EdgeT < portalNext.Position.EdgeT);
@@ -149,7 +149,7 @@ namespace Game.Physics
             return new PolygonShape(new FarseerPhysics.Common.Vertices(verts.Select(v => (Xna.Framework.Vector2)v)), 0);
         }
 
-        private PolygonShape CreatePortalShape(FixturePortal portal, bool previousVertex)
+        PolygonShape CreatePortalShape(FixturePortal portal, bool previousVertex)
         {
             Vector2[] verts = new Vector2[3];
             
@@ -177,7 +177,7 @@ namespace Game.Physics
         /// <summary>
         /// A list of FixturePortals that are parented to this fixture.
         /// </summary>
-        private List<FixturePortal> GetChildPortals()
+        List<FixturePortal> GetChildPortals()
         {
             List<FixturePortal> portals = Actor.Children.OfType<FixturePortal>().ToList();
             return portals.FindAll(item => FixtureExt.GetFixtureAttached(item) == Fixture);

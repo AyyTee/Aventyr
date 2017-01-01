@@ -63,7 +63,7 @@ namespace FarseerPhysics.Common.PhysicsLogic
         /// <summary>
         /// Two degrees: maximum angle from edges to first ray tested
         /// </summary>
-        private const float MaxEdgeOffset = MathHelper.Pi / 90;
+        const float MaxEdgeOffset = MathHelper.Pi / 90;
 
         /// <summary>
         /// Ratio of arc length to angle from edges to first ray tested.
@@ -95,8 +95,8 @@ namespace FarseerPhysics.Common.PhysicsLogic
         /// </summary>
         public int MinRays = 5;
 
-        private List<ShapeData> _data = new List<ShapeData>();
-        private RayDataComparer _rdc;
+        List<ShapeData> _data = new List<ShapeData>();
+        RayDataComparer _rdc;
 
         public RealExplosion(World world)
             : base(world, PhysicsLogicType.Explosion)

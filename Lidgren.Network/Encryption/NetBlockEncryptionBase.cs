@@ -9,7 +9,7 @@ namespace Lidgren.Network
 	public abstract class NetBlockEncryptionBase : NetEncryption
 	{
 		// temporary space for one block to avoid reallocating every time
-		private byte[] m_tmp;
+	    byte[] m_tmp;
 
 		/// <summary>
 		/// Block size in bytes for this cipher

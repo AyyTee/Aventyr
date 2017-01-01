@@ -13,12 +13,12 @@ namespace Lidgren.Network
 
 	public partial class NetPeer
 	{
-		private int m_lastUsedFragmentGroup;
+	    int m_lastUsedFragmentGroup;
 
-		private Dictionary<NetConnection, Dictionary<int, ReceivedFragmentGroup>> m_receivedFragmentGroups;
+	    Dictionary<NetConnection, Dictionary<int, ReceivedFragmentGroup>> m_receivedFragmentGroups;
 
 		// on user thread
-		private NetSendResult SendFragmentedMessage(NetOutgoingMessage msg, IList<INetConnection> recipients, NetDeliveryMethod method, int sequenceChannel)
+	    NetSendResult SendFragmentedMessage(NetOutgoingMessage msg, IList<INetConnection> recipients, NetDeliveryMethod method, int sequenceChannel)
 		{
 			// Note: this group id is PER SENDING/NetPeer; ie. same id is sent to all recipients;
 			// this should be ok however; as long as recipients differentiate between same id but different sender
@@ -79,7 +79,7 @@ namespace Lidgren.Network
 			return retval;
 		}
 
-		private void HandleReleasedFragment(NetIncomingMessage im)
+	    void HandleReleasedFragment(NetIncomingMessage im)
 		{
 			VerifyNetworkThread();
 

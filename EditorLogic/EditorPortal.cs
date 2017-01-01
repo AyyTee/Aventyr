@@ -18,7 +18,7 @@ namespace EditorLogic
     {
         [DataMember]
         public IPortal Linked { get; set; }
-        public bool OneSided { get { return false; } }
+        public bool OneSided => false;
         Model _portalModel;
 
         public EditorPortal(EditorScene editorScene)

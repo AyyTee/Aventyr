@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Common;
 using Game.Physics;
 using Xna = Microsoft.Xna.Framework;
@@ -59,6 +56,7 @@ namespace Game.Portals
         /// <param name="portal">Portal being entered.</param>
         /// <param name="intersectT">Intersection point on the portal.</param>
         /// <param name="velocity">Velocity before entering.</param>
+        /// <param name="ignorePortalVelocity"></param>
         public static Transform2 EnterVelocity(IPortal portal, float intersectT, Transform2 velocity, bool ignorePortalVelocity = false)
         {
             Debug.Assert(IsValid(portal));
@@ -88,7 +86,7 @@ namespace Game.Portals
             return velocityClone;
         }
 
-        private static Vector2 GetAngularVelocity(IPortal portal, float intersectT)
+        static Vector2 GetAngularVelocity(IPortal portal, float intersectT)
         {
             Vector2 intersect = new LineF(GetWorldVerts(portal)).Lerp(intersectT);
             return MathExt.AngularVelocity(intersect, portal.WorldTransform.Position, portal.WorldVelocity.Rotation);
@@ -133,15 +131,12 @@ namespace Game.Portals
 
             Debug.Assert(transform == transformCopy && velocity == velocityCopy);
 
-            if (cast != null)
-            {
-                cast.EnterPortal?.Invoke(new EnterCallbackData(portal, cast, intersectT), transform, velocity);
-            }
+            cast?.EnterPortal?.Invoke(new EnterCallbackData(portal, cast, intersectT), transform, velocity);
         }
 
         public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)
         {
-            Transform2 transform = new Transform2(body.Position, 1, body.Rotation);
+            var transform = new Transform2(body.Position, 1, body.Rotation);
             Transform2 velocity = Transform2.CreateVelocity((Vector2)body.LinearVelocity, body.AngularVelocity);
             velocity = EnterVelocity(portal, 0.5f, velocity, ignorePortalVelocity);
             transform = Enter(portal, transform);
@@ -158,7 +153,7 @@ namespace Game.Portals
         /// </summary>
         public static Vector2[] GetVerts(IPortal portal)
         {
-            return new Vector2[] { new Vector2(0, 0.5f), new Vector2(0, -0.5f) };
+            return new[] { new Vector2(0, 0.5f), new Vector2(0, -0.5f) };
         }
 
         /// <summary>
@@ -250,8 +245,8 @@ namespace Game.Portals
         public static Vector2[] GetFov(IPortal portal, Vector2 viewPoint, float distance, int detail, Transform2 transform)
         {
             Matrix4 a = transform.GetMatrix();
-            Vector2[] verts = new Vector2[detail + 2];
-            Vector2[] portalVerts = Portal.GetVerts(portal);
+            var verts = new Vector2[detail + 2];
+            Vector2[] portalVerts = GetVerts(portal);
             for (int i = 0; i < portalVerts.Length; i++)
             {
                 Vector4 b = Vector4.Transform(new Vector4(portalVerts[i].X, portalVerts[i].Y, 0, 1), a);
@@ -289,6 +284,7 @@ namespace Game.Portals
         /// TFirst is the t value for the line intersection.  
         /// TLast is the t value for the portal intersection.
         /// </summary>
+        /// <param name="path"></param>
         /// <param name="line"></param>
         /// <returns></returns>
         public static IntersectCoord[] PathIntersections(PortalPath path, LineF line)
@@ -296,7 +292,7 @@ namespace Game.Portals
             IntersectCoord[] intersections = new IntersectCoord[path.Portals.Count];
             line = line.ShallowClone();
 
-            LineF[] portalLines = new LineF[path.Portals.Count];
+            var portalLines = new LineF[path.Portals.Count];
             for (int i = 0; i < path.Portals.Count; i++)
             {
                 portalLines[i] = new LineF(GetWorldVerts(path.Portals[i]));
@@ -323,12 +319,15 @@ namespace Game.Portals
         /// <summary>
         /// Get all valid portals that collide with a polygon.  Portals can occlude eachother.
         /// </summary>
+        /// <param name="portals"></param>
         /// <param name="margin">Minimum distance inside of polygon for a portal collision to count.  
         /// Useful for avoiding round off errors.</param>
+        /// <param name="center"></param>
+        /// <param name="polygon"></param>
         public static List<IPortal> GetCollisions(Vector2 center, IList<Vector2> polygon, IList<IPortal> portals, double margin = 0)
         {
-            List<IPortal> collisions = new List<IPortal>();
-            foreach (IPortal p in portals.Where(item => IsValid(item)))
+            var collisions = new List<IPortal>();
+            foreach (IPortal p in portals.Where(IsValid))
             {
                 LineF portalLine = new LineF(GetWorldVerts(p));
                 if (MathExt.LineInPolygon(portalLine, polygon) && 
@@ -340,14 +339,13 @@ namespace Game.Portals
                 }
             }
 
-            var ordered = collisions.OrderBy(item => (item.WorldTransform.Position - center).Length).ToList();
+            List<IPortal> ordered = collisions.OrderBy(item => (item.WorldTransform.Position - center).Length).ToList();
             for (int i = 0; i < ordered.Count; i++)
             {
-                IPortal portal = ordered[i];
                 for (int j = ordered.Count - 1; j > i; j--)
                 {
-                    LineF currentLine = new LineF(GetWorldVerts(ordered[i]));
-                    LineF checkLine = new LineF(GetWorldVerts(ordered[j]));
+                    var currentLine = new LineF(GetWorldVerts(ordered[i]));
+                    var checkLine = new LineF(GetWorldVerts(ordered[j]));
                     Side checkSide = currentLine.GetSideOf(checkLine);
                     if (checkSide != currentLine.GetSideOf(center))
                     {

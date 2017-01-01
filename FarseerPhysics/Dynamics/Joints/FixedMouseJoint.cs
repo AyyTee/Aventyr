@@ -45,24 +45,24 @@ namespace FarseerPhysics.Dynamics.Joints
     /// </summary>
     public class FixedMouseJoint : Joint
     {
-        private Vector2 _worldAnchor;
-        private float _frequency;
-        private float _dampingRatio;
-        private float _beta;
+        Vector2 _worldAnchor;
+        float _frequency;
+        float _dampingRatio;
+        float _beta;
 
         // Solver shared
-        private Vector2 _impulse;
-        private float _maxForce;
-        private float _gamma;
+        Vector2 _impulse;
+        float _maxForce;
+        float _gamma;
 
         // Solver temp
-        private int _indexA;
-        private Vector2 _rA;
-        private Vector2 _localCenterA;
-        private float _invMassA;
-        private float _invIA;
-        private Mat22 _mass;
-        private Vector2 _C;
+        int _indexA;
+        Vector2 _rA;
+        Vector2 _localCenterA;
+        float _invMassA;
+        float _invIA;
+        Mat22 _mass;
+        Vector2 _C;
 
         /// <summary>
         /// This requires a world target point,

@@ -15,7 +15,7 @@ using Xna = Microsoft.Xna.Framework;
 namespace Game.Physics
 {
     /// <summary>A SceneNode with rigid body physics.</summary>
-    [DataContract, DebuggerDisplay("Actor {Name}")]
+    [DataContract, DebuggerDisplay("Actor " + nameof(Name))]
     public class Actor : SceneNode, IWall, IPortalable
     {
         public delegate void OnCollisionHandler(Actor collidingWith, bool firstEvent);
@@ -85,7 +85,7 @@ namespace Game.Physics
 
         public override IDeepClone ShallowClone()
         {
-            Actor clone = new Actor(Scene, Vertices, GetTransform());
+            var clone = new Actor(Scene, Vertices, GetTransform());
             ShallowClone(clone);
             return clone;
         }
@@ -143,7 +143,7 @@ namespace Game.Physics
         /// <returns></returns>
         public Vector2 GetCentroid()
         {
-            Vector2 centroid = new Vector2();
+            var centroid = new Vector2();
             float massTotal = 0;
             foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
             {
@@ -162,7 +162,7 @@ namespace Game.Physics
             _setBodyType(Body, type);
         }
 
-        private void _setBodyType(Body body, BodyType type)
+        void _setBodyType(Body body, BodyType type)
         {
             Debug.Assert(!Scene.InWorldStep);
             body.BodyType = type;
@@ -208,7 +208,7 @@ namespace Game.Physics
             _applyForce(force, point);
         }
 
-        private void _applyForce(Vector2 force, Vector2 point)
+        void _applyForce(Vector2 force, Vector2 point)
         {
             Body.ApplyForce((Xna.Vector2)force, (Xna.Vector2)point);
         }
@@ -252,7 +252,7 @@ namespace Game.Physics
             base.SetTransform(transform);
         }
 
-        private void _setTransform(Body body, Transform2 transform, bool checkScale = true)
+        void _setTransform(Body body, Transform2 transform, bool checkScale = true)
         {
             if (checkScale && _scale != transform.Scale)
             {
@@ -327,7 +327,7 @@ namespace Game.Physics
             }*/
         }
 
-        private static Transform2 UndoPortalTransform(BodyData data, Transform2 transform)
+        static Transform2 UndoPortalTransform(BodyData data, Transform2 transform)
         {
             Transform2 copy = transform.ShallowClone();
             if (data.Parent == null)
@@ -355,7 +355,7 @@ namespace Game.Physics
             }
         }
 
-        private static void _assertBodyType(BodyData bodyData)
+        static void _assertBodyType(BodyData bodyData)
         {
             Debug.Assert(
                 (bodyData.Body.BodyType == BodyType.Dynamic && bodyData.Actor.BodyType == BodyType.Dynamic) ||

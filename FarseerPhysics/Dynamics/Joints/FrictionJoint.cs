@@ -44,22 +44,22 @@ namespace FarseerPhysics.Dynamics.Joints
     public class FrictionJoint : Joint
     {
         // Solver shared
-        private Vector2 _linearImpulse;
-        private float _angularImpulse;
+        Vector2 _linearImpulse;
+        float _angularImpulse;
 
         // Solver temp
-        private int _indexA;
-        private int _indexB;
-        private Vector2 _rA;
-        private Vector2 _rB;
-        private Vector2 _localCenterA;
-        private Vector2 _localCenterB;
-        private float _invMassA;
-        private float _invMassB;
-        private float _invIA;
-        private float _invIB;
-        private float _angularMass;
-        private Mat22 _linearMass;
+        int _indexA;
+        int _indexB;
+        Vector2 _rA;
+        Vector2 _rB;
+        Vector2 _localCenterA;
+        Vector2 _localCenterB;
+        float _invMassA;
+        float _invMassB;
+        float _invIA;
+        float _invIB;
+        float _angularMass;
+        Mat22 _linearMass;
 
         internal FrictionJoint()
         {

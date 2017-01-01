@@ -54,7 +54,7 @@ namespace FarseerPhysics.Common.PhysicsLogic
             return ApplyImpulse(pos, radius, force, maxForce, affectedBodies);
         }
 
-        private Dictionary<Body, Vector2> ApplyImpulse(Vector2 pos, float radius, float force, float maxForce, HashSet<Body> overlappingBodies)
+        Dictionary<Body, Vector2> ApplyImpulse(Vector2 pos, float radius, float force, float maxForce, HashSet<Body> overlappingBodies)
         {
             Dictionary<Body, Vector2> forces = new Dictionary<Body, Vector2>(overlappingBodies.Count);
 
@@ -78,7 +78,7 @@ namespace FarseerPhysics.Common.PhysicsLogic
             return forces;
         }
 
-        private float GetPercent(float distance, float radius)
+        float GetPercent(float distance, float radius)
         {
             //(1-(distance/radius))^power-1
             float percent = (float)Math.Pow(1 - ((distance - radius) / radius), Power) - 1;

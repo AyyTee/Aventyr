@@ -1,15 +1,11 @@
-﻿using Game;
-using OpenTK;
-using OpenTK.Input;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Common;
 using Game.Models;
+using OpenTK;
+using OpenTK.Input;
 
-namespace EditorLogic
+namespace EditorLogic.Tools
 {
     public class ToolAddWall : Tool
     {

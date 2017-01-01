@@ -8,7 +8,7 @@ namespace Lidgren.Network
 	/// </summary>
 	public static class NetRandomSeed
 	{
-		private static int m_seedIncrement = -1640531527;
+	    static int m_seedIncrement = -1640531527;
 
 		/// <summary>
 		/// Generates a 32 bit random seed

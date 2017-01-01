@@ -149,7 +149,7 @@ namespace Game.Physics
         /// </summary>
         /// <param name="body"></param>
         /// <returns></returns>
-        private static List<Tuple<Fixture, Vector2[]>> GetClippedFixtures(Body body)
+        static List<Tuple<Fixture, Vector2[]>> GetClippedFixtures(Body body)
         {
             BodyData data = GetData(body);
 
@@ -232,7 +232,7 @@ namespace Game.Physics
             Debug.Assert(removed == 1);
         }
 
-        private static void _remove(BodyData bodyData)
+        static void _remove(BodyData bodyData)
         {
             foreach (BodyData data in bodyData.Children)
             {

@@ -45,21 +45,21 @@ namespace FarseerPhysics.Dynamics.Joints
     public class RopeJoint : Joint
     {
         // Solver shared
-        private float _impulse;
-        private float _length;
+        float _impulse;
+        float _length;
 
         // Solver temp
-        private int _indexA;
-        private int _indexB;
-        private Vector2 _localCenterA;
-        private Vector2 _localCenterB;
-        private float _invMassA;
-        private float _invMassB;
-        private float _invIA;
-        private float _invIB;
-        private float _mass;
-        private Vector2 _rA, _rB;
-        private Vector2 _u;
+        int _indexA;
+        int _indexB;
+        Vector2 _localCenterA;
+        Vector2 _localCenterB;
+        float _invMassA;
+        float _invMassB;
+        float _invIA;
+        float _invIB;
+        float _mass;
+        Vector2 _rA, _rB;
+        Vector2 _u;
 
         internal RopeJoint()
         {

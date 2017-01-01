@@ -1,15 +1,12 @@
 ﻿using Game;
 using Game.Portals;
 using OpenTK;
-using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using EditorLogic.Tools;
 using Game.Common;
 using Game.Rendering;
 
@@ -20,26 +17,28 @@ namespace EditorLogic
         public Scene Hud, ActiveLevel;
         public EditorScene Level, Clipboard;
         public ControllerCamera CamControl { get; private set; }
-        Tool _activeTool;
-        public Tool ActiveTool { get { return _activeTool; } }
+        public Tool ActiveTool { get; set; }
+
         public float PhysicsStepSize { get; set; }
         Tool _toolDefault;
         Tool _nextTool;
-        Queue<Action> _actions = new Queue<Action>();
+        readonly Queue<Action> _actions = new Queue<Action>();
         public Selection Selection { get; private set; }
         public StateList StateList { get; private set; }
-        public float CanvasAspect { get { return CanvasSize.Width / (float)CanvasSize.Height; } }
+        public float CanvasAspect => CanvasSize.Width / (float)CanvasSize.Height;
+
         /// <summary>
         /// Lock used to prevent race conditions when adding and reading from the action queue.
         /// </summary>
-        object _lockAction = new object();
+        readonly object _lockAction = new object();
+
         /// <summary>
         /// Use this lock to prevent the OGL thread from being killed while doing something important .
         /// </summary>
-        public object ClosingLock { get; private set; }
+        public object ClosingLock { get; } = new object();
         public bool IsPaused { get; private set; }
-        public bool IsStopped { get { return ActiveLevel == null; } }
-        int _stepsPending = 0;
+        public bool IsStopped => ActiveLevel == null;
+        int _stepsPending;
 
         public delegate void UpdateHandler(ControllerEditor controller);
         public event UpdateHandler Update;
@@ -69,7 +68,6 @@ namespace EditorLogic
         {
             IsPaused = true;
             PhysicsStepSize = 1;
-            ClosingLock = new object();
         }
 
         public override void OnLoad(EventArgs e)
@@ -79,7 +77,7 @@ namespace EditorLogic
             Clipboard = new EditorScene();
 
             LevelCreate();
-            Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2, CanvasSize.Height / 2), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
+            Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2f, CanvasSize.Height / 2f), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
 
             PortalCommon.UpdateWorldTransform(Hud);
             PortalCommon.UpdateWorldTransform(Level);
@@ -155,25 +153,14 @@ namespace EditorLogic
 
         public double GetTime()
         {
-            if (IsStopped)
-            {
-                return Level.Time;
-            }
-            return ActiveLevel.Time;
-        }
-
-        public override void OnRenderFrame(FrameEventArgs e)
-        {
-            base.OnRenderFrame(e);
+            return IsStopped ? Level.Time : ActiveLevel.Time;
         }
 
         public Vector2 GetMouseWorld()
         {
-            if (Level == null)
-            {
-                return Vector2.Zero;
-            }
-            return CameraExt.ScreenToWorld(Level.ActiveCamera, Input.MousePos, Vector2Ext.ToOtk(CanvasSize));
+            return Level == null ? 
+                Vector2.Zero : 
+                CameraExt.ScreenToWorld(Level.ActiveCamera, Input.MousePos, Vector2Ext.ToOtk(CanvasSize));
         }
 
         public Vector2 GetMouseWorldPortal(IEnumerable<IPortal> portals)
@@ -188,7 +175,7 @@ namespace EditorLogic
             }
             Transform2 transform = CameraExt.GetWorldViewpoint(Level.ActiveCamera);
             Vector2 mousePos = CameraExt.ScreenToWorld(Level.ActiveCamera, Input.MousePos, Vector2Ext.ToOtk(CanvasSize));
-            Portalable portalable = new Portalable(null, transform, Transform2.CreateVelocity(mousePos - transform.Position));
+            var portalable = new Portalable(null, transform, Transform2.CreateVelocity(mousePos - transform.Position));
             Ray.RayCast(portalable, Level.GetPortalList(), new Ray.Settings());
             return portalable.GetTransform().Position;
         }
@@ -249,7 +236,7 @@ namespace EditorLogic
             }
             else
             {
-                _activeTool.Update();
+                ActiveTool.Update();
                 Level.Step(1 / 60);
                 PortalCommon.UpdateWorldTransform(Level);
             }
@@ -267,7 +254,7 @@ namespace EditorLogic
 
         public void Undo()
         {
-            if (!_activeTool.Active)
+            if (!ActiveTool.Active)
             {
                 StateList.Undo();
             }
@@ -275,43 +262,36 @@ namespace EditorLogic
 
         public void Redo()
         {
-            if (!_activeTool.Active)
+            if (!ActiveTool.Active)
             {
                 StateList.Redo();
             }
         }
 
-        private void _setTool(Tool tool)
+        void _setTool(Tool tool)
         {
             Debug.Assert(tool != null, "Tool cannot be null.");
-            if (_activeTool == _nextTool)
+            if (ActiveTool == _nextTool)
             {
                 return;
             }
-            _activeTool.Disable();
-            _activeTool = tool;
-            _activeTool.Enable();
+            ActiveTool.Disable();
+            ActiveTool = tool;
+            ActiveTool.Enable();
             ToolChanged(this, tool);
         }
 
-        private void InitTools()
+        void InitTools()
         {
             _toolDefault = new ToolDefault(this);
-            _activeTool = _toolDefault;
-            _nextTool = _activeTool;
-            _activeTool.Enable();
+            ActiveTool = _toolDefault;
+            _nextTool = ActiveTool;
+            ActiveTool.Enable();
         }
 
         public void SetTool(Tool tool)
         {
-            if (tool == null)
-            {
-                _nextTool = _toolDefault;
-            }
-            else
-            {
-                _nextTool = tool;
-            }
+            _nextTool = tool ?? _toolDefault;
         }
 
         public EditorObject GetNearestObject(Vector2 point)
@@ -321,7 +301,7 @@ namespace EditorLogic
 
         public EditorObject GetNearestObject(Vector2 point, Func<EditorObject, bool> validObject)
         {
-            List<EditorObject> tempList = new List<EditorObject>();
+            var tempList = new List<EditorObject>();
             tempList.AddRange(Level.GetAll().OfType<EditorObject>());
             var sorted = tempList.OrderBy(item => (point - item.GetWorldTransform().Position).Length).ToList();
             for (int i = 0; i < sorted.Count; i++)
@@ -387,11 +367,6 @@ namespace EditorLogic
             {
                 _actions.Enqueue(action);
             }
-        }
-
-        public override void OnClosing(System.ComponentModel.CancelEventArgs e)
-        {
-            base.OnClosing(e);
         }
 
         public override void OnResize(EventArgs e, Size canvasSize)

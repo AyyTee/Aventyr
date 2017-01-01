@@ -1,15 +1,11 @@
-﻿using Game;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using Game;
 using Game.Common;
 using Game.Models;
-using OpenTK.Input;
 using OpenTK;
+using OpenTK.Input;
 
-namespace EditorLogic
+namespace EditorLogic.Tools
 {
     public class ToolPortalLinker : Tool
     {

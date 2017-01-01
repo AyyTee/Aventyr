@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TankGameTestFramework
 {
-    class Program
+    internal class Program
     {
         static void Main(string[] args)
         {

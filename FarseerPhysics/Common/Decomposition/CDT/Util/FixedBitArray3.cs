@@ -110,7 +110,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Util
             for (int i = 0; i < 3; ++i) if (this[i] == value) this[i] = false;
         }
 
-        private IEnumerable<bool> Enumerate()
+        IEnumerable<bool> Enumerate()
         {
             for (int i = 0; i < 3; ++i) yield return this[i];
         }

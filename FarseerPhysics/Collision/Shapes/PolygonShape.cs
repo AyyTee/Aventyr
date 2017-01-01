@@ -33,8 +33,8 @@ namespace FarseerPhysics.Collision.Shapes
     /// </summary>
     public class PolygonShape : Shape
     {
-        private Vertices _vertices;
-        private Vertices _normals;
+        Vertices _vertices;
+        Vertices _normals;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PolygonShape"/> class.

@@ -26,8 +26,8 @@ namespace FarseerPhysics.Common
 {
     public struct FixedArray2<T>
     {
-        private T _value0;
-        private T _value1;
+        T _value0;
+        T _value1;
 
         public T this[int index]
         {
@@ -62,9 +62,9 @@ namespace FarseerPhysics.Common
 
     public struct FixedArray3<T>
     {
-        private T _value0;
-        private T _value1;
-        private T _value2;
+        T _value0;
+        T _value1;
+        T _value2;
 
         public T this[int index]
         {
@@ -104,10 +104,10 @@ namespace FarseerPhysics.Common
 
     public struct FixedArray4<T>
     {
-        private T _value0;
-        private T _value1;
-        private T _value2;
-        private T _value3;
+        T _value0;
+        T _value1;
+        T _value2;
+        T _value3;
 
         public T this[int index]
         {
@@ -152,14 +152,14 @@ namespace FarseerPhysics.Common
 
     public struct FixedArray8<T>
     {
-        private T _value0;
-        private T _value1;
-        private T _value2;
-        private T _value3;
-        private T _value4;
-        private T _value5;
-        private T _value6;
-        private T _value7;
+        T _value0;
+        T _value1;
+        T _value2;
+        T _value3;
+        T _value4;
+        T _value5;
+        T _value6;
+        T _value7;
 
         public T this[int index]
         {

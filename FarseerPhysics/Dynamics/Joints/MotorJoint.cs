@@ -34,28 +34,28 @@ namespace FarseerPhysics.Dynamics.Joints
     public class MotorJoint : Joint
     {
         // Solver shared
-        private Vector2 _linearOffset;
-        private float _angularOffset;
-        private Vector2 _linearImpulse;
-        private float _angularImpulse;
-        private float _maxForce;
-        private float _maxTorque;
+        Vector2 _linearOffset;
+        float _angularOffset;
+        Vector2 _linearImpulse;
+        float _angularImpulse;
+        float _maxForce;
+        float _maxTorque;
 
         // Solver temp
-        private int _indexA;
-        private int _indexB;
-        private Vector2 _rA;
-        private Vector2 _rB;
-        private Vector2 _localCenterA;
-        private Vector2 _localCenterB;
-        private Vector2 _linearError;
-        private float _angularError;
-        private float _invMassA;
-        private float _invMassB;
-        private float _invIA;
-        private float _invIB;
-        private Mat22 _linearMass;
-        private float _angularMass;
+        int _indexA;
+        int _indexB;
+        Vector2 _rA;
+        Vector2 _rB;
+        Vector2 _localCenterA;
+        Vector2 _localCenterB;
+        Vector2 _linearError;
+        float _angularError;
+        float _invMassA;
+        float _invMassB;
+        float _invIA;
+        float _invIB;
+        Mat22 _linearMass;
+        float _angularMass;
 
         internal MotorJoint()
         {

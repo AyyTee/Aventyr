@@ -9,7 +9,7 @@ namespace Lidgren.Network
 	/// </summary>
 	public class NetXorEncryption : NetEncryption
 	{
-		private byte[] m_key;
+	    byte[] m_key;
 
 		/// <summary>
 		/// NetXorEncryption constructor

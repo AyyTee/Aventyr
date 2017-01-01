@@ -4,23 +4,23 @@ namespace Lidgren.Network
 {
 	public partial class NetConnection  
 	{
-		private enum ExpandMTUStatus
+	    enum ExpandMTUStatus
 		{
 			None,
 			InProgress,
 			Finished
 		}
 
-		private const int c_protocolMaxMTU = (int)((((float)ushort.MaxValue / 8.0f) - 1.0f));
+	    const int c_protocolMaxMTU = (int)((((float)ushort.MaxValue / 8.0f) - 1.0f));
 
-		private ExpandMTUStatus m_expandMTUStatus;
+	    ExpandMTUStatus m_expandMTUStatus;
 
-		private int m_largestSuccessfulMTU;
-		private int m_smallestFailedMTU;
+	    int m_largestSuccessfulMTU;
+	    int m_smallestFailedMTU;
 
-		private int m_lastSentMTUAttemptSize;
-		private double m_lastSentMTUAttemptTime;
-		private int m_mtuAttemptFails;
+	    int m_lastSentMTUAttemptSize;
+	    double m_lastSentMTUAttemptTime;
+	    int m_mtuAttemptFails;
 
 		internal int m_currentMTU;
 
@@ -37,7 +37,7 @@ namespace Lidgren.Network
 			m_currentMTU = m_peerConfiguration.MaximumTransmissionUnit;
 		}
 
-		private void MTUExpansionHeartbeat(double now)
+	    void MTUExpansionHeartbeat(double now)
 		{
 			if (m_expandMTUStatus == ExpandMTUStatus.Finished)
 				return;
@@ -70,7 +70,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private void ExpandMTU(double now)
+	    void ExpandMTU(double now)
 		{
 			int tryMTU;
 
@@ -101,7 +101,7 @@ namespace Lidgren.Network
 			SendExpandMTU(now, tryMTU);
 		}
 
-		private void SendExpandMTU(double now, int size)
+	    void SendExpandMTU(double now, int size)
 		{
 			NetOutgoingMessage om = (NetOutgoingMessage)m_peer.CreateMessage(size);
 			byte[] tmp = new byte[size];
@@ -136,7 +136,7 @@ namespace Lidgren.Network
 			m_peer.Recycle(om);
 		}
 
-		private void FinalizeMTU(int size)
+	    void FinalizeMTU(int size)
 		{
 			if (m_expandMTUStatus == ExpandMTUStatus.Finished)
 				return;
@@ -147,7 +147,7 @@ namespace Lidgren.Network
 			return;
 		}
 
-		private void SendMTUSuccess(int size)
+	    void SendMTUSuccess(int size)
 		{
 			NetOutgoingMessage om = (NetOutgoingMessage)m_peer.CreateMessage(4);
 			om.Write(size);
@@ -162,7 +162,7 @@ namespace Lidgren.Network
 			m_statistics.PacketSent(len, 1);
 		}
 
-		private void HandleExpandMTUSuccess(double now, int size)
+	    void HandleExpandMTUSuccess(double now, int size)
 		{
 			if (size > m_largestSuccessfulMTU)
 				m_largestSuccessfulMTU = size;

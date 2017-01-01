@@ -12,7 +12,7 @@ namespace EditorLogic
 {
     public class Doodad : IRenderable, ITransformable2
     {
-        public bool DrawOverPortals { get { return false; } }
+        public bool DrawOverPortals => false;
         public bool IsPortalable { get; set; }
         public bool Visible { get; set; }
         Transform2 _transform = new Transform2();

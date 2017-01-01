@@ -45,9 +45,9 @@ namespace FarseerPhysics.Common
 
     internal static class WorldXmlSerializer
     {
-        private static XmlWriter _writer;
+        static XmlWriter _writer;
 
-        private static void SerializeShape(Shape shape)
+        static void SerializeShape(Shape shape)
         {
             _writer.WriteStartElement("Shape");
             _writer.WriteAttributeString("Type", shape.ShapeType.ToString());
@@ -103,7 +103,7 @@ namespace FarseerPhysics.Common
             _writer.WriteEndElement();
         }
 
-        private static void SerializeFixture(Fixture fixture)
+        static void SerializeFixture(Fixture fixture)
         {
             _writer.WriteStartElement("Fixture");
             _writer.WriteAttributeString("Id", fixture.FixtureId.ToString());
@@ -129,7 +129,7 @@ namespace FarseerPhysics.Common
             _writer.WriteEndElement();
         }
 
-        private static void SerializeBody(List<Fixture> fixtures, List<Shape> shapes, Body body)
+        static void SerializeBody(List<Fixture> fixtures, List<Shape> shapes, Body body)
         {
             _writer.WriteStartElement("Body");
             _writer.WriteAttributeString("Type", body.BodyType.ToString());
@@ -165,7 +165,7 @@ namespace FarseerPhysics.Common
             _writer.WriteEndElement();
         }
 
-        private static void SerializeJoint(List<Body> bodies, Joint joint)
+        static void SerializeJoint(List<Body> bodies, Joint joint)
         {
             _writer.WriteStartElement("Joint");
             _writer.WriteAttributeString("Type", joint.JointType.ToString());
@@ -307,7 +307,7 @@ namespace FarseerPhysics.Common
             _writer.WriteEndElement();
         }
 
-        private static void WriteDynamicType(Type type, object val)
+        static void WriteDynamicType(Type type, object val)
         {
             _writer.WriteElementString("Type", type.AssemblyQualifiedName);
 
@@ -319,27 +319,27 @@ namespace FarseerPhysics.Common
             _writer.WriteEndElement();
         }
 
-        private static void WriteElement(string name, Vector2 vec)
+        static void WriteElement(string name, Vector2 vec)
         {
             _writer.WriteElementString(name, vec.X + " " + vec.Y);
         }
 
-        private static void WriteElement(string name, int val)
+        static void WriteElement(string name, int val)
         {
             _writer.WriteElementString(name, val.ToString());
         }
 
-        private static void WriteElement(string name, bool val)
+        static void WriteElement(string name, bool val)
         {
             _writer.WriteElementString(name, val.ToString());
         }
 
-        private static void WriteElement(string name, float val)
+        static void WriteElement(string name, float val)
         {
             _writer.WriteElementString(name, val.ToString());
         }
 
-        private static int FindIndex(List<Body> list, Body item)
+        static int FindIndex(List<Body> list, Body item)
         {
             for (int i = 0; i < list.Count; ++i)
                 if (list[i] == item)
@@ -348,7 +348,7 @@ namespace FarseerPhysics.Common
             return -1;
         }
 
-        private static int FindIndex(List<Fixture> list, Fixture item)
+        static int FindIndex(List<Fixture> list, Fixture item)
         {
             for (int i = 0; i < list.Count; ++i)
                 if (list[i].CompareTo(item))
@@ -357,7 +357,7 @@ namespace FarseerPhysics.Common
             return -1;
         }
 
-        private static int FindIndex(List<Shape> list, Shape item)
+        static int FindIndex(List<Shape> list, Shape item)
         {
             for (int i = 0; i < list.Count; ++i)
                 if (list[i].CompareTo(item))
@@ -366,7 +366,7 @@ namespace FarseerPhysics.Common
             return -1;
         }
 
-        private static String Join<T>(String separator, IEnumerable<T> values)
+        static String Join<T>(String separator, IEnumerable<T> values)
         {
             using (IEnumerator<T> en = values.GetEnumerator())
             {
@@ -479,7 +479,7 @@ namespace FarseerPhysics.Common
             return world;
         }
 
-        private static void Deserialize(World world, Stream stream)
+        static void Deserialize(World world, Stream stream)
         {
             List<Body> bodies = new List<Body>();
             List<Fixture> fixtures = new List<Fixture>();
@@ -1139,13 +1139,13 @@ namespace FarseerPhysics.Common
             world.ProcessChanges();
         }
 
-        private static Vector2 ReadVector(XMLFragmentElement node)
+        static Vector2 ReadVector(XMLFragmentElement node)
         {
             string[] values = node.Value.Split(' ');
             return new Vector2(float.Parse(values[0]), float.Parse(values[1]));
         }
 
-        private static object ReadSimpleType(XMLFragmentElement node, Type type, bool outer)
+        static object ReadSimpleType(XMLFragmentElement node, Type type, bool outer)
         {
             if (type == null)
                 return ReadSimpleType(node.Elements[1], Type.GetType(node.Elements[0].Value), outer);
@@ -1180,8 +1180,8 @@ namespace FarseerPhysics.Common
 
     internal class XMLFragmentElement
     {
-        private List<XMLFragmentAttribute> _attributes = new List<XMLFragmentAttribute>();
-        private List<XMLFragmentElement> _elements = new List<XMLFragmentElement>();
+        List<XMLFragmentAttribute> _attributes = new List<XMLFragmentAttribute>();
+        List<XMLFragmentElement> _elements = new List<XMLFragmentElement>();
 
         public IList<XMLFragmentElement> Elements
         {
@@ -1221,7 +1221,7 @@ namespace FarseerPhysics.Common
 
         public int Position { get; set; }
 
-        private int Length
+        int Length
         {
             get { return Buffer.Length; }
         }
@@ -1244,9 +1244,9 @@ namespace FarseerPhysics.Common
 
     internal class XMLFragmentParser
     {
-        private static List<char> _punctuation = new List<char> { '/', '<', '>', '=' };
-        private FileBuffer _buffer;
-        private XMLFragmentElement _rootNode;
+        static List<char> _punctuation = new List<char> { '/', '<', '>', '=' };
+        FileBuffer _buffer;
+        XMLFragmentElement _rootNode;
 
         public XMLFragmentParser(Stream stream)
         {
@@ -1276,7 +1276,7 @@ namespace FarseerPhysics.Common
             return x.RootNode;
         }
 
-        private string NextToken()
+        string NextToken()
         {
             string str = "";
             bool _done = false;
@@ -1321,7 +1321,7 @@ namespace FarseerPhysics.Common
             return str;
         }
 
-        private string PeekToken()
+        string PeekToken()
         {
             int oldPos = _buffer.Position;
             string str = NextToken();
@@ -1329,7 +1329,7 @@ namespace FarseerPhysics.Common
             return str;
         }
 
-        private string ReadUntil(char c)
+        string ReadUntil(char c)
         {
             string str = "";
 
@@ -1356,7 +1356,7 @@ namespace FarseerPhysics.Common
             return str;
         }
 
-        private string TrimControl(string str)
+        string TrimControl(string str)
         {
             string newStr = str;
 
@@ -1376,7 +1376,7 @@ namespace FarseerPhysics.Common
             return newStr;
         }
 
-        private string TrimTags(string outer)
+        string TrimTags(string outer)
         {
             int start = outer.IndexOf('>') + 1;
             int end = outer.LastIndexOf('<');
@@ -1467,7 +1467,7 @@ namespace FarseerPhysics.Common
             return element;
         }
 
-        private void Parse()
+        void Parse()
         {
             _rootNode = TryParseNode();
 

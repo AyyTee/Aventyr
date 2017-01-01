@@ -71,7 +71,7 @@ namespace FarseerPhysics.Common.Decomposition
         /// <remarks>
         /// Only works on simple polygons.
         /// </remarks>
-        private static List<Vertices> TriangulatePolygon(Vertices vertices, float tolerance)
+        static List<Vertices> TriangulatePolygon(Vertices vertices, float tolerance)
         {
             //FPE note: Check is needed as invalid triangles can be returned in recursive calls.
             if (vertices.Count < 3)
@@ -223,7 +223,7 @@ namespace FarseerPhysics.Common.Decomposition
         /// <param name="poutA">The pout A.</param>
         /// <param name="poutB">The pout B.</param>
         /// <param name="tolerance"></param>
-        private static bool ResolvePinchPoint(Vertices pin, out Vertices poutA, out Vertices poutB, float tolerance)
+        static bool ResolvePinchPoint(Vertices pin, out Vertices poutA, out Vertices poutB, float tolerance)
         {
             poutA = new Vertices();
             poutB = new Vertices();
@@ -276,7 +276,7 @@ namespace FarseerPhysics.Common.Decomposition
         /// <param name="x">The x.</param>
         /// <param name="modulus">The modulus.</param>
         /// <returns></returns>
-        private static int Remainder(int x, int modulus)
+        static int Remainder(int x, int modulus)
         {
             int rem = x % modulus;
             while (rem < 0)
@@ -299,7 +299,7 @@ namespace FarseerPhysics.Common.Decomposition
         /// <returns>
         /// 	<c>true</c> if the specified i is ear; otherwise, <c>false</c>.
         /// </returns>
-        private static bool IsEar(int i, float[] xv, float[] yv, int xvLength)
+        static bool IsEar(int i, float[] xv, float[] yv, int xvLength)
         {
             float dx0, dy0, dx1, dy1;
             if (i >= xvLength || i < 0 || xvLength < 3)
@@ -349,7 +349,7 @@ namespace FarseerPhysics.Common.Decomposition
             return true;
         }
 
-        private class Triangle : Vertices
+        class Triangle : Vertices
         {
             //Constructor automatically fixes orientation to ccw
             public Triangle(float x1, float y1, float x2, float y2, float x3, float y3)

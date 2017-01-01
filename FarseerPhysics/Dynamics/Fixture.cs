@@ -90,11 +90,10 @@ namespace FarseerPhysics.Dynamics
     /// </summary>
     public class Fixture : IDisposable
     {
-        [ThreadStatic]
-        private static int _fixtureIdCounter;
-        private bool _isSensor;
-        private float _friction;
-        private float _restitution;
+        [ThreadStatic] static int _fixtureIdCounter;
+        bool _isSensor;
+        float _friction;
+        float _restitution;
 
         internal Category _collidesWith;
         internal Category _collisionCategories;
@@ -360,7 +359,7 @@ namespace FarseerPhysics.Dynamics
         /// flagged for filtering.
         /// This methods flags all contacts associated with the body for filtering.
         /// </summary>
-        private void Refilter()
+        void Refilter()
         {
             // Flag associated contacts for filtering.
             ContactEdge edge = Body.ContactList;
@@ -392,7 +391,7 @@ namespace FarseerPhysics.Dynamics
             }
         }
 
-        private void RegisterFixture()
+        void RegisterFixture()
         {
             // Reserve proxy space
             Proxies = new FixtureProxy[Shape.ChildCount];
@@ -564,7 +563,7 @@ namespace FarseerPhysics.Dynamics
                     SequenceEqual(_collisionIgnores, fixture._collisionIgnores));
         }
 
-        private bool SequenceEqual<T>(HashSet<T> first, HashSet<T> second)
+        bool SequenceEqual<T>(HashSet<T> first, HashSet<T> second)
         {
             if (first.Count != second.Count)
                 return false;

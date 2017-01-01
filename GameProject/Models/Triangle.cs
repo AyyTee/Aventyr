@@ -10,9 +10,9 @@ namespace Game.Models
     /// </summary>
     public class Triangle : IShallowClone<Triangle>
     {
-        public Vertex V0 { get { return Vertices[0]; } }
-        public Vertex V1 { get { return Vertices[1]; } }
-        public Vertex V2 { get { return Vertices[2]; } }
+        public Vertex V0 => Vertices[0];
+        public Vertex V1 => Vertices[1];
+        public Vertex V2 => Vertices[2];
         public readonly ReadOnlyCollection<Vertex> Vertices;
         public const int VertexCount = 3;
 
@@ -26,13 +26,7 @@ namespace Game.Models
             return new Triangle(this[0], this[1], this[2]);
         }
 
-        public Vertex this[int index]
-        {
-            get
-            {
-                return Vertices[index];
-            }
-        }
+        public Vertex this[int index] => Vertices[index];
 
         /// <summary>
         /// Creates a clone of this triangle with the order of the vertices reversed.

@@ -25,7 +25,7 @@ namespace Game.Physics
             return CreateEntityBox(entity, transform);
         }
 
-        private static Actor CreateEntityBox(Entity entity, Transform2 transform)
+        static Actor CreateEntityBox(Entity entity, Transform2 transform)
         {
             entity.IsPortalable = true;
             entity.AddModel(ModelFactory.CreatePlane(transform.Scale));
@@ -78,7 +78,7 @@ namespace Game.Physics
             return CreateEntityPolygon(entity, transform, vertices);
         }
 
-        private static Actor CreateEntityPolygon(Entity entity, Transform2 transform, IList<Vector2> vertices)
+        static Actor CreateEntityPolygon(Entity entity, Transform2 transform, IList<Vector2> vertices)
         {
             Debug.Assert(entity != null);
             Debug.Assert(transform != null);

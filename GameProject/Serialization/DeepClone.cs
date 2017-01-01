@@ -44,7 +44,7 @@ namespace Game.Serialization
             return cloneMap;
         }
 
-        private static void GetReferences(List<IDeepClone> entities, HashSet<IDeepClone> cloneList)
+        static void GetReferences(List<IDeepClone> entities, HashSet<IDeepClone> cloneList)
         {
             foreach (IDeepClone e in entities)
             {
@@ -52,7 +52,7 @@ namespace Game.Serialization
             }
         }
 
-        private static void GetReferences(IDeepClone entity, HashSet<IDeepClone> cloneList)
+        static void GetReferences(IDeepClone entity, HashSet<IDeepClone> cloneList)
         {
             cloneList.Add(entity);
             foreach (IDeepClone cloneable in entity.GetCloneableRefs())

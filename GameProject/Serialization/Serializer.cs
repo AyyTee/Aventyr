@@ -45,7 +45,7 @@ namespace Game.Serialization
                 }), null);
         }
 
-        private void _serialize(Scene scene, string filename)
+        void _serialize(Scene scene, string filename)
         {
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
@@ -66,7 +66,7 @@ namespace Game.Serialization
             }
         }
 
-        private DataContractSerializer GetSerializer()
+        DataContractSerializer GetSerializer()
         {
             return new DataContractSerializer(typeof(SceneNode), "Game", "Game", GetKnownTypes(),
             0x7FFFF,

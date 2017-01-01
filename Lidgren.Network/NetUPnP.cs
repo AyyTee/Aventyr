@@ -37,16 +37,16 @@ namespace Lidgren.Network
 	/// </summary>
 	public class NetUPnP
 	{
-		private const int c_discoveryTimeOutMillis = 1000;
+	    const int c_discoveryTimeOutMillis = 1000;
 
-		private string m_serviceUrl;
-		private string m_serviceName = "";
-		private NetPeer m_peer;
-		private ManualResetEvent m_discoveryComplete = new ManualResetEvent(false);
+	    string m_serviceUrl;
+	    string m_serviceName = "";
+	    NetPeer m_peer;
+	    ManualResetEvent m_discoveryComplete = new ManualResetEvent(false);
 
 		internal double m_discoveryResponseDeadline;
 
-		private UPnPStatus m_status;
+	    UPnPStatus m_status;
 
 		/// <summary>
 		/// Status of the UPnP capabilities of this NetPeer
@@ -131,7 +131,7 @@ namespace Lidgren.Network
 #endif
 		}
 
-		private static string CombineUrls(string gatewayURL, string subUrl)
+	    static string CombineUrls(string gatewayURL, string subUrl)
 		{
 			// Is Control URL an absolute URL?
 			if ((subUrl.Contains("http:")) || (subUrl.Contains(".")))
@@ -144,7 +144,7 @@ namespace Lidgren.Network
 			return "http://" + gatewayURL + subUrl;
 		}
 
-		private bool CheckAvailability()
+	    bool CheckAvailability()
 		{
 			switch (m_status)
 			{
@@ -250,7 +250,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private XmlDocument SOAPRequest(string url, string soap, string function)
+	    XmlDocument SOAPRequest(string url, string soap, string function)
 		{
 			string req = "<?xml version=\"1.0\"?>" +
 			"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\" s:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">" +

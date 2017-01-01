@@ -1,16 +1,10 @@
-﻿using Game;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Input;
-using OpenTK;
-using EditorLogic.Command;
+﻿using EditorLogic.Command;
+using Game;
 using Game.Common;
 using Game.Models;
+using OpenTK.Input;
 
-namespace EditorLogic
+namespace EditorLogic.Tools
 {
     public class ToolAddEntity : Tool
     {

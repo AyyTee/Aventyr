@@ -40,14 +40,14 @@ namespace Lidgren.Network
 		/// Default MTU value in bytes
 		/// </summary>
 		public const int kDefaultMTU = 1408;
-		
-		private const string c_isLockedMessage = "You may not modify the NetPeerConfiguration after it has been used to initialize a NetPeer";
 
-		private bool m_isLocked;
-		private readonly string m_appIdentifier;
-		private string m_networkThreadName;
-		private IPAddress m_localAddress;
-		private IPAddress m_broadcastAddress;
+	    const string c_isLockedMessage = "You may not modify the NetPeerConfiguration after it has been used to initialize a NetPeer";
+
+	    bool m_isLocked;
+	    readonly string m_appIdentifier;
+	    string m_networkThreadName;
+	    IPAddress m_localAddress;
+	    IPAddress m_broadcastAddress;
 		internal bool m_acceptIncomingConnections;
 		internal int m_maximumConnections;
 		internal int m_defaultOutgoingMessageCapacity;
@@ -57,7 +57,7 @@ namespace Lidgren.Network
 		internal float m_connectionTimeout;
 		internal bool m_enableUPnP;
 		internal bool m_autoFlushSendQueue;
-		private NetUnreliableSizeBehaviour m_unreliableSizeBehaviour;
+	    NetUnreliableSizeBehaviour m_unreliableSizeBehaviour;
 		internal bool m_suppressUnreliableUnorderedAcks;
 
 		internal NetIncomingMessageType m_disabledTypes;

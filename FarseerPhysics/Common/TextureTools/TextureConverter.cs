@@ -25,29 +25,29 @@ namespace FarseerPhysics.Common.TextureTools
 
     public sealed class TextureConverter
     {
-        private const int ClosepixelsLength = 8;
+        const int ClosepixelsLength = 8;
 
         /// <summary>
         /// This array is ment to be readonly.
         /// It's not because it is accessed very frequently.
         /// </summary>
-        private static int[,] _closePixels = new[,] { { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 } };
+        static int[,] _closePixels = new[,] { { -1, -1 }, { 0, -1 }, { 1, -1 }, { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 } };
 
-        private uint[] _data;
-        private int _dataLength;
-        private int _width;
-        private int _height;
+        uint[] _data;
+        int _dataLength;
+        int _width;
+        int _height;
 
-        private VerticesDetectionType _polygonDetectionType;
+        VerticesDetectionType _polygonDetectionType;
 
-        private uint _alphaTolerance;
-        private float _hullTolerance;
+        uint _alphaTolerance;
+        float _hullTolerance;
 
-        private bool _holeDetection;
-        private bool _multipartDetection;
-        private bool _pixelOffsetOptimization;
+        bool _holeDetection;
+        bool _multipartDetection;
+        bool _pixelOffsetOptimization;
 
-        private Matrix _transform = Matrix.Identity;
+        Matrix _transform = Matrix.Identity;
 
         #region Properties
         /// <summary>
@@ -156,7 +156,8 @@ namespace FarseerPhysics.Common.TextureTools
         #endregion
 
         #region Initialization
-        private void Initialize(uint[] data, int? width, byte? alphaTolerance,
+
+        void Initialize(uint[] data, int? width, byte? alphaTolerance,
             float? hullTolerance, bool? holeDetection, bool? multipartDetection,
             bool? pixelOffsetOptimization, Matrix? transform)
         {
@@ -201,7 +202,7 @@ namespace FarseerPhysics.Common.TextureTools
         }
         #endregion
 
-        private void SetTextureData(uint[] data, int width)
+        void SetTextureData(uint[] data, int width)
         {
             if (data == null)
                 throw new ArgumentNullException("data", "'data' can't be null.");
@@ -411,7 +412,7 @@ namespace FarseerPhysics.Common.TextureTools
             return detectedPolygons;
         }
 
-        private void ApplyTriangulationCompatibleWinding(ref List<Vertices> detectedPolygons)
+        void ApplyTriangulationCompatibleWinding(ref List<Vertices> detectedPolygons)
         {
             for (int i = 0; i < detectedPolygons.Count; i++)
             {
@@ -425,15 +426,16 @@ namespace FarseerPhysics.Common.TextureTools
             }
         }
 
-        private void ApplyTransform(ref List<Vertices> detectedPolygons)
+        void ApplyTransform(ref List<Vertices> detectedPolygons)
         {
             for (int i = 0; i < detectedPolygons.Count; i++)
                 detectedPolygons[i].Transform(ref _transform);
         }
 
         #region Data[] functions
-        private int _tempIsSolidX;
-        private int _tempIsSolidY;
+
+        int _tempIsSolidX;
+        int _tempIsSolidY;
         public bool IsSolid(ref Vector2 v)
         {
             _tempIsSolidX = (int)v.X;
@@ -476,7 +478,7 @@ namespace FarseerPhysics.Common.TextureTools
         /// <param name="polygon">The polygon to search in.</param>
         /// <param name="lastHoleEntrance">The last entrance point.</param>
         /// <returns>The next holes entrance point. Null if ther are no holes.</returns>
-        private Vector2? SearchHoleEntrance(Vertices polygon, Vector2? lastHoleEntrance)
+        Vector2? SearchHoleEntrance(Vertices polygon, Vector2? lastHoleEntrance)
         {
             if (polygon == null)
                 throw new ArgumentNullException("'polygon' can't be null.");
@@ -585,7 +587,7 @@ namespace FarseerPhysics.Common.TextureTools
             return null;
         }
 
-        private bool DistanceToHullAcceptableHoles(Vertices polygon, Vector2 point, bool higherDetail)
+        bool DistanceToHullAcceptableHoles(Vertices polygon, Vector2 point, bool higherDetail)
         {
             if (polygon == null)
                 throw new ArgumentNullException("polygon", "'polygon' can't be null.");
@@ -614,7 +616,7 @@ namespace FarseerPhysics.Common.TextureTools
             return false;
         }
 
-        private bool DistanceToHullAcceptable(Vertices polygon, Vector2 point, bool higherDetail)
+        bool DistanceToHullAcceptable(Vertices polygon, Vector2 point, bool higherDetail)
         {
             if (polygon == null)
                 throw new ArgumentNullException("polygon", "'polygon' can't be null.");
@@ -656,7 +658,7 @@ namespace FarseerPhysics.Common.TextureTools
             }
         }
 
-        private bool InPolygon(Vertices polygon, Vector2 point)
+        bool InPolygon(Vertices polygon, Vector2 point)
         {
             bool inPolygon = !DistanceToHullAcceptableHoles(polygon, point, true);
 
@@ -679,7 +681,7 @@ namespace FarseerPhysics.Common.TextureTools
             return true;
         }
 
-        private Vector2? GetTopMostVertex(Vertices vertices)
+        Vector2? GetTopMostVertex(Vertices vertices)
         {
             float topMostValue = float.MaxValue;
             Vector2? topMost = null;
@@ -696,7 +698,7 @@ namespace FarseerPhysics.Common.TextureTools
             return topMost;
         }
 
-        private float GetTopMostCoord(Vertices vertices)
+        float GetTopMostCoord(Vertices vertices)
         {
             float returnValue = float.MaxValue;
 
@@ -711,7 +713,7 @@ namespace FarseerPhysics.Common.TextureTools
             return returnValue;
         }
 
-        private float GetBottomMostCoord(Vertices vertices)
+        float GetBottomMostCoord(Vertices vertices)
         {
             float returnValue = float.MinValue;
 
@@ -726,7 +728,7 @@ namespace FarseerPhysics.Common.TextureTools
             return returnValue;
         }
 
-        private List<float> SearchCrossingEdgesHoles(Vertices polygon, int y)
+        List<float> SearchCrossingEdgesHoles(Vertices polygon, int y)
         {
             if (polygon == null)
                 throw new ArgumentNullException("polygon", "'polygon' can't be null.");
@@ -754,7 +756,7 @@ namespace FarseerPhysics.Common.TextureTools
         /// <param name="polygon">Polygon to search in.</param>
         /// <param name="y">Y coordinate to check for edges.</param>
         /// <returns>Descending sorted list of x coordinates of edges that cross the specified y coordinate.</returns>
-        private List<float> SearchCrossingEdges(Vertices polygon, int y)
+        List<float> SearchCrossingEdges(Vertices polygon, int y)
         {
             // sick-o-note:
             // Used to search the x coordinates of edges in the polygon for a specific y coordinate.
@@ -825,7 +827,7 @@ namespace FarseerPhysics.Common.TextureTools
             return edges;
         }
 
-        private bool SplitPolygonEdge(Vertices polygon, Vector2 coordInsideThePolygon, out int vertex1Index, out int vertex2Index)
+        bool SplitPolygonEdge(Vertices polygon, Vector2 coordInsideThePolygon, out int vertex1Index, out int vertex2Index)
         {
             Vector2 slope;
             int nearestEdgeVertex1Index = 0;
@@ -917,7 +919,7 @@ namespace FarseerPhysics.Common.TextureTools
         /// <param name="entrance"></param>
         /// <param name="last"></param>
         /// <returns></returns>
-        private Vertices CreateSimplePolygon(Vector2 entrance, Vector2 last)
+        Vertices CreateSimplePolygon(Vector2 entrance, Vector2 last)
         {
             bool entranceFound = false;
             bool endOfHull = false;
@@ -1032,7 +1034,7 @@ namespace FarseerPhysics.Common.TextureTools
             return polygon;
         }
 
-        private bool SearchNearPixels(bool searchingForSolidPixel, ref Vector2 current, out Vector2 foundPixel)
+        bool SearchNearPixels(bool searchingForSolidPixel, ref Vector2 current, out Vector2 foundPixel)
         {
             for (int i = 0; i < ClosepixelsLength; i++)
             {
@@ -1051,7 +1053,7 @@ namespace FarseerPhysics.Common.TextureTools
             return false;
         }
 
-        private bool IsNearPixel(ref Vector2 current, ref Vector2 near)
+        bool IsNearPixel(ref Vector2 current, ref Vector2 near)
         {
             for (int i = 0; i < ClosepixelsLength; i++)
             {
@@ -1070,7 +1072,7 @@ namespace FarseerPhysics.Common.TextureTools
             return false;
         }
 
-        private bool SearchHullEntrance(out Vector2 entrance)
+        bool SearchHullEntrance(out Vector2 entrance)
         {
             // Search for first solid pixel.
             for (int y = 0; y <= _height; y++)
@@ -1097,7 +1099,7 @@ namespace FarseerPhysics.Common.TextureTools
         /// <param name="start">Search start coordinate.</param>
         /// <param name="entrance">Returns the found entrance coordinate. Null if no other shapes found.</param>
         /// <returns>True if a new shape was found.</returns>
-        private bool SearchNextHullEntrance(List<Vertices> detectedPolygons, Vector2 start, out Vector2? entrance)
+        bool SearchNextHullEntrance(List<Vertices> detectedPolygons, Vector2 start, out Vector2? entrance)
         {
             int x;
 
@@ -1137,7 +1139,7 @@ namespace FarseerPhysics.Common.TextureTools
             return false;
         }
 
-        private bool GetNextHullPoint(ref Vector2 last, ref Vector2 current, out Vector2 next)
+        bool GetNextHullPoint(ref Vector2 last, ref Vector2 current, out Vector2 next)
         {
             int x;
             int y;
@@ -1166,7 +1168,7 @@ namespace FarseerPhysics.Common.TextureTools
             return false;
         }
 
-        private bool SearchForOutstandingVertex(Vertices hullArea, out Vector2 outstanding)
+        bool SearchForOutstandingVertex(Vertices hullArea, out Vector2 outstanding)
         {
             Vector2 outstandingResult = Vector2.Zero;
             bool found = false;
@@ -1198,7 +1200,7 @@ namespace FarseerPhysics.Common.TextureTools
             return found;
         }
 
-        private int GetIndexOfFirstPixelToCheck(ref Vector2 last, ref Vector2 current)
+        int GetIndexOfFirstPixelToCheck(ref Vector2 last, ref Vector2 current)
         {
             // .: pixel
             // l: last position

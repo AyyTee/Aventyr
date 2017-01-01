@@ -924,7 +924,7 @@ namespace FarseerPhysics.Dynamics.Contacts
             }
         }
 
-        private static class PositionSolverManifold
+        static class PositionSolverManifold
         {
             public static void Initialize(ContactPositionConstraint pc, Transform xfA, Transform xfB, int index, out Vector2 normal, out Vector2 point, out float separation)
             {

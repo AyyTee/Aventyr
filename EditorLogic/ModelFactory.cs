@@ -11,7 +11,7 @@ namespace EditorLogic
 {
     public static class ModelFactory
     {
-        public static Vector3 ColorPortalDefault { get { return new Vector3(0.1f, 0.1f, 0.5f); } }
+        public static Vector3 ColorPortalDefault => new Vector3(0.1f, 0.1f, 0.5f);
 
         public static Model CreatePortal()
         {

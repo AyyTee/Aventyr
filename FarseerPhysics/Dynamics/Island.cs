@@ -34,14 +34,14 @@ namespace FarseerPhysics.Dynamics
     /// </summary>
     public class Island
     {
-        private ContactManager _contactManager;
-        private ContactSolver _contactSolver = new ContactSolver();
-        private Contact[] _contacts;
-        private Joint[] _joints;
+        ContactManager _contactManager;
+        ContactSolver _contactSolver = new ContactSolver();
+        Contact[] _contacts;
+        Joint[] _joints;
 
-        private const float LinTolSqr = Settings.LinearSleepTolerance * Settings.LinearSleepTolerance;
-        private const float AngTolSqr = Settings.AngularSleepTolerance * Settings.AngularSleepTolerance;
-        private Stopwatch _watch = new Stopwatch();
+        const float LinTolSqr = Settings.LinearSleepTolerance * Settings.LinearSleepTolerance;
+        const float AngTolSqr = Settings.AngularSleepTolerance * Settings.AngularSleepTolerance;
+        Stopwatch _watch = new Stopwatch();
 
         public Body[] Bodies;
         public int BodyCount;
@@ -422,7 +422,7 @@ namespace FarseerPhysics.Dynamics
             _joints[JointCount++] = joint;
         }
 
-        private void Report(ContactVelocityConstraint[] constraints)
+        void Report(ContactVelocityConstraint[] constraints)
         {
             if (_contactManager == null)
                 return;

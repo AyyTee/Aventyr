@@ -64,18 +64,18 @@ namespace FarseerPhysics.Collision
     /// </summary>
     public class DynamicTreeBroadPhase : IBroadPhase
     {
-        private const int NullProxy = -1;
-        private int[] _moveBuffer;
-        private int _moveCapacity;
-        private int _moveCount;
+        const int NullProxy = -1;
+        int[] _moveBuffer;
+        int _moveCapacity;
+        int _moveCount;
 
-        private Pair[] _pairBuffer;
-        private int _pairCapacity;
-        private int _pairCount;
-        private int _proxyCount;
-        private Func<int, bool> _queryCallback;
-        private int _queryProxyId;
-        private DynamicTree<FixtureProxy> _tree = new DynamicTree<FixtureProxy>();
+        Pair[] _pairBuffer;
+        int _pairCapacity;
+        int _pairCount;
+        int _proxyCount;
+        Func<int, bool> _queryCallback;
+        int _queryProxyId;
+        DynamicTree<FixtureProxy> _tree = new DynamicTree<FixtureProxy>();
 
         /// <summary>
         /// Constructs a new broad phase based on the dynamic tree implementation
@@ -142,7 +142,7 @@ namespace FarseerPhysics.Collision
             BufferMove(proxyId);
         }
 
-        private void BufferMove(int proxyId)
+        void BufferMove(int proxyId)
         {
             if (_moveCount == _moveCapacity)
             {
@@ -156,7 +156,7 @@ namespace FarseerPhysics.Collision
             ++_moveCount;
         }
 
-        private void UnBufferMove(int proxyId)
+        void UnBufferMove(int proxyId)
         {
             for (int i = 0; i < _moveCount; ++i)
             {
@@ -172,7 +172,7 @@ namespace FarseerPhysics.Collision
         /// </summary>
         /// <param name="proxyId"></param>
         /// <returns></returns>
-        private bool QueryCallback(int proxyId)
+        bool QueryCallback(int proxyId)
         {
             // A proxy cannot form a pair with itself.
             if (proxyId == _queryProxyId)

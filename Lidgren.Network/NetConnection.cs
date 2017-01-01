@@ -15,8 +15,8 @@ namespace Lidgren.Network
 	[DebuggerDisplay("RemoteUniqueIdentifier={RemoteUniqueIdentifier} RemoteEndPoint={m_remoteEndPoint}")]
 	public partial class NetConnection : INetConnection
     {
-		private const int m_infrequentEventsSkipFrames = 8; // number of heartbeats to skip checking for infrequent events (ping, timeout etc)
-		private const int m_messageCoalesceFrames = 3; // number of heartbeats to wait for more incoming messages before sending packet
+        const int m_infrequentEventsSkipFrames = 8; // number of heartbeats to skip checking for infrequent events (ping, timeout etc)
+        const int m_messageCoalesceFrames = 3; // number of heartbeats to wait for more incoming messages before sending packet
 
 		internal NetPeer m_peer;
 		internal NetPeerConfiguration m_peerConfiguration;
@@ -30,9 +30,9 @@ namespace Lidgren.Network
 		internal long m_remoteUniqueIdentifier;
 		internal NetQueue<NetTuple<NetMessageType, int>> m_queuedOutgoingAcks;
 		internal NetQueue<NetTuple<NetMessageType, int>> m_queuedIncomingAcks;
-		private int m_sendBufferWritePtr;
-		private int m_sendBufferNumMessages;
-		private object m_tag;
+        int m_sendBufferWritePtr;
+        int m_sendBufferNumMessages;
+        object m_tag;
 		internal NetConnectionStatistics m_statistics;
 
 		/// <summary>
@@ -369,7 +369,7 @@ namespace Lidgren.Network
 		}
 
 		// may be on user thread
-		private NetSenderChannelBase CreateSenderChannel(NetMessageType tp)
+        NetSenderChannelBase CreateSenderChannel(NetMessageType tp)
 		{
 			NetSenderChannelBase chan;
 			lock (m_sendChannels)
@@ -499,7 +499,7 @@ namespace Lidgren.Network
 			chan.ReceiveMessage(msg);
 		}
 
-		private NetReceiverChannelBase CreateReceiverChannel(NetMessageType tp)
+        NetReceiverChannelBase CreateReceiverChannel(NetMessageType tp)
 		{
 			m_peer.VerifyNetworkThread();
 

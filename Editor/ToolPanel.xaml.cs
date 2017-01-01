@@ -73,7 +73,7 @@ namespace EditorWindow
             }
         }
 
-        private void ControllerEditor_ToolChanged(ControllerEditor controller, Tool tool)
+        void ControllerEditor_ToolChanged(ControllerEditor controller, Tool tool)
         {
             MainWindow.Invoke(() =>
             {
@@ -92,7 +92,7 @@ namespace EditorWindow
 
         }
 
-        private void AddButton(ControllerEditor controller, Tool tool, BitmapImage buttonImage)
+        void AddButton(ControllerEditor controller, Tool tool, BitmapImage buttonImage)
         {
             ToolButton button = new ToolButton(controller, tool, buttonImage);
             ToolGrid.Children.Add(button);

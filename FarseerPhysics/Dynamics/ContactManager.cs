@@ -84,7 +84,7 @@ namespace FarseerPhysics.Dynamics
         }
 
         // Broad-phase callback.
-        private void AddPair(ref FixtureProxy proxyA, ref FixtureProxy proxyB)
+        void AddPair(ref FixtureProxy proxyA, ref FixtureProxy proxyB)
         {
             Fixture fixtureA = proxyA.Fixture;
             Fixture fixtureB = proxyB.Fixture;
@@ -359,7 +359,7 @@ namespace FarseerPhysics.Dynamics
 #endif
         }
 
-        private static bool ShouldCollide(Fixture fixtureA, Fixture fixtureB)
+        static bool ShouldCollide(Fixture fixtureA, Fixture fixtureB)
         {
             if (Settings.UseFPECollisionCategories)
             {

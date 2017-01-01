@@ -43,23 +43,23 @@ namespace FarseerPhysics.Dynamics
     /// </summary>
     public class World
     {
-        private float _invDt0;
-        private Body[] _stack = new Body[64];
-        private bool _stepComplete;
-        private HashSet<Body> _bodyAddList = new HashSet<Body>();
-        private HashSet<Body> _bodyRemoveList = new HashSet<Body>();
-        private HashSet<Joint> _jointAddList = new HashSet<Joint>();
-        private HashSet<Joint> _jointRemoveList = new HashSet<Joint>();
-        private Func<Fixture, bool> _queryAABBCallback;
-        private Func<int, bool> _queryAABBCallbackWrapper;
-        private TOIInput _input = new TOIInput();
-        private Fixture _myFixture;
-        private Vector2 _point1;
-        private Vector2 _point2;
-        private List<Fixture> _testPointAllFixtures;
-        private Stopwatch _watch = new Stopwatch();
-        private Func<Fixture, Vector2, Vector2, float, float> _rayCastCallback;
-        private Func<RayCastInput, int, float> _rayCastCallbackWrapper;
+        float _invDt0;
+        Body[] _stack = new Body[64];
+        bool _stepComplete;
+        HashSet<Body> _bodyAddList = new HashSet<Body>();
+        HashSet<Body> _bodyRemoveList = new HashSet<Body>();
+        HashSet<Joint> _jointAddList = new HashSet<Joint>();
+        HashSet<Joint> _jointRemoveList = new HashSet<Joint>();
+        Func<Fixture, bool> _queryAABBCallback;
+        Func<int, bool> _queryAABBCallbackWrapper;
+        TOIInput _input = new TOIInput();
+        Fixture _myFixture;
+        Vector2 _point1;
+        Vector2 _point2;
+        List<Fixture> _testPointAllFixtures;
+        Stopwatch _watch = new Stopwatch();
+        Func<Fixture, Vector2, Vector2, float, float> _rayCastCallback;
+        Func<RayCastInput, int, float> _rayCastCallbackWrapper;
 
         internal Queue<Contact> _contactPool = new Queue<Contact>(256);
         internal bool _worldHasNewFixture;
@@ -134,7 +134,7 @@ namespace FarseerPhysics.Dynamics
             Gravity = gravity;
         }
 
-        private void ProcessRemovedJoints()
+        void ProcessRemovedJoints()
         {
             if (_jointRemoveList.Count > 0)
             {
@@ -231,7 +231,7 @@ namespace FarseerPhysics.Dynamics
             }
         }
 
-        private void ProcessAddedJoints()
+        void ProcessAddedJoints()
         {
             if (_jointAddList.Count > 0)
             {
@@ -295,7 +295,7 @@ namespace FarseerPhysics.Dynamics
             }
         }
 
-        private void ProcessAddedBodies()
+        void ProcessAddedBodies()
         {
             if (_bodyAddList.Count > 0)
             {
@@ -325,7 +325,7 @@ namespace FarseerPhysics.Dynamics
             }
         }
 
-        private void ProcessRemovedBodies()
+        void ProcessRemovedBodies()
         {
             if (_bodyRemoveList.Count > 0)
             {
@@ -385,13 +385,13 @@ namespace FarseerPhysics.Dynamics
             }
         }
 
-        private bool QueryAABBCallbackWrapper(int proxyId)
+        bool QueryAABBCallbackWrapper(int proxyId)
         {
             FixtureProxy proxy = ContactManager.BroadPhase.GetProxy(proxyId);
             return _queryAABBCallback(proxy.Fixture);
         }
 
-        private float RayCastCallbackWrapper(RayCastInput rayCastInput, int proxyId)
+        float RayCastCallbackWrapper(RayCastInput rayCastInput, int proxyId)
         {
             FixtureProxy proxy = ContactManager.BroadPhase.GetProxy(proxyId);
             Fixture fixture = proxy.Fixture;
@@ -409,7 +409,7 @@ namespace FarseerPhysics.Dynamics
             return rayCastInput.MaxFraction;
         }
 
-        private void Solve(ref TimeStep step)
+        void Solve(ref TimeStep step)
         {
             // Size the island for the worst case.
             Island.Reset(BodyList.Count,
@@ -658,7 +658,7 @@ namespace FarseerPhysics.Dynamics
 #endif
         }
 
-        private void SolveTOI(ref TimeStep step)
+        void SolveTOI(ref TimeStep step)
         {
             Island.Reset(2 * Settings.MaxTOIContacts, Settings.MaxTOIContacts, 0, ContactManager);
 
@@ -1151,7 +1151,7 @@ namespace FarseerPhysics.Dynamics
                 _jointAddList.Add(joint);
         }
 
-        private void RemoveJoint(Joint joint, bool doCheck)
+        void RemoveJoint(Joint joint, bool doCheck)
         {
             if (doCheck)
             {
@@ -1416,7 +1416,7 @@ namespace FarseerPhysics.Dynamics
             return _myFixture;
         }
 
-        private bool TestPointCallback(Fixture fixture)
+        bool TestPointCallback(Fixture fixture)
         {
             bool inside = fixture.TestPoint(ref _point1);
             if (inside)
@@ -1450,7 +1450,7 @@ namespace FarseerPhysics.Dynamics
             return _testPointAllFixtures;
         }
 
-        private bool TestPointAllCallback(Fixture fixture)
+        bool TestPointAllCallback(Fixture fixture)
         {
             bool inside = fixture.TestPoint(ref _point2);
             if (inside)

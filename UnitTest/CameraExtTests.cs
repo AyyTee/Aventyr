@@ -17,7 +17,7 @@ namespace UnitTest
         /// <summary>
         /// Simple ICamera2 implementation for unit testing.
         /// </summary>
-        private class SimpleCamera2 : ICamera2
+        class SimpleCamera2 : ICamera2
         {
             public float Aspect { get; set; } = 1;
             public double Fov { get; set; } = Math.PI / 4;

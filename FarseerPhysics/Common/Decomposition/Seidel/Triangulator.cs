@@ -10,12 +10,12 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
         public List<List<Point>> Triangles;
 
         // Initialize trapezoidal map and query structure
-        private Trapezoid _boundingBox;
-        private List<Edge> _edgeList;
-        private QueryGraph _queryGraph;
-        private float _sheer = 0.001f;
-        private TrapezoidalMap _trapezoidalMap;
-        private List<MonotoneMountain> _xMonoPoly;
+        Trapezoid _boundingBox;
+        List<Edge> _edgeList;
+        QueryGraph _queryGraph;
+        float _sheer = 0.001f;
+        TrapezoidalMap _trapezoidalMap;
+        List<MonotoneMountain> _xMonoPoly;
 
         public Triangulator(List<Point> polyLine, float sheer)
         {
@@ -32,7 +32,7 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
         }
 
         // Build the trapezoidal map and query graph
-        private void Process()
+        void Process()
         {
             foreach (Edge edge in _edgeList)
             {
@@ -97,7 +97,7 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
         }
 
         // Build a list of x-monotone mountains
-        private void CreateMountains()
+        void CreateMountains()
         {
             foreach (Edge edge in _edgeList)
             {
@@ -133,14 +133,14 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
         }
 
         // Mark the outside trapezoids surrounding the polygon
-        private void MarkOutside(Trapezoid t)
+        void MarkOutside(Trapezoid t)
         {
             if (t.Top == _boundingBox.Top || t.Bottom == _boundingBox.Bottom)
                 t.TrimNeighbors();
         }
 
         // Create segments and connect end points; update edge event pointer
-        private List<Edge> InitEdges(List<Point> points)
+        List<Edge> InitEdges(List<Point> points)
         {
             List<Edge> edges = new List<Edge>();
 
@@ -152,7 +152,7 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
             return OrderSegments(edges);
         }
 
-        private List<Edge> OrderSegments(List<Edge> edgeInput)
+        List<Edge> OrderSegments(List<Edge> edgeInput)
         {
             // Ignore vertical segments!
             List<Edge> edges = new List<Edge>();
@@ -179,7 +179,7 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
             return edges;
         }
 
-        private static void Shuffle<T>(IList<T> list)
+        static void Shuffle<T>(IList<T> list)
         {
             Random rng = new Random();
             int n = list.Count;
@@ -195,7 +195,7 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
 
         // Prevents any two distinct endpoints from lying on a common vertical line, and avoiding
         // the degenerate case. See Mark de Berg et al, Chapter 6.3
-        private Point ShearTransform(Point point)
+        Point ShearTransform(Point point)
         {
             return new Point(point.X + _sheer * point.Y, point.Y);
         }

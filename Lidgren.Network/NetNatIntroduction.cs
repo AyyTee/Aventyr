@@ -10,8 +10,8 @@ using NetEndPoint = System.Net.IPEndPoint;
 namespace Lidgren.Network
 {
 	public partial class NetPeer {
-		private const byte HostByte = 1;
-		private const byte ClientByte = 0;
+	    const byte HostByte = 1;
+	    const byte ClientByte = 0;
 
 		/// <summary>
 		/// Send NetIntroduction to hostExternal and clientExternal; introducing client to host
@@ -90,7 +90,7 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Called when receiving a NatPunchMessage from a remote endpoint
 		/// </summary>
-		private void HandleNatPunch(int ptr, NetEndPoint senderEndPoint)
+		void HandleNatPunch(int ptr, NetEndPoint senderEndPoint)
 		{
 			NetIncomingMessage tmp = SetupReadHelperMessage(ptr, 1000); // never mind length
 
@@ -120,7 +120,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private void HandleNatPunchConfirmRequest(int ptr, NetEndPoint senderEndPoint)
+	    void HandleNatPunchConfirmRequest(int ptr, NetEndPoint senderEndPoint)
 		{
 			NetIncomingMessage tmp = SetupReadHelperMessage(ptr, 1000); // never mind length
 			var isFromClient = tmp.ReadByte() == ClientByte;
@@ -136,7 +136,7 @@ namespace Lidgren.Network
 			m_unsentUnconnectedMessages.Enqueue(new NetTuple<NetEndPoint, NetOutgoingMessage>(senderEndPoint, confirmResponse));
 		}
 
-		private void HandleNatPunchConfirmed(int ptr, NetEndPoint senderEndPoint)
+	    void HandleNatPunchConfirmed(int ptr, NetEndPoint senderEndPoint)
 		{
 			NetIncomingMessage tmp = SetupReadHelperMessage(ptr, 1000); // never mind length
 			var isFromClient = tmp.ReadByte() == ClientByte;

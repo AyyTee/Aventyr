@@ -1,16 +1,11 @@
-﻿using Game;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using Game;
 
-namespace EditorLogic
+namespace EditorLogic.Tools
 {
     public abstract class Tool
     {
-        protected IInput Input { get { return Controller.Input; } }
+        protected IInput Input => Controller.Input;
         public bool Enabled { get; private set; }
         public bool Active { get; protected set; }
         public virtual bool EditorOnly { get; }

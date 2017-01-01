@@ -11,14 +11,14 @@ namespace Lidgren.Network
 	/// </summary>
 	public static class NetSRP
 	{
-		private static readonly NetBigInteger N = new NetBigInteger("0115b8b692e0e045692cf280b436735c77a5a9e8a9e7ed56c965f87db5b2a2ece3", 16);
-		private static readonly NetBigInteger g = NetBigInteger.Two;
-		private static readonly NetBigInteger k = ComputeMultiplier();
+	    static readonly NetBigInteger N = new NetBigInteger("0115b8b692e0e045692cf280b436735c77a5a9e8a9e7ed56c965f87db5b2a2ece3", 16);
+	    static readonly NetBigInteger g = NetBigInteger.Two;
+	    static readonly NetBigInteger k = ComputeMultiplier();
 		
 		/// <summary>
 		/// Compute multiplier (k)
 		/// </summary>
-		private static NetBigInteger ComputeMultiplier()
+		static NetBigInteger ComputeMultiplier()
 		{
 			string one = NetUtility.ToHexString(N.ToByteArrayUnsigned());
 			string two = NetUtility.ToHexString(g.ToByteArrayUnsigned());

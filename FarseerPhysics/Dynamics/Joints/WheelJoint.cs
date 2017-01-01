@@ -52,37 +52,37 @@ namespace FarseerPhysics.Dynamics.Joints
     public class WheelJoint : Joint
     {
         // Solver shared
-        private Vector2 _localYAxis;
+        Vector2 _localYAxis;
 
-        private float _impulse;
-        private float _motorImpulse;
-        private float _springImpulse;
+        float _impulse;
+        float _motorImpulse;
+        float _springImpulse;
 
-        private float _maxMotorTorque;
-        private float _motorSpeed;
-        private bool _enableMotor;
+        float _maxMotorTorque;
+        float _motorSpeed;
+        bool _enableMotor;
 
         // Solver temp
-        private int _indexA;
-        private int _indexB;
-        private Vector2 _localCenterA;
-        private Vector2 _localCenterB;
-        private float _invMassA;
-        private float _invMassB;
-        private float _invIA;
-        private float _invIB;
+        int _indexA;
+        int _indexB;
+        Vector2 _localCenterA;
+        Vector2 _localCenterB;
+        float _invMassA;
+        float _invMassB;
+        float _invIA;
+        float _invIB;
 
-        private Vector2 _ax, _ay;
-        private float _sAx, _sBx;
-        private float _sAy, _sBy;
+        Vector2 _ax, _ay;
+        float _sAx, _sBx;
+        float _sAy, _sBy;
 
-        private float _mass;
-        private float _motorMass;
-        private float _springMass;
+        float _mass;
+        float _motorMass;
+        float _springMass;
 
-        private float _bias;
-        private float _gamma;
-        private Vector2 _axis;
+        float _bias;
+        float _gamma;
+        Vector2 _axis;
 
         internal WheelJoint()
         {

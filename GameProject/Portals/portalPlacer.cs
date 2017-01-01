@@ -65,7 +65,7 @@ namespace Game.Portals
         /// </summary>
         /// <param name="coord">Initial portal position.</param>
         /// <param name="portalSize">Size of portal.</param>
-        private static WallCoord AdjustCoord(WallCoord coord, float portalSize)
+        static WallCoord AdjustCoord(WallCoord coord, float portalSize)
         {
             LineF edge = PolygonExt.GetEdge(coord.Wall.GetWorldVertices(), coord);
             if (!EdgeValidLength(edge.Length, portalSize))
@@ -76,7 +76,7 @@ namespace Game.Portals
             return intersectValid;
         }
 
-        private static float GetValidT(float t, LineF edge, float portalSize)
+        static float GetValidT(float t, LineF edge, float portalSize)
         {
             Debug.Assert(EdgeValidLength(edge.Length, portalSize));
             float portalSizeT = (portalSize + FixturePortal.EdgeMargin * 2) / edge.Length;
@@ -86,7 +86,7 @@ namespace Game.Portals
         /// <summary>
         /// Return whether world space edge is long enough to fit a portal.
         /// </summary>
-        private static bool EdgeValidLength(float edgeLength, float portalSize)
+        static bool EdgeValidLength(float edgeLength, float portalSize)
         {
             return edgeLength > portalSize + FixturePortal.EdgeMargin * 2;
         }

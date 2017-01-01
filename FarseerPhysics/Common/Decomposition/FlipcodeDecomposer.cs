@@ -17,9 +17,9 @@ namespace FarseerPhysics.Common.Decomposition
     /// </summary>
     internal static class FlipcodeDecomposer
     {
-        private static Vector2 _tmpA;
-        private static Vector2 _tmpB;
-        private static Vector2 _tmpC;
+        static Vector2 _tmpA;
+        static Vector2 _tmpB;
+        static Vector2 _tmpC;
 
         /// <summary>
         /// Decompose the polygon into triangles.
@@ -105,7 +105,7 @@ namespace FarseerPhysics.Common.Decomposition
         /// <param name="c">The C point.</param>
         /// <param name="p">The point to be tested.</param>
         /// <returns>True if the point is inside the triangle</returns>
-        private static bool InsideTriangle(ref Vector2 a, ref Vector2 b, ref Vector2 c, ref Vector2 p)
+        static bool InsideTriangle(ref Vector2 a, ref Vector2 b, ref Vector2 c, ref Vector2 p)
         {
             //A cross bp
             float abp = (c.X - b.X) * (p.Y - b.Y) - (c.Y - b.Y) * (p.X - b.X);
@@ -130,7 +130,7 @@ namespace FarseerPhysics.Common.Decomposition
         /// <param name="n">The number of elements in the array.</param>
         /// <param name="V">The array to populate with indicies of triangles.</param>
         /// <returns>True if a triangle was found</returns>
-        private static bool Snip(Vertices contour, int u, int v, int w, int n, int[] V)
+        static bool Snip(Vertices contour, int u, int v, int w, int n, int[] V)
         {
             if (Settings.Epsilon > MathUtils.Area(ref _tmpA, ref _tmpB, ref _tmpC))
                 return false;

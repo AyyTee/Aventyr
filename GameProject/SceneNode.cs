@@ -101,7 +101,7 @@ namespace Game
             }
         }
 
-        private void RemoveFromParent()
+        void RemoveFromParent()
         {
             if (Parent != null)
             {

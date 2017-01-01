@@ -38,7 +38,7 @@ namespace Game
             Actor.EnterPortal += EnterPortal;
         }
 
-        private void EnterPortal(EnterCallbackData data, Transform2 transformPrevious, Transform2 velocityPrevious)
+        void EnterPortal(EnterCallbackData data, Transform2 transformPrevious, Transform2 velocityPrevious)
         {
             if (Camera != null)
             {

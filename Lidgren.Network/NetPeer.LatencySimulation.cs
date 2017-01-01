@@ -35,9 +35,9 @@ namespace Lidgren.Network
 	{
 
 #if DEBUG
-		private readonly List<DelayedPacket> m_delayedPackets = new List<DelayedPacket>();
+	    readonly List<DelayedPacket> m_delayedPackets = new List<DelayedPacket>();
 
-		private class DelayedPacket
+	    class DelayedPacket
 		{
 			public byte[] Data;
 			public double DelayedUntil;
@@ -99,7 +99,7 @@ namespace Lidgren.Network
 			// LogVerbose("Sending packet " + numBytes + " bytes - delayed " + NetTime.ToReadable(delay));
 		}
 
-		private void SendDelayedPackets()
+	    void SendDelayedPackets()
 		{
 			if (m_delayedPackets.Count <= 0)
 				return;
@@ -120,7 +120,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private void FlushDelayedPackets()
+	    void FlushDelayedPackets()
 		{
 			try
 			{

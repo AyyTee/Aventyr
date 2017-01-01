@@ -38,7 +38,7 @@ namespace Lidgren.Network
 	/// </summary>
 	public sealed class NetConnectionStatistics
 	{
-		private readonly NetConnection m_connection;
+	    readonly NetConnection m_connection;
 
 		internal long m_sentPackets;
 		internal long m_receivedPackets;

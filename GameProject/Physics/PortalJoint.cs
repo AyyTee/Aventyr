@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using FarseerPhysics.Common;
 using Microsoft.Xna.Framework;
 using FarseerPhysics.Dynamics.Joints;
@@ -39,22 +36,22 @@ namespace Game.Physics
         public IPortal PortalEnter;
          
         // Solver shared
-        private Vector3 _impulse;
-        private float _gamma;
-        private float _bias;
+        Vector3 _impulse;
+        float _gamma;
+        float _bias;
 
         // Solver temp
-        private int _indexA;
-        private int _indexB;
-        private Vector2 _rA;
-        private Vector2 _rB;
-        private Vector2 _localCenterA;
-        private Vector2 _localCenterB;
-        private float _invMassA;
-        private float _invMassB;
-        private float _invIa;
-        private float _invIb;
-        private Mat33 _mass;
+        int _indexA;
+        int _indexB;
+        Vector2 _rA;
+        Vector2 _rB;
+        Vector2 _localCenterA;
+        Vector2 _localCenterB;
+        float _invMassA;
+        float _invMassB;
+        float _invIa;
+        float _invIb;
+        Mat33 _mass;
 
         internal PortalJoint()
         {
@@ -67,9 +64,7 @@ namespace Game.Physics
         /// </summary>
         /// <param name="parentBody">The first body</param>
         /// <param name="childBody">The second body</param>
-        /// <param name="anchorA">The first body anchor.</param>
-        /// <param name="anchorB">The second body anchor.</param>
-        /// <param name="useWorldCoordinates">Set to true if you are using world coordinates as anchors.</param>
+        /// <param name="portalEnter"></param>
         public PortalJoint(Body parentBody, Body childBody, IPortal portalEnter)
             : base(parentBody, childBody)
         {
@@ -127,7 +122,7 @@ namespace Game.Physics
             return invDt * _impulse.Z;
         }
 
-        private void TransformOrientation(SolverData data)
+        void TransformOrientation(SolverData data)
         {
             int indexB = BodyB.IslandIndex;
 
@@ -144,7 +139,7 @@ namespace Game.Physics
             data.velocities[indexB].w = v.Rotation;
         }
 
-        private void UndoTransformOrientation(SolverData data)
+        void UndoTransformOrientation(SolverData data)
         {
             int indexB = BodyB.IslandIndex;
 

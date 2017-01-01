@@ -14,7 +14,7 @@ namespace Game.Rendering
         /// </summary>
         public Vector2 Viewpoint = new Vector2();
         public Transform3 Transform { get; set; }
-        private float _fov = 35;
+        float _fov = 35;
         public float Fov 
         {
             get { return _fov; }
@@ -96,7 +96,7 @@ namespace Game.Rendering
             return Vector2Ext.Transform(screenCoord, GetWorldToScreenMatrix(canvasSize).Inverted());
         }
 
-        private Matrix4 GetWorldToScreenMatrix(Vector2 canvasSize)
+        Matrix4 GetWorldToScreenMatrix(Vector2 canvasSize)
         {
             Debug.Assert(Orthographic, "Only ortho projection is allowed for now.");
             var scale = Matrix4.CreateScale(canvasSize.X / 2, -canvasSize.Y / 2, 1);

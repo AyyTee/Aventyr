@@ -94,7 +94,7 @@ namespace Game.Rendering
             return portalView;
         }
 
-        private static bool CalculatePortalViews(IPortal portal, IPortal portalEnter, IList<IPortal> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, PortalView portalView, Matrix4 portalMatrix, List<Func<bool>> actionList)
+        static bool CalculatePortalViews(IPortal portal, IPortal portalEnter, IList<IPortal> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, PortalView portalView, Matrix4 portalMatrix, List<Func<bool>> actionList)
         {
             const float areaEpsilon = 0.0001f;
             Clipper c = new Clipper();
@@ -184,8 +184,8 @@ namespace Game.Rendering
             }
             return true;
         }
-        
-        private static bool _isPortalValid(IPortal previous, IPortal next, Vector2 viewPos)
+
+        static bool _isPortalValid(IPortal previous, IPortal next, Vector2 viewPos)
         {
             //skip this portal if it isn't linked 
             if (!Portal.IsValid(next))

@@ -11,8 +11,8 @@ namespace Lidgren.Network
 		/// </summary>
 		protected const int c_overAllocateAmount = 4;
 
-		private static readonly Dictionary<Type, MethodInfo> s_readMethods;
-		private static readonly Dictionary<Type, MethodInfo> s_writeMethods;
+        static readonly Dictionary<Type, MethodInfo> s_readMethods;
+        static readonly Dictionary<Type, MethodInfo> s_writeMethods;
 
 		internal byte[] m_data;
 		internal int m_bitLength;

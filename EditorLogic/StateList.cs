@@ -14,7 +14,7 @@ namespace EditorLogic
         class FirstNode : ICommand
         {
             public FirstNode() {}
-            public bool IsMarker { get { return true; } }
+            public bool IsMarker => true;
             public void Do() { throw new NotSupportedException(); }
             public void Redo() { throw new NotSupportedException(); }
             public void Undo() { throw new NotSupportedException(); }

@@ -46,14 +46,14 @@ namespace EditorWindow
             RecentFiles = new RecentFilesList(recentFiles, this);
         }
 
-        private void ControllerEditor_LevelCreated(ControllerEditor controller, string filepath)
+        void ControllerEditor_LevelCreated(ControllerEditor controller, string filepath)
         {
             MainWindow.Invoke(() =>
             {
             });
         }
 
-        private void ControllerEditor_LevelSaved(ControllerEditor controller, string filepath)
+        void ControllerEditor_LevelSaved(ControllerEditor controller, string filepath)
         {
             MainWindow.Invoke(() =>
             {
@@ -65,7 +65,7 @@ namespace EditorWindow
             });
         }
 
-        private void ControllerEditor_LevelLoaded(ControllerEditor controller, string filepath)
+        void ControllerEditor_LevelLoaded(ControllerEditor controller, string filepath)
         {
             MainWindow.Invoke(() =>
             {
@@ -141,12 +141,12 @@ namespace EditorWindow
             }
         }
 
-        private void _loadFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        void _loadFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Load(((OpenFileDialog)sender).FileName);
         }
 
-        private void _saveFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        void _saveFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Save(((SaveFileDialog)sender).FileName);
         }

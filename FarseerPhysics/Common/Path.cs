@@ -21,7 +21,7 @@ namespace FarseerPhysics.Common
         /// </summary>
         public List<Vector2> ControlPoints;
 
-        private float _deltaT;
+        float _deltaT;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Path"/> class.

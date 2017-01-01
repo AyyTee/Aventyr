@@ -111,7 +111,7 @@ namespace Game.Portals
             base.Remove();
         }
 
-        private void RemoveFixture()
+        void RemoveFixture()
         {
             if (Position != null)
             {

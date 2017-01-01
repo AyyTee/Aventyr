@@ -38,7 +38,7 @@ namespace Lidgren.Network
 	/// </summary>
 	public static partial class NetUtility
 	{
-		private static readonly bool IsMono = Type.GetType("Mono.Runtime") != null;
+	    static readonly bool IsMono = Type.GetType("Mono.Runtime") != null;
 
 		/// <summary>
 		/// Resolve endpoint callback
@@ -77,7 +77,7 @@ namespace Lidgren.Network
 			return adr == null ? null : new NetEndPoint(adr, port);
 		}
 
-		private static IPAddress s_broadcastAddress;
+	    static IPAddress s_broadcastAddress;
 		public static IPAddress GetCachedBroadcastAddress()
 		{
 			if (s_broadcastAddress == null)

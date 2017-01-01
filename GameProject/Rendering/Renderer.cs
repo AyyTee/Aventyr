@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Linq;
 using ClipperLib;
@@ -16,8 +15,6 @@ namespace Game.Rendering
     /// <summary>
     /// Handles OpenGL rendering.  Only one instance of Renderer should be instantiated during the process's lifetime.
     /// </summary>
-    [SuppressMessage("ReSharper", "ForCanBeConvertedToForeach")]
-    [SuppressMessage("ReSharper", "LoopCanBeConvertedToQuery")]
     public class Renderer
     {
         public static readonly GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
@@ -89,7 +86,7 @@ namespace Game.Rendering
             return _layers.Remove(layer);
         }
 
-        private void SetShader(Shader shader)
+        void SetShader(Shader shader)
         {
             if (shader != _activeShader)
             {
@@ -98,7 +95,7 @@ namespace Game.Rendering
             }
         }
 
-        private void SetEnable(EnableCap enableCap, bool enable)
+        void SetEnable(EnableCap enableCap, bool enable)
         {
             if (_enableCap[enableCap] == enable)
             {
@@ -261,7 +258,7 @@ namespace Game.Rendering
         /// </summary>
         /// <param name="portalViewList"></param>
         /// <param name="cam"></param>
-        private void RenderPortalEdges(List<PortalView> portalViewList, ICamera2 cam)
+        void RenderPortalEdges(List<PortalView> portalViewList, ICamera2 cam)
         {
             int iterations = Math.Min(portalViewList.Count, StencilMaxValue);
             /* Escape early if there aren't any visible portals.

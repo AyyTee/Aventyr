@@ -52,22 +52,22 @@ namespace FarseerPhysics.Dynamics.Joints
     public class PulleyJoint : Joint
     {
         // Solver shared
-        private float _impulse;
+        float _impulse;
 
         // Solver temp
-        private int _indexA;
-        private int _indexB;
-        private Vector2 _uA;
-        private Vector2 _uB;
-        private Vector2 _rA;
-        private Vector2 _rB;
-        private Vector2 _localCenterA;
-        private Vector2 _localCenterB;
-        private float _invMassA;
-        private float _invMassB;
-        private float _invIA;
-        private float _invIB;
-        private float _mass;
+        int _indexA;
+        int _indexB;
+        Vector2 _uA;
+        Vector2 _uB;
+        Vector2 _rA;
+        Vector2 _rB;
+        Vector2 _localCenterA;
+        Vector2 _localCenterB;
+        float _invMassA;
+        float _invMassB;
+        float _invIA;
+        float _invIB;
+        float _mass;
 
         internal PulleyJoint()
         {

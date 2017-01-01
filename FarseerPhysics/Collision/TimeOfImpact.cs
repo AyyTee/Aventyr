@@ -63,18 +63,12 @@ namespace FarseerPhysics.Collision
 
     public static class SeparationFunction
     {
-        [ThreadStatic]
-        private static Vector2 _axis;
-        [ThreadStatic]
-        private static Vector2 _localPoint;
-        [ThreadStatic]
-        private static DistanceProxy _proxyA;
-        [ThreadStatic]
-        private static DistanceProxy _proxyB;
-        [ThreadStatic]
-        private static Sweep _sweepA, _sweepB;
-        [ThreadStatic]
-        private static SeparationFunctionType _type;
+        [ThreadStatic] static Vector2 _axis;
+        [ThreadStatic] static Vector2 _localPoint;
+        [ThreadStatic] static DistanceProxy _proxyA;
+        [ThreadStatic] static DistanceProxy _proxyB;
+        [ThreadStatic] static Sweep _sweepA, _sweepB;
+        [ThreadStatic] static SeparationFunctionType _type;
 
         public static void Set(ref SimplexCache cache, DistanceProxy proxyA, ref Sweep sweepA, DistanceProxy proxyB, ref Sweep sweepB, float t1)
         {
@@ -278,8 +272,7 @@ namespace FarseerPhysics.Collision
         public static int TOICalls, TOIIters, TOIMaxIters;
         [ThreadStatic]
         public static int TOIRootIters, TOIMaxRootIters;
-        [ThreadStatic]
-        private static DistanceInput _distanceInput;
+        [ThreadStatic] static DistanceInput _distanceInput;
 
         /// <summary>
         /// Compute the upper bound on time before two shapes penetrate. Time is represented as

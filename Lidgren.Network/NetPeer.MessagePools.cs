@@ -7,14 +7,14 @@ namespace Lidgren.Network
 	public partial class NetPeer
 	{
 		internal List<byte[]> m_storagePool;
-		private NetQueue<NetOutgoingMessage> m_outgoingMessagesPool;
-		private NetQueue<NetIncomingMessage> m_incomingMessagesPool;
+	    NetQueue<NetOutgoingMessage> m_outgoingMessagesPool;
+	    NetQueue<NetIncomingMessage> m_incomingMessagesPool;
 
 		internal int m_storagePoolBytes;
 		internal int m_storageSlotsUsedCount;
-		private int m_maxCacheCount;
+	    int m_maxCacheCount;
 
-		private void InitializePools()
+	    void InitializePools()
 		{
 			m_storageSlotsUsedCount = 0;
 

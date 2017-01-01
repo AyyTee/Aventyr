@@ -48,10 +48,10 @@ namespace Lidgren.Network
 		// [6] item 
 		// [7] item
 		//
-		private T[] m_items;
-		private readonly ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
-		private int m_size;
-		private int m_head;
+	    T[] m_items;
+	    readonly ReaderWriterLockSlim m_lock = new ReaderWriterLockSlim();
+	    int m_size;
+	    int m_head;
 
 		/// <summary>
 		/// Gets the number of items in the queue
@@ -157,7 +157,7 @@ namespace Lidgren.Network
 		}
 
 		// must be called from within a write locked m_lock!
-		private void SetCapacity(int newCapacity)
+	    void SetCapacity(int newCapacity)
 		{
 			if (m_size == 0)
 			{

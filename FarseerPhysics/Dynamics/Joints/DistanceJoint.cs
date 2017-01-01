@@ -50,23 +50,23 @@ namespace FarseerPhysics.Dynamics.Joints
     public class DistanceJoint : Joint
     {
         // Solver shared
-        private float _bias;
-        private float _gamma;
-        private float _impulse;
+        float _bias;
+        float _gamma;
+        float _impulse;
 
         // Solver temp
-        private int _indexA;
-        private int _indexB;
-        private Vector2 _u;
-        private Vector2 _rA;
-        private Vector2 _rB;
-        private Vector2 _localCenterA;
-        private Vector2 _localCenterB;
-        private float _invMassA;
-        private float _invMassB;
-        private float _invIA;
-        private float _invIB;
-        private float _mass;
+        int _indexA;
+        int _indexB;
+        Vector2 _u;
+        Vector2 _rA;
+        Vector2 _rB;
+        Vector2 _localCenterA;
+        Vector2 _localCenterB;
+        float _invMassA;
+        float _invMassB;
+        float _invIA;
+        float _invIB;
+        float _mass;
 
         internal DistanceJoint()
         {

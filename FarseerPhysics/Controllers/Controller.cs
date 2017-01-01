@@ -52,7 +52,7 @@ namespace FarseerPhysics.Controllers
     {
         public bool Enabled;
         public World World;
-        private ControllerType _type;
+        ControllerType _type;
 
         public Controller(ControllerType controllerType)
         {

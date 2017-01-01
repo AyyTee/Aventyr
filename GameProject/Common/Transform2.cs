@@ -10,12 +10,12 @@ using Xna = Microsoft.Xna.Framework;
 namespace Game.Common
 {
     [DataContract]
-    public class Transform2 : IShallowClone<Transform2>, IAlmostEqual<Transform2>
+    public class Transform2 : IShallowClone<Transform2>, IAlmostEqual<Transform2>, IEquatable<Transform2>
     {
         [DataMember]
-        Vector2 _position = new Vector2();
+        Vector2 _position;
         [DataMember]
-        float _rotation = 0;
+        float _rotation;
         /// <summary>
         /// X-axis mirroring.
         /// </summary>
@@ -44,17 +44,7 @@ namespace Game.Common
             }
         }
 
-        public Vector2 Scale
-        {
-            get 
-            { 
-                if (MirrorX)
-                {
-                    return new Vector2(-Size, Size); 
-                }
-                return new Vector2(Size, Size); 
-            }
-        }
+        public Vector2 Scale => MirrorX ? new Vector2(-Size, Size) : new Vector2(Size, Size);
 
         public Vector2 Position 
         { 
@@ -107,12 +97,13 @@ namespace Game.Common
 
         public Transform2 ShallowClone()
         {
-            Transform2 clone = new Transform2();
-            clone.Position = Position;
-            clone.Size = Size;
-            clone.MirrorX = MirrorX;
-            clone.Rotation = Rotation;
-            return clone;
+            return new Transform2
+            {
+                Position = Position,
+                Size = Size,
+                MirrorX = MirrorX,
+                Rotation = Rotation
+            };
         }
 
         public Transform3 Get3D()
@@ -135,9 +126,9 @@ namespace Game.Common
             return GetVector(new Vector2(1, 0), normalize);
         }
 
-        private Vector2 GetVector(Vector2 vector, bool normalize)
+        Vector2 GetVector(Vector2 vector, bool normalize)
         {
-            Vector2[] v = new Vector2[2]  {
+            Vector2[] v = {
                 new Vector2(0, 0),
                 vector
             };
@@ -249,11 +240,7 @@ namespace Game.Common
                 scale.Y = -Math.Abs(scale.X);
             }
 
-            MirrorX = false;
-            if (Math.Sign(scale.X) != Math.Sign(scale.Y))
-            {
-                MirrorX = true;
-            }
+            MirrorX = Math.Sign(scale.X) != Math.Sign(scale.Y);
             Size = scale.Y;
             Debug.Assert(Scale == scale);
         }
@@ -337,20 +324,33 @@ namespace Game.Common
 
         public override bool Equals(object obj)
         {
-            if (obj is Transform2)
+            var cast = obj as Transform2;
+            if (cast != null)
             {
-                return Equals(this, (Transform2)obj);
+                return Equals(this, cast);
             }
             return false;
         }
 
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = _position.GetHashCode();
+                hashCode = (hashCode * 397) ^ _rotation.GetHashCode();
+                hashCode = (hashCode * 397) ^ _size.GetHashCode();
+                hashCode = (hashCode * 397) ^ MirrorX.GetHashCode();
+                return hashCode;
+            }
+        }
+
         public static bool Equals(Transform2 t0, Transform2 t1)
         {
-            if (((object)t0) == null && ((object)t1) == null)
+            if ((object)t0 == null && (object)t1 == null)
             {
                 return true;
             }
-            else if (((object)t0) == null || ((object)t1) == null)
+            if ((object)t0 == null || (object)t1 == null)
             {
                 return false;
             }
@@ -360,13 +360,9 @@ namespace Game.Common
                 t0.Scale == t1.Scale;
         }
 
-        public override int GetHashCode()
+        public bool Equals(Transform2 other)
         {
-            return base.GetHashCode() ^ 
-                Rotation.GetHashCode() ^ 
-                Size.GetHashCode() ^ 
-                MirrorX.GetHashCode() ^
-                Position.GetHashCode();
+            return Equals(this, other);
         }
 
         public static void SetPosition(ITransformable2 transformable, Vector2 position)
@@ -402,26 +398,6 @@ namespace Game.Common
             Transform2 transform = transformable.GetTransform();
             transform.SetScale(size, mirrorX, mirrorY);
             transformable.SetTransform(transform);
-        }
-
-        public static Vector2 GetPosition(ITransformable2 transformable)
-        {
-            return transformable.GetTransform().Position;
-        }
-
-        public static float GetRotation(ITransformable2 transformable)
-        {
-            return transformable.GetTransform().Rotation;
-        }
-
-        public static Vector2 GetScale(ITransformable2 transformable)
-        {
-            return transformable.GetTransform().Scale;
-        }
-
-        public static float GetSize(ITransformable2 transformable)
-        {
-            return transformable.GetTransform().Size;
         }
     }
 }

@@ -41,12 +41,12 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
     {
         // Inital triangle factor, seed triangle will extend 30% of 
         // PointSet width to both left and right.
-        private const float ALPHA = 0.3f;
+        const float ALPHA = 0.3f;
 
         public DTSweepBasin Basin = new DTSweepBasin();
         public DTSweepEdgeEvent EdgeEvent = new DTSweepEdgeEvent();
 
-        private DTSweepPointComparator _comparator = new DTSweepPointComparator();
+        DTSweepPointComparator _comparator = new DTSweepPointComparator();
         public AdvancingFront aFront;
 
         public DTSweepContext()
@@ -76,7 +76,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             MeshCleanReq(triangle);
         }
 
-        private void MeshCleanReq(DelaunayTriangle triangle)
+        void MeshCleanReq(DelaunayTriangle triangle)
         {
             if (triangle != null && !triangle.IsInterior)
             {

@@ -31,7 +31,7 @@ namespace FarseerPhysics.Common.Decomposition
             return TriangulatePolygon(vertices);
         }
 
-        private static List<Vertices> TriangulatePolygon(Vertices vertices)
+        static List<Vertices> TriangulatePolygon(Vertices vertices)
         {
             List<Vertices> list = new List<Vertices>();
             Vector2 lowerInt = new Vector2();
@@ -148,13 +148,13 @@ namespace FarseerPhysics.Common.Decomposition
             return list;
         }
 
-        private static Vector2 At(int i, Vertices vertices)
+        static Vector2 At(int i, Vertices vertices)
         {
             int s = vertices.Count;
             return vertices[i < 0 ? s - 1 - ((-i - 1) % s) : i % s];
         }
 
-        private static Vertices Copy(int i, int j, Vertices vertices)
+        static Vertices Copy(int i, int j, Vertices vertices)
         {
             while (j < i)
                 j += vertices.Count;
@@ -168,7 +168,7 @@ namespace FarseerPhysics.Common.Decomposition
             return p;
         }
 
-        private static bool CanSee(int i, int j, Vertices vertices)
+        static bool CanSee(int i, int j, Vertices vertices)
         {
             if (Reflex(i, vertices))
             {
@@ -203,37 +203,37 @@ namespace FarseerPhysics.Common.Decomposition
             return true;
         }
 
-        private static bool Reflex(int i, Vertices vertices)
+        static bool Reflex(int i, Vertices vertices)
         {
             return Right(i, vertices);
         }
 
-        private static bool Right(int i, Vertices vertices)
+        static bool Right(int i, Vertices vertices)
         {
             return Right(At(i - 1, vertices), At(i, vertices), At(i + 1, vertices));
         }
 
-        private static bool Left(Vector2 a, Vector2 b, Vector2 c)
+        static bool Left(Vector2 a, Vector2 b, Vector2 c)
         {
             return MathUtils.Area(ref a, ref b, ref c) > 0;
         }
 
-        private static bool LeftOn(Vector2 a, Vector2 b, Vector2 c)
+        static bool LeftOn(Vector2 a, Vector2 b, Vector2 c)
         {
             return MathUtils.Area(ref a, ref b, ref c) >= 0;
         }
 
-        private static bool Right(Vector2 a, Vector2 b, Vector2 c)
+        static bool Right(Vector2 a, Vector2 b, Vector2 c)
         {
             return MathUtils.Area(ref a, ref b, ref c) < 0;
         }
 
-        private static bool RightOn(Vector2 a, Vector2 b, Vector2 c)
+        static bool RightOn(Vector2 a, Vector2 b, Vector2 c)
         {
             return MathUtils.Area(ref a, ref b, ref c) <= 0;
         }
 
-        private static float SquareDist(Vector2 a, Vector2 b)
+        static float SquareDist(Vector2 a, Vector2 b)
         {
             float dx = b.X - a.X;
             float dy = b.Y - a.Y;

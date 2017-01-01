@@ -50,14 +50,14 @@ namespace EditorWindow
         /// Centers main window within display.  Doesn't work for multiple displays that are different sizes.
         /// </summary>
         /// <remarks>Code found at http://stackoverflow.com/questions/4019831/how-do-you-center-your-main-window-in-wpf </remarks>
-        private void CenterWindowOnScreen()
+        void CenterWindowOnScreen()
         {
             Rect workArea = SystemParameters.WorkArea;
             Left = (workArea.Width - Width) / 2 + workArea.Left;
             Top = (workArea.Height - Height) / 2 + workArea.Top;
         }
 
-        private void _openFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        void _openFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _controllerEditor.AddAction(() =>
             {
@@ -98,7 +98,7 @@ namespace EditorWindow
             _loop.Run(60);
         }
 
-        private void ControllerEditor_Update(ControllerEditor controller)
+        void ControllerEditor_Update(ControllerEditor controller)
         {
             Invoke(() =>
             {
@@ -128,7 +128,7 @@ namespace EditorWindow
             _window.Dispatcher.Invoke(action);
         }
 
-        private void UpdateTransformLabels(EditorObject entity)
+        void UpdateTransformLabels(EditorObject entity)
         {
             float angle = 0;
             Vector2 position = new Vector2();
@@ -152,12 +152,12 @@ namespace EditorWindow
             Properties.Settings.Default.Save();
         }
 
-        private void Button_Close(object sender, RoutedEventArgs e)
+        void Button_Close(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
-        private void Button_Play(object sender, RoutedEventArgs e)
+        void Button_Play(object sender, RoutedEventArgs e)
         {
             _controllerEditor.AddAction(() =>
                 {
@@ -165,7 +165,7 @@ namespace EditorWindow
                 });
         }
 
-        private void Button_Pause(object sender, RoutedEventArgs e)
+        void Button_Pause(object sender, RoutedEventArgs e)
         {
             _controllerEditor.AddAction(() =>
                 {
@@ -173,7 +173,7 @@ namespace EditorWindow
                 });
         }
 
-        private void Button_Stop(object sender, RoutedEventArgs e)
+        void Button_Stop(object sender, RoutedEventArgs e)
         {
             _controllerEditor.AddAction(() =>
                 {
@@ -181,7 +181,7 @@ namespace EditorWindow
                 });
         }
 
-        private void ControllerEditor_ScenePlayed(ControllerEditor controller)
+        void ControllerEditor_ScenePlayed(ControllerEditor controller)
         {
             Invoke(() =>
                 {
@@ -196,7 +196,7 @@ namespace EditorWindow
                 });
         }
 
-        private void ControllerEditor_ScenePaused(ControllerEditor controller)
+        void ControllerEditor_ScenePaused(ControllerEditor controller)
         {
             Invoke(() =>
             {
@@ -211,7 +211,7 @@ namespace EditorWindow
             });
         }
 
-        private void ControllerEditor_SceneStopped(ControllerEditor controller)
+        void ControllerEditor_SceneStopped(ControllerEditor controller)
         {
             Invoke(() =>
             {
@@ -226,13 +226,13 @@ namespace EditorWindow
             });
         }
 
-        private void LoadModel(object sender, RoutedEventArgs e)
+        void LoadModel(object sender, RoutedEventArgs e)
         {
             _loadModelDialog.Filter = "Wavefront (*.obj)|*.obj";
             _loadModelDialog.ShowDialog();
         }
 
-        private void MainGrid_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        void MainGrid_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             //Remove arrow key responses. They interfere when trying to pan the camera in the editor.
             if (!(Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
@@ -259,7 +259,7 @@ namespace EditorWindow
             }
         }
 
-        private void toolPortalsVisible_Click(object sender, RoutedEventArgs e)
+        void toolPortalsVisible_Click(object sender, RoutedEventArgs e)
         {
             var button = (System.Windows.Controls.Primitives.ToggleButton)sender;
             bool enable = (bool)button.IsChecked;
@@ -267,7 +267,7 @@ namespace EditorWindow
         }
 
         /// <summary>Programatically set whether or not portals are visible.  The ui will be updated to the new value.</summary>
-        private void SetPortalRendering(bool visible)
+        void SetPortalRendering(bool visible)
         {
             toolPortalsVisible.IsChecked = visible;
             _controllerEditor.AddAction(() =>
@@ -276,27 +276,27 @@ namespace EditorWindow
             });
         }
 
-        private void Button_Save(object sender, EventArgs e)
+        void Button_Save(object sender, EventArgs e)
         {
             _controllerFiles.SaveCurrent();
         }
 
-        private void Button_Load(object sender, EventArgs e)
+        void Button_Load(object sender, EventArgs e)
         {
             _controllerFiles.LoadAs();
         }
 
-        private void Button_New(object sender, EventArgs e)
+        void Button_New(object sender, EventArgs e)
         {
             _controllerFiles.New();
         }
 
-        private void Button_SaveAs(object sender, EventArgs e)
+        void Button_SaveAs(object sender, EventArgs e)
         {
             _controllerFiles.SaveAs();
         }
 
-        private void Button_Undo(object sender, EventArgs e)
+        void Button_Undo(object sender, EventArgs e)
         {
             _controllerEditor.AddAction(() =>
             {
@@ -304,7 +304,7 @@ namespace EditorWindow
             });
         }
 
-        private void Button_Redo(object sender, EventArgs e)
+        void Button_Redo(object sender, EventArgs e)
         {
             _controllerEditor.AddAction(() =>
             {
@@ -312,12 +312,12 @@ namespace EditorWindow
             });
         }
 
-        private void CommandPlayToggle(object sender, ExecutedRoutedEventArgs e)
+        void CommandPlayToggle(object sender, ExecutedRoutedEventArgs e)
         {
             
         }
 
-        private void CommandTimerStep(object sender, ExecutedRoutedEventArgs e)
+        void CommandTimerStep(object sender, ExecutedRoutedEventArgs e)
         {
             _controllerEditor.AddAction(() =>
             {
@@ -325,7 +325,7 @@ namespace EditorWindow
             });
         }
 
-        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (_controllerEditor != null)
             {
@@ -337,35 +337,35 @@ namespace EditorWindow
             }
         }
 
-        private void Command_StepFoward(object sender, ExecutedRoutedEventArgs e)
+        void Command_StepFoward(object sender, ExecutedRoutedEventArgs e)
         {
             _controllerEditor.AddAction(() => {
                 _controllerEditor.SetTime(_controllerEditor.Level.Time + 1 / (double)_loop.UpdatesPerSecond);
             });
         }
 
-        private void Command_StepBackward(object sender, ExecutedRoutedEventArgs e)
+        void Command_StepBackward(object sender, ExecutedRoutedEventArgs e)
         {
             _controllerEditor.AddAction(() => {
                 _controllerEditor.SetTime(_controllerEditor.Level.Time - 1 / (double)_loop.UpdatesPerSecond);
             });
         }
 
-        private void Command_JumpFoward(object sender, ExecutedRoutedEventArgs e)
+        void Command_JumpFoward(object sender, ExecutedRoutedEventArgs e)
         {
             _controllerEditor.AddAction(() => {
                 _controllerEditor.SetTime(_controllerEditor.Level.Time + 1);
             });
         }
 
-        private void Command_JumpBackward(object sender, ExecutedRoutedEventArgs e)
+        void Command_JumpBackward(object sender, ExecutedRoutedEventArgs e)
         {
             _controllerEditor.AddAction(() => {
                 _controllerEditor.SetTime(_controllerEditor.Level.Time - 1);
             });
         }
 
-        private void Command_KeyframeAdd(object sender, ExecutedRoutedEventArgs e)
+        void Command_KeyframeAdd(object sender, ExecutedRoutedEventArgs e)
         {
             _controllerEditor.AddAction(() => {
                 foreach (EditorObject instance in _controllerEditor.Selection.GetAll())
@@ -375,12 +375,12 @@ namespace EditorWindow
             });
         }
 
-        private void Command_KeyframeRemove(object sender, ExecutedRoutedEventArgs e)
+        void Command_KeyframeRemove(object sender, ExecutedRoutedEventArgs e)
         {
 
         }
 
-        private void IntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        void IntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             _controllerEditor.AddAction(() => 
             {
@@ -388,7 +388,7 @@ namespace EditorWindow
             });
         }
 
-        private void RunStandalone(object sender, ExecutedRoutedEventArgs e)
+        void RunStandalone(object sender, ExecutedRoutedEventArgs e)
         {
             _controllerEditor.AddAction(() => 
             {
@@ -410,7 +410,7 @@ namespace EditorWindow
             });
         }
 
-        private string GenerateRandomString(int length)
+        string GenerateRandomString(int length)
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var stringChars = new char[length];

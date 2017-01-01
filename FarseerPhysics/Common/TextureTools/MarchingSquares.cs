@@ -271,12 +271,12 @@ namespace FarseerPhysics.Common.TextureTools
             such as to approximate value(return) = 0
         **/
 
-        private static int[] _lookMarch = {
+        static int[] _lookMarch = {
                                               0x00, 0xE0, 0x38, 0xD8, 0x0E, 0xEE, 0x36, 0xD6, 0x83, 0x63, 0xBB, 0x5B, 0x8D,
                                               0x6D, 0xB5, 0x55
                                           };
 
-        private static float Lerp(float x0, float x1, float v0, float v1)
+        static float Lerp(float x0, float x1, float v0, float v1)
         {
             float dv = v0 - v1;
             float t;
@@ -290,7 +290,7 @@ namespace FarseerPhysics.Common.TextureTools
 
         /** Recursive linear interpolation for use in marching squares **/
 
-        private static float Xlerp(float x0, float x1, float y, float v0, float v1, sbyte[,] f, int c)
+        static float Xlerp(float x0, float x1, float y, float v0, float v1, sbyte[,] f, int c)
         {
             float xm = Lerp(x0, x1, v0, v1);
             if (c == 0)
@@ -306,7 +306,7 @@ namespace FarseerPhysics.Common.TextureTools
 
         /** Recursive linear interpolation for use in marching squares **/
 
-        private static float Ylerp(float y0, float y1, float x, float v0, float v1, sbyte[,] f, int c)
+        static float Ylerp(float y0, float y1, float x, float v0, float v1, sbyte[,] f, int c)
         {
             float ym = Lerp(y0, y1, v0, v1);
             if (c == 0)
@@ -322,18 +322,18 @@ namespace FarseerPhysics.Common.TextureTools
 
         /** Square value for use in marching squares **/
 
-        private static float Square(float x)
+        static float Square(float x)
         {
             return x * x;
         }
 
-        private static float VecDsq(Vector2 a, Vector2 b)
+        static float VecDsq(Vector2 a, Vector2 b)
         {
             Vector2 d = a - b;
             return d.X * d.X + d.Y * d.Y;
         }
 
-        private static float VecCross(Vector2 a, Vector2 b)
+        static float VecCross(Vector2 a, Vector2 b)
         {
             return a.X * b.Y - a.Y * b.X;
         }
@@ -348,7 +348,7 @@ namespace FarseerPhysics.Common.TextureTools
             coordinates of 'ax' 'ay' in the marching squares mesh.
         **/
 
-        private static int MarchSquare(sbyte[,] f, sbyte[,] fs, ref GeomPoly poly, int ax, int ay, float x0, float y0,
+        static int MarchSquare(sbyte[,] f, sbyte[,] fs, ref GeomPoly poly, int ax, int ay, float x0, float y0,
                                        float x1, float y1, int bin)
         {
             //key lookup
@@ -400,7 +400,7 @@ namespace FarseerPhysics.Common.TextureTools
             Combining polya and polyb into one super-polygon stored in polya.
         **/
 
-        private static void combLeft(ref GeomPoly polya, ref GeomPoly polyb)
+        static void combLeft(ref GeomPoly polya, ref GeomPoly polyb)
         {
             CxFastList<Vector2> ap = polya.Points;
             CxFastList<Vector2> bp = polyb.Points;
@@ -486,8 +486,8 @@ namespace FarseerPhysics.Common.TextureTools
         internal class CxFastList<T>
         {
             // first node in the list
-            private CxFastListNode<T> _head;
-            private int _count;
+            CxFastListNode<T> _head;
+            int _count;
 
             /// <summary>
             /// Iterator to start of list (O(1))
@@ -779,7 +779,7 @@ namespace FarseerPhysics.Common.TextureTools
 
         #region Nested type: GeomPolyVal
 
-        private class GeomPolyVal
+        class GeomPolyVal
         {
             /** Associated polygon at coordinate **/
             /** Key of original sub-polygon **/

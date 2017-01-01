@@ -37,32 +37,32 @@ namespace FarseerPhysics.Dynamics.Joints
     public class RevoluteJoint : Joint
     {
         // Solver shared
-        private Vector3 _impulse;
-        private float _motorImpulse;
+        Vector3 _impulse;
+        float _motorImpulse;
 
-        private bool _enableMotor;
-        private float _maxMotorTorque;
-        private float _motorSpeed;
+        bool _enableMotor;
+        float _maxMotorTorque;
+        float _motorSpeed;
 
-        private bool _enableLimit;
-        private float _referenceAngle;
-        private float _lowerAngle;
-        private float _upperAngle;
+        bool _enableLimit;
+        float _referenceAngle;
+        float _lowerAngle;
+        float _upperAngle;
 
         // Solver temp
-        private int _indexA;
-        private int _indexB;
-        private Vector2 _rA;
-        private Vector2 _rB;
-        private Vector2 _localCenterA;
-        private Vector2 _localCenterB;
-        private float _invMassA;
-        private float _invMassB;
-        private float _invIA;
-        private float _invIB;
-        private Mat33 _mass;			// effective mass for point-to-point constraint.
-        private float _motorMass;	    // effective mass for motor/limit angular constraint.
-        private LimitState _limitState;
+        int _indexA;
+        int _indexB;
+        Vector2 _rA;
+        Vector2 _rB;
+        Vector2 _localCenterA;
+        Vector2 _localCenterB;
+        float _invMassA;
+        float _invMassB;
+        float _invIA;
+        float _invIB;
+        Mat33 _mass;			// effective mass for point-to-point constraint.
+        float _motorMass;	    // effective mass for motor/limit angular constraint.
+        LimitState _limitState;
 
         internal RevoluteJoint()
         {

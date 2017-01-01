@@ -30,7 +30,7 @@ namespace EditorLogic
             return clone;
         }
 
-        private void ShallowClone(EditorEntity destination)
+        void ShallowClone(EditorEntity destination)
         {
             base.ShallowClone(destination);
             destination.Models = new List<Model>(Models);

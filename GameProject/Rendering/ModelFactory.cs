@@ -260,7 +260,7 @@ namespace Game.Rendering
             }
         }
 
-        private static void AddLineWidth(Mesh mesh, Vector2 v0, Vector2 v1, float width)
+        static void AddLineWidth(Mesh mesh, Vector2 v0, Vector2 v1, float width)
         {
             Vector2[] vectors = PolygonFactory.CreateLineWidth(new LineF(v0, v1), width);
             Vertex[] vertices = new Vertex[vectors.Length];

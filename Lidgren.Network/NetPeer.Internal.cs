@@ -14,22 +14,22 @@ namespace Lidgren.Network
 {
 	public partial class NetPeer
 	{
-		private NetPeerStatus m_status;
-		private Thread m_networkThread;
-		private Socket m_socket;
+	    NetPeerStatus m_status;
+	    Thread m_networkThread;
+	    Socket m_socket;
 		internal byte[] m_sendBuffer;
 		internal byte[] m_receiveBuffer;
 		internal NetIncomingMessage m_readHelperMessage;
-		private EndPoint m_senderRemote;
-		private object m_initializeLock = new object();
-		private uint m_frameCounter;
-		private double m_lastHeartbeat;
-		private double m_lastSocketBind = float.MinValue;
-		private NetUPnP m_upnp;
+	    EndPoint m_senderRemote;
+	    object m_initializeLock = new object();
+	    uint m_frameCounter;
+	    double m_lastHeartbeat;
+	    double m_lastSocketBind = float.MinValue;
+	    NetUPnP m_upnp;
 		internal bool m_needFlushSendQueue;
 
 		internal readonly NetPeerConfiguration m_configuration;
-		private readonly NetQueue<NetIncomingMessage> m_releasedIncomingMessages;
+	    readonly NetQueue<NetIncomingMessage> m_releasedIncomingMessages;
 		internal readonly NetQueue<NetTuple<NetEndPoint, NetOutgoingMessage>> m_unsentUnconnectedMessages;
 
 		internal Dictionary<NetEndPoint, NetConnection> m_handshakes;
@@ -38,8 +38,8 @@ namespace Lidgren.Network
 		internal long m_uniqueIdentifier;
 		internal bool m_executeFlushSendQueue;
 
-		private AutoResetEvent m_messageReceivedEvent;
-		private List<NetTuple<SynchronizationContext, SendOrPostCallback>> m_receiveCallbacks;
+	    AutoResetEvent m_messageReceivedEvent;
+	    List<NetTuple<SynchronizationContext, SendOrPostCallback>> m_receiveCallbacks;
 
 		/// <summary>
 		/// Gets the socket, if Start() has been called
@@ -106,7 +106,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private void BindSocket(bool reBind)
+	    void BindSocket(bool reBind)
 		{
 			double now = NetTime.Now;
 			if (now - m_lastSocketBind < 1.0)
@@ -146,7 +146,7 @@ namespace Lidgren.Network
 			m_listenPort = boundEp.Port;
 		}
 
-		private void InitializeNetwork()
+	    void InitializeNetwork()
 		{
 			lock (m_initializeLock)
 			{
@@ -185,7 +185,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private void NetworkLoop()
+	    void NetworkLoop()
 		{
 			VerifyNetworkThread();
 
@@ -212,7 +212,7 @@ namespace Lidgren.Network
 			ExecutePeerShutdown();
 		}
 
-		private void ExecutePeerShutdown()
+	    void ExecutePeerShutdown()
 		{
 			VerifyNetworkThread();
 
@@ -293,7 +293,7 @@ namespace Lidgren.Network
 			return;
 		}
 
-		private void Heartbeat()
+	    void Heartbeat()
 		{
 			VerifyNetworkThread();
 
@@ -601,7 +601,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private void ReceivedUnconnectedLibraryMessage(double now, NetEndPoint senderEndPoint, NetMessageType tp, int ptr, int payloadByteLength)
+	    void ReceivedUnconnectedLibraryMessage(double now, NetEndPoint senderEndPoint, NetMessageType tp, int ptr, int payloadByteLength)
 		{
 			NetConnection shake;
 			if (m_handshakes.TryGetValue(senderEndPoint, out shake))

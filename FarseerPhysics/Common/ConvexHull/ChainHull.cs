@@ -13,7 +13,7 @@ namespace FarseerPhysics.Common.ConvexHull
     {
         //Copyright 2001, softSurfer (www.softsurfer.com)
 
-        private static PointComparer _pointComparer = new PointComparer();
+        static PointComparer _pointComparer = new PointComparer();
 
         /// <summary>
         /// Returns the convex hull from the given vertices..
@@ -131,7 +131,7 @@ namespace FarseerPhysics.Common.ConvexHull
             return res;
         }
 
-        private class PointComparer : Comparer<Vector2>
+        class PointComparer : Comparer<Vector2>
         {
             public override int Compare(Vector2 a, Vector2 b)
             {

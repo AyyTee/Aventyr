@@ -5,7 +5,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Util
 {
     internal class PointGenerator
     {
-        private static readonly Random RNG = new Random();
+        static readonly Random RNG = new Random();
 
         public static List<TriangulationPoint> UniformDistribution(int n, double scale)
         {

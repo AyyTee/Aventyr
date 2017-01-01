@@ -77,7 +77,7 @@ namespace Game.Rendering
             return model;
         }
 
-        private bool ParseFace(Model model, string[] parameters, List<Vector3> points, List<Vector3> normals, List<Vector2> texCoords, Dictionary<string, int> vectorMap)
+        bool ParseFace(Model model, string[] parameters, List<Vector3> points, List<Vector3> normals, List<Vector2> texCoords, Dictionary<string, int> vectorMap)
         {
             string[] indices = parameters;
             int[] p = new int[indices.Length - 1];
@@ -126,7 +126,7 @@ namespace Game.Rendering
             return true;
         }
 
-        private bool ParseVertex(string[] parameters, out int vertId, out int texId, out int normId)
+        bool ParseVertex(string[] parameters, out int vertId, out int texId, out int normId)
         {
             vertId = -1;
             texId = -1;
@@ -154,7 +154,7 @@ namespace Game.Rendering
             return true;
         }
 
-        private bool ParseVector3(string[] parameters, out Vector3 v)
+        bool ParseVector3(string[] parameters, out Vector3 v)
         {
             if (parameters.Length != 4)
             {
@@ -170,7 +170,7 @@ namespace Game.Rendering
             return valid;
         }
 
-        private bool ParseVector2(string[] parameters, out Vector2 v)
+        bool ParseVector2(string[] parameters, out Vector2 v)
         {
             if (parameters.Length != 3)
             {
@@ -221,7 +221,7 @@ namespace Game.Rendering
             return null;
         }
 
-        private string GetKey(int verts, int tex, int norm)
+        string GetKey(int verts, int tex, int norm)
         {
             return verts.ToString() + " " + verts.ToString() + " " + norm.ToString();
         }

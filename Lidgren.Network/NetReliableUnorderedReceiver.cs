@@ -4,9 +4,9 @@ namespace Lidgren.Network
 {
 	internal sealed class NetReliableUnorderedReceiver : NetReceiverChannelBase
 	{
-		private int m_windowStart;
-		private int m_windowSize;
-		private NetBitVector m_earlyReceived;
+	    int m_windowStart;
+	    int m_windowSize;
+	    NetBitVector m_earlyReceived;
 
 		public NetReliableUnorderedReceiver(NetConnection connection, int windowSize)
 			: base(connection)
@@ -15,7 +15,7 @@ namespace Lidgren.Network
 			m_earlyReceived = new NetBitVector(windowSize);
 		}
 
-		private void AdvanceWindow()
+	    void AdvanceWindow()
 		{
 			m_earlyReceived.Set(m_windowStart % m_windowSize, false);
 			m_windowStart = (m_windowStart + 1) % NetConstants.NumSequenceNumbers;

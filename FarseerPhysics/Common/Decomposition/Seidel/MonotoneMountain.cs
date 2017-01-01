@@ -7,20 +7,20 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
     internal class MonotoneMountain
     {
         // Almost Pi!
-        private const float PiSlop = 3.1f;
+        const float PiSlop = 3.1f;
 
         // Triangles that constitute the mountain
         public List<List<Point>> Triangles;
-        private HashSet<Point> _convexPoints;
-        private Point _head;
+        HashSet<Point> _convexPoints;
+        Point _head;
 
         // Monotone mountain points
-        private List<Point> _monoPoly;
+        List<Point> _monoPoly;
 
         // Used to track which side of the line we are on
-        private bool _positive;
-        private int _size;
-        private Point _tail;
+        bool _positive;
+        int _size;
+        Point _tail;
 
         public MonotoneMountain()
         {
@@ -95,7 +95,7 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
             Triangulate();
         }
 
-        private void Triangulate()
+        void Triangulate()
         {
             while (_convexPoints.Count != 0)
             {
@@ -125,13 +125,13 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
             Debug.Assert(_size <= 3, "Triangulation bug, please report");
         }
 
-        private bool Valid(Point p)
+        bool Valid(Point p)
         {
             return p.Neq(_head) && p.Neq(_tail) && IsConvex(p);
         }
 
         // Create the monotone polygon
-        private void GenMonoPoly()
+        void GenMonoPoly()
         {
             Point p = _head;
             while (p != null)
@@ -141,14 +141,14 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
             }
         }
 
-        private float Angle(Point p)
+        float Angle(Point p)
         {
             Point a = (p.Next - p);
             Point b = (p.Prev - p);
             return (float)Math.Atan2(a.Cross(b), a.Dot(b));
         }
 
-        private bool AngleSign()
+        bool AngleSign()
         {
             Point a = (_head.Next - _head);
             Point b = (_tail - _head);
@@ -156,7 +156,7 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
         }
 
         // Determines if the inslide angle is convex or reflex
-        private bool IsConvex(Point p)
+        bool IsConvex(Point p)
         {
             if (_positive != (Angle(p) >= 0))
                 return false;

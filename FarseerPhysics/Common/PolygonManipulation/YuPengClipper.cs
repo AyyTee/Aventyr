@@ -24,7 +24,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
 
   public static class YuPengClipper
   {
-    private const float ClipperEpsilonSquared = 1.192092896e-07f;
+      const float ClipperEpsilonSquared = 1.192092896e-07f;
 
     public static List<Vertices> Union(Vertices polygon1, Vertices polygon2, out PolyClipError error)
     {
@@ -57,7 +57,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     /// <param name="error">The error generated (if any)</param>
     /// <returns>A list of closed polygons, which make up the result of the clipping operation.
     /// Outer contours are ordered counter clockwise, holes are ordered clockwise.</returns>
-    private static List<Vertices> Execute(Vertices subject, Vertices clip, PolyClipType clipType, out PolyClipError error)
+    static List<Vertices> Execute(Vertices subject, Vertices clip, PolyClipType clipType, out PolyClipError error)
     {
       Debug.Assert(subject.IsSimple() && clip.IsSimple(), "Non simple input!", "Input polygons must be simple (cannot intersect themselves).");
 
@@ -124,7 +124,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     /// <param name="polygon2">The second polygon.</param>
     /// <param name="slicedPoly1">Returns the first polygon with added intersection points.</param>
     /// <param name="slicedPoly2">Returns the second polygon with added intersection points.</param>
-    private static void CalculateIntersections(Vertices polygon1, Vertices polygon2,
+    static void CalculateIntersections(Vertices polygon1, Vertices polygon2,
                                                out Vertices slicedPoly1, out Vertices slicedPoly2)
     {
       slicedPoly1 = new Vertices(polygon1);
@@ -203,7 +203,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     /// Calculates the simplical chain corresponding to the input polygon.
     /// </summary>
     /// <remarks>Used by method <c>Execute()</c>.</remarks>
-    private static void CalculateSimplicalChain(Vertices poly, out List<float> coeff,
+    static void CalculateSimplicalChain(Vertices poly, out List<float> coeff,
                                                 out List<Edge> simplicies)
     {
       simplicies = new List<Edge>();
@@ -220,7 +220,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     /// the given simplical chains and builds the result chain.
     /// </summary>
     /// <remarks>Used by method <c>Execute()</c>.</remarks>
-    private static void CalculateResultChain(List<float> poly1Coeff, List<Edge> poly1Simplicies,
+    static void CalculateResultChain(List<float> poly1Coeff, List<Edge> poly1Simplicies,
                                                List<float> poly2Coeff, List<Edge> poly2Simplicies,
                                                PolyClipType clipType, out List<Edge> resultSimplices)
     {
@@ -307,7 +307,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     /// Calculates the polygon(s) from the result simplical chain.
     /// </summary>
     /// <remarks>Used by method <c>Execute()</c>.</remarks>
-    private static PolyClipError BuildPolygonsFromChain(List<Edge> simplicies, out List<Vertices> result)
+    static PolyClipError BuildPolygonsFromChain(List<Edge> simplicies, out List<Vertices> result)
     {
       result = new List<Vertices>();
       PolyClipError errVal = PolyClipError.None;
@@ -378,7 +378,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     /// Needed to calculate the characteristics function of a simplex.
     /// </summary>
     /// <remarks>Used by method <c>CalculateEdgeCharacter()</c>.</remarks>
-    private static float CalculateBeta(Vector2 point, Edge e, float coefficient)
+    static float CalculateBeta(Vector2 point, Edge e, float coefficient)
     {
       float result = 0f;
       if (PointInSimplex(point, e))
@@ -397,7 +397,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     /// Needed for sorting multiple intersections points on the same edge.
     /// </summary>
     /// <remarks>Used by method <c>CalculateIntersections()</c>.</remarks>
-    private static float GetAlpha(Vector2 start, Vector2 end, Vector2 point)
+    static float GetAlpha(Vector2 start, Vector2 end, Vector2 point)
     {
       return (point - start).LengthSquared() / (end - start).LengthSquared();
     }
@@ -406,7 +406,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     /// Returns the coefficient of a simplex.
     /// </summary>
     /// <remarks>Used by method <c>CalculateSimplicalChain()</c>.</remarks>
-    private static float CalculateSimplexCoefficient(Vector2 a, Vector2 b, Vector2 c)
+    static float CalculateSimplexCoefficient(Vector2 a, Vector2 b, Vector2 c)
     {
       float isLeft = MathUtils.Area(ref a, ref b, ref c);
       if (isLeft < 0f)
@@ -429,7 +429,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     /// <param name="edge">The edge that the point is tested against.</param>
     /// <returns>False if the winding number is even and the point is outside
     /// the simplex and True otherwise.</returns>
-    private static bool PointInSimplex(Vector2 point, Edge edge)
+    static bool PointInSimplex(Vector2 point, Edge edge)
     {
       Vertices polygon = new Vertices();
       polygon.Add(Vector2.Zero);
@@ -442,7 +442,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     /// Tests if a point lies on a line segment.
     /// </summary>
     /// <remarks>Used by method <c>CalculateBeta()</c>.</remarks>
-    private static bool PointOnLineSegment(Vector2 start, Vector2 end, Vector2 point)
+    static bool PointOnLineSegment(Vector2 start, Vector2 end, Vector2 point)
     {
       Vector2 segment = end - start;
       return MathUtils.Area(ref start, ref end, ref point) == 0f &&
@@ -450,7 +450,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
              Vector2.Dot(point - end, segment) <= 0f;
     }
 
-    private static bool VectorEqual(Vector2 vec1, Vector2 vec2)
+      static bool VectorEqual(Vector2 vec1, Vector2 vec2)
     {
       return (vec2 - vec1).LengthSquared() <= ClipperEpsilonSquared;
     }
@@ -458,7 +458,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
     #region Nested type: Edge
 
     /// <summary>Specifies an Edge. Edges are used to represent simplicies in simplical chains</summary>
-    private sealed class Edge
+    sealed class Edge
     {
       public Edge(Vector2 edgeStart, Vector2 edgeEnd)
       {

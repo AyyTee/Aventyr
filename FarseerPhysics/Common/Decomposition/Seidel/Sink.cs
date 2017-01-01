@@ -4,7 +4,7 @@
     {
         public Trapezoid Trapezoid;
 
-        private Sink(Trapezoid trapezoid)
+        Sink(Trapezoid trapezoid)
             : base(null, null)
         {
             Trapezoid = trapezoid;

@@ -62,7 +62,7 @@ namespace Game.Common
             return polygons;
         }
 
-        private static bool IsHole(List<IntPoint> hole, List<IntPoint> polygon)
+        static bool IsHole(List<IntPoint> hole, List<IntPoint> polygon)
         {
             for (int i = 0; i < hole.Count; i++)
             {
@@ -87,7 +87,7 @@ namespace Game.Common
             return polyList;
         }
 
-        private static List<Polygon> CreatePolygon(PolyNode polyNode)
+        static List<Polygon> CreatePolygon(PolyNode polyNode)
         {
             List<Polygon> polyList = new List<Polygon>();
             Debug.Assert(polyNode.IsOpen == false);
@@ -111,7 +111,7 @@ namespace Game.Common
             return polyList;
         }
 
-        private static Polygon GetPolygon(List<IntPoint> vertices)
+        static Polygon GetPolygon(List<IntPoint> vertices)
         {
             HashSet<Vector2> points = new HashSet<Vector2>();
             List<PolygonPoint> polygonPoints = new List<PolygonPoint>();
@@ -124,7 +124,7 @@ namespace Game.Common
             return new Polygon(polygonPoints);
         }
 
-        private static Polygon GetPolygon(IList<Vector2> vertices)
+        static Polygon GetPolygon(IList<Vector2> vertices)
         {
             HashSet<Vector2> points = new HashSet<Vector2>();
             List<PolygonPoint> polygonPoints = new List<PolygonPoint>();
@@ -138,7 +138,7 @@ namespace Game.Common
         }
 
         /// <summary>Triangulate a polygon and return whether it was successful.</summary>
-        private static bool Triangulate(Polygon polygon)
+        static bool Triangulate(Polygon polygon)
         {
             TextWriter console = Console.Out;
             Console.SetOut(Controller.TrashLog);

@@ -17,8 +17,7 @@ namespace Game.Rendering
         public Transform2 Transform { get; set; } = new Transform2();
         [DataMember]
         public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
-        [DataMember]
-        private float _aspect = 1;
+        [DataMember] float _aspect = 1;
         /// <summary>
         /// The aspect ratio for the camera.  
         /// Window.width / Window.height will give an aspect that matches the window.

@@ -53,8 +53,8 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
 {
     internal static class DTSweep
     {
-        private const double PI_div2 = Math.PI / 2;
-        private const double PI_3div4 = 3 * Math.PI / 4;
+        const double PI_div2 = Math.PI / 2;
+        const double PI_3div4 = 3 * Math.PI / 4;
 
         /// <summary>
         /// Triangulate simple polygon with holes
@@ -81,7 +81,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// <summary>
         /// Start sweeping the Y-sorted point set from bottom to top
         /// </summary>
-        private static void Sweep(DTSweepContext tcx)
+        static void Sweep(DTSweepContext tcx)
         {
             List<TriangulationPoint> points = tcx.Points;
 
@@ -105,7 +105,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// <summary>
         /// If this is a Delaunay Triangulation of a pointset we need to fill so the triangle mesh gets a ConvexHull 
         /// </summary>
-        private static void FinalizationConvexHull(DTSweepContext tcx)
+        static void FinalizationConvexHull(DTSweepContext tcx)
         {
             DelaunayTriangle t1, t2;
 
@@ -184,7 +184,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// <summary>
         /// We will traverse the entire advancing front and fill it to form a convex hull.
         /// </summary>
-        private static void TurnAdvancingFrontConvex(DTSweepContext tcx, AdvancingFrontNode b, AdvancingFrontNode c)
+        static void TurnAdvancingFrontConvex(DTSweepContext tcx, AdvancingFrontNode b, AdvancingFrontNode c)
         {
             AdvancingFrontNode first = b;
             while (c != tcx.aFront.Tail)
@@ -214,7 +214,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FinalizationPolygon(DTSweepContext tcx)
+        static void FinalizationPolygon(DTSweepContext tcx)
         {
             // Get an Internal triangle to start with
             DelaunayTriangle t = tcx.aFront.Head.Next.Triangle;
@@ -233,7 +233,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// create a new triangle. If needed new holes and basins
         /// will be filled to.
         /// </summary>
-        private static AdvancingFrontNode PointEvent(DTSweepContext tcx, TriangulationPoint point)
+        static AdvancingFrontNode PointEvent(DTSweepContext tcx, TriangulationPoint point)
         {
             AdvancingFrontNode node = tcx.LocateNode(point);
             AdvancingFrontNode newNode = NewFrontTriangle(tcx, point, node);
@@ -254,7 +254,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// <summary>
         /// Creates a new front triangle and legalize it
         /// </summary>
-        private static AdvancingFrontNode NewFrontTriangle(DTSweepContext tcx, TriangulationPoint point, AdvancingFrontNode node)
+        static AdvancingFrontNode NewFrontTriangle(DTSweepContext tcx, TriangulationPoint point, AdvancingFrontNode node)
         {
             DelaunayTriangle triangle = new DelaunayTriangle(point, node.Point, node.Next.Point);
             triangle.MarkNeighbor(node.Triangle);
@@ -276,7 +276,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             return newNode;
         }
 
-        private static void EdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
+        static void EdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
         {
             try
             {
@@ -301,7 +301,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FillEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
+        static void FillEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
         {
             if (tcx.EdgeEvent.Right)
             {
@@ -313,7 +313,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FillRightConcaveEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge,
+        static void FillRightConcaveEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge,
                                                       AdvancingFrontNode node)
         {
             Fill(tcx, node.Next);
@@ -336,7 +336,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FillRightConvexEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
+        static void FillRightConvexEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
         {
             // Next concave or convex?
             if (TriangulationUtil.Orient2d(node.Next.Point, node.Next.Next.Point, node.Next.Next.Next.Point) ==
@@ -361,7 +361,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FillRightBelowEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
+        static void FillRightBelowEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
         {
             if (node.Point.X < edge.P.X) // needed?
             {
@@ -380,7 +380,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FillRightAboveEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
+        static void FillRightAboveEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
         {
             while (node.Next.Point.X < edge.P.X)
             {
@@ -397,7 +397,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FillLeftConvexEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
+        static void FillLeftConvexEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
         {
             // Next concave or convex?
             if (TriangulationUtil.Orient2d(node.Prev.Point, node.Prev.Prev.Point, node.Prev.Prev.Prev.Point) ==
@@ -422,7 +422,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FillLeftConcaveEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
+        static void FillLeftConcaveEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
         {
             Fill(tcx, node.Prev);
             if (node.Prev.Point != edge.P)
@@ -444,7 +444,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FillLeftBelowEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
+        static void FillLeftBelowEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
         {
             if (node.Point.X > edge.P.X)
             {
@@ -463,7 +463,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FillLeftAboveEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
+        static void FillLeftAboveEdgeEvent(DTSweepContext tcx, DTSweepConstraint edge, AdvancingFrontNode node)
         {
             while (node.Prev.Point.X > edge.P.X)
             {
@@ -480,7 +480,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static bool IsEdgeSideOfTriangle(DelaunayTriangle triangle, TriangulationPoint ep, TriangulationPoint eq)
+        static bool IsEdgeSideOfTriangle(DelaunayTriangle triangle, TriangulationPoint ep, TriangulationPoint eq)
         {
             int index = triangle.EdgeIndex(ep, eq);
             if (index != -1)
@@ -496,7 +496,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             return false;
         }
 
-        private static void EdgeEvent(DTSweepContext tcx, TriangulationPoint ep, TriangulationPoint eq, DelaunayTriangle triangle, TriangulationPoint point)
+        static void EdgeEvent(DTSweepContext tcx, TriangulationPoint ep, TriangulationPoint eq, DelaunayTriangle triangle, TriangulationPoint point)
         {
             if (IsEdgeSideOfTriangle(triangle, ep, eq))
                 return;
@@ -570,7 +570,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             }
         }
 
-        private static void FlipEdgeEvent(DTSweepContext tcx, TriangulationPoint ep, TriangulationPoint eq, DelaunayTriangle t, TriangulationPoint p)
+        static void FlipEdgeEvent(DTSweepContext tcx, TriangulationPoint ep, TriangulationPoint eq, DelaunayTriangle t, TriangulationPoint p)
         {
             DelaunayTriangle ot = t.NeighborAcross(p);
             TriangulationPoint op = ot.OppositePoint(t, p);
@@ -635,7 +635,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// the point in current triangle that is the opposite point to the next
         /// triangle. 
         /// </summary>
-        private static TriangulationPoint NextFlipPoint(TriangulationPoint ep, TriangulationPoint eq, DelaunayTriangle ot, TriangulationPoint op)
+        static TriangulationPoint NextFlipPoint(TriangulationPoint ep, TriangulationPoint eq, DelaunayTriangle ot, TriangulationPoint op)
         {
             Orientation o2d = TriangulationUtil.Orient2d(eq, op, ep);
             if (o2d == Orientation.CW)
@@ -666,7 +666,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// <param name="p">a point shared by both triangles</param>
         /// <param name="op">another point shared by both triangles</param>
         /// <returns>returns the triangle still intersecting the edge</returns>
-        private static DelaunayTriangle NextFlipTriangle(DTSweepContext tcx, Orientation o, DelaunayTriangle t, DelaunayTriangle ot, TriangulationPoint p, TriangulationPoint op)
+        static DelaunayTriangle NextFlipTriangle(DTSweepContext tcx, Orientation o, DelaunayTriangle t, DelaunayTriangle ot, TriangulationPoint p, TriangulationPoint op)
         {
             int edgeIndex;
             if (o == Orientation.CCW)
@@ -698,7 +698,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// <param name="flipTriangle">the current triangle sharing the point eq with edge</param>
         /// <param name="t"></param>
         /// <param name="p"></param>
-        private static void FlipScanEdgeEvent(DTSweepContext tcx, TriangulationPoint ep, TriangulationPoint eq, DelaunayTriangle flipTriangle, DelaunayTriangle t, TriangulationPoint p)
+        static void FlipScanEdgeEvent(DTSweepContext tcx, TriangulationPoint ep, TriangulationPoint eq, DelaunayTriangle flipTriangle, DelaunayTriangle t, TriangulationPoint p)
         {
             DelaunayTriangle ot = t.NeighborAcross(p);
             TriangulationPoint op = ot.OppositePoint(t, p);
@@ -733,7 +733,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// <summary>
         /// Fills holes in the Advancing Front
         /// </summary>
-        private static void FillAdvancingFront(DTSweepContext tcx, AdvancingFrontNode n)
+        static void FillAdvancingFront(DTSweepContext tcx, AdvancingFrontNode n)
         {
             double angle;
 
@@ -778,7 +778,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         }
 
         // True if HoleAngle exceeds 90 degrees.
-        private static bool LargeHole_DontFill(AdvancingFrontNode node)
+        static bool LargeHole_DontFill(AdvancingFrontNode node)
         {
             AdvancingFrontNode nextNode = node.Next;
             AdvancingFrontNode prevNode = node.Prev;
@@ -799,21 +799,21 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             return true;
         }
 
-        private static bool AngleExceeds90Degrees(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
+        static bool AngleExceeds90Degrees(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
         {
             double angle = Angle(origin, pa, pb);
             bool exceeds90Degrees = ((angle > PI_div2) || (angle < -PI_div2));
             return exceeds90Degrees;
         }
 
-        private static bool AngleExceedsPlus90DegreesOrIsNegative(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
+        static bool AngleExceedsPlus90DegreesOrIsNegative(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
         {
             double angle = Angle(origin, pa, pb);
             bool exceedsPlus90DegreesOrIsNegative = (angle > PI_div2) || (angle < 0);
             return exceedsPlus90DegreesOrIsNegative;
         }
 
-        private static double Angle(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
+        static double Angle(TriangulationPoint origin, TriangulationPoint pa, TriangulationPoint pb)
         {
             /* Complex plane
             * ab = cosA +i*sinA
@@ -843,7 +843,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// </summary>
         /// <param name="tcx"></param>
         /// <param name="node">starting node, this or next node will be left node</param>
-        private static void FillBasin(DTSweepContext tcx, AdvancingFrontNode node)
+        static void FillBasin(DTSweepContext tcx, AdvancingFrontNode node)
         {
             if (TriangulationUtil.Orient2d(node.Point, node.Next.Point, node.Next.Next.Point) == Orientation.CCW)
             {
@@ -889,7 +889,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// <summary>
         /// Recursive algorithm to fill a Basin with triangles
         /// </summary>
-        private static void FillBasinReq(DTSweepContext tcx, AdvancingFrontNode node)
+        static void FillBasinReq(DTSweepContext tcx, AdvancingFrontNode node)
         {
             // if shallow stop filling
             if (IsShallow(tcx, node))
@@ -935,7 +935,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
             FillBasinReq(tcx, node);
         }
 
-        private static bool IsShallow(DTSweepContext tcx, AdvancingFrontNode node)
+        static bool IsShallow(DTSweepContext tcx, AdvancingFrontNode node)
         {
             double height;
 
@@ -959,7 +959,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// </summary>
         /// <param name="node">middle node</param>
         /// <returns>the angle between 3 front nodes</returns>
-        private static double HoleAngle(AdvancingFrontNode node)
+        static double HoleAngle(AdvancingFrontNode node)
         {
             // XXX: do we really need a signed angle for holeAngle?
             //      could possible save some cycles here
@@ -983,7 +983,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// <summary>
         /// The basin angle is decided against the horizontal line [1,0]
         /// </summary>
-        private static double BasinAngle(AdvancingFrontNode node)
+        static double BasinAngle(AdvancingFrontNode node)
         {
             double ax = node.Point.X - node.Next.Next.Point.X;
             double ay = node.Point.Y - node.Next.Next.Point.Y;
@@ -995,7 +995,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// </summary>
         /// <param name="tcx"></param>
         /// <param name="node">middle node, that is the bottom of the hole</param>
-        private static void Fill(DTSweepContext tcx, AdvancingFrontNode node)
+        static void Fill(DTSweepContext tcx, AdvancingFrontNode node)
         {
             DelaunayTriangle triangle = new DelaunayTriangle(node.Prev.Point, node.Point, node.Next.Point);
             // TODO: should copy the cEdge value from neighbor triangles
@@ -1019,7 +1019,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         /// <summary>
         /// Returns true if triangle was legalized
         /// </summary>
-        private static bool Legalize(DTSweepContext tcx, DelaunayTriangle t)
+        static bool Legalize(DTSweepContext tcx, DelaunayTriangle t)
         {
             // To legalize a triangle we start by finding if any of the three edges
             // violate the Delaunay condition
@@ -1102,7 +1102,7 @@ namespace FarseerPhysics.Common.Decomposition.CDT.Delaunay.Sweep
         ///    +-----+ oP            +-----+
         ///       n4                    n4
         /// </summary>
-        private static void RotateTrianglePair(DelaunayTriangle t, TriangulationPoint p, DelaunayTriangle ot, TriangulationPoint op)
+        static void RotateTrianglePair(DelaunayTriangle t, TriangulationPoint p, DelaunayTriangle ot, TriangulationPoint op)
         {
             DelaunayTriangle n1 = t.NeighborCCW(p);
             DelaunayTriangle n2 = t.NeighborCW(p);

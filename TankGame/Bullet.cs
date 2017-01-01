@@ -37,7 +37,7 @@ namespace TankGame
             SetCollidesWith(~Category.Cat1);
         }
 
-        private void Bullet_OnCollision(Actor collidingWith, bool firstEvent)
+        void Bullet_OnCollision(Actor collidingWith, bool firstEvent)
         {
             if (collidingWith is Wall)
             {

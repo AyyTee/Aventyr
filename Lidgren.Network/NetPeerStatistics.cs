@@ -32,7 +32,7 @@ namespace Lidgren.Network
 	/// </summary>
 	public sealed class NetPeerStatistics : INetPeerStatistics
     {
-		private readonly NetPeer m_peer;
+        readonly NetPeer m_peer;
 
 		internal int m_sentPackets;
 		internal int m_receivedPackets;

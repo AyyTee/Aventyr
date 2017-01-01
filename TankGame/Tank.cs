@@ -75,7 +75,7 @@ namespace TankGame
             _attemptFirePortal1 = false;
         }
 
-        private void StepMovement(float stepSize)
+        void StepMovement(float stepSize)
         {
             Transform2 transform = GetTransform();
             Vector2 up = transform.GetUp(true);
@@ -124,7 +124,7 @@ namespace TankGame
             SetVelocity(velocity);
         }
 
-        private void StepTurret(float stepSize)
+        void StepTurret(float stepSize)
         {
             float turretSpeed = 1.5f;
 

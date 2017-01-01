@@ -23,7 +23,7 @@ namespace EditorLogic
         RollingAverage _average;
 
         public int UpdatesPerSecond { get { return _updatesPerSecond; } private set { _updatesPerSecond = value; } }
-        public int MillisecondsPerStep { get { return 1000 / UpdatesPerSecond; } }        
+        public int MillisecondsPerStep => 1000 / UpdatesPerSecond;
         public bool IsStopping { get { return _isStopping; } private set { _isStopping = value; } }
         public bool IsRunning { get { return _isRunning; } private set { _isRunning = value; } }
 

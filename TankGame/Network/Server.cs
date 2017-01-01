@@ -168,7 +168,7 @@ namespace TankGame.Network
             }
         }
 
-        private void HandleStatusChanged(INetIncomingMessage msg)
+        void HandleStatusChanged(INetIncomingMessage msg)
         {
             Console.WriteLine(Name + "Status Changed: " + Encoding.Default.GetString(msg.Data));
 
@@ -181,7 +181,7 @@ namespace TankGame.Network
             PortalCommon.UpdateWorldTransform(_scene, true);
         }
 
-        private void HandleData(INetIncomingMessage msg)
+        void HandleData(INetIncomingMessage msg)
         {
             ClientMessage data = NetworkHelper.ReadMessage<ClientMessage>(msg);
             ClientInstance client = _clients.First(item => item.Id == msg.SenderConnection.RemoteUniqueIdentifier);

@@ -28,13 +28,13 @@ namespace Lidgren.Network
 	/// </summary>
 	public sealed class NetXtea : NetBlockEncryptionBase
 	{
-		private const int c_blockSize = 8;
-		private const int c_keySize = 16;
-		private const int c_delta = unchecked((int)0x9E3779B9);
+	    const int c_blockSize = 8;
+	    const int c_keySize = 16;
+	    const int c_delta = unchecked((int)0x9E3779B9);
 
-		private readonly int m_numRounds;
-		private readonly uint[] m_sum0;
-		private readonly uint[] m_sum1;
+	    readonly int m_numRounds;
+	    readonly uint[] m_sum0;
+	    readonly uint[] m_sum1;
 
 		/// <summary>
 		/// Gets the block size for this cipher
@@ -135,7 +135,7 @@ namespace Lidgren.Network
 			return;
 		}
 
-		private static uint BytesToUInt(byte[] bytes, int offset)
+	    static uint BytesToUInt(byte[] bytes, int offset)
 		{
 			uint retval = (uint)(bytes[offset] << 24);
 			retval |= (uint)(bytes[++offset] << 16);
@@ -143,7 +143,7 @@ namespace Lidgren.Network
 			return (retval | bytes[++offset]);
 		}
 
-		private static void UIntToBytes(uint value, byte[] destination, int destinationOffset)
+	    static void UIntToBytes(uint value, byte[] destination, int destinationOffset)
 		{
 			destination[destinationOffset++] = (byte)(value >> 24);
 			destination[destinationOffset++] = (byte)(value >> 16);

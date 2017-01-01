@@ -8,13 +8,13 @@ namespace Lidgren.Network
 	/// </summary>
 	internal sealed class NetUnreliableSenderChannel : NetSenderChannelBase
 	{
-		private NetConnection m_connection;
-		private int m_windowStart;
-		private int m_windowSize;
-		private int m_sendStart;
-		private bool m_doFlowControl;
+	    NetConnection m_connection;
+	    int m_windowStart;
+	    int m_windowSize;
+	    int m_sendStart;
+	    bool m_doFlowControl;
 
-		private NetBitVector m_receivedAcks;
+	    NetBitVector m_receivedAcks;
 
 		internal override int WindowSize { get { return m_windowSize; } }
 
@@ -81,7 +81,7 @@ namespace Lidgren.Network
 			}
 		}
 
-		private void ExecuteSend(NetOutgoingMessage message)
+	    void ExecuteSend(NetOutgoingMessage message)
 		{
 			m_connection.m_peer.VerifyNetworkThread();
 

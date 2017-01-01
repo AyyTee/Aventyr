@@ -6,14 +6,14 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
     // See "Computational Geometry", 3rd edition, by Mark de Berg et al, Chapter 6.2
     internal class QueryGraph
     {
-        private Node _head;
+        Node _head;
 
         public QueryGraph(Node head)
         {
             _head = head;
         }
 
-        private Trapezoid Locate(Edge edge)
+        Trapezoid Locate(Edge edge)
         {
             return _head.Locate(edge).Trapezoid;
         }
@@ -39,7 +39,7 @@ namespace FarseerPhysics.Common.Decomposition.Seidel
             return trapezoids;
         }
 
-        private void Replace(Sink sink, Node node)
+        void Replace(Sink sink, Node node)
         {
             if (sink.ParentList.Count == 0)
                 _head = node;

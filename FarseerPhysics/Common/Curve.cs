@@ -62,9 +62,9 @@ namespace Microsoft.Xna.Framework
     {
 #region Private Fields
 
-        private CurveKeyCollection keys;
-        private CurveLoopType postLoop;
-        private CurveLoopType preLoop;
+        CurveKeyCollection keys;
+        CurveLoopType postLoop;
+        CurveLoopType preLoop;
 
 #endregion Private Fields
 
@@ -224,7 +224,7 @@ namespace Microsoft.Xna.Framework
 
 #region Private Methods
 
-        private int GetNumberOfCycle(float position)
+        int GetNumberOfCycle(float position)
         {
             float cycle = (position - keys[0].Position)/(keys[keys.Count - 1].Position - keys[0].Position);
             if (cycle < 0f)
@@ -232,7 +232,7 @@ namespace Microsoft.Xna.Framework
             return (int) cycle;
         }
 
-        private float GetCurvePosition(float position)
+        float GetCurvePosition(float position)
         {
             //only for position in curve
             CurveKey prev = keys[0];

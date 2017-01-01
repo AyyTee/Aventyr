@@ -15,7 +15,7 @@ namespace EditorLogic
         public const string FileExtension = "xml";
         public const string FileExtensionName = "Save File";
 
-        private static IEnumerable<Type> GetKnownTypes()
+        static IEnumerable<Type> GetKnownTypes()
         {
             var types = from t in Assembly.GetAssembly(typeof(Scene)).GetTypes()
                    where Attribute.IsDefined(t, typeof(DataContractAttribute))
@@ -30,7 +30,7 @@ namespace EditorLogic
             return typeList;
         }
 
-        private static DataContractSerializer GetSerializer()
+        static DataContractSerializer GetSerializer()
         {
             return new DataContractSerializer(typeof(EditorScene), "Game", "Game", GetKnownTypes(),
             0x7FFFF,

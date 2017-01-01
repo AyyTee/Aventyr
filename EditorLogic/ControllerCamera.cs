@@ -7,12 +7,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Common;
 using Game.Rendering;
 using Game.Serialization;
-using static Game.Input;
 
 namespace EditorLogic
 {
@@ -40,8 +37,8 @@ namespace EditorLogic
             get { return _worldVelocityPrevious?.ShallowClone(); }
             set { _worldVelocityPrevious = value?.ShallowClone(); }
         }
-        public IPortalCommon Parent { get { return null; } }
-        public List<IPortalCommon> Children { get { return new List<IPortalCommon>(); } }
+        public IPortalCommon Parent => null;
+        public List<IPortalCommon> Children => new List<IPortalCommon>();
 
         public ControllerEditor Controller { get; set; }
         public IInput InputExt { get; set; }
@@ -62,8 +59,7 @@ namespace EditorLogic
         const int QueueSize = 3;
         [DataMember]
         public IScene Scene { get; set; }
-        [DataMember]
-        private float _zoomScrollFactor;
+        [DataMember] float _zoomScrollFactor;
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
         /// <summary>How much the camera zooms in/out with mouse scrolling. Value must be greater than 1.</summary>
@@ -76,8 +72,7 @@ namespace EditorLogic
                 _zoomScrollFactor = value;
             }
         }
-        [DataMember]
-        private float _zoomFactor;
+        [DataMember] float _zoomFactor;
         /// <summary>How much the camera zooms in/out with key input. Value must be greater than 1.</summary>
         public float ZoomFactor
         {
@@ -88,11 +83,11 @@ namespace EditorLogic
                 _zoomFactor = value;
             }
         }
-        public float Aspect { get { return Controller.CanvasAspect; } }
-        public Vector2 ViewOffset { get { return new Vector2(); } }
-        public double Fov { get { return Math.PI / 4; } }
-        public float ZNear { get { return -1000f; } }
-        public float ZFar { get { return 1000f; } }
+        public float Aspect => Controller.CanvasAspect;
+        public Vector2 ViewOffset => new Vector2();
+        public double Fov => Math.PI / 4;
+        public float ZNear => -1000f;
+        public float ZFar => 1000f;
 
         public ControllerCamera(ControllerEditor controller, IInput inputExt, IScene scene)
         {
@@ -148,7 +143,7 @@ namespace EditorLogic
 
             //Handle user input for zooming the camera.
             {
-                float scale = Transform2.GetSize(this);
+                float scale = GetTransform().Size;
                 if (InputExt.MouseInside)
                 {
                     if (InputExt.MouseWheelDelta() != 0)
@@ -167,7 +162,7 @@ namespace EditorLogic
                     scale *= ZoomFactor;
                     isMoved = true;
                 }
-                scale = MathHelper.Clamp(Math.Abs(scale), ZoomMin, ZoomMax) * Math.Sign(Transform2.GetSize(this));
+                scale = MathHelper.Clamp(Math.Abs(scale), ZoomMin, ZoomMax) * Math.Sign(GetTransform().Size);
                 Transform2.SetSize(this, scale);
             }
 
@@ -199,19 +194,19 @@ namespace EditorLogic
                 {
                     if (InputExt.KeyDown(Key.Left))
                     {
-                        v += GetTransform().GetRight() * -KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
+                        v += GetTransform().GetRight() * -KeyMoveSpeed * Math.Abs(GetTransform().Size);
                     }
                     if (InputExt.KeyDown(Key.Right))
                     {
-                        v += GetTransform().GetRight() * KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
+                        v += GetTransform().GetRight() * KeyMoveSpeed * Math.Abs(GetTransform().Size);
                     }
                     if (InputExt.KeyDown(Key.Up))
                     {
-                        v += GetTransform().GetUp() * KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
+                        v += GetTransform().GetUp() * KeyMoveSpeed * Math.Abs(GetTransform().Size);
                     }
                     if (InputExt.KeyDown(Key.Down))
                     {
-                        v += GetTransform().GetUp() * -KeyMoveSpeed * Math.Abs(Transform2.GetSize(this));
+                        v += GetTransform().GetUp() * -KeyMoveSpeed * Math.Abs(GetTransform().Size);
                     }
                 }
                 if (InputExt.MouseInside && InputExt.MouseDown(MouseButton.Middle))
@@ -230,9 +225,9 @@ namespace EditorLogic
             }
 
             //If the camera has been moved then call events.
-            if ((isMoved || GetWorldVelocity().Position != new Vector2()) && CameraMoved != null)
+            if ((isMoved || GetWorldVelocity().Position != new Vector2()))
             {
-                CameraMoved(this);
+                CameraMoved?.Invoke(this);
             }
         }
 
@@ -240,7 +235,7 @@ namespace EditorLogic
         {
             if (Controller.Renderer.PortalRenderEnabled)
             {
-                Ray.Settings settings = new Ray.Settings();
+                var settings = new Ray.Settings();
                 //settings.IgnorePortalVelocity = true;
                 Ray.RayCast(this, Scene.GetPortalList(), settings);
             }
@@ -268,13 +263,15 @@ namespace EditorLogic
 
         public ControllerCamera ShallowClone()
         {
-            ControllerCamera clone = new ControllerCamera(Controller, InputExt, Scene);
-            clone._lazyPan = new Queue<Vector2>(_lazyPan);
-            clone._zoomFactor = _zoomFactor;
-            clone.ZoomMin = ZoomMin;
-            clone.ZoomMax = ZoomMax;
-            clone.KeyMoveSpeed = KeyMoveSpeed;
-            clone.Transform = Transform;
+            ControllerCamera clone = new ControllerCamera(Controller, InputExt, Scene)
+            {
+                _lazyPan = new Queue<Vector2>(_lazyPan),
+                _zoomFactor = _zoomFactor,
+                ZoomMin = ZoomMin,
+                ZoomMax = ZoomMax,
+                KeyMoveSpeed = KeyMoveSpeed,
+                Transform = Transform
+            };
             return clone;
         }
 

@@ -14,7 +14,7 @@ namespace Lidgren.Network
 		/// </summary>
 		public static NetRandom Instance = new MWCRandom();
 
-		private const double c_realUnitInt = 1.0 / ((double)int.MaxValue + 1.0);
+	    const double c_realUnitInt = 1.0 / ((double)int.MaxValue + 1.0);
 
 		/// <summary>
 		/// Constructor with randomized seed
@@ -125,8 +125,8 @@ namespace Lidgren.Network
 			return retval;
 		}
 
-		private uint m_boolValues;
-		private int m_nextBoolIndex;
+	    uint m_boolValues;
+	    int m_nextBoolIndex;
 
 		/// <summary>
 		/// Returns true or false, randomly

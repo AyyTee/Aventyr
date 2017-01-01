@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Game.Portals
+﻿namespace Game.Portals
 {
     /// <summary>
     /// Callback data often provided when entering a portal.

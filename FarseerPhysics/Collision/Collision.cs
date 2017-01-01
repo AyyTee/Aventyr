@@ -590,8 +590,7 @@ namespace FarseerPhysics.Collision
     /// </summary>
     public static class Collision
     {
-        [ThreadStatic]
-        private static DistanceInput _input;
+        [ThreadStatic] static DistanceInput _input;
 
         /// <summary>
         /// Test overlap between the two shapes.
@@ -1133,9 +1132,9 @@ namespace FarseerPhysics.Collision
             collider.Collide(ref manifold, edgeA, ref xfA, polygonB, ref xfB);
         }
 
-        private class EPCollider
+        class EPCollider
         {
-            private TempPolygon _polygonB = new TempPolygon();
+            TempPolygon _polygonB = new TempPolygon();
 
             Transform _xf;
             Vector2 _centroidB;
@@ -1551,7 +1550,7 @@ namespace FarseerPhysics.Collision
                 manifold.PointCount = pointCount;
             }
 
-            private EPAxis ComputeEdgeSeparation()
+            EPAxis ComputeEdgeSeparation()
             {
                 EPAxis axis;
                 axis.Type = EPAxisType.EdgeA;
@@ -1570,7 +1569,7 @@ namespace FarseerPhysics.Collision
                 return axis;
             }
 
-            private EPAxis ComputePolygonSeparation()
+            EPAxis ComputePolygonSeparation()
             {
                 EPAxis axis;
                 axis.Type = EPAxisType.Unknown;
@@ -1633,7 +1632,7 @@ namespace FarseerPhysics.Collision
         /// <param name="offset">The offset.</param>
         /// <param name="vertexIndexA">The vertex index A.</param>
         /// <returns></returns>
-        private static int ClipSegmentToLine(out FixedArray2<ClipVertex> vOut, ref FixedArray2<ClipVertex> vIn, Vector2 normal, float offset, int vertexIndexA)
+        static int ClipSegmentToLine(out FixedArray2<ClipVertex> vOut, ref FixedArray2<ClipVertex> vIn, Vector2 normal, float offset, int vertexIndexA)
         {
             vOut = new FixedArray2<ClipVertex>();
 
@@ -1685,7 +1684,7 @@ namespace FarseerPhysics.Collision
         /// <param name="poly2">The poly2.</param>
         /// <param name="xf2">The XF2.</param>
         /// <returns></returns>
-        private static float EdgeSeparation(PolygonShape poly1, ref Transform xf1, int edge1, PolygonShape poly2, ref Transform xf2)
+        static float EdgeSeparation(PolygonShape poly1, ref Transform xf1, int edge1, PolygonShape poly2, ref Transform xf2)
         {
             List<Vector2> vertices1 = poly1.Vertices;
             List<Vector2> normals1 = poly1.Normals;
@@ -1728,7 +1727,7 @@ namespace FarseerPhysics.Collision
         /// <param name="poly2">The poly2.</param>
         /// <param name="xf2">The XF2.</param>
         /// <returns></returns>
-        private static float FindMaxSeparation(out int edgeIndex, PolygonShape poly1, ref Transform xf1, PolygonShape poly2, ref Transform xf2)
+        static float FindMaxSeparation(out int edgeIndex, PolygonShape poly1, ref Transform xf1, PolygonShape poly2, ref Transform xf2)
         {
             int count1 = poly1.Vertices.Count;
             List<Vector2> normals1 = poly1.Normals;
@@ -1808,7 +1807,7 @@ namespace FarseerPhysics.Collision
             return bestSeparation;
         }
 
-        private static void FindIncidentEdge(out FixedArray2<ClipVertex> c, PolygonShape poly1, ref Transform xf1, int edge1, PolygonShape poly2, ref Transform xf2)
+        static void FindIncidentEdge(out FixedArray2<ClipVertex> c, PolygonShape poly1, ref Transform xf1, int edge1, PolygonShape poly2, ref Transform xf2)
         {
             c = new FixedArray2<ClipVertex>();
             Vertices normals1 = poly1.Normals;

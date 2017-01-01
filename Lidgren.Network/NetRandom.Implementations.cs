@@ -13,7 +13,7 @@ namespace Lidgren.Network
 		/// </summary>
 		public static new readonly MWCRandom Instance = new MWCRandom();
 
-		private uint m_w, m_z;
+	    uint m_w, m_z;
 
 		/// <summary>
 		/// Constructor with randomized seed
@@ -65,12 +65,12 @@ namespace Lidgren.Network
 		/// </summary>
 		public static new readonly XorShiftRandom Instance = new XorShiftRandom();
 
-		private const uint c_x = 123456789;
-		private const uint c_y = 362436069;
-		private const uint c_z = 521288629;
-		private const uint c_w = 88675123;
+	    const uint c_x = 123456789;
+	    const uint c_y = 362436069;
+	    const uint c_z = 521288629;
+	    const uint c_w = 88675123;
 
-		private uint m_x, m_y, m_z, m_w;
+	    uint m_x, m_y, m_z, m_w;
 
 		/// <summary>
 		/// Constructor with randomized seed
@@ -135,23 +135,23 @@ namespace Lidgren.Network
 		/// </summary>
 		public static new readonly MersenneTwisterRandom Instance = new MersenneTwisterRandom();
 
-		private const int N = 624;
-		private const int M = 397;
-		private const uint MATRIX_A = 0x9908b0dfU;
-		private const uint UPPER_MASK = 0x80000000U;
-		private const uint LOWER_MASK = 0x7fffffffU;
-		private const uint TEMPER1 = 0x9d2c5680U;
-		private const uint TEMPER2 = 0xefc60000U;
-		private const int TEMPER3 = 11;
-		private const int TEMPER4 = 7;
-		private const int TEMPER5 = 15;
-		private const int TEMPER6 = 18;
+	    const int N = 624;
+	    const int M = 397;
+	    const uint MATRIX_A = 0x9908b0dfU;
+	    const uint UPPER_MASK = 0x80000000U;
+	    const uint LOWER_MASK = 0x7fffffffU;
+	    const uint TEMPER1 = 0x9d2c5680U;
+	    const uint TEMPER2 = 0xefc60000U;
+	    const int TEMPER3 = 11;
+	    const int TEMPER4 = 7;
+	    const int TEMPER5 = 15;
+	    const int TEMPER6 = 18;
 
-		private UInt32[] mt;
-		private int mti;
-		private UInt32[] mag01;
+	    UInt32[] mt;
+	    int mti;
+	    UInt32[] mag01;
 
-		private const double c_realUnitInt = 1.0 / ((double)int.MaxValue + 1.0);
+	    const double c_realUnitInt = 1.0 / ((double)int.MaxValue + 1.0);
 
 		/// <summary>
 		/// Constructor with randomized seed
@@ -204,7 +204,7 @@ namespace Lidgren.Network
 			return y;
 		}
 
-		private void GenRandAll()
+	    void GenRandAll()
 		{
 			int kk = 1;
 			UInt32 y;
@@ -237,7 +237,7 @@ namespace Lidgren.Network
 		/// </summary>
 		public static new readonly CryptoRandom Instance = new CryptoRandom();
 
-		private RandomNumberGenerator m_rnd = new RNGCryptoServiceProvider();
+	    RandomNumberGenerator m_rnd = new RNGCryptoServiceProvider();
 
 		/// <summary>
 		/// Seed in CryptoRandom does not create deterministic sequences

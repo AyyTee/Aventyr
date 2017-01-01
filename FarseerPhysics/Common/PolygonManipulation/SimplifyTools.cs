@@ -69,7 +69,7 @@ namespace FarseerPhysics.Common.PolygonManipulation
             return simplified;
         }
 
-        private static void SimplifySection(Vertices vertices, int i, int j, bool[] usePoint, float distanceTolerance)
+        static void SimplifySection(Vertices vertices, int i, int j, bool[] usePoint, float distanceTolerance)
         {
             if ((i + 1) == j)
                 return;

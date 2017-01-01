@@ -2,7 +2,7 @@
 {
     internal class XNode : Node
     {
-        private Point _point;
+        Point _point;
 
         public XNode(Point point, Node lChild, Node rChild)
             : base(lChild, rChild)

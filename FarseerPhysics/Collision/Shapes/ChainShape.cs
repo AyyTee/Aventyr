@@ -39,9 +39,10 @@ namespace FarseerPhysics.Collision.Shapes
         /// The vertices. These are not owned/freed by the chain Shape.
         /// </summary>
         public Vertices Vertices;
-        private Vector2 _prevVertex, _nextVertex;
-        private bool _hasPrevVertex, _hasNextVertex;
-        private static EdgeShape _edgeShape = new EdgeShape();
+
+        Vector2 _prevVertex, _nextVertex;
+        bool _hasPrevVertex, _hasNextVertex;
+        static EdgeShape _edgeShape = new EdgeShape();
 
         /// <summary>
         /// Constructor for ChainShape. By default have 0 in density.

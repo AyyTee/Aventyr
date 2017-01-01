@@ -100,7 +100,7 @@ namespace Game.Physics
             #endregion
         }
 
-        private void PreSolveListener(Contact contact, ref Manifold oldManifold)
+        void PreSolveListener(Contact contact, ref Manifold oldManifold)
         {
             if (contact.IsTouching)
             {
@@ -223,7 +223,7 @@ namespace Game.Physics
         /// <summary>
         /// Returns true if a contact should not be disabled due to portal clipping.
         /// </summary>
-        private bool IsContactValid(Contact contact)
+        bool IsContactValid(Contact contact)
         {
             FixtureData[] fixtureData = new FixtureData[2];
             fixtureData[0] = FixtureExt.GetData(contact.FixtureA);

@@ -40,11 +40,11 @@ namespace Microsoft.Xna.Framework
     {
 #region Private Fields
 
-        private CurveContinuity continuity;
-        private float position;
-        private float tangentIn;
-        private float tangentOut;
-        private float value;
+        CurveContinuity continuity;
+        float position;
+        float tangentIn;
+        float tangentOut;
+        float value;
 
 #endregion Private Fields
 

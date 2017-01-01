@@ -156,7 +156,7 @@ namespace FarseerPhysics.Common.Decomposition
             return results;
         }
 
-        private static bool ValidatePolygon(Vertices polygon)
+        static bool ValidatePolygon(Vertices polygon)
         {
             PolygonError errorCode = polygon.CheckPolygon();
 
