@@ -228,7 +228,7 @@ namespace Game.Portals
         }
 
         /// <summary>
-        /// Returns a polygon in world space representing the 2D FOV through the portal.  
+        /// Returns a polygon in world space representing the 2D Fov through the portal.  
         /// Polygon is not guaranteed to be non-degenerate which can occur if the viewPoint is edge-on to the portal.
         /// </summary>
         public static Vector2[] GetFov(IPortal portal, Vector2 origin, float distance)
@@ -242,7 +242,7 @@ namespace Game.Portals
         }
 
         /// <summary>
-        /// Returns a polygon in world space representing the 2D FOV through the portal.  
+        /// Returns a polygon in world space representing the 2D Fov through the portal.  
         /// Polygon is not guaranteed to be non-degenerate which can occur if the viewPoint is edge-on to the portal.
         /// </summary>
         public static Vector2[] GetFov(IPortal portal, Vector2 viewPoint, float distance, int detail, Transform2 transform)
@@ -259,10 +259,10 @@ namespace Game.Portals
             const float errorMargin = 0.01f;
             float distanceMin = Math.Max((verts[0] - viewPoint).Length, (verts[1] - viewPoint).Length) + errorMargin;
             distance = Math.Max(distance, distanceMin);
-            //get the leftmost and rightmost edges of the FOV
+            //get the leftmost and rightmost edges of the Fov
             verts[verts.Length - 1] = (verts[0] - viewPoint).Normalized() * distance + viewPoint;
             verts[2] = (verts[1] - viewPoint).Normalized() * distance + viewPoint;
-            //find the angle between the edges of the FOV
+            //find the angle between the edges of the Fov
             double angle0 = MathExt.AngleLine(verts[verts.Length - 1], viewPoint);
             double angle1 = MathExt.AngleLine(verts[2], viewPoint);
             double diff = MathExt.AngleDiff(angle0, angle1);

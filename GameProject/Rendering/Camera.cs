@@ -14,7 +14,7 @@ namespace Game
         public Vector2 Viewpoint = new Vector2();
         public Transform3 Transform { get; set; }
         private float _fov = 35;
-        public float FOV 
+        public float Fov 
         {
             get { return _fov; }
             set
@@ -33,16 +33,20 @@ namespace Game
 
         public static Camera CameraOrtho(Vector3 position, float scale, float aspect)
         {
-            Camera cam = new Camera();
-            cam.Transform.Rotation = new Quaternion(0, 0, 1, 0);
-            cam.Transform.Position = new Vector3(position.X, position.Y, 1000);
-            cam.Transform.Scale = new Vector3(1, 1, 1);
-            cam.Aspect = aspect;
-            cam.Scale = scale;
-            cam.Orthographic = true;
-            cam.ZNear = -10000f;
-            cam.ZFar = 10000f;
-            return cam;
+            return new Camera
+            {
+                Orthographic = true,
+                Scale = scale,
+                Aspect = aspect,
+                Transform =
+                {
+                    Scale = new Vector3(1, 1, 1),
+                    Position = new Vector3(position.X, position.Y, 1000),
+                    Rotation = new Quaternion(0, 0, 1, 0)
+                },
+                ZNear = -10000f,
+                ZFar = 10000f
+            };
         }
 
         public Vector2[] GetVerts()
@@ -63,15 +67,9 @@ namespace Game
         {
             Matrix4 m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
             Vector3 lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
-            Matrix4 perspective;
-            if (Orthographic)
-            {
-                perspective = Matrix4.CreateOrthographic(Transform.Scale.X * Scale * Aspect, Transform.Scale.Y * Scale, ZNear, ZFar);
-            }
-            else
-            {
-                perspective = Matrix4.CreatePerspectiveFieldOfView(FOV, Transform.Scale.X / Transform.Scale.Y, ZNear, ZFar);
-            }
+            Matrix4 perspective = Orthographic ? 
+                Matrix4.CreateOrthographic(Transform.Scale.X * Scale * Aspect, Transform.Scale.Y * Scale, ZNear, ZFar) : 
+                Matrix4.CreatePerspectiveFieldOfView(Fov, Transform.Scale.X / Transform.Scale.Y, ZNear, ZFar);
             return Matrix4.LookAt(Transform.Position, Transform.Position + lookat, GetUp()) * perspective;
         }
 
@@ -100,16 +98,9 @@ namespace Game
         private Matrix4 GetWorldToScreenMatrix(Vector2 canvasSize)
         {
             Debug.Assert(Orthographic, "Only ortho projection is allowed for now.");
-            Matrix4 scale = Matrix4.CreateScale((float)(canvasSize.X / 2), -(float)(canvasSize.Y / 2), 1);
-            Matrix4 translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
+            var scale = Matrix4.CreateScale((float)(canvasSize.X / 2), -(canvasSize.Y / 2), 1);
+            var translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
             return GetViewMatrix() * translation * scale;
         }
-
-        /*public Camera Clone()
-        {
-            Camera camera = new Camera();
-            //camera.Transform = Transform.Clone();
-            return camera;
-        }*/
     }
 }

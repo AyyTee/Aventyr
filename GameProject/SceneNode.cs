@@ -25,11 +25,11 @@ namespace Game
             set { _worldTransformPrevious = value?.ShallowClone(); }
         }
         [DataMember]
-        Transform2 _worldVelocityPrevious = null;
+        Transform2 _worldVelocity = null;
         public Transform2 WorldVelocity
         {
-            get { return _worldVelocityPrevious?.ShallowClone(); }
-            set { _worldVelocityPrevious = value?.ShallowClone(); }
+            get { return _worldVelocity?.ShallowClone(); }
+            set { _worldVelocity = value?.ShallowClone(); }
         }
         IPortalCommon ITreeNode<IPortalCommon>.Parent { get { return Parent; } }
         List<IPortalCommon> ITreeNode<IPortalCommon>.Children { get { return Children.ToList<IPortalCommon>(); } }
@@ -110,7 +110,7 @@ namespace Game
 
         public virtual void SetParent(SceneNode parent)
         {
-            Debug.Assert(Scene == parent.Scene);
+            //Debug.Assert(Scene == parent.Scene);
             /*if (parent != null && parent.Scene != Scene)
             {
                 Scene.SceneNodes.Remove(this);
@@ -162,7 +162,6 @@ namespace Game
         /// <param name="transform"></param>
         public virtual void SetTransform(Transform2 transform)
         {
-            
         }
 
         public virtual void SetVelocity(Transform2 transform)

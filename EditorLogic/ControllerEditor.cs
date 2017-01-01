@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Game.Rendering;
 
 namespace EditorLogic
 {
@@ -117,6 +118,7 @@ namespace EditorLogic
             EditorScene load = Serializer.Deserialize(filepath);
             load.ActiveCamera.Controller = this;
             load.ActiveCamera.InputExt = Input;
+            load.SetRenderer(Renderer);
             Renderer.AddLayer(load);
             Renderer.RemoveLayer(Level);
             Level = load;

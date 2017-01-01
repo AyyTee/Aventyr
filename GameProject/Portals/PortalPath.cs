@@ -42,7 +42,7 @@ namespace Game.Portals
         /// Add a portal to the portal list.  
         /// If the portal is the exit for the previous portal then the two are removed from the list.
         /// </summary>
-        /// <param name="current">Portal that contains this portal path.</param>
+        /// <param name="portal">Portal being entered.</param>
         public void Enter(IPortal portal)
         {
             //If the last portal in the path is the same as this portal's exit portal then the two portals negate eachother.

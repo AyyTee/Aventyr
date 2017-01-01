@@ -139,5 +139,10 @@ namespace EditorLogic
                 s.StepEnd(this, stepSize);
             }
         }
+
+        public void SetRenderer(Renderer renderer)
+        {
+            Renderer = renderer;
+        }
     }
 }

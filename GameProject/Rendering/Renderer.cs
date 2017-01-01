@@ -237,7 +237,7 @@ namespace Game
             }
             #endregion
 
-            #region Draw the scenes within each portal's FOV.
+            #region Draw the scenes within each portal's Fov.
             {
                 GL.ColorMask(true, true, true, true);
                 GL.DepthMask(true);

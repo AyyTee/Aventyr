@@ -54,6 +54,9 @@ namespace Game
         public static void Step(IEnumerable<IPortalCommon> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter)
         {
             Step(moving, portals, stepSize, portalEnter, new List<PortalableSweep>());
+
+            PortalCommon.UpdateWorldTransform(moving);
+
             foreach (IPortalable instance in moving.OfType<IPortalable>())
             {
                 AddMargin(portals, instance);
@@ -229,7 +232,7 @@ namespace Game
                     transform.Position += pos;
                     instance.WorldTransform = (Transform2)transform;
                     /*We return now rather than look for more portals that are too close because it is assumed that 
-                     * portals will never be closer than 2 * Portal.EnterMinDistance*/
+                     * portals will never be closer than 2 * Portal.EnterMinDistance to eachother*/
                     return;
                 }
             }

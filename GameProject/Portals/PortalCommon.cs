@@ -10,7 +10,6 @@ namespace Game.Portals
 {
     public static class PortalCommon
     {
-
         public static void UpdateWorldTransform(IScene scene, bool onlyNullTransforms = false, bool onlyVelocity = false)
         {
             HashSet<IPortalCommon> set = new HashSet<IPortalCommon>();
@@ -21,22 +20,14 @@ namespace Game.Portals
 
         public static void UpdateWorldTransform(IEnumerable<IPortalCommon> set, bool onlyNullTransforms = false, bool onlyVelocity = false)
         {
-            var nullTransforms = set.Where(item => item.WorldTransform == null);
-            foreach (IPortalCommon p in nullTransforms)
-            {
-                Debug.Assert(p.WorldVelocity == null);
-                /*p.WorldTransform = new Transform2();
-                p.WorldVelocity = Transform2.CreateVelocity();*/
-            }
-            if (onlyNullTransforms)
-            {
-                set = nullTransforms;
-            }
+            Debug.Assert(set.FirstOrDefault(item => item.WorldTransform == null && item.WorldVelocity != null) == null, 
+                "IPortalCommon instance cannot have a world transform but no world velocity.");
+
+            var newSet = onlyNullTransforms ? set.Where(item => item.WorldTransform == null) : set;
+
             /*Sort the nodes by parent depth in order to make sure we have the WorldTransforms 
              * for parents before child nodes use those transforms.*/
-            set = set.OrderBy(item => Tree<IPortalCommon>.Depth(item));
-
-            foreach (IPortalCommon p in set)
+            foreach (IPortalCommon p in newSet.OrderBy(item => Tree<IPortalCommon>.Depth(item)))
             {
                 if (!onlyVelocity)
                 {
@@ -79,12 +70,33 @@ namespace Game.Portals
             Transform2 parent = instance.Parent.WorldTransform;
             Transform2 t = local.Transform(parent);
 
-            Ray.Settings settings = new Ray.Settings();
+            var settings = new Ray.Settings();
             IPortalable portalable = new Portalable(null, new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
 
             Ray.RayCast(portalable, GetPortalsForPortal(instance, portals), settings);
             return portalable.GetTransform();
         }
+
+        //public static Transform2 GetWorldTransformUsingPath(IPortalCommon instance)
+        //{
+        //    List<IPortal> portals = instance.Scene.GetPortalList();
+        //    Transform2 local = instance.GetTransform();
+        //    if (local == null || IsRoot(instance))
+        //    {
+        //        return local;
+        //    }
+
+        //    Transform2 parent = instance.Parent.WorldTransform;
+        //    Transform2 t = local.Transform(parent);
+
+
+
+        //    /*Ray.Settings settings = new Ray.Settings();
+        //    IPortalable portalable = new Portalable(null, new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
+
+        //    Ray.RayCast(portalable, GetPortalsForPortal(instance, portals), settings);
+        //    return portalable.GetTransform();*/
+        //}
 
         public static Transform2 TransformVelocity(IGetTransformVelocity portalable, IPortal portal, Transform2 velocity, double movementT)
         {
@@ -116,7 +128,7 @@ namespace Game.Portals
             {
                 return null;
             }
-            else if (IsRoot(instance))
+            if (IsRoot(instance))
             {
                 return velocity;
             }
@@ -145,16 +157,16 @@ namespace Game.Portals
 
             IPortalable portalable = new Portalable(null, new Transform2(parentTransform.Position, worldTransform.Size, worldTransform.Rotation, worldTransform.MirrorX), Transform2.CreateVelocity(positionDelta));
             HashSet<IPortal> portals = GetPortalsForPortal(instance, instance.Scene.GetPortalList());
-            Ray.RayCast(portalable, portals, new Ray.Settings(), (EnterCallbackData data, double movementT) => {
+            Ray.RayCast(portalable, portals, new Ray.Settings(), (data, movementT) => {
                 worldVelocity = TransformVelocity(data.Instance, data.EntrancePortal, worldVelocity, movementT);
             });
 
             return worldVelocity;
         }
 
-        private static HashSet<IPortal> GetPortalsForPortal(IPortalCommon instance, IList<IPortal> portals)
+        private static HashSet<IPortal> GetPortalsForPortal(IPortalCommon instance, IEnumerable<IPortal> portals)
         {
-            HashSet<IPortal> portalSet = new HashSet<IPortal>(portals);
+            var portalSet = new HashSet<IPortal>(portals);
             portalSet.ExceptWith(Tree<IPortalCommon>.GetDescendents(instance).OfType<IPortal>());
             portalSet.RemoveWhere(item => ReferenceEquals(item, instance.Parent));
             return portalSet;

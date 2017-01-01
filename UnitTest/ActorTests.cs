@@ -103,7 +103,7 @@ namespace UnitTest
             }
 
             //LocalCenter and centroid should be the same since the actor is on the origin with no rotation.
-            Assert.IsTrue((Xna.Vector2)actor.Body.LocalCenter == (Xna.Vector2)centroid);
+            Assert.IsTrue(actor.Body.LocalCenter == (Xna.Vector2)centroid);
             Assert.IsTrue(centroid == new Vector2());
         }
 
@@ -144,7 +144,7 @@ namespace UnitTest
             Portal.SetLinked(enter, exit);
             enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)(Math.PI / 2)));
             exit.SetTransform(new Transform2(new Vector2(5, 0), 2));
-
+             
             scene.Step();
 
             Vector2 centroid = actor.GetCentroid();
@@ -227,40 +227,45 @@ namespace UnitTest
         [TestMethod]
         public void GetFixtureContourTest0()
         {
-            Actor actor = new Actor(new Scene(), GetVertices());
-
+            Scene scene = new Scene();
+            Actor actor = new Actor(scene, GetVertices());
+            PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
         [TestMethod]
         public void GetFixtureContourTest1()
         {
-            Actor actor = new Actor(new Scene(), GetVertices());
+            Scene scene = new Scene();
+            Actor actor = new Actor(scene, GetVertices());
             actor.SetTransform(new Transform2(new Vector2(), 2.2f));
-
+            PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
         [TestMethod]
         public void GetFixtureContourTest2()
         {
-            Actor actor = new Actor(new Scene(), GetVertices());
+            Scene scene = new Scene();
+            Actor actor = new Actor(scene, GetVertices());
             actor.SetTransform(new Transform2(new Vector2(), -3.2f));
-
+            PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
         [TestMethod]
         public void GetFixtureContourTest3()
         {
-            Actor actor = new Actor(new Scene(), GetVertices());
+            Scene scene = new Scene();
+            Actor actor = new Actor(scene, GetVertices());
             actor.SetTransform(new Transform2(new Vector2(), 2.2f, 0, true));
-
+            PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
         [TestMethod]
         public void GetFixtureContourTest4()
         {
-            Actor actor = new Actor(new Scene(), GetVertices());
+            Scene scene = new Scene();
+            Actor actor = new Actor(scene, GetVertices());
             actor.SetTransform(new Transform2(new Vector2(), -2.2f, 0, true));
-
+            PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
     }

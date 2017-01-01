@@ -49,23 +49,5 @@ namespace UnitTest
                 Assert.IsTrue(clipmodels.Count == polygon.GetModels().Count);
             }
         }
-
-        [TestMethod]
-        public void FloatPortal()
-        {
-            EditorPortal portal0, portal1;
-            EditorScene scene = new EditorScene();
-            EditorWall polygon = new EditorWall(scene, PolygonFactory.CreateRectangle(2, 2));
-
-            portal0 = new EditorPortal(scene);
-            portal1 = new EditorPortal(scene);
-            portal0.SetTransform(new Transform2(new Vector2(-0.8f, 0)));
-            portal1.SetTransform(new Transform2(new Vector2(0.8f, 0)));
-            portal0.Linked = portal1;
-            portal1.Linked = portal0;
-
-            List<Clip.ClipModel> clipmodels = Clip.GetClipModels(polygon, scene.GetPortalList(), 2);
-            Assert.IsTrue(clipmodels.Count == polygon.GetModels().Count + 2);
-        }
     }
 }

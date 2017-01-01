@@ -304,5 +304,48 @@ namespace UnitTest
             Assert.IsTrue(PortalCommon.GetWorldTransform(exit) == exit.WorldTransform);
         }*/
         #endregion
+
+        /// <summary>
+        /// Test that as an object rotates, a child object remains in the same place relative to it and doesn't "drift".
+        /// </summary>
+        [TestMethod]
+        public void WorldTransformMatchesLocalTransformTest0()
+        {
+            Scene scene = new Scene();
+            NodePortalable node = new NodePortalable(scene);
+            NodePortalable child = new NodePortalable(scene);
+            child.SetParent(node);
+
+            child.SetTransform(new Transform2(new Vector2(1, 0)));
+            node.SetVelocity(Transform2.CreateVelocity(new Vector2(), (float)Math.PI));
+
+            for (int i = 0; i < 60; i++)
+            {
+                scene.Step(1f / 60);
+            }
+            
+            Transform2 expectedWorldTransform = child.GetTransform().Transform(node.GetTransform());
+            Assert.IsTrue(expectedWorldTransform.AlmostEqual(child.GetWorldTransform(), 0.001f));
+        }
+
+        [TestMethod]
+        public void PortalSelfEntryTest0()
+        {
+            Scene scene = new Scene();
+            NodePortalable node = new NodePortalable(scene);
+            FloatPortal portal = new FloatPortal(scene);
+            FloatPortal portalChild = new FloatPortal(scene);
+            portalChild.SetParent(node);
+            portalChild.SetTransform(new Transform2(new Vector2(1, 1)));
+
+            portal.SetTransform(new Transform2(new Vector2(0, -0.5f), 1, (float)Math.PI/2));
+            Portal.SetLinked(portal, portalChild);
+
+            node.SetVelocity(Transform2.CreateVelocity(new Vector2(0, -1)));
+
+            scene.Step(1);
+
+            Assert.AreEqual(node.GetWorldTransform().Rotation, Math.PI/2, 0.0001f);
+        }
     }
 }

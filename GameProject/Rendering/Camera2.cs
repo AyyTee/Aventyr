@@ -1,14 +1,12 @@
-﻿using Game.Portals;
-using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+using Game.Portals;
+using OpenTK;
 
-namespace Game
+namespace Game.Rendering
 {
     [DataContract]
     public class Camera2 : SceneNode, ICamera2, IPortalable
@@ -18,7 +16,7 @@ namespace Game
         [DataMember]
         public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
         [DataMember]
-        public float _aspect = 1;
+        private float _aspect = 1;
         /// <summary>
         /// The aspect ratio for the camera.  
         /// Window.width / Window.height will give an aspect that matches the window.
@@ -33,10 +31,11 @@ namespace Game
             }
         }
         [DataMember]
-        public Vector2 ViewOffset { get; set; } = new Vector2();
-        public float ZNear { get { return -10000f; } }
-        public float ZFar { get { return 10000f; } }
-        public double Fov { get { return Math.PI / 4; } }
+        public Vector2 ViewOffset { get; set; }
+        public float ZNear => -10000f;
+        public float ZFar => 10000f;
+        public double Fov => Math.PI / 4;
+
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 

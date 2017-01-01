@@ -136,7 +136,7 @@ namespace Game
                 {
                     continue;
                 }
-                //Skip this portal if it's inside the current portal's FOV.
+                //Skip this portal if it's inside the current portal's Fov.
                 LineF portalLine = new LineF(Portal.GetWorldVerts(portal));
                 LineF portalOtherLine = new LineF(Portal.GetWorldVerts(other));
                 if (portalLine.IsInsideFOV(viewPos, portalOtherLine))
