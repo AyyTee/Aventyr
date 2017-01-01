@@ -1,6 +1,5 @@
 ﻿using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
-using FarseerPhysics.Factories;
 using Game.Portals;
 using OpenTK;
 //using Poly2Tri.Triangulation.Polygon;
@@ -8,8 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Common;
 using Game.Rendering;
 using Xna = Microsoft.Xna.Framework;

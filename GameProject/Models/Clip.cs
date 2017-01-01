@@ -14,9 +14,9 @@ namespace Game.Models
         public class ClipModel
         {
             readonly LineF[] _clipLines;
-            public LineF[] ClipLines { get { return _clipLines; } }
+            public LineF[] ClipLines => _clipLines;
             readonly Matrix4 _transform;
-            public Matrix4 Transform { get { return _transform; } }
+            public Matrix4 Transform => _transform;
             public readonly Model Model;
             public readonly IRenderable Entity;
 

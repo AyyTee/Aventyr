@@ -1,12 +1,8 @@
 ﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FarseerPhysics.Dynamics;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Xml.Serialization;
 using System.Runtime.Serialization;
 using Game.Common;
 using Game.Models;
@@ -38,7 +34,8 @@ namespace Game
         /// </summary>
         [DataMember]
         public bool Visible { get; set; }
-        public List<Model> ModelList { get { return new List<Model>(_models); } }
+        public List<Model> ModelList => new List<Model>(_models);
+
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 

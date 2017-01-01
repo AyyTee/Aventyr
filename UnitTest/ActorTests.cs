@@ -30,7 +30,7 @@ namespace UnitTest
             Transform2 t = new Transform2(new Vector2(1, 2), 2, 4.23f, true);
             actor.SetTransform(t);
 
-            Assert.IsTrue(actor.GetTransform() == t);
+            Assert.IsTrue(actor.GetTransform().EqualsValue(t));
         }
 
         [TestMethod]

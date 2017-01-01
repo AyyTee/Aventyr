@@ -192,9 +192,9 @@ namespace UnitTest
             Transform2 expected = new Transform2(new Vector2(8, 10), 1, (float)Math.PI / 2, true);
             Assert.IsTrue(actor.WorldTransform.AlmostEqual(expected));
             Assert.IsTrue(entity.WorldTransform.AlmostEqual(expected));
-            Assert.IsTrue(entity.GetTransform() == new Transform2());
-            Assert.IsTrue(entity.GetVelocity() == Transform2.CreateVelocity());
-            Assert.IsTrue(actor.GetTransform() == actor.WorldTransform);
+            Assert.IsTrue(entity.GetTransform().EqualsValue(new Transform2()));
+            Assert.IsTrue(entity.GetVelocity().EqualsValue(Transform2.CreateVelocity()));
+            Assert.IsTrue(actor.GetTransform().EqualsValue(actor.WorldTransform));
         }
 
         [TestMethod]
@@ -222,11 +222,11 @@ namespace UnitTest
             PortalCommon.UpdateWorldTransform(scene);
             SimulationStep.Step(scene.GetAll().OfType<IPortalCommon>(), scene.GetAll().OfType<IPortal>(), 1, null);
 
-            Assert.IsTrue(entity.GetTransform() == new Transform2());
-            Assert.IsTrue(entity.GetVelocity() == Transform2.CreateVelocity());
+            Assert.IsTrue(entity.GetTransform().EqualsValue(new Transform2()));
+            Assert.IsTrue(entity.GetVelocity().EqualsValue(Transform2.CreateVelocity()));
 
-            Assert.IsTrue(actor.GetTransform() == actor.WorldTransform);
-            Assert.IsTrue(actor.GetVelocity() == actor.WorldVelocity);
+            Assert.IsTrue(actor.GetTransform().EqualsValue(actor.WorldTransform));
+            Assert.IsTrue(actor.GetVelocity().EqualsValue(actor.WorldVelocity));
         }
 
         [TestMethod]

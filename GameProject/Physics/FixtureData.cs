@@ -40,7 +40,8 @@ namespace Game.Physics
         }
 
         List<Fixture> _fixtureChildren = new List<Fixture>();
-        public List<Fixture> FixtureChildren { get { return new List<Fixture>(_fixtureChildren); } }
+        public List<Fixture> FixtureChildren => new List<Fixture>(_fixtureChildren);
+
         public Actor Actor
         {
             get

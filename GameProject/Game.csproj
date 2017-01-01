@@ -137,6 +137,7 @@
     <Compile Include="Animation\Curve2.cs" />
     <Compile Include="Animation\CurveTransform2.cs" />
     <Compile Include="Common\IAlmostEqual.cs" />
+    <Compile Include="Common\IValueEquality.cs" />
     <Compile Include="Common\Line.cs" />
     <Compile Include="Common\Transform2d.cs" />
     <Compile Include="IController.cs" />

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Common;
 using Game.Serialization;
 
@@ -21,7 +18,7 @@ namespace Game.Animation
         public string Name { get; set; }
         [DataMember]
         public SortedList<float, Keyframe> Keyframes = new SortedList<float, Keyframe>();
-        public float Length { get { return Keyframes.Count == 0 ? 0 : Keyframes.Last().Key; } }
+        public float Length => Keyframes.Count == 0 ? 0 : Keyframes.Last().Key;
 
         public Curve()
         {

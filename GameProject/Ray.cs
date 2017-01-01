@@ -3,9 +3,6 @@ using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Common;
 
 namespace Game
@@ -20,10 +17,6 @@ namespace Game
             public int MaxIterations = 50;
             /// <summary>The end position of the portalable instance will be adjusted to not be too near to any portal.</summary>
             public bool AdjustEndpoint = true;
-
-            public Settings()
-            {
-            }
         }
 
         /// <summary>
@@ -31,6 +24,7 @@ namespace Game
         /// </summary>
         /// <param name="portalable">Instance travelling along ray.</param>
         /// <param name="portals">Collection of portals used for portal teleportation.</param>
+        /// <param name="settings"></param>
         /// <param name="portalEnter">Callback that is executed after entering a portal.</param>
         public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, Settings settings, Action<EnterCallbackData, double> portalEnter = null)
         {
@@ -139,21 +133,15 @@ namespace Game
                 {
                     continue;
                 }
-                LineF exitLine = new LineF(Portal.GetWorldVerts(p));
+                var exitLine = new LineF(Portal.GetWorldVerts(p));
                 Vector2 position = transform.Position;
                 double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
                 if (distanceToPortal < Portal.EnterMinDistance)
                 {
                     Vector2 exitNormal = p.WorldTransform.GetRight();
-                    Side sideOf;
-                    if (p == portalPrevious)
-                    {
-                        sideOf = exitLine.GetSideOf(position + velocity.Position);
-                    }
-                    else
-                    {
-                        sideOf = exitLine.GetSideOf(position - velocity.Position);
-                    }
+                    Side sideOf = p == portalPrevious ? 
+                        exitLine.GetSideOf(position + velocity.Position) : 
+                        exitLine.GetSideOf(position - velocity.Position);
                     if (sideOf != exitLine.GetSideOf(exitNormal + p.WorldTransform.Position))
                     {
                         exitNormal = -exitNormal;

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Common;
 
 namespace Game.Portals
@@ -32,7 +29,7 @@ namespace Game.Portals
         public IPortalCommon Parent { get; set; }
         public List<IPortalCommon> Children { get; private set; } = new List<IPortalCommon>();
         public Scene Scene { get; private set; }
-        IScene IPortalCommon.Scene { get { return Scene; } }
+        IScene IPortalCommon.Scene => Scene;
 
         public Portalable(Scene scene)
         {

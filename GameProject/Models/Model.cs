@@ -14,7 +14,8 @@ namespace Game.Models
     public class Model : IShallowClone<Model>
     {
         static object _lockDelete = new object();
-        public static object LockDelete { get { return _lockDelete; } }
+        public static object LockDelete => _lockDelete;
+
         [DataMember]
         public Transform3 Transform = new Transform3();
 

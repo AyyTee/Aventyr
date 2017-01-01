@@ -19,7 +19,7 @@ namespace Game.Physics
         /// <summary>
         /// Return the Actor linked to the Body that is linked to the Fixture being intersected.
         /// </summary>
-        public Actor Actor { get { return BodyExt.GetData(Fixture.Body).Actor; } }
+        public Actor Actor => BodyExt.GetData(Fixture.Body).Actor;
 
         int _edgeIndex;
         /// <summary>Index value of edge in Fixture's Shape.</summary>
@@ -60,7 +60,7 @@ namespace Game.Physics
         /// <summary>
         /// EdgeIndex + EdgeT
         /// </summary>
-        public float EdgeIndexT { get { return (float)EdgeIndex + EdgeT; } }
+        public float EdgeIndexT => (float)EdgeIndex + EdgeT;
 
         public FixtureCoord(Fixture fixture, int edgeIndex = 0, float edgeT = 0)
         {

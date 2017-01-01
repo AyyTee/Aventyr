@@ -1,7 +1,4 @@
-﻿using FarseerPhysics.Dynamics;
-using Game.Portals;
-using OpenTK;
-using System;
+﻿using Game.Portals;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -33,19 +30,20 @@ namespace Game
             get { return _worldVelocity?.ShallowClone(); }
             set { _worldVelocity = value?.ShallowClone(); }
         }
-        IPortalCommon ITreeNode<IPortalCommon>.Parent { get { return Parent; } }
-        List<IPortalCommon> ITreeNode<IPortalCommon>.Children { get { return Children.ToList<IPortalCommon>(); } }
+        IPortalCommon ITreeNode<IPortalCommon>.Parent => Parent;
+        List<IPortalCommon> ITreeNode<IPortalCommon>.Children => Children.ToList<IPortalCommon>();
 
         [DataMember]
         public string Name { get; set; }
         [DataMember]
         HashSet<SceneNode> _children = new HashSet<SceneNode>();
-        public List<SceneNode> Children { get { return new List<SceneNode>(_children); } }
+        public List<SceneNode> Children => new List<SceneNode>(_children);
+
         [DataMember]
         public SceneNode Parent { get; private set; }
         [DataMember]
         public Scene Scene { get; private set; }
-        IScene IPortalCommon.Scene { get { return Scene; } }
+        IScene IPortalCommon.Scene => Scene;
         public virtual bool IsPortalable { get; set; } = true;
 
         #region Constructors

@@ -15,14 +15,10 @@ namespace Game.Physics
         public Xna.Vector2 PreviousPosition { get; set; }
         public List<ChildBody> BodyChildren = new List<ChildBody>();
         public ChildBody BodyParent { get; private set; } = new ChildBody(null, null);
-        public bool IsChild { get { return BodyParent.Body != null; } }
+        public bool IsChild => BodyParent.Body != null;
 
-        public BodyData Parent {
-            get
-            {
-                return BodyParent.Body == null ? null : BodyExt.GetData(BodyParent.Body);
-            }
-        }
+        public BodyData Parent => BodyParent.Body == null ? null : BodyExt.GetData(BodyParent.Body);
+
         public List<BodyData> Children {
             get
             {

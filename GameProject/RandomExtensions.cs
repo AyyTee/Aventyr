@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Game
 {
@@ -30,8 +26,7 @@ namespace Game
             long randomOffset = NextLong(rnd);
             if (IsModuloBiased(randomOffset, numbersInRange))
                 return NextLong(rnd, min, max); // Try again
-            else
-                return min + PositiveModuloOrZero(randomOffset, numbersInRange);
+            return min + PositiveModuloOrZero(randomOffset, numbersInRange);
         }
 
         static bool IsModuloBiased(long randomOffset, long numbersInRange)

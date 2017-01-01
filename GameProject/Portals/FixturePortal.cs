@@ -1,8 +1,4 @@
-﻿using FarseerPhysics.Collision;
-using FarseerPhysics.Collision.Shapes;
-using FarseerPhysics.Dynamics;
-using OpenTK;
-using System;
+﻿using FarseerPhysics.Dynamics;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
