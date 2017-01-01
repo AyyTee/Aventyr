@@ -1,11 +1,8 @@
-﻿using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Game.Common;
+using Game.Models;
 
-namespace Game
+namespace Game.Rendering
 {
     public interface IRenderable
     {

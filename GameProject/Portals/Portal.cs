@@ -7,6 +7,8 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
+using Game.Physics;
 using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Portals
@@ -274,10 +276,10 @@ namespace Game.Portals
                 return new Vector2[0];
             }*/
 
-            Matrix2 Rot = Matrix2.CreateRotation((float)diff / (detail - 1));
+            Matrix2 rot = Matrix2.CreateRotation((float)diff / (detail - 1));
             for (int i = 3; i < verts.Length - 1; i++)
             {
-                verts[i] = Vector2Ext.Transform(verts[i - 1] - viewPoint, Rot) + viewPoint;
+                verts[i] = Vector2Ext.Transform(verts[i - 1] - viewPoint, rot) + viewPoint;
             }
             return verts;
         }

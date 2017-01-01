@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Game
+namespace Game.Rendering
 {
     [DataContract]
     public class Texture : IDisposable, ITexture
     {
-        static object _lockDelete = new object();
-        public static object LockDelete { get { return _lockDelete; } }
+        public static object LockDelete { get; } = new object();
+
         /// <summary>GL texture id.</summary>
-        readonly int _id;
+        private readonly int _id;
 
         #region Constructors
         public Texture(int id)
@@ -30,12 +25,10 @@ namespace Game
 
         public void Dispose()
         {
-            if (_id != -1)
+            if (_id == -1) return;
+            lock (LockDelete)
             {
-                lock (LockDelete)
-                {
-                    Controller.textureGarbage.Add(_id);
-                }
+                Controller.TextureGarbage.Add(_id);
             }
         }
 

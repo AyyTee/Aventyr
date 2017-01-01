@@ -62,5 +62,10 @@ namespace TankGameTests
         {
             throw new NotImplementedException();
         }
+
+        public IPEndPoint ReadIPEndPoint()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

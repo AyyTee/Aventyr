@@ -1,23 +1,21 @@
-﻿using Game.Common;
-using Game.Portals;
-using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Game.Common;
+using Game.Portals;
+using OpenTK;
 
-namespace Game
+namespace Game.Physics
 {
     public static class SimulationStep
     {
         private class PortalableMovement
         {
-            public Transform2d Previous;
+            public Transform2D Previous;
             public Line StartEnd;
             public IPortalCommon Instance;
-            public PortalableMovement(IPortalCommon instance, Line startEnd, Transform2d previous)
+            public PortalableMovement(IPortalCommon instance, Line startEnd, Transform2D previous)
             {
                 Instance = instance;
                 StartEnd = startEnd;
@@ -78,7 +76,7 @@ namespace Game
                     }
                     Line lineStart = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p)));
 
-                    Transform2d t = (Transform2d)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
+                    Transform2D t = (Transform2D)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
                     Line lineEnd = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p, (Transform2)t)));
 
                     lineMovement.Add(new PortalMovement(p, lineStart, lineEnd));
@@ -90,12 +88,12 @@ namespace Game
                     {
                         continue;
                     }
-                    Transform2d shift = (Transform2d)p.WorldVelocity.Multiply((float)stepSize);
-                    Transform2d t = (Transform2d)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
+                    Transform2D shift = (Transform2D)p.WorldVelocity.Multiply((float)stepSize);
+                    Transform2D t = (Transform2D)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
 
                     Line movement = new Line((Vector2d)p.WorldTransform.Position, t.Position);
 
-                    pointMovement.Add(new PortalableMovement(p, movement, (Transform2d)p.WorldTransform));
+                    pointMovement.Add(new PortalableMovement(p, movement, (Transform2D)p.WorldTransform));
                 }
             }
 
@@ -108,11 +106,11 @@ namespace Game
                     IPortalable portalable = p.Instance as IPortalable;
                     if (portalable != null)
                     {
-                        Transform2d shift = (Transform2d)portalable.GetVelocity().Multiply((float)stepSize);
+                        Transform2D shift = (Transform2D)portalable.GetVelocity().Multiply((float)stepSize);
                         portalable.SetTransform(portalable.Transform.Add((Transform2)shift));
                     }
                     
-                    Transform2d worldVelocity = (Transform2d)p.Instance.WorldVelocity.Multiply((float)stepSize);
+                    Transform2D worldVelocity = (Transform2D)p.Instance.WorldVelocity.Multiply((float)stepSize);
                     p.Instance.WorldTransform = p.Instance.WorldTransform.Add((Transform2)worldVelocity);
                 }
                 return;
@@ -124,11 +122,11 @@ namespace Game
                 IPortalable portalable = move.Instance as IPortalable;
                 if (portalable != null)
                 {
-                    Transform2d velocity = (Transform2d)portalable.GetVelocity().Multiply((float)(stepSize * tDelta));
+                    Transform2D velocity = (Transform2D)portalable.GetVelocity().Multiply((float)(stepSize * tDelta));
                     portalable.SetTransform(portalable.GetTransform().Add((Transform2)velocity));
                 }
 
-                Transform2d worldVelocity = (Transform2d)move.Instance.WorldVelocity.Multiply((float)(stepSize * tDelta));
+                Transform2D worldVelocity = (Transform2D)move.Instance.WorldVelocity.Multiply((float)(stepSize * tDelta));
                 move.Instance.WorldTransform = move.Instance.WorldTransform.Add((Transform2)worldVelocity);
             }
 
@@ -156,7 +154,7 @@ namespace Game
         private static void PlaceOnPortal(IPortalCommon instance, IPortal portal, float t)
         {
             Line portalLine = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(portal)));
-            Transform2d transform = (Transform2d)instance.WorldTransform;
+            Transform2D transform = (Transform2D)instance.WorldTransform;
             transform.Position = (Vector2d)portalLine.Lerp(t);
             instance.WorldTransform = (Transform2)transform;
         }
@@ -218,7 +216,7 @@ namespace Game
 
         private static void AddMargin(IEnumerable<IPortal> portals, IPortalCommon instance)
         {
-            Transform2d transform = (Transform2d)instance.WorldTransform;
+            Transform2D transform = (Transform2D)instance.WorldTransform;
             foreach (IPortal p in portals.Where(item => item.OneSided && Portal.IsValid(item)))
             {
                 Line exitLine = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p)));

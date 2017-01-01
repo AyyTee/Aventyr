@@ -280,11 +280,11 @@ namespace FarseerPhysics.Collision
         /// Get the fat AABB for a proxy.
         /// </summary>
         /// <param name="proxyId">The proxy id.</param>
-        /// <param name="fatAABB">The fat AABB.</param>
-        public void GetFatAABB(int proxyId, out AABB fatAABB)
+        /// <param name="fatAabb">The fat AABB.</param>
+        public void GetFatAABB(int proxyId, out AABB fatAabb)
         {
             Debug.Assert(0 <= proxyId && proxyId < _nodeCapacity);
-            fatAABB = _nodes[proxyId].AABB;
+            fatAabb = _nodes[proxyId].AABB;
         }
 
         /// <summary>

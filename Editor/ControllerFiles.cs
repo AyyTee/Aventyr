@@ -19,25 +19,25 @@ namespace EditorWindow
     {
         SaveFileDialog _saveFileDialog;
         OpenFileDialog _loadFileDialog;
-        readonly MainWindow ControllerWPF;
-        readonly ControllerEditor ControllerEditor;
+        readonly MainWindow _controllerWpf;
+        readonly ControllerEditor _controllerEditor;
         public string FilepathCurrent { get; private set; }
         public bool Loading { get; private set; }
         public RecentFilesList RecentFiles;
 
         public ControllerFiles(MainWindow controller, ControllerEditor controllerEditor, System.Windows.Controls.MenuItem recentFiles)
         {
-            ControllerWPF = controller;
-            ControllerEditor = controllerEditor;
-            ControllerEditor.LevelLoaded += ControllerEditor_LevelLoaded;
-            ControllerEditor.LevelSaved += ControllerEditor_LevelSaved;
-            ControllerEditor.LevelCreated += ControllerEditor_LevelCreated;
+            _controllerWpf = controller;
+            _controllerEditor = controllerEditor;
+            _controllerEditor.LevelLoaded += ControllerEditor_LevelLoaded;
+            _controllerEditor.LevelSaved += ControllerEditor_LevelSaved;
+            _controllerEditor.LevelCreated += ControllerEditor_LevelCreated;
             _saveFileDialog = new SaveFileDialog();
             _loadFileDialog = new OpenFileDialog();
             _saveFileDialog.FileOk += _saveFileDialog_FileOk;
             _loadFileDialog.FileOk += _loadFileDialog_FileOk;
-            _saveFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension + "|TXT|*.txt";
-            _loadFileDialog.Filter = Serializer.fileExtensionName + " (*." + Serializer.fileExtension + ")|*." + Serializer.fileExtension + "|TXT|*.txt";
+            _saveFileDialog.Filter = Serializer.FileExtensionName + " (*." + Serializer.FileExtension + ")|*." + Serializer.FileExtension + "|TXT|*.txt";
+            _loadFileDialog.Filter = Serializer.FileExtensionName + " (*." + Serializer.FileExtension + ")|*." + Serializer.FileExtension + "|TXT|*.txt";
             //TODO: Figure out how to add callback for user pressing the cancel button in file dialog window.
 
             FilepathCurrent = null;
@@ -60,7 +60,7 @@ namespace EditorWindow
                 Debug.Assert(filepath != null);
                 Debug.Assert(filepath != "");
                 RecentFiles.AddFilepath(filepath);
-                ControllerWPF.Status.Content = "Saved";
+                _controllerWpf.Status.Content = "Saved";
                 FilepathCurrent = filepath;
             });
         }
@@ -74,7 +74,7 @@ namespace EditorWindow
                 Debug.Assert(Loading);
                 RecentFiles.AddFilepath(filepath);
                 Loading = false;
-                ControllerWPF.Status.Content = "Loaded";
+                _controllerWpf.Status.Content = "Loaded";
                 FilepathCurrent = filepath;
             });
         }
@@ -92,9 +92,9 @@ namespace EditorWindow
             if (IsUnlocked())
             {
                 FilepathCurrent = null;
-                ControllerEditor.AddAction(() =>
+                _controllerEditor.AddAction(() =>
                 {
-                    ControllerEditor.LevelCreate();
+                    _controllerEditor.LevelCreate();
                 });
             }
         }
@@ -124,7 +124,7 @@ namespace EditorWindow
         {
             if (IsUnlocked())
             {
-                ControllerWPF.Status.Content = "Saving...";
+                _controllerWpf.Status.Content = "Saving...";
                 _saveFileDialog.ShowDialog();
             }
         }
@@ -136,7 +136,7 @@ namespace EditorWindow
         {
             if (IsUnlocked())
             {
-                ControllerWPF.Status.Content = "Loading...";
+                _controllerWpf.Status.Content = "Loading...";
                 _loadFileDialog.ShowDialog();
             }
         }
@@ -158,9 +158,9 @@ namespace EditorWindow
         {
             if (IsUnlocked())
             {
-                ControllerEditor.AddAction(() =>
+                _controllerEditor.AddAction(() =>
                 {
-                    ControllerEditor.LevelSave(filepath);
+                    _controllerEditor.LevelSave(filepath);
                 });
             }
         }
@@ -173,10 +173,10 @@ namespace EditorWindow
             if (IsUnlocked())
             {
                 Loading = true;
-                ControllerEditor.AddAction(() =>
+                _controllerEditor.AddAction(() =>
                 {
                     //ControllerEditor.LevelNew();
-                    ControllerEditor.LevelLoad(filepath);
+                    _controllerEditor.LevelLoad(filepath);
                 });
             }
         }

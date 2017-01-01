@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
+using Game.Models;
 using OpenTK.Input;
 using OpenTK;
 
@@ -11,7 +13,7 @@ namespace EditorLogic
 {
     public class ToolPortalLinker : Tool
     {
-        Doodad line;
+        Doodad _line;
         EditorPortal _portalPrevious;
 
         public ToolPortalLinker(ControllerEditor controller)
@@ -22,11 +24,11 @@ namespace EditorLogic
         public override void Update()
         {
             base.Update();
-            if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape) || _input.MousePress(MouseButton.Right))
+            if (Input.KeyPress(Key.Delete) || Input.KeyPress(Key.Escape) || Input.MousePress(MouseButton.Right))
             {
                 Controller.SetTool(null);
             }
-            else if (_input.MousePress(MouseButton.Left))
+            else if (Input.MousePress(MouseButton.Left))
             {
                 Vector2 mousePos = Controller.GetMouseWorld();
                 EditorPortal portal = (EditorPortal)Controller.GetNearestObject(mousePos,
@@ -43,7 +45,7 @@ namespace EditorLogic
                         _portalPrevious.Linked = portal;
 
                         Transform2 t = portal.GetTransform();
-                        if (_input.KeyDown(KeyBoth.Control))
+                        if (Input.KeyDown(KeyBoth.Control))
                         {
                             /*portal.IsMirrored = true;
                             _portalPrevious.IsMirrored = false;*/
@@ -81,13 +83,13 @@ namespace EditorLogic
             }
             if (_portalPrevious != null)
             {
-                line.Models.Clear();
-                Model lineModel = Game.ModelFactory.CreateLineStrip(new Vector2[] {
+                _line.Models.Clear();
+                Model lineModel = Game.Rendering.ModelFactory.CreateLineStrip(new Vector2[] {
                     Controller.GetMouseWorld(),
                     _portalPrevious.GetWorldTransform().Position
                 });
                 lineModel.SetColor(new Vector3(0.1f, 0.7f, 0.1f));
-                line.Models.Add(lineModel);
+                _line.Models.Add(lineModel);
             }
         }
 
@@ -95,13 +97,13 @@ namespace EditorLogic
         {
             base.Enable();
             _portalPrevious = null;
-            line = new Doodad(Controller.Level);
+            _line = new Doodad(Controller.Level);
         }
 
         public override void Disable()
         {
             base.Disable();
-            Controller.Level.Doodads.Remove(line);
+            Controller.Level.Doodads.Remove(_line);
         }
     }
 }

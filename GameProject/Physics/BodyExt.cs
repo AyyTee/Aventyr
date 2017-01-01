@@ -1,17 +1,15 @@
-﻿using FarseerPhysics.Collision.Shapes;
-using FarseerPhysics.Dynamics;
-using Game.Portals;
-using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xna = Microsoft.Xna.Framework;
 using ClipperLib;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Dynamics;
+using Game.Common;
+using Game.Portals;
+using Vector2 = OpenTK.Vector2;
+using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Physics
 {
     public static class BodyExt
     {

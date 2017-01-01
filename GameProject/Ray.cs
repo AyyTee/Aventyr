@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
 
 namespace Game
 {
@@ -96,9 +97,9 @@ namespace Game
 
                 begin.Position = (Vector2)intersectNearest.Position;
                 placeable.SetTransform(begin);
-                Portal.Enter(portalNearest, placeable, (float)intersectNearest.TFirst, true);
+                Portal.Enter(portalNearest, placeable, (float)intersectNearest.First, true);
                 
-                portalEnter?.Invoke(new EnterCallbackData(portalNearest, placeable, intersectNearest.TFirst), t);
+                portalEnter?.Invoke(new EnterCallbackData(portalNearest, placeable, intersectNearest.First), t);
 
                 movementLeft *= Math.Abs(placeable.GetTransform().Size / begin.Size);
                 _rayCast(placeable, portals, movementLeft, portalNearest.Linked, portalEnter, settings, count + 1);

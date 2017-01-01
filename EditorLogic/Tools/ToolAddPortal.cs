@@ -9,6 +9,7 @@ using OpenTK;
 using System.Drawing;
 using System.Diagnostics;
 using EditorLogic.Command;
+using Game.Common;
 using Game.Portals;
 
 namespace EditorLogic
@@ -16,10 +17,10 @@ namespace EditorLogic
     public class ToolAddPortal : Tool
     {
         Doodad _mouseFollow;
-        float snapDistance = 0.2f;
-        bool isSecondPortal = false;
-        EditorPortal portalPrevious = null;
-        float unsnapAngle = 0;
+        float _snapDistance = 0.2f;
+        bool _isSecondPortal = false;
+        EditorPortal _portalPrevious = null;
+        float _unsnapAngle = 0;
 
         public ToolAddPortal(ControllerEditor controller)
             : base(controller)
@@ -31,13 +32,13 @@ namespace EditorLogic
             base.Update();
             _mouseFollow.SetTransform(GetPortalTransform());
 
-            if (_input.MouseDown(MouseButton.Right) || _input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape))
+            if (Input.MouseDown(MouseButton.Right) || Input.KeyPress(Key.Delete) || Input.KeyPress(Key.Escape))
             {
                 Controller.SetTool(null);
             }
             else
             {
-                if (_input.MousePress(MouseButton.Left))
+                if (Input.MousePress(MouseButton.Left))
                 {
                     EditorPortal portal = new EditorPortal(Controller.Level);
                     var coord = GetEdgeCoord();
@@ -52,10 +53,10 @@ namespace EditorLogic
                     }
 
                     AddPortal command;
-                    if (isSecondPortal)
+                    if (_isSecondPortal)
                     {
-                        Debug.Assert(portalPrevious != null);
-                        command = new AddPortal(Controller, portal, portalPrevious);
+                        Debug.Assert(_portalPrevious != null);
+                        command = new AddPortal(Controller, portal, _portalPrevious);
                     }
                     else
                     {
@@ -63,12 +64,12 @@ namespace EditorLogic
                     }
                     Controller.StateList.Add(command, true);
                     
-                    if (!_input.KeyDown(KeyBoth.Shift))
+                    if (!Input.KeyDown(KeyBoth.Shift))
                     {
                         Controller.SetTool(null);
                     }
-                    portalPrevious = portal;
-                    isSecondPortal = !isSecondPortal;
+                    _portalPrevious = portal;
+                    _isSecondPortal = !_isSecondPortal;
                 }
             }
         }
@@ -77,7 +78,7 @@ namespace EditorLogic
         {
             float size = Transform2.GetSize(_mouseFollow);
             IWall[] walls = Controller.Level.GetAll().OfType<IWall>().ToArray();
-            return PortalPlacer.GetNearestPortalableEdge(walls, Controller.GetMouseWorld(), snapDistance, size);
+            return PortalPlacer.GetNearestPortalableEdge(walls, Controller.GetMouseWorld(), _snapDistance, size);
         }
 
         private Transform2 GetPortalTransform()
@@ -94,7 +95,7 @@ namespace EditorLogic
                 Transform2 transform = new Transform2();
                 transform.Position = Controller.GetMouseWorld();
                 //transform.Rotation = _mouseFollow.GetTransform().Rotation;
-                transform.Rotation = unsnapAngle;
+                transform.Rotation = _unsnapAngle;
                 //Transform2.SetRotation(_mouseFollow, unsnapAngle);
                 transform.Size = _mouseFollow.GetTransform().Size;
                 transform.MirrorX = _mouseFollow.GetTransform().MirrorX;
@@ -105,9 +106,9 @@ namespace EditorLogic
         public override void Enable()
         {
             base.Enable();
-            isSecondPortal = false;
-            portalPrevious = null;
-            unsnapAngle = 0;
+            _isSecondPortal = false;
+            _portalPrevious = null;
+            _unsnapAngle = 0;
             _mouseFollow = new Doodad(Controller.Level);
             _mouseFollow.Models.Add(ModelFactory.CreatePortal());
         }

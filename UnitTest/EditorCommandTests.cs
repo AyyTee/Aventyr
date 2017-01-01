@@ -13,31 +13,31 @@ namespace UnitTest
     [TestClass]
     public class EditorCommandTests
     {
-        StateList stateList;
-        EditorScene scene;
+        StateList _stateList;
+        EditorScene _scene;
 
         public void Initialize()
         {
-            stateList = new StateList();
-            scene = new EditorScene();
+            _stateList = new StateList();
+            _scene = new EditorScene();
         }
 
         [TestMethod]
         public void RenameTest0()
         {
             Initialize();
-            EditorObject editorObject = new EditorObject(scene);
+            EditorObject editorObject = new EditorObject(_scene);
             string oldName = "old name";
             string newName = "new name";
 
             editorObject.Name = oldName;
-            stateList.Add(new Rename(editorObject, newName));
+            _stateList.Add(new Rename(editorObject, newName));
             Assert.IsTrue(editorObject.Name == newName);
 
-            stateList.Undo();
+            _stateList.Undo();
             Assert.IsTrue(editorObject.Name == oldName);
 
-            stateList.Redo();
+            _stateList.Redo();
             Assert.IsTrue(editorObject.Name == newName);
         }
     }

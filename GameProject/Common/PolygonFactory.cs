@@ -1,15 +1,13 @@
-﻿using ClipperLib;
-using OpenTK;
-using Poly2Tri;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ClipperLib;
+using OpenTK;
+using Poly2Tri;
 
-namespace Game
+namespace Game.Common
 {
     public static class PolygonFactory
     {
@@ -219,7 +217,7 @@ namespace Game
             Vector2[] vertices = new Vector2[sides];
             for (int i = 0; i < sides; i++)
             {
-                double angle = (MathExt.TAU * i) / sides;
+                double angle = (MathExt.Tau * i) / sides;
                 float x, y;
                 x = (float)Math.Cos(angle);
                 y = (float)Math.Sin(angle);

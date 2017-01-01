@@ -15,7 +15,7 @@ namespace Game
         {
             public float Begin { get; private set; }
             public float End { get; private set; }
-            public T data { get; set; }
+            public T Data { get; set; }
 
             public Segment(T data, float begin, float end)
             {
@@ -43,7 +43,7 @@ namespace Game
         {
             for (int i = 0; i < _segments.Count(); i++)
             {
-                if (_segments[i].data.Equals(data))
+                if (_segments[i].Data.Equals(data))
                 {
                     _segments.RemoveAt(i);
                     return true;

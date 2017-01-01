@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Serialization;
 
 namespace Game.Animation
 {
@@ -13,25 +14,25 @@ namespace Game.Animation
     public class Curve2 : IShallowClone<Curve2>
     {
         [DataMember]
-        Curve X;
+        Curve _x;
         [DataMember]
-        Curve Y;
+        Curve _y;
         public Vector2 DefaultValue
         {
-            get { return new Vector2(X.DefaultValue, Y.DefaultValue); }
+            get { return new Vector2(_x.DefaultValue, _y.DefaultValue); }
             set
             {
-                X.DefaultValue = value.X;
-                Y.DefaultValue = value.Y;
+                _x.DefaultValue = value.X;
+                _y.DefaultValue = value.Y;
             }
         }
         public bool IsLoop
         {
-            get { return X.IsLoop; }
+            get { return _x.IsLoop; }
             set
             {
-                X.IsLoop = value;
-                Y.IsLoop = value;
+                _x.IsLoop = value;
+                _y.IsLoop = value;
             }
         }
         [DataMember]
@@ -44,37 +45,37 @@ namespace Game.Animation
 
         public Curve2(Vector2 defaultValue)
         {
-            X = new Curve(defaultValue.X);
-            Y = new Curve(defaultValue.Y);
+            _x = new Curve(defaultValue.X);
+            _y = new Curve(defaultValue.Y);
         }
 
         public void AddKeyframe(Keyframe2 keyframe)
         {
-            X.AddKeyframe(keyframe.X);
-            Y.AddKeyframe(keyframe.Y);
+            _x.AddKeyframe(keyframe.X);
+            _y.AddKeyframe(keyframe.Y);
         }
 
         public Vector2 GetValue(float time)
         {
             Vector2 result;
-            result.X = X.GetValue(time);
-            result.Y = Y.GetValue(time);
+            result.X = _x.GetValue(time);
+            result.Y = _y.GetValue(time);
             return result;
         }
 
         public Vector2 GetDerivative(float time)
         {
             Vector2 result;
-            result.X = X.GetDerivative(time);
-            result.Y = Y.GetDerivative(time);
+            result.X = _x.GetDerivative(time);
+            result.Y = _y.GetDerivative(time);
             return result;
         }
 
         public Curve2 ShallowClone()
         {
             Curve2 clone = new Curve2();
-            clone.X = X.ShallowClone();
-            clone.Y = Y.ShallowClone();
+            clone._x = _x.ShallowClone();
+            clone._y = _y.ShallowClone();
             return clone;
         }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Rendering;
 using OpenTK.Input;
 using OpenTK;
 
@@ -11,31 +12,31 @@ namespace Game
 {
     public class Input : IInput
     {
-        KeyboardState KeyCurrent, KeyPrevious;
-        MouseState MouseCurrent, MousePrevious;
+        KeyboardState _keyCurrent, _keyPrevious;
+        MouseState _mouseCurrent, _mousePrevious;
         public Vector2 _mousePos;
-        float wheelDelta = 0;
-        float wheelDeltaPrev = 0;
+        float _wheelDelta = 0;
+        float _wheelDeltaPrev = 0;
         public Vector2 MousePos { get; private set; }
         public Vector2 MousePosPrev { get; private set; }
         bool _mouseInside;
         public bool Focus { get; private set; }
 
-        GameWindow Ctx;
-        GLControl Control;
+        GameWindow _ctx;
+        GLControl _control;
         public bool MouseInside { get; private set; }
         public Input(GameWindow ctx)
         {
-            Ctx = ctx;
+            _ctx = ctx;
             Update(true);
-            Ctx.MouseEnter += delegate { _mouseInside = true; };
-            Ctx.MouseLeave += delegate { _mouseInside = false; };
-            Ctx.MouseWheel += Ctx_MouseWheel;
+            _ctx.MouseEnter += delegate { _mouseInside = true; };
+            _ctx.MouseLeave += delegate { _mouseInside = false; };
+            _ctx.MouseWheel += Ctx_MouseWheel;
         }
 
         public Input(GLControl control)
         {
-            Control = control;
+            _control = control;
             control.MouseMove += control_MouseMove;
             control.MouseLeave += delegate { _mouseInside = false; };
             control.MouseEnter += delegate { _mouseInside = true; };
@@ -44,14 +45,14 @@ namespace Game
 
         private void Ctx_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            wheelDelta += e.DeltaPrecise;
+            _wheelDelta += e.DeltaPrecise;
         }
 
         private void control_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (((GLControl)sender).Focus())
             {
-                wheelDelta += (float)e.Delta / 120;
+                _wheelDelta += (float)e.Delta / 120;
             }
         }
 
@@ -68,24 +69,24 @@ namespace Game
         public void Update(bool hasFocus)
         {
             Focus = hasFocus;
-            KeyPrevious = KeyCurrent;
-            KeyCurrent = Keyboard.GetState();
-            MousePrevious = MouseCurrent;
-            MouseCurrent = Mouse.GetState();
+            _keyPrevious = _keyCurrent;
+            _keyCurrent = Keyboard.GetState();
+            _mousePrevious = _mouseCurrent;
+            _mouseCurrent = Mouse.GetState();
             MouseInside = _mouseInside;
             MousePosPrev = MousePos;
             MousePos = _mousePos;
-            wheelDeltaPrev = wheelDelta;
-            wheelDelta = 0;
-            if (Ctx != null)
+            _wheelDeltaPrev = _wheelDelta;
+            _wheelDelta = 0;
+            if (_ctx != null)
             {
-                MousePos = new Vector2(Ctx.Mouse.X, Ctx.Mouse.Y);
+                MousePos = new Vector2(_ctx.Mouse.X, _ctx.Mouse.Y);
             }
         }
 
         public bool KeyDown(Key input)
         {
-            return KeyCurrent.IsKeyDown(input) && Focus;
+            return _keyCurrent.IsKeyDown(input) && Focus;
         }
 
         public bool KeyDown(KeyBoth input)
@@ -105,8 +106,8 @@ namespace Game
 
         public bool KeyPress(Key input)
         {
-            return KeyCurrent.IsKeyDown(input) && 
-                !KeyPrevious.IsKeyDown(input) && 
+            return _keyCurrent.IsKeyDown(input) && 
+                !_keyPrevious.IsKeyDown(input) && 
                 Focus;
         }
 
@@ -127,8 +128,8 @@ namespace Game
 
         public bool KeyRelease(Key input)
         {
-            return !KeyCurrent.IsKeyDown(input) && 
-                KeyPrevious.IsKeyDown(input) && 
+            return !_keyCurrent.IsKeyDown(input) && 
+                _keyPrevious.IsKeyDown(input) && 
                 Focus;
         }
 
@@ -147,28 +148,28 @@ namespace Game
             }
         }
 
-        public bool MouseDown(MouseButton Input)
+        public bool MouseDown(MouseButton input)
         {
-            return MouseCurrent.IsButtonDown(Input) && Focus;
+            return _mouseCurrent.IsButtonDown(input) && Focus;
         }
 
-        public bool MousePress(MouseButton Input)
+        public bool MousePress(MouseButton input)
         {
-            return MouseCurrent.IsButtonDown(Input) && 
-                !MousePrevious.IsButtonDown(Input) && 
+            return _mouseCurrent.IsButtonDown(input) && 
+                !_mousePrevious.IsButtonDown(input) && 
                 Focus;
         }
 
-        public bool MouseRelease(MouseButton Input)
+        public bool MouseRelease(MouseButton input)
         {
-            return !MouseCurrent.IsButtonDown(Input) && 
-                MousePrevious.IsButtonDown(Input) && 
+            return !_mouseCurrent.IsButtonDown(input) && 
+                _mousePrevious.IsButtonDown(input) && 
                 Focus;
         }
 
         public float MouseWheelDelta()
         {
-            return wheelDeltaPrev;
+            return _wheelDeltaPrev;
         }
     }
 }

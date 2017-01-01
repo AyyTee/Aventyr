@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Collision.Shapes;
-using OpenTK;
 using System.Diagnostics;
 using System.Runtime.Serialization;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Dynamics;
+using Game.Common;
+using Game.Serialization;
+using OpenTK;
 
-namespace Game
+namespace Game.Physics
 {
     /// <summary>
     /// A coordinate defined by its position on a edge in a Fixture

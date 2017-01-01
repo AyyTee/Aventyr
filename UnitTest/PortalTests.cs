@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
+using Game.Common;
 using OpenTK;
 using Game.Portals;
 
@@ -9,7 +10,7 @@ namespace UnitTest
     [TestClass]
     public class PortalTests
     {
-        const double PATH_INTERSECTION_DELTA = 0.0001;
+        const double PathIntersectionDelta = 0.0001;
 
         [TestMethod]
         public void GetPortalTransformTest0()
@@ -76,8 +77,8 @@ namespace UnitTest
             path.Enter(p0);
             var intersections = Portal.PathIntersections(path, ray);
             Assert.AreEqual(1, intersections.Length);
-            Assert.AreEqual(0.5, intersections[0].TFirst, PATH_INTERSECTION_DELTA);
-            Assert.AreEqual(1.0 / 3, intersections[0].TLast, PATH_INTERSECTION_DELTA);
+            Assert.AreEqual(0.5, intersections[0].First, PathIntersectionDelta);
+            Assert.AreEqual(1.0 / 3, intersections[0].Last, PathIntersectionDelta);
         }
 
         [TestMethod]
@@ -109,11 +110,11 @@ namespace UnitTest
 
             var intersections = Portal.PathIntersections(path, ray);
             Assert.AreEqual(2, intersections.Length);
-            Assert.AreEqual(0.5, intersections[0].TFirst, PATH_INTERSECTION_DELTA);
-            Assert.AreEqual(1.0 / 3, intersections[0].TLast, PATH_INTERSECTION_DELTA);
+            Assert.AreEqual(0.5, intersections[0].First, PathIntersectionDelta);
+            Assert.AreEqual(1.0 / 3, intersections[0].Last, PathIntersectionDelta);
 
-            Assert.AreEqual(0.5, intersections[1].TFirst, PATH_INTERSECTION_DELTA);
-            Assert.AreEqual(2.0 / 3, intersections[1].TLast, PATH_INTERSECTION_DELTA);
+            Assert.AreEqual(0.5, intersections[1].First, PathIntersectionDelta);
+            Assert.AreEqual(2.0 / 3, intersections[1].Last, PathIntersectionDelta);
         }
 
         [TestMethod]
@@ -145,11 +146,11 @@ namespace UnitTest
 
             var intersections = Portal.PathIntersections(path, ray);
             Assert.AreEqual(2, intersections.Length);
-            Assert.AreEqual(0.5, intersections[0].TFirst, PATH_INTERSECTION_DELTA);
-            Assert.AreEqual(1.0 / 3, intersections[0].TLast, PATH_INTERSECTION_DELTA);
+            Assert.AreEqual(0.5, intersections[0].First, PathIntersectionDelta);
+            Assert.AreEqual(1.0 / 3, intersections[0].Last, PathIntersectionDelta);
 
-            Assert.AreEqual(0.5, intersections[1].TFirst, PATH_INTERSECTION_DELTA);
-            Assert.AreEqual(2.0 / 3, intersections[1].TLast, PATH_INTERSECTION_DELTA);
+            Assert.AreEqual(0.5, intersections[1].First, PathIntersectionDelta);
+            Assert.AreEqual(2.0 / 3, intersections[1].Last, PathIntersectionDelta);
         }
         #endregion
 

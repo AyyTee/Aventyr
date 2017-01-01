@@ -1,11 +1,6 @@
-﻿using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Game.Serialization;
 
-namespace Game
+namespace Game.Common
 {
     public interface IPolygonCoord : IShallowClone<IPolygonCoord>
     {
@@ -19,10 +14,5 @@ namespace Game
         /// Value between [0,1) that represents the position along the edge.
         /// </summary>
         float EdgeT { get; }
-        /// <summary>
-        /// Returns Transform local to polygon. Rotation represents the normal vector.  Scale is always (1,1).
-        /// </summary>
-        /// <returns></returns>
-        //Transform2 GetTransform();
     }
 }

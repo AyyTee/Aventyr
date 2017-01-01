@@ -1,11 +1,9 @@
-﻿using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Game.Common;
+using OpenTK;
 
-namespace Game
+namespace Game.Rendering
 {
     public static class CameraExt
     {
@@ -15,7 +13,7 @@ namespace Game
         public static Matrix4 GetViewMatrix(ICamera2 camera, bool isOrtho = true)
         {
             Transform2 transform = camera.GetWorldTransform();
-            Matrix4 m = Matrix4.CreateRotationZ(transform.Rotation);
+            var m = Matrix4.CreateRotationZ(transform.Rotation);
             Vector3 lookat = new Vector3(transform.Position) + Vector3.Transform(new Vector3(0, 0, -1), m);
             Vector3 eye;
             Matrix4 perspective;

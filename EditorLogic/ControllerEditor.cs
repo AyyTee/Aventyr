@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Game.Common;
 using Game.Rendering;
 
 namespace EditorLogic
@@ -21,11 +22,11 @@ namespace EditorLogic
         public ControllerCamera CamControl { get; private set; }
         Tool _activeTool;
         public Tool ActiveTool { get { return _activeTool; } }
-        public float physicsStepSize { get; set; }
+        public float PhysicsStepSize { get; set; }
         Tool _toolDefault;
         Tool _nextTool;
-        Queue<Action> Actions = new Queue<Action>();
-        public Selection selection { get; private set; }
+        Queue<Action> _actions = new Queue<Action>();
+        public Selection Selection { get; private set; }
         public StateList StateList { get; private set; }
         public float CanvasAspect { get { return CanvasSize.Width / (float)CanvasSize.Height; } }
         /// <summary>
@@ -67,7 +68,7 @@ namespace EditorLogic
             : base(canvasSize, input)
         {
             IsPaused = true;
-            physicsStepSize = 1;
+            PhysicsStepSize = 1;
             ClosingLock = new object();
         }
 
@@ -98,7 +99,7 @@ namespace EditorLogic
             Renderer.AddLayer(Level);
             Renderer.AddLayer(Hud);
 
-            selection = new Selection(Level);
+            Selection = new Selection(Level);
             StateList = new StateList();
 
             CamControl = new ControllerCamera(this, Input, Level);
@@ -122,7 +123,7 @@ namespace EditorLogic
             Renderer.AddLayer(load);
             Renderer.RemoveLayer(Level);
             Level = load;
-            selection = new Selection(Level);
+            Selection = new Selection(Level);
 
             LevelLoaded(this, filepath);
             LevelChanged(this, filepath);
@@ -195,7 +196,7 @@ namespace EditorLogic
         public void Remove(EditorObject editorObject)
         {
             editorObject.Remove();
-            selection.Remove(editorObject);
+            Selection.Remove(editorObject);
         }
 
         public void RemoveRange(List<EditorObject> editorObjects)
@@ -203,7 +204,7 @@ namespace EditorLogic
             foreach (EditorObject e in editorObjects)
             {
                 e.Remove();
-                selection.Remove(e);
+                Selection.Remove(e);
             }
         }
 
@@ -217,8 +218,8 @@ namespace EditorLogic
                 Queue<Action> copy;
                 lock (_lockAction)
                 {
-                    copy = new Queue<Action>(Actions);
-                    Actions.Clear();
+                    copy = new Queue<Action>(_actions);
+                    _actions.Clear();
                 }
                 foreach (Action item in copy)
                 {
@@ -231,7 +232,7 @@ namespace EditorLogic
 
             if (ActiveLevel != null)
             {
-                float stepSize = physicsStepSize / 60;
+                float stepSize = PhysicsStepSize / 60;
                 if (!IsPaused || _stepsPending > 0)
                 {
                     if (_stepsPending > 0)
@@ -253,7 +254,7 @@ namespace EditorLogic
                 PortalCommon.UpdateWorldTransform(Level);
             }
 
-            HashSet<EditorObject> modified = new HashSet<EditorObject>(Level._children.FindAll(item => item.IsModified));
+            HashSet<EditorObject> modified = new HashSet<EditorObject>(Level.Children.FindAll(item => item.IsModified));
             foreach (EditorObject reset in modified)
             {
                 reset.IsModified = false;
@@ -384,7 +385,7 @@ namespace EditorLogic
         {
             lock (_lockAction)
             {
-                Actions.Enqueue(action);
+                _actions.Enqueue(action);
             }
         }
 

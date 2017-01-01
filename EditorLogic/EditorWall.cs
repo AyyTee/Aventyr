@@ -8,6 +8,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
+using Game.Models;
+using Game.Serialization;
 
 namespace EditorLogic
 {
@@ -27,7 +30,7 @@ namespace EditorLogic
 
         public override void Initialize()
         {
-            _wallModel = Game.ModelFactory.CreatePolygon(Vertices);
+            _wallModel = Game.Rendering.ModelFactory.CreatePolygon(Vertices);
         }
 
         public override IDeepClone ShallowClone()

@@ -37,7 +37,7 @@ namespace EditorWindow
             _controller.SceneModified += _controller_SceneModified;
             _controller.LevelChanged += (ControllerEditor control, string filepath) =>
             {
-                control.selection.SelectionChanged += Selection_SelectionChanged;
+                control.Selection.SelectionChanged += Selection_SelectionChanged;
             };
             SetSelected(null);
         }

@@ -22,7 +22,7 @@ namespace EditorLogic.Command
 
         public override ICommand ShallowClone()
         {
-            AddEntity clone = new AddEntity(_controller, (EditorEntity)_editorObject);
+            AddEntity clone = new AddEntity(Controller, (EditorEntity)EditorObject);
             return clone;
         }
     }

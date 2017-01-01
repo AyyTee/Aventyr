@@ -1,13 +1,7 @@
-﻿using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Game
+namespace Game.Common
 {
     [DataContract]
     public class PolygonCoord : IPolygonCoord

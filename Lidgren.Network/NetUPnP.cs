@@ -131,17 +131,17 @@ namespace Lidgren.Network
 #endif
 		}
 
-		private static string CombineUrls(string gatewayURL, string subURL)
+		private static string CombineUrls(string gatewayURL, string subUrl)
 		{
 			// Is Control URL an absolute URL?
-			if ((subURL.Contains("http:")) || (subURL.Contains(".")))
-				return subURL;
+			if ((subUrl.Contains("http:")) || (subUrl.Contains(".")))
+				return subUrl;
 
 			gatewayURL = gatewayURL.Replace("http://", "");  // strip any protocol
 			int n = gatewayURL.IndexOf("/");
 			if (n != -1)
 				gatewayURL = gatewayURL.Substring(0, n);  // Use first portion of URL
-			return "http://" + gatewayURL + subURL;
+			return "http://" + gatewayURL + subUrl;
 		}
 
 		private bool CheckAvailability()

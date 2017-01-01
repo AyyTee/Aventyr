@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OpenTK;
 
-namespace Game
+namespace Game.Common
 {
     public static class GeometryUtil
     {
@@ -29,7 +27,7 @@ namespace Game
                     let time = point.LerpProjectOnto(new Line(start, end))
                     where time >= 0 && time <= 1
                     orderby time
-                    select new Sweep(timeProportion: time, acrossProportion: across);
+                    select new Sweep(time, across);
         }
 
         public struct Sweep
@@ -50,9 +48,6 @@ namespace Game
         public static double LerpProjectOnto(this Vector2d point, Line line)
         {
             return line.NearestT(point, false);
-            /*var b = point - line[0];
-            var d = line.Delta;
-            return (b * d) / (d * d);*/
         }
 
         ///<summary>
@@ -84,11 +79,11 @@ namespace Game
             // ax^2 + bx + c == 0
             // x = (-b +- sqrt(b^2 - 4ac)) / 2a
 
-            var d = b * b - 4 * a * c;
+            double d = b * b - 4 * a * c;
             if (d < 0) yield break; // no real roots
 
-            var s0 = -b / (2 * a);
-            var sd = Math.Sqrt(d) / (2 * a);
+            double s0 = -b / (2 * a);
+            double sd = Math.Sqrt(d) / (2 * a);
             yield return s0 - sd;
             if (sd == 0) yield break; // unique root
 

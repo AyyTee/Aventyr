@@ -109,13 +109,13 @@ namespace FarseerPhysics.Common
         }
 
         // A^T * B
-        public static void MulT(ref Mat22 A, ref Mat22 B, out Mat22 C)
+        public static void MulT(ref Mat22 A, ref Mat22 b, out Mat22 c)
         {
-            C = new Mat22();
-            C.ex.X = A.ex.X * B.ex.X + A.ex.Y * B.ex.Y;
-            C.ex.Y = A.ey.X * B.ex.X + A.ey.Y * B.ex.Y;
-            C.ey.X = A.ex.X * B.ey.X + A.ex.Y * B.ey.Y;
-            C.ey.Y = A.ey.X * B.ey.X + A.ey.Y * B.ey.Y;
+            c = new Mat22();
+            c.ex.X = A.ex.X * b.ex.X + A.ex.Y * b.ex.Y;
+            c.ex.Y = A.ey.X * b.ex.X + A.ey.Y * b.ex.Y;
+            c.ey.X = A.ex.X * b.ey.X + A.ex.Y * b.ey.Y;
+            c.ey.Y = A.ey.X * b.ey.X + A.ey.Y * b.ey.Y;
         }
 
         /// Multiply a matrix times a vector.
@@ -126,21 +126,21 @@ namespace FarseerPhysics.Common
 
         // v2 = A.q.Rot(B.q.Rot(v1) + B.p) + A.p
         //    = (A.q * B.q).Rot(v1) + A.q.Rot(B.p) + A.p
-        public static Transform Mul(Transform A, Transform B)
+        public static Transform Mul(Transform A, Transform b)
         {
             Transform C = new Transform();
-            C.q = Mul(A.q, B.q);
-            C.p = Mul(A.q, B.p) + A.p;
+            C.q = Mul(A.q, b.q);
+            C.p = Mul(A.q, b.p) + A.p;
             return C;
         }
 
         // v2 = A.q' * (B.q * v1 + B.p - A.p)
         //    = A.q' * B.q * v1 + A.q' * (B.p - A.p)
-        public static void MulT(ref Transform A, ref Transform B, out Transform C)
+        public static void MulT(ref Transform A, ref Transform b, out Transform c)
         {
-            C = new Transform();
-            C.q = MulT(A.q, B.q);
-            C.p = MulT(A.q, B.p - A.p);
+            c = new Transform();
+            c.q = MulT(A.q, b.q);
+            c.p = MulT(A.q, b.p - A.p);
         }
 
         public static void Swap<T>(ref T a, ref T b)
@@ -194,11 +194,11 @@ namespace FarseerPhysics.Common
 
         // v2 = A.q' * (B.q * v1 + B.p - A.p)
         //    = A.q' * B.q * v1 + A.q' * (B.p - A.p)
-        public static Transform MulT(Transform A, Transform B)
+        public static Transform MulT(Transform A, Transform b)
         {
             Transform C = new Transform();
-            C.q = MulT(A.q, B.q);
-            C.p = MulT(A.q, B.p - A.p);
+            C.q = MulT(A.q, b.q);
+            C.p = MulT(A.q, b.p - A.p);
             return C;
         }
 
@@ -507,10 +507,10 @@ namespace FarseerPhysics.Common
             return new Vector2(det * (a22 * b.X - a12 * b.Y), det * (a11 * b.Y - a21 * b.X));
         }
 
-        public static void Add(ref Mat22 A, ref Mat22 B, out Mat22 R)
+        public static void Add(ref Mat22 A, ref Mat22 b, out Mat22 r)
         {
-            R.ex = A.ex + B.ex;
-            R.ey = A.ey + B.ey;
+            r.ex = A.ex + b.ex;
+            r.ey = A.ey + b.ey;
         }
     }
 

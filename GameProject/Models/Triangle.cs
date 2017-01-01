@@ -1,13 +1,9 @@
-﻿using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Game.Serialization;
+using OpenTK;
 
-namespace Game
+namespace Game.Models
 {
     /// <summary>
     /// Immutable class that represents a triangle in 3 dimensions.
@@ -18,7 +14,7 @@ namespace Game
         public Vertex V1 { get { return Vertices[1]; } }
         public Vertex V2 { get { return Vertices[2]; } }
         public readonly ReadOnlyCollection<Vertex> Vertices;
-        public const int VERTEX_COUNT = 3;
+        public const int VertexCount = 3;
 
         public Triangle(Vertex v0, Vertex v1, Vertex v2)
         {

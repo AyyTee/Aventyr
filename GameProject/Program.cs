@@ -6,10 +6,10 @@ namespace Game
     {
         static void Main(string[] args)
         {
-            using (Window Window = new Window())
+            using (Window window = new Window())
             {
-                Window.controller = new Controller(Window);
-                Window.Run(Controller.StepsPerSecond, Controller.DrawsPerSecond);
+                window.Controller = new Controller(window);
+                window.Run(Controller.StepsPerSecond, Controller.DrawsPerSecond);
             }
         }
     }

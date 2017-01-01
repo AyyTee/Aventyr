@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using Game.Rendering;
+using OpenTK;
 using OpenTK.Input;
 
 namespace Game
@@ -17,15 +18,12 @@ namespace Game
         bool KeyPress(Key input);
         bool KeyRelease(KeyBoth input);
         bool KeyRelease(Key input);
-        bool MouseDown(MouseButton Input);
-        bool MousePress(MouseButton Input);
-        bool MouseRelease(MouseButton Input);
+        bool MouseDown(MouseButton input);
+        bool MousePress(MouseButton input);
+        bool MouseRelease(MouseButton input);
         float MouseWheelDelta();
         void Update(bool hasFocus);
     }
-}
 
-namespace OpenTK.Input
-{
     public enum KeyBoth { Control, Shift, Alt }
 }

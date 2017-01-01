@@ -1,44 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Graphics.OpenGL;
-using OpenTK;
-using System.IO;
-using System.Drawing;
-using System.Drawing.Imaging;
-using ClipperLib;
 using System.Diagnostics;
-using OpenTK.Input;
+using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using System.Linq;
+using ClipperLib;
+using Game.Common;
+using Game.Models;
+using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
-namespace Game
+namespace Game.Rendering
 {
     /// <summary>
     /// Handles OpenGL rendering.  Only one instance of Renderer should be instantiated during the process's lifetime.
     /// </summary>
+    [SuppressMessage("ReSharper", "ForCanBeConvertedToForeach")]
+    [SuppressMessage("ReSharper", "LoopCanBeConvertedToQuery")]
     public class Renderer
     {
-        public readonly static GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
-        List<IRenderLayer> _layers = new List<IRenderLayer>();
+        public static readonly GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
+        readonly List<IRenderLayer> _layers = new List<IRenderLayer>();
         public bool PortalRenderEnabled { get; set; } = true;
         public int PortalRenderMax { get; set; } = 50;
         public int PortalClipDepth { get; set; } = 4;
         /// <summary>Number of bits in the stencil buffer.</summary>
-        public int StencilBits { get; private set; }
-        public int StencilMaxValue { get { return 1 << StencilBits; } }
-        public int StencilMask { get { return StencilMaxValue - 1; } }
+        public int StencilBits { get; }
+        public int StencilMaxValue => 1 << StencilBits;
+        public int StencilMask => StencilMaxValue - 1;
+
         /// <summary>Flag for preventing rendering occuring.  Intended for benchmarking purposes.</summary>
         public bool RenderEnabled { get; set; } = true;
         Shader _activeShader;
-        Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
+        readonly Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
         public Size CanvasSize { get; private set; }
 
         public Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
         public Dictionary<string, Shader> Shaders = new Dictionary<string, Shader>();
 
-        private int IboElements;
+        readonly int _iboElements;
 
         public Renderer(Size canvasSize)
         {
@@ -59,7 +60,7 @@ namespace Game
             StencilBits = GL.GetInteger(GetPName.StencilBits);
             Debug.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
 
-            GL.GenBuffers(1, out IboElements);
+            GL.GenBuffers(1, out _iboElements);
         }
 
         public TextureFile GetTexture(string name)
@@ -92,7 +93,7 @@ namespace Game
         {
             if (shader != _activeShader)
             {
-                GL.UseProgram(shader.ProgramID);
+                GL.UseProgram(shader.ProgramId);
                 _activeShader = shader;
             }
         }
@@ -128,10 +129,9 @@ namespace Game
             SetShader(Shaders["uber"]);
             GL.Enable(EnableCap.DepthTest);
 
-            for (int i = 0; i < _layers.Count(); i++)
+            for (int i = 0; i < _layers.Count; i++)
             {
                 IRenderLayer layer = _layers[i];
-                ICamera2 camera = layer.GetCamera();
                 DrawPortalAll(layer);
                 GL.Clear(ClearBufferMask.DepthBufferBit);
             }
@@ -144,11 +144,11 @@ namespace Game
             GL.Flush();
         }
 
-        private class DrawData
+        class DrawData
         {
             public int Index;
-            public Model Model;
-            public Matrix4 Offset;
+            public readonly Model Model;
+            public readonly Matrix4 Offset;
 
             public DrawData(int index, Model model, Matrix4 offset)
             {
@@ -181,7 +181,7 @@ namespace Game
                 for (int i = 1; i < Math.Min(portalViewList.Count, StencilMaxValue); i++)
                 {
                     GL.StencilFunc(StencilFunction.Always, i, StencilMask);
-                    Mesh mesh = new Mesh();
+                    var mesh = new Mesh();
                     for (int j = 0; j < portalViewList[i].Paths.Count; j++)
                     {
                         Vector2[] a = ClipperConvert.ToVector2(portalViewList[i].Paths[j]);
@@ -275,10 +275,8 @@ namespace Game
             SetEnable(EnableCap.StencilTest, false);
             GL.Disable(EnableCap.DepthTest);
             GL.Clear(ClearBufferMask.StencilBufferBit);
-            Clipper c = new Clipper();
-            c.StrictlySimple = true;
 
-            Model portalEdges = new Model();
+            var portalEdges = new Model();
             portalEdges.SetTexture(Textures["lineBlur.png"]);
             SetEnable(EnableCap.Blend, true);
             for (int i = 1; i < iterations; i++)
@@ -321,7 +319,7 @@ namespace Game
                         {
                             continue;
                         }
-                        if (p.PortalLine.IsInsideFOV(camPos, line[0]))
+                        if (p.PortalLine.IsInsideFov(camPos, line[0]))
                         {
                             obscured = true;
                             break;
@@ -340,8 +338,7 @@ namespace Game
                         Vector3 pos = Vector3Ext.Transform(vertex.Position, homography);
                         pos.Z = CameraExt.UnitZToWorld(cam, pos.Z);
 
-                        Vector2 texCoord;
-                        Vector2 v = new Vector2(vertex.Position.X, vertex.Position.Y);
+                        var v = new Vector2(vertex.Position.X, vertex.Position.Y);
                         double distance = MathExt.PointLineDistance(v, line.GetPerpendicularLeft(), false);
                         double texCoordX = MathExt.PointLineDistance(v, line, false) / minWidth;
                         if (line.GetSideOf(v) == Side.Left)
@@ -349,7 +346,7 @@ namespace Game
                             texCoordX *= -1;
                         }
                         texCoordX += 0.5;
-                        texCoord = new Vector2((float)texCoordX, (float)(distance / line.Length));
+                        var texCoord = new Vector2((float)texCoordX, (float)(distance / line.Length));
 
                         mesh.GetVertices()[k] = new Vertex(pos, texCoord);
                     }
@@ -360,7 +357,7 @@ namespace Game
             GL.Enable(EnableCap.DepthTest);
         }
 
-        private float GetLineBlurAngle(LineF line, LineF linePrev)
+        float GetLineBlurAngle(LineF line, LineF linePrev)
         {
             const float angleMax = (float)(1f * Math.PI / 4);
             float angleScale = 80f;
@@ -368,7 +365,7 @@ namespace Game
             return Math.Min(angleDiff, angleMax);
         }
 
-        private void Draw(DrawData[] drawData, Matrix4 viewMatrix)
+        void Draw(DrawData[] drawData, Matrix4 viewMatrix)
         {
             for (int i = 0; i < drawData.Length; i++)
             {
@@ -381,8 +378,8 @@ namespace Game
 
                 if (_activeShader.GetUniform("UVMatrix") != -1)
                 {
-                    Matrix4 UVMatrix = data.Model.TransformUv.GetMatrix();
-                    GL.UniformMatrix4(_activeShader.GetUniform("UVMatrix"), false, ref UVMatrix);
+                    Matrix4 uvMatrix = data.Model.TransformUv.GetMatrix();
+                    GL.UniformMatrix4(_activeShader.GetUniform("UVMatrix"), false, ref uvMatrix);
                 }
 
                 if (data.Model.Texture != null)
@@ -421,8 +418,9 @@ namespace Game
         }
 
         /// <summary>Sets scissor region around a portalview.</summary>
+        /// <param name="view"></param>
         /// <param name="viewMatrix">Camera view matrix, do not use view matrix for the portalview.</param>
-        private void SetScissor(PortalView view, Matrix4 viewMatrix)
+        void SetScissor(PortalView view, Matrix4 viewMatrix)
         {
             Debug.Assert(view != null);
             if (view.Paths == null)
@@ -430,18 +428,16 @@ namespace Game
                 ResetScissor();
                 return;
             }
-            Matrix4 ScaleMatrix;
-            ScaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
-            ScaleMatrix = ScaleMatrix * Matrix4.CreateScale(new Vector3(CanvasSize.Width / (float)2, CanvasSize.Height / (float)2, 0));
+            Matrix4 scaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
+            scaleMatrix = scaleMatrix * Matrix4.CreateScale(new Vector3(CanvasSize.Width / (float)2, CanvasSize.Height / (float)2, 0));
 
-            Vector2 vMin, vMax;
-            vMin = ClipperConvert.ToVector2(view.Paths[0][0]);
-            vMax = ClipperConvert.ToVector2(view.Paths[0][0]);
+            Vector2 vMin = ClipperConvert.ToVector2(view.Paths[0][0]);
+            Vector2 vMax = ClipperConvert.ToVector2(view.Paths[0][0]);
             for (int i = 0; i < view.Paths.Count; i++)
             {
                 for (int j = 0; j < view.Paths[i].Count; j++)
                 {
-                    Vector2 vTransform = Vector2Ext.Transform(ClipperConvert.ToVector2(view.Paths[i][j]), ScaleMatrix);
+                    Vector2 vTransform = Vector2Ext.Transform(ClipperConvert.ToVector2(view.Paths[i][j]), scaleMatrix);
                     vMax = Vector2.ComponentMax(vMax, vTransform);
                     vMin = Vector2.ComponentMin(vMin, vTransform);
                 }
@@ -450,22 +446,15 @@ namespace Game
             GL.Scissor((int)vMin.X - 1, (int)vMin.Y - 1, (int)(vMax.X - vMin.X) + 3, (int)(vMax.Y - vMin.Y) + 3);
         }
 
-        private void ResetScissor()
+        void ResetScissor()
         {
             GL.Scissor(0, 0, CanvasSize.Width, CanvasSize.Height);
         }
 
-        private void UpdateCullFace(Matrix4 viewMatrix)
+        void UpdateCullFace(Matrix4 viewMatrix)
         {
             SetEnable(EnableCap.CullFace, false);
-            if (Matrix4Ext.IsMirrored(viewMatrix))
-            {
-                GL.CullFace(CullFaceMode.Front);
-            }
-            else
-            {
-                GL.CullFace(CullFaceMode.Back);
-            }
+            GL.CullFace(Matrix4Ext.IsMirrored(viewMatrix) ? CullFaceMode.Front : CullFaceMode.Back);
         }
 
         public void RenderModel(Model model, Matrix4 viewMatrix)
@@ -476,12 +465,12 @@ namespace Game
                 return;
             }
 
-            BufferData(model.GetVerts(), model.GetColorData(), model.GetTextureCoords(), model.GetIndices(), IboElements);
+            BufferData(model.GetVerts(), model.GetColorData(), model.GetTextureCoords(), model.GetIndices(), _iboElements);
 
             if (_activeShader.GetUniform("UVMatrix") != -1)
             {
-                Matrix4 UVMatrix = model.TransformUv.GetMatrix();
-                GL.UniformMatrix4(_activeShader.GetUniform("UVMatrix"), false, ref UVMatrix);
+                Matrix4 uvMatrix = model.TransformUv.GetMatrix();
+                GL.UniformMatrix4(_activeShader.GetUniform("UVMatrix"), false, ref uvMatrix);
             }
 
             if (model.Texture != null)
@@ -519,14 +508,14 @@ namespace Game
             }
         }
 
-        private Dictionary<Model, int> BufferModels(Model[] models)
+        Dictionary<Model, int> BufferModels(Model[] models)
         {
-            Dictionary<Model, int> indexList = new Dictionary<Model, int>();
+            var indexList = new Dictionary<Model, int>();
 
-            List<Vector3> vertices = new List<Vector3>();
-            List<Vector3> colors = new List<Vector3>();
-            List<Vector2> texCoords = new List<Vector2>();
-            List<int> indices = new List<int>();
+            var vertices = new List<Vector3>();
+            var colors = new List<Vector3>();
+            var texCoords = new List<Vector2>();
+            var indices = new List<int>();
             for (int i = 0; i < models.Length; i++)
             {
                 indexList.Add(models[i], indices.Count);
@@ -546,11 +535,11 @@ namespace Game
                 texCoords.AddRange(models[i].GetTextureCoords());
             }
 
-            BufferData(vertices.ToArray(), colors.ToArray(), texCoords.ToArray(), indices.ToArray(), IboElements);
+            BufferData(vertices.ToArray(), colors.ToArray(), texCoords.ToArray(), indices.ToArray(), _iboElements);
             return indexList;
         }
 
-        private void BufferData(Vector3[] vertdata, Vector3[] coldata, Vector2[] texcoorddata, int[] indices, int indexBuffer)
+        void BufferData(Vector3[] vertdata, Vector3[] coldata, Vector2[] texcoorddata, int[] indices, int indexBuffer)
         {
             Debug.Assert(coldata.Length == vertdata.Length);
             Debug.Assert(texcoorddata.Length == vertdata.Length);
@@ -578,7 +567,7 @@ namespace Game
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StreamDraw);
         }
 
-        private void RenderSetTransformMatrix(Matrix4 offset, Model model, Matrix4 viewMatrix)
+        void RenderSetTransformMatrix(Matrix4 offset, Model model, Matrix4 viewMatrix)
         {
             Matrix4 modelMatrix = model.Transform.GetMatrix() * offset;
             UpdateCullFace(modelMatrix * viewMatrix);

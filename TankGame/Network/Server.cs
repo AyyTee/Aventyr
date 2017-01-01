@@ -9,25 +9,26 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
 using Game.Rendering;
 
 namespace TankGame.Network
 {
     public class Server : INetController
     {
-        Dictionary<long, Tank> Tanks = new Dictionary<long, Tank>();
+        Dictionary<long, Tank> _tanks = new Dictionary<long, Tank>();
         INetServer _server;
         public INetPeer Peer { get { return _server; } }
         Scene _scene;
         Renderer _renderer;
         public string Name { get { return "Server"; } }
         public int StepCount { get; private set; }
-        List<Wall> Walls = new List<Wall>();
-        HashSet<long> loading = new HashSet<long>();
+        List<Wall> _walls = new List<Wall>();
+        HashSet<long> _loading = new HashSet<long>();
         int _idCount;
         public int MessagesSent { get; set; }
 
-        HashSet<ClientInstance> clients = new HashSet<ClientInstance>();
+        HashSet<ClientInstance> _clients = new HashSet<ClientInstance>();
 
         public class ClientInstance
         {
@@ -61,10 +62,10 @@ namespace TankGame.Network
             serverMarker.AddModel(ModelFactory.CreateCircle(new Vector3(-3, -3, 1), 0.5f, 10));
 
 
-            Walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
-            Walls[0].SetTransform(new Transform2(new Vector2(3, 0)));
-            Walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
-            Walls[1].SetTransform(new Transform2(new Vector2(1, 3)));
+            _walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
+            _walls[0].SetTransform(new Transform2(new Vector2(3, 0)));
+            _walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
+            _walls[1].SetTransform(new Transform2(new Vector2(1, 3)));
 
             PortalCommon.UpdateWorldTransform(_scene);
             _renderer?.AddLayer(_scene);
@@ -108,21 +109,21 @@ namespace TankGame.Network
             {
                 _scene.Step();
 
-                foreach (long clientId in loading.ToArray())
+                foreach (long clientId in _loading.ToArray())
                 {
                     ServerMessage message = new ServerMessage
                     {
-                        WallsAdded = Walls.Select(wall => new WallAdded(wall)).ToArray()
+                        WallsAdded = _walls.Select(wall => new WallAdded(wall)).ToArray()
                     };
                     INetConnection client = _server.Connections.First(item => item.RemoteUniqueIdentifier == clientId);
                     SendMessage(message, client);
-                    loading.Remove(clientId);
+                    _loading.Remove(clientId);
                 }
 
                 List<TankData> tankData = new List<TankData>();
-                foreach (long id in Tanks.Keys)
+                foreach (long id in _tanks.Keys)
                 {
-                    tankData.Add(new TankData(id, Tanks[id]));
+                    tankData.Add(new TankData(id, _tanks[id]));
                 }
 
                 List<BulletData> bulletData = new List<BulletData>();
@@ -173,9 +174,9 @@ namespace TankGame.Network
 
             if (msg.SenderConnection.Status == NetConnectionStatus.Connected)
             {
-                clients.Add(new ClientInstance(msg.SenderConnection.RemoteUniqueIdentifier));
-                Tanks.Add(msg.SenderConnection.RemoteUniqueIdentifier, InitNetObject(new Tank(_scene)));
-                loading.Add(msg.SenderConnection.RemoteUniqueIdentifier);
+                _clients.Add(new ClientInstance(msg.SenderConnection.RemoteUniqueIdentifier));
+                _tanks.Add(msg.SenderConnection.RemoteUniqueIdentifier, InitNetObject(new Tank(_scene)));
+                _loading.Add(msg.SenderConnection.RemoteUniqueIdentifier);
             }
             PortalCommon.UpdateWorldTransform(_scene, true);
         }
@@ -183,8 +184,8 @@ namespace TankGame.Network
         private void HandleData(INetIncomingMessage msg)
         {
             ClientMessage data = NetworkHelper.ReadMessage<ClientMessage>(msg);
-            ClientInstance client = clients.First(item => item.Id == msg.SenderConnection.RemoteUniqueIdentifier);
-            Tank tank = Tanks[msg.SenderConnection.RemoteUniqueIdentifier];
+            ClientInstance client = _clients.First(item => item.Id == msg.SenderConnection.RemoteUniqueIdentifier);
+            Tank tank = _tanks[msg.SenderConnection.RemoteUniqueIdentifier];
 
             bool outOfDate = data.LocalSendTime <= client.LatestTimestamp;
             if (!outOfDate)

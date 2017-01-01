@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
 using OpenTK.Input;
 using OpenTK;
 
@@ -27,15 +28,15 @@ namespace EditorLogic
                 transform.Position = Controller.GetMouseWorld();
                 _mouseFollow.SetTransform(transform);
             }
-            if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape) || _input.MousePress(MouseButton.Right))
+            if (Input.KeyPress(Key.Delete) || Input.KeyPress(Key.Escape) || Input.MousePress(MouseButton.Right))
             {
                 Controller.SetTool(null);
             }
-            else if (_input.MousePress(MouseButton.Left))
+            else if (Input.MousePress(MouseButton.Left))
             {
                 EditorActor editorActor = new EditorActor(Controller.Level, PolygonFactory.CreateRectangle(4, 0.5f));
                 Transform2.SetPosition(editorActor, Controller.GetMouseWorld());
-                if (!_input.KeyDown(KeyBoth.Shift))
+                if (!Input.KeyDown(KeyBoth.Shift))
                 {
                     Controller.SetTool(null);
                 }
@@ -46,7 +47,7 @@ namespace EditorLogic
         {
             base.Enable();
             _mouseFollow = new Doodad(Controller.Level);
-            _mouseFollow.Models.Add(Game.ModelFactory.CreatePolygon(PolygonFactory.CreateRectangle(4, 0.5f)));
+            _mouseFollow.Models.Add(Game.Rendering.ModelFactory.CreatePolygon(PolygonFactory.CreateRectangle(4, 0.5f)));
             _mouseFollow.Models[0].SetTexture(Controller.Renderer.Textures["default.png"]);
             _mouseFollow.IsPortalable = true;
         }

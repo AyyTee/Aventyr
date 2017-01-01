@@ -1,16 +1,15 @@
-﻿using Game.Portals;
-using OpenTK;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Game.Common;
+using Game.Portals;
+using Game.Rendering;
+using OpenTK;
 
-namespace Game
+namespace Game.Models
 {
     public static class Clip
     {
-        const double PORTAL_CLIP_MARGIN = 0.0001;
+        const double PortalClipMargin = 0.0001;
 
         public class ClipModel
         {
@@ -80,7 +79,7 @@ namespace Game
                 Vector2Ext.Transform(model.GetWorldConvexHull(), 
                 entity.GetWorldTransform().GetMatrix() * modelMatrix), 
                 portalList, 
-                PORTAL_CLIP_MARGIN);
+                PortalClipMargin);
 
             List<LineF> clipLines = new List<LineF>();
             foreach (IPortal portal in collisions)
@@ -143,7 +142,7 @@ namespace Game
                 convexHull.Add(centerPoint);
                 convexHull = (List<Vector2>)Vector2Ext.Transform(MathExt.GetConvexHull(convexHull, true), modelMatrix);
 
-                if (MathExt.LinePolygonDistance(portalLine, convexHull) < PORTAL_CLIP_MARGIN)
+                if (MathExt.LinePolygonDistance(portalLine, convexHull) < PortalClipMargin)
                 {
                     collisions.Add(portal);
                 }

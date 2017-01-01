@@ -1,15 +1,15 @@
-﻿using FarseerPhysics.Collision.Shapes;
-using FarseerPhysics.Dynamics;
-using Game.Portals;
-using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml.Serialization;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Dynamics;
+using Game.Common;
+using Game.Portals;
+using OpenTK;
 using Xna = Microsoft.Xna;
 
-namespace Game
+namespace Game.Physics
 {
     public class FixtureData
     {

@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using OpenTK;
 using System.Diagnostics;
-using Xna = Microsoft.Xna.Framework;
+using System.Linq;
+using Game.Serialization;
+using OpenTK;
+using MathHelper = OpenTK.MathHelper;
 
-namespace Game
+namespace Game.Common
 {
     [DebuggerDisplay("Line {this[0]}, {this[1]}")]
     public class Line : IShallowClone<Line>
     {
-        public double Length { get { return Delta.Length; } }
-        Vector2d[] _vertices = new Vector2d[2];
-        public Vector2d Delta { get { return this[1] - this[0]; } }
-        public Vector2d Center { get { return (this[1] + this[0]) / 2; } }
+        public double Length => Delta.Length;
+        readonly Vector2d[] _vertices = new Vector2d[2];
+        public Vector2d Delta => this[1] - this[0];
+        public Vector2d Center => (this[1] + this[0]) / 2;
+
         public Vector2d this[int index]
         {
             get { return _vertices[index]; }
@@ -36,7 +37,7 @@ namespace Game
             this[1] = lineEnd;
         }
 
-        public Line(IList<Vector2d> line)
+        public Line(ICollection<Vector2d> line)
         {
             Debug.Assert(line.Count == 2);
             _vertices = line.ToArray();
@@ -44,7 +45,7 @@ namespace Game
 
         public Line(Vector2d center, double rotation, double length)
         {
-            Vector2d offset = new Vector2d((double)Math.Cos(rotation), (double)Math.Sin(rotation)) * length;
+            Vector2d offset = new Vector2d(Math.Cos(rotation), Math.Sin(rotation)) * length;
             this[0] = center + offset;
             this[1] = center - offset;
         }
@@ -53,6 +54,7 @@ namespace Game
         /// <summary>
         /// Returns whether a point is left or right of this line.
         /// </summary>
+        /// <param name="point"></param>
         /// <param name="ignoreEdgeCase">Whether or not to treat points exactly on the line as to the right of it instead.</param>
         public Side GetSideOf(Vector2d point, bool ignoreEdgeCase = true)
         {
@@ -61,7 +63,7 @@ namespace Game
             {
                 return Side.Left;
             }
-            else if (p == 0 && !ignoreEdgeCase)
+            if (p == 0 && !ignoreEdgeCase)
             {
                 return Side.Neither;
             }
@@ -92,7 +94,7 @@ namespace Game
         /// <summary>
         /// Check if a Vector2d is inside the Fov of this line.
         /// </summary>
-        public bool IsInsideFOV(Vector2d viewPoint, Vector2d v)
+        public bool IsInsideFov(Vector2d viewPoint, Vector2d v)
         {
             //Check if the lookPoint is on the opposite side of the line from the viewPoint.
             if (GetSideOf(viewPoint) == GetSideOf(v))
@@ -100,22 +102,18 @@ namespace Game
                 return false;
             }
             //Check if the lookPoint is within the Fov angles.
-            double Angle0 = MathExt.AngleVector(_vertices[0] - viewPoint);
-            double Angle1 = MathExt.AngleVector(_vertices[1] - viewPoint);
-            double AngleDiff = MathExt.AngleDiff(Angle0, Angle1);
-            double AngleLook = MathExt.AngleVector(v - viewPoint);
-            double AngleLookDiff = MathExt.AngleDiff(Angle0, AngleLook);
-            if (Math.Abs(AngleDiff) >= Math.Abs(AngleLookDiff) && Math.Sign(AngleDiff) == Math.Sign(AngleLookDiff))
-            {
-                return true;
-            }
-            return false;
+            double angle0 = MathExt.AngleVector(_vertices[0] - viewPoint);
+            double angle1 = MathExt.AngleVector(_vertices[1] - viewPoint);
+            double angleDiff = MathExt.AngleDiff(angle0, angle1);
+            double angleLook = MathExt.AngleVector(v - viewPoint);
+            double angleLookDiff = MathExt.AngleDiff(angle0, angleLook);
+            return Math.Abs(angleDiff) >= Math.Abs(angleLookDiff) && Math.Sign(angleDiff) == Math.Sign(angleLookDiff);
         }
 
         /// <summary>
         /// Check if a line is at least partially inside the Fov of this line.
         /// </summary>
-        public bool IsInsideFOV(Vector2d viewPoint, Line line)
+        public bool IsInsideFov(Vector2d viewPoint, Line line)
         {
             //Check if there is an intersection between the two lines.
             if (MathExt.LineLineIntersect(this, line, true).Exists)
@@ -124,27 +122,27 @@ namespace Game
             }
             //Check if there is an intersection between the first Fov line and line.
             IntersectCoord intersect0 = MathExt.LineLineIntersect(new Line(_vertices[0], 2 * _vertices[0] - viewPoint), line, false);
-            if (intersect0.TFirst >= 0 && intersect0.TLast >= 0 && intersect0.TLast < 1)
+            if (intersect0.First >= 0 && intersect0.Last >= 0 && intersect0.Last < 1)
             {
                 return true;
             }
             //Check if there is an intersection between the second Fov line and line.
             IntersectCoord intersect1 = MathExt.LineLineIntersect(new Line(_vertices[1], 2 * _vertices[1] - viewPoint), line, false);
-            if (intersect1.TFirst >= 0 && intersect1.TLast >= 0 && intersect1.TLast < 1)
+            if (intersect1.First >= 0 && intersect1.Last >= 0 && intersect1.Last < 1)
             {
                 return true;
             }
 
             //Check if the lookPoint is within the Fov angles.
-            double Angle0 = MathExt.AngleVector(_vertices[0] - viewPoint);
-            double Angle1 = MathExt.AngleVector(_vertices[1] - viewPoint);
-            double AngleDiff = MathExt.AngleDiff(Angle0, Angle1);
-            double AngleLook = MathExt.AngleVector(line[0] - viewPoint);
-            double AngleLookDiff = MathExt.AngleDiff(Angle0, AngleLook);
-            double AngleLook2 = MathExt.AngleVector(line[1] - viewPoint);
-            double AngleLookDiff2 = MathExt.AngleDiff(Angle0, AngleLook2);
+            double angle0 = MathExt.AngleVector(_vertices[0] - viewPoint);
+            double angle1 = MathExt.AngleVector(_vertices[1] - viewPoint);
+            double angleDiff = MathExt.AngleDiff(angle0, angle1);
+            double angleLook = MathExt.AngleVector(line[0] - viewPoint);
+            double angleLookDiff = MathExt.AngleDiff(angle0, angleLook);
+            double angleLook2 = MathExt.AngleVector(line[1] - viewPoint);
+            double angleLookDiff2 = MathExt.AngleDiff(angle0, angleLook2);
             //check if the first point is in the Fov
-            if (Math.Abs(AngleDiff) >= Math.Abs(AngleLookDiff) && Math.Sign(AngleDiff) == Math.Sign(AngleLookDiff))
+            if (Math.Abs(angleDiff) >= Math.Abs(angleLookDiff) && Math.Sign(angleDiff) == Math.Sign(angleLookDiff))
             {
                 if (GetSideOf(viewPoint) != GetSideOf(line[0]))
                 {
@@ -152,7 +150,7 @@ namespace Game
                 }
             }
             //check if the second point is in the Fov
-            if (Math.Abs(AngleDiff) >= Math.Abs(AngleLookDiff2) && Math.Sign(AngleDiff) == Math.Sign(AngleLookDiff2))
+            if (Math.Abs(angleDiff) >= Math.Abs(angleLookDiff2) && Math.Sign(angleDiff) == Math.Sign(angleLookDiff2))
             {
                 if (GetSideOf(viewPoint) != GetSideOf(line[1]))
                 {
@@ -193,18 +191,18 @@ namespace Game
         /// <summary>
         /// Returns the T value of the nearest point on this line to a vector.
         /// </summary>
-        /// <param name="point"></param>
+        /// <param name="v"></param>
+        /// <param name="isSegment"></param>
         /// <returns></returns>
         public double NearestT(Vector2d v, bool isSegment)
         {
-            Vector2d VDelta = _vertices[1] - _vertices[0];
-            double t = ((v.X - _vertices[0].X) * VDelta.X + (v.Y - _vertices[0].Y) * VDelta.Y) / (Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
+            Vector2d vDelta = _vertices[1] - _vertices[0];
+            double t = ((v.X - _vertices[0].X) * vDelta.X + (v.Y - _vertices[0].Y) * vDelta.Y) / (Math.Pow(vDelta.X, 2) + Math.Pow(vDelta.Y, 2));
             if (isSegment)
             {
                 t = MathHelper.Clamp(t, 0, 1);
             }
-            return (double)t;        
-            //return Vector2d.Dot(v - Vertices[0], Vertices[1] - Vertices[0]);
+            return t;
         }
 
         public Vector2d Nearest(Vector2d v, bool isSegment)
@@ -225,7 +223,7 @@ namespace Game
 
         public Line GetPerpendicularLeft(bool normalize = true)
         {
-            Line p = new Line(_vertices[0], (_vertices[1] - _vertices[0]).PerpendicularLeft + _vertices[0]);
+            var p = new Line(_vertices[0], (_vertices[1] - _vertices[0]).PerpendicularLeft + _vertices[0]);
             if (normalize)
             {
                 p.Normalize();
@@ -235,7 +233,7 @@ namespace Game
 
         public Line GetPerpendicularRight(bool normalize = true)
         {
-            Line p = new Line(_vertices[0], (_vertices[1] - _vertices[0]).PerpendicularRight + _vertices[0]);
+            var p = new Line(_vertices[0], (_vertices[1] - _vertices[0]).PerpendicularRight + _vertices[0]);
             if (normalize)
             {
                 p.Normalize();

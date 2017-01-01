@@ -6,6 +6,8 @@ using System.Linq;
 using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
 using System.Collections.Generic;
+using Game.Common;
+using Game.Physics;
 using OpenTK;
 using Game.Portals;
 

@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using OpenTK.Graphics.OpenGL;
-using System.IO;
 
-namespace Game
+namespace Game.Rendering
 {
     public class Shader
     {
-        public int ProgramID = -1;
-        public int VShaderID = -1;
-        public int GShaderID = -1;
-        public int FShaderID = -1;
-        public int AttributeCount = 0;
-        public int UniformCount = 0;
+        public int ProgramId = -1;
+        public int VShaderId = -1;
+        public int GShaderId = -1;
+        public int FShaderId = -1;
+        public int AttributeCount;
+        public int UniformCount;
 
         public Dictionary<string, AttributeInfo> Attributes = new Dictionary<string, AttributeInfo>();
         public Dictionary<string, UniformInfo> Uniforms = new Dictionary<string, UniformInfo>();
@@ -22,15 +22,15 @@ namespace Game
 
         public Shader()
         {
-            ProgramID = GL.CreateProgram();
+            ProgramId = GL.CreateProgram();
         }
 
-        private void loadShader(string code, ShaderType type, out int address)
+        void LoadShader(string code, ShaderType type, out int address)
         {
             address = GL.CreateShader(type);
             GL.ShaderSource(address, code);
             GL.CompileShader(address);
-            GL.AttachShader(ProgramID, address);
+            GL.AttachShader(ProgramId, address);
             //Console.WriteLine(GL.GetShaderInfoLog(address));
         }
 
@@ -39,31 +39,31 @@ namespace Game
             switch (type)
             {
                 case ShaderType.VertexShader:
-                    loadShader(code, type, out VShaderID);
+                    LoadShader(code, type, out VShaderId);
                     break;
                 case ShaderType.GeometryShader:
-                    loadShader(code, type, out GShaderID);
+                    LoadShader(code, type, out GShaderId);
                     break;
                 case ShaderType.FragmentShader:
-                    loadShader(code, type, out FShaderID);
+                    LoadShader(code, type, out FShaderId);
                     break;
             }
         }
 
         public void LoadShaderFromFile(string filename, ShaderType type)
         {
-            using (StreamReader sr = new StreamReader(filename))
+            using (var sr = new StreamReader(filename))
             {
                 switch (type)
                 {
                     case ShaderType.VertexShader:
-                        loadShader(sr.ReadToEnd(), type, out VShaderID);
+                        LoadShader(sr.ReadToEnd(), type, out VShaderId);
                         break;
                     case ShaderType.GeometryShader:
-                        loadShader(sr.ReadToEnd(), type, out GShaderID);
+                        LoadShader(sr.ReadToEnd(), type, out GShaderId);
                         break;
                     case ShaderType.FragmentShader:
-                        loadShader(sr.ReadToEnd(), type, out FShaderID);
+                        LoadShader(sr.ReadToEnd(), type, out FShaderId);
                         break;
                 }
             }
@@ -71,39 +71,39 @@ namespace Game
 
         public void Link()
         {
-            GL.LinkProgram(ProgramID);
+            GL.LinkProgram(ProgramId);
 
-            Console.WriteLine(GL.GetProgramInfoLog(ProgramID));
+            Console.WriteLine(GL.GetProgramInfoLog(ProgramId));
 
-            GL.GetProgram(ProgramID, GetProgramParameterName.ActiveAttributes, out AttributeCount);
-            GL.GetProgram(ProgramID, GetProgramParameterName.ActiveUniforms, out UniformCount);
+            GL.GetProgram(ProgramId, GetProgramParameterName.ActiveAttributes, out AttributeCount);
+            GL.GetProgram(ProgramId, GetProgramParameterName.ActiveUniforms, out UniformCount);
 
             for (int i = 0; i < AttributeCount; i++)
             {
-                AttributeInfo info = new AttributeInfo();
-                int length = 0;
+                var info = new AttributeInfo();
+                int length;
 
-                StringBuilder name = new StringBuilder();
+                var name = new StringBuilder();
 
-                GL.GetActiveAttrib(ProgramID, i, 256, out length, out info.size, out info.type, name);
+                GL.GetActiveAttrib(ProgramId, i, 256, out length, out info.Size, out info.Type, name);
 
-                info.name = name.ToString();
-                info.address = GL.GetAttribLocation(ProgramID, info.name);
+                info.Name = name.ToString();
+                info.Address = GL.GetAttribLocation(ProgramId, info.Name);
                 Attributes.Add(name.ToString(), info);
             }
 
             for (int i = 0; i < UniformCount; i++)
             {
-                UniformInfo info = new UniformInfo();
-                int length = 0;
+                var info = new UniformInfo();
+                int length;
 
-                StringBuilder name = new StringBuilder();
+                var name = new StringBuilder();
 
-                GL.GetActiveUniform(ProgramID, i, 256, out length, out info.size, out info.type, name);
+                GL.GetActiveUniform(ProgramId, i, 256, out length, out info.Size, out info.Type, name);
 
-                info.name = name.ToString();
+                info.Name = name.ToString();
                 Uniforms.Add(name.ToString(), info);
-                info.address = GL.GetUniformLocation(ProgramID, info.name);
+                info.Address = GL.GetUniformLocation(ProgramId, info.Name);
             }
         }
 
@@ -111,18 +111,18 @@ namespace Game
         {
             for (int i = 0; i < Attributes.Count; i++)
             {
-                uint buffer = 0;
+                uint buffer;
                 GL.GenBuffers(1, out buffer);
 
-                Buffers.Add(Attributes.Values.ElementAt(i).name, buffer);
+                Buffers.Add(Attributes.Values.ElementAt(i).Name, buffer);
             }
 
             for (int i = 0; i < Uniforms.Count; i++)
             {
-                uint buffer = 0;
+                uint buffer;
                 GL.GenBuffers(1, out buffer);
 
-                Buffers.Add(Uniforms.Values.ElementAt(i).name, buffer);
+                Buffers.Add(Uniforms.Values.ElementAt(i).Name, buffer);
             }
         }
 
@@ -130,7 +130,7 @@ namespace Game
         {
             for (int i = 0; i < Attributes.Count; i++)
             {
-                GL.EnableVertexAttribArray(Attributes.Values.ElementAt(i).address);
+                GL.EnableVertexAttribArray(Attributes.Values.ElementAt(i).Address);
             }
         }
 
@@ -138,7 +138,7 @@ namespace Game
         {
             for (int i = 0; i < Attributes.Count; i++)
             {
-                GL.DisableVertexAttribArray(Attributes.Values.ElementAt(i).address);
+                GL.DisableVertexAttribArray(Attributes.Values.ElementAt(i).Address);
             }
         }
 
@@ -146,7 +146,7 @@ namespace Game
         {
             if (Attributes.ContainsKey(name))
             {
-                return Attributes[name].address;
+                return Attributes[name].Address;
             }
             else
             {
@@ -158,7 +158,7 @@ namespace Game
         {
             if (Uniforms.ContainsKey(name))
             {
-                return Uniforms[name].address;
+                return Uniforms[name].Address;
             }
             else
             {
@@ -180,7 +180,7 @@ namespace Game
 
         public Shader(string vshader, string fshader, bool fromFile = false)
         {
-            ProgramID = GL.CreateProgram();
+            ProgramId = GL.CreateProgram();
 
             if (fromFile)
             {
@@ -199,7 +199,7 @@ namespace Game
 
         public Shader(string vshader, string gshader, string fshader, bool fromFile = false)
         {
-            ProgramID = GL.CreateProgram();
+            ProgramId = GL.CreateProgram();
 
             if (fromFile)
             {
@@ -220,18 +220,18 @@ namespace Game
 
         public class UniformInfo
         {
-            public string name = "";
-            public int address = -1;
-            public int size = 0;
-            public ActiveUniformType type;
+            public string Name = "";
+            public int Address = -1;
+            public int Size;
+            public ActiveUniformType Type;
         }
 
         public class AttributeInfo
         {
-            public string name = "";
-            public int address = -1;
-            public int size = 0;
-            public ActiveAttribType type;
+            public string Name = "";
+            public int Address = -1;
+            public int Size;
+            public ActiveAttribType Type;
         }
     }
 }

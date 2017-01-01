@@ -8,6 +8,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using Game.Common;
+using Game.Models;
+using Game.Serialization;
 
 namespace EditorLogic
 {
@@ -50,7 +53,7 @@ namespace EditorLogic
 
         public Model GetActorModel(EditorActor actor)
         {
-            Model model = Game.ModelFactory.CreatePolygon(actor.Vertices);
+            Model model = Game.Rendering.ModelFactory.CreatePolygon(actor.Vertices);
             model.SetTexture(Scene.Renderer.GetTexture("default.png"));
             return model;
         }

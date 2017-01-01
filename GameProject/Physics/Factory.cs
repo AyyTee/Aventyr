@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
+using Game.Rendering;
 using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Physics

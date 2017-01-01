@@ -4,6 +4,8 @@ using Game.Portals;
 using Game;
 using OpenTK;
 using System.Linq;
+using Game.Common;
+using Game.Physics;
 
 namespace UnitTest
 {

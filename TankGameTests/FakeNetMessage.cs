@@ -270,7 +270,7 @@ namespace TankGameTests
             throw new NotImplementedException();
         }
 
-        public IPEndPoint ReadIPEndPoint()
+        public IPEndPoint ReadIpEndPoint()
         {
             throw new NotImplementedException();
         }

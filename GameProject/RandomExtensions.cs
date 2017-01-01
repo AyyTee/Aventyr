@@ -22,7 +22,7 @@ namespace Game
 
         public static long NextLong(this Random rnd, long min, long max)
         {
-            EnsureMinLEQMax(ref min, ref max);
+            EnsureMinLeqMax(ref min, ref max);
             long numbersInRange = unchecked(max - min + 1);
             if (numbersInRange < 0)
                 throw new ArgumentException("Size of range between min and max must be less than or equal to Int64.MaxValue");
@@ -49,7 +49,7 @@ namespace Game
             return mod;
         }
 
-        static void EnsureMinLEQMax(ref long min, ref long max)
+        static void EnsureMinLeqMax(ref long min, ref long max)
         {
             if (min <= max)
                 return;

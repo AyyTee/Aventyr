@@ -9,6 +9,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
+using Game.Models;
+using Game.Physics;
 
 namespace EditorLogic
 {
@@ -41,7 +44,7 @@ namespace EditorLogic
             }
 
             #region create background
-            Model background = Game.ModelFactory.CreatePlane();
+            Model background = Game.Rendering.ModelFactory.CreatePlane();
             background.Texture = level.Renderer.GetTexture("grid.png");
             background.SetColor(new Vector3(1, 1, 0.5f));
             background.Transform.Position = new Vector3(0, 0, -5f);
@@ -134,7 +137,7 @@ namespace EditorLogic
                         EditorWall castWall = (EditorWall)e;
                         actor.SetBodyType(BodyType.Static);
                         //actor.Vertices = castWall.Vertices;
-                        entity.AddModel(Game.ModelFactory.CreatePolygon(castWall.Vertices));
+                        entity.AddModel(Game.Rendering.ModelFactory.CreatePolygon(castWall.Vertices));
                         //entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
                         dictionary.Add(castWall, actor);
                     }
@@ -177,7 +180,7 @@ namespace EditorLogic
                     Entity entity = new Entity(scene, new Transform2());
                     entity.Name = cast.Name;
                     entity.SetParent(actor);
-                    entity.AddModel(Game.ModelFactory.CreatePolygon(polygon));
+                    entity.AddModel(Game.Rendering.ModelFactory.CreatePolygon(polygon));
 
                     scene.SceneObjects.Add(player);
                     dictionary.Add(cast, player.Actor);

@@ -1,5 +1,6 @@
 ﻿using Game;
 using System.Runtime.Serialization;
+using Game.Common;
 
 namespace TankGame.Network
 {

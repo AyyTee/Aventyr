@@ -4,6 +4,7 @@ using OpenTK;
 using Game;
 using System.Linq;
 using System.Collections.Generic;
+using Game.Common;
 
 namespace UnitTest
 {

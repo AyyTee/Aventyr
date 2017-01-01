@@ -1,16 +1,11 @@
-﻿using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+using OpenTK.Graphics.OpenGL;
 
-namespace Game
+namespace Game.Rendering
 {
     [DataContract]
     public class TextureFile : ITexture
@@ -18,7 +13,7 @@ namespace Game
         /// <summary>
         /// If Filename doesn't point to a valid texture then this is used instead.
         /// </summary>
-        readonly static Texture _textureMissing;
+        static readonly Texture TextureMissing;
 
         Texture _texture;
         [DataMember]
@@ -39,11 +34,11 @@ namespace Game
             return _texture.GetId();
         }
 
-        private void LoadImage(Bitmap image)
+        void LoadImage(Bitmap image)
         {
-            int texID = GL.GenTexture();
+            int texId = GL.GenTexture();
 
-            GL.BindTexture(TextureTarget.Texture2D, texID);
+            GL.BindTexture(TextureTarget.Texture2D, texId);
             BitmapData data = image.LockBits(new Rectangle(0, 0, image.Width, image.Height),
                 ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
@@ -54,14 +49,14 @@ namespace Game
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-            _texture = new Texture(texID);
+            _texture = new Texture(texId);
         }
 
-        private void LoadImage()
+        void LoadImage()
         {
             try
             {
-                using (Bitmap file = new Bitmap(Filename))
+                using (var file = new Bitmap(Filename))
                 {
                     LoadImage(file);
                 }
@@ -69,7 +64,7 @@ namespace Game
             catch (FileNotFoundException)
             {
                 Debug.Assert(false, "Texture missing.");
-                _texture = _textureMissing;
+                _texture = TextureMissing;
             }
         }
     }

@@ -1,14 +1,13 @@
-﻿using OpenTK;
-using System;
+﻿using System;
 using System.Diagnostics;
-using System.Collections.Generic;
-using Xna = Microsoft.Xna.Framework;
-using System.ComponentModel;
-using System.Xml;
 using System.Runtime.Serialization;
-using Game.Common;
+using Game.Serialization;
+using OpenTK;
+using Vector2 = OpenTK.Vector2;
+using Vector3 = OpenTK.Vector3;
+using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Common
 {
     [DataContract]
     public class Transform2 : IShallowClone<Transform2>, IAlmostEqual<Transform2>
@@ -22,8 +21,8 @@ namespace Game
         /// </summary>
         [DataMember]
         public bool MirrorX { get; set; }
-        const float UNIFORM_SCALE_EPSILON = 0.0001f;
-        const float EQUALITY_EPSILON = 0.0001f;
+        const float UniformScaleEpsilon = 0.0001f;
+        const float EqualityEpsilon = 0.0001f;
 
         public float Rotation 
         { 
@@ -238,7 +237,7 @@ namespace Game
             Debug.Assert(Vector2Ext.IsReal(scale));
             Debug.Assert(scale.X != 0 && scale.Y != 0, "Scale vector must have non-zero components");
             Debug.Assert(
-                Math.Abs(scale.X) - Math.Abs(scale.Y) <= UNIFORM_SCALE_EPSILON,
+                Math.Abs(scale.X) - Math.Abs(scale.Y) <= UniformScaleEpsilon,
                 "Transforms with fixed scale cannot have non-uniform scale.");
 
             if (scale.Y > 0)
@@ -274,7 +273,7 @@ namespace Game
 
         public bool AlmostEqual(Transform2 transform)
         {
-            return AlmostEqual(transform, EQUALITY_EPSILON);
+            return AlmostEqual(transform, EqualityEpsilon);
         }
 
         public bool AlmostEqual(Transform2 transform, double delta)

@@ -11,7 +11,7 @@ namespace EditorWindow
 {
     public class RecentFilesList
     {
-        public const int MAX_SIZE = 10;
+        public const int MaxSize = 10;
         public MenuItem RecentFilesDropdown;
         public List<Tuple<MenuItem, string>> ButtonList = new List<Tuple<MenuItem, string>>();
         public ControllerFiles ControllerFiles;
@@ -21,7 +21,7 @@ namespace EditorWindow
             RecentFilesDropdown = recentFilesDropdown;
             ControllerFiles = controllerFiles;
             var filepaths = Properties.Settings.Default.RecentFilepaths;
-            for (int i = Math.Min(MAX_SIZE, filepaths.Count) - 1; i >= 0 ; i--)
+            for (int i = Math.Min(MaxSize, filepaths.Count) - 1; i >= 0 ; i--)
             {
                 InsertNewButton(filepaths[i]);
             }
@@ -40,8 +40,8 @@ namespace EditorWindow
             {
                 InsertNewButton(filepath);
 
-                Debug.Assert(MAX_SIZE > 0);
-                while (RecentFilesDropdown.Items.Count > MAX_SIZE)
+                Debug.Assert(MaxSize > 0);
+                while (RecentFilesDropdown.Items.Count > MaxSize)
                 {
                     ButtonList.RemoveAt(ButtonList.Count - 1);
                     RecentFilesDropdown.Items.RemoveAt(RecentFilesDropdown.Items.Count - 1);

@@ -8,6 +8,7 @@ using Game.Physics;
 using OpenTK;
 using Game.Portals;
 using Game;
+using Game.Common;
 
 namespace UnitTest
 {

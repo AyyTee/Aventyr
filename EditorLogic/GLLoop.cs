@@ -9,7 +9,7 @@ namespace EditorLogic
     /// <summary>
     /// Drives a GLControl instance to redraw at a specified frequency.
     /// </summary>
-    public class GLLoop
+    public class GlLoop
     {
         public Thread Thread { get; private set; }
         volatile bool _resize = false;
@@ -17,7 +17,7 @@ namespace EditorLogic
         volatile int _updatesPerSecond = -1;
         volatile bool _isStopping;
         volatile bool _isRunning;
-        Stopwatch stopwatch = new Stopwatch();
+        Stopwatch _stopwatch = new Stopwatch();
         readonly GLControl _control;
         readonly Controller _loopControl;
         RollingAverage _average;
@@ -27,7 +27,7 @@ namespace EditorLogic
         public bool IsStopping { get { return _isStopping; } private set { _isStopping = value; } }
         public bool IsRunning { get { return _isRunning; } private set { _isRunning = value; } }
 
-        public GLLoop(GLControl control, Controller loopControl)
+        public GlLoop(GLControl control, Controller loopControl)
         {
             _control = control;
             IsRunning = false;
@@ -91,9 +91,9 @@ namespace EditorLogic
                 _loopControl.OnLoad(new EventArgs());
                 while (!IsStopping)
                 {
-                    stopwatch.Stop();
-                    _average.Enqueue(stopwatch.ElapsedMilliseconds);
-                    stopwatch.Restart();
+                    _stopwatch.Stop();
+                    _average.Enqueue(_stopwatch.ElapsedMilliseconds);
+                    _stopwatch.Restart();
                     if (_resize)
                     {
                         _loopControl.OnResize(new EventArgs(), _control.ClientSize);
@@ -106,9 +106,9 @@ namespace EditorLogic
                     _control.SwapBuffers();
                     _control.Invalidate();
 
-                    stopwatch.Stop();
-                    int sleepLength = Math.Max(0, MillisecondsPerStep - (int)stopwatch.ElapsedMilliseconds);
-                    stopwatch.Start();
+                    _stopwatch.Stop();
+                    int sleepLength = Math.Max(0, MillisecondsPerStep - (int)_stopwatch.ElapsedMilliseconds);
+                    _stopwatch.Start();
                     Thread.Sleep(sleepLength);
                 }
                 _control.Context.MakeCurrent(null);

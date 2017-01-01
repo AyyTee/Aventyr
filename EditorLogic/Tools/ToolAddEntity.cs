@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using OpenTK.Input;
 using OpenTK;
 using EditorLogic.Command;
+using Game.Common;
+using Game.Models;
 
 namespace EditorLogic
 {
@@ -28,25 +30,25 @@ namespace EditorLogic
                 transform.Position = Controller.GetMouseWorld();
                 _mouseFollow.SetTransform(transform);
             }
-            if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape) || _input.MousePress(MouseButton.Right))
+            if (Input.KeyPress(Key.Delete) || Input.KeyPress(Key.Escape) || Input.MousePress(MouseButton.Right))
             {
                 Controller.SetTool(null);
             }
-            else if (_input.MousePress(MouseButton.Left))
+            else if (Input.MousePress(MouseButton.Left))
             {
                 EditorEntity editorEntity = new EditorEntity(Controller.Level);
-                Model m = Game.ModelFactory.CreateCube();
+                Model m = Game.Rendering.ModelFactory.CreateCube();
                 m.SetTexture(Controller.Renderer.Textures["default.png"]);
                 editorEntity.AddModel(m);
                 editorEntity.Name = "Editor Entity";
                 
                 Transform2.SetPosition(editorEntity, Controller.GetMouseWorld());
-                Controller.selection.Set(editorEntity);
+                Controller.Selection.Set(editorEntity);
 
                 AddEntity command = new AddEntity(Controller, editorEntity);
                 Controller.StateList.Add(command, true);
 
-                if (!_input.KeyDown(KeyBoth.Shift))
+                if (!Input.KeyDown(KeyBoth.Shift))
                 {
                     Controller.SetTool(null);
                 }
@@ -57,7 +59,7 @@ namespace EditorLogic
         {
             base.Enable();
             _mouseFollow = new Doodad(Controller.Level);
-            _mouseFollow.Models.Add(Game.ModelFactory.CreateCube());
+            _mouseFollow.Models.Add(Game.Rendering.ModelFactory.CreateCube());
             _mouseFollow.Models[0].SetTexture(Controller.Renderer.Textures["default.png"]);
             _mouseFollow.IsPortalable = true;
         }

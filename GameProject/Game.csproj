@@ -160,7 +160,7 @@
     <Compile Include="RandomExtensions.cs" />
     <Compile Include="Rendering\Camera2.cs" />
     <Compile Include="Rendering\CameraExt.cs" />
-    <Compile Include="Rendering\Models\Clip.cs" />
+    <Compile Include="Models\Clip.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="Serialization\DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
@@ -171,7 +171,7 @@
     <Compile Include="Portals\IPortal.cs" />
     <Compile Include="Portals\IPortalable.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
-    <Compile Include="Rendering\Models\IMesh.cs" />
+    <Compile Include="Models\IMesh.cs" />
     <Compile Include="Rendering\IRenderLayer.cs" />
     <Compile Include="IScene.cs" />
     <Compile Include="ISceneObject.cs" />
@@ -181,9 +181,9 @@
     <Compile Include="Common\ITransformable2.cs" />
     <Compile Include="ITreeNode.cs" />
     <Compile Include="IWall.cs" />
-    <Compile Include="Rendering\Models\Mesh.cs" />
+    <Compile Include="Models\Mesh.cs" />
     <Compile Include="Common\PolygonExt.cs" />
-    <Compile Include="Rendering\Models\ReadOnlyMesh.cs" />
+    <Compile Include="Models\ReadOnlyMesh.cs" />
     <Compile Include="Rendering\ModelLoader.cs" />
     <Compile Include="EdgeData.cs" />
     <Compile Include="Entity.cs" />
@@ -220,14 +220,14 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Shader.cs" />
-    <Compile Include="Rendering\Models\Model.cs" />
+    <Compile Include="Models\Model.cs" />
     <Compile Include="Common\Transform2.cs" />
     <Compile Include="Animation\BezierCurve.cs" />
     <Compile Include="Tree.cs" />
-    <Compile Include="Rendering\Models\Triangle.cs" />
+    <Compile Include="Models\Triangle.cs" />
     <Compile Include="Common\Vector2Ext.cs" />
     <Compile Include="Common\Vector3Ext.cs" />
-    <Compile Include="Rendering\Models\Vertex.cs" />
+    <Compile Include="Models\Vertex.cs" />
     <Compile Include="WallCoord.cs" />
     <Compile Include="Window.cs" />
     <Compile Include="Physics\WorldExt.cs" />

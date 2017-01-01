@@ -91,17 +91,17 @@ namespace Game
             return node.Parent == null ? node : FindRoot(node.Parent);
         }
 
-        public static List<S> FindByType<S>(T root) where S : class, T
+        public static List<TS> FindByType<TS>(T root) where TS : class, T
         {
-            List<S> list = new List<S>();
-            S nodeCast = root as S;
+            List<TS> list = new List<TS>();
+            TS nodeCast = root as TS;
             if (nodeCast != null)
             {
                 list.Add(nodeCast);
             }
             foreach (T p in root.Children)
             {
-                list.AddRange(FindByType<S>(p));
+                list.AddRange(FindByType<TS>(p));
             }
             return list;
         }

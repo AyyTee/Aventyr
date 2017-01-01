@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
 using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Portals
@@ -51,7 +52,7 @@ namespace Game.Portals
                         if ((minDist == -1 || minDist < dist))
                         {
                             minDist = dist;
-                            wallCoord = new WallCoord(wall, i, (float)coord.TLast);
+                            wallCoord = new WallCoord(wall, i, (float)coord.Last);
                         }
                     }
                 }

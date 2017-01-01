@@ -6,11 +6,12 @@ using Xna = Microsoft.Xna.Framework;
 using System.ComponentModel;
 using System.Xml;
 using System.Runtime.Serialization;
+using Game.Serialization;
 
 namespace Game.Common
 {
     [DataContract]
-    public class Transform2d : IShallowClone<Transform2d>, IAlmostEqual<Transform2d>
+    public class Transform2D : IShallowClone<Transform2D>, IAlmostEqual<Transform2D>
     {
         [DataMember]
         Vector2d _position = new Vector2d();
@@ -21,8 +22,8 @@ namespace Game.Common
         /// </summary>
         [DataMember]
         public bool MirrorX { get; set; }
-        const double UNIFORM_SCALE_EPSILON = 0.0001f;
-        const double EQUALITY_EPSILON = 0.0001f;
+        const double UniformScaleEpsilon = 0.0001f;
+        const double EqualityEpsilon = 0.0001f;
 
         public double Rotation 
         { 
@@ -67,26 +68,26 @@ namespace Game.Common
         }
 
         #region Constructors
-        public Transform2d()
+        public Transform2D()
         {
         }
 
-        public Transform2d(Vector2d position)
+        public Transform2D(Vector2d position)
             : this(position, 1)
         {
         }
 
-        public Transform2d(Vector2d position, double size)
+        public Transform2D(Vector2d position, double size)
             : this(position, size, 0f)
         {
         }
 
-        public Transform2d(Vector2d position, double scale, double rotation)
+        public Transform2D(Vector2d position, double scale, double rotation)
             : this(position, scale, rotation, false)
         {
         }
 
-        public Transform2d(Vector2d position, double scale, double rotation, bool mirrorX)
+        public Transform2D(Vector2d position, double scale, double rotation, bool mirrorX)
         {
             Position = position;
             Size = scale;
@@ -95,9 +96,9 @@ namespace Game.Common
         }
         #endregion
 
-        public Transform2d ShallowClone()
+        public Transform2D ShallowClone()
         {
-            Transform2d clone = new Transform2d();
+            Transform2D clone = new Transform2D();
             clone.Position = Position;
             clone.Size = Size;
             clone.MirrorX = MirrorX;
@@ -142,9 +143,9 @@ namespace Game.Common
         /// Transform(transform).GetMatrix();
         /// approximately equals 
         /// GetMatrix() * transform.GetMatrix();</remarks>
-        public Transform2d Transform(Transform2d transform)
+        public Transform2D Transform(Transform2D transform)
         {
-            Transform2d output = ShallowClone();
+            Transform2D output = ShallowClone();
             if (transform.MirrorX)
             {
                 output.Rotation *= -1;
@@ -164,9 +165,9 @@ namespace Game.Common
         /// Inverted().GetMatrix();
         /// approximately equals 
         /// GetMatrix().Inverted();</remarks>
-        public Transform2d Inverted()
+        public Transform2D Inverted()
         {
-            Transform2d invert = new Transform2d();
+            Transform2D invert = new Transform2D();
             if ((Scale.Y < 0) == (Scale.X < 0))
             {
                 invert.Rotation = -Rotation;
@@ -182,9 +183,9 @@ namespace Game.Common
             return invert;
         }
 
-        public Transform2d Add(Transform2d transform)
+        public Transform2D Add(Transform2D transform)
         {
-            Transform2d output = ShallowClone();
+            Transform2D output = ShallowClone();
             output.Rotation += transform.Rotation;
             output.Size += transform.Size;
             output.MirrorX = output.MirrorX != transform.MirrorX;
@@ -195,9 +196,9 @@ namespace Game.Common
         /// <summary>
         /// Returns the result of this minus another transform.
         /// </summary>
-        public Transform2d Minus(Transform2d transform)
+        public Transform2D Minus(Transform2D transform)
         {
-            Transform2d output = ShallowClone();
+            Transform2D output = ShallowClone();
             output.Rotation -= transform.Rotation;
             output.Size -= transform.Size;
             output.MirrorX = output.MirrorX != transform.MirrorX;
@@ -208,9 +209,9 @@ namespace Game.Common
         /// <summary>
         /// Returns a transform that is componentwise multiplication of this with a scalar value.
         /// </summary>
-        public Transform2d Multiply(double scalar)
+        public Transform2D Multiply(double scalar)
         {
-            Transform2d output = ShallowClone();
+            Transform2D output = ShallowClone();
             output.Rotation = Rotation * scalar;
             output.Size = Size * scalar;
             output.Position = Position * scalar;
@@ -222,7 +223,7 @@ namespace Game.Common
             Debug.Assert(Vector2Ext.IsReal(scale));
             Debug.Assert(scale.X != 0 && scale.Y != 0, "Scale vector must have non-zero components");
             Debug.Assert(
-                Math.Abs(scale.X) - Math.Abs(scale.Y) <= UNIFORM_SCALE_EPSILON,
+                Math.Abs(scale.X) - Math.Abs(scale.Y) <= UniformScaleEpsilon,
                 "Transforms with fixed scale cannot have non-uniform scale.");
 
             if (scale.Y > 0)
@@ -256,12 +257,12 @@ namespace Game.Common
             }
         }
 
-        public bool AlmostEqual(Transform2d transform)
+        public bool AlmostEqual(Transform2D transform)
         {
-            return AlmostEqual(transform, EQUALITY_EPSILON);
+            return AlmostEqual(transform, EqualityEpsilon);
         }
 
-        public bool AlmostEqual(Transform2d transform, double delta)
+        public bool AlmostEqual(Transform2D transform, double delta)
         {
             if (transform != null)
             {
@@ -277,7 +278,7 @@ namespace Game.Common
             return false;
         }
 
-        public bool AlmostEqual(Transform2d transform, double delta, double percent)
+        public bool AlmostEqual(Transform2D transform, double delta, double percent)
         {
             if ((Math.Abs(1 - transform.Rotation / Rotation) <= percent || Math.Abs(transform.Rotation - Rotation) <= delta) &&
                 (Math.Abs(1 - transform.Scale.X / Scale.X) <= percent || Math.Abs(transform.Scale.X - Scale.X) <= delta) &&
@@ -290,46 +291,46 @@ namespace Game.Common
             return false;
         }
 
-        public static Transform2d CreateVelocity()
+        public static Transform2D CreateVelocity()
         {
             return CreateVelocity(new Vector2d());
         }
 
-        public static Transform2d CreateVelocity(Vector2d linearVelocity)
+        public static Transform2D CreateVelocity(Vector2d linearVelocity)
         {
             return CreateVelocity(linearVelocity, 0);
         }
 
-        public static Transform2d CreateVelocity(Vector2d linearVelocity, double angularVelocity)
+        public static Transform2D CreateVelocity(Vector2d linearVelocity, double angularVelocity)
         {
             return CreateVelocity(linearVelocity, angularVelocity, 0);
         }
 
-        public static Transform2d CreateVelocity(Vector2d linearVelocity, double angularVelocity, double scalarVelocity)
+        public static Transform2D CreateVelocity(Vector2d linearVelocity, double angularVelocity, double scalarVelocity)
         {
-            return new Transform2d(linearVelocity, scalarVelocity, angularVelocity);
+            return new Transform2D(linearVelocity, scalarVelocity, angularVelocity);
         }
 
-        public static bool operator ==(Transform2d left, Transform2d right)
+        public static bool operator ==(Transform2D left, Transform2D right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(Transform2d left, Transform2d right)
+        public static bool operator !=(Transform2D left, Transform2D right)
         {
             return !Equals(left, right);
         }
 
         public override bool Equals(object obj)
         {
-            if (obj is Transform2d)
+            if (obj is Transform2D)
             {
-                return Equals(this, (Transform2d)obj);
+                return Equals(this, (Transform2D)obj);
             }
             return false;
         }
 
-        public static bool Equals(Transform2d t0, Transform2d t1)
+        public static bool Equals(Transform2D t0, Transform2D t1)
         {
             if (((object)t0) == null && ((object)t1) == null)
             {
@@ -354,12 +355,12 @@ namespace Game.Common
                 Position.GetHashCode();
         }
 
-        public static explicit operator Transform2d(Transform2 t)
+        public static explicit operator Transform2D(Transform2 t)
         {
-            return new Transform2d((Vector2d)t.Position, t.Size, t.Rotation, t.MirrorX);
+            return new Transform2D((Vector2d)t.Position, t.Size, t.Rotation, t.MirrorX);
         }
 
-        public static explicit operator Transform2(Transform2d t)
+        public static explicit operator Transform2(Transform2D t)
         {
             return new Transform2((Vector2)t.Position, (float)t.Size, (float)t.Rotation, t.MirrorX);
         }

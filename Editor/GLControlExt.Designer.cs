@@ -1,6 +1,6 @@
 ﻿namespace EditorWindow
 {
-    partial class GLControlExt
+    partial class GlControlExt
     {
         /// <summary> 
         /// Required designer variable.

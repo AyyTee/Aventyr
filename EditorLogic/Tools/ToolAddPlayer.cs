@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
 
 namespace EditorLogic.Tools
 {
@@ -26,11 +27,11 @@ namespace EditorLogic.Tools
                 transform.Position = Controller.GetMouseWorld();
                 _mouseFollow.SetTransform(transform);
             }
-            if (_input.KeyPress(Key.Delete) || _input.KeyPress(Key.Escape) || _input.MousePress(MouseButton.Right))
+            if (Input.KeyPress(Key.Delete) || Input.KeyPress(Key.Escape) || Input.MousePress(MouseButton.Right))
             {
                 Controller.SetTool(null);
             }
-            else if (_input.MousePress(MouseButton.Left))
+            else if (Input.MousePress(MouseButton.Left))
             {
                 EditorPlayer editorActor = new EditorPlayer(Controller.Level);
                 Transform2.SetPosition(editorActor, Controller.GetMouseWorld());

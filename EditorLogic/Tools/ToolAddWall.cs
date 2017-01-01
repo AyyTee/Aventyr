@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
+using Game.Models;
 
 namespace EditorLogic
 {
@@ -35,7 +37,7 @@ namespace EditorLogic
         public override void Update()
         {
             base.Update();
-            if (_input.KeyPress(Key.Delete))
+            if (Input.KeyPress(Key.Delete))
             {
                 if (_vertices.Count > 0)
                 {
@@ -43,11 +45,11 @@ namespace EditorLogic
                     UpdatePolygon();
                 }
             }
-            else if (_input.MousePress(MouseButton.Right))
+            else if (Input.MousePress(MouseButton.Right))
             {
                 Controller.SetTool(null);
             }
-            else if (_input.MousePress(MouseButton.Left))
+            else if (Input.MousePress(MouseButton.Left))
             {
                 Vector2 mousePos = Controller.GetMouseWorld();
                 if (mousePos != _vertices.LastOrDefault())
@@ -89,7 +91,7 @@ namespace EditorLogic
                 {
                     colors[p.EdgeIndex] = new Vector3(1f, 0.2f, 0.2f);
                 }
-                Model model = Game.ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
+                Model model = Game.Rendering.ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
                 model.Transform.Position = new Vector3(0, 0, 6);
                 //model.SetShader("default");
                 _polygon.Models.Add(model);

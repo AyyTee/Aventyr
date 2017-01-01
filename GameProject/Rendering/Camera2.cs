@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
+using Game.Common;
 using Game.Portals;
+using Game.Serialization;
 using OpenTK;
 
 namespace Game.Rendering
@@ -72,7 +74,7 @@ namespace Game.Rendering
             destination.ViewOffset = ViewOffset;
         }
 
-        public override void SetTransform(Transform2 transform)
+        public sealed override void SetTransform(Transform2 transform)
         {
             Transform = transform.ShallowClone();
             base.SetTransform(transform);

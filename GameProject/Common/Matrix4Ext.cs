@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FarseerPhysics;
 using OpenTK;
 
-namespace Game
+namespace Game.Common
 {
     public static class Matrix4Ext
     {
-        private const float EQUALITY_EPSILON = 0.0001f;
-        private const int MATRIX_4_SIZE = 4;
+        private const float EqualityEpsilon = 0.0001f;
+        private const int Matrix4Size = 4;
         public static Matrix4 ConvertTo(FarseerPhysics.Common.Transform transform)
         {
             Matrix4 matrix = Matrix4.CreateRotationZ(transform.q.GetAngle());
@@ -32,14 +27,14 @@ namespace Game
 
         public static bool AlmostEqual(Matrix4 matrix0, Matrix4 matrix1)
         {
-            return AlmostEqual(matrix0, matrix1, EQUALITY_EPSILON);
+            return AlmostEqual(matrix0, matrix1, EqualityEpsilon);
         }
 
         public static bool AlmostEqual(Matrix4 matrix0, Matrix4 matrix1, float delta)
         {
-            for (int i = 0; i < MATRIX_4_SIZE; i++)
+            for (int i = 0; i < Matrix4Size; i++)
             {
-                for (int j = 0; j < MATRIX_4_SIZE; j++)
+                for (int j = 0; j < Matrix4Size; j++)
                 {
                     if (Math.Abs(matrix0[i, j] - matrix1[i, j]) > delta)
                     {
@@ -52,9 +47,9 @@ namespace Game
 
         public static bool AlmostEqual(Matrix4 matrix0, Matrix4 matrix1, float delta, float percent)
         {
-            for (int i = 0; i < MATRIX_4_SIZE; i++)
+            for (int i = 0; i < Matrix4Size; i++)
             {
-                for (int j = 0; j < MATRIX_4_SIZE; j++)
+                for (int j = 0; j < Matrix4Size; j++)
                 {
                     if (Math.Abs(matrix0[i, j] - matrix1[i, j]) > delta && Math.Abs(1 - matrix1[i, j] / matrix0[i, j]) > percent)
                     {
@@ -67,14 +62,14 @@ namespace Game
 
         public static bool AlmostEqual(Matrix4d matrix0, Matrix4d matrix1)
         {
-            return AlmostEqual(matrix0, matrix1, EQUALITY_EPSILON);
+            return AlmostEqual(matrix0, matrix1, EqualityEpsilon);
         }
 
         public static bool AlmostEqual(Matrix4d matrix0, Matrix4d matrix1, double delta)
         {
-            for (int i = 0; i < MATRIX_4_SIZE; i++)
+            for (int i = 0; i < Matrix4Size; i++)
             {
-                for (int j = 0; j < MATRIX_4_SIZE; j++)
+                for (int j = 0; j < Matrix4Size; j++)
                 {
                     if (Math.Abs(matrix0[i, j] - matrix1[i, j]) > delta)
                     {
@@ -87,9 +82,9 @@ namespace Game
 
         public static bool AlmostEqual(Matrix4d matrix0, Matrix4d matrix1, double delta, double percent)
         {
-            for (int i = 0; i < MATRIX_4_SIZE; i++)
+            for (int i = 0; i < Matrix4Size; i++)
             {
-                for (int j = 0; j < MATRIX_4_SIZE; j++)
+                for (int j = 0; j < Matrix4Size; j++)
                 {
                     if (Math.Abs(matrix0[i, j] - matrix1[i, j]) > delta && Math.Abs(1 - matrix1[i, j] / matrix0[i, j]) > percent)
                     {

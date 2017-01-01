@@ -1,11 +1,7 @@
-﻿using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Game.Common;
+using OpenTK;
 
-namespace Game
+namespace Game.Rendering
 {
     public interface ICamera2 : ISceneObject
     {

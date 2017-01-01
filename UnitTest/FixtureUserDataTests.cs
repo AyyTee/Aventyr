@@ -5,6 +5,7 @@ using OpenTK;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Collision.Shapes;
 using System.Linq;
+using Game.Common;
 using Game.Portals;
 using Game.Physics;
 

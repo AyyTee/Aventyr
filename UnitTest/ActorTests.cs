@@ -6,6 +6,8 @@ using FarseerPhysics.Collision.Shapes;
 using System.Collections.Generic;
 using Game.Portals;
 using System.Linq;
+using Game.Common;
+using Game.Physics;
 using Xna = Microsoft.Xna.Framework;
 
 namespace UnitTest
@@ -13,7 +15,7 @@ namespace UnitTest
     [TestClass]
     public class ActorTests
     {
-        public const float EQUALITY_EPSILON = 0.0001f;
+        public const float EqualityEpsilon = 0.0001f;
 
         [TestMethod]
         public void SetTransformTest0()
@@ -50,8 +52,8 @@ namespace UnitTest
 
             for (int i = 0; i < fixture.Count; i++)
             {
-                Assert.AreEqual(fixture[i].X, polygon.Vertices[i].X, EQUALITY_EPSILON);
-                Assert.AreEqual(fixture[i].Y, polygon.Vertices[i].Y, EQUALITY_EPSILON);
+                Assert.AreEqual(fixture[i].X, polygon.Vertices[i].X, EqualityEpsilon);
+                Assert.AreEqual(fixture[i].Y, polygon.Vertices[i].Y, EqualityEpsilon);
             }
         }
 

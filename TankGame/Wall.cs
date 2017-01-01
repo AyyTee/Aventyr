@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 using FarseerPhysics.Dynamics;
+using Game.Physics;
+using Game.Rendering;
 using TankGame.Network;
 
 namespace TankGame

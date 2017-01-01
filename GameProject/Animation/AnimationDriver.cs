@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
 
 namespace Game.Animation
 {
@@ -12,7 +13,7 @@ namespace Game.Animation
     public class AnimationDriver : ISceneObject, IStep
     {
         [DataMember]
-        public Dictionary<IPortalable, CurveTransform2> animated = new Dictionary<IPortalable, CurveTransform2>();
+        public Dictionary<IPortalable, CurveTransform2> Animated = new Dictionary<IPortalable, CurveTransform2>();
 
         public AnimationDriver()
         {
@@ -20,19 +21,19 @@ namespace Game.Animation
 
         public void Add(IPortalable portalable, CurveTransform2 curve)
         {
-            animated.Add(portalable, curve.ShallowClone());
+            Animated.Add(portalable, curve.ShallowClone());
             portalable.EnterPortal += (data, transformPrev, velocityPrev) => {
-                animated[portalable].EnterPortal(data.EntrancePortal, data.EntrancePortal.Linked);
+                Animated[portalable].EnterPortal(data.EntrancePortal, data.EntrancePortal.Linked);
             };
         }
 
         public void StepBegin(IScene scene, float stepSize)
         {
-            foreach (IPortalable p in animated.Keys)
+            foreach (IPortalable p in Animated.Keys)
             {
-                Transform2 velocity = animated[p].GetVelocity((float)(scene.Time));
+                Transform2 velocity = Animated[p].GetVelocity((float)(scene.Time));
                 p.SetVelocity(velocity);
-                Transform2 t = animated[p].GetTransform((float)(scene.Time));
+                Transform2 t = Animated[p].GetTransform((float)(scene.Time));
                 p.SetTransform(t);
             }
         }

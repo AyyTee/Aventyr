@@ -1,13 +1,10 @@
-﻿using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+using Game.Common;
+using Game.Serialization;
+using OpenTK;
 
-namespace Game
+namespace Game.Models
 {
     [DataContract, DebuggerDisplay("Vertex {Position}")]
     public class Vertex : IShallowClone<Vertex>

@@ -9,6 +9,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
+using Game.Models;
+using Game.Rendering;
+using Game.Serialization;
 
 namespace EditorLogic
 {
@@ -87,7 +91,7 @@ namespace EditorLogic
         public virtual List<Model> GetModels()
         {
             List<Model> models = new List<Model>();
-            Model marker = Game.ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
+            Model marker = Game.Rendering.ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
             marker.Transform.Position = new Vector3(0, 0, DrawDepth.EntityMarker);
 
             if (IsSelected)
@@ -106,9 +110,9 @@ namespace EditorLogic
 
         public virtual void SetScene(EditorScene destination)
         {
-            Scene._children.Remove(this);
+            Scene.Children.Remove(this);
             Scene = destination;
-            Scene._children.Add(this);
+            Scene.Children.Add(this);
         }
 
         public virtual HashSet<IDeepClone> GetCloneableRefs()
@@ -154,7 +158,7 @@ namespace EditorLogic
             Debug.Assert(scene != null);
             RemoveSelf();
             Scene = scene;
-            Scene._children.Add(this);
+            Scene.Children.Add(this);
             Parent = null;
         }
 
@@ -259,7 +263,7 @@ namespace EditorLogic
             }
             if (_scene != null)
             {
-                _scene._children.Remove(this);
+                _scene.Children.Remove(this);
                 Scene = null;
             }
         }

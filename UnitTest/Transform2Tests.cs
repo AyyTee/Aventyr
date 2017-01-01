@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
+using Game.Common;
 using OpenTK;
 
 namespace UnitTest

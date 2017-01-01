@@ -12,8 +12,8 @@ namespace EditorLogic
 {
     public static class Serializer
     {
-        public const string fileExtension = "xml";
-        public const string fileExtensionName = "Save File";
+        public const string FileExtension = "xml";
+        public const string FileExtensionName = "Save File";
 
         private static IEnumerable<Type> GetKnownTypes()
         {

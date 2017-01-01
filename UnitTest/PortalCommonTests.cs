@@ -4,6 +4,7 @@ using Game;
 using Game.Portals;
 using OpenTK;
 using FarseerPhysics.Dynamics;
+using Game.Common;
 using Game.Physics;
 
 namespace UnitTest

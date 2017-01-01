@@ -1,24 +1,27 @@
-﻿using ClipperLib;
-using Game.Common;
-using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using ClipperLib;
+using Game.Models;
+using OpenTK;
+using MathHelper = OpenTK.MathHelper;
+using Vector2 = OpenTK.Vector2;
+using Vector3 = OpenTK.Vector3;
 using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Common
 {
     public struct IntersectCoord
     {
         public bool Exists;
         public Vector2d Position;
         /// <summary>T value for the first line.</summary>
-        public double TFirst;
+        public double First;
         /// <summary>T value for the second line.</summary>
-        public double TLast;
+        public double Last;
 
-        const float EQUALITY_EPSILON = 0.0000001f;
+        const float EqualityEpsilon = 0.0000001f;
 
         public bool Equals(IntersectCoord intersect)
         {
@@ -27,61 +30,58 @@ namespace Game
                 return true;
             }
             return Exists == intersect.Exists &&
-                (Position - intersect.Position).Length < EQUALITY_EPSILON &&
-                Math.Abs(TFirst - intersect.TFirst) < EQUALITY_EPSILON &&
-                Math.Abs(TLast - intersect.TLast) < EQUALITY_EPSILON;
+                (Position - intersect.Position).Length < EqualityEpsilon &&
+                Math.Abs(First - intersect.First) < EqualityEpsilon &&
+                Math.Abs(Last - intersect.Last) < EqualityEpsilon;
         }
     }
 
     public static class MathExt
     {
-        public const double TAU = Math.PI * 2;
+        public const double Tau = Math.PI * 2;
 
         #region Lerp
-        static public double Lerp(double Value0, double Value1, double T)
+        public static double Lerp(double value0, double value1, double T)
         {
-            return Value0 * (1 - T) + Value1 * T;
+            return value0 * (1 - T) + value1 * T;
         }
 
-        static public Vector2d Lerp(Vector2d Vector0, Vector2d Vector1, double T)
+        public static Vector2d Lerp(Vector2d vector0, Vector2d vector1, double T)
         {
-            return Vector0 * (1 - T) + Vector1 * T;
+            return vector0 * (1 - T) + vector1 * T;
         }
 
-        static public Vector2 Lerp(Vector2 Vector0, Vector2 Vector1, float T)
+        public static Vector2 Lerp(Vector2 vector0, Vector2 vector1, float T)
         {
-            return Vector0 * (1 - T) + Vector1 * T;
+            return vector0 * (1 - T) + vector1 * T;
         }
 
-        static public Vector3d Lerp(Vector3d Vector0, Vector3d Vector1, double T)
+        public static Vector3d Lerp(Vector3d vector0, Vector3d vector1, double T)
         {
-            return Vector0 * (1 - T) + Vector1 * T;
+            return vector0 * (1 - T) + vector1 * T;
         }
 
-        static public Vector3 Lerp(Vector3 Vector0, Vector3 Vector1, float T)
+        public static Vector3 Lerp(Vector3 vector0, Vector3 vector1, float T)
         {
-            return Vector0 * (1 - T) + Vector1 * T;
+            return vector0 * (1 - T) + vector1 * T;
         }
 
-        static public double LerpAngle(double Angle0, double Angle1, double T, bool IsClockwise)
+        public static double LerpAngle(double angle0, double angle1, double T, bool isClockwise)
         {
-            if (IsClockwise == true)
+            if (isClockwise)
             {
-                if (Angle0 <= Angle1)
+                if (angle0 <= angle1)
                 {
-                    Angle0 += 2 * Math.PI;
+                    angle0 += 2 * Math.PI;
                 }
-                return Lerp(Angle0, Angle1, T) % (2 * Math.PI);
+                return Lerp(angle0, angle1, T) % (2 * Math.PI);
             }
-            else
+            if (angle0 > angle1)
             {
-                if (Angle0 > Angle1)
-                {
-                    Angle1 += 2 * Math.PI;
-                }
-
-                return Lerp(Angle0, Angle1, T) % (2 * Math.PI);
+                angle1 += 2 * Math.PI;
             }
+
+            return Lerp(angle0, angle1, T) % (2 * Math.PI);
         }
         #endregion
         #region Nearest
@@ -90,12 +90,12 @@ namespace Game
         /// </summary>
         public static PolygonCoord PointPolygonNearest(IList<Vector2> polygon, Vector2 point)
         {
-            PolygonCoord nearest = new PolygonCoord(0, 0);
+            var nearest = new PolygonCoord(0, 0);
             double distanceMin = -1;
             for (int i = 0; i < polygon.Count; i++)
             {
                 int iNext = (i + 1) % polygon.Count;
-                LineF edge = new LineF(polygon[i], polygon[iNext]);
+                var edge = new LineF(polygon[i], polygon[iNext]);
                 double distance = PointLineDistance(point, edge, true);
                 if (distanceMin == -1 || distance < distanceMin)
                 {
@@ -110,20 +110,20 @@ namespace Game
         #region Distance
         public static double PointLineDistance(Vector2d point, Line line, bool isSegment)
         {
-            Vector2d V;
-            Vector2d VDelta = line[1] - line[0];
-            if ((VDelta.X == 0) && (VDelta.Y == 0))
+            Vector2d v;
+            Vector2d vDelta = line[1] - line[0];
+            if ((vDelta.X == 0) && (vDelta.Y == 0))
             {
-                V = line[0];
+                v = line[0];
             }
             else
             {
-                double t = ((point.X - line[0].X) * VDelta.X + (point.Y - line[0].Y) * VDelta.Y) / (Math.Pow(VDelta.X, 2) + Math.Pow(VDelta.Y, 2));
+                double t = ((point.X - line[0].X) * vDelta.X + (point.Y - line[0].Y) * vDelta.Y) / (Math.Pow(vDelta.X, 2) + Math.Pow(vDelta.Y, 2));
                 Debug.Assert(double.IsNaN(t) == false);
                 if (isSegment) { t = MathHelper.Clamp(t, 0, 1); }
-                V = line[0] + Vector2d.Multiply(VDelta, t);
+                v = line[0] + Vector2d.Multiply(vDelta, t);
             }
-            double distance = (point - V).Length;
+            double distance = (point - v).Length;
             Debug.Assert(distance >= 0);
             return distance;
         }
@@ -135,12 +135,12 @@ namespace Game
 
         public static double PointLineDistance(Vector2 point, LineF line, bool isSegment)
         {
-            return PointLineDistance((Vector2d)point, (Line)line, isSegment);
+            return PointLineDistance((Vector2d)point, line, isSegment);
         }
 
-        static public double PointPolygonDistance(Vector2 point, IList<Vector2> polygon)
+        public static double PointPolygonDistance(Vector2 point, IList<Vector2> polygon)
         {
-            LineF edge = new LineF(polygon[0], polygon[1]);
+            var edge = new LineF(polygon[0], polygon[1]);
             double distMin = PointLineDistance(point, edge, true);
             for (int i = 1; i < polygon.Count; i++)
             {
@@ -189,9 +189,9 @@ namespace Game
         }
         #endregion
         #region Inside
-        static public bool PointInRectangle(Vector2d V0, Vector2d V1, Vector2d Point)
+        public static bool PointInRectangle(Vector2d v0, Vector2d v1, Vector2d point)
         {
-            if (((Point.X >= V0.X && Point.X <= V1.X) || (Point.X <= V0.X && Point.X >= V1.X)) && ((Point.Y >= V0.Y && Point.Y <= V1.Y) || (Point.Y <= V0.Y && Point.Y >= V1.Y)))
+            if (((point.X >= v0.X && point.X <= v1.X) || (point.X <= v0.X && point.X >= v1.X)) && ((point.Y >= v0.Y && point.Y <= v1.Y) || (point.Y <= v0.Y && point.Y >= v1.Y)))
             {
                 return true;
             }
@@ -201,6 +201,7 @@ namespace Game
         /// <summary>
         /// Checks if the line segment is at least partially contained in a polygon
         /// </summary>
+        /// <param name="line"></param>
         /// <param name="polygon">A closed polygon</param>
         /// <returns></returns>
         public static bool LineInPolygon(LineF line, IList<Vector2> polygon)
@@ -246,13 +247,13 @@ namespace Game
         /// <param name="lineBegin">Beginning of line segment</param>
         /// <param name="lineEnd">Ending of line segment</param>
         /// <returns>True if the line is contained within or intersects the rectangle</returns>
-        static public bool LineInRectangle(Vector2d topLeft, Vector2d bottomRight, Vector2d lineBegin, Vector2d lineEnd)
+        public static bool LineInRectangle(Vector2d topLeft, Vector2d bottomRight, Vector2d lineBegin, Vector2d lineEnd)
         {
             if (PointInRectangle(topLeft, bottomRight, lineBegin) || PointInRectangle(topLeft, bottomRight, lineEnd))
             {
                 return true;
             }
-            Vector2d[] v = new Vector2d[4] {
+            Vector2d[] v = {
                 topLeft,
                 new Vector2d(bottomRight.X, topLeft.Y),
                 bottomRight,
@@ -268,7 +269,7 @@ namespace Game
             return false;
         }
 
-        static public bool LineInRectangle(Vector2 topLeft, Vector2 bottomRight, Vector2 lineBegin, Vector2 lineEnd)
+        public static bool LineInRectangle(Vector2 topLeft, Vector2 bottomRight, Vector2 lineBegin, Vector2 lineEnd)
         {
             return LineInRectangle(new Vector2d(topLeft.X, topLeft.Y), new Vector2d(bottomRight.X, bottomRight.Y), new Vector2d(lineBegin.X, lineBegin.Y), new Vector2d(lineEnd.X, lineEnd.Y));
         }
@@ -291,7 +292,7 @@ namespace Game
               a.X == b.X ? a.Y.CompareTo(b.Y) : (a.X > b.X ? 1 : -1));
 
             List<Vector2> hull = new List<Vector2>();
-            int L = 0, U = 0; // size of lower and upper hulls
+            int l = 0, u = 0; // size of lower and upper hulls
 
             // Builds a hull such that the output polygon starts at the leftmost point.
             for (int i = points.Count - 1; i >= 0; i--)
@@ -299,25 +300,25 @@ namespace Game
                 Vector2 p = points[i];
 
                 // build lower hull (at end of output list)
-                while (L >= 2 && Vector2Ext.Cross(hull[hull.Count - 1] - hull[hull.Count - 2], p - hull[hull.Count - 1]) >= 0)
+                while (l >= 2 && Vector2Ext.Cross(hull[hull.Count - 1] - hull[hull.Count - 2], p - hull[hull.Count - 1]) >= 0)
                 {
                     hull.RemoveAt(hull.Count - 1);
-                    L--;
+                    l--;
                 }
                 hull.Add(p);
-                L++;
+                l++;
 
                 // build upper hull (at beginning of output list)
 
-                while (U >= 2 && Vector2Ext.Cross(hull[0] - hull[1], p - hull[0]) <= 0)
+                while (u >= 2 && Vector2Ext.Cross(hull[0] - hull[1], p - hull[0]) <= 0)
                 {
                     hull.RemoveAt(0);
-                    U--;
+                    u--;
                 }
-                if (U != 0) // when U=0, share the point added above
+                if (u != 0) // when U=0, share the point added above
                     hull.Insert(0, p);
-                U++;
-                Debug.Assert(U + L == hull.Count + 1);
+                u++;
+                Debug.Assert(u + l == hull.Count + 1);
             }
             hull.RemoveAt(hull.Count - 1);
             return hull;
@@ -391,7 +392,7 @@ namespace Game
         /// <returns></returns>
         public static List<Vector2> SetWinding(List<Vector2> polygon, bool clockwise)
         {
-            List<Vector2> copy = new List<Vector2>(polygon);
+            var copy = new List<Vector2>(polygon);
             if (IsClockwise(polygon) != clockwise)
             {
                 copy.Reverse();
@@ -412,34 +413,34 @@ namespace Game
         #region Intersections
         /// <summary>Tests if two lines intersect.</summary>
         /// <returns>Location where the two lines intersect. TFirst is relative to the first line.</returns>
-        static public IntersectCoord LineLineIntersect(Line line0, Line line1, bool SegmentOnly)
+        public static IntersectCoord LineLineIntersect(Line line0, Line line1, bool segmentOnly)
         {
-            IntersectCoord v = new IntersectCoord();
+            
             double ua, ub;
             double ud = (line1[1].Y - line1[0].Y) * (line0[1].X - line0[0].X) - (line1[1].X - line1[0].X) * (line0[1].Y - line0[0].Y);
             if (ud != 0)
             {
                 ua = ((line1[1].X - line1[0].X) * (line0[0].Y - line1[0].Y) - (line1[1].Y - line1[0].Y) * (line0[0].X - line1[0].X)) / ud;
                 ub = ((line0[1].X - line0[0].X) * (line0[0].Y - line1[0].Y) - (line0[1].Y - line0[0].Y) * (line0[0].X - line1[0].X)) / ud;
-                if (SegmentOnly)
+                if (segmentOnly)
                 {
                     if (ua < 0 || ua > 1 || ub < 0 || ub > 1)
                     {
-                        v.Exists = false;
-                        return v;
+                        return new IntersectCoord {Exists = false};
                     }
                 }
             }
             else
             {
-                v.Exists = false;
-                return v;
+                return new IntersectCoord { Exists = false };
             }
-            v.Exists = true;
-            v.Position = Lerp(new Vector2d(line0[0].X, line0[0].Y), new Vector2d(line0[1].X, line0[1].Y), ua);
-            v.TFirst = ua;
-            v.TLast = ub;
-            return v;
+            return new IntersectCoord
+            {
+                Exists = true,
+                Position = Lerp(new Vector2d(line0[0].X, line0[0].Y), new Vector2d(line0[1].X, line0[1].Y), ua),
+                First = ua,
+                Last = ub
+            };
         }
 
         /// <summary>
@@ -450,21 +451,21 @@ namespace Game
         /// <returns></returns>
         public static PolygonCoord[] LineStripIntersect(Vector2[] vertices, bool includeTwice)
         {
-            List<PolygonCoord> intersections = new List<PolygonCoord>();
+            var intersections = new List<PolygonCoord>();
             //for now we'll just use the slow O(n^2) implementation
             for (int i = 0; i < vertices.Length - 1; i++)
             {
                 for (int j = i + 2; j < vertices.Length - 1; j++)
                 {
                     IntersectCoord first = LineLineIntersect(new LineF(vertices[i], vertices[i + 1]), new LineF(vertices[j], vertices[j + 1]), true);
-                    if (first.Exists && first.TFirst < 1)
+                    if (first.Exists && first.First < 1)
                     {
-                        intersections.Add(new PolygonCoord(i, (float)first.TFirst));
+                        intersections.Add(new PolygonCoord(i, (float)first.First));
                         if (includeTwice)
                         {
                             IntersectCoord second = LineLineIntersect(new LineF(vertices[i], vertices[i + 1]), new LineF(vertices[j], vertices[j + 1]), true);
                             Debug.Assert(second.Exists);
-                            intersections.Add(new PolygonCoord(j, (float)second.TFirst));
+                            intersections.Add(new PolygonCoord(j, (float)second.First));
                         }
                     }
                 }
@@ -487,7 +488,7 @@ namespace Game
                 
                 if (intersect.Exists)
                 {
-                    points.Add(new PolygonCoord(i0, (float)intersect.TLast));
+                    points.Add(new PolygonCoord(i0, (float)intersect.Last));
                 }
             }
             return points;
@@ -497,61 +498,62 @@ namespace Game
         /// <param name="circle">Origin of circle.</param>
         /// <param name="radius">Radius of circle.</param>
         /// <param name="line">Line used to check intersections with circle.</param>
+        /// <param name="isSegment"></param>
         /// <returns>Array of intersections. If no intersections exist then an array of length 0 is returned.</returns>
         /// <remarks>Original code was found here 
         /// http://csharphelper.com/blog/2014/09/determine-where-a-line-intersects-a-circle-in-c/
         /// </remarks>
         public static IntersectCoord[] LineCircleIntersect(Vector2 circle, float radius, LineF line, bool isSegment)
         {
-            IntersectCoord intersect0 = new IntersectCoord();
-            IntersectCoord intersect1 = new IntersectCoord();
-            double dx, dy, A, B, C, det, t;
+            var intersect0 = new IntersectCoord();
+            var intersect1 = new IntersectCoord();
+            double dx, dy, a, b, c, det, t;
 
             dx = line[1].X - line[0].X;
             dy = line[1].Y - line[0].Y;
 
-            A = dx * dx + dy * dy;
-            B = 2 * (dx * (line[0].X - circle.X) + dy * (line[0].Y - circle.Y));
-            C = (line[0].X - circle.X) * (line[0].X - circle.X) +
+            a = dx * dx + dy * dy;
+            b = 2 * (dx * (line[0].X - circle.X) + dy * (line[0].Y - circle.Y));
+            c = (line[0].X - circle.X) * (line[0].X - circle.X) +
                 (line[0].Y - circle.Y) * (line[0].Y - circle.Y) -
                 radius * radius;
 
-            det = B * B - 4 * A * C;
-            if ((A <= 0.0000001) || (det < 0))
+            det = b * b - 4 * a * c;
+            if ((a <= 0.0000001) || (det < 0))
             {
                 // No real solutions.
             }
             else if (det == 0)
             {
                 // One solution.
-                t = -B / (2 * A);
+                t = -b / (2 * a);
                 if (t >= 0 && t < 1 || !isSegment)
                 {
                     intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
                     intersect0.Exists = true;
-                    intersect0.TFirst = t;
-                    return new IntersectCoord[] { intersect0 };
+                    intersect0.First = t;
+                    return new[] { intersect0 };
                 }
             }
             else
             {
                 // Two solutions.
-                List<IntersectCoord> list = new List<IntersectCoord>();
-                t = (float)((-B + Math.Sqrt(det)) / (2 * A));
+                var list = new List<IntersectCoord>();
+                t = (float)((-b + Math.Sqrt(det)) / (2 * a));
                 if (t >= 0 && t < 1 || !isSegment)
                 {
                     intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
                     intersect0.Exists = true;
-                    intersect0.TFirst = t;
+                    intersect0.First = t;
                     list.Add(intersect0);
                 }
 
-                t = (float)((-B - Math.Sqrt(det)) / (2 * A));
+                t = (float)((-b - Math.Sqrt(det)) / (2 * a));
                 if (t >= 0 && t < 1 || !isSegment)
                 {
                     intersect1.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
                     intersect1.Exists = true;
-                    intersect1.TFirst = t;
+                    intersect1.First = t;
                     list.Add(intersect1);
                 }
                 return list.ToArray();
@@ -601,7 +603,7 @@ namespace Game
             return mat;
         }
 
-        private static Matrix4d SquareToQuad(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3)
+        static Matrix4d SquareToQuad(Vector2 v0, Vector2 v1, Vector2 v2, Vector2 v3)
         {
             double dx1 = v1.X - v2.X, dy1 = v1.Y - v2.Y;
             double dx2 = v3.X - v2.X, dy2 = v3.Y - v2.Y;
@@ -616,11 +618,13 @@ namespace Game
             double e = v3.Y - v0.Y + h * v3.Y;
             double f = v0.Y;
 
-            Matrix4d mat = new Matrix4d();
-            mat.M11 = a; mat.M12 = d; mat.M13 = 0; mat.M14 = g;
-            mat.M21 = b; mat.M22 = e; mat.M23 = 0; mat.M24 = h;
-            mat.M31 = 0; mat.M32 = 0; mat.M33 = 1; mat.M34 = 0;
-            mat.M41 = c; mat.M42 = f; mat.M43 = 0; mat.M44 = 1;
+            var mat = new Matrix4d
+            {
+                M11 = a, M12 = d, M13 = 0, M14 = g,
+                M21 = b, M22 = e, M23 = 0, M24 = h,
+                M31 = 0, M32 = 0, M33 = 1, M34 = 0,
+                M41 = c, M42 = f, M43 = 0, M44 = 1
+            };
             return mat;
         }
 
@@ -675,21 +679,21 @@ namespace Game
 
             List<Vertex> keep = new List<Vertex>();
             int intersectCount = 0;
-            for (int i = 0; i < Triangle.VERTEX_COUNT; i++)
+            for (int i = 0; i < Triangle.VertexCount; i++)
             {
                 Side side = bisector.GetSideOf(vertices[i], false);
                 if (side == keepSide || side == Side.Neither)
                 {
                     keep.Add(triangle[i]);
                 }
-                LineF edge = new LineF(vertices[i], vertices[(i + 1) % Triangle.VERTEX_COUNT]);
+                LineF edge = new LineF(vertices[i], vertices[(i + 1) % Triangle.VertexCount]);
                 IntersectCoord intersect = MathExt.LineLineIntersect(edge, bisector, false);
-                if (intersect.Exists && intersect.TFirst > 0 && intersect.TFirst < 1)
+                if (intersect.Exists && intersect.First > 0 && intersect.First < 1)
                 {
                     intersectCount++;
                     Debug.Assert(intersectCount <= 2);
-                    int index = (i + 1) % Triangle.VERTEX_COUNT;
-                    keep.Add(Vertex.Lerp(triangle[i], triangle[index], (float)intersect.TFirst));
+                    int index = (i + 1) % Triangle.VertexCount;
+                    keep.Add(Vertex.Lerp(triangle[i], triangle[index], (float)intersect.First));
                 }
             }
 
@@ -747,28 +751,27 @@ namespace Game
             Triangle[] triangles = new Triangle[indices.Count / 3];
             for (int i = 0; i < triangles.Length; i++)
             {
-                Vertex v0, v1, v2;
-                v0 = vertices[indices[i * 3]];
-                v1 = vertices[indices[i * 3 + 1]];
-                v2 = vertices[indices[i * 3 + 2]];
+                Vertex v0 = vertices[indices[i * 3]];
+                Vertex v1 = vertices[indices[i * 3 + 1]];
+                Vertex v2 = vertices[indices[i * 3 + 2]];
                 triangles[i] = new Triangle(v0, v1, v2);
             }
             return triangles;
         }
 
-        static public double AngleLine(Vector2d V0, Vector2d V1)
+        public static double AngleLine(Vector2d v0, Vector2d v1)
         {
-            return AngleVector(V0 - V1);
+            return AngleVector(v0 - v1);
         }
-        static public double AngleLine(Vector2 V0, Vector2 V1)
+        public static double AngleLine(Vector2 v0, Vector2 v1)
         {
-            return AngleLine(new Vector2d(V0.X, V0.Y), new Vector2d(V1.X, V1.Y));
+            return AngleLine(new Vector2d(v0.X, v0.Y), new Vector2d(v1.X, v1.Y));
         }
 
-        static public double AngleVector(Vector2d V0)
+        public static double AngleVector(Vector2d v0)
         {
             //Debug.Assert(V0 == Vector2d.Zero, "Vector must have non-zero length.");
-            double val = Math.Atan2(V0.X, V0.Y);
+            double val = Math.Atan2(v0.X, v0.Y);
 
             if (double.IsNaN(val))
             {
@@ -777,9 +780,9 @@ namespace Game
             return (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
         }
 
-        public static double AngleVector(Vector2 V0)
+        public static double AngleVector(Vector2 v0)
         {
-            return AngleVector(new Vector2d(V0.X, V0.Y));
+            return AngleVector(new Vector2d(v0.X, v0.Y));
         }
 
         public static double AngleDiff(Vector2 v0, Vector2 v1)
@@ -804,14 +807,14 @@ namespace Game
             return ((val1 - val0) % (wrapSize) + (wrapSize * 3)/2) % (wrapSize) - wrapSize/2;
         }
 
-        static public double ValueWrap(double Value, double mod)
+        static public double ValueWrap(double value, double mod)
         {
-            Value = Value % mod;
-            if (Value < 0)
+            value = value % mod;
+            if (value < 0)
             {
-                return mod + Value;
+                return mod + value;
             }
-            return Value;
+            return value;
         }
 
         static public double Round(double value, double size)
@@ -821,7 +824,7 @@ namespace Game
 
         static public double AngleWrap(double value)
         {
-            return ((value % TAU) + TAU) % TAU;
+            return ((value % Tau) + Tau) % Tau;
         }
 
         public static Vector2 AngularVelocity(Vector2 point, Vector2 pivotPoint, float rotationSpeed)
@@ -837,22 +840,22 @@ namespace Game
         /// <summary>
         /// Returns a projection of V0 onto V1
         /// </summary>
-        /// <param name="V0"></param>
-        /// <param name="V1"></param>
-        static public Vector2d VectorProject(Vector2d V0, Vector2d V1)
+        /// <param name="v0"></param>
+        /// <param name="v1"></param>
+        static public Vector2d VectorProject(Vector2d v0, Vector2d v1)
         {
-            return V1.Normalized() * V0;
+            return v1.Normalized() * v0;
         }
 
         /// <summary>
         /// Mirrors V0 across an axis defined by V1
         /// </summary>
-        /// <param name="V0"></param>
-        /// <param name="V1"></param>
+        /// <param name="v0"></param>
+        /// <param name="v1"></param>
         /// <returns></returns>
-        static public Vector2d VectorMirror(Vector2d V0, Vector2d V1)
+        static public Vector2d VectorMirror(Vector2d v0, Vector2d v1)
         {
-            return -V0 + 2 * (V0 - VectorProject(V0, V1));
+            return -v0 + 2 * (v0 - VectorProject(v0, v1));
         }
 
         /// <summary>
@@ -879,14 +882,14 @@ namespace Game
         public static double GetArea(IList<Vector2> polygon)
         {
             // Add the first point to the end.
-            int num_points = polygon.Count;
-            Vector2[] pts = new Vector2[num_points + 1];
+            int numPoints = polygon.Count;
+            Vector2[] pts = new Vector2[numPoints + 1];
             polygon.CopyTo(pts, 0);
-            pts[num_points] = polygon[0];
+            pts[numPoints] = polygon[0];
 
             // Get the areas.
             float area = 0;
-            for (int i = 0; i < num_points; i++)
+            for (int i = 0; i < numPoints; i++)
             {
                 area +=
                     (pts[i + 1].X - pts[i].X) *

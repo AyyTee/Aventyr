@@ -10,33 +10,33 @@ namespace EditorLogic.Command
     public abstract class Add : ICommand
     {
         public bool IsMarker { get; set; }
-        protected readonly ControllerEditor _controller;
-        protected readonly EditorObject _editorObject;
+        protected readonly ControllerEditor Controller;
+        protected readonly EditorObject EditorObject;
         MementoSelection _selection;
 
         public Add(ControllerEditor controller, EditorObject editorObject)
         {
             IsMarker = true;
-            _editorObject = editorObject;
-            _controller = controller;
+            EditorObject = editorObject;
+            Controller = controller;
         }
 
         public virtual void Do()
         {
-            _selection = new MementoSelection(_controller.selection);
+            _selection = new MementoSelection(Controller.Selection);
         }
 
         public virtual void Redo()
         {
-            _editorObject.SetParent(_editorObject.Scene);
+            EditorObject.SetParent(EditorObject.Scene);
             //_editorObject.Marker.SetParent(_editorObject.Scene.Scene.Root);
-            _controller.selection.Set(_editorObject);
+            Controller.Selection.Set(EditorObject);
         }
 
         public virtual void Undo()
         {
-            _editorObject.Remove();
-            _controller.selection.SetRange(_selection);
+            EditorObject.Remove();
+            Controller.Selection.SetRange(_selection);
         }
 
         public abstract ICommand ShallowClone();

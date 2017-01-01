@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
 using OpenTK;
 using FarseerPhysics.Collision.Shapes;
+using Game.Common;
+using Game.Physics;
 using Game.Portals;
 
 namespace UnitTest

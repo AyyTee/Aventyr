@@ -22,7 +22,7 @@ namespace EditorLogic.Command
             base.Do();
             if (_linked != null)
             {
-                EditorPortal portal = (EditorPortal)_editorObject;
+                EditorPortal portal = (EditorPortal)EditorObject;
                 portal.Linked = _linked;
                 _linked.Linked = portal;
                 ///((EditorPortal)_editorObject).Portal.SetLinked(_linked.Portal);
@@ -46,7 +46,7 @@ namespace EditorLogic.Command
 
         public override ICommand ShallowClone()
         {
-            AddPortal clone = new AddPortal(_controller, (EditorPortal)_editorObject, _linked);
+            AddPortal clone = new AddPortal(Controller, (EditorPortal)EditorObject, _linked);
             return clone;
         }
     }

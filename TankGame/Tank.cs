@@ -9,6 +9,10 @@ using OpenTK;
 using Lidgren.Network;
 using TankGame.Network;
 using FarseerPhysics.Dynamics;
+using Game.Common;
+using Game.Models;
+using Game.Physics;
+using Game.Rendering;
 
 namespace TankGame
 {

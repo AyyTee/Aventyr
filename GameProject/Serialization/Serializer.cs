@@ -1,24 +1,17 @@
-﻿using FarseerPhysics.Common;
-using FarseerPhysics.Dynamics;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Serialization;
 
-namespace Game
+namespace Game.Serialization
 {
     public class Serializer
     {
-        public const string fileExtension = "save";
-        public const string fileExtensionName = "Save File";
+        public const string FileExtension = "save";
+        public const string FileExtensionName = "Save File";
 
         public Serializer()
         {

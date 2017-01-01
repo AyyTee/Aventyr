@@ -10,7 +10,7 @@ namespace EditorLogic
 {
     public abstract class Tool
     {
-        protected IInput _input { get { return Controller.Input; } }
+        protected IInput Input { get { return Controller.Input; } }
         public bool Enabled { get; private set; }
         public bool Active { get; protected set; }
         public virtual bool EditorOnly { get; }

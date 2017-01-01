@@ -9,6 +9,7 @@ using System.ComponentModel;
 using Cgen.Audio;
 using System.Threading;
 using System.Diagnostics;
+using Game.Rendering;
 
 
 namespace Game
@@ -20,22 +21,22 @@ namespace Game
         /// Keep pointless messages from the Poly2Tri library out of the console window.
         /// </summary>
         public static StreamWriter TrashLog = new StreamWriter(Stream.Null);
-        public const int MICROSECONDS_IN_SECOND = 1000000;
+        public const int MicrosecondsInSecond = 1000000;
         public float TimeFixedStep = 0.0f;
         public Size CanvasSize { get; set; }
         public const int StepsPerSecond = 60;
         public const int DrawsPerSecond = 60;
-        public const string tempLevelPrefix = "temp_level_";
+        public const string TempLevelPrefix = "temp_level_";
         public int RenderCount = 0;
-        public string[] programArgs = new string[0];
+        public string[] ProgramArgs = new string[0];
         public SoundSystem SoundSystem { get; private set; }
 
-        public static List<int> textureGarbage = new List<int>();
+        public static List<int> TextureGarbage = new List<int>();
 
-        public static string fontFolder { get; private set; } = Path.Combine(new string[2] { "assets", "fonts" });
-        public static string shaderFolder { get; private set; } = Path.Combine(new string[2] { "assets", "shaders" });
-        public static string textureFolder { get; private set; } = Path.Combine(new string[2] { "assets", "textures" });
-        public static string soundFolder { get; private set; } = Path.Combine(new string[2] { "assets", "sounds" });
+        public static string FontFolder { get; private set; } = Path.Combine(new string[2] { "assets", "fonts" });
+        public static string ShaderFolder { get; private set; } = Path.Combine(new string[2] { "assets", "shaders" });
+        public static string TextureFolder { get; private set; } = Path.Combine(new string[2] { "assets", "textures" });
+        public static string SoundFolder { get; private set; } = Path.Combine(new string[2] { "assets", "sounds" });
 
         /// <summary>
         /// Records time elapsed since the program start.
@@ -45,7 +46,7 @@ namespace Game
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
-        float TimeRenderDelta = 0.0f;
+        float _timeRenderDelta = 0.0f;
         public Renderer Renderer { get; private set; }
         public FontRenderer FontRenderer { get; private set; }
         public Font Default;
@@ -78,20 +79,20 @@ namespace Game
                 Renderer = new Renderer(CanvasSize);
 
                 // Load textures from file
-                Renderer.Textures.Add("default.png", new TextureFile(Path.Combine(textureFolder, "default.png")));
-                Renderer.Textures.Add("grid.png", new TextureFile(Path.Combine(textureFolder, "grid.png")));
-                Renderer.Textures.Add("lineBlur.png", new TextureFile(Path.Combine(textureFolder, "lineBlur.png")));
+                Renderer.Textures.Add("default.png", new TextureFile(Path.Combine(TextureFolder, "default.png")));
+                Renderer.Textures.Add("grid.png", new TextureFile(Path.Combine(TextureFolder, "grid.png")));
+                Renderer.Textures.Add("lineBlur.png", new TextureFile(Path.Combine(TextureFolder, "lineBlur.png")));
 
                 //Create the default font
                 System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
-                privateFonts.AddFontFile(Path.Combine(fontFolder, "times.ttf"));
+                privateFonts.AddFontFile(Path.Combine(FontFolder, "times.ttf"));
                 Default = new Font(privateFonts.Families[0], 14);
                 FontRenderer = new FontRenderer(Default);
 
                 // Load shaders from file
                 Renderer.Shaders.Add("uber", new Shader(
-                    Path.Combine(shaderFolder, "vs_uber.glsl"),
-                    Path.Combine(shaderFolder, "fs_uber.glsl"),
+                    Path.Combine(ShaderFolder, "vs_uber.glsl"),
+                    Path.Combine(ShaderFolder, "fs_uber.glsl"),
                     true));
 
                 SoundEnabled = false;
@@ -121,24 +122,24 @@ namespace Game
         public virtual void OnRenderFrame(FrameEventArgs e)
         {
             RenderCount++;
-            TimeRenderDelta += (float)e.Time;
+            _timeRenderDelta += (float)e.Time;
             Renderer.Render();
         }
 
         public virtual void OnUpdateFrame(FrameEventArgs e)
         {
 
-            TimeFixedStep += MICROSECONDS_IN_SECOND / (float)StepsPerSecond;
-            TimeRenderDelta = 0;
+            TimeFixedStep += MicrosecondsInSecond / (float)StepsPerSecond;
+            _timeRenderDelta = 0;
 
             lock (Texture.LockDelete)
             {
-                foreach (int iboElement in textureGarbage.ToArray())
+                foreach (int iboElement in TextureGarbage.ToArray())
                 {
                     int a = iboElement;
                     GL.DeleteTextures(1, ref a);
                 }
-                textureGarbage.Clear();
+                TextureGarbage.Clear();
             }
         }
 

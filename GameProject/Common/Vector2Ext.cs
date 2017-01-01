@@ -1,17 +1,17 @@
-﻿using OpenTK;
-using Poly2Tri;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
+using OpenTK;
+using Poly2Tri;
+using Vector2 = OpenTK.Vector2;
+using Vector3 = OpenTK.Vector3;
 using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Common
 {
     public class Vector2Ext
     {
-        const float EQUALITY_EPSILON = 0.0001f;
+        const float EqualityEpsilon = 0.0001f;
 
         public static float Cross(Vector2 v0, Vector2 v1)
         {
@@ -217,7 +217,7 @@ namespace Game
 
         public static bool AlmostEqual(Vector2 v0, Vector2 v1)
         {
-            return AlmostEqual(v0, v1, EQUALITY_EPSILON);
+            return AlmostEqual(v0, v1, EqualityEpsilon);
         }
 
         public static bool AlmostEqual(Vector2d v0, Vector2d v1, double delta)
@@ -227,7 +227,7 @@ namespace Game
 
         public static bool AlmostEqual(Vector2d v0, Vector2d v1)
         {
-            return AlmostEqual(v0, v1, EQUALITY_EPSILON);
+            return AlmostEqual(v0, v1, EqualityEpsilon);
         }
 
         public static Vector2d[] ToDouble(Vector2[] v)

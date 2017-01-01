@@ -10,12 +10,13 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Game.Rendering;
 
 namespace Game
 {
     public class Window : GameWindow
     {
-        public Controller controller;
+        public Controller Controller;
         public Input InputExt;
         public Window()
             : base(800, 600, Renderer.DefaultGraphics, "Game", GameWindowFlags.FixedWindow)
@@ -27,13 +28,13 @@ namespace Game
         {
             base.OnLoad(e);
             Context.SwapInterval = 1;
-            controller.OnLoad(e);
+            Controller.OnLoad(e);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
-            controller?.OnRenderFrame(e);
+            Controller?.OnRenderFrame(e);
             SwapBuffers();
         }
 
@@ -49,19 +50,19 @@ namespace Game
             {
                 Exit();
             }
-            controller?.OnUpdateFrame(e);
+            Controller?.OnUpdateFrame(e);
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             base.OnClosing(e);
-            controller?.OnClosing(e);
+            Controller?.OnClosing(e);
         }
 
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            controller?.OnResize(e, ClientSize);
+            Controller?.OnResize(e, ClientSize);
         }
 
         private void ToggleFullScreen()

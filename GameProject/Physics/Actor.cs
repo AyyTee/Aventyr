@@ -1,18 +1,18 @@
-﻿using FarseerPhysics.Dynamics;
-using Xna = Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK;
-using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Dynamics;
+using Game.Common;
 using Game.Portals;
-using Game.Physics;
+using Game.Serialization;
+using OpenTK;
+using Vector2 = OpenTK.Vector2;
+using Vector3 = OpenTK.Vector3;
+using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Physics
 {
     /// <summary>A SceneNode with rigid body physics.</summary>
     [DataContract, DebuggerDisplay("Actor {Name}")]
@@ -49,7 +49,8 @@ namespace Game
         [DataMember]
         Vector2[] _vertices;
         /// <summary>Copy of local coordinates for collision mask.</summary>
-        public IList<Vector2> Vertices { get { return _vertices.ToList(); } }
+        public IList<Vector2> Vertices => _vertices.ToList();
+
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 
@@ -92,10 +93,10 @@ namespace Game
         protected void ShallowClone(Actor destination)
         {
             base.ShallowClone(destination);
-            BodyData bodyData = BodyExt.SetData(destination.Body, destination);
+            BodyExt.SetData(destination.Body, destination);
             foreach (Fixture f in destination.Body.FixtureList)
             {
-                FixtureData fixtureData = FixtureExt.SetData(f);
+                FixtureExt.SetData(f);
             }
         }
 

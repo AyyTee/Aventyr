@@ -1,26 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FarseerPhysics;
+using FarseerPhysics.Collision;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Common;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Dynamics.Contacts;
-using Xna = Microsoft.Xna.Framework;
-using System.Diagnostics;
-using FarseerPhysics.Collision.Shapes;
-using FarseerPhysics.Collision;
-using OpenTK;
-using FarseerPhysics.Common;
+using Game.Common;
+using Game.Models;
 using Game.Portals;
+using Game.Rendering;
+using OpenTK;
+using Vector2 = OpenTK.Vector2;
+using Vector3 = OpenTK.Vector3;
+using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Physics
 {
     public class PhyicsListener
     {
         public Scene Scene { get; private set; }
-        Entity DebugEntity;
-        bool DebugMode = true;
+        Entity _debugEntity;
+        bool _debugMode = true;
 
         public PhyicsListener(Scene scene)
         {
@@ -59,12 +61,12 @@ namespace Game
                 actor.ApplyGravity(Scene.Gravity);
             }
 
-            if (DebugEntity != null)
+            if (_debugEntity != null)
             {
-                Scene.MarkForRemoval(DebugEntity);
+                Scene.MarkForRemoval(_debugEntity);
             }
-            DebugEntity = new Entity(Scene);
-            DebugEntity.IsPortalable = false;
+            _debugEntity = new Entity(Scene);
+            _debugEntity.IsPortalable = false;
 
             foreach (Actor actor in Scene.GetAll().OfType<Actor>())
             {
@@ -76,13 +78,13 @@ namespace Game
         public void StepEnd()
         {
             #region Debug
-            if (DebugMode)
+            if (_debugMode)
             {
                 foreach (Body body in Scene.World.BodyList)
                 {
                     Model model = ModelFactory.CreateCube();
                     model.Transform.Scale = new Vector3(0.03f, 0.03f, 0.03f);
-                    DebugEntity.AddModel(model);
+                    _debugEntity.AddModel(model);
                     model.Transform.Position = new Vector3(body.Position.X, body.Position.Y, 10);
                     model.SetColor(new Vector3(1, 0.5f, 0.5f));
 
@@ -90,7 +92,7 @@ namespace Game
                     Model positionPrev = ModelFactory.CreateCube();
                     positionPrev.Transform.Scale = new Vector3(0.03f, 0.03f, 0.03f);
                     positionPrev.Transform.Rotation = new Quaternion(0, 1, 1, (float)Math.PI / 2);
-                    DebugEntity.AddModel(positionPrev);
+                    _debugEntity.AddModel(positionPrev);
                     positionPrev.Transform.Position = new Vector3(bodyUserData.PreviousPosition.X, bodyUserData.PreviousPosition.Y, 10);
                     positionPrev.SetColor(new Vector3(1, 0, 0));
                 }
@@ -137,7 +139,7 @@ namespace Game
                     actor1.CallOnCollision(actor0, false);
                 }
                 #region Debug
-                if (DebugMode)
+                if (_debugMode)
                 {
                     FixtureData[] userData = new FixtureData[2];
                     userData[0] = FixtureExt.GetData(contact.FixtureA);
@@ -161,7 +163,7 @@ namespace Game
                             line.SetColor(new Vector3(0.5f, 0.5f, 0));
                         }
                         line.Transform.Position += new Vector3(0, 0, 5);
-                        DebugEntity.AddModel(line);
+                        _debugEntity.AddModel(line);
                     }
 
 
@@ -180,11 +182,11 @@ namespace Game
                             arrowNormal *= -1;
                         }
                         Model arrow = ModelFactory.CreateArrow(pos, arrowNormal, 0.02f * scale, 0.05f * scale, 0.03f * scale);
-                        DebugEntity.AddModel(arrow);
+                        _debugEntity.AddModel(arrow);
 
                         Model model = ModelFactory.CreateCube();
                         model.Transform.Scale = new Vector3(0.08f, 0.08f, 0.08f) * scale;
-                        DebugEntity.AddModel(model);
+                        _debugEntity.AddModel(model);
                         if (contact.Enabled)
                         {
                             model.SetColor(new Vector3(1, 1, 0.2f));
@@ -210,7 +212,7 @@ namespace Game
                             fixtureModel.Transform.Position += new Vector3(0, 0, 5);
                             fixtureModel.Transform.Scale = Vector3.One;
 
-                            DebugEntity.AddModel(fixtureModel);
+                            _debugEntity.AddModel(fixtureModel);
                         }
                     }
                 }

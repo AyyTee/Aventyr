@@ -8,7 +8,7 @@ namespace UnitTest
     [TestClass]
     public class FCurveTests
     {
-        public const float ERROR_MARGIN = 0.0001f;
+        public const float ErrorMargin = 0.0001f;
         public float DefaultValue = 5f;
 
         public Curve CreateFCurve()
@@ -37,8 +37,8 @@ namespace UnitTest
         public void GetValuesTest0()
         {
             Curve fCurve = CreateFCurve();
-            Assert.AreEqual(fCurve.GetValue(1f), 0f, ERROR_MARGIN);
-            Assert.AreEqual(fCurve.GetValue(6f), 10f, ERROR_MARGIN);
+            Assert.AreEqual(fCurve.GetValue(1f), 0f, ErrorMargin);
+            Assert.AreEqual(fCurve.GetValue(6f), 10f, ErrorMargin);
         }
 
         /// <summary>
@@ -48,16 +48,16 @@ namespace UnitTest
         public void GetValuesTest1()
         {
             Curve fCurve = CreateFCurve();
-            Assert.AreEqual(fCurve.GetValue(-1f), 0f, ERROR_MARGIN);
-            Assert.AreEqual(fCurve.GetValue(0f), 0f, ERROR_MARGIN);
-            Assert.AreEqual(fCurve.GetValue(100f), 10f, ERROR_MARGIN);
+            Assert.AreEqual(fCurve.GetValue(-1f), 0f, ErrorMargin);
+            Assert.AreEqual(fCurve.GetValue(0f), 0f, ErrorMargin);
+            Assert.AreEqual(fCurve.GetValue(100f), 10f, ErrorMargin);
         }
 
         [TestMethod]
         public void GetValuesTest2()
         {
             Curve fCurve = CreateFCurve();
-            Assert.AreEqual(fCurve.GetValue(2f), 2f, ERROR_MARGIN);
+            Assert.AreEqual(fCurve.GetValue(2f), 2f, ErrorMargin);
         }
 
         [TestMethod]

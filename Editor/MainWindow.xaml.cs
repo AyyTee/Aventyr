@@ -11,18 +11,22 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
+using Game.Common;
+using Game.Models;
+using Game.Rendering;
+using Serializer = Game.Serialization.Serializer;
 
 namespace EditorWindow
 {
     /// <summary>Interaction logic for MainWindow.xaml</summary>
     public partial class MainWindow : System.Windows.Window, IDisposable
     {
-        GLLoop _loop;
-        ControllerEditor ControllerEditor;
+        GlLoop _loop;
+        ControllerEditor _controllerEditor;
         public static string WorkingDirectory { get; private set; }
         public static string AssetsDirectory { get; private set; }
         OpenFileDialog _loadModelDialog = new OpenFileDialog();
-        ControllerFiles ControllerFiles;
+        ControllerFiles _controllerFiles;
         readonly Thread _wpfThread;
         static MainWindow _window;
 
@@ -55,7 +59,7 @@ namespace EditorWindow
 
         private void _openFileDialog_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            ControllerEditor.AddAction(() =>
+            _controllerEditor.AddAction(() =>
             {
                 string fileName = ((OpenFileDialog)sender).FileName;
                 ModelLoader loader = new ModelLoader();
@@ -65,13 +69,13 @@ namespace EditorWindow
 
         public void GLControl_Load(object sender, EventArgs e)
         {
-            ControllerEditor = new ControllerEditor(glControl.ClientSize, new Input(glControl));
-            ControllerEditor.ScenePlayEvent += ControllerEditor_ScenePlayed;
-            ControllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;
-            ControllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;
-            ControllerEditor.Update += ControllerEditor_Update;
+            _controllerEditor = new ControllerEditor(glControl.ClientSize, new Input(glControl));
+            _controllerEditor.ScenePlayEvent += ControllerEditor_ScenePlayed;
+            _controllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;
+            _controllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;
+            _controllerEditor.Update += ControllerEditor_Update;
 
-            ControllerFiles = new ControllerFiles(this, ControllerEditor, filesRecent);
+            _controllerFiles = new ControllerFiles(this, _controllerEditor, filesRecent);
 
             UpdateTransformLabels(null);
 
@@ -80,17 +84,17 @@ namespace EditorWindow
 
             SetPortalRendering(true);
 
-            ToolPanel.Initialize(ControllerEditor);
-            PropertiesEditor.Initialize(ControllerEditor);
-            Time.Initialize(ControllerEditor);
+            ToolPanel.Initialize(_controllerEditor);
+            PropertiesEditor.Initialize(_controllerEditor);
+            Time.Initialize(_controllerEditor);
             
             Slider_ValueChanged(
                 null, 
-                new RoutedPropertyChangedEventArgs<double>(ControllerEditor.physicsStepSize, ControllerEditor.physicsStepSize)
+                new RoutedPropertyChangedEventArgs<double>(_controllerEditor.PhysicsStepSize, _controllerEditor.PhysicsStepSize)
                 );
 
             //Start the drawing loop last to make sure all listeners are in place.
-            _loop = new GLLoop(glControl, ControllerEditor);
+            _loop = new GlLoop(glControl, _controllerEditor);
             _loop.Run(60);
         }
 
@@ -98,13 +102,13 @@ namespace EditorWindow
         {
             Invoke(() =>
             {
-                Vector2 mousePos = ControllerEditor.GetMouseWorld();
+                Vector2 mousePos = _controllerEditor.GetMouseWorld();
                 MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
 
                 int fps = (int)Math.Round(_loop.UpdatesPerSecond * (double)_loop.MillisecondsPerStep / _loop.GetAverage());
                 FrameRate.Content = "FPS " + fps.ToString() + "/" + _loop.UpdatesPerSecond.ToString();
 
-                var selection = ControllerEditor.selection.GetAll();
+                var selection = _controllerEditor.Selection.GetAll();
                 if (selection.Count > 0)
                 {
                     UpdateTransformLabels(selection[0]);
@@ -140,7 +144,7 @@ namespace EditorWindow
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
-            lock (ControllerEditor.ClosingLock)
+            lock (_controllerEditor.ClosingLock)
             {
                 _loop.Thread.Abort();
             }
@@ -155,25 +159,25 @@ namespace EditorWindow
 
         private void Button_Play(object sender, RoutedEventArgs e)
         {
-            ControllerEditor.AddAction(() =>
+            _controllerEditor.AddAction(() =>
                 {
-                    ControllerEditor.ScenePlay();
+                    _controllerEditor.ScenePlay();
                 });
         }
 
         private void Button_Pause(object sender, RoutedEventArgs e)
         {
-            ControllerEditor.AddAction(() =>
+            _controllerEditor.AddAction(() =>
                 {
-                    ControllerEditor.ScenePause();
+                    _controllerEditor.ScenePause();
                 });
         }
 
         private void Button_Stop(object sender, RoutedEventArgs e)
         {
-            ControllerEditor.AddAction(() =>
+            _controllerEditor.AddAction(() =>
                 {
-                    ControllerEditor.SceneStop();
+                    _controllerEditor.SceneStop();
                 });
         }
 
@@ -251,7 +255,7 @@ namespace EditorWindow
                 (Keyboard.IsKeyDown(Key.LeftCtrl) ||
                 Keyboard.IsKeyDown(Key.RightCtrl)))
             {
-                SetPortalRendering(!ControllerEditor.Renderer.PortalRenderEnabled);
+                SetPortalRendering(!_controllerEditor.Renderer.PortalRenderEnabled);
             }
         }
 
@@ -266,107 +270,107 @@ namespace EditorWindow
         private void SetPortalRendering(bool visible)
         {
             toolPortalsVisible.IsChecked = visible;
-            ControllerEditor.AddAction(() =>
+            _controllerEditor.AddAction(() =>
             {
-                ControllerEditor.Renderer.PortalRenderEnabled = visible;
+                _controllerEditor.Renderer.PortalRenderEnabled = visible;
             });
         }
 
         private void Button_Save(object sender, EventArgs e)
         {
-            ControllerFiles.SaveCurrent();
+            _controllerFiles.SaveCurrent();
         }
 
         private void Button_Load(object sender, EventArgs e)
         {
-            ControllerFiles.LoadAs();
+            _controllerFiles.LoadAs();
         }
 
         private void Button_New(object sender, EventArgs e)
         {
-            ControllerFiles.New();
+            _controllerFiles.New();
         }
 
         private void Button_SaveAs(object sender, EventArgs e)
         {
-            ControllerFiles.SaveAs();
+            _controllerFiles.SaveAs();
         }
 
         private void Button_Undo(object sender, EventArgs e)
         {
-            ControllerEditor.AddAction(() =>
+            _controllerEditor.AddAction(() =>
             {
-                ControllerEditor.Undo();
+                _controllerEditor.Undo();
             });
         }
 
         private void Button_Redo(object sender, EventArgs e)
         {
-            ControllerEditor.AddAction(() =>
+            _controllerEditor.AddAction(() =>
             {
-                ControllerEditor.Redo();
+                _controllerEditor.Redo();
             });
         }
 
-        private void commandPlayToggle(object sender, ExecutedRoutedEventArgs e)
+        private void CommandPlayToggle(object sender, ExecutedRoutedEventArgs e)
         {
             
         }
 
-        private void commandTimerStep(object sender, ExecutedRoutedEventArgs e)
+        private void CommandTimerStep(object sender, ExecutedRoutedEventArgs e)
         {
-            ControllerEditor.AddAction(() =>
+            _controllerEditor.AddAction(() =>
             {
-                ControllerEditor.SceneStep();
+                _controllerEditor.SceneStep();
             });
         }
 
         private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (ControllerEditor != null)
+            if (_controllerEditor != null)
             {
                 labelTimeStep.Content = e.NewValue.ToString() + "x";
-                ControllerEditor.AddAction(() =>
+                _controllerEditor.AddAction(() =>
                 {
-                    ControllerEditor.physicsStepSize = (float)e.NewValue;
+                    _controllerEditor.PhysicsStepSize = (float)e.NewValue;
                 });
             }
         }
 
         private void Command_StepFoward(object sender, ExecutedRoutedEventArgs e)
         {
-            ControllerEditor.AddAction(() => {
-                ControllerEditor.SetTime(ControllerEditor.Level.Time + 1 / (double)_loop.UpdatesPerSecond);
+            _controllerEditor.AddAction(() => {
+                _controllerEditor.SetTime(_controllerEditor.Level.Time + 1 / (double)_loop.UpdatesPerSecond);
             });
         }
 
         private void Command_StepBackward(object sender, ExecutedRoutedEventArgs e)
         {
-            ControllerEditor.AddAction(() => {
-                ControllerEditor.SetTime(ControllerEditor.Level.Time - 1 / (double)_loop.UpdatesPerSecond);
+            _controllerEditor.AddAction(() => {
+                _controllerEditor.SetTime(_controllerEditor.Level.Time - 1 / (double)_loop.UpdatesPerSecond);
             });
         }
 
         private void Command_JumpFoward(object sender, ExecutedRoutedEventArgs e)
         {
-            ControllerEditor.AddAction(() => {
-                ControllerEditor.SetTime(ControllerEditor.Level.Time + 1);
+            _controllerEditor.AddAction(() => {
+                _controllerEditor.SetTime(_controllerEditor.Level.Time + 1);
             });
         }
 
         private void Command_JumpBackward(object sender, ExecutedRoutedEventArgs e)
         {
-            ControllerEditor.AddAction(() => {
-                ControllerEditor.SetTime(ControllerEditor.Level.Time - 1);
+            _controllerEditor.AddAction(() => {
+                _controllerEditor.SetTime(_controllerEditor.Level.Time - 1);
             });
         }
 
         private void Command_KeyframeAdd(object sender, ExecutedRoutedEventArgs e)
         {
-            ControllerEditor.AddAction(() => {
-                foreach (EditorObject instance in ControllerEditor.selection.GetAll())
+            _controllerEditor.AddAction(() => {
+                foreach (EditorObject instance in _controllerEditor.Selection.GetAll())
                 {
-                    ControllerEditor.Level.AddKeyframe(instance, instance.GetTransform());
+                    _controllerEditor.Level.AddKeyframe(instance, instance.GetTransform());
                 }
             });
         }
@@ -378,24 +382,24 @@ namespace EditorWindow
 
         private void IntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            ControllerEditor.AddAction(() => 
+            _controllerEditor.AddAction(() => 
             {
-                ControllerEditor.Renderer.PortalRenderMax = (int)e.NewValue;
+                _controllerEditor.Renderer.PortalRenderMax = (int)e.NewValue;
             });
         }
 
         private void RunStandalone(object sender, ExecutedRoutedEventArgs e)
         {
-            ControllerEditor.AddAction(() => 
+            _controllerEditor.AddAction(() => 
             {
                 string tempFile;
                 do {
-                    tempFile = Controller.tempLevelPrefix + GenerateRandomString(8) + ".xml";
+                    tempFile = Controller.TempLevelPrefix + GenerateRandomString(8) + ".xml";
                 } while (File.Exists(tempFile));
 
-                Scene scene = LevelExport.Export(ControllerEditor.Level, ControllerEditor);
+                Scene scene = LevelExport.Export(_controllerEditor.Level, _controllerEditor);
                 Game.Portals.PortalCommon.UpdateWorldTransform(scene);
-                Game.Serializer serializer = new Game.Serializer();
+                Serializer serializer = new Serializer();
                 serializer.Serialize(scene, tempFile);
 
                 Process process = new Process();

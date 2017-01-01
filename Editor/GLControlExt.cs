@@ -10,12 +10,13 @@ using System.Windows.Forms;
 using OpenTK;
 using OpenTK.Graphics;
 using Game;
+using Game.Rendering;
 
 namespace EditorWindow
 {
-    public partial class GLControlExt : GLControl
+    public partial class GlControlExt : GLControl
     {
-        public GLControlExt()
+        public GlControlExt()
             : base(Renderer.DefaultGraphics)
         {
             InitializeComponent();

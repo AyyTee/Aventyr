@@ -1,14 +1,12 @@
-﻿using FarseerPhysics.Collision.Shapes;
-using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FarseerPhysics.Collision.Shapes;
+using Game.Physics;
+using Vector2 = OpenTK.Vector2;
 using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Common
 {
     public static class PolygonExt
     {

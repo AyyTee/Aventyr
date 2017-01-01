@@ -9,6 +9,9 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
+using Game.Rendering;
+using Game.Serialization;
 using static Game.Input;
 
 namespace EditorLogic
@@ -49,14 +52,14 @@ namespace EditorLogic
         [DataMember]
         public float KeyMoveSpeed = 0.013f;
         [DataMember]
-        Queue<Vector2> lazyPan = new Queue<Vector2>();
+        Queue<Vector2> _lazyPan = new Queue<Vector2>();
         [DataMember]
         public Transform2 Transform { get; set; } = new Transform2();
         /// <summary>
         /// This is not used for anything.
         /// </summary>
         public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
-        const int QUEUE_SIZE = 3;
+        const int QueueSize = 3;
         [DataMember]
         public IScene Scene { get; set; }
         [DataMember]
@@ -100,9 +103,9 @@ namespace EditorLogic
             ZoomScrollFactor = 1.2f;
             ZoomFactor = 1.5f;
             InputExt = inputExt;
-            for (int i = 0; i < QUEUE_SIZE; i++)
+            for (int i = 0; i < QueueSize; i++)
             {
-                lazyPan.Enqueue(new Vector2());
+                _lazyPan.Enqueue(new Vector2());
             }
         }
 
@@ -176,7 +179,7 @@ namespace EditorLogic
                 //transform.Scale = new Vector2(Math.Abs(transform.Scale.X), Math.Abs(transform.Scale.Y));
                 transform.MirrorX = false;
                 transform.Size = Math.Abs(transform.Size);
-                EditorObject selected = Controller.selection.First;
+                EditorObject selected = Controller.Selection.First;
                 if (selected != null)
                 {
                     transform.Position = selected.GetTransform().Position;
@@ -213,7 +216,7 @@ namespace EditorLogic
                 }
                 if (InputExt.MouseInside && InputExt.MouseDown(MouseButton.Middle))
                 {
-                    lazyPan.Enqueue(
+                    _lazyPan.Enqueue(
                         CameraExt.ScreenToWorld(
                             this, InputExt.MousePosPrev - InputExt.MousePos, 
                             Vector2Ext.ToOtk(Controller.CanvasSize)) - CameraExt.ScreenToWorld(this, new Vector2(), 
@@ -221,9 +224,9 @@ namespace EditorLogic
                 }
                 else
                 {
-                    lazyPan.Enqueue(v);
+                    _lazyPan.Enqueue(v);
                 }
-                lazyPan.Dequeue();
+                _lazyPan.Dequeue();
             }
 
             //If the camera has been moved then call events.
@@ -250,23 +253,23 @@ namespace EditorLogic
 
         public Transform2 GetVelocity()
         {
-            Vector2 velocity = lazyPan.Aggregate((item, acc) => item + acc) / lazyPan.Count;
+            Vector2 velocity = _lazyPan.Aggregate((item, acc) => item + acc) / _lazyPan.Count;
             return Transform2.CreateVelocity(velocity);
         }
 
         public void SetVelocity(Transform2 velocity)
         {
-            lazyPan = new Queue<Vector2>();
-            for (int i = 0; i < QUEUE_SIZE; i++)
+            _lazyPan = new Queue<Vector2>();
+            for (int i = 0; i < QueueSize; i++)
             {
-                lazyPan.Enqueue(velocity.Position);
+                _lazyPan.Enqueue(velocity.Position);
             }
         }
 
         public ControllerCamera ShallowClone()
         {
             ControllerCamera clone = new ControllerCamera(Controller, InputExt, Scene);
-            clone.lazyPan = new Queue<Vector2>(lazyPan);
+            clone._lazyPan = new Queue<Vector2>(_lazyPan);
             clone._zoomFactor = _zoomFactor;
             clone.ZoomMin = ZoomMin;
             clone.ZoomMax = ZoomMax;

@@ -1,25 +1,26 @@
-﻿using ClipperLib;
-using FarseerPhysics.Collision.Shapes;
-using OpenTK;
-using Poly2Tri;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ClipperLib;
+using FarseerPhysics.Collision.Shapes;
+using Game.Common;
+using Game.Models;
+using Game.Physics;
+using OpenTK;
+using Poly2Tri;
 
-namespace Game
+namespace Game.Rendering
 {
     public static class ModelFactory
     {
-        public static Model CreatePlane(Vector2 Scale)
+        public static Model CreatePlane(Vector2 scale)
         {
             Vertex[] vertices = new Vertex[] {
-                new Vertex(new Vector3(-0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(0, 0)),
-                new Vertex(new Vector3(0.5f * Scale.X, 0.5f * Scale.Y,  0f), new Vector2(1, 0)),
-                new Vertex(new Vector3(0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(1, 1)),
-                new Vertex(new Vector3(-0.5f * Scale.X, -0.5f * Scale.Y,  0f), new Vector2(0, 1))
+                new Vertex(new Vector3(-0.5f * scale.X, 0.5f * scale.Y,  0f), new Vector2(0, 0)),
+                new Vertex(new Vector3(0.5f * scale.X, 0.5f * scale.Y,  0f), new Vector2(1, 0)),
+                new Vertex(new Vector3(0.5f * scale.X, -0.5f * scale.Y,  0f), new Vector2(1, 1)),
+                new Vertex(new Vector3(-0.5f * scale.X, -0.5f * scale.Y,  0f), new Vector2(0, 1))
             };
 
             /*int[] indices = new int[] {

@@ -10,7 +10,7 @@ namespace Game
 {
     public static class ClipperConvert
     {
-        public const double SCALE_FACTOR = 1 << 20;
+        public const double ScaleFactor = 1 << 20;
 
         public static Vector2[] ToVector2(List<IntPoint> point)
         {
@@ -57,22 +57,22 @@ namespace Game
 
         public static IntPoint ToIntPoint(Vector2 v)
         {
-            return new IntPoint(v.X * SCALE_FACTOR, v.Y * SCALE_FACTOR);
+            return new IntPoint(v.X * ScaleFactor, v.Y * ScaleFactor);
         }
 
         public static IntPoint ToIntPoint(Vector3 v)
         {
-            return new IntPoint(v.X * SCALE_FACTOR, v.Y * SCALE_FACTOR, v.Z);
+            return new IntPoint(v.X * ScaleFactor, v.Y * ScaleFactor, v.Z);
         }
 
         public static Vector2 ToVector2(IntPoint point)
         {
-            return new Vector2((float)(point.X / SCALE_FACTOR), (float)(point.Y / SCALE_FACTOR));
+            return new Vector2((float)(point.X / ScaleFactor), (float)(point.Y / ScaleFactor));
         }
 
         public static Vector3 ToVector3(IntPoint point)
         {
-            return new Vector3((float)(point.X / SCALE_FACTOR), (float)(point.Y / SCALE_FACTOR), (float)point.Z);
+            return new Vector3((float)(point.X / ScaleFactor), (float)(point.Y / ScaleFactor), (float)point.Z);
         }
     }
 }

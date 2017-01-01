@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
 using OpenTK;
 using FarseerPhysics;
+using Game.Common;
 using Game.Portals;
 
 namespace UnitTest
@@ -139,7 +140,7 @@ namespace UnitTest
         #endregion
         #region IsInsideFOV test
         [TestMethod]
-        public void IsInsideFOVTest0()
+        public void IsInsideFovTest0()
         {
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
             {
@@ -152,11 +153,11 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2((float)Math.Cos(i + Math.PI), (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2((float)Math.Cos(i), (float)Math.Sin(i));
                 LineF line = new LineF(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
-                Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
+                Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest1()
+        public void IsInsideFovTest1()
         {
             float x = 100;
             float y = 100;
@@ -172,11 +173,11 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
                 LineF line = new LineF(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
-                Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
+                Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest2()
+        public void IsInsideFovTest2()
         {
             float x = 0;
             float y = 0;
@@ -192,11 +193,11 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI)/100000, y + (float)Math.Sin(i + Math.PI)/100000);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i)/100000, y + (float)Math.Sin(i)/100000);
                 LineF line = new LineF(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
-                Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
+                Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest3()
+        public void IsInsideFovTest3()
         {
             float x = 0;
             float y = 0;
@@ -213,11 +214,11 @@ namespace UnitTest
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
                 LineF line = new LineF(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
 
-                Assert.IsFalse(line.IsInsideFOV(viewPoint, lookPoint));
+                Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest4()
+        public void IsInsideFovTest4()
         {
             float x = 0;
             float y = 0;
@@ -234,11 +235,11 @@ namespace UnitTest
                 Vector2 lookPoint = new Vector2(x, y);
                 LineF line = new LineF(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
 
-                Assert.IsFalse(line.IsInsideFOV(viewPoint, lookPoint));
+                Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest5()
+        public void IsInsideFovTest5()
         {
             float x = 0;
             float y = 0;
@@ -254,11 +255,11 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
                 Vector2 lookPoint = new Vector2(x, y);
                 LineF line = new LineF(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
-                Assert.IsTrue(line.IsInsideFOV(viewPoint, lookPoint));
+                Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest6()
+        public void IsInsideFovTest6()
         {
             float x = 0;
             float y = 0;
@@ -274,11 +275,11 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i) * 2, y + (float)Math.Sin(i) * 2);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
                 LineF line = new LineF(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
-                Assert.IsFalse(line.IsInsideFOV(viewPoint, lookPoint));
+                Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest7()
+        public void IsInsideFovTest7()
         {
             float x = 0;
             float y = 0;
@@ -294,11 +295,11 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i) * 2, y + (float)Math.Sin(i) * 2);
                 LineF line = new LineF(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
-                Assert.IsFalse(line.IsInsideFOV(viewPoint, lookPoint));
+                Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest8()
+        public void IsInsideFovTest8()
         {
             float x = -2;
             float y = 2;
@@ -307,11 +308,11 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2(x - 1, y);
                 LineF lookLine = new LineF(new Vector2(x + 1, y), (float)i, 1f);
                 LineF line = new LineF(new Vector2(x, y + 0.5f), new Vector2(x, y - 0.5f));
-                Assert.IsTrue(line.IsInsideFOV(viewPoint, lookLine));
+                Assert.IsTrue(line.IsInsideFov(viewPoint, lookLine));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest9()
+        public void IsInsideFovTest9()
         {
             float x = -2;
             float y = 2;
@@ -320,11 +321,11 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2(x - 1, y);
                 LineF lookLine = new LineF(new Vector2(x + 1, y), (float)i, 1f);
                 LineF line = new LineF(new Vector2(x, y + 0.5f), new Vector2(x, y - 0.5f));
-                Assert.IsTrue(line.IsInsideFOV(viewPoint, lookLine));
+                Assert.IsTrue(line.IsInsideFov(viewPoint, lookLine));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest10()
+        public void IsInsideFovTest10()
         {
             float x = -2;
             float y = 2;
@@ -333,11 +334,11 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2(x - 1, y);
                 LineF lookLine = new LineF(new Vector2(x + 2, y), (float)i, 1f);
                 LineF line = new LineF(new Vector2(x, y + 0.5f), new Vector2(x, y - 0.5f));
-                Assert.IsFalse(lookLine.IsInsideFOV(viewPoint, line));
+                Assert.IsFalse(lookLine.IsInsideFov(viewPoint, line));
             }
         }
         [TestMethod]
-        public void IsInsideFOVTest11()
+        public void IsInsideFovTest11()
         {
             float x = -2;
             float y = 2;
@@ -346,7 +347,7 @@ namespace UnitTest
                 Vector2 viewPoint = new Vector2(x - 1, y);
                 LineF lookLine = new LineF(new Vector2(x + 3, y + 0.5f), new Vector2(x + 3, y - 0.5f));
                 LineF line = new LineF(new Vector2(x + 1, y), (float)i, 1f);
-                Assert.IsTrue(line.IsInsideFOV(viewPoint, lookLine));
+                Assert.IsTrue(line.IsInsideFov(viewPoint, lookLine));
             }
         }
         #endregion
@@ -381,8 +382,8 @@ namespace UnitTest
             IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, 0.6);
-            comparison.TFirst = 0.6;
-            comparison.TLast = 0.5;
+            comparison.First = 0.6;
+            comparison.Last = 0.5;
             Assert.IsTrue(intersect.Equals(comparison));
         }
 
@@ -396,8 +397,8 @@ namespace UnitTest
             IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, 1);
-            comparison.TFirst = 1;
-            comparison.TLast = 0.5;
+            comparison.First = 1;
+            comparison.Last = 0.5;
             Assert.IsTrue(intersect.Equals(comparison));
         }
 
@@ -411,8 +412,8 @@ namespace UnitTest
             IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, -1);
-            comparison.TFirst = 1;
-            comparison.TLast = 0.5;
+            comparison.First = 1;
+            comparison.Last = 0.5;
             Assert.IsTrue(intersect.Equals(comparison));
         }
 
@@ -426,8 +427,8 @@ namespace UnitTest
             IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, -1000000);
-            comparison.TFirst = 1;
-            comparison.TLast = 0.5;
+            comparison.First = 1;
+            comparison.Last = 0.5;
             Assert.IsTrue(intersect.Equals(comparison));
         }
 
@@ -441,8 +442,8 @@ namespace UnitTest
             IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, -1);
-            comparison.TFirst = 1;
-            comparison.TLast = 0.5;
+            comparison.First = 1;
+            comparison.Last = 0.5;
             Assert.IsTrue(intersect.Equals(comparison));
         }
 
@@ -456,8 +457,8 @@ namespace UnitTest
             IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(0, -1000000);
-            comparison.TFirst = 1;
-            comparison.TLast = 0.5;
+            comparison.First = 1;
+            comparison.Last = 0.5;
             Assert.IsTrue(intersect.Equals(comparison));
         }
 
@@ -471,8 +472,8 @@ namespace UnitTest
             IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(1.5, 1.5);
-            comparison.TFirst = 0.5;
-            comparison.TLast = 1/(double)3;
+            comparison.First = 0.5;
+            comparison.Last = 1/(double)3;
             Assert.IsTrue(intersect.Equals(comparison));
         }
 
@@ -498,8 +499,8 @@ namespace UnitTest
             IntersectCoord comparison = new IntersectCoord();
             comparison.Exists = true;
             comparison.Position = new Vector2d(5.25, 5.25);
-            comparison.TFirst = 4.25;
-            comparison.TLast = 0.25;
+            comparison.First = 4.25;
+            comparison.Last = 0.25;
             Assert.IsTrue(intersect.Equals(comparison));
         }
         #endregion

@@ -1,8 +1,9 @@
-﻿using OpenTK;
-using System;
+﻿using System;
 using System.Diagnostics;
+using Game.Common;
+using OpenTK;
 
-namespace Game
+namespace Game.Rendering
 {
     public class Camera
     {
@@ -51,7 +52,7 @@ namespace Game
 
         public Vector2[] GetVerts()
         {
-            return new Vector2[4] {
+            return new[] {
                 new Vector2(-1f, -1f),
                 new Vector2(1f, -1f),
                 new Vector2(1f, 1f),
@@ -65,9 +66,9 @@ namespace Game
         /// <returns>A view matrix to look in the camera's direction</returns>
         public Matrix4 GetViewMatrix()
         {
-            Matrix4 m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
-            Vector3 lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
-            Matrix4 perspective = Orthographic ? 
+            var m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
+            var lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
+            var perspective = Orthographic ? 
                 Matrix4.CreateOrthographic(Transform.Scale.X * Scale * Aspect, Transform.Scale.Y * Scale, ZNear, ZFar) : 
                 Matrix4.CreatePerspectiveFieldOfView(Fov, Transform.Scale.X / Transform.Scale.Y, ZNear, ZFar);
             return Matrix4.LookAt(Transform.Position, Transform.Position + lookat, GetUp()) * perspective;
@@ -75,13 +76,13 @@ namespace Game
 
         public Vector3 GetUp()
         {
-            Matrix4 m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
+            var m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
             return Vector3.Transform(new Vector3(0, 1, 0), m);
         }
 
         public Vector3 GetRight()
         {
-            Matrix4 m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
+            var m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
             return Vector3.Transform(new Vector3(1, 0, 0), m);
         }
 
@@ -98,7 +99,7 @@ namespace Game
         private Matrix4 GetWorldToScreenMatrix(Vector2 canvasSize)
         {
             Debug.Assert(Orthographic, "Only ortho projection is allowed for now.");
-            var scale = Matrix4.CreateScale((float)(canvasSize.X / 2), -(canvasSize.Y / 2), 1);
+            var scale = Matrix4.CreateScale(canvasSize.X / 2, -canvasSize.Y / 2, 1);
             var translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
             return GetViewMatrix() * translation * scale;
         }

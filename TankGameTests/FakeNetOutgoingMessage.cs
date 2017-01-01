@@ -11,8 +11,7 @@ namespace TankGameTests
     {
         public FakeNetIncomingMessage ToIncomingMessage()
         {
-            var message = new FakeNetIncomingMessage();
-            message.Data = Data;
+            var message = new FakeNetIncomingMessage {Data = Data};
             return message;
         }
 
@@ -22,6 +21,11 @@ namespace TankGameTests
         }
 
         public void EnsureBufferSize(int numberOfBits)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IPEndPoint ReadIPEndPoint()
         {
             throw new NotImplementedException();
         }

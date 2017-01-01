@@ -7,6 +7,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Serialization;
 
 namespace EditorLogic
 {
@@ -14,7 +15,7 @@ namespace EditorLogic
     {
         public static List<EditorObject> Clone(EditorScene source, EditorScene destination)
         {
-            return Clone(new List<IDeepClone>(source._children), destination);
+            return Clone(new List<IDeepClone>(source.Children), destination);
         }
 
         public static List<EditorObject> Clone(List<IDeepClone> source, EditorScene destination)

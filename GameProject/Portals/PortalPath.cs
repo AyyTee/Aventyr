@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
+using Game.Serialization;
 
 namespace Game.Portals
 {

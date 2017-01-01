@@ -5,6 +5,8 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenTK;
 using System.Collections.Generic;
+using Game.Common;
+using Game.Models;
 
 namespace UnitTest
 {
@@ -42,7 +44,7 @@ namespace UnitTest
             portal0.Linked = portal1;
             portal1.Linked = portal0;
 
-            for (float i = 0; i < MathExt.TAU; i += 0.01f)
+            for (float i = 0; i < MathExt.Tau; i += 0.01f)
             {
                 polygon.SetTransform(new Transform2(new Vector2(100000, -123), 1, i));
                 List<Clip.ClipModel> clipmodels = Clip.GetClipModels(polygon, scene.GetPortalList(), 2);

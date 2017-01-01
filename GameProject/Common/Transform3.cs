@@ -1,24 +1,20 @@
-﻿using OpenTK;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using OpenTK;
 
-namespace Game
+namespace Game.Common
 {
     public class Transform3
     {
-        private Matrix4 Matrix;
-        private bool MatrixUpdate = true;
+        private Matrix4 _matrix;
+        private bool _matrixUpdate = true;
         private Vector3 _position = new Vector3();
         private Quaternion _rotation = new Quaternion(0, 0, 1, 0);
         private Vector3 _scale = new Vector3(1, 1, 1);
 
         public bool FixedScale { get; private set; }
 
-        public Quaternion Rotation { get { return _rotation; } set { _rotation = value; MatrixUpdate = true;  } }
+        public Quaternion Rotation { get { return _rotation; } set { _rotation = value; _matrixUpdate = true;  } }
         public Vector3 Scale
         {
             get { return _scale; }
@@ -28,11 +24,11 @@ namespace Game
                 {
                     Debug.Assert(Math.Abs(value.X) == Math.Abs(value.Y) && Math.Abs(value.Y) == Math.Abs(value.Z), "Transforms with fixed scale cannot have non-uniform scale.");
                 }
-                MatrixUpdate = true;
+                _matrixUpdate = true;
                 _scale = value;
             }
         }
-        public Vector3 Position { get { return _position; } set { _position = value; MatrixUpdate = true; } }
+        public Vector3 Position { get { return _position; } set { _position = value; _matrixUpdate = true; } }
 
         public Transform3()
         {
@@ -76,12 +72,12 @@ namespace Game
 
         public Matrix4 GetMatrix()
         {
-            if (MatrixUpdate)
+            if (_matrixUpdate)
             {
-                Matrix = Matrix4.CreateScale(Scale) * Matrix4.CreateFromAxisAngle(new Vector3(Rotation.X, Rotation.Y, Rotation.Z), Rotation.W) * Matrix4.CreateTranslation(Position);
-                MatrixUpdate = false;
+                _matrix = Matrix4.CreateScale(Scale) * Matrix4.CreateFromAxisAngle(new Vector3(Rotation.X, Rotation.Y, Rotation.Z), Rotation.W) * Matrix4.CreateTranslation(Position);
+                _matrixUpdate = false;
             }
-            return Matrix;
+            return _matrix;
         }
 
         public static Transform3 Lerp(Transform3 a, Transform3 b, float t)

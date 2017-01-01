@@ -24,7 +24,7 @@ namespace EditorWindow
     /// </summary>
     public partial class ToolPanel : UserControl
     {
-        Dictionary<Tool, ToolButton> ButtonMap = new Dictionary<Tool, ToolButton>();
+        Dictionary<Tool, ToolButton> _buttonMap = new Dictionary<Tool, ToolButton>();
 
         public ToolPanel()
         {
@@ -40,31 +40,31 @@ namespace EditorWindow
             Debug.Assert(controller != null);
             controller.ToolChanged += ControllerEditor_ToolChanged;
 
-            string AssetsDirectory = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "editor assets");
+            string assetsDirectory = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "editor assets");
             var arguments = new[] {
                 new {
                     tool = (Tool)new ToolAddEntity(controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "entityIcon.png")))
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(assetsDirectory, "icons", "entityIcon.png")))
                 },
                 new {
                     tool = (Tool)new ToolAddPortal(controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "portalIcon.png")))
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(assetsDirectory, "icons", "portalIcon.png")))
                 },
                 new {
                     tool = (Tool)new ToolPortalLinker(controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "polygonLinkerIcon.png")))
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(assetsDirectory, "icons", "polygonLinkerIcon.png")))
                 },
                 new {
                     tool = (Tool)new ToolAddActor(controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "entityIcon.png")))
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(assetsDirectory, "icons", "entityIcon.png")))
                 },
                 new {
                     tool = (Tool)new ToolAddWall(controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "polygonIcon.png")))
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(assetsDirectory, "icons", "polygonIcon.png")))
                 },
                 new {
                     tool = (Tool)new ToolAddPlayer(controller),
-                    image = new BitmapImage(new Uri(System.IO.Path.Combine(AssetsDirectory, "icons", "polygonIcon.png")))
+                    image = new BitmapImage(new Uri(System.IO.Path.Combine(assetsDirectory, "icons", "polygonIcon.png")))
                 }
             };
             for (int i = 0; i < arguments.Length; i++)
@@ -77,13 +77,13 @@ namespace EditorWindow
         {
             MainWindow.Invoke(() =>
             {
-                if (ButtonMap.ContainsKey(tool))
+                if (_buttonMap.ContainsKey(tool))
                 {
-                    ButtonMap[tool].Button.IsChecked = true;
+                    _buttonMap[tool].Button.IsChecked = true;
                 }
                 else
                 {
-                    foreach (ToolButton button in ButtonMap.Values)
+                    foreach (ToolButton button in _buttonMap.Values)
                     {
                         button.Button.IsChecked = false;
                     }
@@ -96,7 +96,7 @@ namespace EditorWindow
         {
             ToolButton button = new ToolButton(controller, tool, buttonImage);
             ToolGrid.Children.Add(button);
-            ButtonMap.Add(tool, button);
+            _buttonMap.Add(tool, button);
         }
     }
 }

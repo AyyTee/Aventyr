@@ -1,21 +1,19 @@
-﻿using ClipperLib;
-using FarseerPhysics.Collision.Shapes;
-using FarseerPhysics.Dynamics;
-using Game.Portals;
-using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FarseerPhysics.Collision.Shapes;
+using FarseerPhysics.Dynamics;
+using Game.Common;
+using Game.Portals;
+using Vector2 = OpenTK.Vector2;
 using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Physics
 {
     public static class FixtureExt
     {
-        const float ERROR_MARGIN = 0.0001f;
+        const float ErrorMargin = 0.0001f;
 
         public static FixtureData SetData(Fixture fixture)
         {
@@ -72,8 +70,8 @@ namespace Game
                         for (int i = 0; i < polygon.Vertices.Count; i++)
                         {
                             int iNext = (i + 1) % polygon.Vertices.Count;
-                            if ((edge[0] - (Vector2)polygon.Vertices[i]).Length < ERROR_MARGIN &&
-                                (edge[1] - (Vector2)polygon.Vertices[iNext]).Length < ERROR_MARGIN)
+                            if ((edge[0] - (Vector2)polygon.Vertices[i]).Length < ErrorMargin &&
+                                (edge[1] - (Vector2)polygon.Vertices[iNext]).Length < ErrorMargin)
                             {
                                 //float edgeT = PolygonExt.IsInterior(fixtureContour) ? coord.EdgeT : 1 - coord.EdgeT;
                                 float edgeT = coord.EdgeT;
@@ -132,7 +130,7 @@ namespace Game
                             IntersectCoord[] intersects = MathExt.LineCircleIntersect(new Vector2(relativePoint.X, relativePoint.Y), radius, edge, true);
                             for (int j = 0; i < intersects.Length; i++)
                             {
-                                collisions.Add(new FixtureCoord(f, i, (float)intersects[j].TFirst));
+                                collisions.Add(new FixtureCoord(f, i, (float)intersects[j].First));
                             }
                             /*if (intersects.Length > 0)
                             {

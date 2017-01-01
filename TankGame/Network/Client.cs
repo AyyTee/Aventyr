@@ -11,6 +11,7 @@ using OpenTK.Input;
 using System.Drawing;
 using Game.Portals;
 using System.Diagnostics;
+using Game.Common;
 using Game.Rendering;
 
 namespace TankGame.Network
@@ -21,7 +22,7 @@ namespace TankGame.Network
         /// This client's id.
         /// </summary>
         public long ServerId { get { return _client.UniqueIdentifier; } }
-        Dictionary<long, Tank> Tanks = new Dictionary<long, Tank>();
+        Dictionary<long, Tank> _tanks = new Dictionary<long, Tank>();
         INetClient _client;
         public INetPeer Peer { get { return _client; } }
         public bool IsConnected { get { return _client.ServerConnection != null; } }
@@ -133,7 +134,7 @@ namespace TankGame.Network
         public Tank GetTank()
         {
             Tank tank;
-            Tanks.TryGetValue(ServerId, out tank);
+            _tanks.TryGetValue(ServerId, out tank);
             return tank;
         }
 
@@ -196,12 +197,12 @@ namespace TankGame.Network
                 foreach (TankData tankData in data.TankData)
                 {
                     Tank tank;
-                    Tanks.TryGetValue(tankData.OwnerId, out tank);
+                    _tanks.TryGetValue(tankData.OwnerId, out tank);
 
                     if (tank == null)
                     {
                         tank = tank ?? new Tank(Scene);
-                        Tanks.Add(tankData.OwnerId, tank);
+                        _tanks.Add(tankData.OwnerId, tank);
 
                         if (tankData.OwnerId == ServerId)
                         {

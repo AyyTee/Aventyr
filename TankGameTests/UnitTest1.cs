@@ -7,39 +7,40 @@ using TankGame;
 using Game;
 using OpenTK.Input;
 using System.Linq;
+using Game.Common;
 
 namespace TankGameTests
 {
     [TestClass]
     public class UnitTest1
     {
-        Client Client;
-        FakeNetClient NetClient;
-        Server Server;
-        FakeNetServer NetServer;
+        Client _client;
+        FakeNetClient _netClient;
+        Server _server;
+        FakeNetServer _netServer;
 
         [TestInitialize]
         public void Initialize()
         {
             NetTime.AutomaticTimeKeeping = false;
-            NetClient = new FakeNetClient();
+            _netClient = new FakeNetClient();
             FakeController controller = new FakeController();
-            Client = new Client(null, controller, NetClient);
-            Client.Init(null, controller.CanvasSize);
+            _client = new Client(null, controller, _netClient);
+            _client.Init(null, controller.CanvasSize);
 
-            NetServer = new FakeNetServer();
+            _netServer = new FakeNetServer();
             FakeController controllerServer = new FakeController();
-            Server = new Server(NetServer);
-            Server.Init(null, controllerServer.CanvasSize);
+            _server = new Server(_netServer);
+            _server.Init(null, controllerServer.CanvasSize);
 
-            NetServer.Connections.Add(new FakeNetConnection
+            _netServer.Connections.Add(new FakeNetConnection
             {
-                EndPoint = NetClient,
+                EndPoint = _netClient,
                 AverageRoundtripTime = 0.2f
             });
-            NetClient.Connections.Add(new FakeNetConnection
+            _netClient.Connections.Add(new FakeNetConnection
             {
-                EndPoint = NetServer,
+                EndPoint = _netServer,
                 AverageRoundtripTime = 0.2f
             });
         }
@@ -47,10 +48,10 @@ namespace TankGameTests
         [TestCleanup]
         public void Cleanup()
         {
-            Client = null;
-            NetClient = null;
-            Server = null;
-            NetServer = null;
+            _client = null;
+            _netClient = null;
+            _server = null;
+            _netServer = null;
         }
 
         [TestMethod]
@@ -65,7 +66,7 @@ namespace TankGameTests
                 {
                     new TankData
                     {
-                        OwnerId = Client.ServerId,
+                        OwnerId = _client.ServerId,
                         GunFiredTime = -1,
                         Transform = new Transform2(),
                         WorldTransform = new Transform2(),
@@ -75,14 +76,14 @@ namespace TankGameTests
                         TurretWorldTransform = new Transform2(),
                     },
                 };
-                var message = ((FakeNetOutgoingMessage)NetworkHelper.PrepareMessage(Client, data)).ToIncomingMessage();
+                var message = ((FakeNetOutgoingMessage)NetworkHelper.PrepareMessage(_client, data)).ToIncomingMessage();
                 message.MessageType = NetIncomingMessageType.Data;
-                NetClient.Messages.Enqueue(message);
+                _netClient.Messages.Enqueue(message);
 
-                ((FakeController)Client.Controller).Input.KeyCurrent.Add(Key.Space);
-                Client.Step();
+                ((FakeController)_client.Controller).Input.KeyCurrent.Add(Key.Space);
+                _client.Step();
 
-                Assert.IsTrue(Client.Scene.GetAll().OfType<Bullet>().Count() <= 1);
+                Assert.IsTrue(_client.Scene.GetAll().OfType<Bullet>().Count() <= 1);
             }
         }
 
@@ -92,12 +93,12 @@ namespace TankGameTests
         [TestMethod]
         public void FakeNetTest0()
         {
-            Client.SendMessage(new ClientMessage { Input = new TankInput { FireGun = true } });
-            ClientMessage clientMessage = NetworkHelper.ReadMessage<ClientMessage>(NetServer.ReadMessage());
+            _client.SendMessage(new ClientMessage { Input = new TankInput { FireGun = true } });
+            ClientMessage clientMessage = NetworkHelper.ReadMessage<ClientMessage>(_netServer.ReadMessage());
             Assert.IsTrue(clientMessage.Input.FireGun);
 
-            Server.SendMessage(new ServerMessage { SceneTime = 1 });
-            ServerMessage serverMessage = NetworkHelper.ReadMessage<ServerMessage>(NetClient.ReadMessage());
+            _server.SendMessage(new ServerMessage { SceneTime = 1 });
+            ServerMessage serverMessage = NetworkHelper.ReadMessage<ServerMessage>(_netClient.ReadMessage());
             Assert.IsTrue(serverMessage.SceneTime == 1);
         }
     }

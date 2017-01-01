@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
+using Game.Common;
+using Game.Rendering;
 using OpenTK;
 
 namespace UnitTest

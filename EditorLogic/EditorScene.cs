@@ -9,6 +9,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
+using Game.Models;
+using Game.Physics;
+using Game.Rendering;
 using Xna = Microsoft.Xna.Framework;
 
 namespace EditorLogic
@@ -18,7 +22,7 @@ namespace EditorLogic
     {
         public Renderer Renderer { get; private set; }
         [DataMember]
-        public List<EditorObject> _children = new List<EditorObject>();
+        public List<EditorObject> Children = new List<EditorObject>();
         [DataMember]
         public ControllerCamera ActiveCamera { get; set; }
         [DataMember]
@@ -31,7 +35,7 @@ namespace EditorLogic
             Renderer = renderer;
 
             #region create background
-            Model background = Game.ModelFactory.CreatePlane();
+            Model background = Game.Rendering.ModelFactory.CreatePlane();
             background.Texture = Renderer?.GetTexture("grid.png");
             background.SetColor(new Vector3(1, 1, 0.5f));
             background.Transform.Position = new Vector3(0, 0, -5f);
@@ -47,7 +51,7 @@ namespace EditorLogic
         public List<ISceneObject> GetAll()
         {
             HashSet<ISceneObject> set = new HashSet<ISceneObject>();
-            foreach (EditorObject e in _children)
+            foreach (EditorObject e in Children)
             {
                 set.UnionWith(Tree<EditorObject>.GetDescendents(e));
             }
@@ -57,7 +61,7 @@ namespace EditorLogic
 
         public void Clear()
         {
-            List<EditorObject> childrenCopy = new List<EditorObject>(_children);
+            List<EditorObject> childrenCopy = new List<EditorObject>(Children);
             foreach (EditorObject e in childrenCopy)
             {
                 e.Remove();

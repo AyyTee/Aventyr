@@ -1,14 +1,13 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Collections.Generic;
+using Game.Models;
 using OpenTK;
-using System.Diagnostics;
 
-namespace Game
+namespace Game.Rendering
 {
     public class ModelLoader
     {
-        const char splitChar = ' ';
+        const char SplitChar = ' ';
         /// <summary>
         /// Creates a Model using data from an obj file.  If unable to parse the file, null will be returned.
         /// </summary>
@@ -25,13 +24,13 @@ namespace Game
             string line;
             while ((line = reader.ReadLine()) != null)
             {
-                line = line.Trim(splitChar);
-                string[] parameters = line.Split(splitChar);
+                line = line.Trim(SplitChar);
+                string[] parameters = line.Split(SplitChar);
 
                 switch (parameters[0])
                 {
                     case "mtllib":
-                        mtlFileName = string.Join(splitChar.ToString(), parameters, 1, parameters.Length - 1);
+                        mtlFileName = string.Join(SplitChar.ToString(), parameters, 1, parameters.Length - 1);
                         break;
 
                     case "p": // Point
@@ -39,7 +38,7 @@ namespace Game
 
                     case "v": // Vertex
                         Vector3 vert;
-                        if (!parseVector3(parameters, out vert))
+                        if (!ParseVector3(parameters, out vert))
                         {
                             return null;
                         }
@@ -48,7 +47,7 @@ namespace Game
 
                     case "vt": // TexCoord
                         Vector2 tex;
-                        if (!parseVector2(parameters, out tex))
+                        if (!ParseVector2(parameters, out tex))
                         {
                             return null;
                         }
@@ -57,7 +56,7 @@ namespace Game
 
                     case "vn": // Normal
                         Vector3 norm;
-                        if (!parseVector3(parameters, out norm))
+                        if (!ParseVector3(parameters, out norm))
                         {
                             return null;
                         }
@@ -65,7 +64,7 @@ namespace Game
                         break;
 
                     case "f": // Face
-                        if (!parseFace(model, parameters, points, normals, texCoords, vectorMap))
+                        if (!ParseFace(model, parameters, points, normals, texCoords, vectorMap))
                         {
                             return null;
                         }
@@ -78,7 +77,7 @@ namespace Game
             return model;
         }
 
-        private bool parseFace(Model model, string[] parameters, List<Vector3> points, List<Vector3> normals, List<Vector2> texCoords, Dictionary<string, int> vectorMap)
+        private bool ParseFace(Model model, string[] parameters, List<Vector3> points, List<Vector3> normals, List<Vector2> texCoords, Dictionary<string, int> vectorMap)
         {
             string[] indices = parameters;
             int[] p = new int[indices.Length - 1];
@@ -89,7 +88,7 @@ namespace Game
                 char[] splitCharsFace = { '/' };
                 string[] subparameters = indices[i + 1].Split(splitCharsFace);
                 int vertId, texId, normId;
-                if (!parseVertex(subparameters, out vertId, out texId, out normId))
+                if (!ParseVertex(subparameters, out vertId, out texId, out normId))
                 {
                     return false;
                 }
@@ -127,7 +126,7 @@ namespace Game
             return true;
         }
 
-        private bool parseVertex(string[] parameters, out int vertId, out int texId, out int normId)
+        private bool ParseVertex(string[] parameters, out int vertId, out int texId, out int normId)
         {
             vertId = -1;
             texId = -1;
@@ -155,7 +154,7 @@ namespace Game
             return true;
         }
 
-        private bool parseVector3(string[] parameters, out Vector3 v)
+        private bool ParseVector3(string[] parameters, out Vector3 v)
         {
             if (parameters.Length != 4)
             {
@@ -171,7 +170,7 @@ namespace Game
             return valid;
         }
 
-        private bool parseVector2(string[] parameters, out Vector2 v)
+        private bool ParseVector2(string[] parameters, out Vector2 v)
         {
             if (parameters.Length != 3)
             {
@@ -209,12 +208,12 @@ namespace Game
             string textureFile = "";
             while ((line = reader.ReadLine()) != null)
             {
-                line = line.Trim(splitChar);
-                string[] parameters = line.Split(splitChar);
+                line = line.Trim(SplitChar);
+                string[] parameters = line.Split(SplitChar);
 
                 if (parameters[0] == "map_Kd")
                 {
-                    textureFile = string.Join(splitChar.ToString(), parameters, 1, parameters.Length - 1);
+                    textureFile = string.Join(SplitChar.ToString(), parameters, 1, parameters.Length - 1);
                     string textureFilePath = Path.Combine(Path.GetDirectoryName(stream.Name), textureFile);
                     return new TextureFile(textureFilePath);//Renderer.LoadImage(textureFilePath);
                 }

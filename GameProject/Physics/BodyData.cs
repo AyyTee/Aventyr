@@ -1,15 +1,11 @@
-﻿using FarseerPhysics.Dynamics;
-using Game.Portals;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
+using FarseerPhysics.Dynamics;
+using Game.Portals;
 using Xna = Microsoft.Xna.Framework;
 
-namespace Game
+namespace Game.Physics
 {
     public class BodyData : ITreeNode<BodyData>
     {

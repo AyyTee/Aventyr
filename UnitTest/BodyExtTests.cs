@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
+using Game.Common;
 using Game.Physics;
 using Game.Portals;
 using OpenTK;
-using static Game.BodyExt;
+using static Game.Physics.BodyExt;
 
 namespace UnitTest
 {

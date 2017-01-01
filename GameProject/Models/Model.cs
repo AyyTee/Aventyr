@@ -1,11 +1,11 @@
-﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using Game.Common;
+using Game.Rendering;
+using Game.Serialization;
+using OpenTK;
 
-namespace Game
+namespace Game.Models
 {
     /// <summary>
     /// An object made up of vertices

@@ -1,14 +1,13 @@
-﻿using ClipperLib;
-using Game.Portals;
-using OpenTK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ClipperLib;
+using Game.Common;
+using Game.Portals;
+using OpenTK;
 
-namespace Game
+namespace Game.Rendering
 {
     public class PortalView
     {
@@ -97,7 +96,7 @@ namespace Game
 
         private static bool CalculatePortalViews(IPortal portal, IPortal portalEnter, IList<IPortal> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, PortalView portalView, Matrix4 portalMatrix, List<Func<bool>> actionList)
         {
-            const float AREA_EPSILON = 0.0001f;
+            const float areaEpsilon = 0.0001f;
             Clipper c = new Clipper();
             //The clipper must be set to strictly simple. Otherwise polygons might have duplicate vertices which causes poly2tri to generate incorrect results.
             c.StrictlySimple = true;
@@ -108,7 +107,7 @@ namespace Game
             }
 
             Vector2[] fov = Vector2Ext.Transform(Portal.GetFov(portal, viewPos, 500, 3), portalMatrix);
-            if (MathExt.GetArea(fov) < AREA_EPSILON)
+            if (MathExt.GetArea(fov) < areaEpsilon)
             {
                 return false;
             }
@@ -139,12 +138,12 @@ namespace Game
                 //Skip this portal if it's inside the current portal's Fov.
                 LineF portalLine = new LineF(Portal.GetWorldVerts(portal));
                 LineF portalOtherLine = new LineF(Portal.GetWorldVerts(other));
-                if (portalLine.IsInsideFOV(viewPos, portalOtherLine))
+                if (portalLine.IsInsideFov(viewPos, portalOtherLine))
                 {
                     continue;
                 }
                 Vector2[] otherFov = Vector2Ext.Transform(Portal.GetFov(other, viewPos, 500, 3), portalMatrix);
-                if (MathExt.GetArea(otherFov) < AREA_EPSILON)
+                if (MathExt.GetArea(otherFov) < areaEpsilon)
                 {
                     continue;
                 }
@@ -212,7 +211,7 @@ namespace Game
             if (previous != null)
             {
                 LineF portalEnterLine = new LineF(Portal.GetWorldVerts(previous.Linked));
-                if (!portalEnterLine.IsInsideFOV(viewPos, portalLine))
+                if (!portalEnterLine.IsInsideFov(viewPos, portalLine))
                 {
                     return false;
                 }

@@ -5,13 +5,13 @@ using System.Windows.Input;
 
 namespace EditorWindow
 {
-    public static class WPFCommands
+    public static class WpfCommands
     {
         public static readonly RoutedUICommand Exit = new RoutedUICommand
             (
                 "Exit",
                 "Exit",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 new InputGestureCollection()
                 {
                     new KeyGesture(Key.F4, ModifierKeys.Alt)
@@ -22,7 +22,7 @@ namespace EditorWindow
             (
                 "Toggle",
                 "TimerToggle",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 null
             );
 
@@ -30,7 +30,7 @@ namespace EditorWindow
             (
                 "Stop",
                 "TimerStop",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 new InputGestureCollection()
                 {
                     new KeyGesture(Key.Escape)
@@ -41,7 +41,7 @@ namespace EditorWindow
             (
                 "Play",
                 "TimerPlay",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 null
             );
 
@@ -49,7 +49,7 @@ namespace EditorWindow
             (
                 "Pause",
                 "TimerPause",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 null
             );
 
@@ -57,7 +57,7 @@ namespace EditorWindow
             (
                 "Step",
                 "TimerStep",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 new InputGestureCollection()
                 {
                     new KeyGesture(Key.P, ModifierKeys.Control)
@@ -67,7 +67,7 @@ namespace EditorWindow
             (
                 "Step Foward",
                 "TimerStepFoward",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 new InputGestureCollection()
                 {
                     new KeyGesture(Key.Right, ModifierKeys.Control)
@@ -77,7 +77,7 @@ namespace EditorWindow
             (
                 "Step Backward",
                 "TimerStepBackward",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 new InputGestureCollection()
                 {
                     new KeyGesture(Key.Left, ModifierKeys.Control)
@@ -87,7 +87,7 @@ namespace EditorWindow
             (
                 "Jump Foward",
                 "TimerJumpFoward",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 new InputGestureCollection()
                 {
                     new KeyGesture(Key.Up, ModifierKeys.Control)
@@ -97,7 +97,7 @@ namespace EditorWindow
             (
                 "Jump Backward",
                 "TimerJumpBackward",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 new InputGestureCollection()
                 {
                     new KeyGesture(Key.Down, ModifierKeys.Control)
@@ -107,7 +107,7 @@ namespace EditorWindow
             (
                 "Add Keyframe",
                 "KeyframeAdd",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 new InputGestureCollection()
                 {
                     new KeyGesture(Key.K, ModifierKeys.Control)
@@ -117,7 +117,7 @@ namespace EditorWindow
             (
                 "Remove Keyframe",
                 "KeyframeRemove",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 new InputGestureCollection()
                 {
                     new KeyGesture(Key.K, ModifierKeys.Alt)
@@ -128,7 +128,7 @@ namespace EditorWindow
             (
                 "Run Standalone",
                 "RunStandalone",
-                typeof(WPFCommands),
+                typeof(WpfCommands),
                 null
             );
     }
