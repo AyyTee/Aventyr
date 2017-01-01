@@ -13,8 +13,8 @@ namespace Game.Physics
         class PortalableMovement
         {
             public Transform2D Previous;
-            public Line StartEnd;
-            public IPortalCommon Instance;
+            public readonly Line StartEnd;
+            public readonly IPortalCommon Instance;
             public PortalableMovement(IPortalCommon instance, Line startEnd, Transform2D previous)
             {
                 Instance = instance;
@@ -25,9 +25,9 @@ namespace Game.Physics
 
         class PortalMovement
         {
-            public Line Start;
-            public Line End;
-            public IPortal Portal;
+            public readonly Line Start;
+            public readonly Line End;
+            public readonly IPortal Portal;
             public PortalMovement(IPortal portal, Line start, Line end)
             {
                 Portal = portal;
@@ -39,8 +39,8 @@ namespace Game.Physics
         class PortalableSweep
         {
             public GeometryUtil.Sweep Sweep;
-            public PortalableMovement Portalable;
-            public PortalMovement Portal;
+            public readonly PortalableMovement Portalable;
+            public readonly PortalMovement Portal;
             public PortalableSweep(GeometryUtil.Sweep sweep, PortalableMovement portalable, PortalMovement portal)
             {
                 Sweep = sweep;
@@ -63,8 +63,8 @@ namespace Game.Physics
 
         static void Step(IEnumerable<IPortalCommon> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter, List<PortalableSweep> previous)
         {
-            List<PortalableMovement> pointMovement = new List<PortalableMovement>();
-            List<PortalMovement> lineMovement = new List<PortalMovement>();
+            var pointMovement = new List<PortalableMovement>();
+            var lineMovement = new List<PortalMovement>();
 
             //Get the start positions and initial end positions for all portals and portalables.
             {
@@ -74,10 +74,10 @@ namespace Game.Physics
                     {
                         continue;
                     }
-                    Line lineStart = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p)));
+                    var lineStart = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p)));
 
-                    Transform2D t = (Transform2D)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
-                    Line lineEnd = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p, (Transform2)t)));
+                    var t = (Transform2D)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
+                    var lineEnd = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p, (Transform2)t)));
 
                     lineMovement.Add(new PortalMovement(p, lineStart, lineEnd));
                 }
@@ -88,10 +88,10 @@ namespace Game.Physics
                     {
                         continue;
                     }
-                    Transform2D shift = (Transform2D)p.WorldVelocity.Multiply((float)stepSize);
-                    Transform2D t = (Transform2D)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
+                    var shift = (Transform2D)p.WorldVelocity.Multiply((float)stepSize);
+                    var t = (Transform2D)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
 
-                    Line movement = new Line((Vector2d)p.WorldTransform.Position, t.Position);
+                    var movement = new Line((Vector2d)p.WorldTransform.Position, t.Position);
 
                     pointMovement.Add(new PortalableMovement(p, movement, (Transform2D)p.WorldTransform));
                 }
@@ -103,10 +103,10 @@ namespace Game.Physics
             {
                 foreach (PortalableMovement p in pointMovement)
                 {
-                    IPortalable portalable = p.Instance as IPortalable;
+                    var portalable = p.Instance as IPortalable;
                     if (portalable != null)
                     {
-                        Transform2D shift = (Transform2D)portalable.GetVelocity().Multiply((float)stepSize);
+                        var shift = (Transform2D)portalable.GetVelocity().Multiply((float)stepSize);
                         portalable.SetTransform(portalable.Transform.Add((Transform2)shift));
                     }
                     
@@ -155,19 +155,21 @@ namespace Game.Physics
         {
             Line portalLine = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(portal)));
             Transform2D transform = (Transform2D)instance.WorldTransform;
-            transform.Position = (Vector2d)portalLine.Lerp(t);
+            transform.Position = portalLine.Lerp(t);
             instance.WorldTransform = (Transform2)transform;
         }
 
+        /// <param name="lineMovement"></param>
         /// <param name="previous">A list of the previous earliest portal collisions.  This is used to 
         /// detect repeat portal entry.</param>
         /// <param name="timeSpan">This is purely used for determining what t value exceeds the minimum 
         /// amount of time allowed for repeat portal entry.</param>
-        static List<PortalableSweep> GetEarliestCollision(List<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, List<PortalableSweep> previous, double timeSpan)
+        /// <param name="pointMovement"></param>
+        static List<PortalableSweep> GetEarliestCollision(IEnumerable<PortalableMovement> pointMovement, List<PortalMovement> lineMovement, List<PortalableSweep> previous, double timeSpan)
         {
             double tMin = 1;
             double repeatIntersectionEpsilon = 0.00005 / timeSpan;
-            List<PortalableSweep> earliest = new List<PortalableSweep>();
+            var earliest = new List<PortalableSweep>();
             foreach (PortalableMovement move in pointMovement)
             {
                 if (move.Instance.IsPortalable)
@@ -216,10 +218,10 @@ namespace Game.Physics
 
         static void AddMargin(IEnumerable<IPortal> portals, IPortalCommon instance)
         {
-            Transform2D transform = (Transform2D)instance.WorldTransform;
+            var transform = (Transform2D)instance.WorldTransform;
             foreach (IPortal p in portals.Where(item => item.OneSided && Portal.IsValid(item)))
             {
-                Line exitLine = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p)));
+                var exitLine = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p)));
                 Vector2d position = transform.Position;
                 double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
                 if (distanceToPortal < Portal.EnterMinDistance)

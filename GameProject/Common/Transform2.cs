@@ -10,7 +10,7 @@ using Xna = Microsoft.Xna.Framework;
 namespace Game.Common
 {
     [DataContract]
-    public class Transform2 : IShallowClone<Transform2>, IAlmostEqual<Transform2>, IEquatable<Transform2>
+    public class Transform2 : IShallowClone<Transform2>, IAlmostEqual<Transform2>, IValueEquality<Transform2>
     {
         [DataMember]
         Vector2 _position;
@@ -312,59 +312,6 @@ namespace Game.Common
             return new Transform2(linearVelocity, scalarVelocity, angularVelocity);
         }
 
-        public static bool operator ==(Transform2 left, Transform2 right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(Transform2 left, Transform2 right)
-        {
-            return !Equals(left, right);
-        }
-
-        public override bool Equals(object obj)
-        {
-            var cast = obj as Transform2;
-            if (cast != null)
-            {
-                return Equals(this, cast);
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hashCode = _position.GetHashCode();
-                hashCode = (hashCode * 397) ^ _rotation.GetHashCode();
-                hashCode = (hashCode * 397) ^ _size.GetHashCode();
-                hashCode = (hashCode * 397) ^ MirrorX.GetHashCode();
-                return hashCode;
-            }
-        }
-
-        public static bool Equals(Transform2 t0, Transform2 t1)
-        {
-            if ((object)t0 == null && (object)t1 == null)
-            {
-                return true;
-            }
-            if ((object)t0 == null || (object)t1 == null)
-            {
-                return false;
-            }
-
-            return t0.Position == t1.Position && 
-                t0.Rotation == t1.Rotation && 
-                t0.Scale == t1.Scale;
-        }
-
-        public bool Equals(Transform2 other)
-        {
-            return Equals(this, other);
-        }
-
         public static void SetPosition(ITransformable2 transformable, Vector2 position)
         {
             Transform2 transform = transformable.GetTransform();
@@ -398,6 +345,14 @@ namespace Game.Common
             Transform2 transform = transformable.GetTransform();
             transform.SetScale(size, mirrorX, mirrorY);
             transformable.SetTransform(transform);
+        }
+
+        public bool EqualsValue(Transform2 other)
+        {
+            return other != null &&
+                Position == other.Position &&
+                Rotation == other.Rotation &&
+                Scale == other.Scale;
         }
     }
 }

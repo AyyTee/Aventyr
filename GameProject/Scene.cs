@@ -4,14 +4,7 @@ using System.Linq;
 using FarseerPhysics.Dynamics;
 using Xna = Microsoft.Xna.Framework;
 using System.Diagnostics;
-using FarseerPhysics.Factories;
-using FarseerPhysics.Collision.Shapes;
-using Poly2Tri;
-using System.IO;
 using System.Runtime.Serialization;
-using System.Reflection;
-using System;
-using FarseerPhysics.Dynamics.Contacts;
 using Game.Common;
 using Game.Physics;
 using Game.Portals;
@@ -109,8 +102,8 @@ namespace Game
 
 
                 PortalCommon.UpdateWorldTransform(this, false, true);
-                SimulationStep.Step(GetAll().OfType<IPortalCommon>(), GetAll().OfType<IPortal>(), stepSize, (EnterCallbackData data) => {
-                    Actor actor = data.Instance as Actor;
+                SimulationStep.Step(GetAll().OfType<IPortalCommon>(), GetAll().OfType<IPortal>(), stepSize, data => {
+                    var actor = data.Instance as Actor;
                     if (actor != null)
                     {
                         ActorPrev prev = actorTemp.Find(item => item.Actor == actor);

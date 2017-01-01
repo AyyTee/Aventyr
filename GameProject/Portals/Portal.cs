@@ -129,7 +129,7 @@ namespace Game.Portals
                 p.Path.Enter(portal.Linked);
             }
 
-            Debug.Assert(transform == transformCopy && velocity == velocityCopy);
+            Debug.Assert(transform.EqualsValue(transformCopy) && velocity.EqualsValue(velocityCopy));
 
             cast?.EnterPortal?.Invoke(new EnterCallbackData(portal, cast, intersectT), transform, velocity);
         }
@@ -217,7 +217,7 @@ namespace Game.Portals
         public static LineF[] GetFovLines(IPortal portal, Vector2 origin, float distance, Transform2 transform)
         {
             Vector2[] vertices = GetFov(portal, origin, distance);
-            LineF[] lines = new LineF[] {
+            LineF[] lines = {
                 new LineF(vertices[1], vertices[2]),
                 new LineF(vertices[0], vertices[vertices.Length-1])
             };

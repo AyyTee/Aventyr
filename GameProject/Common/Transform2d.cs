@@ -7,7 +7,7 @@ using Game.Serialization;
 namespace Game.Common
 {
     [DataContract]
-    public class Transform2D : IShallowClone<Transform2D>, IAlmostEqual<Transform2D>, IEquatable<Transform2D>
+    public class Transform2D : IShallowClone<Transform2D>, IAlmostEqual<Transform2D>, IValueEquality<Transform2D>
     {
         [DataMember]
         Vector2d _position;
@@ -294,52 +294,6 @@ namespace Game.Common
             return new Transform2D(linearVelocity, scalarVelocity, angularVelocity);
         }
 
-        public static bool operator ==(Transform2D left, Transform2D right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(Transform2D left, Transform2D right)
-        {
-            return !Equals(left, right);
-        }
-
-        public override bool Equals(object obj)
-        {
-            var cast = obj as Transform2D;
-            if (cast != null)
-            {
-                return Equals(this, cast);
-            }
-            return false;
-        }
-
-        public static bool Equals(Transform2D t0, Transform2D t1)
-        {
-            if ((object)t0 == null && (object)t1 == null)
-            {
-                return true;
-            }
-            if ((object)t0 == null || (object)t1 == null)
-            {
-                return false;
-            }
-
-            return t0.Position == t1.Position && 
-                t0.Rotation == t1.Rotation && 
-                t0.Scale == t1.Scale;
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public bool Equals(Transform2D other)
-        {
-            return Equals(this, other);
-        }
-
         public static explicit operator Transform2D(Transform2 t)
         {
             return new Transform2D((Vector2d)t.Position, t.Size, t.Rotation, t.MirrorX);
@@ -348,6 +302,14 @@ namespace Game.Common
         public static explicit operator Transform2(Transform2D t)
         {
             return new Transform2((Vector2)t.Position, (float)t.Size, (float)t.Rotation, t.MirrorX);
+        }
+
+        public bool EqualsValue(Transform2D other)
+        {
+            return other != null &&
+                Position == other.Position &&
+                Rotation == other.Rotation &&
+                Scale == other.Scale;
         }
     }
 }

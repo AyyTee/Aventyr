@@ -1,10 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Game.Rendering;
+﻿using Game.Rendering;
 using OpenTK.Input;
 using OpenTK;
 
@@ -14,16 +8,16 @@ namespace Game
     {
         KeyboardState _keyCurrent, _keyPrevious;
         MouseState _mouseCurrent, _mousePrevious;
-        public Vector2 _mousePos;
-        float _wheelDelta = 0;
-        float _wheelDeltaPrev = 0;
+        Vector2 _mousePos;
+        float _wheelDelta;
+        float _wheelDeltaPrev;
         public Vector2 MousePos { get; private set; }
         public Vector2 MousePosPrev { get; private set; }
         bool _mouseInside;
         public bool Focus { get; private set; }
 
-        GameWindow _ctx;
-        GLControl _control;
+        readonly GameWindow _ctx;
+        readonly GLControl _control;
         public bool MouseInside { get; private set; }
         public Input(GameWindow ctx)
         {

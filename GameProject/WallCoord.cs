@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 using Game.Common;
 
 namespace Game
@@ -25,7 +20,7 @@ namespace Game
             Wall = wall;
         }
 
-        public WallCoord(IWall wall, PolygonCoord coord)
+        public WallCoord(IWall wall, IPolygonCoord coord)
             : this(wall, coord.EdgeIndex, coord.EdgeT)
         {
         }

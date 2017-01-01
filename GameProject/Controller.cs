@@ -1,52 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
+using Cgen.Audio;
+using Game.Rendering;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
-using System.ComponentModel;
-using Cgen.Audio;
-using System.Threading;
-using System.Diagnostics;
-using Game.Rendering;
-
 
 namespace Game
 {
     public class Controller : ITime, IController
     {
-        public IInput Input { get; private set; }
+        public IInput Input { get; }
         /// <summary>
         /// Keep pointless messages from the Poly2Tri library out of the console window.
         /// </summary>
         public static StreamWriter TrashLog = new StreamWriter(Stream.Null);
         public const int MicrosecondsInSecond = 1000000;
-        public float TimeFixedStep = 0.0f;
+        public float TimeFixedStep;
         public Size CanvasSize { get; set; }
         public const int StepsPerSecond = 60;
         public const int DrawsPerSecond = 60;
         public const string TempLevelPrefix = "temp_level_";
-        public int RenderCount = 0;
+        public int RenderCount;
         public string[] ProgramArgs = new string[0];
         public SoundSystem SoundSystem { get; private set; }
 
         public static List<int> TextureGarbage = new List<int>();
 
-        public static string FontFolder { get; private set; } = Path.Combine(new string[2] { "assets", "fonts" });
-        public static string ShaderFolder { get; private set; } = Path.Combine(new string[2] { "assets", "shaders" });
-        public static string TextureFolder { get; private set; } = Path.Combine(new string[2] { "assets", "textures" });
-        public static string SoundFolder { get; private set; } = Path.Combine(new string[2] { "assets", "sounds" });
+        public static string FontFolder { get; } = Path.Combine(new[] { "assets", "fonts" });
+        public static string ShaderFolder { get; } = Path.Combine(new[] { "assets", "shaders" });
+        public static string TextureFolder { get; } = Path.Combine(new[] { "assets", "textures" });
+        public static string SoundFolder { get; private set; } = Path.Combine(new[] { "assets", "sounds" });
 
         /// <summary>
         /// Records time elapsed since the program start.
         /// </summary>
-        Stopwatch _time = new Stopwatch();
-        public double Time { get { return _time.ElapsedMilliseconds / (double)1000; } }
+        readonly Stopwatch _time = new Stopwatch();
+        public double Time => _time.ElapsedMilliseconds / (double)1000;
+
         /// <summary>
         /// The difference in seconds between the last OnUpdateEvent and the current OnRenderEvent.
         /// </summary>
-        float _timeRenderDelta = 0.0f;
+        float _timeRenderDelta;
         public Renderer Renderer { get; private set; }
         public FontRenderer FontRenderer { get; private set; }
         public Font Default;
@@ -84,7 +83,7 @@ namespace Game
                 Renderer.Textures.Add("lineBlur.png", new TextureFile(Path.Combine(TextureFolder, "lineBlur.png")));
 
                 //Create the default font
-                System.Drawing.Text.PrivateFontCollection privateFonts = new System.Drawing.Text.PrivateFontCollection();
+                PrivateFontCollection privateFonts = new PrivateFontCollection();
                 privateFonts.AddFontFile(Path.Combine(FontFolder, "times.ttf"));
                 Default = new Font(privateFonts.Families[0], 14);
                 FontRenderer = new FontRenderer(Default);

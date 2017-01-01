@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Game
 {
@@ -27,7 +23,7 @@ namespace Game
         /// </summary>
         public static bool ParentLoopExists(T node)
         {
-            HashSet<T> map = new HashSet<T>();
+            var map = new HashSet<T>();
             while (node.Parent != null)
             {
                 node = node.Parent;
@@ -83,7 +79,7 @@ namespace Game
         /// </summary>
         public static List<T> GetAll(T node)
         {
-            return GetDescendents(FindRoot(node), true);
+            return GetDescendents(FindRoot(node));
         }
 
         public static T FindRoot(T node)
@@ -93,8 +89,8 @@ namespace Game
 
         public static List<TS> FindByType<TS>(T root) where TS : class, T
         {
-            List<TS> list = new List<TS>();
-            TS nodeCast = root as TS;
+            var list = new List<TS>();
+            var nodeCast = root as TS;
             if (nodeCast != null)
             {
                 list.Add(nodeCast);

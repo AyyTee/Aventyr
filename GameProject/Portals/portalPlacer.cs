@@ -1,14 +1,8 @@
-﻿using FarseerPhysics.Collision.Shapes;
-using FarseerPhysics.Dynamics;
-using OpenTK;
-using System;
+﻿using OpenTK;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Game.Common;
-using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Portals
 {
