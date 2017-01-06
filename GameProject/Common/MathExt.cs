@@ -329,7 +329,6 @@ namespace Game.Common
         /// <summary>
         /// Returns true if vertices are ordered clockwise, false they are counter-clockwise.  It is assumed that the polygon they form is simple.
         /// </summary>
-        /// <param name="v">Array of vertices that form a polygon</param>
         /// <param name="polygon"></param>
         public static bool IsClockwise(IList<Vector2> polygon)
         {

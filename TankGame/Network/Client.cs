@@ -21,18 +21,19 @@ namespace TankGame.Network
         /// <summary>
         /// This client's id.
         /// </summary>
-        public long ServerId { get { return _client.UniqueIdentifier; } }
-        Dictionary<long, Tank> _tanks = new Dictionary<long, Tank>();
-        INetClient _client;
-        public INetPeer Peer { get { return _client; } }
-        public bool IsConnected { get { return _client.ServerConnection != null; } }
-        Queue<InputTime> _inputQueue = new Queue<InputTime>();
+        public long ServerId => _client.UniqueIdentifier;
+
+        readonly Dictionary<long, Tank> _tanks = new Dictionary<long, Tank>();
+        readonly INetClient _client;
+        public INetPeer Peer => _client;
+        public bool IsConnected => _client.ServerConnection != null;
+        readonly Queue<InputTime> _inputQueue = new Queue<InputTime>();
         public Scene Scene { get; private set; }
-        public IController Controller;
+        public readonly IController Controller;
         Renderer _renderer;
-        public string Name { get { return "Client"; } }
+        public string Name => "Client";
         double _lastTimestamp;
-        bool _sceneUpdated = false;
+        bool _sceneUpdated;
         public int StepCount { get; private set; }
         TankCamera _tankCamera;
         public int MessagesSent { get; set; }
@@ -201,7 +202,7 @@ namespace TankGame.Network
 
                     if (tank == null)
                     {
-                        tank = tank ?? new Tank(Scene);
+                        tank = new Tank(Scene);
                         _tanks.Add(tankData.OwnerId, tank);
 
                         if (tankData.OwnerId == ServerId)
@@ -217,11 +218,8 @@ namespace TankGame.Network
 
                 foreach (BulletData bulletData in data.BulletData)
                 {
-                    Bullet bullet = (Bullet)Scene.GetAll().OfType<INetObject>().FirstOrDefault(item => item.ServerId == bulletData.ServerId);
-                    if (bullet == null)
-                    {
-                        bullet = new Bullet(Scene, new Vector2(), new Vector2());
-                    }
+                    var bullet = (Bullet)Scene.GetAll().OfType<INetObject>().FirstOrDefault(item => item.ServerId == bulletData.ServerId);
+                    bullet = bullet ?? new Bullet(Scene, new Vector2(), new Vector2());
                     bulletData.UpdateBullet(bullet);
                 }
             }

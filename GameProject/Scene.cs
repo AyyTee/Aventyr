@@ -40,11 +40,6 @@ namespace Game
         }
         #endregion
 
-        public void Step()
-        {
-            Step(1 / (float)Controller.StepsPerSecond);
-        }
-
         class ActorPrev
         {
             public Actor Actor;
@@ -57,7 +52,7 @@ namespace Game
             ToBeRemoved.Add(sceneObject);
         }
 
-        public void Step(float stepSize)
+        public void Step(float stepSize = 1 / (float)Controller.StepsPerSecond)
         {
             Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
             InStep = true;

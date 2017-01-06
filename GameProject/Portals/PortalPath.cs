@@ -9,13 +9,9 @@ namespace Game.Portals
     {
         public List<IPortal> Portals = new List<IPortal>();
 
-        public PortalPath()
-        {
-        }
-
         public Transform2 GetPortalTransform()
         {
-            Transform2 t = new Transform2();
+            var t = new Transform2();
             for (int i = 0; i < Portals.Count; i++)
             {
                 Transform2 portal = Portal.GetLinkedTransform(Portals[i]);
@@ -31,9 +27,7 @@ namespace Game.Portals
 
         public PortalPath ShallowClone()
         {
-            PortalPath clone = new PortalPath();
-            clone.Portals = new List<IPortal>(Portals);
-            return clone;
+            return new PortalPath {Portals = new List<IPortal>(Portals)};
         }
 
         /// <summary>

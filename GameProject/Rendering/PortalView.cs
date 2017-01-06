@@ -18,18 +18,6 @@ namespace Game.Rendering
         public LineF[] FovLines { get; private set; }
         public LineF[] FovLinesPrevious { get; private set; }
         public LineF PortalLine { get; private set; }
-        public int Count
-        {
-            get
-            {
-                int total = 1;
-                foreach (PortalView p in Children)
-                {
-                    total += p.Count;
-                }
-                return total;
-            }
-        }
 
         public PortalView(PortalView parent, Matrix4 viewMatrix, List<IntPoint> path, LineF[] fovLines, LineF[] fovLinesPrevious)
             : this(parent, viewMatrix, new List<List<IntPoint>>(), fovLines, fovLinesPrevious, null)
@@ -44,18 +32,14 @@ namespace Game.Rendering
             FovLinesPrevious = fovLinesPrevious;
             Children = new List<PortalView>();
             Parent = parent;
-            if (Parent != null)
-            {
-                Parent.Children.Add(this);
-            }
+            Parent?.Children.Add(this);
             ViewMatrix = viewMatrix;
             Paths = path;
         }
 
         public List<PortalView> GetPortalViewList()
         {
-            List<PortalView> list = new List<PortalView>();
-            list.Add(this);
+            var list = new List<PortalView> {this};
             foreach (PortalView p in Children)
             {
                 list.AddRange(p.GetPortalViewList());
@@ -69,12 +53,10 @@ namespace Game.Rendering
             Debug.Assert(depth >= 0);
             Debug.Assert(portals != null);
             List<IntPoint> view = ClipperConvert.ToIntPoint(CameraExt.GetWorldVerts(camera));
-            List<List<IntPoint>> paths = new List<List<IntPoint>>();
-            paths.Add(view);
-            PortalView portalView = new PortalView(null, CameraExt.GetViewMatrix(camera), view, new LineF[0], new LineF[0]);
+            var portalView = new PortalView(null, CameraExt.GetViewMatrix(camera), view, new LineF[0], new LineF[0]);
             Vector2 camPos = camera.GetWorldTransform().Position;
 
-            List<Func<bool>> actionList = new List<Func<bool>>();
+            var actionList = new List<Func<bool>>();
 
             foreach (IPortal p in portals)
             {
@@ -97,9 +79,9 @@ namespace Game.Rendering
         static bool CalculatePortalViews(IPortal portal, IPortal portalEnter, IList<IPortal> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, PortalView portalView, Matrix4 portalMatrix, List<Func<bool>> actionList)
         {
             const float areaEpsilon = 0.0001f;
-            Clipper c = new Clipper();
+
             //The clipper must be set to strictly simple. Otherwise polygons might have duplicate vertices which causes poly2tri to generate incorrect results.
-            c.StrictlySimple = true;
+            var c = new Clipper {StrictlySimple = true};
 
             if (!_isPortalValid(portalEnter, portal, viewPos))
             {

@@ -155,7 +155,7 @@ namespace Game.Rendering
             }
         }
 
-        public void DrawPortalAll(IRenderLayer layer)
+        void DrawPortalAll(IRenderLayer layer)
         {
             ICamera2 cam = layer.GetCamera();
             if (cam == null)

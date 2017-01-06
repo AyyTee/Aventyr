@@ -13,13 +13,12 @@ namespace Game.Rendering
         /// </summary>
         public Model LoadObj(FileStream stream)
         {
-            StreamReader reader = new StreamReader(stream);
-            Dictionary<string, int> vectorMap = new Dictionary<string, int>();
-            List<Vector3> points = new List<Vector3>();
-            List<Vector3> normals = new List<Vector3>();
-            List<Vector2> texCoords = new List<Vector2>();
-            Model model = new Model();
-            model.Mesh = new Mesh();
+            var reader = new StreamReader(stream);
+            var vectorMap = new Dictionary<string, int>();
+            var points = new List<Vector3>();
+            var normals = new List<Vector3>();
+            var texCoords = new List<Vector2>();
+            Model model = new Model {Mesh = new Mesh()};
             string mtlFileName = "";
             string line;
             while ((line = reader.ReadLine()) != null)
@@ -104,7 +103,7 @@ namespace Game.Rendering
                     normal = normals[normId];
                 }
                 
-                string key = GetKey(vertId, texId, normId);
+                string key = GetKey(vertId, normId);
                 if (vectorMap.ContainsKey(key))
                 {
                     vertIndices.Add(vectorMap[key]);
@@ -154,18 +153,17 @@ namespace Game.Rendering
             return true;
         }
 
-        bool ParseVector3(string[] parameters, out Vector3 v)
+        static bool ParseVector3(string[] parameters, out Vector3 v)
         {
             if (parameters.Length != 4)
             {
                 v = new Vector3();
                 return false;
             }
-            float x = 0, y = 0, z = 0;
-            bool valid = true;
-            valid = valid && float.TryParse(parameters[1], out x);
-            valid = valid && float.TryParse(parameters[2], out y);
-            valid = valid && float.TryParse(parameters[3], out z);
+            float x, y, z;
+            bool valid = float.TryParse(parameters[1], out x);
+            valid = float.TryParse(parameters[2], out y) && valid;
+            valid = float.TryParse(parameters[3], out z) && valid;
             v = new Vector3(x, y, z);
             return valid;
         }
@@ -177,10 +175,9 @@ namespace Game.Rendering
                 v = new Vector2();
                 return false;
             }
-            float x = 0, y = 0;
-            bool valid = true;
-            valid = valid && float.TryParse(parameters[1], out x);
-            valid = valid && float.TryParse(parameters[2], out y);
+            float x, y;
+            bool valid = float.TryParse(parameters[1], out x);
+            valid = float.TryParse(parameters[2], out y) && valid;
             v = new Vector2(x, y);
             return valid;
         }
@@ -203,9 +200,8 @@ namespace Game.Rendering
 
         public TextureFile LoadMtl(FileStream stream)
         {
-            StreamReader reader = new StreamReader(stream);
+            var reader = new StreamReader(stream);
             string line;
-            string textureFile = "";
             while ((line = reader.ReadLine()) != null)
             {
                 line = line.Trim(SplitChar);
@@ -213,7 +209,7 @@ namespace Game.Rendering
 
                 if (parameters[0] == "map_Kd")
                 {
-                    textureFile = string.Join(SplitChar.ToString(), parameters, 1, parameters.Length - 1);
+                    string textureFile = string.Join(SplitChar.ToString(), parameters, 1, parameters.Length - 1);
                     string textureFilePath = Path.Combine(Path.GetDirectoryName(stream.Name), textureFile);
                     return new TextureFile(textureFilePath);//Renderer.LoadImage(textureFilePath);
                 }
@@ -221,9 +217,9 @@ namespace Game.Rendering
             return null;
         }
 
-        string GetKey(int verts, int tex, int norm)
+        static string GetKey(int verts, int norm)
         {
-            return verts.ToString() + " " + verts.ToString() + " " + norm.ToString();
+            return verts + " " + verts + " " + norm;
         }
     }
 }

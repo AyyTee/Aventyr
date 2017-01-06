@@ -2,7 +2,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
 using OpenTK;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -79,14 +78,13 @@ namespace UnitTest
         public void ComputeConvexHullTest0()
         {
             List<Vector2> listIn = new List<Vector2>();
-            listIn.AddRange(new Vector2[3] {
+            listIn.AddRange(new[] {
                 new Vector2(0, 0),
                 new Vector2(0, 1),
                 new Vector2(1, 0)
             });
-            List<Vector2> listOut;
 
-            listOut = MathExt.GetConvexHull(listIn);
+            List<Vector2> listOut = MathExt.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(0, 0) &&
@@ -98,15 +96,14 @@ namespace UnitTest
         public void ComputeConvexHullTest1()
         {
             List<Vector2> listIn = new List<Vector2>();
-            listIn.AddRange(new Vector2[4] {
+            listIn.AddRange(new[] {
                 new Vector2(-5, -5),
                 new Vector2(5, -5),
                 new Vector2(5, 5),
                 new Vector2(-5, 5),
             });
-            List<Vector2> listOut;
 
-            listOut = MathExt.GetConvexHull(listIn);
+            List<Vector2> listOut = MathExt.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(-5, -5) &&
@@ -119,16 +116,15 @@ namespace UnitTest
         public void ComputeConvexHullTest2()
         {
             List<Vector2> listIn = new List<Vector2>();
-            listIn.AddRange(new Vector2[5] {
+            listIn.AddRange(new[] {
                 new Vector2(-5, -5),
                 new Vector2(5, -5),
                 new Vector2(0, 0),
                 new Vector2(5, 5),
                 new Vector2(-5, 5),
             });
-            List<Vector2> listOut;
 
-            listOut = MathExt.GetConvexHull(listIn);
+            List<Vector2> listOut = MathExt.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(-5, -5) &&
@@ -141,7 +137,7 @@ namespace UnitTest
         public void ComputeConvexHullTest3()
         {
             List<Vector2> listIn = new List<Vector2>();
-            listIn.AddRange(new Vector2[7] {
+            listIn.AddRange(new[] {
                 new Vector2(123, 34),
                 new Vector2(135, 50),
                 new Vector2(303, 101),
@@ -150,9 +146,8 @@ namespace UnitTest
                 new Vector2(198, 32),
                 new Vector2(198, 200),
             });
-            List<Vector2> listOut;
 
-            listOut = MathExt.GetConvexHull(listIn);
+            List<Vector2> listOut = MathExt.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(15, 51) &&
@@ -167,7 +162,7 @@ namespace UnitTest
         [TestMethod]
         public void IsClockwiseTest0()
         {
-            Vector2[] v = new Vector2[] {
+            Vector2[] v = {
                 new Vector2(),
                 new Vector2(0, 1),
                 new Vector2(1, 0)
@@ -177,7 +172,7 @@ namespace UnitTest
         [TestMethod]
         public void IsClockwiseTest1()
         {
-            Vector2[] v = new Vector2[] {
+            Vector2[] v = {
                 new Vector2(),
                 new Vector2(1, 0),
                 new Vector2(0, 1)
@@ -187,7 +182,7 @@ namespace UnitTest
         [TestMethod]
         public void IsClockwiseTest2()
         {
-            Vector2[] v = new Vector2[] {
+            Vector2[] v = {
                 new Vector2(1f, 9f),
                 new Vector2(10f, 10f),
                 new Vector2(11f, -5f),
@@ -198,7 +193,7 @@ namespace UnitTest
         [TestMethod]
         public void IsClockwiseTest3()
         {
-            Vector2[] v = new Vector2[] {
+            Vector2[] v = {
                 new Vector2(1f, 1f),
                 new Vector2(1f, 0f),
                 new Vector2(0f, 0f),
@@ -209,7 +204,7 @@ namespace UnitTest
         [TestMethod]
         public void IsClockwiseTest4()
         {
-            Vector2[] v = new Vector2[] {
+            Vector2[] v = {
                 new Vector2(1f, 1f),
                 new Vector2(1f, 0f),
                 new Vector2(0f, 0f),
@@ -224,40 +219,40 @@ namespace UnitTest
         [TestMethod]
         public void SetWindingTest0()
         {
-            Vector2[] v = new Vector2[] {
+            Vector2[] v = {
                 new Vector2(),
                 new Vector2(0, 1),
                 new Vector2(1, 0)
             };
             Debug.Assert(MathExt.IsClockwise(v));
             Vector2[] result = MathExt.SetWinding(v, false);
-            Vector2[] expected = new Vector2[]
-            {
+            Vector2[] expected = {
                 new Vector2(1, 0),
                 new Vector2(0, 1),
                 new Vector2()
             };
 
-            Assert.IsTrue(Enumerable.SequenceEqual(result, expected));
+            Assert.IsTrue(result.SequenceEqual(expected));
         }
         [TestMethod]
         public void SetWindingTest1()
         {
-            List<Vector2> v = new List<Vector2>();
-            v.Add(new Vector2());
-            v.Add(new Vector2(0, 1));
-            v.Add(new Vector2(1, 0));
-            
+            var v = new List<Vector2>
+            {
+                new Vector2(),
+                new Vector2(0, 1),
+                new Vector2(1, 0)
+            };
+
             Debug.Assert(MathExt.IsClockwise(v));
             List<Vector2> result = MathExt.SetWinding(v, false);
-            Vector2[] expected = new Vector2[]
-            {
+            Vector2[] expected = {
                 new Vector2(1, 0),
                 new Vector2(0, 1),
                 new Vector2()
             };
 
-            Assert.IsTrue(Enumerable.SequenceEqual(result, expected));
+            Assert.IsTrue(result.SequenceEqual(expected));
         }
         #endregion
         #region LineCircleIntersect tests
@@ -294,7 +289,7 @@ namespace UnitTest
         {
             LineF line = new LineF(new Vector2(-1f, 1f), new Vector2(2f, 1f));
             IntersectCoord[] intersects = MathExt.LineCircleIntersect(new Vector2(1, 1), 0.1f, line, true);
-            Assert.IsTrue(intersects[0].Exists == true && intersects[1].Exists == true);
+            Assert.IsTrue(intersects[0].Exists && intersects[1].Exists);
             Assert.IsTrue(
                 ((intersects[0].Position - new Vector2d(1.1, 1)).Length < ErrorMargin && intersects[0].First - 0.7 < ErrorMargin &&
                 (intersects[1].Position - new Vector2d(0.9, 1)).Length < ErrorMargin) && intersects[1].First - 0.63333333333 < ErrorMargin ||
@@ -320,9 +315,10 @@ namespace UnitTest
         }
         #endregion
         #region GetHomography tests
-        public Vector2[] GetSquare()
+
+        Vector2[] GetSquare()
         {
-            return new Vector2[] {
+            return new[] {
                 new Vector2(0, 0),
                 new Vector2(1, 0),
                 new Vector2(1, 1),
@@ -330,7 +326,7 @@ namespace UnitTest
             };
         }
 
-        public Camera2 GetCamera()
+        Camera2 GetCamera()
         {
             Camera2 camera = new Camera2(new Scene(), new Transform2(), 1.3333f);
             camera.WorldTransform = PortalCommon.GetWorldTransform(camera);
@@ -343,7 +339,7 @@ namespace UnitTest
             Vector2[] source = GetSquare();
             Vector2[] destination = GetSquare();
             Matrix4d homography = MathExt.GetHomography(source, destination);
-            Vector3[] vectors = new Vector3[] {
+            Vector3[] vectors = {
                 new Vector3(source[0]),
                 new Vector3(source[1]),
                 new Vector3(source[2]),
@@ -368,14 +364,14 @@ namespace UnitTest
         public void GetHomographyTest1()
         {
             Vector2[] source = GetSquare();
-            Vector2[] destination = new Vector2[] {
+            Vector2[] destination = {
                 new Vector2(0, 0),
                 new Vector2(1, -1),
                 new Vector2(1, 2),
                 new Vector2(0, 1)
             };
             Matrix4d homography = MathExt.GetHomography(source, destination);
-            Vector3[] vectors = new Vector3[] {
+            Vector3[] vectors = {
                 new Vector3(source[0]),
                 new Vector3(source[1]),
                 new Vector3(source[2]),
@@ -402,13 +398,13 @@ namespace UnitTest
         [TestMethod]
         public void GetHomographyTest2()
         {
-            Vector2[] source = new Vector2[] {
+            Vector2[] source = {
                 new Vector2(12, 50),
                 new Vector2(11, 0.01f),
                 new Vector2(-15, 11),
                 new Vector2(0, 100.5f)
             };
-            Vector2[] destination = new Vector2[] {
+            Vector2[] destination = {
                 new Vector2(10, -10),
                 new Vector2(41, -41),
                 new Vector2(0, 0),
@@ -416,7 +412,7 @@ namespace UnitTest
             };
             try
             {
-                Matrix4d homography = MathExt.GetHomography(source, destination);
+                MathExt.GetHomography(source, destination);
             }
             catch (ExceptionInvalidPolygon)
             {
@@ -428,20 +424,20 @@ namespace UnitTest
         [TestMethod]
         public void GetHomographyTest3()
         {
-            Vector2[] source = new Vector2[] {
+            Vector2[] source = {
                 new Vector2(15, -10),
                 new Vector2(10, 100),
                 new Vector2(-50, 95),
                 new Vector2(-50, -40)
             };
-            Vector2[] destination = new Vector2[] {
+            Vector2[] destination = {
                 new Vector2(0, 0),
                 new Vector2(1, -1),
                 new Vector2(1, 2),
                 new Vector2(0, 1)
             };
             Matrix4d homography = MathExt.GetHomography(source, destination);
-            Vector3[] vectors = new Vector3[] {
+            Vector3[] vectors = {
                 new Vector3(source[0]),
                 new Vector3(source[1]),
                 new Vector3(source[2]),
@@ -505,7 +501,7 @@ namespace UnitTest
         public void BisectTriangleTest2()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, GetDefaultBisector(), Side.Left);
+            Triangle[] result = MathExt.BisectTriangle(triangle, GetDefaultBisector());
 
             Assert.IsTrue(result.Length == 1);
             Triangle comparison = GetDefaultComparison();
@@ -564,21 +560,12 @@ namespace UnitTest
         [TestMethod]
         public void BisectTriangleTest8()
         {
-            Triangle triangle = new Triangle(new Vertex(0, 0, 5f), new Vertex(1, 0, 0), new Vertex(0, 1, 2f));
+            Triangle triangle = new Triangle(new Vertex(0, 0, 5f), new Vertex(1, 0), new Vertex(0, 1, 2f));
             Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(-1, 0.6f), new Vector2(1, 0.6f)));
 
             Assert.IsTrue(result.Length == 1);
             Triangle comparison = new Triangle(new Vertex(0.399999976f, 0.6f, 1.2f), new Vertex(0f, 1f, 2f), new Vertex(0f, 0.6f, 3.19999981f));
             Assert.IsTrue(Triangle.IsIsomorphic(result[0], comparison));
-        }
-        #endregion
-        #region BisectMesh tests
-        [TestMethod]
-        public void BisectMestTest0()
-        {
-            Model m = ModelFactory.CreatePlane();
-            LineF bisector = new LineF(new Vector2(0.4f, -1f), new Vector2(0.4f, 0));
-            Mesh mesh = MathExt.BisectMesh(m.Mesh, bisector);
         }
         #endregion
         #region LinePolygonDistance tests
