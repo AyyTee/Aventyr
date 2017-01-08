@@ -7,7 +7,7 @@ using Game.Portals;
 using OpenTK;
 using static Game.Physics.BodyExt;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class BodyExtTests

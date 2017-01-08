@@ -12,14 +12,12 @@ namespace Game.Physics
     {
         class PortalableMovement
         {
-            public Transform2D Previous;
             public readonly Line StartEnd;
             public readonly IPortalCommon Instance;
-            public PortalableMovement(IPortalCommon instance, Line startEnd, Transform2D previous)
+            public PortalableMovement(IPortalCommon instance, Line startEnd)
             {
                 Instance = instance;
                 StartEnd = startEnd;
-                Previous = previous;
             }
         }
 
@@ -88,12 +86,11 @@ namespace Game.Physics
                     {
                         continue;
                     }
-                    var shift = (Transform2D)p.WorldVelocity.Multiply((float)stepSize);
                     var t = (Transform2D)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
 
                     var movement = new Line((Vector2d)p.WorldTransform.Position, t.Position);
 
-                    pointMovement.Add(new PortalableMovement(p, movement, (Transform2D)p.WorldTransform));
+                    pointMovement.Add(new PortalableMovement(p, movement));
                 }
             }
 
@@ -110,7 +107,7 @@ namespace Game.Physics
                         portalable.SetTransform(portalable.Transform.Add((Transform2)shift));
                     }
                     
-                    Transform2D worldVelocity = (Transform2D)p.Instance.WorldVelocity.Multiply((float)stepSize);
+                    var worldVelocity = (Transform2D)p.Instance.WorldVelocity.Multiply((float)stepSize);
                     p.Instance.WorldTransform = p.Instance.WorldTransform.Add((Transform2)worldVelocity);
                 }
                 return;

@@ -13,8 +13,7 @@ namespace Game.Models
     [DataContract]
     public class Model : IShallowClone<Model>
     {
-        static object _lockDelete = new object();
-        public static object LockDelete => _lockDelete;
+        public static object LockDelete { get; } = new object();
 
         [DataMember]
         public Transform3 Transform = new Transform3();
@@ -25,11 +24,11 @@ namespace Game.Models
         [DataMember]
         public ITexture Texture;
         [DataMember]
-        public Vector4 Color = new Vector4();
+        public Vector4 Color;
         [DataMember]
         public Transform2 TransformUv = new Transform2();
         [DataMember]
-        public bool Wireframe = false;
+        public bool Wireframe;
         [DataMember]
         public IMesh Mesh = new Mesh();
         
@@ -48,15 +47,16 @@ namespace Game.Models
 
         public Model ShallowClone()
         {
-            Model clone = new Model();
-            clone.Mesh = Mesh;
-            clone.Transform = Transform.ShallowClone();
-            clone.Texture = Texture;
-            clone.TransformUv = TransformUv.ShallowClone();
-            clone.Wireframe = Wireframe;
-            clone.Color = Color;
-            clone.IsTransparent = IsTransparent;
-            return clone;
+            return new Model
+            {
+                Mesh = Mesh,
+                Transform = Transform.ShallowClone(),
+                Texture = Texture,
+                TransformUv = TransformUv.ShallowClone(),
+                Wireframe = Wireframe,
+                Color = Color,
+                IsTransparent = IsTransparent
+            };
         }
 
         public Model DeepClone()
@@ -87,7 +87,7 @@ namespace Game.Models
         public Vector3[] GetVerts()
         {
             List<Vertex> vertices = Mesh.GetVertices();
-            Vector3[] val = new Vector3[vertices.Count];
+            var val = new Vector3[vertices.Count];
             for (int i = 0; i < val.Length; i++)
             {
                 val[i] = vertices[i].Position;
@@ -106,7 +106,7 @@ namespace Game.Models
         public Vector2[] GetWorldConvexHull()
         {
             Vector3[] v = GetWorldVerts();
-            List<Vector2> vProject = new List<Vector2>();
+            var vProject = new List<Vector2>();
             for (int i = 0; i < v.Length; i++)
             {
                 vProject.Add(new Vector2(v[i].X, v[i].Y));
@@ -125,7 +125,7 @@ namespace Game.Models
         public Vector3[] GetColorData()
         {
             List<Vertex> vertices = Mesh.GetVertices();
-            Vector3[] val = new Vector3[vertices.Count];
+            var val = new Vector3[vertices.Count];
             for (int i = 0; i < val.Length; i++)
             {
                 val[i] = vertices[i].Color * (1 - Color.W) + new Vector3(Color * Color.W);

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Game.Common;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class PolygonExtTests

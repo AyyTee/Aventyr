@@ -25,7 +25,7 @@ namespace Game.Portals
 
             /*Sort the nodes by parent depth in order to make sure we have the WorldTransforms 
              * for parents before child nodes use those transforms.*/
-            foreach (IPortalCommon p in newSet.OrderBy(item => Tree<IPortalCommon>.Depth(item)))
+            foreach (IPortalCommon p in newSet.OrderBy(Tree<IPortalCommon>.Depth))
             {
                 if (!onlyVelocity)
                 {
@@ -75,26 +75,26 @@ namespace Game.Portals
             return portalable.GetTransform();
         }
 
-        //public static Transform2 GetWorldTransformUsingPath(IPortalCommon instance)
-        //{
-        //    List<IPortal> portals = instance.Scene.GetPortalList();
-        //    Transform2 local = instance.GetTransform();
-        //    if (local == null || IsRoot(instance))
-        //    {
-        //        return local;
-        //    }
+        public static Transform2 GetWorldTransformUsingPath(IPortalCommon instance)
+        {
+            //List<IPortal> portals = instance.Scene.GetPortalList();
+            Transform2 local = instance.GetTransform();
+            if (local == null || IsRoot(instance))
+            {
+                return local;
+            }
 
-        //    Transform2 parent = instance.Parent.WorldTransform;
-        //    Transform2 t = local.Transform(parent);
-
+            Transform2 parent = instance.Parent.WorldTransform;
 
 
-        //    /*Ray.Settings settings = new Ray.Settings();
-        //    IPortalable portalable = new Portalable(null, new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
 
-        //    Ray.RayCast(portalable, GetPortalsForPortal(instance, portals), settings);
-        //    return portalable.GetTransform();*/
-        //}
+            Transform2 t = local.Transform(parent);
+
+            
+            t = t.Transform(instance.Path.GetPortalTransform());
+
+            return t;
+        }
 
         public static Transform2 TransformVelocity(IGetTransformVelocity portalable, IPortal portal, Transform2 velocity, double movementT)
         {

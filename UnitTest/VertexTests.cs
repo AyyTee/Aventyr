@@ -4,7 +4,7 @@ using Game;
 using Game.Models;
 using OpenTK;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class VertexTests

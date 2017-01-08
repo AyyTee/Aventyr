@@ -17,7 +17,7 @@ namespace EditorLogic
 
         static IEnumerable<Type> GetKnownTypes()
         {
-            var types = from t in Assembly.GetAssembly(typeof(Scene)).GetTypes()
+            var types = from t in Assembly.Load(nameof(Game)).GetTypes()
                    where Attribute.IsDefined(t, typeof(DataContractAttribute))
                    select t;
 
@@ -41,10 +41,12 @@ namespace EditorLogic
 
         public static void Serialize(EditorScene scene, string filename)
         {
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.NewLineOnAttributes = false;
-            settings.OmitXmlDeclaration = true;
+            var settings = new XmlWriterSettings
+            {
+                Indent = true,
+                NewLineOnAttributes = false,
+                OmitXmlDeclaration = true
+            };
             using (XmlWriter writer = XmlWriter.Create(filename, settings))
             {
                 GetSerializer().WriteObject(writer, scene);

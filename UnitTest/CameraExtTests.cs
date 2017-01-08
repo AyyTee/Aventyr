@@ -9,7 +9,7 @@ using Game.Common;
 using Game.Rendering;
 using OpenTK;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class CameraExtTests

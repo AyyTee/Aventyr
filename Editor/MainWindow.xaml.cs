@@ -106,7 +106,7 @@ namespace EditorWindow
                 MouseCoordinates.Content = mousePos.X.ToString("0.00") + ", " + mousePos.Y.ToString("0.00");
 
                 int fps = (int)Math.Round(_loop.UpdatesPerSecond * (double)_loop.MillisecondsPerStep / _loop.GetAverage());
-                FrameRate.Content = "FPS " + fps.ToString() + "/" + _loop.UpdatesPerSecond.ToString();
+                FrameRate.Content = "FPS " + fps + "/" + _loop.UpdatesPerSecond;
 
                 var selection = _controllerEditor.Selection.GetAll();
                 if (selection.Count > 0)
@@ -244,8 +244,6 @@ namespace EditorWindow
                     case Key.Up:
                     case Key.Down:
                         e.Handled = true;
-                        break;
-                    default:
                         break;
                 }
             }
@@ -399,7 +397,7 @@ namespace EditorWindow
 
                 Scene scene = LevelExport.Export(_controllerEditor.Level, _controllerEditor);
                 Game.Portals.PortalCommon.UpdateWorldTransform(scene);
-                Serializer serializer = new Serializer();
+                var serializer = new Serializer();
                 serializer.Serialize(scene, tempFile);
 
                 Process process = new Process();
@@ -412,7 +410,7 @@ namespace EditorWindow
 
         string GenerateRandomString(int length)
         {
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var stringChars = new char[length];
             var random = new Random(Guid.NewGuid().GetHashCode());
 

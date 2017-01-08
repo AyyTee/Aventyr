@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using OpenTK;
 using System.Linq;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class SceneNodeTests

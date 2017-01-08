@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using Game.Serialization;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class DeepCloneTests

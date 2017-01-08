@@ -11,13 +11,13 @@ namespace TankGameTestFramework
     {
         static void Main(string[] args)
         {
-            int serverPort = 45619;
-            Thread server = new Thread(new ThreadStart(() =>
+            const int serverPort = 45619;
+            var server = new Thread(() =>
             {
-                TankGame.Program.Main(new string[] {
+                TankGame.Program.Main(new[] {
                     "server", serverPort.ToString()
                 });
-            }));
+            });
             server.Name = "Server";
             server.Start();
 
@@ -26,12 +26,12 @@ namespace TankGameTestFramework
             {
                 Thread.Sleep(1000);
                 int clientPort = serverPort + 1 + i;
-                Thread client = new Thread(new ThreadStart(() =>
+                var client = new Thread(() =>
                 {
-                    TankGame.Program.Main(new string[] {
+                    TankGame.Program.Main(new[] {
                         "client", clientPort.ToString(), serverPort.ToString()
                     });
-                }));
+                });
                 client.Name = "Client " + (i + 1);
                 client.Start();
             }

@@ -5,7 +5,7 @@ using Game.Common;
 using OpenTK;
 using Game.Portals;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class PortalTests

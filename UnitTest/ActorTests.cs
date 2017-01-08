@@ -10,7 +10,7 @@ using Game.Common;
 using Game.Physics;
 using Xna = Microsoft.Xna.Framework;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class ActorTests

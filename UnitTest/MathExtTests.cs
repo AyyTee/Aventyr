@@ -10,7 +10,7 @@ using Game.Models;
 using Game.Portals;
 using Game.Rendering;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class MathExtTests

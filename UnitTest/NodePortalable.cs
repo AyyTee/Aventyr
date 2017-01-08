@@ -6,12 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Common;
+using System.Runtime.Serialization;
 
-namespace UnitTest
+namespace GameTests
 {
+    [DataContract]
     public class NodePortalable : SceneNode, IPortalable
     {
+        [DataMember]
         public Transform2 Transform { get; set; } = new Transform2();
+        [DataMember]
         public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 

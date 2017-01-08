@@ -11,7 +11,7 @@ using Game.Physics;
 using OpenTK;
 using Game.Portals;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class SceneTests

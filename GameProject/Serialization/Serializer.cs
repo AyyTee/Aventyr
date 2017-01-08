@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -15,6 +16,11 @@ namespace Game.Serialization
 
         public Serializer()
         {
+        }
+
+        public void Serialize(Scene scene, Stream stream)
+        {
+            _serialize(scene, stream);
         }
 
         public void Serialize(Scene scene, string filename)
@@ -35,31 +41,28 @@ namespace Game.Serialization
             return clone;
         }*/
 
-        public void SerializeAsync(SceneNode rootNode, string filename)
-        {
-            SceneNode clone = null;// CopyData(rootNode);
-            ThreadPool.QueueUserWorkItem(
-                new WaitCallback(delegate(object state)
-                {
-                    _serialize(clone.Scene, filename);
-                }), null);
-        }
-
         void _serialize(Scene scene, string filename)
         {
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.NewLineOnAttributes = false;
-            settings.OmitXmlDeclaration = true;
+            var settings = new XmlWriterSettings
+            {
+                Indent = true,
+                NewLineOnAttributes = false,
+                OmitXmlDeclaration = true
+            };
             using (XmlWriter writer = XmlWriter.Create(filename, settings))
             {
                 GetSerializer().WriteObject(writer, scene);
             }
         }
 
+        void _serialize(Scene scene, Stream stream)
+        {
+            GetSerializer().WriteObject(stream, scene);
+        }
+
         public Scene Deserialize(string filename)
         {
-            XmlReaderSettings settings = new XmlReaderSettings();
+            var settings = new XmlReaderSettings();
             using (XmlReader reader = XmlReader.Create(filename, settings))
             {
                 return (Scene)GetSerializer().ReadObject(reader);

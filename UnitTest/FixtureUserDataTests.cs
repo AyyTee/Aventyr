@@ -9,7 +9,7 @@ using Game.Common;
 using Game.Portals;
 using Game.Physics;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class FixtureUserDataTests

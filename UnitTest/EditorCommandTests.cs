@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EditorLogic;
 using EditorLogic.Command;
 
-namespace UnitTest
+namespace GameTests
 {
     /// <summary>
     /// Summary description for EditorCommandTests

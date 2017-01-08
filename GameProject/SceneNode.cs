@@ -11,20 +11,20 @@ namespace Game
     /// <summary>
     /// Scene graph node.  All derived classes MUST override ShallowClone() and return an instance of the derived class.
     /// </summary>
-    [DataContract, DebuggerDisplay("SceneNode {Name}")]
+    [DataContract, DebuggerDisplay("SceneNode " + nameof(Name))]
     public class SceneNode : ITreeNode<SceneNode>, IDeepClone, ISceneObject, IPortalCommon
     {
         [DataMember]
         public PortalPath Path { get; set; } = new PortalPath();
         [DataMember]
-        Transform2 _worldTransformPrevious = null;
+        Transform2 _worldTransformPrevious;
         public Transform2 WorldTransform
         {
             get { return _worldTransformPrevious?.ShallowClone(); }
             set { _worldTransformPrevious = value?.ShallowClone(); }
         }
         [DataMember]
-        Transform2 _worldVelocity = null;
+        Transform2 _worldVelocity;
         public Transform2 WorldVelocity
         {
             get { return _worldVelocity?.ShallowClone(); }
@@ -101,10 +101,7 @@ namespace Game
 
         void RemoveFromParent()
         {
-            if (Parent != null)
-            {
-                Parent._children.Remove(this);
-            }
+            Parent?._children.Remove(this);
             Parent = null;
         }
 
@@ -121,11 +118,8 @@ namespace Game
             RemoveFromParent();
             Parent = parent;
 
-            if (parent != null)
-            {
-                parent._children.Add(this);
-            }
-            
+            parent?._children.Add(this);
+
             Debug.Assert(Scene.SceneObjects.FindAll(item => item == this).Count <= 1);
             Debug.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
         }

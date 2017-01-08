@@ -8,7 +8,7 @@ namespace Game.Common
     {
         Matrix4 _matrix;
         bool _matrixUpdate = true;
-        Vector3 _position = new Vector3();
+        Vector3 _position;
         Quaternion _rotation = new Quaternion(0, 0, 1, 0);
         Vector3 _scale = new Vector3(1, 1, 1);
 
@@ -62,12 +62,13 @@ namespace Game.Common
 
         public Transform3 ShallowClone()
         {
-            Transform3 clone = new Transform3();
-            clone.Rotation = new Quaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W);
-            clone.Position = new Vector3(Position);
-            clone.Scale = new Vector3(Scale);
-            clone.FixedScale = FixedScale;
-            return clone;
+            return new Transform3
+            {
+                Rotation = new Quaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W),
+                Position = new Vector3(Position),
+                Scale = new Vector3(Scale),
+                FixedScale = FixedScale
+            };
         }
 
         public Matrix4 GetMatrix()
@@ -82,29 +83,12 @@ namespace Game.Common
 
         public static Transform3 Lerp(Transform3 a, Transform3 b, float t)
         {
-            Transform3 c = new Transform3();
-            c.Position = Vector3.Lerp(a.Position, b.Position, t);
-            c.Scale = Vector3.Lerp(a.Scale, b.Scale, t);
-            c.Rotation = Quaternion.Slerp(a.Rotation, b.Rotation, t);
-            return c;
-        }
-
-        /// <summary>
-        /// Projects a copy of Transform projected onto the XY-plane, the rotation simply uses the Quaternion's W (theta) value
-        /// </summary>
-        /*public Transform2 Get2D()
-        {
-            return new Transform2(new Vector2(Position.X, Position.Y), new Vector2(Scale.X, Scale.Y), Rotation.W);
-        }*/
-
-        /// <summary>
-        /// Returns true if this has the same position, rotation, and scale as another Transform.
-        /// </summary>
-        /// <param name="transform"></param>
-        /// <returns></returns>
-        public bool AlmostEqual(Transform3 transform)
-        {
-            return Position == transform.Position && Scale == transform.Scale && Rotation == transform.Rotation;
+            return new Transform3
+            {
+                Position = Vector3.Lerp(a.Position, b.Position, t),
+                Scale = Vector3.Lerp(a.Scale, b.Scale, t),
+                Rotation = Quaternion.Slerp(a.Rotation, b.Rotation, t)
+            };
         }
     }
 }

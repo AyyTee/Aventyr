@@ -7,7 +7,7 @@ using System.Linq;
 using Game.Common;
 using Game.Physics;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class SimulationStepTests
@@ -346,6 +346,11 @@ namespace UnitTest
             node.SetVelocity(Transform2.CreateVelocity(new Vector2(0, -1)));
 
             scene.Step(1);
+
+            Vector2d[] blah =
+            {
+                new Vector2d(),
+            };
 
             Assert.AreEqual(node.GetWorldTransform().Rotation, Math.PI/2, 0.0001f);
         }

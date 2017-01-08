@@ -4,7 +4,7 @@ using Game;
 using Game.Common;
 using OpenTK;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class Transform2Tests

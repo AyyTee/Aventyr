@@ -51,6 +51,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -75,6 +76,14 @@
     <ProjectReference Include="..\CustomDebugVisualizer\DebugVisualizer.csproj">
       <Project>{88dd432c-fac9-4bf4-99f6-69fba77a2b6b}</Project>
       <Name>DebugVisualizer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameProject\Game.csproj">
+      <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
+      <Name>Game</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UnitTest\GameTests.csproj">
+      <Project>{0f3e7119-4982-4ab9-a2a1-e025f68488eb}</Project>
+      <Name>GameTests</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

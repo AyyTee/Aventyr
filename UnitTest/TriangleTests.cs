@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
 using Game.Models;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class TriangleTests

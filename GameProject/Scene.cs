@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using System;
+using OpenTK;
 using System.Collections.Generic;
 using System.Linq;
 using FarseerPhysics.Dynamics;
@@ -17,11 +18,11 @@ namespace Game
     {
         public World World { get; private set; }
         PhyicsListener _contactListener;
-
         public ICamera2 ActiveCamera { get; private set; }
+
         [DataMember]
         public List<ISceneObject> SceneObjects = new List<ISceneObject>();
-        public HashSet<ISceneObject> ToBeRemoved = new HashSet<ISceneObject>();
+        public readonly HashSet<ISceneObject> ToBeRemoved = new HashSet<ISceneObject>();
         /// <summary>
         /// Whether the scene is currently performing a physics step.  
         /// This is useful in cases where changing physics state can break FSE.

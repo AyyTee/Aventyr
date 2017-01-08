@@ -69,19 +69,20 @@ namespace Game.Physics
             SetBodyType(BodyType.Dynamic);
         }
 
-        [OnDeserialized]
-        public void Deserialize(StreamingContext context)
-        {
-            Body = Factory.CreatePolygon(Scene.World, _body.Transform, Vertices);
-            BodyExt.SetData(Body, this);
-            BodyExt.SetVelocity(Body, _body.Velocity);
-        }
+        //TODO: Fix serialization for scenes.
+        //[OnDeserialized]
+        //public void Deserialize(StreamingContext context)
+        //{
+        //    Body = Factory.CreatePolygon(Scene.World, _body.Transform, Vertices);
+        //    BodyExt.SetData(Body, this);
+        //    BodyExt.SetVelocity(Body, _body.Velocity);
+        //}
 
-        [OnSerializing]
-        public void Serialize(StreamingContext context)
-        {
-            _body = new BodyMemento(Body);
-        }
+        //[OnSerializing]
+        //public void Serialize(StreamingContext context)
+        //{
+        //    _body = new BodyMemento(Body);
+        //}
 
         public override IDeepClone ShallowClone()
         {

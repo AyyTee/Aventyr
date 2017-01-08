@@ -3,7 +3,7 @@ using Game;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game.Animation;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class FCurveTests

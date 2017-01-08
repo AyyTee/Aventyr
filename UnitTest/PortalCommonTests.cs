@@ -7,7 +7,7 @@ using FarseerPhysics.Dynamics;
 using Game.Common;
 using Game.Physics;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class PortalCommonTests

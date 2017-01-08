@@ -6,7 +6,7 @@ using FarseerPhysics;
 using Game.Common;
 using Game.Portals;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class LineTests

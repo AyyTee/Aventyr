@@ -3,7 +3,7 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class EditorCloneTests

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using OpenTK;
 using OxyPlot;
 using OxyPlot.Wpf;
@@ -13,46 +14,21 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using VerticalAlignment = System.Windows.VerticalAlignment;
+using Game;
+using Game.Portals;
 
 #region Target datatypes
-/* We can't constrain List to only some generic types unfortunately.  
- * As a result, our visualizer will claim to work for any List<T> but will throw a runtime 
- * exception for some of them.  Not much can be done about this.*/
 [assembly: System.Diagnostics.DebuggerVisualizer(
-typeof(PolygonViewer),
-typeof(VisualizerObjectSource),
-Target = typeof(List<>),
-Description = PolygonViewer.Description)]
-
-[assembly: System.Diagnostics.DebuggerVisualizer(
-typeof(PolygonViewer),
-typeof(VisualizerObjectSource),
-Target = typeof(Vector2[]),
-Description = PolygonViewer.Description)]
-
-[assembly: System.Diagnostics.DebuggerVisualizer(
-typeof(PolygonViewer),
-typeof(VisualizerObjectSource),
-Target = typeof(Vector2d[]),
-Description = PolygonViewer.Description)]
-
-[assembly: System.Diagnostics.DebuggerVisualizer(
-typeof(PolygonViewer),
-typeof(VisualizerObjectSource),
-Target = typeof(List<Vector2d>[]),
-Description = PolygonViewer.Description)]
-
-[assembly: System.Diagnostics.DebuggerVisualizer(
-typeof(PolygonViewer),
-typeof(VisualizerObjectSource),
-Target = typeof(List<Vector2>[]),
-Description = PolygonViewer.Description)]
+typeof(SceneViewer),
+typeof(VisualizerSceneSource),
+Target = typeof(Scene),
+Description = SceneViewer.Description)]
 #endregion
 namespace CustomDebugVisualizer
 {
-    public class PolygonViewer : DialogDebuggerVisualizer
+    public class SceneViewer : DialogDebuggerVisualizer
     {
-        public const string Description = "Graph Vertices";
+        public const string Description = "Scene Viewer";
 
         protected override void Show(IDialogVisualizerService windowService, IVisualizerObjectProvider objectProvider)
         {
@@ -61,12 +37,14 @@ namespace CustomDebugVisualizer
             if (objectProvider == null)
                 throw new ArgumentNullException(nameof(objectProvider));
 
-            object data = objectProvider.GetObject();
+            object data = Serializer.Deserialize(objectProvider.GetData());
             Grid grid = GetGrid(data);
             if (grid == null)
             {
                 return;
             }
+
+
 
             var window = new System.Windows.Window
             {
@@ -75,30 +53,55 @@ namespace CustomDebugVisualizer
                 Content = grid
             };
             window.ShowDialog();
+
+            //// Create a thread
+            //Thread newWindowThread = new Thread(new ThreadStart(() =>
+            //{
+            //    // Create and show the Window
+            //    var window = new System.Windows.Window
+            //    {
+            //        Width = 500,
+            //        Height = 510,
+            //        //Content = grid
+            //    };
+
+
+            //    window.Show();
+            //    // Start the Dispatcher Processing
+            //    System.Windows.Threading.Dispatcher.Run();
+            //}));
+            //// Set the apartment state
+            //newWindowThread.SetApartmentState(ApartmentState.STA);
+            //// Make the thread a background thread
+            //newWindowThread.IsBackground = true;
+            //// Start the thread
+            //newWindowThread.Start();
         }
 
         static ICollection<List<Vector2d>> CastData(object data)
         {
             var vertices = new List<List<Vector2d>>();
 
-            var cast2 = data as IEnumerable<Vector2>;
-            if (cast2 != null)
+            var scene = data as Scene;
+            if (scene != null)
             {
-                vertices.Add(((IEnumerable<Vector2>) data).Select(item => (Vector2d)item).ToList());
+                PortalCommon.UpdateWorldTransform(scene);
+                foreach (ISceneObject item in scene.GetAll())
+                {
+                    var wall = item as IWall;
+                    var portal = item as IPortal;
+                    if (wall != null)
+                    {
+                        vertices.Add(wall.GetWorldVertices().Select(v => (Vector2d)v).ToList());
+                    }
+                    else if (portal != null)
+                    {
+                        vertices.Add(Portal.GetWorldVerts(portal).Select(v => (Vector2d)v).ToList());
+                    }
+                }
                 return vertices;
             }
-            var cast2D = data as IEnumerable<Vector2d>;
-            if (cast2D != null)
-            {
-                vertices.Add(((IEnumerable<Vector2d>)data).ToList());
-                return vertices;
-            }
-            var cast2Collection = data as ICollection<List<Vector2>>;
-            if (cast2Collection != null)
-            {
-                return cast2Collection.Select(item => item.Select(v => (Vector2d)v).ToList()).ToList();
-            }
-            return data as ICollection<List<Vector2d>>;
+            return null;
         }
 
         public static Grid GetGrid(object data)
@@ -123,7 +126,7 @@ namespace CustomDebugVisualizer
 
                     var lines = new OxyPlot.Series.LineSeries { MarkerType = MarkerType.Circle };
                     lines.Points.AddRange(list.Select(item => new DataPoint(item.X, item.Y)));
-                    
+
                     model.Series.Add(lines);
                     model.Series.Add(point);
                 }
@@ -154,7 +157,7 @@ namespace CustomDebugVisualizer
         /// <param name="objectToVisualize">The object to display in the visualizer.</param>
         public static void TestShowVisualizer(object objectToVisualize)
         {
-            var visualizerHost = new VisualizerDevelopmentHost(objectToVisualize, typeof(PolygonViewer), typeof(VisualizerObjectSource));
+            var visualizerHost = new VisualizerDevelopmentHost(objectToVisualize, typeof(SceneViewer), typeof(VisualizerSceneSource));
             visualizerHost.ShowVisualizer();
         }
 
@@ -167,7 +170,7 @@ namespace CustomDebugVisualizer
                 vMin = Vector2d.Min(vMin, new Vector2d(list.Min(item => item.X), list.Min(item => item.Y)));
                 vMax = Vector2d.Max(vMax, new Vector2d(list.Max(item => item.X), list.Max(item => item.Y)));
             }
-            
+
 
             double margin = 1;
             if (vertices.Sum(item => item.Count()) >= 2)

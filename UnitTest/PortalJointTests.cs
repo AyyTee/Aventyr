@@ -10,7 +10,7 @@ using Game.Portals;
 using Game;
 using Game.Common;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class PortalJointTests

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Game.Common;
 using Game.Models;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class ClipModelTests

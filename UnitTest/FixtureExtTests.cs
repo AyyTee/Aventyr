@@ -7,7 +7,7 @@ using Game.Common;
 using Game.Physics;
 using Game.Portals;
 
-namespace UnitTest
+namespace GameTests
 {
     [TestClass]
     public class FixtureExtTests
