@@ -20,9 +20,9 @@ namespace Game.Physics
 {
     public class PhyicsListener
     {
-        public Scene Scene { get; private set; }
+        public readonly Scene Scene;
         Entity _debugEntity;
-        bool _debugMode = true;
+        bool _debugMode = false;
 
         public PhyicsListener(Scene scene)
         {
@@ -61,13 +61,15 @@ namespace Game.Physics
                 actor.ApplyGravity(Scene.Gravity);
             }
 
-            if (_debugEntity != null)
+            if (_debugMode)
             {
-                Scene.MarkForRemoval(_debugEntity);
+                if (_debugEntity != null)
+                {
+                    Scene.MarkForRemoval(_debugEntity);
+                }
+                _debugEntity = new Entity(Scene) { IsPortalable = false };
             }
-            _debugEntity = new Entity(Scene);
-            _debugEntity.IsPortalable = false;
-
+            
             foreach (Actor actor in Scene.GetAll().OfType<Actor>())
             {
                 Actor.AssertTransform(actor);
@@ -151,17 +153,12 @@ namespace Game.Physics
                     if (contact.Manifold.PointCount == 2)
                     {
                         Model line = ModelFactory.CreateLines(
-                           new LineF[] {
+                            new[] {
                             new LineF(vList[0], vList[1])
-                           });
-                        if (contact.Enabled)
-                        {
-                            line.SetColor(new Vector3(1, 1, 0.2f));
-                        }
-                        else
-                        {
-                            line.SetColor(new Vector3(0.5f, 0.5f, 0));
-                        }
+                            });
+                        line.SetColor(contact.Enabled ? 
+                            new Vector3(1, 1, 0.2f) : 
+                            new Vector3(0.5f, 0.5f, 0));
                         line.Transform.Position += new Vector3(0, 0, 5);
                         _debugEntity.AddModel(line);
                     }
@@ -261,7 +258,7 @@ namespace Game.Physics
                 {
                     int iNext = (i + 1) % fixtureData.Length;
                     var intersection = fixtureData[iNext].GetPortalChildren().Intersect(fixtureData[i].PortalCollisions);
-                    if (intersection.Count() > 0)
+                    if (intersection.Any())
                     {
                         //Debug.Fail("Fixtures with portal collisions should be filtered.");
                         return false;
@@ -286,7 +283,7 @@ namespace Game.Physics
                     }
 
                     LineF line = new LineF(Portal.GetWorldVerts(portal));
-                    double[] vDist = new double[] {
+                    double[] vDist = {
                         MathExt.PointLineDistance(vList[0], line, true),
                         MathExt.PointLineDistance(vList[1], line, true)
                     };
@@ -337,7 +334,7 @@ namespace Game.Physics
                             return false;
                         }
                     }
-                    else 
+                    else
                     //else if (line.GetSideOf((vList[0] + vList[1])/2) != line.GetSideOf(pos))
                     {
                         bool oppositeSides1 = line.GetSideOf(vList[1]) != line.GetSideOf(pos);

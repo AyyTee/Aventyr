@@ -336,9 +336,9 @@ namespace GameTests
             Scene scene = new Scene();
             NodePortalable node = new NodePortalable(scene);
             FloatPortal portal = new FloatPortal(scene);
-            FloatPortal portalChild = new FloatPortal(scene);
+            FloatPortal portalChild = new FloatPortal(scene) {Name = "Child portal"};
             portalChild.SetParent(node);
-            portalChild.SetTransform(new Transform2(new Vector2(1, 1)));
+            portalChild.SetTransform(new Transform2(new Vector2(1, 5)));
 
             portal.SetTransform(new Transform2(new Vector2(0, -0.5f), 1, (float)Math.PI/2));
             Portal.SetLinked(portal, portalChild);
@@ -346,11 +346,6 @@ namespace GameTests
             node.SetVelocity(Transform2.CreateVelocity(new Vector2(0, -1)));
 
             scene.Step(1);
-
-            Vector2d[] blah =
-            {
-                new Vector2d(),
-            };
 
             Assert.AreEqual(node.GetWorldTransform().Rotation, Math.PI/2, 0.0001f);
         }

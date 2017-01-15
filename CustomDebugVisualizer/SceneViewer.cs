@@ -85,7 +85,7 @@ namespace CustomDebugVisualizer
             var scene = data as Scene;
             if (scene != null)
             {
-                PortalCommon.UpdateWorldTransform(scene);
+                PortalCommon.UpdateWorldTransform(scene, true);
                 foreach (ISceneObject item in scene.GetAll())
                 {
                     var wall = item as IWall;

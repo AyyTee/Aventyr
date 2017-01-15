@@ -51,7 +51,11 @@ namespace Game.Physics
         {
             Step(moving, portals, stepSize, portalEnter, new List<PortalableSweep>());
 
-            PortalCommon.UpdateWorldTransform(moving);
+            //PortalCommon.UpdateWorldTransform(moving);
+            foreach (IPortalCommon p in moving.OrderBy(Tree<IPortalCommon>.Depth))
+            {
+                p.WorldTransform = PortalCommon.GetWorldTransformUsingPath(p);
+            }
 
             foreach (IPortalable instance in moving.OfType<IPortalable>())
             {
