@@ -91,8 +91,8 @@ namespace TankGame.Network
                 TurnRight = Controller.Input.KeyDown(Key.D),
                 ReticlePos = Controller.Input.GetMouseWorldPos(_tankCamera.Camera, Vector2Ext.ToOtk(Controller.CanvasSize)),
                 FireGun = Controller.Input.KeyPress(Key.Space),
-                FirePortal0 = Controller.Input.MousePress(MouseButton.Left),
-                FirePortal1 = Controller.Input.MousePress(MouseButton.Right),
+                FirePortalLeft = Controller.Input.MousePress(MouseButton.Left),
+                FirePortalRight = Controller.Input.MousePress(MouseButton.Right)
             };
             
             if (IsConnected)
@@ -102,6 +102,10 @@ namespace TankGame.Network
                     Input = input,
                     Timestamp = NetTime.Now
                 });
+                if (_inputQueue.Count > 60)
+                {
+                    _inputQueue.Dequeue();
+                }
 
                 SendMessage(new ClientMessage { Input = input });
             }
@@ -110,13 +114,13 @@ namespace TankGame.Network
             {
                 foreach (Bullet b in Scene.GetAll().OfType<Bullet>().Where(item => item.ServerId == null))
                 {
-                    b.Remove();
+                    Scene.MarkForRemoval(b);
                 }
                 while (_inputQueue.Count > 0 && _client.ServerConnection.GetRemoteTime(_inputQueue.Peek().Timestamp) < _lastTimestamp - _client.ServerConnection.AverageRoundtripTime/2)
                 {
                     _inputQueue.Dequeue();
                 }
-                var inputArray = _inputQueue.ToArray();
+                InputTime[] inputArray = _inputQueue.ToArray();
                 for (int i = 0; i < inputArray.Length; i++)
                 {
                     tank?.SetInput(inputArray[i].Input);
@@ -132,7 +136,7 @@ namespace TankGame.Network
             StepCount++;
         }
 
-        public Tank GetTank()
+        Tank GetTank()
         {
             Tank tank;
             _tanks.TryGetValue(ServerId, out tank);

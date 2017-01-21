@@ -158,7 +158,7 @@ namespace CustomDebugVisualizer
             visualizerHost.ShowVisualizer();
         }
 
-        static void SetViewRegion(PlotModel model, IEnumerable<IEnumerable<Vector2d>> vertices)
+        internal static void SetViewRegion(PlotModel model, IEnumerable<IEnumerable<Vector2d>> vertices)
         {
             var vMin = new Vector2d();
             var vMax = new Vector2d();

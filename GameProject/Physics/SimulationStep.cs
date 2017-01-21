@@ -49,6 +49,8 @@ namespace Game.Physics
 
         public static void Step(IEnumerable<IPortalCommon> moving, IEnumerable<IPortal> portals, double stepSize, Action<EnterCallbackData> portalEnter)
         {
+            moving = moving.Where(item => item.WorldTransform != null && item.WorldVelocity != null);
+            portals = portals.Where(Portal.IsValid);
             Step(moving, portals, stepSize, portalEnter, new List<PortalableSweep>());
 
             //PortalCommon.UpdateWorldTransform(moving);
@@ -120,14 +122,14 @@ namespace Game.Physics
             double tDelta = earliest[0].Sweep.TimeProportion;
             foreach (PortalableMovement move in pointMovement)
             {
-                IPortalable portalable = move.Instance as IPortalable;
+                var portalable = move.Instance as IPortalable;
                 if (portalable != null)
                 {
-                    Transform2D velocity = (Transform2D)portalable.GetVelocity().Multiply((float)(stepSize * tDelta));
+                    var velocity = (Transform2D)portalable.GetVelocity().Multiply((float)(stepSize * tDelta));
                     portalable.SetTransform(portalable.GetTransform().Add((Transform2)velocity));
                 }
 
-                Transform2D worldVelocity = (Transform2D)move.Instance.WorldVelocity.Multiply((float)(stepSize * tDelta));
+                var worldVelocity = (Transform2D)move.Instance.WorldVelocity.Multiply((float)(stepSize * tDelta));
                 move.Instance.WorldTransform = move.Instance.WorldTransform.Add((Transform2)worldVelocity);
             }
 
@@ -155,7 +157,7 @@ namespace Game.Physics
         static void PlaceOnPortal(IPortalCommon instance, IPortal portal, float t)
         {
             Line portalLine = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(portal)));
-            Transform2D transform = (Transform2D)instance.WorldTransform;
+            var transform = (Transform2D)instance.WorldTransform;
             transform.Position = portalLine.Lerp(t);
             instance.WorldTransform = (Transform2)transform;
         }

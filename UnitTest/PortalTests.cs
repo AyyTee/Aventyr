@@ -179,5 +179,69 @@ namespace GameTests
             Assert.IsTrue(new Transform2(new Vector2(5, 0)).AlmostEqual(portal.WorldTransform));
         }
         #endregion
+
+        #region SetLinked tests
+
+        [TestMethod]
+        public void SetLinkedTest0()
+        {
+            Scene scene = new Scene();
+            FloatPortal p0 = new FloatPortal(scene);
+            FloatPortal p1 = new FloatPortal(scene);
+            
+            Portal.SetLinked(p0, p1);
+
+            Assert.IsTrue(p0.Linked == p1 && p1.Linked == p0);
+        }
+
+        [TestMethod]
+        public void SetLinkedTest1()
+        {
+            Scene scene = new Scene();
+            FloatPortal p0 = new FloatPortal(scene);
+
+            Portal.SetLinked(p0, null);
+
+            Assert.IsTrue(p0.Linked == null);
+        }
+
+        [TestMethod]
+        public void SetLinkedTest2()
+        {
+            Scene scene = new Scene();
+            FloatPortal p0 = new FloatPortal(scene);
+
+            Portal.SetLinked(null, p0);
+
+            Assert.IsTrue(p0.Linked == null);
+        }
+
+        [TestMethod]
+        public void SetLinkedTest3()
+        {
+            Scene scene = new Scene();
+            FloatPortal p0 = new FloatPortal(scene);
+            FloatPortal p1 = new FloatPortal(scene);
+
+            Portal.SetLinked(p0, p1);
+            Portal.SetLinked(p0, null);
+
+            Assert.IsTrue(p0.Linked == null && p1.Linked == null);
+        }
+
+        [TestMethod]
+        public void SetLinkedTest4()
+        {
+            Scene scene = new Scene();
+            FloatPortal p0 = new FloatPortal(scene);
+            FloatPortal p1 = new FloatPortal(scene);
+            FloatPortal p2 = new FloatPortal(scene);
+
+            Portal.SetLinked(p0, p1);
+            Portal.SetLinked(p0, p2);
+
+            Assert.IsTrue(p0.Linked == p2 && p1.Linked == null && p2.Linked == p0);
+        }
+        #endregion
     }
 }

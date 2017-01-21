@@ -11,6 +11,9 @@ namespace Game.Animation
         [DataMember]
         public Dictionary<IPortalable, CurveTransform2> Animated = new Dictionary<IPortalable, CurveTransform2>();
 
+        [DataMember]
+        public string Name { get; set; } = nameof(AnimationDriver);
+
         public AnimationDriver()
         {
         }

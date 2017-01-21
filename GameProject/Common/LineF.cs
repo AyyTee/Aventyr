@@ -57,11 +57,11 @@ namespace Game.Common
             _vertices = line.ToArray();
         }
 
-        public LineF(Vector2 center, float rotation, float length)
+        public LineF(Vector2 start, float direction, float length)
         {
-            Vector2 offset = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * length;
-            this[0] = center + offset;
-            this[1] = center - offset;
+            Vector2 offset = new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction)) * length;
+            this[0] = start;
+            this[1] = start - offset;
         }
         #endregion
 

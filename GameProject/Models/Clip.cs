@@ -13,10 +13,8 @@ namespace Game.Models
 
         public class ClipModel
         {
-            readonly LineF[] _clipLines;
-            public LineF[] ClipLines => _clipLines;
-            readonly Matrix4 _transform;
-            public Matrix4 Transform => _transform;
+            public readonly LineF[] ClipLines;
+            public readonly Matrix4 Transform;
             public readonly Model Model;
             public readonly IRenderable Entity;
 
@@ -24,8 +22,8 @@ namespace Game.Models
             {
                 Entity = entity;
                 Model = model;
-                _clipLines = clipLines;
-                _transform = transform;
+                ClipLines = clipLines;
+                Transform = transform;
             }
         }
 
@@ -43,10 +41,13 @@ namespace Game.Models
             }
         }
 
-
         public static List<ClipModel> GetClipModels(IRenderable entity, IList<IPortal> portalList, int depth)
         {
-            List<ClipModel> clipModels = new List<ClipModel>();
+            var clipModels = new List<ClipModel>();
+            if (entity.GetWorldTransform() == null)
+            {
+                return clipModels;
+            }
             if (entity.IsPortalable && !entity.DrawOverPortals)
             {
                 foreach (Model m in entity.GetModels())
@@ -140,7 +141,7 @@ namespace Game.Models
 
                 List<Vector2> convexHull = new List<Vector2>(polygon);
                 convexHull.Add(centerPoint);
-                convexHull = (List<Vector2>)Vector2Ext.Transform(MathExt.GetConvexHull(convexHull, true), modelMatrix);
+                convexHull = Vector2Ext.Transform(MathExt.GetConvexHull(convexHull, true), modelMatrix);
 
                 if (MathExt.LinePolygonDistance(portalLine, convexHull) < PortalClipMargin)
                 {

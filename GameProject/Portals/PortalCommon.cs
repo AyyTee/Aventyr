@@ -52,15 +52,29 @@ namespace Game.Portals
         }
 
         /// <summary>
+        /// Is true if the IPortalCommon is located somewhere (as oppsed to having a null position).
+        /// </summary>
+        static bool IsPlaced(IPortalCommon instance)
+        {
+            return Tree<IPortalCommon>.GetAncestors(instance, true)
+                .Any(item => item.GetTransform() == null);
+        }
+
+        /// <summary>
         /// Calculates the world transform for a given instance.
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
         public static Transform2 GetWorldTransform(IPortalCommon instance)
         {
+            if (IsPlaced(instance))
+            {
+                return null;
+            }
+
             List<IPortal> portals = instance.Scene.GetPortalList();
             Transform2 local = instance.GetTransform();
-            if (local == null || IsRoot(instance))
+            if (IsRoot(instance))
             {
                 return local;
             }
@@ -77,23 +91,21 @@ namespace Game.Portals
 
         public static Transform2 GetWorldTransformUsingPath(IPortalCommon instance)
         {
-            //List<IPortal> portals = instance.Scene.GetPortalList();
+            if (IsPlaced(instance))
+            {
+                return null;
+            }
+
             Transform2 local = instance.GetTransform();
-            if (local == null || IsRoot(instance))
+            if (IsRoot(instance))
             {
                 return local;
             }
 
             Transform2 parent = instance.Parent.WorldTransform;
-
-
-
             Transform2 t = local.Transform(parent);
 
-            
-            t = t.Transform(instance.Path.GetPortalTransform());
-
-            return t;
+            return t.Transform(instance.Path.GetPortalTransform());
         }
 
         public static Transform2 TransformVelocity(IGetTransformVelocity portalable, IPortal portal, Transform2 velocity, double movementT)

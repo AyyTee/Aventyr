@@ -12,25 +12,47 @@ using FarseerPhysics.Dynamics;
 using Game.Common;
 using Game.Models;
 using Game.Physics;
+using Game.Portals;
 using Game.Rendering;
+using System.Diagnostics;
 
 namespace TankGame
 {
-    public class Tank : Actor, IStep, ISceneObject, INetObject
+    [DebuggerDisplay(nameof(Tank) + " {" + nameof(Name) + "}")]
+    public class Tank : Actor, IStep, INetObject
     {
         public TankInput Input { get; private set; } = new TankInput();
         public Entity Turret { get; private set; }
         public double GunFiredTime { get; set; } = -1;
+        public double PortalFiredTime { get; set; } = -1;
         public int? ServerId { get; set; }
-        bool _attemptFireGun, _attemptFirePortal0, _attemptFirePortal1;
+        bool _attemptFireGun;
+        readonly bool[] _attemptFirePortal = new bool[2];
+        public int GunReloadTime = 1;
+        public int PortalReloadTime = 1;
+        public readonly FixturePortal[] PortalPair = new FixturePortal[2];
+        
 
         public Tank(Scene scene)
             : base(scene, PolygonFactory.CreateRectangle(0.8f, 1))
         {
+            for (int i = 0; i < PortalPair.Length; i++)
+            {
+                PortalPair[i] = new FixturePortal(Scene);
+                var portalEntity = new Entity(Scene);
+                portalEntity.SetParent(PortalPair[i]);
+                portalEntity.AddModel(ModelFactory.CreateLinesWidth( new[] { new LineF(Portal.GetVerts(PortalPair[i])) }, 0.1f));
+                portalEntity.ModelList[0].SetColor(new Vector3(1, 0, 0));
+            }
+            Portal.SetLinked(PortalPair[0], PortalPair[1]);
+
             scene.SceneObjects.Add(this);
+
+            Name = "Player Tank";
 
             //Actor = new Actor(scene, PolygonFactory.CreateRectangle(0.8f, 1));
             Entity entity = new Entity(scene);
+            entity.Name = "Player Tank Entity";
             entity.SetParent(this);
             entity.AddModel(ModelFactory.CreateCube(new Vector3(0.8f, 1, 1)));
 
@@ -54,8 +76,8 @@ namespace TankGame
             /*We store attempts to fire weapons here so that if input is set again 
              * we won't ignore the first firing attempt.*/
             _attemptFireGun |= input.FireGun;
-            _attemptFirePortal0 |= input.FirePortal0;
-            _attemptFirePortal1 |= input.FirePortal1;
+            _attemptFirePortal[0] |= input.FirePortal[0];
+            _attemptFirePortal[1] |= input.FirePortal[1];
         }
 
         public void StepBegin(IScene scene, float stepSize)
@@ -63,23 +85,38 @@ namespace TankGame
             StepTurret(stepSize);
             StepMovement(stepSize);
 
-            double gunReloadTime = 2;
-            if ((GunFiredTime + gunReloadTime <= scene.Time || GunFiredTime == -1) && _attemptFireGun)
+            if (_attemptFireGun && (GunFiredTime == -1 || GunFiredTime + GunReloadTime <= scene.Time))
             {
                 Transform2 t = Turret.GetWorldTransform();
                 new Bullet(Scene, t.Position, Vector2Ext.LengthDir(2, t.Rotation));
                 GunFiredTime = scene.Time;
             }
+
+            if (PortalFiredTime == -1 || PortalFiredTime + PortalReloadTime <= scene.Time)
+            {
+                for (int i = 0; i < _attemptFirePortal.Length; i++)
+                {
+                    if (_attemptFirePortal[i])
+                    {
+                        Transform2 t = Turret.WorldTransform;
+                        PortalPlacer.PortalPlace(PortalPair[i], new LineF(t.Position, t.Rotation, 10));
+
+                        PortalFiredTime = scene.Time;
+                        break;
+                    }
+                }
+            }
+
             _attemptFireGun = false;
-            _attemptFirePortal0 = false;
-            _attemptFirePortal1 = false;
+            _attemptFirePortal[0] = false;
+            _attemptFirePortal[1] = false;
         }
 
         void StepMovement(float stepSize)
         {
             Transform2 transform = GetTransform();
-            Vector2 up = transform.GetUp(true);
-            Vector2 right = transform.GetRight(true);
+            Vector2 up = transform.GetUp();
+            Vector2 right = transform.GetRight();
             Transform2 velocity = GetVelocity();
 
             if (Input.MoveFoward || Input.MoveBackward)

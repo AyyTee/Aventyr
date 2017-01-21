@@ -25,9 +25,16 @@ namespace TankGame
         [DataMember]
         public Vector2 ReticlePos;
         [DataMember]
-        public bool FirePortal0;
-        [DataMember]
-        public bool FirePortal1;
+        public readonly bool[] FirePortal = new bool[2];
+        public bool FirePortalLeft {
+            get { return FirePortal[0]; }
+            set { FirePortal[0] = value; }
+        }
+        public bool FirePortalRight
+        {
+            get { return FirePortal[1]; }
+            set { FirePortal[1] = value; }
+        }
         [DataMember]
         public bool FireGun;
     }

@@ -178,8 +178,6 @@ namespace VisualizerTests
             //new Actor(scene, PolygonFactory.CreateNGon(5, 2, new Vector2()));
             PortalCommon.UpdateWorldTransform(scene);
             Assert.IsTrue(SceneViewer.GetGrid(scene) != null);
-
-            SceneViewer.TestShowVisualizer(scene);
         }
 
         [TestMethod]

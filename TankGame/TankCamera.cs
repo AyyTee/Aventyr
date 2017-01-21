@@ -14,6 +14,7 @@ namespace TankGame
         public Camera2 Camera { get; private set; }
         public Tank Tank { get; private set; }
         public IController Controller { get; private set; }
+        public string Name { get; set; } = nameof(TankCamera);
 
         public TankCamera(Camera2 camera, Tank tank, IController controller)
         {

@@ -20,11 +20,6 @@ namespace Game.Portals
             return t;
         }
 
-        public void RemoveAfter(int index)
-        {
-            Portals.RemoveRange(index, Portals.Count - index);
-        }
-
         public PortalPath ShallowClone()
         {
             return new PortalPath {Portals = new List<IPortal>(Portals)};

@@ -26,6 +26,7 @@ namespace GameTests
             public float ZNear { get; set; } = 0.1f;
             public Transform2 WorldTransform { get; set; } = new Transform2();
             public Transform2 WorldVelocity { get; set; } = Transform2.CreateVelocity();
+            public string Name { get; set; } = nameof(SimpleCamera2);
 
             public Transform2 GetWorldTransform(bool ignorePortals = false)
             {

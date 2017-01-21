@@ -32,16 +32,22 @@ namespace Game.Portals
 
         public static void SetLinked(IPortal p0, IPortal p1)
         {
-            if (p0.Linked != null)
+            if (p0?.Linked != null)
             {
                 p0.Linked.Linked = null;
             }
-            if (p1.Linked != null)
+            if (p1?.Linked != null)
             {
                 p1.Linked.Linked = null;
             }
-            p0.Linked = p1;
-            p1.Linked = p0;
+            if (p0 != null)
+            {
+                p0.Linked = p1;
+            }
+            if (p1 != null)
+            {
+                p1.Linked = p0;
+            }
         }
 
         public static Transform2 Enter(IPortal portal, Transform2 transform)
@@ -101,7 +107,7 @@ namespace Game.Portals
             Transform2 transformCopy = transform.ShallowClone();
             Transform2 velocityCopy = velocity.ShallowClone();
 
-            IPortalable cast = portalable as IPortalable;
+            var cast = portalable as IPortalable;
             if (cast != null)
             {
                 if (!worldOnly)
@@ -127,6 +133,10 @@ namespace Game.Portals
             foreach (IPortalCommon p in portalable.Children)
             {
                 p.Path.Enter(portal.Linked);
+            }
+            if (portalable.Parent != null)
+            {
+                portalable.Path.Enter(portal);
             }
 
             Debug.Assert(transform.EqualsValue(transformCopy) && velocity.EqualsValue(velocityCopy));

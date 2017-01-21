@@ -66,14 +66,13 @@ namespace Game
             PortalCommon.UpdateWorldTransform(this, true);
             if (World != null && stepSize > 0)
             {
-                List<ActorPrev> actorTemp = new List<ActorPrev>();
-                foreach (Actor actor in GetAll().OfType<Actor>())
-                {
-                    ActorPrev actorPrev = new ActorPrev();
-                    actorTemp.Add(actorPrev);
-                    actorPrev.Actor = actor;
-                    actorPrev.Previous = actor.GetTransform();
-                }
+                var actorTemp = GetAll()
+                    .OfType<Actor>()
+                    .Select(actor => new ActorPrev
+                    {
+                        Actor = actor,
+                        Previous = actor.GetTransform()
+                    }).ToList();
 
                 //Perform physics step.
                 {

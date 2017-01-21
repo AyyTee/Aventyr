@@ -11,7 +11,7 @@ namespace Game
     /// <summary>
     /// Scene graph node.  All derived classes MUST override ShallowClone() and return an instance of the derived class.
     /// </summary>
-    [DataContract, DebuggerDisplay("SceneNode " + nameof(Name))]
+    [DataContract, DebuggerDisplay(nameof(SceneNode) + " {" + nameof(Name) + "}")]
     public class SceneNode : ITreeNode<SceneNode>, IDeepClone, ISceneObject, IPortalCommon
     {
         [DataMember]
@@ -51,7 +51,7 @@ namespace Game
         {
             Scene = scene;
             Scene.SceneObjects.Add(this);
-            Name = "";
+            Name = GetType().Name;
         }
         #endregion
 
@@ -141,7 +141,7 @@ namespace Game
             {
                 child.Remove();
             }
-            //Scene.SceneNodes.Remove(this);
+            Scene.SceneObjects.Remove(this);
             Scene = null;
         }
 

@@ -99,7 +99,7 @@ namespace Game.Physics
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], true));
                     _fixtureChildren.Add(fixture);
-                    FixtureExt.GetData(fixture).PortalParents = new FixturePortal[] {
+                    FixtureExt.GetData(fixture).PortalParents = new[] {
                         sortedPortals[i],
                         null
                     };
@@ -108,7 +108,7 @@ namespace Game.Physics
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], sortedPortals[i + 1]));
                     _fixtureChildren.Add(fixture);
-                    FixtureExt.GetData(fixture).PortalParents = new FixturePortal[] {
+                    FixtureExt.GetData(fixture).PortalParents = new[] {
                         sortedPortals[i],
                         sortedPortals[i+1]
                     };
@@ -117,7 +117,7 @@ namespace Game.Physics
                 {
                     Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], false));
                     _fixtureChildren.Add(fixture);
-                    FixtureExt.GetData(fixture).PortalParents = new FixturePortal[] {
+                    FixtureExt.GetData(fixture).PortalParents = new[] {
                         sortedPortals[i],
                         null
                     };
@@ -129,32 +129,29 @@ namespace Game.Physics
         {
             Debug.Assert(portal.Position.EdgeIndex == portalNext.Position.EdgeIndex);
             Debug.Assert(portal.Position.EdgeT < portalNext.Position.EdgeT);
-            Vector2[] verts = new Vector2[4];
+            
+            Transform2 t0 = portal.GetTransform();
+            t0.MirrorX = false;
+            t0.Size = Math.Abs(t0.Size);
 
-            {
-                Transform2 t0 = portal.GetTransform();
-                t0.MirrorX = false;
-                t0.Size = Math.Abs(t0.Size);
-                verts[0] = Vector2Ext.Transform(Portal.GetVerts(portal)[0], t0.GetMatrix());
-                verts[1] = Vector2Ext.Transform(Portal.GetVerts(portal)[0] + new Vector2(-FixturePortal.EdgeMargin, 0), t0.GetMatrix());
-            }
+            Transform2 t1 = portalNext.GetTransform();
+            t1.MirrorX = false;
+            t1.Size = Math.Abs(t1.Size);
 
+            Vector2[] verts = 
             {
-                Transform2 t1 = portalNext.GetTransform();
-                t1.MirrorX = false;
-                t1.Size = Math.Abs(t1.Size);
-                verts[2] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[1] + new Vector2(-FixturePortal.EdgeMargin, 0), t1.GetMatrix());
-                verts[3] = Vector2Ext.Transform(Portal.GetVerts(portalNext)[1], t1.GetMatrix());
-            }
+                Vector2Ext.Transform(Portal.GetVerts(portal)[0], t0.GetMatrix()),
+                Vector2Ext.Transform(Portal.GetVerts(portal)[0] + new Vector2(-FixturePortal.EdgeMargin, 0), t0.GetMatrix()),
+                Vector2Ext.Transform(Portal.GetVerts(portalNext)[1] + new Vector2(-FixturePortal.EdgeMargin, 0), t1.GetMatrix()),
+                Vector2Ext.Transform(Portal.GetVerts(portalNext)[1], t1.GetMatrix())
+            };
+            
             verts = MathExt.SetWinding(verts, false);
             return new PolygonShape(new FarseerPhysics.Common.Vertices(verts.Select(v => (Xna.Framework.Vector2)v)), 0);
         }
 
         PolygonShape CreatePortalShape(FixturePortal portal, bool previousVertex)
         {
-            Vector2[] verts = new Vector2[3];
-            
-            PolygonShape shape = (PolygonShape)FixtureExt.GetFixtureAttached(portal).Shape;
             int i = 1;
             if (previousVertex)
             {
@@ -167,9 +164,14 @@ namespace Game.Physics
             t.Size = Math.Abs(t.Size);
 
             int index = (portal.Position.EdgeIndex + i) % Actor.Vertices.Count;
-            verts[0] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext], t.GetMatrix());
-            verts[1] = Actor.GetFixtureContour(Actor)[index];
-            verts[2] = Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix());
+
+            Vector2[] verts = 
+            {
+                Vector2Ext.Transform(Portal.GetVerts(portal)[iNext], t.GetMatrix()),
+                Actor.GetFixtureContour(Actor)[index],
+                Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix())
+            };
+            
             verts = MathExt.SetWinding(verts, false);
 
             return new PolygonShape(new FarseerPhysics.Common.Vertices(verts.Select(v => (Xna.Framework.Vector2)v)), 0);

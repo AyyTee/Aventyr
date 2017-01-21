@@ -164,6 +164,9 @@ namespace GameTests
             Assert.IsTrue(p.GetVelocity().Position == new Vector2(8, 0));
         }
 
+        /// <summary>
+        /// A child entity with no offset from its parent should have the same WorldTransform when travelling through a portal.
+        /// </summary>
         [TestMethod]
         public void StepTest6()
         {
@@ -175,11 +178,11 @@ namespace GameTests
             Entity entity = new Entity(scene);
             entity.SetParent(actor);
 
-            FloatPortal enter = new FloatPortal(scene);
+            FloatPortal enter = new FloatPortal(scene) {Name = "Entrance Portal"};
             enter.SetTransform(new Transform2(new Vector2(1, 2), 1, (float)Math.PI/2));
             //enter.SetVelocity(Transform2.CreateVelocity(new Vector2(1, 0)));
 
-            FloatPortal exit = new FloatPortal(scene);
+            FloatPortal exit = new FloatPortal(scene) {Name = "Exit Portal"};
             exit.SetTransform(new Transform2(new Vector2(10, 10)));
             //exit.SetVelocity(Transform2.CreateVelocity(new Vector2(10, 0)));
 
@@ -189,6 +192,7 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             SimulationStep.Step(scene.GetAll().OfType<IPortalCommon>(), scene.GetAll().OfType<IPortal>(), 1, null);
 
+            Assert.IsTrue(entity.Path.Portals.Count == 0);
             Transform2 expected = new Transform2(new Vector2(8, 10), 1, (float)Math.PI / 2, true);
             Assert.IsTrue(actor.WorldTransform.AlmostEqual(expected));
             Assert.IsTrue(entity.WorldTransform.AlmostEqual(expected));
@@ -280,7 +284,7 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             SimulationStep.Step(scene.GetAll().OfType<IPortalCommon>(), scene.GetAll().OfType<IPortal>(), 1, null);
 
-            Assert.IsTrue(PortalCommon.GetWorldTransform(exit) == exit.WorldTransform);
+            Assert.IsTrue(PortalCommon.GetWorldTransform(exit).EqualsValue(exit.WorldTransform));
         }
 
         /*[TestMethod]

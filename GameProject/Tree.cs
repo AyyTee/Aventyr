@@ -54,6 +54,22 @@ namespace Game
             return true;
         }
 
+        public static List<T> GetAncestors(T node, bool includeSelf = false)
+        {
+            var list = new List<T>();
+            if (includeSelf)
+            {
+                list.Add(node);
+            }
+            return GetAncestors(node, list);
+        }
+
+        static List<T> GetAncestors(T node, List<T> list)
+        {
+            list.Add(node);
+            return node.Parent != null ? GetAncestors(node.Parent, list) : list;
+        }
+
         public static List<T> GetDescendents(T root, bool includeRoot = true)
         {
             List<T> list = FindByType<T>(root);

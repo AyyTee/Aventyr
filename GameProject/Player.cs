@@ -13,6 +13,7 @@ namespace Game
         public Controller Controller;
         public Camera2 Camera;
         public bool FollowPlayer = true;
+        public string Name { get; set; } = nameof(Player);
 
         public Player(Controller controller)
         {

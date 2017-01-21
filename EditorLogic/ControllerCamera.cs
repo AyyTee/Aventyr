@@ -41,6 +41,9 @@ namespace EditorLogic
         public List<IPortalCommon> Children => new List<IPortalCommon>();
 
         public ControllerEditor Controller { get; set; }
+
+        [DataMember]
+        public string Name { get; set; } = nameof(ControllerCamera);
         public IInput InputExt { get; set; }
         [DataMember]
         public float ZoomMin = 0.5f;

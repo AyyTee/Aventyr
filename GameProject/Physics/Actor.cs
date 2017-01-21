@@ -15,7 +15,7 @@ using Xna = Microsoft.Xna.Framework;
 namespace Game.Physics
 {
     /// <summary>A SceneNode with rigid body physics.</summary>
-    [DataContract, DebuggerDisplay("Actor " + nameof(Name))]
+    [DataContract, DebuggerDisplay(nameof(Actor) + " {" + nameof(Name) + "}")]
     public class Actor : SceneNode, IWall, IPortalable
     {
         public delegate void OnCollisionHandler(Actor collidingWith, bool firstEvent);
@@ -180,12 +180,13 @@ namespace Game.Physics
 
         public override void Remove()
         {
+            Scene sceneTemp = Scene;
+            base.Remove();
             if (Body != null)
             {
-                Scene.World.RemoveBody(Body);
+                sceneTemp.World.RemoveBody(Body);
                 Body = null;
             }
-            base.Remove();
         }
 
         /// <summary>

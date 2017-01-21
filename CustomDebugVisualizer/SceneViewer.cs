@@ -78,9 +78,9 @@ namespace CustomDebugVisualizer
             //newWindowThread.Start();
         }
 
-        static ICollection<List<Vector2d>> CastData(object data)
+        static ICollection<Series> CastData(object data)
         {
-            var vertices = new List<List<Vector2d>>();
+            var vertices = new List<Series>();
 
             var scene = data as Scene;
             if (scene != null)
@@ -92,11 +92,19 @@ namespace CustomDebugVisualizer
                     var portal = item as IPortal;
                     if (wall != null)
                     {
-                        vertices.Add(wall.GetWorldVertices().Select(v => (Vector2d)v).ToList());
+                        vertices.Add(new Series
+                        {
+                            Vertices = wall.GetWorldVertices().Select(v => (Vector2d)v).ToList(),
+                            Name = item.Name
+                        });
                     }
                     else if (portal != null)
                     {
-                        vertices.Add(Portal.GetWorldVerts(portal).Select(v => (Vector2d)v).ToList());
+                        vertices.Add(new Series
+                        {
+                            Vertices = Portal.GetWorldVerts(portal).Select(v => (Vector2d)v).ToList(),
+                            Name = item.Name
+                        });
                     }
                 }
                 return vertices;
@@ -104,9 +112,15 @@ namespace CustomDebugVisualizer
             return null;
         }
 
+        class Series
+        {
+            public List<Vector2d> Vertices;
+            public string Name;
+        }
+
         public static Grid GetGrid(object data)
         {
-            ICollection<List<Vector2d>> vertices = CastData(data);
+            ICollection<Series> vertices = CastData(data);
             if (vertices == null)
             {
                 return null;
@@ -114,24 +128,29 @@ namespace CustomDebugVisualizer
 
             var grid = new Grid();
 
-            if (vertices.Any(item => item.Any()))
+            if (vertices.Any(item => item.Vertices.Any()))
             {
                 var model = new PlotModel();
                 grid.Children.Add(new PlotView { Model = model });
 
-                foreach (var list in vertices)
+                foreach (Series list in vertices)
                 {
                     var point = new OxyPlot.Series.ScatterSeries { MarkerType = MarkerType.Circle };
-                    point.Points.Add(new ScatterPoint(list.First().X, list.First().Y));
+                    point.Points.Add(new ScatterPoint(list.Vertices.First().X, list.Vertices.First().Y));
 
-                    var lines = new OxyPlot.Series.LineSeries { MarkerType = MarkerType.Circle };
-                    lines.Points.AddRange(list.Select(item => new DataPoint(item.X, item.Y)));
+                    var lines = new OxyPlot.Series.LineSeries
+                    {
+                        MarkerType = MarkerType.Circle,
+                        Title = list.Name
+                    };
+                    lines.Points.AddRange(list.Vertices.Select(item => new DataPoint(item.X, item.Y)));
+                    
 
                     model.Series.Add(lines);
                     model.Series.Add(point);
                 }
 
-                SetViewRegion(model, vertices);
+                PolygonViewer.SetViewRegion(model, vertices.Select(item => item.Vertices));
             }
             else
             {
@@ -159,55 +178,6 @@ namespace CustomDebugVisualizer
         {
             var visualizerHost = new VisualizerDevelopmentHost(objectToVisualize, typeof(SceneViewer), typeof(VisualizerSceneSource));
             visualizerHost.ShowVisualizer();
-        }
-
-        static void SetViewRegion(PlotModel model, IEnumerable<IEnumerable<Vector2d>> vertices)
-        {
-            var vMin = new Vector2d();
-            var vMax = new Vector2d();
-            foreach (var list in vertices)
-            {
-                vMin = Vector2d.Min(vMin, new Vector2d(list.Min(item => item.X), list.Min(item => item.Y)));
-                vMax = Vector2d.Max(vMax, new Vector2d(list.Max(item => item.X), list.Max(item => item.Y)));
-            }
-
-
-            double margin = 1;
-            if (vertices.Sum(item => item.Count()) >= 2)
-            {
-                double xDiff = vMax.X - vMin.X;
-                double yDiff = vMax.Y - vMin.Y;
-                if (xDiff > yDiff)
-                {
-                    vMin.Y -= (xDiff - yDiff) / 2;
-                    vMax.Y += (xDiff - yDiff) / 2;
-                }
-                else
-                {
-                    vMin.X -= (yDiff - xDiff) / 2;
-                    vMax.X += (yDiff - xDiff) / 2;
-                }
-
-                double diff = vMax.X - vMin.X;
-                const double marginPercent = 0.1f;
-                margin = diff * marginPercent;
-            }
-
-            vMin -= new Vector2d(margin, margin);
-            vMax += new Vector2d(margin, margin);
-
-            model.Axes.Add(new OxyPlot.Axes.LinearAxis
-            {
-                Minimum = vMin.X,
-                Maximum = vMax.X,
-                Position = AxisPosition.Bottom
-            });
-            model.Axes.Add(new OxyPlot.Axes.LinearAxis()
-            {
-                Minimum = vMin.Y,
-                Maximum = vMax.Y,
-                Position = AxisPosition.Left
-            });
         }
     }
 }

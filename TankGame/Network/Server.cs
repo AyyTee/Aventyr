@@ -17,11 +17,11 @@ namespace TankGame.Network
     public class Server : INetController
     {
         Dictionary<long, Tank> _tanks = new Dictionary<long, Tank>();
-        INetServer _server;
-        public INetPeer Peer { get { return _server; } }
+        readonly INetServer _server;
+        public INetPeer Peer => _server;
         Scene _scene;
         Renderer _renderer;
-        public string Name { get { return "Server"; } }
+        public string Name => "Server";
         public int StepCount { get; private set; }
         List<Wall> _walls = new List<Wall>();
         HashSet<long> _loading = new HashSet<long>();
@@ -111,7 +111,7 @@ namespace TankGame.Network
 
                 foreach (long clientId in _loading.ToArray())
                 {
-                    ServerMessage message = new ServerMessage
+                    var message = new ServerMessage
                     {
                         WallsAdded = _walls.Select(wall => new WallAdded(wall)).ToArray()
                     };
@@ -120,13 +120,13 @@ namespace TankGame.Network
                     _loading.Remove(clientId);
                 }
 
-                List<TankData> tankData = new List<TankData>();
+                var tankData = new List<TankData>();
                 foreach (long id in _tanks.Keys)
                 {
                     tankData.Add(new TankData(id, _tanks[id]));
                 }
 
-                List<BulletData> bulletData = new List<BulletData>();
+                var bulletData = new List<BulletData>();
                 foreach (Bullet bullet in _scene.GetAll().OfType<Bullet>())
                 {
                     bulletData.Add(new BulletData(InitNetObject(bullet)));
@@ -197,8 +197,8 @@ namespace TankGame.Network
             {
                 //If the message is late then still accept firing input (unless it's really late).
                 tank.Input.FireGun |= data.Input.FireGun;
-                tank.Input.FirePortal0 |= data.Input.FirePortal0;
-                tank.Input.FirePortal1 |= data.Input.FirePortal1;
+                tank.Input.FirePortal[0] |= data.Input.FirePortal[0];
+                tank.Input.FirePortal[1] |= data.Input.FirePortal[1];
             }
             else if (!outOfDate)
             {

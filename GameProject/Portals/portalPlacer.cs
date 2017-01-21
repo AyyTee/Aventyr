@@ -12,7 +12,7 @@ namespace Game.Portals
         /// Attach a portal to the nearest valid wall edge along a ray.
         /// </summary>
         /// <param name="portal">Portal that will potentially be attached to a wall edge.</param>
-        /// <param name="ray">Portal ray cast.  ray[0] is the begin point and ray[1] is the end point.</param>
+        /// <param name="ray">Portal ray cast. ray[0] is the beginning point and ray[1] is the end point.</param>
         /// <returns>True if a valid edge was found, otherwise false.</returns>
         public static bool PortalPlace(FixturePortal portal, LineF ray)
         {
@@ -35,15 +35,15 @@ namespace Game.Portals
             float minDist = -1;
             foreach (IWall wall in scene.GetAll().OfType<IWall>())
             {
-                Vector2[] vertices = wall.GetWorldVertices().ToArray();
-                for (int i = 0; i < vertices.Length; i++)
+                var vertices = wall.GetWorldVertices();
+                for (int i = 0; i < vertices.Count; i++)
                 {
-                    int iNext = (i + 1) % vertices.Length;
+                    int iNext = (i + 1) % vertices.Count;
                     IntersectCoord coord = MathExt.LineLineIntersect(ray, new LineF(vertices[i], vertices[iNext]), false);
                     if (coord.Exists)
                     {
                         float dist = ((Vector2)coord.Position - ray[0]).Length;
-                        if ((minDist == -1 || minDist < dist))
+                        if (minDist == -1 || minDist < dist)
                         {
                             minDist = dist;
                             wallCoord = new WallCoord(wall, i, (float)coord.Last);
@@ -66,8 +66,8 @@ namespace Game.Portals
             {
                 return null;
             }
-            WallCoord intersectValid = new WallCoord(coord.Wall, coord.EdgeIndex, GetValidT(coord.EdgeT, edge, portalSize));
-            return intersectValid;
+
+            return new WallCoord(coord.Wall, coord.EdgeIndex, GetValidT(coord.EdgeT, edge, portalSize));
         }
 
         static float GetValidT(float t, LineF edge, float portalSize)

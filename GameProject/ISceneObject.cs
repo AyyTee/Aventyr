@@ -4,5 +4,7 @@
     public interface ISceneObject
     {
         void Remove();
+        //Simple name used to quickly identify objects.  Cannot be assumed to be unique or constant.
+        string Name { get; }
     }
 }

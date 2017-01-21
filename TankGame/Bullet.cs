@@ -11,9 +11,11 @@ using Game.Models;
 using Game.Physics;
 using Game.Rendering;
 using TankGame.Network;
+using System.Diagnostics;
 
 namespace TankGame
 {
+    [DebuggerDisplay(nameof(Bullet) + " {" + nameof(Name) + "}")]
     public class Bullet : Actor, IStep, ISceneObject, INetObject
     {
         public Entity Entity { get; private set; }

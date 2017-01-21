@@ -77,7 +77,7 @@
     <Compile Include="Network\ServerMessage.cs" />
     <Compile Include="Network\Server.cs" />
     <Compile Include="Tank.cs" />
-    <Compile Include="TankAction.cs" />
+    <Compile Include="TankInput.cs" />
     <Compile Include="Network\TankData.cs" />
     <Compile Include="TankCamera.cs" />
     <Compile Include="Wall.cs" />
