@@ -43,11 +43,9 @@ namespace Game.Common
             _vertices = line.ToArray();
         }
 
-        public Line(Vector2d center, double rotation, double length)
+        public Line(Vector2d start, double direction, double length)
+            : this(start, start + new Vector2d(Math.Cos(direction), Math.Sin(direction)) * length)
         {
-            Vector2d offset = new Vector2d(Math.Cos(rotation), Math.Sin(rotation)) * length;
-            this[0] = center + offset;
-            this[1] = center - offset;
         }
         #endregion
 

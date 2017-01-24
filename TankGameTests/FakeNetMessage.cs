@@ -11,6 +11,8 @@ namespace TankGameTests
     {
         List<byte> _data = new List<byte>();
 
+        public double SendTime { get; set; }
+
         public byte[] Data
         {
             get

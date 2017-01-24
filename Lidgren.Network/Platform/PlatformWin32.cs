@@ -145,7 +145,7 @@ namespace Lidgren.Network
 	public static partial class NetTime
 	{
 	    static readonly long s_timeInitialized = Stopwatch.GetTimestamp();
-	    static readonly double s_dInvFreq = 1.0 / (double)Stopwatch.Frequency;
+	    static readonly double s_dInvFreq = 1.0 / Stopwatch.Frequency;
 
 	    static double _time;
 
@@ -161,13 +161,9 @@ namespace Lidgren.Network
 		/// <summary>
 		/// Get number of seconds since the application started
 		/// </summary>
-		public static double Now {
-            get
-            {
-                return AutomaticTimeKeeping ? 
-                    (double)(Stopwatch.GetTimestamp() - s_timeInitialized) * s_dInvFreq : _time;
-            }
-        }
+		public static double Now => AutomaticTimeKeeping ? 
+            (Stopwatch.GetTimestamp() - s_timeInitialized) * s_dInvFreq : 
+            _time;
 	}
 }
 #endif

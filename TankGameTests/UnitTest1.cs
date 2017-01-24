@@ -61,20 +61,22 @@ namespace TankGameTests
             {
                 NetTime.SetTime(i / 60f);
 
-                ServerMessage data = new ServerMessage();
-                data.TankData = new TankData[]
+                ServerMessage data = new ServerMessage
                 {
-                    new TankData
+                    TankData = new TankData[]
                     {
-                        OwnerId = _client.ServerId,
-                        GunFiredTime = -1,
-                        Transform = new Transform2(),
-                        WorldTransform = new Transform2(),
-                        Velocity = Transform2.CreateVelocity(),
-                        WorldVelocity = Transform2.CreateVelocity(),
-                        TurretTransform = new Transform2(),
-                        TurretWorldTransform = new Transform2(),
-                    },
+                        new TankData
+                        {
+                            OwnerId = _client.ServerId,
+                            GunFiredTime = -1,
+                            Transform = new Transform2(),
+                            WorldTransform = new Transform2(),
+                            Velocity = Transform2.CreateVelocity(),
+                            WorldVelocity = Transform2.CreateVelocity(),
+                            TurretTransform = new Transform2(),
+                            TurretWorldTransform = new Transform2(),
+                        },
+                    }
                 };
                 var message = ((FakeNetOutgoingMessage)NetworkHelper.PrepareMessage(_client, data)).ToIncomingMessage();
                 message.MessageType = NetIncomingMessageType.Data;

@@ -202,7 +202,7 @@ namespace EditorLogic
                     {
                         FixturePortal cast = (FixturePortal)clone;
 
-                        cast.SetPosition((IWall)parent, ((EditorPortal)e).PolygonTransform, e.GetTransform().Size, e.GetTransform().MirrorX);
+                        cast.SetPosition(new WallCoord((IWall)parent, ((EditorPortal)e).PolygonTransform), e.GetTransform().Size, e.GetTransform().MirrorX);
                         Debug.Assert(((IWall)parent).Vertices.Count > 0);
 
                         IPortal portalEditor = (IPortal)e;

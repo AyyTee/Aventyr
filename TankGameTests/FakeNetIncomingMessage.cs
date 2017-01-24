@@ -19,13 +19,7 @@ namespace TankGameTests
             }
         }
 
-        public double ReceiveTime
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public double ReceiveTime { get; set; }
 
         public NetConnection SenderConnection
         {

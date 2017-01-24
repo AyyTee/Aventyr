@@ -11,8 +11,11 @@ namespace TankGameTests
     {
         public FakeNetIncomingMessage ToIncomingMessage()
         {
-            var message = new FakeNetIncomingMessage {Data = Data};
-            return message;
+            return new FakeNetIncomingMessage
+            {
+                Data = Data,
+                SendTime = SendTime
+            };
         }
 
         public bool Encrypt(NetEncryption encryption)

@@ -58,10 +58,8 @@ namespace Game.Common
         }
 
         public LineF(Vector2 start, float direction, float length)
+            : this(start, start + new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction)) * length)
         {
-            Vector2 offset = new Vector2((float)Math.Cos(direction), (float)Math.Sin(direction)) * length;
-            this[0] = start;
-            this[1] = start - offset;
         }
         #endregion
 

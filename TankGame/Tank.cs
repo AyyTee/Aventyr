@@ -98,8 +98,20 @@ namespace TankGame
                 {
                     if (_attemptFirePortal[i])
                     {
-                        Transform2 t = Turret.WorldTransform;
-                        PortalPlacer.PortalPlace(PortalPair[i], new LineF(t.Position, t.Rotation, 10));
+                        Vector2 pos = Turret.WorldTransform.Position;
+                        var ray = new LineF(pos, (Input.ReticlePos - pos).Normalized() * 10 + pos);
+                        foreach (WallCoord coord in PortalPlacer.PortalPlace(PortalPair[i], ray))
+                        {
+                            if (coord.Wall is Tank || coord.Wall is Bullet)
+                            {
+                                continue;
+                            }
+                            if (PortalPlacer.EdgeValid(coord, PortalPair[i].Size))
+                            {
+                                PortalCommon.SetLocalTransform(PortalPair[i], PortalPlacer.AdjustCoord(coord, PortalPair[i].Size));
+                                break;
+                            }
+                        }
 
                         PortalFiredTime = scene.Time;
                         break;

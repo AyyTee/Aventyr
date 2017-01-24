@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using System;
+using OpenTK;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,45 +14,28 @@ namespace Game.Portals
         /// </summary>
         /// <param name="portal">Portal that will potentially be attached to a wall edge.</param>
         /// <param name="ray">Portal ray cast. ray[0] is the beginning point and ray[1] is the end point.</param>
-        /// <returns>True if a valid edge was found, otherwise false.</returns>
-        public static bool PortalPlace(FixturePortal portal, LineF ray)
+        public static IEnumerable<WallCoord> PortalPlace(FixturePortal portal, LineF ray)
         {
-            WallCoord intersection = RayCast(portal.Scene, ray);
-            if (intersection != null)
-            {
-                intersection = AdjustCoord(intersection, portal.Size);
-                if (intersection != null)
-                {
-                    portal.SetPosition(intersection.Wall, new PolygonCoord(intersection.EdgeIndex, intersection.EdgeT));
-                    return true;
-                }
-            }
-            return false;
+            return RayCast(portal.Scene, ray);
         }
 
-        public static WallCoord RayCast(IScene scene, LineF ray)
+        public static IEnumerable<WallCoord> RayCast(IScene scene, LineF ray)
         {
-            WallCoord wallCoord = null;
-            float minDist = -1;
+            var wallCoord = new List<WallCoord>();
             foreach (IWall wall in scene.GetAll().OfType<IWall>())
             {
                 var vertices = wall.GetWorldVertices();
                 for (int i = 0; i < vertices.Count; i++)
                 {
                     int iNext = (i + 1) % vertices.Count;
-                    IntersectCoord coord = MathExt.LineLineIntersect(ray, new LineF(vertices[i], vertices[iNext]), false);
+                    IntersectCoord coord = MathExt.LineLineIntersect(ray, new LineF(vertices[i], vertices[iNext]), true);
                     if (coord.Exists)
                     {
-                        float dist = ((Vector2)coord.Position - ray[0]).Length;
-                        if (minDist == -1 || minDist < dist)
-                        {
-                            minDist = dist;
-                            wallCoord = new WallCoord(wall, i, (float)coord.Last);
-                        }
+                        wallCoord.Add(new WallCoord(wall, i, (float) coord.Last));
                     }
                 }
             }
-            return wallCoord;
+            return wallCoord.OrderBy(item => (PolygonExt.GetTransform(item.Wall.GetWorldVertices(), item).Position - ray[0]).Length);
         }
 
         /// <summary>
@@ -59,15 +43,12 @@ namespace Game.Portals
         /// </summary>
         /// <param name="coord">Initial portal position.</param>
         /// <param name="portalSize">Size of portal.</param>
-        static WallCoord AdjustCoord(WallCoord coord, float portalSize)
+        public static WallCoord AdjustCoord(WallCoord coord, float portalSize)
         {
             LineF edge = PolygonExt.GetEdge(coord.Wall.GetWorldVertices(), coord);
-            if (!EdgeValidLength(edge.Length, portalSize))
-            {
-                return null;
-            }
-
-            return new WallCoord(coord.Wall, coord.EdgeIndex, GetValidT(coord.EdgeT, edge, portalSize));
+            return EdgeValid(coord, portalSize)
+                ? new WallCoord(coord.Wall, coord.EdgeIndex, GetValidT(coord.EdgeT, edge, portalSize))
+                : null;
         }
 
         static float GetValidT(float t, LineF edge, float portalSize)
@@ -75,6 +56,12 @@ namespace Game.Portals
             Debug.Assert(EdgeValidLength(edge.Length, portalSize));
             float portalSizeT = (portalSize + FixturePortal.EdgeMargin * 2) / edge.Length;
             return MathHelper.Clamp(t, portalSizeT / 2, 1 - portalSizeT / 2);
+        }
+
+        public static bool EdgeValid(WallCoord coord, float portalSize)
+        {
+            LineF edge = PolygonExt.GetEdge(coord.Wall.GetWorldVertices(), coord);
+            return EdgeValidLength(edge.Length, portalSize);
         }
 
         /// <summary>

@@ -99,8 +99,7 @@ namespace Game.Common
                 double distance = PointLineDistance(point, edge, true);
                 if (distanceMin == -1 || distance < distanceMin)
                 {
-                    nearest.EdgeIndex = i;
-                    nearest.EdgeT = edge.NearestT(point, true);
+                    nearest = new PolygonCoord(i, edge.NearestT(point, true));
                     distanceMin = distance;
                 }
             }
@@ -112,7 +111,7 @@ namespace Game.Common
         {
             Vector2d v;
             Vector2d vDelta = line[1] - line[0];
-            if ((vDelta.X == 0) && (vDelta.Y == 0))
+            if (vDelta.X == 0 && vDelta.Y == 0)
             {
                 v = line[0];
             }

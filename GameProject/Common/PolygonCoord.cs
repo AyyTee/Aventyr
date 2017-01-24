@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Runtime.Serialization;
+using Game.Serialization;
 
 namespace Game.Common
 {
@@ -10,29 +12,17 @@ namespace Game.Common
         /// Index of the edge within the polygon.
         /// </summary>
         [DataMember]
-        public int EdgeIndex { get; set; }
-        float _edgeT;
+        public int EdgeIndex { get; private set; }
+
         /// <summary>
         /// Value between [0,1] that represents the position along the edge.
         /// </summary>
         [DataMember]
-        public float EdgeT
-        {
-            get { return _edgeT; }
-            set
-            {
-                Debug.Assert(_edgeT >= 0 && _edgeT <= 1);
-                _edgeT = value;
-            }
-        }
-
-        public PolygonCoord()
-            : this(0, 0)
-        {
-        }
+        public float EdgeT { get; private set; }
 
         public PolygonCoord(int edgeIndex, float edgeT)
         {
+            Debug.Assert(edgeT >= 0 && edgeT <= 1);
             EdgeIndex = edgeIndex;
             EdgeT = edgeT;
         }

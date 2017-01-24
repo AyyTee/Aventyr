@@ -48,7 +48,7 @@ namespace Game.Portals
         {
             if (parent != null && position != null)
             {
-                SetPosition(parent, position);
+                SetPosition(new WallCoord(parent, position));
             }
         }
 
@@ -115,14 +115,14 @@ namespace Game.Portals
             }
         }
 
-        public void SetPosition(IWall wall, IPolygonCoord position)
+        public void SetPosition(WallCoord coord)
         {
             RemoveFixture();
-            Position = position;
-            Debug.Assert(wall != null);
-            Debug.Assert(wall is SceneNode);
+            Position = new PolygonCoord(coord.EdgeIndex, coord.EdgeT);
+            Debug.Assert(coord.Wall != null);
+            Debug.Assert(coord.Wall is SceneNode);
             Debug.Assert(Position != null);
-            SetParent((SceneNode)wall);
+            SetParent((SceneNode)coord.Wall);
             //wake up all the bodies so that they will fall if there is now a portal entrance below them
             foreach (Body b in Scene.World.BodyList)
             {
@@ -130,11 +130,11 @@ namespace Game.Portals
             }
         }
 
-        public void SetPosition(IWall wall, IPolygonCoord position, float size, bool mirrorX)
+        public void SetPosition(WallCoord coord, float size, bool mirrorX)
         {
             MirrorX = mirrorX;
             Size = size;
-            SetPosition(wall, position);
+            SetPosition(coord);
         }
 
         public void SetMirrorX(bool mirrorX)

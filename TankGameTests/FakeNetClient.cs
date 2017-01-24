@@ -11,6 +11,6 @@ namespace TankGameTests
 {
     public class FakeNetClient : FakeNetPeer, INetClient
     {
-        public INetConnection ServerConnection { get { return Connections.FirstOrDefault(); } }
+        public INetConnection ServerConnection => Connections.FirstOrDefault();
     }
 }

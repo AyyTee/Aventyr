@@ -181,5 +181,36 @@ namespace Game.Portals
             portalSet.RemoveWhere(item => ReferenceEquals(item, instance.Parent));
             return portalSet;
         }
+
+        public static void SetLocalTransform(IPortalable portalable, Transform2 transform)
+        {
+            portalable.Transform = transform;
+            ClearWorld(portalable);
+        }
+
+        public static void SetLocalTransform(FixturePortal fixturePortal, WallCoord coord)
+        {
+            fixturePortal.SetPosition(coord);
+            ClearWorld(fixturePortal);
+        }
+
+        public static void SetLocalVelocity(IPortalable portalable, Transform2 velocity)
+        {
+            portalable.Velocity = velocity;
+            ClearWorld(portalable, true);
+        }
+
+        static void ClearWorld(IPortalCommon portalCommon, bool onlyVelocity = false)
+        {
+            foreach (var child in Tree<IPortalCommon>.GetDescendents(portalCommon))
+            {
+                child.WorldVelocity = null;
+                if (!onlyVelocity)
+                {
+                    child.WorldTransform = null;
+                    child.Path.Portals.Clear();
+                }
+            }
+        }
     }
 }

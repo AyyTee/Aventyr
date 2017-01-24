@@ -7,11 +7,11 @@ namespace Game
     public class WallCoord : IPolygonCoord
     {
         [DataMember]
-        public IWall Wall { get; set; }
+        public IWall Wall { get; private set; }
         [DataMember]
-        public int EdgeIndex { get; set; }
+        public int EdgeIndex { get; private set; }
         [DataMember]
-        public float EdgeT { get; set; }
+        public float EdgeT { get; private set; }
 
         public WallCoord(IWall wall, int edgeIndex, float edgeT)
         {

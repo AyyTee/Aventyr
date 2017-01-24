@@ -11,7 +11,7 @@ namespace Game.Common
         /// </summary>
         int EdgeIndex { get; }
         /// <summary>
-        /// Value between [0,1) that represents the position along the edge.
+        /// Value between [0,1] that represents the position along the edge.
         /// </summary>
         float EdgeT { get; }
     }

@@ -13,6 +13,13 @@ namespace TankGameTests
     {
         public Queue<FakeNetIncomingMessage> Messages { get; set; } = new Queue<FakeNetIncomingMessage>();
 
+        public int Latency { get; set; } = 0;
+
+        public void Step()
+        {
+            
+        }
+
         public NetPeerConfiguration Configuration
         {
             get
@@ -23,7 +30,7 @@ namespace TankGameTests
 
         public List<INetConnection> Connections { get; set; } = new List<INetConnection>();
 
-        public int ConnectionsCount { get { return Connections.Count; } }
+        public int ConnectionsCount => Connections.Count;
 
         public NetConnectionStatus ConnectionStatus
         {
@@ -207,6 +214,7 @@ namespace TankGameTests
         {
             FakeNetConnection connection = (FakeNetConnection)Connections[0];
             FakeNetOutgoingMessage _msg = (FakeNetOutgoingMessage)msg;
+            _msg.SendTime = NetTime.Now;
             connection.EndPoint.Messages.Enqueue(_msg.ToIncomingMessage());
             return NetSendResult.Sent;
         }
@@ -215,6 +223,7 @@ namespace TankGameTests
         {
             FakeNetConnection connection = (FakeNetConnection)recipient;
             FakeNetOutgoingMessage _msg = (FakeNetOutgoingMessage)msg;
+            _msg.SendTime = NetTime.Now;
             connection.EndPoint.Messages.Enqueue(_msg.ToIncomingMessage());
             return NetSendResult.Sent;
         }

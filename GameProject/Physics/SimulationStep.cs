@@ -110,7 +110,7 @@ namespace Game.Physics
                     if (portalable != null)
                     {
                         var shift = (Transform2D)portalable.GetVelocity().Multiply((float)stepSize);
-                        portalable.SetTransform(portalable.Transform.Add((Transform2)shift));
+                        portalable.Transform = portalable.Transform.Add((Transform2)shift);
                     }
                     
                     var worldVelocity = (Transform2D)p.Instance.WorldVelocity.Multiply((float)stepSize);
@@ -126,7 +126,7 @@ namespace Game.Physics
                 if (portalable != null)
                 {
                     var velocity = (Transform2D)portalable.GetVelocity().Multiply((float)(stepSize * tDelta));
-                    portalable.SetTransform(portalable.GetTransform().Add((Transform2)velocity));
+                    portalable.Transform = portalable.Transform.Add((Transform2)velocity);
                 }
 
                 var worldVelocity = (Transform2D)move.Instance.WorldVelocity.Multiply((float)(stepSize * tDelta));

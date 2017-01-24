@@ -1,6 +1,6 @@
 ﻿namespace Game.Serialization
 {
-    public interface IShallowClone<T> where T : IShallowClone<T>
+    public interface IShallowClone<out T> where T : IShallowClone<T>
     {
         T ShallowClone();
     }
