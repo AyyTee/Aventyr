@@ -1,6 +1,7 @@
 ﻿using Game;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -19,6 +20,8 @@ namespace TankGame.Network
         public long OwnerId;
         [DataMember]
         public int ServerId;
+        [DataMember]
+        public readonly PortalData[] PortalData = new PortalData[2];
         [DataMember]
         public Transform2 Transform;
         [DataMember]
@@ -50,10 +53,18 @@ namespace TankGame.Network
             TurretWorldTransform = tank.Turret.GetWorldTransform();
 
             GunFiredTime = tank.GunFiredTime;
+
+            Debug.Assert(tank.PortalPair.Length == 2);
+            for (int i = 0; i < tank.PortalPair.Length; i++)
+            {
+                PortalData[i] = new PortalData(tank.PortalPair[i]);
+            }
         }
 
-        public void UpdateTank(Tank tank)
+        public void UpdateTank(Tank tank, Scene scene)
         {
+            Debug.Assert(tank.ServerId == ServerId || tank.ServerId == null);
+
             NetworkHelper.SetServerId(tank, ServerId);
             tank.SetTransform(Transform);
             tank.SetVelocity(Velocity);
@@ -70,6 +81,12 @@ namespace TankGame.Network
             tank.Turret.WorldTransform = TurretWorldTransform;
 
             tank.GunFiredTime = GunFiredTime;
+
+            Debug.Assert(tank.PortalPair.Length == 2);
+            for (int i = 0; i < tank.PortalPair.Length; i++)
+            {
+                PortalData[i]?.Update(tank.PortalPair[i], scene);
+            }
         }
     }
 }

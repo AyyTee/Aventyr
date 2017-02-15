@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -193,8 +194,6 @@ namespace TankGame.Network
                 added.WallCreate(Scene);
             }
 
-            
-
             if (!outOfDate)
             {
                 Scene.Time = data.SceneTime;
@@ -215,7 +214,7 @@ namespace TankGame.Network
                         }
                     }
 
-                    tankData.UpdateTank(tank);
+                    tankData.UpdateTank(tank, Scene);
 
                     _sceneUpdated = true;
                 }
@@ -226,6 +225,13 @@ namespace TankGame.Network
                     bullet = bullet ?? new Bullet(Scene, new Vector2(), new Vector2());
                     bulletData.UpdateBullet(bullet);
                 }
+
+                /*foreach (PortalData portalData in data.PortalData)
+                {
+                    var portal = (TankPortal)Scene.GetAll().OfType<INetObject>().FirstOrDefault(item => item.ServerId == portalData.ServerId);
+                    portal = portal ?? new TankPortal(Scene, new Vector2(), new Vector2());
+                    portalData.Update(portal);
+                }*/
             }
 
             PortalCommon.UpdateWorldTransform(Scene, true);

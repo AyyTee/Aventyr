@@ -85,7 +85,7 @@ namespace Game.Portals
         /// </summary>
         public override Transform2 GetTransform()
         {
-            if (Position == null)
+            if (Position == null || Parent == null)
             {
                 return null;
             }
@@ -97,7 +97,6 @@ namespace Game.Portals
 
         public override void Remove()
         {
-            RemoveFixture();
             if (Linked != null)
             {
                 Linked.Linked = null;
@@ -107,26 +106,37 @@ namespace Game.Portals
             base.Remove();
         }
 
-        void RemoveFixture()
+        public override void SetParent(SceneNode parent)
         {
-            if (Position != null)
-            {
-                //FixtureExt.GetUserData(Position.Fixture).RemovePortal(this);
-            }
+            Debug.Fail("Use " + nameof(SetPosition) + " method instead.");
+        }
+
+        public WallCoord GetPosition()
+        {
+            return Parent == null ? null : new WallCoord((IWall)Parent, Position);
         }
 
         public void SetPosition(WallCoord coord)
         {
-            RemoveFixture();
-            Position = new PolygonCoord(coord.EdgeIndex, coord.EdgeT);
-            Debug.Assert(coord.Wall != null);
-            Debug.Assert(coord.Wall is SceneNode);
-            Debug.Assert(Position != null);
-            SetParent((SceneNode)coord.Wall);
-            //wake up all the bodies so that they will fall if there is now a portal entrance below them
-            foreach (Body b in Scene.World.BodyList)
+            bool update = (coord == null) != (Position == null);
+            
+            if (coord == null)
             {
-                b.Awake = true;
+                base.SetParent(null);
+            }
+            else
+            {
+                Position = new PolygonCoord(coord.EdgeIndex, coord.EdgeT);
+                base.SetParent((SceneNode)coord.Wall);
+            }
+
+            if (update)
+            {
+                //wake up all the bodies so that they will fall if there is now a portal entrance below them
+                foreach (Body b in Scene.World.BodyList)
+                {
+                    b.Awake = true;
+                }
             }
         }
 

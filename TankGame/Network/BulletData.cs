@@ -1,4 +1,5 @@
-﻿using Game;
+﻿using System.Diagnostics;
+using Game;
 using System.Runtime.Serialization;
 using Game.Common;
 
@@ -23,6 +24,8 @@ namespace TankGame.Network
 
         public void UpdateBullet(Bullet bullet)
         {
+            Debug.Assert(bullet.ServerId == ServerId || bullet.ServerId == null);
+
             NetworkHelper.SetServerId(bullet, ServerId);
             bullet.SetTransform(Transform);
             bullet.WorldTransform = Transform;

@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Diagnostics;
+using System.Runtime.Serialization;
 using Game.Common;
 
 namespace Game
@@ -15,6 +16,7 @@ namespace Game
 
         public WallCoord(IWall wall, int edgeIndex, float edgeT)
         {
+            Debug.Assert(wall != null);
             EdgeIndex = edgeIndex;
             EdgeT = edgeT;
             Wall = wall;

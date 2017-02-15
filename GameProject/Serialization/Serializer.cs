@@ -34,13 +34,6 @@ namespace Game.Serialization
             _serialize(clone.Scene, filename);
         }
 
-        /*private SceneNode CopyData(SceneNode rootNode)
-        {
-            SceneNode clone = rootNode.DeepClone(new Scene());
-            clone.Scene.World.ProcessChanges();
-            return clone;
-        }*/
-
         void _serialize(Scene scene, string filename)
         {
             var settings = new XmlWriterSettings

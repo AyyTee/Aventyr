@@ -30,7 +30,7 @@ namespace TankGame
         readonly bool[] _attemptFirePortal = new bool[2];
         public int GunReloadTime = 1;
         public int PortalReloadTime = 1;
-        public readonly FixturePortal[] PortalPair = new FixturePortal[2];
+        public readonly TankPortal[] PortalPair = new TankPortal[2];
         
 
         public Tank(Scene scene)
@@ -38,7 +38,7 @@ namespace TankGame
         {
             for (int i = 0; i < PortalPair.Length; i++)
             {
-                PortalPair[i] = new FixturePortal(Scene);
+                PortalPair[i] = new TankPortal(Scene);
                 var portalEntity = new Entity(Scene);
                 portalEntity.SetParent(PortalPair[i]);
                 portalEntity.AddModel(ModelFactory.CreateLinesWidth( new[] { new LineF(Portal.GetVerts(PortalPair[i])) }, 0.1f));

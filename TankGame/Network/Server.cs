@@ -120,21 +120,16 @@ namespace TankGame.Network
                     _loading.Remove(clientId);
                 }
 
-                var tankData = new List<TankData>();
-                foreach (long id in _tanks.Keys)
+                foreach (INetObject netObject in _scene.GetAll().OfType<INetObject>())
                 {
-                    tankData.Add(new TankData(id, _tanks[id]));
+                    InitNetObject(netObject);
                 }
 
-                var bulletData = new List<BulletData>();
-                foreach (Bullet bullet in _scene.GetAll().OfType<Bullet>())
-                {
-                    bulletData.Add(new BulletData(InitNetObject(bullet)));
-                }
                 SendMessage(new ServerMessage
                 {
-                    TankData = tankData.ToArray(),
-                    BulletData = bulletData.ToArray(),
+                    TankData = _tanks.Keys.Select(id => new TankData(id, _tanks[id])).ToArray(),
+                    BulletData = _scene.GetAll().OfType<Bullet>().Select(item => new BulletData(item)).ToArray(),
+                    //PortalData = _scene.GetAll().OfType<TankPortal>().Select(item => new PortalData(InitNetObject(item))).ToArray(),
                     SceneTime = _scene.Time,
                 });
             }

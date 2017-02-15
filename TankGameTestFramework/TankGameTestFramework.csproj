@@ -36,8 +36,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,6 +48,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller.cs" />
+    <Compile Include="FakeController.cs" />
+    <Compile Include="FakeInput.cs" />
+    <Compile Include="FakeNetClient.cs" />
+    <Compile Include="FakeNetConnection.cs" />
+    <Compile Include="FakeNetIncomingMessage.cs" />
+    <Compile Include="FakeNetMessage.cs" />
+    <Compile Include="FakeNetOutgoingMessage.cs" />
+    <Compile Include="FakeNetPeer.cs" />
+    <Compile Include="FakeNetPeerStatistics.cs" />
+    <Compile Include="FakeNetServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -60,6 +73,10 @@
     <ProjectReference Include="..\GameProject\Game.csproj">
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
       <Name>Game</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lidgren.Network\Lidgren.Network.csproj">
+      <Project>{49ba1c69-6104-41ac-a5d8-b54fa9f696e8}</Project>
+      <Name>Lidgren.Network</Name>
     </ProjectReference>
     <ProjectReference Include="..\TankGame\TankGame.csproj">
       <Project>{aa060735-819a-4094-ab53-abda3673e052}</Project>
