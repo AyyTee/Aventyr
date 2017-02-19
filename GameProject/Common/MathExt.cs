@@ -12,27 +12,45 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Common
 {
-    public struct IntersectCoord
+    public class IntersectCoord : IAlmostEqual<IntersectCoord>
     {
-        public bool Exists;
-        public Vector2d Position;
+        public readonly Vector2d Position;
         /// <summary>T value for the first line.</summary>
-        public double First;
+        public readonly double First;
         /// <summary>T value for the second line.</summary>
-        public double Last;
+        public readonly double Last;
 
         const float EqualityEpsilon = 0.0000001f;
 
-        public bool Equals(IntersectCoord intersect)
+        public IntersectCoord(Vector2d position, double first, double last)
         {
-            if (Exists == intersect.Exists && Exists == false)
+            Position = position;
+            First = first;
+            Last = last;
+        }
+
+        public bool AlmostEqual(IntersectCoord intersect, double delta = EqualityEpsilon)
+        {
+            if (intersect == null)
             {
-                return true;
+                return false;
             }
-            return Exists == intersect.Exists &&
-                (Position - intersect.Position).Length < EqualityEpsilon &&
-                Math.Abs(First - intersect.First) < EqualityEpsilon &&
-                Math.Abs(Last - intersect.Last) < EqualityEpsilon;
+            return MathExt.AlmostEqual(Position.X, intersect.Position.X, delta) &&
+                MathExt.AlmostEqual(Position.Y, intersect.Position.Y, delta) &&
+                MathExt.AlmostEqual(First, intersect.First, delta) &&
+                MathExt.AlmostEqual(Last, intersect.Last, delta);
+        }
+
+        public bool AlmostEqual(IntersectCoord intersect, double delta, double ratioDelta)
+        {
+            if (intersect == null)
+            {
+                return false;
+            }
+            return MathExt.AlmostEqual(Position.X, intersect.Position.X, delta, ratioDelta) &&
+                MathExt.AlmostEqual(Position.Y, intersect.Position.Y, delta, ratioDelta) &&
+                MathExt.AlmostEqual(First, intersect.First, delta, ratioDelta) &&
+                MathExt.AlmostEqual(Last, intersect.Last, delta, ratioDelta);
         }
     }
 
@@ -175,7 +193,7 @@ namespace Game.Common
 
         public static double LineLineDistance(LineF line0, LineF line1)
         {
-            if (LineLineIntersect(line0, line1, true).Exists)
+            if (LineLineIntersect(line0, line1, true) != null)
             {
                 return 0;
             }
@@ -260,7 +278,7 @@ namespace Game.Common
             };
             for (int i = 0; i < v.Length; i++)
             {
-                if (LineLineIntersect(new LineF(v[i], v[(i+1) % v.Length]), new LineF(lineBegin, lineEnd), true).Exists)
+                if (LineLineIntersect(new LineF(v[i], v[(i + 1) % v.Length]), new LineF(lineBegin, lineEnd), true) != null)
                 {
                     return true;
                 }
@@ -415,7 +433,7 @@ namespace Game.Common
         /// <returns>Location where the two lines intersect. TFirst is relative to the first line.</returns>
         public static IntersectCoord LineLineIntersect(Line line0, Line line1, bool segmentOnly)
         {
-            
+
             double ua, ub;
             double ud = (line1[1].Y - line1[0].Y) * (line0[1].X - line0[0].X) - (line1[1].X - line1[0].X) * (line0[1].Y - line0[0].Y);
             if (ud != 0)
@@ -426,21 +444,15 @@ namespace Game.Common
                 {
                     if (ua < 0 || ua > 1 || ub < 0 || ub > 1)
                     {
-                        return new IntersectCoord {Exists = false};
+                        return null;
                     }
                 }
             }
             else
             {
-                return new IntersectCoord { Exists = false };
+                return null;
             }
-            return new IntersectCoord
-            {
-                Exists = true,
-                Position = Lerp(new Vector2d(line0[0].X, line0[0].Y), new Vector2d(line0[1].X, line0[1].Y), ua),
-                First = ua,
-                Last = ub
-            };
+            return new IntersectCoord(Lerp(new Vector2d(line0[0].X, line0[0].Y), new Vector2d(line0[1].X, line0[1].Y), ua), ua, ub);
         }
 
         /// <summary>
@@ -458,13 +470,13 @@ namespace Game.Common
                 for (int j = i + 2; j < vertices.Length - 1; j++)
                 {
                     IntersectCoord first = LineLineIntersect(new LineF(vertices[i], vertices[i + 1]), new LineF(vertices[j], vertices[j + 1]), true);
-                    if (first.Exists && first.First < 1)
+                    if (first != null && first.First < 1)
                     {
                         intersections.Add(new PolygonCoord(i, (float)first.First));
                         if (includeTwice)
                         {
                             IntersectCoord second = LineLineIntersect(new LineF(vertices[i], vertices[i + 1]), new LineF(vertices[j], vertices[j + 1]), true);
-                            Debug.Assert(second.Exists);
+                            Debug.Assert(second != null);
                             intersections.Add(new PolygonCoord(j, (float)second.First));
                         }
                     }
@@ -486,8 +498,8 @@ namespace Game.Common
             {
                 int i1 = (i0 + 1) % polygon.Count;
                 IntersectCoord intersect = LineLineIntersect(line, new LineF(polygon[i0], polygon[i1]), true);
-                
-                if (intersect.Exists)
+
+                if (intersect != null)
                 {
                     points.Add(new PolygonCoord(i0, (float)intersect.Last));
                 }
@@ -506,9 +518,6 @@ namespace Game.Common
         /// </remarks>
         public static IntersectCoord[] LineCircleIntersect(Vector2 circle, float radius, LineF line, bool isSegment)
         {
-            var intersect0 = new IntersectCoord();
-            var intersect1 = new IntersectCoord();
-
             double dx = line[1].X - line[0].X;
             double dy = line[1].Y - line[0].Y;
 
@@ -529,10 +538,7 @@ namespace Game.Common
                 double t = -b / (2 * a);
                 if (t >= 0 && t < 1 || !isSegment)
                 {
-                    intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
-                    intersect0.Exists = true;
-                    intersect0.First = t;
-                    return new[] { intersect0 };
+                    return new[] { new IntersectCoord(new Vector2d(line[0].X + t * dx, line[0].Y + t * dy), t, 0) };
                 }
             }
             else
@@ -542,19 +548,13 @@ namespace Game.Common
                 double t = (float)((-b + Math.Sqrt(det)) / (2 * a));
                 if (t >= 0 && t < 1 || !isSegment)
                 {
-                    intersect0.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
-                    intersect0.Exists = true;
-                    intersect0.First = t;
-                    list.Add(intersect0);
+                    list.Add(new IntersectCoord(new Vector2d(line[0].X + t * dx, line[0].Y + t * dy), t, 0));
                 }
 
                 t = (float)((-b - Math.Sqrt(det)) / (2 * a));
                 if (t >= 0 && t < 1 || !isSegment)
                 {
-                    intersect1.Position = new Vector2d(line[0].X + t * dx, line[0].Y + t * dy);
-                    intersect1.Exists = true;
-                    intersect1.First = t;
-                    list.Add(intersect1);
+                    list.Add(new IntersectCoord(new Vector2d(line[0].X + t * dx, line[0].Y + t * dy), t, 0));
                 }
                 return list.ToArray();
             }
@@ -565,8 +565,8 @@ namespace Game.Common
         {
             return GeometryUtil.WhenLineSweepsPoint(
                 point[0],
-                lineStart, 
-                lineEnd.Translate(-point.Delta) 
+                lineStart,
+                lineEnd.Translate(-point.Delta)
                 ).ToList();
         }
 
@@ -593,7 +593,7 @@ namespace Game.Common
             }
             Matrix4d mat = QuadToSquare(src[0], src[1], src[2], src[3]);
             mat *= SquareToQuad(dest[0], dest[1], dest[2], dest[3]);
-            
+
             mat.Column2 = mat.Column3;
             mat.Column3 = Matrix4d.Identity.Column3;
             //mat.M34 = 1 - mat.M34;
@@ -620,10 +620,22 @@ namespace Game.Common
 
             var mat = new Matrix4d
             {
-                M11 = a, M12 = d, M13 = 0, M14 = g,
-                M21 = b, M22 = e, M23 = 0, M24 = h,
-                M31 = 0, M32 = 0, M33 = 1, M34 = 0,
-                M41 = c, M42 = f, M43 = 0, M44 = 1
+                M11 = a,
+                M12 = d,
+                M13 = 0,
+                M14 = g,
+                M21 = b,
+                M22 = e,
+                M23 = 0,
+                M24 = h,
+                M31 = 0,
+                M32 = 0,
+                M33 = 1,
+                M34 = 0,
+                M41 = c,
+                M42 = f,
+                M43 = 0,
+                M44 = 1
             };
             return mat;
         }
@@ -633,7 +645,7 @@ namespace Game.Common
             Matrix4d mat = SquareToQuad(v0, v1, v2, v3);
 
             //invert through adjoint
-            double a = mat.M11, d = mat.M12,	/*ignore*/ 	g = mat.M14;
+            double a = mat.M11, d = mat.M12,    /*ignore*/    g = mat.M14;
             double b = mat.M21, e = mat.M22, /*3rd col*/	h = mat.M24;
             /*ignore 3rd row*/
             double c = mat.M41, f = mat.M42;
@@ -650,10 +662,10 @@ namespace Game.Common
 
             double idet = 1.0f / (a * a1 + b * d1 + c * g1);
 
-            mat.M11 = a1 * idet;    mat.M12 = d1 * idet;    mat.M13 = 0; mat.M14 = g1 * idet;
-            mat.M21 = b1 * idet;    mat.M22 = e1 * idet;    mat.M23 = 0; mat.M24 = h1 * idet;
-            mat.M31 = 0;            mat.M32 = 0;            mat.M33 = 1; mat.M34 = 0;
-            mat.M41 = c1 * idet;    mat.M42 = f1 * idet;    mat.M43 = 0; mat.M44 = i1 * idet;
+            mat.M11 = a1 * idet; mat.M12 = d1 * idet; mat.M13 = 0; mat.M14 = g1 * idet;
+            mat.M21 = b1 * idet; mat.M22 = e1 * idet; mat.M23 = 0; mat.M24 = h1 * idet;
+            mat.M31 = 0; mat.M32 = 0; mat.M33 = 1; mat.M34 = 0;
+            mat.M41 = c1 * idet; mat.M42 = f1 * idet; mat.M43 = 0; mat.M44 = i1 * idet;
             return mat;
         }
         #endregion
@@ -687,7 +699,7 @@ namespace Game.Common
                 }
                 var edge = new LineF(vertices[i], vertices[(i + 1) % Triangle.VertexCount]);
                 IntersectCoord intersect = LineLineIntersect(edge, bisector, false);
-                if (intersect.Exists && intersect.First > 0 && intersect.First < 1)
+                if (intersect != null && intersect.First > 0 && intersect.First < 1)
                 {
                     intersectCount++;
                     Debug.Assert(intersectCount <= 2);
@@ -748,8 +760,8 @@ namespace Game.Common
             for (int i = 0; i < triangles.Length; i++)
             {
                 triangles[i] = new Triangle(
-                    vertices[indices[i * 3]], 
-                    vertices[indices[i * 3 + 1]], 
+                    vertices[indices[i * 3]],
+                    vertices[indices[i * 3 + 1]],
                     vertices[indices[i * 3 + 2]]);
             }
             return triangles;
@@ -800,7 +812,7 @@ namespace Game.Common
         /// <returns></returns>
         public static int ValueDiff(int val0, int val1, int wrapSize)
         {
-            return ((val1 - val0) % (wrapSize) + (wrapSize * 3)/2) % (wrapSize) - wrapSize/2;
+            return ((val1 - val0) % (wrapSize) + (wrapSize * 3) / 2) % (wrapSize) - wrapSize / 2;
         }
 
         public static double ValueWrap(double value, double mod)
@@ -953,7 +965,7 @@ namespace Game.Common
             for (int i = 0; i < first.Count; i++)
             {
                 int j = (i + offset) % first.Count;
-                
+
                 if (!equality.Invoke(first[i], second[j]))
                 {
                     i = 0;
@@ -981,6 +993,32 @@ namespace Game.Common
         public static bool IsIsomorphic<T>(IList<T> first, IList<T> second, bool noReversing = false)
         {
             return IsIsomorphic(first, second, (itemFirst, itemSecond) => itemFirst.Equals(itemSecond), noReversing);
+        }
+
+        /// <summary>
+        /// Compares two doubles and returns if they are almost equal. 
+        /// Primarily intended as a helper function for other classes implementing IAlmostEquals.
+        /// </summary>
+        /// <param name="delta">The maximum difference between the two values.</param>
+        /// <returns></returns>
+        public static bool AlmostEqual(double value0, double value1, double delta)
+        {
+            return Math.Abs(value1 - value0) <= delta;
+        }
+
+        /// <summary>
+        /// Compares two doubles and returns if they are almost equal. 
+        /// Primarily intended as a helper function for other classes implementing IAlmostEquals.
+        /// </summary>
+        /// <param name="delta">The maximum difference between the two values.</param>
+        /// <param name="ratioDelta">The maximum ratio between the two values.</param>
+        public static bool AlmostEqual(double value0, double value1, double delta, double ratioDelta)
+        {
+            if (value0 == 0)
+            {
+                return false;
+            }
+            return Math.Abs(1 - Math.Min(value0, value1) / Math.Max(value0, value1)) <= ratioDelta || Math.Abs(value1 - value0) <= delta;
         }
     }
 }

@@ -114,7 +114,7 @@ namespace GameTests
             {
                 Vector2 v0 = new Vector2((float)Math.Cos(rot), (float)Math.Sin(rot));
                 Vector2 v1 = new Vector2((float)Math.Cos(rot + Math.PI), (float)Math.Sin(rot + Math.PI));
-                Vector2 v2 = new Vector2((float)Math.Cos(rot + Math.PI/2), (float)Math.Sin(rot + Math.PI/2));
+                Vector2 v2 = new Vector2((float)Math.Cos(rot + Math.PI / 2), (float)Math.Sin(rot + Math.PI / 2));
                 LineF line = new LineF(v0, v1);
                 Assert.IsTrue(line.GetSideOf(v2) == Side.Right);
             }
@@ -190,8 +190,8 @@ namespace GameTests
                 FloatPortal p0 = new FloatPortal(scene);
                 p0.SetParent(node);
                 PortalCommon.UpdateWorldTransform(scene);
-                Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI)/100000, y + (float)Math.Sin(i + Math.PI)/100000);
-                Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i)/100000, y + (float)Math.Sin(i)/100000);
+                Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI) / 100000, y + (float)Math.Sin(i + Math.PI) / 100000);
+                Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i) / 100000, y + (float)Math.Sin(i) / 100000);
                 LineF line = new LineF(Vector2Ext.Transform(Portal.GetVerts(p0), p0.GetWorldTransform().GetMatrix()));
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
@@ -367,7 +367,7 @@ namespace GameTests
         [TestMethod]
         public void NearestTTest2()
         {
-            LineF line = new LineF(new Vector2(3.3f,-4.9f), new Vector2(-5.3f, -6.1f));
+            LineF line = new LineF(new Vector2(3.3f, -4.9f), new Vector2(-5.3f, -6.1f));
             Assert.IsTrue(line.NearestT(new Vector2(-4, 2), false) == 0.722811639f);
         }
         #endregion
@@ -379,12 +379,8 @@ namespace GameTests
             LineF line1 = new LineF(new Vector2(-0.5f, 0.6f), new Vector2(0.5f, 0.6f));
             IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectCoord comparison = new IntersectCoord();
-            comparison.Exists = true;
-            comparison.Position = new Vector2d(0, 0.6);
-            comparison.First = 0.6;
-            comparison.Last = 0.5;
-            Assert.IsTrue(intersect.Equals(comparison));
+            IntersectCoord comparison = new IntersectCoord(new Vector2d(0, 0.6), 0.6, 0.5);
+            Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
         [TestMethod]
@@ -394,12 +390,8 @@ namespace GameTests
             LineF line1 = new LineF(new Vector2(-0.5f, 1f), new Vector2(0.5f, 1f));
             IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectCoord comparison = new IntersectCoord();
-            comparison.Exists = true;
-            comparison.Position = new Vector2d(0, 1);
-            comparison.First = 1;
-            comparison.Last = 0.5;
-            Assert.IsTrue(intersect.Equals(comparison));
+            IntersectCoord comparison = new IntersectCoord(new Vector2d(0, 1), 1, 0.5);
+            Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
         [TestMethod]
@@ -409,12 +401,8 @@ namespace GameTests
             LineF line1 = new LineF(new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f));
             IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectCoord comparison = new IntersectCoord();
-            comparison.Exists = true;
-            comparison.Position = new Vector2d(0, -1);
-            comparison.First = 1;
-            comparison.Last = 0.5;
-            Assert.IsTrue(intersect.Equals(comparison));
+            IntersectCoord comparison = new IntersectCoord(new Vector2d(0, -1), 1, 0.5);
+            Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
         [TestMethod]
@@ -424,12 +412,8 @@ namespace GameTests
             LineF line1 = new LineF(new Vector2(-0.5f, -1000000), new Vector2(0.5f, -1000000f));
             IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectCoord comparison = new IntersectCoord();
-            comparison.Exists = true;
-            comparison.Position = new Vector2d(0, -1000000);
-            comparison.First = 1;
-            comparison.Last = 0.5;
-            Assert.IsTrue(intersect.Equals(comparison));
+            IntersectCoord comparison = new IntersectCoord(new Vector2d(0, -1000000), 1, 0.5);
+            Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
         [TestMethod]
@@ -439,12 +423,8 @@ namespace GameTests
             LineF line1 = new LineF(new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f));
             IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, true);
 
-            IntersectCoord comparison = new IntersectCoord();
-            comparison.Exists = true;
-            comparison.Position = new Vector2d(0, -1);
-            comparison.First = 1;
-            comparison.Last = 0.5;
-            Assert.IsTrue(intersect.Equals(comparison));
+            IntersectCoord comparison = new IntersectCoord(new Vector2d(0, -1), 1, 0.5);
+            Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
         [TestMethod]
@@ -454,12 +434,8 @@ namespace GameTests
             LineF line1 = new LineF(new Vector2(-0.5f, -1000000), new Vector2(0.5f, -1000000f));
             IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, true);
 
-            IntersectCoord comparison = new IntersectCoord();
-            comparison.Exists = true;
-            comparison.Position = new Vector2d(0, -1000000);
-            comparison.First = 1;
-            comparison.Last = 0.5;
-            Assert.IsTrue(intersect.Equals(comparison));
+            IntersectCoord comparison = new IntersectCoord(new Vector2d(0, -1000000), 1, 0.5);
+            Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
         [TestMethod]
@@ -469,12 +445,8 @@ namespace GameTests
             LineF line1 = new LineF(new Vector2(1.5f, 3f), new Vector2(1.5f, -1.5f));
             IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectCoord comparison = new IntersectCoord();
-            comparison.Exists = true;
-            comparison.Position = new Vector2d(1.5, 1.5);
-            comparison.First = 0.5;
-            comparison.Last = 1/(double)3;
-            Assert.IsTrue(intersect.Equals(comparison));
+            IntersectCoord comparison = new IntersectCoord(new Vector2d(1.5, 1.5), 0.5, 1.0 / 3.0);
+            Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
         [TestMethod]
@@ -484,9 +456,7 @@ namespace GameTests
             LineF line1 = new LineF(new Vector2(3f, 9f), new Vector2(12f, -6f));
             IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, true);
 
-            IntersectCoord comparison = new IntersectCoord();
-            comparison.Exists = false;
-            Assert.IsTrue(intersect.Equals(comparison));
+            Assert.IsTrue(intersect == null);
         }
 
         [TestMethod]
@@ -496,12 +466,8 @@ namespace GameTests
             LineF line1 = new LineF(new Vector2(3f, 9f), new Vector2(12f, -6f));
             IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
 
-            IntersectCoord comparison = new IntersectCoord();
-            comparison.Exists = true;
-            comparison.Position = new Vector2d(5.25, 5.25);
-            comparison.First = 4.25;
-            comparison.Last = 0.25;
-            Assert.IsTrue(intersect.Equals(comparison));
+            IntersectCoord comparison = new IntersectCoord(new Vector2d(5.25, 5.25), 4.25, 0.25);
+            Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
         #endregion
         #region IntersectParametric tests

@@ -140,7 +140,7 @@ namespace Game.Common
         public bool IsInsideFov(Vector2 viewPoint, LineF line)
         {
             //Check if there is an intersection between the two lines.
-            if (MathExt.LineLineIntersect(this, line, true).Exists)
+            if (MathExt.LineLineIntersect(this, line, true) != null)
             {
                 return true;
             }
@@ -224,7 +224,7 @@ namespace Game.Common
             {
                 t = MathHelper.Clamp(t, 0, 1);
             }
-            return (float)t;        
+            return (float)t;
             //return Vector2.Dot(v - Vertices[0], Vertices[1] - Vertices[0]);
         }
 

@@ -258,34 +258,34 @@ namespace Game.Common
             }
         }
 
-        public bool AlmostEqual(Transform2 transform)
+        public bool AlmostEqual(Transform2 transform, double delta = EqualityEpsilon)
         {
-            return AlmostEqual(transform, EqualityEpsilon);
-        }
-
-        public bool AlmostEqual(Transform2 transform, double delta)
-        {
-            if (transform != null)
+            if (transform == null)
             {
-                if (Math.Abs(Rotation - transform.Rotation) <= delta &&
-                    Math.Abs(Scale.X - transform.Scale.X) <= delta &&
-                    Math.Abs(Scale.Y - transform.Scale.Y) <= delta &&
-                    Math.Abs(Position.X - transform.Position.X) <= delta &&
-                    Math.Abs(Position.Y - transform.Position.Y) <= delta)
-                {
-                    return true;
-                }
+                return false;
+            }
+            if (MathExt.AlmostEqual(Rotation, transform.Rotation, delta) &&
+                MathExt.AlmostEqual(Scale.X, transform.Scale.X, delta) &&
+                MathExt.AlmostEqual(Scale.Y, transform.Scale.Y, delta) &&
+                MathExt.AlmostEqual(Position.X, transform.Position.X, delta) &&
+                MathExt.AlmostEqual(Position.Y, transform.Position.Y, delta))
+            {
+                return true;
             }
             return false;
         }
 
         public bool AlmostEqual(Transform2 transform, double delta, double ratioDelta)
         {
-            if ((Math.Abs(1 - transform.Rotation / Rotation) <= ratioDelta || Math.Abs(transform.Rotation - Rotation) <= delta) &&
-                (Math.Abs(1 - transform.Scale.X / Scale.X) <= ratioDelta || Math.Abs(transform.Scale.X - Scale.X) <= delta) &&
-                (Math.Abs(1 - transform.Scale.Y / Scale.Y) <= ratioDelta || Math.Abs(transform.Scale.Y - Scale.Y) <= delta) &&
-                (Math.Abs(1 - transform.Position.X / Position.X) <= ratioDelta || Math.Abs(transform.Position.X - Position.X) <= delta) &&
-                (Math.Abs(1 - transform.Position.Y / Position.Y) <= ratioDelta || Math.Abs(transform.Position.Y - Position.Y) <= delta))
+            if (transform == null)
+            {
+                return false;
+            }
+            if (MathExt.AlmostEqual(Rotation, transform.Rotation, delta, ratioDelta) &&
+                MathExt.AlmostEqual(Scale.X, transform.Scale.X, delta, ratioDelta) &&
+                MathExt.AlmostEqual(Scale.Y, transform.Scale.Y, delta, ratioDelta) &&
+                MathExt.AlmostEqual(Position.X, transform.Position.X, delta, ratioDelta) &&
+                MathExt.AlmostEqual(Position.Y, transform.Position.Y, delta, ratioDelta))
             {
                 return true;
             }

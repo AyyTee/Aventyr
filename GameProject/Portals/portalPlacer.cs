@@ -29,9 +29,9 @@ namespace Game.Portals
                 {
                     int iNext = (i + 1) % vertices.Count;
                     IntersectCoord coord = MathExt.LineLineIntersect(ray, new LineF(vertices[i], vertices[iNext]), true);
-                    if (coord.Exists)
+                    if (coord != null)
                     {
-                        wallCoord.Add(new WallCoord(wall, i, (float) coord.Last));
+                        wallCoord.Add(new WallCoord(wall, i, (float)coord.Last));
                     }
                 }
             }

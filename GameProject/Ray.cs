@@ -38,12 +38,12 @@ namespace Game
                 return;
             }
             _rayCast(
-                portalable, 
+                portalable,
                 portals,
-                portalable.GetVelocity().Position.Length * settings.TimeScale, 
-                null, 
-                portalEnter, 
-                settings, 
+                portalable.GetVelocity().Position.Length * settings.TimeScale,
+                null,
+                portalEnter,
+                settings,
                 0);
         }
 
@@ -64,7 +64,7 @@ namespace Game
             }
             double distanceMin = movementLeft;
             IPortal portalNearest = null;
-            IntersectCoord intersectNearest = new IntersectCoord();
+            IntersectCoord intersectNearest = null;
             LineF ray = new LineF(begin.Position, begin.Position + velocity.Position);
             foreach (IPortal p in portals)
             {
@@ -75,12 +75,16 @@ namespace Game
 
                 LineF portalLine = new LineF(Portal.GetWorldVerts(p));
                 IntersectCoord intersect = MathExt.LineLineIntersect(portalLine, ray, true);
-                double distance = ((Vector2d)begin.Position - intersect.Position).Length;
-                if (intersect.Exists && distance < distanceMin)
+
+                if (intersect != null)
                 {
-                    distanceMin = distance;
-                    portalNearest = p;
-                    intersectNearest = intersect;
+                    double distance = ((Vector2d)begin.Position - intersect.Position).Length;
+                    if (distance < distanceMin)
+                    {
+                        distanceMin = distance;
+                        portalNearest = p;
+                        intersectNearest = intersect;
+                    }
                 }
             }
             if (portalNearest != null)
@@ -92,7 +96,7 @@ namespace Game
                 begin.Position = (Vector2)intersectNearest.Position;
                 placeable.SetTransform(begin);
                 Portal.Enter(portalNearest, placeable, (float)intersectNearest.First, true);
-                
+
                 portalEnter?.Invoke(new EnterCallbackData(portalNearest, placeable, intersectNearest.First), t);
 
                 movementLeft *= Math.Abs(placeable.GetTransform().Size / begin.Size);
@@ -139,8 +143,8 @@ namespace Game
                 if (distanceToPortal < Portal.EnterMinDistance)
                 {
                     Vector2 exitNormal = p.WorldTransform.GetRight();
-                    Side sideOf = p == portalPrevious ? 
-                        exitLine.GetSideOf(position + velocity.Position) : 
+                    Side sideOf = p == portalPrevious ?
+                        exitLine.GetSideOf(position + velocity.Position) :
                         exitLine.GetSideOf(position - velocity.Position);
                     if (sideOf != exitLine.GetSideOf(exitNormal + p.WorldTransform.Position))
                     {

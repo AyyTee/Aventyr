@@ -85,7 +85,7 @@ namespace Game.Common
                         continue;
                     }
                     var intersect = MathExt.LineLineIntersect(line, new LineF(polygon[j], polygon[jNext]), true);
-                    if (intersect.Exists)
+                    if (intersect != null)
                     {
                         return false;
                     }
@@ -105,7 +105,7 @@ namespace Game.Common
             double xtmp = 0;
             double ytmp = 0;
             int j = polygon.Count;
-            for (int i = 0; i < j; i += 1) 
+            for (int i = 0; i < j; i += 1)
             {
                 int iNext = (i + 1) % j;
                 double x1 = polygon[i].X;
@@ -145,7 +145,7 @@ namespace Game.Common
             {
                 vertices.Add(polygon[i].V);
             }
-            
+
             if (MathExt.IsConvex(vertices))
             {
                 concaveList.Add(vertices);
@@ -155,7 +155,7 @@ namespace Game.Common
             for (int i = 0; i < polygon.Count; i++)
             {
                 ConvexVert point = polygon[i];
-                
+
                 if (point.Diagonals.Count == 0)
                 {
                     continue;
@@ -204,7 +204,7 @@ namespace Game.Common
                 }
             }
 
-            Debug.Assert(false, "Execution should not have reached this point."); 
+            Debug.Assert(false, "Execution should not have reached this point.");
             return concaveList;
         }
 
