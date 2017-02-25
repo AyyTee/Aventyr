@@ -9,7 +9,7 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Common
 {
-    public class Vector2Ext
+    public static class Vector2Ext
     {
         const float EqualityEpsilon = 0.0001f;
 
@@ -40,6 +40,50 @@ namespace Game.Common
                 vList[i] = vectors[i] * scalar;
             }
             return vList;
+        }
+
+        /// <summary>
+        /// Get projection of this vector onto v1.
+        /// </summary>
+        /// <param name="v0"></param>
+        /// <param name="v1"></param>
+        public static Vector2 Project(this Vector2 v0, Vector2 v1)
+        {
+            var normal = v1.Normalized();
+            return normal * Vector2.Dot(v0, normal);
+        }
+
+        /// <summary>
+        /// Get projection of this vector onto v1.
+        /// </summary>
+        /// <param name="v0"></param>
+        /// <param name="v1"></param>
+        public static Vector2d Project(this Vector2d v0, Vector2d v1)
+        {
+            var normal = v1.Normalized();
+            return normal * Vector2d.Dot(v0, normal);
+        }
+
+        /// <summary>
+        /// Reflects this vector across a normal.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="normal"></param>
+        /// <returns></returns>
+        public static Vector2 Mirror(this Vector2 v, Vector2 normal)
+        {
+            return v - 2 * (v - Project(v, normal));
+        }
+
+        /// <summary>
+        /// Reflects this vector across a normal.
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="normal"></param>
+        /// <returns></returns>
+        public static Vector2d Mirror(this Vector2d v, Vector2d normal)
+        {
+            return v - 2 * (v - Project(v, normal));
         }
 
         public static Vector2 Transform(Vector2 vector, Matrix4 matrix)

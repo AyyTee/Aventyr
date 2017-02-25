@@ -846,27 +846,6 @@ namespace Game.Common
         }
 
         /// <summary>
-        /// Returns a projection of V0 onto V1
-        /// </summary>
-        /// <param name="v0"></param>
-        /// <param name="v1"></param>
-        public static Vector2d VectorProject(Vector2d v0, Vector2d v1)
-        {
-            return v1.Normalized() * v0;
-        }
-
-        /// <summary>
-        /// Mirrors V0 across an axis defined by V1
-        /// </summary>
-        /// <param name="v0"></param>
-        /// <param name="v1"></param>
-        /// <returns></returns>
-        public static Vector2d VectorMirror(Vector2d v0, Vector2d v1)
-        {
-            return -v0 + 2 * (v0 - VectorProject(v0, v1));
-        }
-
-        /// <summary>
         /// Find the bounding box for an array of lines.  A mimimum of one line is required.
         /// </summary>
         public static void GetBBox(LineF[] lines, out Vector2 vMin, out Vector2 vMax)
