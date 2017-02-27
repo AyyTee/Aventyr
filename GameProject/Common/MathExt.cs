@@ -999,5 +999,32 @@ namespace Game.Common
             }
             return Math.Abs(1 - Math.Min(value0, value1) / Math.Max(value0, value1)) <= ratioDelta || Math.Abs(value1 - value0) <= delta;
         }
+
+        /// <summary>
+        /// Get incenter of a given triangle. The incenter defined as the intersection point of 3 edges that are angle bisectors of the triangle vertices.
+        /// </summary>
+        /// <param name="triangle"></param>
+        /// <returns></returns>
+        public static Vector2d GetTriangleIncenter(Vector2d[] triangle)
+        {
+            Debug.Assert(triangle.Length == 3);
+            var edgeLength = new[]
+            {
+                (triangle[2] - triangle[1]).Length,
+                (triangle[0] - triangle[2]).Length,
+                (triangle[1] - triangle[0]).Length
+            };
+            return (edgeLength[0] * triangle[0] + edgeLength[1] * triangle[1] + edgeLength[2] * triangle[2]) / edgeLength.Sum();
+        }
+
+        /// <summary>
+        /// Get incenter of a given triangle. The incenter defined as the intersection point of 3 edges that are angle bisectors of the triangle vertices.
+        /// </summary>
+        /// <param name="triangle"></param>
+        /// <returns></returns>
+        public static Vector2 GetTriangleIncenter(Vector2[] triangle)
+        {
+            return (Vector2)GetTriangleIncenter(Vector2Ext.ToDouble(triangle));
+        }
     }
 }
