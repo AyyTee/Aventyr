@@ -19,7 +19,6 @@ namespace Game
         public World World { get; private set; }
         PhyicsListener _contactListener;
         public ICamera2 ActiveCamera { get; private set; }
-        public Matrix3 ViewportOffset { get; set; } = Matrix3.Identity;
 
         [DataMember]
         public List<ISceneObject> SceneObjects = new List<ISceneObject>();
@@ -35,12 +34,10 @@ namespace Game
         [DataMember]
         public Vector2 Gravity { get; set; } = new Vector2(0, -4.9f);
 
-        #region Constructors
         public Scene()
         {
             SetWorld(new World(new Xna.Vector2(0f, 0f)));
         }
-        #endregion
 
         class ActorPrev
         {
@@ -49,10 +46,7 @@ namespace Game
             public Transform2 TrueVelocity;
         }
 
-        public void MarkForRemoval(ISceneObject sceneObject)
-        {
-            ToBeRemoved.Add(sceneObject);
-        }
+        public void MarkForRemoval(ISceneObject sceneObject) => ToBeRemoved.Add(sceneObject);
 
         public void Step(float stepSize = 1 / (float)Controller.StepsPerSecond)
         {
@@ -135,10 +129,7 @@ namespace Game
             Time += stepSize;
         }
 
-        public ICamera2 GetCamera()
-        {
-            return ActiveCamera;
-        }
+        public ICamera2 GetCamera() => ActiveCamera;
 
         public List<ISceneObject> GetAll()
         {
@@ -151,25 +142,13 @@ namespace Game
             return set.ToList();
         }
 
-        public List<IRenderable> GetRenderList()
-        {
-            return SceneObjects.OfType<IRenderable>().ToList();
-        }
+        public List<IRenderable> GetRenderList() => SceneObjects.OfType<IRenderable>().ToList();
 
-        public List<IPortal> GetPortalList()
-        {
-            return GetAll().OfType<IPortal>().ToList();
-        }
+        public List<IPortal> GetPortalList() => GetAll().OfType<IPortal>().ToList();
 
-        public List<IPortalable> GetPortalableList()
-        {
-            return GetAll().OfType<IPortalable>().ToList();
-        }
+        public List<IPortalable> GetPortalableList() => GetAll().OfType<IPortalable>().ToList();
 
-        public void SetActiveCamera(ICamera2 camera)
-        {
-            ActiveCamera = camera;
-        }
+        public void SetActiveCamera(ICamera2 camera) => ActiveCamera = camera;
 
         /// <summary>
         /// Assigns a physics world to this scene. Can only be done if there isn't already a physics world assigned.

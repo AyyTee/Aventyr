@@ -75,10 +75,7 @@ namespace Game.Rendering
 
         /// <summary>Remove a Scene from the Renderer.</summary>
         /// <returns>True if the Scene was in the Renderer, otherwise false.</returns>
-        public bool RemoveLayer(IRenderLayer layer)
-        {
-            return _layers.Remove(layer);
-        }
+        public bool RemoveLayer(IRenderLayer layer) => _layers.Remove(layer);
 
         void SetShader(Shader shader)
         {
@@ -437,10 +434,7 @@ namespace Game.Rendering
             GL.Scissor((int)vMin.X - 1, (int)vMin.Y - 1, (int)(vMax.X - vMin.X) + 3, (int)(vMax.Y - vMin.Y) + 3);
         }
 
-        void ResetScissor()
-        {
-            GL.Scissor(0, 0, CanvasSize.Width, CanvasSize.Height);
-        }
+        void ResetScissor() => GL.Scissor(0, 0, CanvasSize.Width, CanvasSize.Height);
 
         void UpdateCullFace(Matrix4 viewMatrix)
         {

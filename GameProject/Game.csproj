@@ -163,6 +163,7 @@
     <Compile Include="Rendering\CameraExt.cs" />
     <Compile Include="Models\Clip.cs" />
     <Compile Include="ClipperConvert.cs" />
+    <Compile Include="Rendering\VirtualWindow.cs" />
     <Compile Include="Serialization\DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="GlobalEnums.cs" />

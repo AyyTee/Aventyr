@@ -9,6 +9,5 @@ namespace Game.Rendering
         List<IRenderable> GetRenderList();
         List<IPortal> GetPortalList();
         ICamera2 GetCamera();
-        Matrix3 ViewportOffset { get; }
     }
 }
