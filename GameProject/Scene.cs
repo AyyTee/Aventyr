@@ -48,7 +48,7 @@ namespace Game
 
         public void MarkForRemoval(ISceneObject sceneObject) => ToBeRemoved.Add(sceneObject);
 
-        public void Step(float stepSize = 1 / (float)Controller.StepsPerSecond)
+        public void Step(float stepSize)
         {
             Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
             InStep = true;

@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CE5CD75D-8626-4CD8-83FC-B7A4868DAEC0}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Game</RootNamespace>
     <AssemblyName>Game</AssemblyName>
@@ -59,7 +59,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
@@ -141,10 +141,12 @@
     <Compile Include="Common\Line.cs" />
     <Compile Include="Common\Transform2d.cs" />
     <Compile Include="IController.cs" />
+    <Compile Include="IGameController.cs" />
     <Compile Include="IGetTransform.cs" />
     <Compile Include="IGetTransformVelocity.cs" />
     <Compile Include="IGetVelocity.cs" />
     <Compile Include="IInput.cs" />
+    <Compile Include="IResourceController.cs" />
     <Compile Include="ITime.cs" />
     <Compile Include="Keyframe.cs" />
     <Compile Include="Keyframe2.cs" />
@@ -163,6 +165,10 @@
     <Compile Include="Rendering\CameraExt.cs" />
     <Compile Include="Models\Clip.cs" />
     <Compile Include="ClipperConvert.cs" />
+    <Compile Include="Rendering\IClientSizeProvider.cs" />
+    <Compile Include="Rendering\IRenderer.cs" />
+    <Compile Include="Rendering\IVirtualWindow.cs" />
+    <Compile Include="ResourceController.cs" />
     <Compile Include="Rendering\VirtualWindow.cs" />
     <Compile Include="Serialization\DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
@@ -217,9 +223,7 @@
     <Compile Include="Rendering\Texture.cs" />
     <Compile Include="Rendering\TextureFile.cs" />
     <Compile Include="Common\Transform3.cs" />
-    <Compile Include="Controller.cs" />
     <Compile Include="Portals\FixturePortal.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Shader.cs" />
     <Compile Include="Models\Model.cs" />
@@ -231,7 +235,6 @@
     <Compile Include="Common\Vector3Ext.cs" />
     <Compile Include="Models\Vertex.cs" />
     <Compile Include="WallCoord.cs" />
-    <Compile Include="Window.cs" />
     <Compile Include="Physics\WorldExt.cs" />
   </ItemGroup>
   <ItemGroup>

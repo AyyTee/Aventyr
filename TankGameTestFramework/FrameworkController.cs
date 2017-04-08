@@ -1,4 +1,5 @@
 ﻿using Game;
+using Game.Rendering;
 using Lidgren.Network;
 using OpenTK;
 using System;
@@ -11,32 +12,30 @@ using TankGame.Network;
 
 namespace TankGameTestFramework
 {
-    public class Controller : Game.Controller
+    public class FrameworkController : IGameController
     {
         INetController _netController;
 
-        public Controller(Window window, FakeNetServer connectTo)
-            : base(window)
+        public FrameworkController(IVirtualWindow window, FakeNetServer connectTo)
         {
-            Client client = new Client(new IPEndPoint(0, 0), this, new FakeNetClient());
+            Client client = new Client(window, new IPEndPoint(0, 0), this, new FakeNetClient());
         }
 
-        public Controller(Window window, ICollection<FakeNetClient> connectTo)
-            : base(window)
+        public FrameworkController(IVirtualWindow window, ICollection<FakeNetClient> connectTo)
         {
-            Server server = new Server(new FakeNetServer());
+            Server server = new Server(window, new FakeNetServer());
+
+            _netController.Init();
         }
 
-        public override void OnLoad(EventArgs e)
+        public void Update()
         {
-            base.OnLoad(e);
-            _netController.Init(Renderer, CanvasSize);
-        }
-
-        public override void OnUpdateFrame(FrameEventArgs e)
-        {
-            base.OnUpdateFrame(e);
             _netController.Step();
+        }
+
+        public void Render()
+        {
+
         }
     }
 }

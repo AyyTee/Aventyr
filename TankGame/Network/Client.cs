@@ -30,13 +30,15 @@ namespace TankGame.Network
         public bool IsConnected => _client.ServerConnection != null;
         readonly Queue<InputTime> _inputQueue = new Queue<InputTime>();
         public Scene Scene { get; private set; }
-        public readonly IController Controller;
+        public readonly IGameController Controller;
         Renderer _renderer;
         public string Name => "Client";
         double _lastTimestamp;
         bool _sceneUpdated;
         public int StepCount { get; private set; }
         TankCamera _tankCamera;
+        readonly IVirtualWindow _window;
+
         public int MessagesSent { get; set; }
 
         struct InputTime
@@ -45,8 +47,9 @@ namespace TankGame.Network
             public double Timestamp;
         }
 
-        public Client(IPEndPoint serverAddress, IController controller, INetClient client)
+        public Client(IVirtualWindow window, IPEndPoint serverAddress, IGameController controller, INetClient client)
         {
+            _window = window;
             Controller = controller;
 
             _client = client;
@@ -58,14 +61,12 @@ namespace TankGame.Network
             Scene.Gravity = new Vector2();
         }
 
-        public void Init(Renderer renderer, Size canvasSize)
+        public void Init()
         {
-            _renderer = renderer;
-
             Camera2 camera = new Camera2(
                 Scene,
                 new Transform2(new Vector2(), 10),
-                canvasSize.Width / (float)canvasSize.Height);
+                _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
 
             Scene.SetActiveCamera(camera);
 
@@ -73,7 +74,7 @@ namespace TankGame.Network
 
             Entity entity2 = new Entity(Scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
-            entity2.ModelList[0].SetTexture(_renderer?.Textures["default.png"]);
+            entity2.ModelList[0].SetTexture(_window.Textures["default.png"]);
 
             PortalCommon.UpdateWorldTransform(Scene);
             _renderer?.AddLayer(Scene);
@@ -86,14 +87,14 @@ namespace TankGame.Network
             Tank tank = GetTank();
             TankInput input = new TankInput
             {
-                MoveFoward = Controller.Input.KeyDown(Key.W),
-                MoveBackward = Controller.Input.KeyDown(Key.S),
-                TurnLeft = Controller.Input.KeyDown(Key.A),
-                TurnRight = Controller.Input.KeyDown(Key.D),
-                ReticlePos = Controller.Input.GetMouseWorldPos(_tankCamera.Camera, Vector2Ext.ToOtk(Controller.CanvasSize)),
-                FireGun = Controller.Input.KeyPress(Key.Space),
-                FirePortalLeft = Controller.Input.MousePress(MouseButton.Left),
-                FirePortalRight = Controller.Input.MousePress(MouseButton.Right)
+                MoveFoward = _window.Input.KeyDown(Key.W),
+                MoveBackward = _window.Input.KeyDown(Key.S),
+                TurnLeft = _window.Input.KeyDown(Key.A),
+                TurnRight = _window.Input.KeyDown(Key.D),
+                ReticlePos = _window.Input.GetMouseWorldPos(_tankCamera.Camera, Vector2Ext.ToOtk(_window.CanvasSize)),
+                FireGun = _window.Input.KeyPress(Key.Space),
+                FirePortalLeft = _window.Input.MousePress(MouseButton.Left),
+                FirePortalRight = _window.Input.MousePress(MouseButton.Right)
             };
             
             if (IsConnected)
@@ -125,14 +126,14 @@ namespace TankGame.Network
                 for (int i = 0; i < inputArray.Length; i++)
                 {
                     tank?.SetInput(inputArray[i].Input);
-                    Scene.Step();
+                    Scene.Step(1 / _window.UpdatesPerSecond);
                 }
                 _sceneUpdated = false;
             }
             else
             {
                 tank?.SetInput(input);
-                Scene.Step();
+                Scene.Step(1 / _window.UpdatesPerSecond);
             }
             StepCount++;
         }

@@ -12,7 +12,7 @@ namespace TankGame.Network
 {
     public interface INetController
     {
-        void Init(Renderer renderer, Size canvasSize);
+        void Init();
         void Step();
         string Name { get; }
         INetPeer Peer { get; }

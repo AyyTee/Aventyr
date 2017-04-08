@@ -47,7 +47,7 @@ namespace Game.Rendering
             return list;
         }
 
-        public static PortalView CalculatePortalViews(IList<IPortal> portals, ICamera2 camera, int depth)
+        public static PortalView CalculatePortalViews(float shutterTime, IList<IPortal> portals, ICamera2 camera, int depth)
         {
             Debug.Assert(camera != null);
             Debug.Assert(depth >= 0);
@@ -60,7 +60,7 @@ namespace Game.Rendering
 
             foreach (IPortal p in portals)
             {
-                actionList.Add(() => CalculatePortalViews(p, null, portals, CameraExt.GetViewMatrix(camera), camPos, camPos - camera.GetWorldVelocity().Position / Controller.DrawsPerSecond, portalView, Matrix4.Identity, actionList));
+                actionList.Add(() => CalculatePortalViews(p, null, portals, CameraExt.GetViewMatrix(camera), camPos, camPos - camera.GetWorldVelocity().Position * shutterTime, portalView, Matrix4.Identity, actionList));
             }
 
             while (actionList.Count > 0 && depth > 0)

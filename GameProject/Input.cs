@@ -1,6 +1,7 @@
 ﻿using Game.Rendering;
 using OpenTK.Input;
 using OpenTK;
+using OpenTK.Platform;
 
 namespace Game
 {

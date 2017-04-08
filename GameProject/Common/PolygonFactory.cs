@@ -141,7 +141,7 @@ namespace Game.Common
         static bool Triangulate(Polygon polygon)
         {
             TextWriter console = Console.Out;
-            Console.SetOut(Controller.TrashLog);
+            Console.SetOut(ResourceController.TrashLog);
             try
             {
                 P2T.Triangulate(polygon);

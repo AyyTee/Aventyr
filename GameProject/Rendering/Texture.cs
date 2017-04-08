@@ -11,12 +11,10 @@ namespace Game.Rendering
         /// <summary>GL texture id.</summary>
         readonly int _id;
 
-        #region Constructors
         public Texture(int id)
         {
             _id = id;
         }
-        #endregion
 
         ~Texture()
         {
@@ -28,7 +26,8 @@ namespace Game.Rendering
             if (_id == -1) return;
             lock (LockDelete)
             {
-                Controller.TextureGarbage.Add(_id);
+                //throw new NotImplementedException();
+                //ResourceController.TextureGarbage.Add(_id);
             }
         }
 

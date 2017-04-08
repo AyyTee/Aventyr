@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Game;
+using Game.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,20 +13,13 @@ namespace TankGame
     {
         public static void Main(string[] args)
         {
-            using (Game.Window window = new Game.Window())
-            {
+            var resourceController = new ResourceController();
 
-                window.Controller = new TankGameController(window, args);
+            var window = new VirtualWindow(resourceController);
+            window.CanvasSize = resourceController.ClientSize;
+            resourceController.Controllers.Add(new TankGameController(window));
 
-                //window.Visible = true;
-                
-                window.Run(Game.Controller.StepsPerSecond, Game.Controller.DrawsPerSecond);
-            }
-        }
-
-        public static void Main(INetController netController)
-        {
-
+            resourceController.Run();
         }
     }
 }

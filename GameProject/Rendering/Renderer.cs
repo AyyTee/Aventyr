@@ -9,15 +9,21 @@ using Game.Models;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using System.Drawing.Text;
+using System.IO;
 
 namespace Game.Rendering
 {
     /// <summary>
     /// Handles OpenGL rendering.  Only one instance of Renderer should be instantiated during the process's lifetime.
     /// </summary>
-    public class Renderer
+    public class Renderer : IRenderer
     {
-        public static readonly GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
+        public static string FontFolder { get; } = Path.Combine(new[] { "assets", "fonts" });
+        public static string ShaderFolder { get; } = Path.Combine(new[] { "assets", "shaders" });
+        public static string TextureFolder { get; } = Path.Combine(new[] { "assets", "textures" });
+        public static string SoundFolder { get; private set; } = Path.Combine(new[] { "assets", "sounds" });
+
         readonly List<IRenderLayer> _layers = new List<IRenderLayer>();
         public bool PortalRenderEnabled { get; set; } = true;
         public int PortalRenderMax { get; set; } = 50;
@@ -31,16 +37,24 @@ namespace Game.Rendering
         public bool RenderEnabled { get; set; } = true;
         Shader _activeShader;
         readonly Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
-        public Size CanvasSize { get; private set; }
 
-        public Dictionary<string, TextureFile> Textures = new Dictionary<string, TextureFile>();
-        public Dictionary<string, Shader> Shaders = new Dictionary<string, Shader>();
+        readonly Dictionary<string, ITexture> _textures = new Dictionary<string, ITexture>();
+        readonly Dictionary<string, Shader> _shaders = new Dictionary<string, Shader>();
+
+        Dictionary<string, ITexture> IRenderer.Textures => new Dictionary<string, ITexture>(_textures);
+        Dictionary<string, Shader> IRenderer.Shaders => new Dictionary<string, Shader>(_shaders);
 
         readonly int _iboElements;
 
-        public Renderer(Size canvasSize)
+        public List<IVirtualWindow> Windows { get; private set; } = new List<IVirtualWindow>();
+
+        Size ClientSize => _canvasSizeProvider.ClientSize;
+
+        IClientSizeProvider _canvasSizeProvider;
+
+        public Renderer(IClientSizeProvider canvasSizeProvider)
         {
-            CanvasSize = canvasSize;
+            _canvasSizeProvider = canvasSizeProvider;
 
             foreach (EnableCap e in Enum.GetValues(typeof(EnableCap)))
             {
@@ -58,18 +72,25 @@ namespace Game.Rendering
             Debug.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
 
             GL.GenBuffers(1, out _iboElements);
-        }
 
-        public TextureFile GetTexture(string name)
-        {
-            if (Textures.ContainsKey(name))
-            {
-                return Textures[name];
-            }
-            return null;
-        }
 
-        public void SetCanvasSize(Size canvasSize) => CanvasSize = canvasSize;
+            // Load textures from file
+            _textures.Add("default.png", new TextureFile(Path.Combine(TextureFolder, "default.png")));
+            _textures.Add("grid.png", new TextureFile(Path.Combine(TextureFolder, "grid.png")));
+            _textures.Add("lineBlur.png", new TextureFile(Path.Combine(TextureFolder, "lineBlur.png")));
+
+            //Create the default font
+            PrivateFontCollection privateFonts = new PrivateFontCollection();
+            privateFonts.AddFontFile(Path.Combine(FontFolder, "times.ttf"));
+            var Default = new Font(privateFonts.Families[0], 14);
+            var FontRenderer = new FontRenderer(Default);
+
+            // Load shaders from file
+            _shaders.Add("uber", new Shader(
+                Path.Combine(ShaderFolder, "vs_uber.glsl"),
+                Path.Combine(ShaderFolder, "fs_uber.glsl"),
+                true));
+        }
 
         public void AddLayer(IRenderLayer layer) => _layers.Add(layer);
 
@@ -105,26 +126,28 @@ namespace Game.Rendering
 
         public void Render()
         {
-            GL.Viewport(0, 0, CanvasSize.Width, CanvasSize.Height);
+            GL.Viewport(0, 0, ClientSize.Width, ClientSize.Height);
             ResetScissor();
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit | ClearBufferMask.ColorBufferBit);
 
-            var shaderList = Shaders.ToList();
-            for (int i = 0; i < Shaders.Count; i++)
+            var shaderList = _shaders.ToList();
+            for (int i = 0; i < _shaders.Count; i++)
             {
                 shaderList[i].Value.EnableVertexAttribArrays();
             }
-            SetShader(Shaders["uber"]);
+            SetShader(_shaders["uber"]);
             GL.Enable(EnableCap.DepthTest);
 
-            for (int i = 0; i < _layers.Count; i++)
+            foreach (var window in Windows)
             {
-                IRenderLayer layer = _layers[i];
-                DrawPortalAll(layer);
-                GL.Clear(ClearBufferMask.DepthBufferBit);
+                foreach (var layer in window.Layers)
+                {
+                    DrawPortalAll(layer, 1 / window.RendersPerSecond);
+                    GL.Clear(ClearBufferMask.DepthBufferBit);
+                }
             }
 
-            for (int i = 0; i < Shaders.Count; i++)
+            for (int i = 0; i < _shaders.Count; i++)
             {
                 shaderList[i].Value.DisableVertexAttribArrays();
             }
@@ -146,7 +169,7 @@ namespace Game.Rendering
             }
         }
 
-        void DrawPortalAll(IRenderLayer layer)
+        void DrawPortalAll(IRenderLayer layer, float shutterTime)
         {
             ICamera2 cam = layer.GetCamera();
             if (cam == null)
@@ -154,6 +177,7 @@ namespace Game.Rendering
                 return;
             }
             PortalView portalView = PortalView.CalculatePortalViews(
+                shutterTime,
                 layer.GetPortalList().ToArray(),
                 cam,
                 PortalRenderEnabled ? PortalRenderMax : 0);
@@ -265,7 +289,7 @@ namespace Game.Rendering
             GL.Clear(ClearBufferMask.StencilBufferBit);
 
             var portalEdges = new Model();
-            portalEdges.SetTexture(Textures["lineBlur.png"]);
+            portalEdges.SetTexture(_textures["lineBlur.png"]);
             SetEnable(EnableCap.Blend, true);
             for (int i = 1; i < iterations; i++)
             {
@@ -417,7 +441,7 @@ namespace Game.Rendering
                 return;
             }
             Matrix4 scaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
-            scaleMatrix = scaleMatrix * Matrix4.CreateScale(new Vector3(CanvasSize.Width / (float)2, CanvasSize.Height / (float)2, 0));
+            scaleMatrix = scaleMatrix * Matrix4.CreateScale(new Vector3(ClientSize.Width / (float)2, ClientSize.Height / (float)2, 0));
 
             Vector2 vMin = ClipperConvert.ToVector2(view.Paths[0][0]);
             Vector2 vMax = ClipperConvert.ToVector2(view.Paths[0][0]);
@@ -434,7 +458,7 @@ namespace Game.Rendering
             GL.Scissor((int)vMin.X - 1, (int)vMin.Y - 1, (int)(vMax.X - vMin.X) + 3, (int)(vMax.Y - vMin.Y) + 3);
         }
 
-        void ResetScissor() => GL.Scissor(0, 0, CanvasSize.Width, CanvasSize.Height);
+        void ResetScissor() => GL.Scissor(0, 0, ClientSize.Width, ClientSize.Height);
 
         void UpdateCullFace(Matrix4 viewMatrix)
         {

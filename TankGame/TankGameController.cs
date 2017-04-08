@@ -12,53 +12,50 @@ using OpenTK.Input;
 using System.Threading;
 using TankGame.Network;
 using System.Diagnostics;
+using Game.Rendering;
 
 namespace TankGame
 {
-    public class TankGameController : Game.Controller
+    public class TankGameController : IGameController
     {
         readonly INetController _netController;
+        readonly VirtualWindow _window;
 
-        public TankGameController(Window window, string[] args)//INetController netController)
-            : base(window)
+        public TankGameController(VirtualWindow window)
         {
+            _window = window;
             //_netController = netController;
-            if (args.Length >= 2)
-            {
-                if (args[0] == "server")
-                {
-                    var config = NetworkHelper.GetDefaultConfig();
-                    config.Port = int.Parse(args[1]);
-                    _netController = new Server(new NetServer(config));
-                }
-                else if (args[0] == "client")
-                {
-                    var config = NetworkHelper.GetDefaultConfig();
-                    config.Port = int.Parse(args[1]);
 
-                    NetClient client = new NetClient(config);
 
-                    var serverAddress = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), int.Parse(args[2]));
+            var config = NetworkHelper.GetDefaultConfig();
+            config.Port = 1001;
+            _netController = new Server(_window, new NetServer(config));
 
-                    _netController = new Client(serverAddress, this, client);
-                }
-            }
-            else
-            {
-                //_netController = new Client(111, 112, this);
-            }
+
+            //var config = NetworkHelper.GetDefaultConfig();
+            //config.Port = int.Parse(args[1]);
+
+            //NetClient client = new NetClient(config);
+
+            //var serverAddress = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), int.Parse(args[2]));
+
+            //_netController = new Client(serverAddress, this, client);
+
+
+
+
+
+            _netController.Init();
         }
 
-        public override void OnLoad(EventArgs e)
+        public void Update()
         {
-            base.OnLoad(e);
-            _netController.Init(Renderer, CanvasSize);
-        }
-
-        public override void OnUpdateFrame(FrameEventArgs e)
-        {
-            base.OnUpdateFrame(e);
             _netController.Step();
+        }
+
+        public void Render()
+        {
+
         }
     }
 }

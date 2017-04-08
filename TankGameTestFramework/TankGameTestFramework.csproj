@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller.cs" />
+    <Compile Include="FrameworkController.cs" />
     <Compile Include="FakeController.cs" />
     <Compile Include="FakeInput.cs" />
     <Compile Include="FakeNetClient.cs" />

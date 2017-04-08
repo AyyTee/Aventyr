@@ -20,7 +20,6 @@ namespace TankGame.Network
         readonly INetServer _server;
         public INetPeer Peer => _server;
         Scene _scene;
-        Renderer _renderer;
         public string Name => "Server";
         public int StepCount { get; private set; }
         List<Wall> _walls = new List<Wall>();
@@ -29,6 +28,7 @@ namespace TankGame.Network
         public int MessagesSent { get; set; }
 
         HashSet<ClientInstance> _clients = new HashSet<ClientInstance>();
+        readonly IVirtualWindow _window;
 
         public class ClientInstance
         {
@@ -41,22 +41,22 @@ namespace TankGame.Network
             }
         }
 
-        public Server(INetServer netServer)
+        public Server(IVirtualWindow window, INetServer netServer)
         {
+            _window = window;
             _server = netServer;
             _server.Start();
         }
 
-        public void Init(Renderer renderer, Size canvasSize)
+        public void Init()
         {
-            _renderer = renderer;
             _scene = new Scene();
             _scene.Gravity = new Vector2();
-            _scene.SetActiveCamera(new Camera2(_scene, new Transform2(new Vector2(), 10), canvasSize.Width / (float)canvasSize.Height));
+            _scene.SetActiveCamera(new Camera2(_scene, new Transform2(new Vector2(), 10), _window.CanvasSize.Width / (float)_window.CanvasSize.Height));
 
             Entity entity2 = new Entity(_scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
-            entity2.ModelList[0].SetTexture(_renderer?.Textures["default.png"]);
+            entity2.ModelList[0].SetTexture(_window.Textures["default.png"]);
 
             Entity serverMarker = new Entity(_scene);
             serverMarker.AddModel(ModelFactory.CreateCircle(new Vector3(-3, -3, 1), 0.5f, 10));
@@ -68,7 +68,7 @@ namespace TankGame.Network
             _walls[1].SetTransform(new Transform2(new Vector2(1, 3)));
 
             PortalCommon.UpdateWorldTransform(_scene);
-            _renderer?.AddLayer(_scene);
+            _window.Layers.Add(_scene);
         }
 
         public T InitNetObject<T>(T netObject) where T : INetObject
@@ -107,7 +107,7 @@ namespace TankGame.Network
 
             if (_scene != null)
             {
-                _scene.Step();
+                _scene.Step(1 / _window.UpdatesPerSecond);
 
                 foreach (long clientId in _loading.ToArray())
                 {
