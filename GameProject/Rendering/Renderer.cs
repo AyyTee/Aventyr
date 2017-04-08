@@ -69,15 +69,9 @@ namespace Game.Rendering
             return null;
         }
 
-        public void SetCanvasSize(Size canvasSize)
-        {
-            CanvasSize = canvasSize;
-        }
+        public void SetCanvasSize(Size canvasSize) => CanvasSize = canvasSize;
 
-        public void AddLayer(IRenderLayer layer)
-        {
-            _layers.Add(layer);
-        }
+        public void AddLayer(IRenderLayer layer) => _layers.Add(layer);
 
         /// <summary>Remove a Scene from the Renderer.</summary>
         /// <returns>True if the Scene was in the Renderer, otherwise false.</returns>

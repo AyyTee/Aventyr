@@ -47,7 +47,10 @@ namespace EditorLogic.Tools
             string filepath = Path.Combine(Directory.GetCurrentDirectory(), "editor assets", "models", "coordinateArrows.obj");
             ModelLoader loader = new ModelLoader();
             _translationModel = loader.LoadObj(filepath);
-            _translationModel.Transform.Position = new Vector3(0, 0, 5);
+            if (_translationModel != null)
+            {
+                _translationModel.Transform.Position = new Vector3(0, 0, 5);
+            }
         }
 
         public override void Update()

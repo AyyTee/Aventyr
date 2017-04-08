@@ -15,13 +15,14 @@ using System.Diagnostics;
 
 namespace TankGame
 {
-    public class Controller : Game.Controller
+    public class TankGameController : Game.Controller
     {
-        INetController _netController;
+        readonly INetController _netController;
 
-        public Controller(Window window, string[] args)
+        public TankGameController(Window window, string[] args)//INetController netController)
             : base(window)
         {
+            //_netController = netController;
             if (args.Length >= 2)
             {
                 if (args[0] == "server")

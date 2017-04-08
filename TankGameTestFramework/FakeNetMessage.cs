@@ -15,17 +15,13 @@ namespace TankGameTestFramework
 
         public byte[] Data
         {
-            get
-            {
-                return _data.ToArray();
-            }
-
-            set
-            {
-                _data = value.ToList();
-            }
+            get { return _data.ToArray(); }
+            set { _data = value.ToList(); }
         }
 
+        public long Position { get; set; }
+
+        #region Not Implemented
         public int LengthBits
         {
             get
@@ -51,8 +47,6 @@ namespace TankGameTestFramework
                 throw new NotImplementedException();
             }
         }
-
-        public long Position { get; set; }
 
         public int PositionInBytes
         {
@@ -212,14 +206,6 @@ namespace TankGameTestFramework
             throw new NotImplementedException();
         }
 
-        public byte[] ReadBytes(int numberOfBytes)
-        {
-            byte[] bytes = new byte[numberOfBytes];
-            Array.Copy(Data, Position, bytes, 0, numberOfBytes);
-            Position += numberOfBytes;
-            return bytes;
-        }
-
         public bool ReadBytes(int numberOfBytes, out byte[] result)
         {
             throw new NotImplementedException();
@@ -243,13 +229,6 @@ namespace TankGameTestFramework
         public short ReadInt16()
         {
             throw new NotImplementedException();
-        }
-
-        public int ReadInt32()
-        {
-            int result = BitConverter.ToInt32(Data, (int)Position);
-            Position += sizeof(int);
-            return result;
         }
 
         public int ReadInt32(int numberOfBits)
@@ -405,37 +384,6 @@ namespace TankGameTestFramework
         public void SkipPadBits(int numberOfBits)
         {
             throw new NotImplementedException();
-        }
-
-        public void Write(long source)
-        {
-            _data.AddRange(BitConverter.GetBytes(source));
-        }
-
-        public void Write(byte[] source)
-        {
-            _data.AddRange(source);
-        }
-
-        public void Write(bool value)
-        {
-            _data.AddRange(BitConverter.GetBytes(value));
-        }
-
-        public void Write(byte source)
-        {
-            _data.AddRange(BitConverter.GetBytes(source));
-        }
-
-        public void Write(ulong source)
-        {
-            _data.AddRange(BitConverter.GetBytes(source));
-        }
-
-        public void Write(int source)
-        {
-            _data.AddRange(BitConverter.GetBytes(source));
-            Position += sizeof(int);
         }
 
         public void Write(ushort source)
@@ -632,5 +580,59 @@ namespace TankGameTestFramework
         {
             throw new NotImplementedException();
         }
+        #endregion
+
+        public byte[] ReadBytes(int numberOfBytes)
+        {
+            byte[] bytes = new byte[numberOfBytes];
+            Array.Copy(Data, Position, bytes, 0, numberOfBytes);
+            Position += numberOfBytes;
+            return bytes;
+        }
+
+        public int ReadInt32()
+        {
+            int result = BitConverter.ToInt32(Data, (int)Position);
+            Position += sizeof(int);
+            return result;
+        }
+
+        public void Write(long source)
+        {
+            _data.AddRange(BitConverter.GetBytes(source));
+            Position += sizeof(long);
+        }
+
+        public void Write(byte[] source)
+        {
+            _data.AddRange(source);
+            Position += sizeof(byte) * source.Length;
+        }
+
+        public void Write(bool value)
+        {
+            _data.AddRange(BitConverter.GetBytes(value));
+            Position += sizeof(bool);
+        }
+
+        public void Write(byte source)
+        {
+            _data.AddRange(BitConverter.GetBytes(source));
+            Position += sizeof(byte);
+        }
+
+        public void Write(ulong source)
+        {
+            _data.AddRange(BitConverter.GetBytes(source));
+            Position += sizeof(ulong);
+        }
+
+        public void Write(int source)
+        {
+            _data.AddRange(BitConverter.GetBytes(source));
+            Position += sizeof(int);
+        }
+
+        
     }
 }

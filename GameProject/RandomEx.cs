@@ -7,7 +7,7 @@ namespace Game
     /// </summary>
     /// <remarks>Class found here http://stackoverflow.com/a/6651656
     /// </remarks>
-    public static class RandomExtensions
+    public static class RandomEx
     {
         public static long NextLong(this Random rnd)
         {

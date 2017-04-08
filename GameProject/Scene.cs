@@ -19,6 +19,7 @@ namespace Game
         public World World { get; private set; }
         PhyicsListener _contactListener;
         public ICamera2 ActiveCamera { get; private set; }
+        public Matrix3 ViewportOffset { get; set; } = Matrix3.Identity;
 
         [DataMember]
         public List<ISceneObject> SceneObjects = new List<ISceneObject>();

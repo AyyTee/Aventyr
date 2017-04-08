@@ -158,7 +158,7 @@
     <Compile Include="Portals\PortalCommon.cs" />
     <Compile Include="Portals\PortalPath.cs" />
     <Compile Include="Portals\Portalable.cs" />
-    <Compile Include="RandomExtensions.cs" />
+    <Compile Include="RandomEx.cs" />
     <Compile Include="Rendering\Camera2.cs" />
     <Compile Include="Rendering\CameraExt.cs" />
     <Compile Include="Models\Clip.cs" />

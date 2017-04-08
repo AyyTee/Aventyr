@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TankGame.Network;
 
 namespace TankGame
 {
@@ -12,9 +13,18 @@ namespace TankGame
         {
             using (Game.Window window = new Game.Window())
             {
-                window.Controller = new Controller(window, args);
+
+                window.Controller = new TankGameController(window, args);
+
+                //window.Visible = true;
+                
                 window.Run(Game.Controller.StepsPerSecond, Game.Controller.DrawsPerSecond);
             }
+        }
+
+        public static void Main(INetController netController)
+        {
+
         }
     }
 }

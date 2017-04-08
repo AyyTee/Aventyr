@@ -21,6 +21,8 @@ namespace TankGameTests
         Server _server;
         FakeNetServer _netServer;
 
+        FakeNetPeer[] _netPeers => new FakeNetPeer[] { _netClient, _netServer };
+
         [TestInitialize]
         public void Initialize()
         {
@@ -56,6 +58,8 @@ namespace TankGameTests
             _netClient = null;
             _server = null;
             _netServer = null;
+
+            NetTime.SetTime(0);
         }
 
         [TestMethod]
@@ -100,6 +104,10 @@ namespace TankGameTests
         public void ServerRecieveClient()
         {
             _client.SendMessage(new ClientMessage { Input = new TankInput { FireGun = true } });
+
+            NetTime.SetTime(NetTime.Now + 1);
+            _netClient.Connections.ForEach(item => item.SetTime(NetTime.Now));
+
             ClientMessage clientMessage = NetworkHelper.ReadMessage<ClientMessage>(_netServer.ReadMessage());
             Assert.IsTrue(clientMessage.Input.FireGun);
         }
@@ -117,15 +125,15 @@ namespace TankGameTests
         {
             FakeNetPeer reader = _netClient;
 
-            reader.Latency = 100;
+            _netServer.Connections[0].Latency = 1;
             _server.SendMessage(new ServerMessage());
 
             Assert.IsTrue(reader.ReadMessage() == null);
 
-            NetTime.SetTime(50);
+            AdvanceTime(0.5);
             Assert.IsTrue(reader.ReadMessage() == null);
 
-            NetTime.SetTime(100);
+            AdvanceTime(0.5);
             Assert.IsTrue(reader.ReadMessage() != null);
         }
 
@@ -134,16 +142,25 @@ namespace TankGameTests
         {
             FakeNetPeer reader = _netServer;
 
-            reader.Latency = 100;
+            _netClient.Connections[0].Latency = 1;
             _client.SendMessage(new ClientMessage());
 
             Assert.IsTrue(reader.ReadMessage() == null);
 
-            NetTime.SetTime(50);
+            AdvanceTime(0.5);
             Assert.IsTrue(reader.ReadMessage() == null);
 
-            NetTime.SetTime(100);
+            AdvanceTime(0.5);
             Assert.IsTrue(reader.ReadMessage() != null);
+        }
+
+        public void AdvanceTime(double amount)
+        {
+            NetTime.SetTime(NetTime.Now + amount);
+            foreach (var netPeer in _netPeers)
+            {
+                netPeer.Connections.ForEach(item => item.SetTime(NetTime.Now));
+            }
         }
     }
 }

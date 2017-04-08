@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net;
 using Lidgren.Network;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TankGameTestFramework
 {
@@ -8,8 +10,11 @@ namespace TankGameTestFramework
     {
         public FakeNetPeer EndPoint { get; set; }
 
+        public List<FakeNetIncomingMessage> MessagesInTransit { get; private set; } = new List<FakeNetIncomingMessage>();
+
         public float AverageRoundtripTime { get; set; }
 
+        #region Not Implemented
         public int CurrentMTU
         {
             get
@@ -137,6 +142,11 @@ namespace TankGameTestFramework
         {
             throw new NotImplementedException();
         }
+        public void GetSendQueueInfo(NetDeliveryMethod method, int sequenceChannel, out int windowSize, out int freeWindowSlots)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         public double GetLocalTime(double remoteTimestamp)
         {
@@ -148,17 +158,31 @@ namespace TankGameTestFramework
             return localTimestamp;
         }
 
-        public void GetSendQueueInfo(NetDeliveryMethod method, int sequenceChannel, out int windowSize, out int freeWindowSlots)
-        {
-            throw new NotImplementedException();
-        }
-
         public NetSendResult SendMessage(INetOutgoingMessage msg, NetDeliveryMethod method, int sequenceChannel)
         {
-            var _msg = (FakeNetOutgoingMessage) msg;
+            var _msg = (FakeNetOutgoingMessage)msg;
             _msg.SendTime = NetTime.Now;
-            EndPoint.Messages.Enqueue(_msg.ToIncomingMessage(EndPoint.Latency));
+            if (Latency > 0)
+            {
+                MessagesInTransit.Add(_msg.ToIncomingMessage(Latency));
+            }
+            else
+            {
+                EndPoint.Messages.Enqueue(_msg.ToIncomingMessage(Latency));
+            }
             return NetSendResult.Sent;
         }
+
+        public void SetTime(double time)
+        {
+            var arrivals = MessagesInTransit
+                .FindAll(item => item.ReceiveTime <= time)
+                .OrderBy(item => item.ReceiveTime)
+                .ToList();
+            MessagesInTransit = MessagesInTransit.Except(arrivals).ToList();
+            arrivals.ForEach(EndPoint.Messages.Enqueue);
+        }
+
+        public double Latency { get; set; }
     }
 }

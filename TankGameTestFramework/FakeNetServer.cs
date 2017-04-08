@@ -12,12 +12,12 @@ namespace TankGameTestFramework
     {
         public void SendToAll(INetOutgoingMessage msg, NetDeliveryMethod method)
         {
-            SendMessage(msg, Connections, method, 0);
+            SendMessage(msg, ((INetServer)this).Connections, method, 0);
         }
 
         public void SendToAll(INetOutgoingMessage msg, INetConnection except, NetDeliveryMethod method, int sequenceChannel)
         {
-            SendMessage(msg, Connections.Where(item => item != except).ToList(), method, 0);
+            SendMessage(msg, ((INetServer)this).Connections.Where(item => item != except).ToList(), method, 0);
         }
     }
 }

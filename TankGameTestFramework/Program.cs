@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lidgren.Network;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -15,13 +16,13 @@ namespace TankGameTestFramework
     {
         static void Main(string[] args)
         {
-            //Run(true);
+            Run(true);
 
-            using (Game.Window window = new Game.Window())
-            {
-                window.Controller = new TankGame.Controller(window, args);
-                window.Run(Game.Controller.StepsPerSecond, Game.Controller.DrawsPerSecond);
-            }
+            //using (Game.Window window = new Game.Window())
+            //{
+            //    window.Controller = new TankGame.Controller(window, args);
+            //    window.Run(Game.Controller.StepsPerSecond, Game.Controller.DrawsPerSecond);
+            //}
         }
 
         static void Run(bool useThreads)
@@ -31,6 +32,8 @@ namespace TankGameTestFramework
 
             if (useThreads)
             {
+                //NetTime.AutomaticTimeKeeping = true;
+
                 var server = new Thread(() =>
                 {
                     TankGame.Program.Main(new[] {

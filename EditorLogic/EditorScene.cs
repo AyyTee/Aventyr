@@ -29,6 +29,7 @@ namespace EditorLogic
         public List<Doodad> Doodads = new List<Doodad>();
         [DataMember]
         public double Time { get; private set; }
+        public Matrix3 ViewportOffset => Matrix3.Identity;
 
         public EditorScene(Renderer renderer = null)
         {
