@@ -1,7 +1,10 @@
-﻿using Lidgren.Network;
+﻿using Game;
+using Game.Rendering;
+using Lidgren.Network;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,6 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TankGame;
+using TankGame.Network;
 
 namespace TankGameTestFramework
 {
@@ -16,73 +20,73 @@ namespace TankGameTestFramework
     {
         static void Main(string[] args)
         {
-            Run(true);
-
-            //using (Game.Window window = new Game.Window())
-            //{
-            //    window.Controller = new TankGame.Controller(window, args);
-            //    window.Run(Game.Controller.StepsPerSecond, Game.Controller.DrawsPerSecond);
-            //}
-        }
-
-        static void Run(bool useThreads)
-        {
-            const int serverPort = 45619;
-            const int clientCount = 2;
-
-            if (useThreads)
+            bool splitScreen = false;
+            if (splitScreen)
             {
-                //NetTime.AutomaticTimeKeeping = true;
-
-                var server = new Thread(() =>
-                {
-                    TankGame.Program.Main(new[] {
-                        "server", serverPort.ToString()
-                    });
-                });
-                server.Name = "Server";
-                server.Start();
-
-                for (int i = 0; i < clientCount; i++)
-                {
-                    Thread.Sleep(1000);
-                    int clientPort = serverPort + 1 + i;
-                    var client = new Thread(() =>
-                    {
-                        TankGame.Program.Main(new[] {
-                            "client", clientPort.ToString(), serverPort.ToString()
-                        });
-                    });
-                    client.Name = "Client " + (i + 1);
-                    client.Start();
-                }
+                RunSplitScreen();
             }
             else
             {
-                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                Run();
+            }
+        }
 
-                var server = new Process();
-                server.StartInfo.FileName = "TankGame.exe";
-                server.StartInfo.WorkingDirectory = path;
-                server.StartInfo.Arguments = "server " + serverPort;
-                server.Start();
+        static void RunSplitScreen()
+        {
+            var controller = new ResourceController();
 
-                var clients = new Process[clientCount];
-                for (int i = 0; i < clientCount; i++)
-                {
-                    Thread.Sleep(1000);
-                    int clientPort = serverPort + 1 + i;
-                    clients[i] = new Process();
-                    clients[i].StartInfo.FileName = "TankGame.exe";
-                    clients[i].StartInfo.WorkingDirectory = path;
-                    clients[i].StartInfo.Arguments = "client " + clientPort + " " + serverPort;
-                    clients[i].Start();
-                }
+            var center = new Point(controller.ClientSize.Width / 2, controller.ClientSize.Height / 2);
 
-                Console.WriteLine("Press enter to close all.");
-                Console.ReadLine();
-                server.Kill();
-                foreach (Process process in clients)
+            var server = new FakeNetServer();
+            var client = new FakeNetClient();
+            server.Connections.Add(new FakeNetConnection() { EndPoint = client });
+            client.Connections.Add(new FakeNetConnection() { EndPoint = server });
+            var netController = new NetworkController();
+            netController.Connections.AddRange(server.Connections);
+            netController.Connections.AddRange(client.Connections);
+            controller.Controllers.Add(netController);
+
+            var windowClient = new VirtualWindow(controller);
+            windowClient.CanvasSize = (Size)center;
+            controller.Controllers.Add(new Server(windowClient, server));
+
+            var windowServer = new VirtualWindow(controller);
+            windowServer.CanvasSize = (Size)center;
+            windowServer.CanvasPosition = center;
+            controller.Controllers.Add(new Client(windowServer, null, client));
+
+            controller.Run();
+        }
+
+        static void Run()
+        {
+            const int serverPort = 45619;
+            const int clientCount = 1;
+
+            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+            var server = new Process();
+            server.StartInfo.FileName = "TankGame.exe";
+            server.StartInfo.WorkingDirectory = path;
+            server.StartInfo.Arguments = $"server {serverPort}";
+            server.Start();
+
+            var clients = new Process[clientCount];
+            for (int i = 0; i < clientCount; i++)
+            {
+                Thread.Sleep(1000);
+                int clientPort = serverPort + 1 + i;
+                clients[i] = new Process();
+                clients[i].StartInfo.FileName = "TankGame.exe";
+                clients[i].StartInfo.WorkingDirectory = path;
+                clients[i].StartInfo.Arguments = $"client {serverPort} {clientPort}";
+                clients[i].Start();
+            }
+
+            server.WaitForExit();
+            foreach (Process process in clients)
+            {
+                if (!process.HasExited)
                 {
                     process.Kill();
                 }

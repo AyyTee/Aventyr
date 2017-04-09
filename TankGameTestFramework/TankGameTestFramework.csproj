@@ -48,8 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FrameworkController.cs" />
-    <Compile Include="FakeController.cs" />
     <Compile Include="FakeInput.cs" />
     <Compile Include="FakeNetClient.cs" />
     <Compile Include="FakeNetConnection.cs" />
@@ -59,6 +57,7 @@
     <Compile Include="FakeNetPeer.cs" />
     <Compile Include="FakeNetPeerStatistics.cs" />
     <Compile Include="FakeNetServer.cs" />
+    <Compile Include="NetworkController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

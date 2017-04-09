@@ -12,6 +12,7 @@ namespace EditorLogic
 {
     public class EditorVirtualWindow : IVirtualWindow
     {
+        public Point CanvasPosition => new Point();
         public Size CanvasSize { get; set; }
 
         public IInput Input { get; private set; }
@@ -34,6 +35,8 @@ namespace EditorLogic
             CanvasSize = _glControl.ClientSize;
             Renderer = renderer;
             Input = input;
+
+            renderer.Windows.Add(this);
         }
     }
 }

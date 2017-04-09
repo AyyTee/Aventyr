@@ -5,6 +5,7 @@ namespace Game.Rendering
 {
     public interface IVirtualWindow
     {
+        Point CanvasPosition { get; }
         Size CanvasSize { get; }
         IInput Input { get; }
         Dictionary<string, ITexture> Textures { get; }

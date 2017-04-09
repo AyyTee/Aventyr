@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface IController
+    public interface IUpdateable
     {
         void Update();
-        void Render();
     }
 }

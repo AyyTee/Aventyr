@@ -143,7 +143,6 @@
     <Compile Include="FakeInput.cs" />
     <Compile Include="FakeVirtualWindow.cs" />
     <Compile Include="IController.cs" />
-    <Compile Include="IGameController.cs" />
     <Compile Include="IGetTransform.cs" />
     <Compile Include="IGetTransformVelocity.cs" />
     <Compile Include="IGetVelocity.cs" />

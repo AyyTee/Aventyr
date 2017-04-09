@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Game
 {
-    public interface IResourceController : IController, IClientSizeProvider
+    public interface IResourceController : IUpdateable, IClientSizeProvider
     {
         IInput Input { get; }
     }

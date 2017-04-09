@@ -72,7 +72,6 @@
     <Compile Include="Network\IServer.cs" />
     <Compile Include="Network\NetworkHelper.cs" />
     <Compile Include="Network\ClientMessage.cs" />
-    <Compile Include="TankGameController.cs" />
     <Compile Include="Network\Message.cs" />
     <Compile Include="Network\NetworkSerializer.cs" />
     <Compile Include="Network\PortalData.cs" />

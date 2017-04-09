@@ -13,14 +13,12 @@ namespace TankGame
     {
         public Camera2 Camera { get; private set; }
         public Tank Tank { get; private set; }
-        public IGameController Controller { get; private set; }
         public string Name { get; set; } = nameof(TankCamera);
 
-        public TankCamera(Camera2 camera, Tank tank, IGameController controller)
+        public TankCamera(Camera2 camera, Tank tank)
         {
             Camera = camera;
             SetTank(tank);
-            Controller = controller;
         }
 
         public void SetTank(Tank tank)

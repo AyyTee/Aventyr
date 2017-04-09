@@ -17,7 +17,7 @@ using Game.Rendering;
 
 namespace TankGame.Network
 {
-    public class Client : INetController
+    public class Client : IUpdateable, INetController
     {
         /// <summary>
         /// This client's id.
@@ -30,7 +30,6 @@ namespace TankGame.Network
         public bool IsConnected => _client.ServerConnection != null;
         readonly Queue<InputTime> _inputQueue = new Queue<InputTime>();
         public Scene Scene { get; private set; }
-        public readonly IGameController Controller;
         Renderer _renderer;
         public string Name => "Client";
         double _lastTimestamp;
@@ -47,10 +46,9 @@ namespace TankGame.Network
             public double Timestamp;
         }
 
-        public Client(IVirtualWindow window, IPEndPoint serverAddress, IGameController controller, INetClient client)
+        public Client(IVirtualWindow window, IPEndPoint serverAddress, INetClient client)
         {
             _window = window;
-            Controller = controller;
 
             _client = client;
             _client.Start();
@@ -59,6 +57,8 @@ namespace TankGame.Network
 
             Scene = new Scene();
             Scene.Gravity = new Vector2();
+
+            Init();
         }
 
         public void Init()
@@ -70,7 +70,7 @@ namespace TankGame.Network
 
             Scene.SetActiveCamera(camera);
 
-            _tankCamera = new TankCamera(camera, null, Controller);
+            _tankCamera = new TankCamera(camera, null);
 
             Entity entity2 = new Entity(Scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
@@ -80,7 +80,11 @@ namespace TankGame.Network
             _window.Layers.Add(Scene);
         }
 
-        public void Step()
+        public void Render()
+        {
+        }
+
+        public void Update()
         {
             NetworkStep();
 

@@ -20,6 +20,8 @@ namespace TankGameTests
         FakeNetClient _netClient;
         Server _server;
         FakeNetServer _netServer;
+        FakeVirtualWindow _clientWindow;
+        FakeVirtualWindow _serverWindow;
 
         FakeNetPeer[] _netPeers => new FakeNetPeer[] { _netClient, _netServer };
 
@@ -30,13 +32,13 @@ namespace TankGameTests
             NetTime.SetTime(0);
 
             _netClient = new FakeNetClient();
-            var controller = new FakeController();
-            _client = new Client(new FakeVirtualWindow(), null, controller, _netClient);
+            _clientWindow = new FakeVirtualWindow();
+            _client = new Client(_clientWindow, null, _netClient);
             _client.Init();
 
             _netServer = new FakeNetServer();
-            var controllerServer = new FakeController();
-            _server = new Server(new FakeVirtualWindow(), _netServer);
+            _serverWindow = new FakeVirtualWindow();
+            _server = new Server(_serverWindow, _netServer);
             _server.Init();
 
             _netServer.Connections.Add(new FakeNetConnection
@@ -90,8 +92,8 @@ namespace TankGameTests
                 message.MessageType = NetIncomingMessageType.Data;
                 _netClient.Messages.Enqueue(message);
 
-                ((FakeController)_client.Controller).Input.KeyCurrent.Add(Key.Space);
-                _client.Step();
+                _clientWindow.Input.KeyCurrent.Add(Key.Space);
+                _client.Update();
 
                 Assert.IsTrue(_client.Scene.GetAll().OfType<Bullet>().Count() <= 1);
             }

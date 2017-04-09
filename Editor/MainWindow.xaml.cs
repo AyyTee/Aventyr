@@ -71,7 +71,6 @@ namespace EditorWindow
         {
             var renderer = new Renderer(new EditorClientSizeProvider(glControl));
             var window = new EditorVirtualWindow(glControl, renderer, new Input(glControl));
-            renderer.Windows.Add(window);
             _controllerEditor = new ControllerEditor(window);
             _controllerEditor.ScenePlayEvent += ControllerEditor_ScenePlayed;
             _controllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;

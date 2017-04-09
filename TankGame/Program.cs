@@ -1,8 +1,10 @@
 ﻿using Game;
 using Game.Rendering;
+using Lidgren.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using TankGame.Network;
@@ -13,11 +15,30 @@ namespace TankGame
     {
         public static void Main(string[] args)
         {
-            var resourceController = new ResourceController();
-
+            var resourceController = new ResourceController(args[0]);
             var window = new VirtualWindow(resourceController);
             window.CanvasSize = resourceController.ClientSize;
-            resourceController.Controllers.Add(new TankGameController(window));
+
+
+            var config = NetworkHelper.GetDefaultConfig();
+
+            int serverPort;
+            int.TryParse(args[1], out serverPort);
+
+            if (args[0] == "client")
+            {
+                int clientPort;
+                int.TryParse(args[2], out clientPort);
+                config.Port = clientPort;
+
+                var serverAddress = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), serverPort);
+                resourceController.Controllers.Add(new Client(window, serverAddress, new NetClient(config)));
+            }
+            else if (args[0] == "server")
+            {
+                config.Port = serverPort;
+                resourceController.Controllers.Add(new Server(window, new NetServer(config)));
+            }
 
             resourceController.Run();
         }

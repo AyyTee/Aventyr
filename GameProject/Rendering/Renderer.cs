@@ -119,8 +119,10 @@ namespace Game.Rendering
 
         public void Render()
         {
+            Debug.Assert(GL.GetError() == ErrorCode.NoError);
+
+            SetScissor(null);
             GL.Viewport(0, 0, ClientSize.Width, ClientSize.Height);
-            ResetScissor();
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit | ClearBufferMask.ColorBufferBit);
 
             var shaderList = _shaders.ToList();
@@ -133,9 +135,12 @@ namespace Game.Rendering
 
             foreach (var window in Windows)
             {
+                SetScissor(window);
+                GL.Viewport(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.Width, window.CanvasSize.Height);
+
                 foreach (var layer in window.Layers)
                 {
-                    DrawPortalAll(layer, 1 / window.RendersPerSecond);
+                    DrawPortalAll(window, layer, 1 / window.RendersPerSecond);
                     GL.Clear(ClearBufferMask.DepthBufferBit);
                 }
             }
@@ -162,8 +167,10 @@ namespace Game.Rendering
             }
         }
 
-        void DrawPortalAll(IRenderLayer layer, float shutterTime)
+        void DrawPortalAll(IVirtualWindow window, IRenderLayer layer, float shutterTime)
         {
+            Debug.Assert(window.Layers.Contains(layer));
+
             ICamera2 cam = layer.GetCamera();
             if (cam == null)
             {
@@ -250,11 +257,11 @@ namespace Game.Rendering
                 GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
                 for (int i = 0; i < Math.Min(portalViewList.Count, StencilMaxValue); i++)
                 {
-                    SetScissor(portalViewList[i], CameraExt.GetViewMatrix(cam));
+                    SetScissor(window, portalViewList[i], CameraExt.GetViewMatrix(cam));
                     GL.StencilFunc(StencilFunction.Equal, i, StencilMask);
                     Draw(drawData.ToArray(), portalViewList[i].ViewMatrix);
                 }
-                ResetScissor();
+                SetScissor(window);
             }
             #endregion
 
@@ -425,12 +432,12 @@ namespace Game.Rendering
         /// <summary>Sets scissor region around a portalview.</summary>
         /// <param name="view"></param>
         /// <param name="viewMatrix">Camera view matrix, do not use view matrix for the portalview.</param>
-        void SetScissor(PortalView view, Matrix4 viewMatrix)
+        void SetScissor(IVirtualWindow window, PortalView view, Matrix4 viewMatrix)
         {
             Debug.Assert(view != null);
             if (view.Paths == null)
             {
-                ResetScissor();
+                SetScissor(window);
                 return;
             }
             Matrix4 scaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
@@ -451,7 +458,15 @@ namespace Game.Rendering
             GL.Scissor((int)vMin.X - 1, (int)vMin.Y - 1, (int)(vMax.X - vMin.X) + 3, (int)(vMax.Y - vMin.Y) + 3);
         }
 
-        void ResetScissor() => GL.Scissor(0, 0, ClientSize.Width, ClientSize.Height);
+        void SetScissor(IVirtualWindow window)
+        {
+            if (window == null)
+            {
+                GL.Scissor(0, 0, ClientSize.Width, ClientSize.Height);
+                return;
+            }
+            GL.Scissor(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.Width, window.CanvasSize.Height);
+        }
 
         void UpdateCullFace(Matrix4 viewMatrix)
         {

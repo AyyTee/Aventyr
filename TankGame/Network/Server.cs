@@ -14,7 +14,7 @@ using Game.Rendering;
 
 namespace TankGame.Network
 {
-    public class Server : INetController
+    public class Server : IUpdateable, INetController
     {
         Dictionary<long, Tank> _tanks = new Dictionary<long, Tank>();
         readonly INetServer _server;
@@ -46,6 +46,8 @@ namespace TankGame.Network
             _window = window;
             _server = netServer;
             _server.Start();
+
+            Init();
         }
 
         public void Init()
@@ -101,7 +103,11 @@ namespace TankGame.Network
             }
         }
 
-        public void Step()
+        public void Render()
+        {
+        }
+
+        public void Update()
         {
             NetworkStep();
 

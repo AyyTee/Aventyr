@@ -27,7 +27,7 @@ namespace Game
 
         public IInput Input { get; private set; }
 
-        public List<IGameController> Controllers { get; private set; } = new List<IGameController>();
+        public List<IUpdateable> Controllers { get; private set; } = new List<IUpdateable>();
 
         public static readonly GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
 
@@ -39,9 +39,9 @@ namespace Game
         readonly SoundSystem _soundSystem;
         bool _soundEnabled;
 
-        public ResourceController()
+        public ResourceController(string windowName = "Game")
         {
-            _window = new GameWindow(800, 600, DefaultGraphics, "Game", GameWindowFlags.FixedWindow);
+            _window = new GameWindow(800, 600, DefaultGraphics, windowName, GameWindowFlags.FixedWindow);
             Renderer = new Renderer(this);
             Input = new Input(_window);
 
@@ -88,6 +88,11 @@ namespace Game
                     GL.DeleteTextures(1, ref a);
                 }
                 TextureGarbage.Clear();
+            }
+
+            foreach (var controller in Controllers)
+            {
+                controller.Update();
             }
         }
 
