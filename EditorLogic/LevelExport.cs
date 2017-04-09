@@ -196,7 +196,10 @@ namespace EditorLogic
             {
                 SceneNode parent = e.Parent == null ? null : dictionary[e.Parent];
                 SceneNode clone = dictionary[e];
-                clone.SetParent(parent);
+                if (!(clone is FixturePortal))
+                {
+                    clone.SetParent(parent);
+                }
                 if (clone is IPortal)
                 {
                     if (clone is FixturePortal)
