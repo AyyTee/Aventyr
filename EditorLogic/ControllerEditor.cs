@@ -12,7 +12,7 @@ using Game.Rendering;
 
 namespace EditorLogic
 {
-    public class ControllerEditor : Controller
+    public class ControllerEditor
     {
         public Scene Hud, ActiveLevel;
         public EditorScene Level, Clipboard;
@@ -25,7 +25,6 @@ namespace EditorLogic
         readonly Queue<Action> _actions = new Queue<Action>();
         public Selection Selection { get; private set; }
         public StateList StateList { get; private set; }
-        public float CanvasAspect => CanvasSize.Width / (float)CanvasSize.Height;
 
         /// <summary>
         /// Lock used to prevent race conditions when adding and reading from the action queue.
@@ -39,9 +38,10 @@ namespace EditorLogic
         public bool IsPaused { get; private set; }
         public bool IsStopped => ActiveLevel == null;
         int _stepsPending;
+        public readonly IVirtualWindow Window;
 
         public delegate void UpdateHandler(ControllerEditor controller);
-        public event UpdateHandler Update;
+        public event UpdateHandler UpdateEvent;
         public delegate void SceneEventHandler(ControllerEditor controller);
         public event SceneEventHandler ScenePauseEvent;
         public event SceneEventHandler ScenePlayEvent;
@@ -63,21 +63,19 @@ namespace EditorLogic
         public delegate void ToolEventHandler(ControllerEditor controller, Tool tool);
         public event ToolEventHandler ToolChanged;
 
-        public ControllerEditor(Size canvasSize, Input input)
-            : base(canvasSize, input)
+        public ControllerEditor(IVirtualWindow window)
         {
+            Window = window;
             IsPaused = true;
             PhysicsStepSize = 1;
         }
 
-        public override void OnLoad(EventArgs e)
+        public void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
-            
-            Clipboard = new EditorScene();
+            Clipboard = new EditorScene(Window);
 
             LevelCreate();
-            Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(CanvasSize.Width / 2f, CanvasSize.Height / 2f), CanvasSize.Width), CanvasSize.Width / (float)CanvasSize.Height));
+            Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(Window.CanvasSize.Width / 2f, Window.CanvasSize.Height / 2f), Window.CanvasSize.Width), (float)Window.CanvasSize.WidthRatio()));
 
             PortalCommon.UpdateWorldTransform(Hud);
             PortalCommon.UpdateWorldTransform(Level);
@@ -90,17 +88,17 @@ namespace EditorLogic
         {
             //SceneStop();
             SetTool(null);
-            Renderer.RemoveLayer(Hud);
-            Renderer.RemoveLayer(Level);
+            Window.Layers.Remove(Hud);
+            Window.Layers.Remove(Level);
             Hud = new Scene();
-            Level = new EditorScene(Renderer);
-            Renderer.AddLayer(Level);
-            Renderer.AddLayer(Hud);
+            Level = new EditorScene(Window);
+            Window.Layers.Add(Level);
+            Window.Layers.Add(Hud);
 
             Selection = new Selection(Level);
             StateList = new StateList();
 
-            CamControl = new ControllerCamera(this, Input, Level);
+            CamControl = new ControllerCamera(this, Window.Input, Level);
             Transform2.SetSize(CamControl, 10);
             Hud.SetActiveCamera(CamControl);
             Level.ActiveCamera = CamControl;
@@ -116,10 +114,9 @@ namespace EditorLogic
             SetTool(null);
             EditorScene load = Serializer.Deserialize(filepath);
             load.ActiveCamera.Controller = this;
-            load.ActiveCamera.InputExt = Input;
-            load.SetRenderer(Renderer);
-            Renderer.AddLayer(load);
-            Renderer.RemoveLayer(Level);
+            load.ActiveCamera.InputExt = Window.Input;
+            Window.Layers.Add(load);
+            Window.Layers.Remove(Level);
             Level = load;
             Selection = new Selection(Level);
 
@@ -160,21 +157,21 @@ namespace EditorLogic
         {
             return Level == null ? 
                 Vector2.Zero : 
-                CameraExt.ScreenToWorld(Level.ActiveCamera, Input.MousePos, Vector2Ext.ToOtk(CanvasSize));
+                CameraExt.ScreenToWorld(Level.ActiveCamera, Window.Input.MousePos, Vector2Ext.ToOtk(Window.CanvasSize));
         }
 
-        public Vector2 GetMouseWorldPortal(IEnumerable<IPortal> portals)
+        public Vector2 GetMouseWorldPortal(IEnumerable<IPortal> portals, bool ignorePortalViews)
         {
             if (Level == null)
             {
                 return Vector2.Zero;
             }
-            if (!Renderer.PortalRenderEnabled)
+            if (ignorePortalViews)
             {
                 return GetMouseWorld();
             }
             Transform2 transform = CameraExt.GetWorldViewpoint(Level.ActiveCamera);
-            Vector2 mousePos = CameraExt.ScreenToWorld(Level.ActiveCamera, Input.MousePos, Vector2Ext.ToOtk(CanvasSize));
+            Vector2 mousePos = CameraExt.ScreenToWorld(Level.ActiveCamera, Window.Input.MousePos, Vector2Ext.ToOtk(Window.CanvasSize));
             var portalable = new Portalable(null, transform, Transform2.CreateVelocity(mousePos - transform.Position));
             Ray.RayCast(portalable, Level.GetPortalList(), new Ray.Settings());
             return portalable.GetTransform().Position;
@@ -195,10 +192,8 @@ namespace EditorLogic
             }
         }
 
-        public override void OnUpdateFrame(FrameEventArgs e)
+        public void Update()
         {
-            base.OnUpdateFrame(e);
-
             //Avoid a potential deadlock by making a copy of the action queue and releasing 
             //the lock before executing actions in the copy.
             {
@@ -213,7 +208,7 @@ namespace EditorLogic
                     item();
                 }
             }
-            Update(this);
+            UpdateEvent(this);
 
             _setTool(_nextTool);
 
@@ -318,10 +313,10 @@ namespace EditorLogic
         {
             if (ActiveLevel == null)
             {
-                ActiveLevel = LevelExport.Export(Level, this);
-                Renderer.AddLayer(ActiveLevel);
-                Renderer.RemoveLayer(Level);
-                Renderer.RemoveLayer(Hud);
+                ActiveLevel = LevelExport.Export(Level, Window);
+                Window.Layers.Add(ActiveLevel);
+                Window.Layers.Remove(Level);
+                Window.Layers.Remove(Hud);
             }
             _stepsPending = 0;
             IsPaused = false;
@@ -338,9 +333,9 @@ namespace EditorLogic
         {
             if (ActiveLevel != null)
             {
-                Renderer.RemoveLayer(ActiveLevel);
-                Renderer.AddLayer(Level);
-                Renderer.AddLayer(Hud);
+                Window.Layers.Remove(ActiveLevel);
+                Window.Layers.Add(Level);
+                Window.Layers.Add(Hud);
             }
 
             ActiveLevel = null;
@@ -367,12 +362,6 @@ namespace EditorLogic
             {
                 _actions.Enqueue(action);
             }
-        }
-
-        public override void OnResize(EventArgs e, Size canvasSize)
-        {
-            base.OnResize(e, canvasSize);
-            Transform2.SetSize((ITransformable2)Hud.ActiveCamera, canvasSize.Height);
         }
     }
 }

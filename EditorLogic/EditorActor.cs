@@ -54,7 +54,7 @@ namespace EditorLogic
         public Model GetActorModel(EditorActor actor)
         {
             Model model = Game.Rendering.ModelFactory.CreatePolygon(actor.Vertices);
-            model.SetTexture(Scene.Renderer.GetTexture("default.png"));
+            model.SetTexture(Scene.Window.Textures["default.png"]);
             return model;
         }
     }

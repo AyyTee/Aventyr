@@ -60,6 +60,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EditorClientSizeProvider.cs" />
+    <Compile Include="EditorVirtualWindow.cs" />
     <Compile Include="Command\Add.cs" />
     <Compile Include="Command\AddEntity.cs" />
     <Compile Include="Command\AddPortal.cs" />

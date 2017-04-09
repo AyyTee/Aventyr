@@ -77,7 +77,7 @@ namespace TankGame.Network
             entity2.ModelList[0].SetTexture(_window.Textures["default.png"]);
 
             PortalCommon.UpdateWorldTransform(Scene);
-            _renderer?.AddLayer(Scene);
+            _window.Layers.Add(Scene);
         }
 
         public void Step()

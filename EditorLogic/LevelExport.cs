@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Game.Common;
 using Game.Models;
 using Game.Physics;
+using Game.Rendering;
 
 namespace EditorLogic
 {
@@ -20,7 +21,7 @@ namespace EditorLogic
         /// <summary>
         /// Creates a Scene from an EditorScene.  Scene is intended for gameplay use.
         /// </summary>
-        public static Scene Export(EditorScene level, Controller controller)
+        public static Scene Export(EditorScene level, IVirtualWindow window)
         {
             Scene scene = new Scene();
             /*if (level.GetAll().OfType<EditorPlayer>().Count() > 0)
@@ -45,7 +46,7 @@ namespace EditorLogic
 
             #region create background
             Model background = Game.Rendering.ModelFactory.CreatePlane();
-            background.Texture = level.Renderer.GetTexture("grid.png");
+            background.Texture = window.Textures["grid.png"];
             background.SetColor(new Vector3(1, 1, 0.5f));
             background.Transform.Position = new Vector3(0, 0, -5f);
             float size = 50;
@@ -169,7 +170,7 @@ namespace EditorLogic
                 else if (e is EditorPlayer)
                 {
                     EditorPlayer cast = (EditorPlayer)e;
-                    Player player = new Player(controller);
+                    Player player = new Player(window);
                     Vector2[] polygon = PolygonFactory.CreateNGon(6, 0.5f, new Vector2());
                     Actor actor = new Actor(scene, polygon);
                     player.SetActor(actor);

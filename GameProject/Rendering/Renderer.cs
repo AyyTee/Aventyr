@@ -24,7 +24,6 @@ namespace Game.Rendering
         public static string TextureFolder { get; } = Path.Combine(new[] { "assets", "textures" });
         public static string SoundFolder { get; private set; } = Path.Combine(new[] { "assets", "sounds" });
 
-        readonly List<IRenderLayer> _layers = new List<IRenderLayer>();
         public bool PortalRenderEnabled { get; set; } = true;
         public int PortalRenderMax { get; set; } = 50;
         public int PortalClipDepth { get; set; } = 4;
@@ -91,12 +90,6 @@ namespace Game.Rendering
                 Path.Combine(ShaderFolder, "fs_uber.glsl"),
                 true));
         }
-
-        public void AddLayer(IRenderLayer layer) => _layers.Add(layer);
-
-        /// <summary>Remove a Scene from the Renderer.</summary>
-        /// <returns>True if the Scene was in the Renderer, otherwise false.</returns>
-        public bool RemoveLayer(IRenderLayer layer) => _layers.Remove(layer);
 
         void SetShader(Shader shader)
         {

@@ -20,7 +20,6 @@ namespace EditorLogic
     [DataContract]
     public class EditorScene : IRenderLayer, IScene
     {
-        public Renderer Renderer { get; private set; }
         [DataMember]
         public List<EditorObject> Children = new List<EditorObject>();
         [DataMember]
@@ -29,14 +28,16 @@ namespace EditorLogic
         public List<Doodad> Doodads = new List<Doodad>();
         [DataMember]
         public double Time { get; private set; }
+        public bool RenderPortalViews => true;
+        public IVirtualWindow Window { get; private set; }
 
-        public EditorScene(Renderer renderer = null)
+        public EditorScene(IVirtualWindow window)
         {
-            Renderer = renderer;
+            Window = window;
 
             #region create background
             Model background = Game.Rendering.ModelFactory.CreatePlane();
-            background.Texture = Renderer?.GetTexture("grid.png");
+            background.Texture = Window.Textures["grid.png"];
             background.SetColor(new Vector3(1, 1, 0.5f));
             background.Transform.Position = new Vector3(0, 0, -5f);
             float size = 50;
@@ -142,11 +143,6 @@ namespace EditorLogic
             {
                 s.StepEnd(this, stepSize);
             }
-        }
-
-        public void SetRenderer(Renderer renderer)
-        {
-            Renderer = renderer;
         }
     }
 }

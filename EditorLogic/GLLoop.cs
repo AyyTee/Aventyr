@@ -1,4 +1,5 @@
 ﻿using Game;
+using Game.Rendering;
 using OpenTK;
 using System;
 using System.Diagnostics;
@@ -19,20 +20,22 @@ namespace EditorLogic
         volatile bool _isRunning;
         Stopwatch _stopwatch = new Stopwatch();
         readonly GLControl _control;
-        readonly Controller _loopControl;
+        readonly ControllerEditor _loopControl;
         RollingAverage _average;
+        readonly EditorVirtualWindow _window;
 
         public int UpdatesPerSecond { get { return _updatesPerSecond; } private set { _updatesPerSecond = value; } }
         public int MillisecondsPerStep => 1000 / UpdatesPerSecond;
         public bool IsStopping { get { return _isStopping; } private set { _isStopping = value; } }
         public bool IsRunning { get { return _isRunning; } private set { _isRunning = value; } }
 
-        public GlLoop(GLControl control, Controller loopControl)
+        public GlLoop(GLControl control, ControllerEditor loopControl, EditorVirtualWindow window)
         {
             _control = control;
             IsRunning = false;
             IsStopping = false;
             _loopControl = loopControl;
+            _window = window;
             /*_control.GotFocus += delegate { _focused = true; };
             _control.LostFocus += delegate { _focused = false; };*/
             _control.MouseEnter += delegate { _focused = true; };
@@ -96,12 +99,12 @@ namespace EditorLogic
                     _stopwatch.Restart();
                     if (_resize)
                     {
-                        _loopControl.OnResize(new EventArgs(), _control.ClientSize);
+                        _window.CanvasSize = _control.ClientSize;
                         _resize = false;
                     }
-                    _loopControl.Input.Update(_focused);
-                    _loopControl.OnUpdateFrame(new FrameEventArgs());
-                    _loopControl.OnRenderFrame(new FrameEventArgs());
+                    _window.Input.Update(_focused);
+                    _loopControl.Update();
+                    _window.Renderer.Render();
 
                     _control.SwapBuffers();
                     _control.Invalidate();

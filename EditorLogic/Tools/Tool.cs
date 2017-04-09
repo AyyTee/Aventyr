@@ -5,7 +5,7 @@ namespace EditorLogic.Tools
 {
     public abstract class Tool
     {
-        protected IInput Input => Controller.Input;
+        protected IInput Input => Controller.Window.Input;
         public bool Enabled { get; private set; }
         public bool Active { get; protected set; }
         public virtual bool EditorOnly { get; }

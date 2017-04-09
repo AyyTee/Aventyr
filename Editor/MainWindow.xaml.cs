@@ -37,9 +37,9 @@ namespace EditorWindow
             WorkingDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             AssetsDirectory = Path.Combine(WorkingDirectory, "editor assets");
             InitializeComponent();
-            //Set the application window size here.  That way it can be super small in the editor!
-            Width = 1920;
-            Height = 1080;
+            //Set the application window size here. That way it can be super small in the editor!
+            Width = 1000;
+            Height = 800;
             CenterWindowOnScreen();
             _loadModelDialog.FileOk += _openFileDialog_FileOk;
 
@@ -69,20 +69,18 @@ namespace EditorWindow
 
         public void GLControl_Load(object sender, EventArgs e)
         {
-            _controllerEditor = new ControllerEditor(glControl.ClientSize, new Input(glControl));
+            var renderer = new Renderer(new EditorClientSizeProvider(glControl));
+            var window = new EditorVirtualWindow(glControl, renderer, new Input(glControl));
+            renderer.Windows.Add(window);
+            _controllerEditor = new ControllerEditor(window);
             _controllerEditor.ScenePlayEvent += ControllerEditor_ScenePlayed;
             _controllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;
             _controllerEditor.SceneStopEvent += ControllerEditor_SceneStopped;
-            _controllerEditor.Update += ControllerEditor_Update;
+            _controllerEditor.UpdateEvent += ControllerEditor_Update;
 
             _controllerFiles = new ControllerFiles(this, _controllerEditor, filesRecent);
 
             UpdateTransformLabels(null);
-
-            PortalDepth.ValueChanged += IntegerUpDown_ValueChanged;
-            PortalDepth.Value = 40;
-
-            SetPortalRendering(true);
 
             ToolPanel.Initialize(_controllerEditor);
             PropertiesEditor.Initialize(_controllerEditor);
@@ -94,7 +92,7 @@ namespace EditorWindow
                 );
 
             //Start the drawing loop last to make sure all listeners are in place.
-            _loop = new GlLoop(glControl, _controllerEditor);
+            _loop = new GlLoop(glControl, _controllerEditor, window);
             _loop.Run(60);
         }
 
@@ -247,31 +245,6 @@ namespace EditorWindow
                         break;
                 }
             }
-            
-
-            if (e.Key == Key.D && 
-                (Keyboard.IsKeyDown(Key.LeftCtrl) ||
-                Keyboard.IsKeyDown(Key.RightCtrl)))
-            {
-                SetPortalRendering(!_controllerEditor.Renderer.PortalRenderEnabled);
-            }
-        }
-
-        void toolPortalsVisible_Click(object sender, RoutedEventArgs e)
-        {
-            var button = (System.Windows.Controls.Primitives.ToggleButton)sender;
-            bool enable = (bool)button.IsChecked;
-            SetPortalRendering(enable);
-        }
-
-        /// <summary>Programatically set whether or not portals are visible.  The ui will be updated to the new value.</summary>
-        void SetPortalRendering(bool visible)
-        {
-            toolPortalsVisible.IsChecked = visible;
-            _controllerEditor.AddAction(() =>
-            {
-                _controllerEditor.Renderer.PortalRenderEnabled = visible;
-            });
         }
 
         void Button_Save(object sender, EventArgs e)
@@ -378,35 +351,27 @@ namespace EditorWindow
 
         }
 
-        void IntegerUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            _controllerEditor.AddAction(() => 
-            {
-                _controllerEditor.Renderer.PortalRenderMax = (int)e.NewValue;
-            });
-        }
+        //void RunStandalone(object sender, ExecutedRoutedEventArgs e)
+        //{
+        //    _controllerEditor.AddAction(() => 
+        //    {
+        //        string tempFile;
+        //        do {
+        //            tempFile = Controller.TempLevelPrefix + GenerateRandomString(8) + ".xml";
+        //        } while (File.Exists(tempFile));
 
-        void RunStandalone(object sender, ExecutedRoutedEventArgs e)
-        {
-            _controllerEditor.AddAction(() => 
-            {
-                string tempFile;
-                do {
-                    tempFile = Controller.TempLevelPrefix + GenerateRandomString(8) + ".xml";
-                } while (File.Exists(tempFile));
+        //        Scene scene = LevelExport.Export(_controllerEditor.Level, _controllerEditor);
+        //        Game.Portals.PortalCommon.UpdateWorldTransform(scene);
+        //        var serializer = new Serializer();
+        //        serializer.Serialize(scene, tempFile);
 
-                Scene scene = LevelExport.Export(_controllerEditor.Level, _controllerEditor);
-                Game.Portals.PortalCommon.UpdateWorldTransform(scene);
-                var serializer = new Serializer();
-                serializer.Serialize(scene, tempFile);
-
-                Process process = new Process();
-                process.StartInfo.FileName = "Game.exe";
-                process.StartInfo.WorkingDirectory = WorkingDirectory;
-                process.StartInfo.Arguments = tempFile;
-                process.Start();
-            });
-        }
+        //        Process process = new Process();
+        //        process.StartInfo.FileName = "Game.exe";
+        //        process.StartInfo.WorkingDirectory = WorkingDirectory;
+        //        process.StartInfo.Arguments = tempFile;
+        //        process.Start();
+        //    });
+        //}
 
         string GenerateRandomString(int length)
         {

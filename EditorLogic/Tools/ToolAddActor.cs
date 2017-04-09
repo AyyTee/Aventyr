@@ -42,7 +42,7 @@ namespace EditorLogic.Tools
             base.Enable();
             _mouseFollow = new Doodad(Controller.Level);
             _mouseFollow.Models.Add(Game.Rendering.ModelFactory.CreatePolygon(PolygonFactory.CreateRectangle(4, 0.5f)));
-            _mouseFollow.Models[0].SetTexture(Controller.Renderer.Textures["default.png"]);
+            _mouseFollow.Models[0].SetTexture(Controller.Window.Textures["default.png"]);
             _mouseFollow.IsPortalable = true;
         }
 

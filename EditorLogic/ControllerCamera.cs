@@ -86,7 +86,7 @@ namespace EditorLogic
                 _zoomFactor = value;
             }
         }
-        public float Aspect => Controller.CanvasAspect;
+        public float Aspect => (float)Controller.Window.CanvasSize.WidthRatio();
         public Vector2 ViewOffset => new Vector2();
         public double Fov => Math.PI / 4;
         public float ZNear => -1000f;
@@ -217,8 +217,8 @@ namespace EditorLogic
                     _lazyPan.Enqueue(
                         CameraExt.ScreenToWorld(
                             this, InputExt.MousePosPrev - InputExt.MousePos, 
-                            Vector2Ext.ToOtk(Controller.CanvasSize)) - CameraExt.ScreenToWorld(this, new Vector2(), 
-                            Vector2Ext.ToOtk(Controller.CanvasSize)));
+                            Vector2Ext.ToOtk(Controller.Window.CanvasSize)) - CameraExt.ScreenToWorld(this, new Vector2(), 
+                            Vector2Ext.ToOtk(Controller.Window.CanvasSize)));
                 }
                 else
                 {
@@ -236,7 +236,7 @@ namespace EditorLogic
 
         public void StepEnd(IScene scene, float stepSize)
         {
-            if (Controller.Renderer.PortalRenderEnabled)
+            if (true)//Controller.Renderer.PortalRenderEnabled)
             {
                 var settings = new Ray.Settings();
                 //settings.IgnorePortalVelocity = true;

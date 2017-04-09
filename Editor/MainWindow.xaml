@@ -24,7 +24,6 @@
         <CommandBinding Command="self:WpfCommands.TimerJumpBackward" Executed="Command_JumpBackward" />
         <CommandBinding Command="self:WpfCommands.KeyframeAdd" Executed="Command_KeyframeAdd" />
         <CommandBinding Command="self:WpfCommands.KeyframeRemove" Executed="Command_KeyframeRemove" />
-        <CommandBinding Command="self:WpfCommands.RunStandalone" Executed="RunStandalone" />
     </Window.CommandBindings>
 
     <Grid Name="MainGrid" KeyDown="MainGrid_KeyDown">
@@ -90,11 +89,11 @@
                         <Image Source="/editor assets/icons/control-stop-square.png" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem Command="self:WpfCommands.RunStandalone">
+                <!--<MenuItem Command="self:WpfCommands.RunStandalone">
                     <MenuItem.Icon>
                         <Image Source="/editor assets/icons/application-export.png" />
                     </MenuItem.Icon>
-                </MenuItem>
+                </MenuItem>-->
             </MenuItem>
         </Menu>
         <ToolBar Grid.Row="1">
@@ -120,10 +119,7 @@
                 <self:Time x:Name="Time"/>
             </Grid>
             <Separator VerticalAlignment="Stretch" Margin="4,0,4,0"/>
-            <ToggleButton Name="toolPortalsVisible" Height="22" Click="toolPortalsVisible_Click">
-                <Image Source="/editor assets/icons/eye.png" />
-            </ToggleButton>
-            <ext:IntegerUpDown Name="PortalDepth" Margin="3,0,0,0" Minimum="1" Maximum="255" Width="46"/>
+            <!--<ext:IntegerUpDown Name="PortalDepth" Margin="3,0,0,0" Minimum="1" Maximum="255" Width="46"/>-->
             <Separator VerticalAlignment="Stretch" Margin="4,0,4,0"/>
             <Button Name="KeyframeAdd" Height="22" Command="self:WpfCommands.KeyframeAdd">
                 <Image Source="/editor assets/icons/key--plus.png" />

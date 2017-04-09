@@ -229,6 +229,7 @@
     <Compile Include="Models\Model.cs" />
     <Compile Include="Common\Transform2.cs" />
     <Compile Include="Animation\BezierCurve.cs" />
+    <Compile Include="SizeEx.cs" />
     <Compile Include="Tree.cs" />
     <Compile Include="Models\Triangle.cs" />
     <Compile Include="Common\Vector2Ext.cs" />

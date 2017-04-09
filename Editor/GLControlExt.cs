@@ -17,7 +17,7 @@ namespace EditorWindow
     public partial class GlControlExt : GLControl
     {
         public GlControlExt()
-            : base(Renderer.DefaultGraphics)
+            : base(ResourceController.DefaultGraphics)
         {
             InitializeComponent();
         }

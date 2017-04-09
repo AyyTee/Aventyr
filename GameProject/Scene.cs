@@ -33,6 +33,7 @@ namespace Game
         public double Time { get; set; }
         [DataMember]
         public Vector2 Gravity { get; set; } = new Vector2(0, -4.9f);
+        public bool RenderPortalViews => true;
 
         public Scene()
         {
