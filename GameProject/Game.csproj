@@ -140,6 +140,8 @@
     <Compile Include="Common\IValueEquality.cs" />
     <Compile Include="Common\Line.cs" />
     <Compile Include="Common\Transform2d.cs" />
+    <Compile Include="FakeInput.cs" />
+    <Compile Include="FakeVirtualWindow.cs" />
     <Compile Include="IController.cs" />
     <Compile Include="IGameController.cs" />
     <Compile Include="IGetTransform.cs" />
@@ -150,6 +152,7 @@
     <Compile Include="ITime.cs" />
     <Compile Include="Keyframe.cs" />
     <Compile Include="Keyframe2.cs" />
+    <Compile Include="LinqEx.cs" />
     <Compile Include="Physics\BodyMemento.cs" />
     <Compile Include="Physics\BodyData.cs" />
     <Compile Include="Physics\PortalJoint.cs" />

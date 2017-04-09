@@ -74,7 +74,7 @@ namespace TankGame.Network
 
             Entity entity2 = new Entity(Scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
-            entity2.ModelList[0].SetTexture(_window.Textures["default.png"]);
+            entity2.ModelList[0].SetTexture(_window.Textures.GetOrDefault("default.png"));
 
             PortalCommon.UpdateWorldTransform(Scene);
             _window.Layers.Add(Scene);

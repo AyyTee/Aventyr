@@ -31,13 +31,13 @@ namespace TankGameTests
 
             _netClient = new FakeNetClient();
             var controller = new FakeController();
-            _client = new Client(null, controller, _netClient);
-            _client.Init(null, controller.CanvasSize);
+            _client = new Client(new FakeVirtualWindow(), null, controller, _netClient);
+            _client.Init();
 
             _netServer = new FakeNetServer();
             var controllerServer = new FakeController();
-            _server = new Server(_netServer);
-            _server.Init(null, controllerServer.CanvasSize);
+            _server = new Server(new FakeVirtualWindow(), _netServer);
+            _server.Init();
 
             _netServer.Connections.Add(new FakeNetConnection
             {

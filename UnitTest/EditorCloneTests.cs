@@ -13,8 +13,9 @@ namespace GameTests
 
         public void Init()
         {
-            _scene = new EditorScene();
-            _clipboard = new EditorScene();
+            var fakeWindow = new FakeVirtualWindow();
+            _scene = new EditorScene(fakeWindow);
+            _clipboard = new EditorScene(fakeWindow);
         }
 
         /*[TestMethod]

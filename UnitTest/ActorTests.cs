@@ -122,7 +122,7 @@ namespace GameTests
             enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)(Math.PI / 2)));
             exit.SetTransform(new Transform2(new Vector2(5, 0)));
 
-            scene.Step();
+            scene.Step(1 / 60f);
 
             Vector2 centroid = actor.GetCentroid();
             foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))

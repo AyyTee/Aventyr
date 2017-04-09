@@ -16,7 +16,7 @@ namespace GameTests
         public Tuple<EditorScene, EditorWall> CreateTestScene()
         {
             EditorPortal portal0, portal1;
-            EditorScene scene = new EditorScene();
+            EditorScene scene = new EditorScene(new FakeVirtualWindow());
             EditorWall polygon = new EditorWall(scene, PolygonFactory.CreateRectangle(2, 2));
 
             portal0 = new EditorPortal(scene);
@@ -34,7 +34,7 @@ namespace GameTests
         public void FixturePortal()
         {
             EditorPortal portal0, portal1;
-            EditorScene scene = new EditorScene();
+            EditorScene scene = new EditorScene(new FakeVirtualWindow());
             EditorWall polygon = new EditorWall(scene, PolygonFactory.CreateRectangle(2, 2));
 
             portal0 = new EditorPortal(scene);
