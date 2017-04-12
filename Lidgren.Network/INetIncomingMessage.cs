@@ -8,7 +8,7 @@ namespace Lidgren.Network
         NetDeliveryMethod DeliveryMethod { get; }
         NetIncomingMessageType MessageType { get; }
         double ReceiveTime { get; }
-        NetConnection SenderConnection { get; }
+        INetConnection SenderConnection { get; }
         IPEndPoint SenderEndPoint { get; }
         int SequenceChannel { get; }
 

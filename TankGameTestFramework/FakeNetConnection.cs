@@ -8,11 +8,21 @@ namespace TankGameTestFramework
 {
     public class FakeNetConnection : INetConnection
     {
-        public FakeNetPeer EndPoint { get; set; }
+        public FakeNetConnection(FakeNetPeer start, FakeNetPeer end)
+        {
+            StartPoint = start;
+            EndPoint = end;
+        }
+
+        public FakeNetPeer StartPoint { get; private set; }
+
+        public FakeNetPeer EndPoint { get; private set; }
 
         public List<FakeNetIncomingMessage> MessagesInTransit { get; private set; } = new List<FakeNetIncomingMessage>();
 
-        public float AverageRoundtripTime { get; set; }
+        public float AverageRoundtripTime => (float)Latency * 2;
+
+        public long RemoteUniqueIdentifier => StartPoint.UniqueIdentifier;
 
         #region Not Implemented
         public int CurrentMTU
@@ -63,23 +73,7 @@ namespace TankGameTestFramework
             }
         }
 
-        public long RemoteUniqueIdentifier
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public NetConnectionStatistics Statistics
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public NetConnectionStatus Status
         {
             get
             {
@@ -164,11 +158,11 @@ namespace TankGameTestFramework
             _msg.SendTime = NetTime.Now;
             if (Latency > 0)
             {
-                MessagesInTransit.Add(_msg.ToIncomingMessage(Latency));
+                MessagesInTransit.Add(_msg.ToIncomingMessage(this));
             }
             else
             {
-                EndPoint.Messages.Enqueue(_msg.ToIncomingMessage(Latency));
+                EndPoint.Messages.Enqueue(_msg.ToIncomingMessage(this));
             }
             return NetSendResult.Sent;
         }
@@ -184,5 +178,7 @@ namespace TankGameTestFramework
         }
 
         public double Latency { get; set; }
+
+        public NetConnectionStatus Status => NetConnectionStatus.Connected;
     }
 }

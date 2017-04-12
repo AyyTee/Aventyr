@@ -145,8 +145,6 @@ namespace TankGameTestFramework
             }
         }
 
-        public long UniqueIdentifier { get; set; } = new Random().NextLong();
-
         public NetUPnP UPnP
         {
             get
@@ -157,22 +155,22 @@ namespace TankGameTestFramework
 
         public INetConnection Connect(IPEndPoint remoteEndPoint)
         {
-            return new FakeNetConnection();
+            return new FakeNetConnection(null, null);
         }
 
         public INetConnection Connect(string host, int port)
         {
-            return new FakeNetConnection();
+            return new FakeNetConnection(null, null);
         }
 
         public INetConnection Connect(IPEndPoint remoteEndPoint, INetOutgoingMessage hailMessage)
         {
-            return new FakeNetConnection();
+            return new FakeNetConnection(null, null);
         }
 
         public INetConnection Connect(string host, int port, INetOutgoingMessage hailMessage)
         {
-            return new FakeNetConnection();
+            return new FakeNetConnection(null, null);
         }
 
         public INetOutgoingMessage CreateMessage()
@@ -281,6 +279,8 @@ namespace TankGameTestFramework
             throw new NotImplementedException();
         }
 #endregion
+
+        public long UniqueIdentifier { get; set; } = new Random().NextLong();
 
         public void Start()
         {

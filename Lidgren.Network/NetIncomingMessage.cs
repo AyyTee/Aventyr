@@ -63,7 +63,7 @@ namespace Lidgren.Network
 		/// <summary>
 		/// NetConnection of sender, if any
 		/// </summary>
-		public NetConnection SenderConnection { get { return m_senderConnection; } }
+		public INetConnection SenderConnection { get { return m_senderConnection; } }
 
 		/// <summary>
 		/// What local time the message was received from the network

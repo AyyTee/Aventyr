@@ -20,7 +20,8 @@ namespace TankGameTestFramework
     {
         static void Main(string[] args)
         {
-            bool splitScreen = false;
+            bool splitScreen = true;
+            //splitScreen = false;
             if (splitScreen)
             {
                 RunSplitScreen();
@@ -39,21 +40,25 @@ namespace TankGameTestFramework
 
             var server = new FakeNetServer();
             var client = new FakeNetClient();
-            server.Connections.Add(new FakeNetConnection() { EndPoint = client });
-            client.Connections.Add(new FakeNetConnection() { EndPoint = server });
-            var netController = new NetworkController();
-            netController.Connections.AddRange(server.Connections);
-            netController.Connections.AddRange(client.Connections);
-            controller.Controllers.Add(netController);
+            server.Connections.Add(new FakeNetConnection(server, client));
+            client.Connections.Add(new FakeNetConnection(client, server));
+
+            server.Messages.Enqueue(new FakeNetIncomingMessage() { MessageType = NetIncomingMessageType.StatusChanged, SenderConnection = client.ServerConnection });
 
             var windowClient = new VirtualWindow(controller);
             windowClient.CanvasSize = (Size)center;
+            windowClient.CanvasPosition = new Point(0, center.Y);
             controller.Controllers.Add(new Server(windowClient, server));
 
             var windowServer = new VirtualWindow(controller);
             windowServer.CanvasSize = (Size)center;
             windowServer.CanvasPosition = center;
             controller.Controllers.Add(new Client(windowServer, null, client));
+
+            var netController = new NetworkController();
+            netController.Connections.AddRange(server.Connections);
+            netController.Connections.AddRange(client.Connections);
+            controller.Controllers.Add(netController);
 
             controller.Run();
         }

@@ -118,10 +118,10 @@ namespace Lidgren.Network
 			}
 
 			Dictionary<int, ReceivedFragmentGroup> groups;
-			if (!m_receivedFragmentGroups.TryGetValue(im.SenderConnection, out groups))
+			if (!m_receivedFragmentGroups.TryGetValue((NetConnection)im.SenderConnection, out groups))
 			{
 				groups = new Dictionary<int, ReceivedFragmentGroup>();
-				m_receivedFragmentGroups[im.SenderConnection] = groups;
+				m_receivedFragmentGroups[(NetConnection)im.SenderConnection] = groups;
 			}
 
 			ReceivedFragmentGroup info;

@@ -9,13 +9,14 @@ namespace TankGameTestFramework
 {
     public class FakeNetOutgoingMessage : FakeNetMessage, INetOutgoingMessage
     {
-        public FakeNetIncomingMessage ToIncomingMessage(double latency)
+        public FakeNetIncomingMessage ToIncomingMessage(FakeNetConnection senderConnection)
         {
             return new FakeNetIncomingMessage
             {
                 Data = Data,
                 SendTime = SendTime,
-                ReceiveTime = SendTime + latency
+                ReceiveTime = SendTime + senderConnection.Latency,
+                SenderConnection = senderConnection,
             };
         }
 

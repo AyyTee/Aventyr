@@ -211,7 +211,7 @@ namespace Lidgren.Network
 				if (retval.MessageType == NetIncomingMessageType.StatusChanged)
 				{
 					NetConnectionStatus status = (NetConnectionStatus)retval.PeekByte();
-					retval.SenderConnection.m_visibleStatus = status;
+					((NetConnection)retval.SenderConnection).m_visibleStatus = status;
 				}
 			}
 			return retval;
@@ -244,7 +244,7 @@ namespace Lidgren.Network
 					if (nim.MessageType == NetIncomingMessageType.StatusChanged)
 					{
 						NetConnectionStatus status = (NetConnectionStatus)nim.PeekByte();
-						nim.SenderConnection.m_visibleStatus = status;
+                        ((NetConnection)nim.SenderConnection).m_visibleStatus = status;
 					}
 				}
 			}

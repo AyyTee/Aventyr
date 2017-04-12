@@ -41,15 +41,13 @@ namespace TankGameTests
             _server = new Server(_serverWindow, _netServer);
             _server.Init();
 
-            _netServer.Connections.Add(new FakeNetConnection
+            _netServer.Connections.Add(new FakeNetConnection(_netServer, _netClient)
             {
-                EndPoint = _netClient,
-                AverageRoundtripTime = 0.2f
+                Latency = 0.1f
             });
-            _netClient.Connections.Add(new FakeNetConnection
+            _netClient.Connections.Add(new FakeNetConnection(_netClient, _netServer)
             {
-                EndPoint = _netServer,
-                AverageRoundtripTime = 0.2f
+                Latency = 0.1f
             });
         }
 
@@ -88,7 +86,7 @@ namespace TankGameTests
                         }
                     }
                 };
-                var message = ((FakeNetOutgoingMessage)NetworkHelper.PrepareMessage(_client, data)).ToIncomingMessage(0);
+                var message = ((FakeNetOutgoingMessage)NetworkHelper.PrepareMessage(_client, data)).ToIncomingMessage(_netServer.Connections[0]);
                 message.MessageType = NetIncomingMessageType.Data;
                 _netClient.Messages.Enqueue(message);
 
@@ -118,6 +116,7 @@ namespace TankGameTests
         public void ClientRecieveServer()
         {
             _server.SendMessage(new ServerMessage { SceneTime = 1 });
+            AdvanceTime(2);
             ServerMessage serverMessage = NetworkHelper.ReadMessage<ServerMessage>(_netClient.ReadMessage());
             Assert.IsTrue(serverMessage.SceneTime == 1);
         }

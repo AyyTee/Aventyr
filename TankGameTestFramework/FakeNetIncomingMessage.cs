@@ -21,13 +21,7 @@ namespace TankGameTestFramework
 
         public double ReceiveTime { get; set; }
 
-        public NetConnection SenderConnection
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
+        public INetConnection SenderConnection { get; set; }
 
         public IPEndPoint SenderEndPoint
         {
@@ -45,7 +39,7 @@ namespace TankGameTestFramework
             }
         }
 
-        public NetIncomingMessageType MessageType { get; set; }
+        public NetIncomingMessageType MessageType { get; set; } = NetIncomingMessageType.Data;
 
         public bool Decrypt(NetEncryption encryption)
         {

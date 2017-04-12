@@ -137,6 +137,7 @@ namespace Game.Rendering
             {
                 SetScissor(window);
                 GL.Viewport(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.Width, window.CanvasSize.Height);
+                GL.Clear(ClearBufferMask.StencilBufferBit);
 
                 foreach (var layer in window.Layers)
                 {
@@ -454,6 +455,10 @@ namespace Game.Rendering
                     vMin = Vector2.ComponentMin(vMin, vTransform);
                 }
             }
+
+            vMin += new Vector2(window.CanvasPosition.X, window.CanvasPosition.Y);
+            vMax += new Vector2(window.CanvasPosition.X, window.CanvasPosition.Y);
+
             //The -1 and +3 are margins to prevent rounding errors from making the scissor box too small.
             GL.Scissor((int)vMin.X - 1, (int)vMin.Y - 1, (int)(vMax.X - vMin.X) + 3, (int)(vMax.Y - vMin.Y) + 3);
         }
