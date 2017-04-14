@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animation\AnimationDriver.cs" />
+    <Compile Include="AssetPaths.cs" />
     <Compile Include="Common\GeometryUtil.cs" />
     <Compile Include="Animation\Curve.cs" />
     <Compile Include="Animation\Curve2.cs" />
@@ -170,6 +171,7 @@
     <Compile Include="Rendering\IClientSizeProvider.cs" />
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\IVirtualWindow.cs" />
+    <Compile Include="Rendering\Layer.cs" />
     <Compile Include="ResourceController.cs" />
     <Compile Include="Rendering\VirtualWindow.cs" />
     <Compile Include="Serialization\DeepClone.cs" />

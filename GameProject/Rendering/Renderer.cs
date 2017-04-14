@@ -19,11 +19,6 @@ namespace Game.Rendering
     /// </summary>
     public class Renderer : IRenderer
     {
-        public static string FontFolder { get; } = Path.Combine(new[] { "assets", "fonts" });
-        public static string ShaderFolder { get; } = Path.Combine(new[] { "assets", "shaders" });
-        public static string TextureFolder { get; } = Path.Combine(new[] { "assets", "textures" });
-        public static string SoundFolder { get; private set; } = Path.Combine(new[] { "assets", "sounds" });
-
         public bool PortalRenderEnabled { get; set; } = true;
         public int PortalRenderMax { get; set; } = 50;
         public int PortalClipDepth { get; set; } = 4;
@@ -74,20 +69,14 @@ namespace Game.Rendering
 
 
             // Load textures from file
-            _textures.Add("default.png", new TextureFile(Path.Combine(TextureFolder, "default.png")));
-            _textures.Add("grid.png", new TextureFile(Path.Combine(TextureFolder, "grid.png")));
-            _textures.Add("lineBlur.png", new TextureFile(Path.Combine(TextureFolder, "lineBlur.png")));
-
-            //Create the default font
-            PrivateFontCollection privateFonts = new PrivateFontCollection();
-            privateFonts.AddFontFile(Path.Combine(FontFolder, "times.ttf"));
-            var Default = new Font(privateFonts.Families[0], 14);
-            var FontRenderer = new FontRenderer(Default);
+            _textures.Add("default.png", new TextureFile(Path.Combine(AssetPaths.TextureFolder, "default.png")));
+            _textures.Add("grid.png", new TextureFile(Path.Combine(AssetPaths.TextureFolder, "grid.png")));
+            _textures.Add("lineBlur.png", new TextureFile(Path.Combine(AssetPaths.TextureFolder, "lineBlur.png")));
 
             // Load shaders from file
             _shaders.Add("uber", new Shader(
-                Path.Combine(ShaderFolder, "vs_uber.glsl"),
-                Path.Combine(ShaderFolder, "fs_uber.glsl"),
+                Path.Combine(AssetPaths.ShaderFolder, "vs_uber.glsl"),
+                Path.Combine(AssetPaths.ShaderFolder, "fs_uber.glsl"),
                 true));
         }
 
@@ -172,14 +161,14 @@ namespace Game.Rendering
         {
             Debug.Assert(window.Layers.Contains(layer));
 
-            ICamera2 cam = layer.GetCamera();
+            ICamera2 cam = layer.Camera;
             if (cam == null)
             {
                 return;
             }
             PortalView portalView = PortalView.CalculatePortalViews(
                 shutterTime,
-                layer.GetPortalList().ToArray(),
+                layer.Portals,
                 cam,
                 PortalRenderEnabled ? PortalRenderMax : 0);
             List<PortalView> portalViewList = portalView.GetPortalViewList();
@@ -210,14 +199,13 @@ namespace Game.Rendering
             #region Get models.
             {
                 HashSet<Model> models = new HashSet<Model>();
-                List<IRenderable> renderList = layer.GetRenderList();
-                foreach (IRenderable e in renderList)
+                foreach (IRenderable e in layer.Renderables)
                 {
                     if (!e.Visible)
                     {
                         continue;
                     }
-                    List<Clip.ClipModel> clipModels = Clip.GetClipModels(e, layer.GetPortalList(), PortalClipDepth);
+                    List<Clip.ClipModel> clipModels = Clip.GetClipModels(e, layer.Portals, PortalClipDepth);
                     foreach (Clip.ClipModel clip in clipModels)
                     {
                         if (clip.ClipLines.Length > 0)

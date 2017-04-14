@@ -19,6 +19,7 @@ namespace Game
 
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
         public Dictionary<string, ITexture> Textures => new Dictionary<string, ITexture>();
+        public FontRenderer FontRenderer => null;
 
         public float UpdatesPerSecond => 60;
         public float RendersPerSecond => 60;

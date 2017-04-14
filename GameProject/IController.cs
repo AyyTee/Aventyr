@@ -8,6 +8,6 @@ namespace Game
 {
     public interface IUpdateable
     {
-        void Update();
+        void Update(double timeDelta);
     }
 }

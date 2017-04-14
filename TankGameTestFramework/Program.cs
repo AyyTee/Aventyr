@@ -34,31 +34,31 @@ namespace TankGameTestFramework
 
         static void RunSplitScreen()
         {
-            var controller = new ResourceController();
+            var controller = new ResourceController(new Size(1000, 800));
 
             var center = new Point(controller.ClientSize.Width / 2, controller.ClientSize.Height / 2);
 
             var server = new FakeNetServer();
             var client = new FakeNetClient();
-            server.Connections.Add(new FakeNetConnection(server, client));
-            client.Connections.Add(new FakeNetConnection(client, server));
+            server.Connections.Add(new FakeNetConnection(server, client) { Latency = 0.5 });
+            client.Connections.Add(new FakeNetConnection(client, server) { Latency = 0.5 });
 
             server.Messages.Enqueue(new FakeNetIncomingMessage() { MessageType = NetIncomingMessageType.StatusChanged, SenderConnection = client.ServerConnection });
 
             var windowClient = new VirtualWindow(controller);
             windowClient.CanvasSize = (Size)center;
             windowClient.CanvasPosition = new Point(0, center.Y);
-            controller.Controllers.Add(new Server(windowClient, server));
+            controller.AddController(new Server(windowClient, server));
 
             var windowServer = new VirtualWindow(controller);
             windowServer.CanvasSize = (Size)center;
             windowServer.CanvasPosition = center;
-            controller.Controllers.Add(new Client(windowServer, null, client));
+            controller.AddController(new Client(windowServer, null, client));
 
             var netController = new NetworkController();
             netController.Connections.AddRange(server.Connections);
             netController.Connections.AddRange(client.Connections);
-            controller.Controllers.Add(netController);
+            controller.AddController(netController);
 
             controller.Run();
         }

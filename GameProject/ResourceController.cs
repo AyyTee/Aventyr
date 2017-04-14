@@ -12,6 +12,7 @@ using Cgen.Audio;
 using OpenTK.Input;
 using OpenTK;
 using OpenTK.Graphics;
+using System.Diagnostics;
 
 namespace Game
 {
@@ -25,9 +26,12 @@ namespace Game
 
         public IRenderer Renderer { get; private set; }
 
+        public FontRenderer FontRenderer { get; private set; }
+
         public IInput Input { get; private set; }
 
-        public List<IUpdateable> Controllers { get; private set; } = new List<IUpdateable>();
+        readonly List<ControllerData> _controllers = new List<ControllerData>();
+        readonly Stopwatch _stopwatch = new Stopwatch();
 
         public static readonly GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
 
@@ -39,11 +43,17 @@ namespace Game
         readonly SoundSystem _soundSystem;
         bool _soundEnabled;
 
-        public ResourceController(string windowName = "Game")
+        public ResourceController(Size windowSize, string windowName = "Game")
         {
-            _window = new GameWindow(800, 600, DefaultGraphics, windowName, GameWindowFlags.FixedWindow);
+            _window = new GameWindow(windowSize.Width, windowSize.Height, DefaultGraphics, windowName, GameWindowFlags.FixedWindow);
             Renderer = new Renderer(this);
             Input = new Input(_window);
+
+            //Create the default font
+            PrivateFontCollection privateFonts = new PrivateFontCollection();
+            privateFonts.AddFontFile(Path.Combine(AssetPaths.FontFolder, "times.ttf"));
+            var Default = new Font(privateFonts.Families[0], 14);
+            FontRenderer = new FontRenderer(Default);
 
             _soundEnabled = false;
             if (_soundEnabled)
@@ -59,6 +69,7 @@ namespace Game
 
         public void Run()
         {
+            _stopwatch.Start();
             _window.Run(60);
         }
 
@@ -70,6 +81,7 @@ namespace Game
 
         void Update()
         {
+
             Input.Update(_window.Focused);
             if (Input.KeyPress(Key.F4))
             {
@@ -90,10 +102,16 @@ namespace Game
                 TextureGarbage.Clear();
             }
 
-            foreach (var controller in Controllers)
+            foreach (var controller in _controllers)
             {
-                controller.Update();
+                double timeDelta = _stopwatch.ElapsedMilliseconds / 1000 - controller.LastUpdate;
+                controller.Controller.Update(timeDelta);
             }
+        }
+
+        public void AddController(IUpdateable controller)
+        {
+            _controllers.Add(new ControllerData { Controller = controller });
         }
 
         void ToggleFullScreen()
@@ -108,6 +126,12 @@ namespace Game
                 _window.WindowState = WindowState.Normal;
                 _window.ClientSize = new Size(800, 600);
             }
+        }
+
+        class ControllerData
+        {
+            public IUpdateable Controller;
+            public double LastUpdate;
         }
     }
 }

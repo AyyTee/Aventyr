@@ -16,6 +16,7 @@ namespace Game.Rendering
         public IInput Input => _resourceController.Input;
         public Dictionary<string, ITexture> Textures => _resourceController.Renderer.Textures;
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
+        public FontRenderer FontRenderer => _resourceController.FontRenderer;
         public float UpdatesPerSecond => 60;
         public float RendersPerSecond => 60;
 

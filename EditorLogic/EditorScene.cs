@@ -18,7 +18,7 @@ using Xna = Microsoft.Xna.Framework;
 namespace EditorLogic
 {
     [DataContract]
-    public class EditorScene : IRenderLayer, IScene
+    public class EditorScene : IScene
     {
         [DataMember]
         public List<EditorObject> Children = new List<EditorObject>();
@@ -57,6 +57,7 @@ namespace EditorLogic
                 set.UnionWith(Tree<EditorObject>.GetDescendents(e));
             }
             set.Add(ActiveCamera);
+            set.UnionWith(Doodads);
             return set.ToList();
         }
 
@@ -67,13 +68,6 @@ namespace EditorLogic
             {
                 e.Remove();
             }
-        }
-
-        public List<IRenderable> GetRenderList()
-        {
-            List<IRenderable> renderList = GetAll().OfType<IRenderable>().ToList();
-            renderList.AddRange(Doodads);
-            return renderList;
         }
 
         public List<IPortalable> GetPortalableList()

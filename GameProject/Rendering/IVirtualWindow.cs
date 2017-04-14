@@ -10,6 +10,7 @@ namespace Game.Rendering
         IInput Input { get; }
         Dictionary<string, ITexture> Textures { get; }
         List<IRenderLayer> Layers { get; }
+        FontRenderer FontRenderer { get; }
         float UpdatesPerSecond { get; }
         float RendersPerSecond { get; }
     }

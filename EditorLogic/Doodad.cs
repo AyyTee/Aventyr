@@ -10,11 +10,13 @@ using Game.Rendering;
 
 namespace EditorLogic
 {
-    public class Doodad : IRenderable, ITransformable2
+    public class Doodad : IRenderable, ITransformable2, ISceneObject
     {
         public bool DrawOverPortals => false;
         public bool IsPortalable { get; set; }
         public bool Visible { get; set; }
+        public string Name => "Doodad";
+
         Transform2 _transform = new Transform2();
         public List<Model> Models = new List<Model>();
 
@@ -52,6 +54,10 @@ namespace EditorLogic
         public void SetTransform(Transform2 transform)
         {
             _transform = transform.ShallowClone();
+        }
+
+        public void Remove()
+        {
         }
     }
 }

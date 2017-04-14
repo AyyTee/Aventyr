@@ -10,10 +10,9 @@ using Game.Rendering;
 
 namespace TankGame.Network
 {
-    public interface INetController
+    public interface INetController : IUpdateable
     {
         void Init();
-        void Update();
         string Name { get; }
         INetPeer Peer { get; }
         int StepCount { get; }

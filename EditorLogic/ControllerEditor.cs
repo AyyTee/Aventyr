@@ -88,12 +88,8 @@ namespace EditorLogic
         {
             //SceneStop();
             SetTool(null);
-            Window.Layers.Remove(Hud);
-            Window.Layers.Remove(Level);
             Hud = new Scene();
             Level = new EditorScene(Window);
-            Window.Layers.Add(Level);
-            Window.Layers.Add(Hud);
 
             Selection = new Selection(Level);
             StateList = new StateList();
@@ -115,8 +111,6 @@ namespace EditorLogic
             EditorScene load = Serializer.Deserialize(filepath);
             load.ActiveCamera.Controller = this;
             load.ActiveCamera.InputExt = Window.Input;
-            Window.Layers.Add(load);
-            Window.Layers.Remove(Level);
             Level = load;
             Selection = new Selection(Level);
 
@@ -192,6 +186,20 @@ namespace EditorLogic
             }
         }
 
+        void Render()
+        {
+            Window.Layers.Clear();
+            if (IsStopped)
+            {
+                Window.Layers.Add(new Layer(Level));
+                Window.Layers.Add(new Layer(Hud));
+            }
+            else
+            {
+                Window.Layers.Add(new Layer(ActiveLevel));
+            }
+        }
+
         public void Update()
         {
             //Avoid a potential deadlock by making a copy of the action queue and releasing 
@@ -245,6 +253,8 @@ namespace EditorLogic
             {
                 SceneModified(modified);
             }
+
+            Render();
         }
 
         public void Undo()
@@ -314,9 +324,6 @@ namespace EditorLogic
             if (ActiveLevel == null)
             {
                 ActiveLevel = LevelExport.Export(Level, Window);
-                Window.Layers.Add(ActiveLevel);
-                Window.Layers.Remove(Level);
-                Window.Layers.Remove(Hud);
             }
             _stepsPending = 0;
             IsPaused = false;
@@ -331,13 +338,6 @@ namespace EditorLogic
 
         public void SceneStop()
         {
-            if (ActiveLevel != null)
-            {
-                Window.Layers.Remove(ActiveLevel);
-                Window.Layers.Add(Level);
-                Window.Layers.Add(Hud);
-            }
-
             ActiveLevel = null;
             IsPaused = true;
             SceneStopEvent(this);

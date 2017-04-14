@@ -17,7 +17,7 @@ namespace TankGameTestFramework
         {
         }
 
-        public void Update()
+        public void Update(double timeDelta)
         {
             NetTime.SetTime(NetTime.Now + 1 / 60.0);
             foreach (var connection in Connections)

@@ -91,7 +91,7 @@ namespace TankGameTests
                 _netClient.Messages.Enqueue(message);
 
                 _clientWindow.Input.KeyCurrent.Add(Key.Space);
-                _client.Update();
+                _client.Update(1 / 60.0);
 
                 Assert.IsTrue(_client.Scene.GetAll().OfType<Bullet>().Count() <= 1);
             }

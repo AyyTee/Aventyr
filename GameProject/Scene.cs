@@ -14,7 +14,7 @@ using Game.Rendering;
 namespace Game
 {
     [DataContract]
-    public class Scene : IRenderLayer, IScene
+    public class Scene : IScene
     {
         public World World { get; private set; }
         PhyicsListener _contactListener;
@@ -142,8 +142,6 @@ namespace Game
             }
             return set.ToList();
         }
-
-        public List<IRenderable> GetRenderList() => SceneObjects.OfType<IRenderable>().ToList();
 
         public List<IPortal> GetPortalList() => GetAll().OfType<IPortal>().ToList();
 

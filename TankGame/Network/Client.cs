@@ -17,7 +17,7 @@ using Game.Rendering;
 
 namespace TankGame.Network
 {
-    public class Client : IUpdateable, INetController
+    public class Client : INetController
     {
         /// <summary>
         /// This client's id.
@@ -77,14 +77,18 @@ namespace TankGame.Network
             entity2.ModelList[0].SetTexture(_window.Textures.GetOrDefault("default.png"));
 
             PortalCommon.UpdateWorldTransform(Scene);
-            _window.Layers.Add(Scene);
         }
 
-        public void Render()
+        void Render(double timeDelta)
         {
+            _window.Layers.Clear();
+            _window.Layers.Add(new Layer(Scene));
+
+            var gui = new Layer();
+            //_window.FontRenderer.GetModel($"FPS: {1 / timeDelta}");
         }
 
-        public void Update()
+        public void Update(double timeDelta)
         {
             NetworkStep();
 
@@ -140,6 +144,8 @@ namespace TankGame.Network
                 Scene.Step(1 / _window.UpdatesPerSecond);
             }
             StepCount++;
+
+            Render(timeDelta);
         }
 
         Tank GetTank()

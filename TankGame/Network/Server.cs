@@ -14,7 +14,7 @@ using Game.Rendering;
 
 namespace TankGame.Network
 {
-    public class Server : IUpdateable, INetController
+    public class Server : INetController
     {
         Dictionary<long, Tank> _tanks = new Dictionary<long, Tank>();
         readonly INetServer _server;
@@ -70,7 +70,6 @@ namespace TankGame.Network
             _walls[1].SetTransform(new Transform2(new Vector2(1, 3)));
 
             PortalCommon.UpdateWorldTransform(_scene);
-            _window.Layers.Add(_scene);
         }
 
         public T InitNetObject<T>(T netObject) where T : INetObject
@@ -105,9 +104,11 @@ namespace TankGame.Network
 
         public void Render()
         {
+            _window.Layers.Clear();
+            _window.Layers.Add(new Layer(_scene));
         }
 
-        public void Update()
+        public void Update(double timeDelta)
         {
             NetworkStep();
 
@@ -139,6 +140,8 @@ namespace TankGame.Network
                     SceneTime = _scene.Time,
                 });
             }
+
+            Render();
         }
 
         public void NetworkStep()

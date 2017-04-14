@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using Game.Models;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using System.Diagnostics;
 
 namespace Game.Rendering
 {
@@ -20,7 +21,7 @@ namespace Game.Rendering
                 _pixelRegion = pixelRegion;
                 _fontRenderer = fontRenderer;
             }
-            Rectangle _pixelRegion;
+            readonly Rectangle _pixelRegion;
             readonly FontRenderer _fontRenderer;
 
             public Rectangle PixelRegion => _pixelRegion;
@@ -84,6 +85,8 @@ namespace Game.Rendering
             BitmapData data = glyphBitmap.LockBits(new Rectangle(0, 0, glyphBitmap.Width, glyphBitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, _textureSize.Width, _textureSize.Height, 0, _format, PixelType.UnsignedByte, data.Scan0);
             glyphBitmap.UnlockBits(data);
+
+            Debug.Assert(GL.GetError() == ErrorCode.NoError);
         }
 
         public CharData[] GetChar(int[] index)

@@ -19,15 +19,16 @@ namespace EditorLogic
 
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
 
-        public float RendersPerSecond => 60;
-
         public Dictionary<string, ITexture> Textures => Renderer.Textures;
 
         public IRenderer Renderer { get; private set; }
 
+        public FontRenderer FontRenderer { get; private set; }
+
         readonly GLControl _glControl;
 
         public float UpdatesPerSecond => 60;
+        public float RendersPerSecond => 60;
 
         public EditorVirtualWindow(GLControl glControl, IRenderer renderer, IInput input)
         {
