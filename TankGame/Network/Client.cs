@@ -30,6 +30,7 @@ namespace TankGame.Network
         public bool IsConnected => _client.ServerConnection != null;
         readonly Queue<InputTime> _inputQueue = new Queue<InputTime>();
         public Scene Scene { get; private set; }
+        public Scene Hud { get; private set; }
         Renderer _renderer;
         public string Name => "Client";
         double _lastTimestamp;
@@ -58,6 +59,14 @@ namespace TankGame.Network
             Scene = new Scene();
             Scene.Gravity = new Vector2();
 
+            Hud = new Scene();
+            Camera2 camera = new Camera2(
+                Scene,
+                new Transform2(new Vector2(), _window.CanvasSize.Width),
+                _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
+
+            Hud.SetActiveCamera(camera);
+
             Init();
         }
 
@@ -84,8 +93,9 @@ namespace TankGame.Network
             _window.Layers.Clear();
             _window.Layers.Add(new Layer(Scene));
 
-            var gui = new Layer();
-            //_window.FontRenderer.GetModel($"FPS: {1 / timeDelta}");
+            var gui = new Layer(Hud);
+            gui.Renderables.Add(new TextEntity(_window.FontRenderer, new Vector2(), $"TEST0123456789") { Transform = new Transform2(new Vector2(), 1f)});
+            _window.Layers.Add(gui);
         }
 
         public void Update(double timeDelta)

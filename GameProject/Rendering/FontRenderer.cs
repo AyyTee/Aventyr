@@ -62,7 +62,7 @@ namespace Game.Rendering
                     var charSize = new Size((int)Math.Ceiling(charSizeF.Width), (int)Math.Ceiling(charSizeF.Height));
 
                     //fudge factor to prevent glyphs from overlapping
-                    charSize.Width += 2;
+                    //charSize.Width += 2;
 
                     if (charSize.Width + charPoint.X > _textureSize.Width)
                     {
@@ -78,7 +78,7 @@ namespace Game.Rendering
                 for (int i = 0; i < _chars.Length; i++)
                 {
                     var point = new PointF(_chars[i].PixelRegion.X, _chars[i].PixelRegion.Y);
-                    gfx.DrawString(new string(new[] { Convert.ToChar(i) }), font1, new SolidBrush(Color.Black), point);
+                    gfx.DrawString(new string(new[] { Convert.ToChar(i) }), font1, new SolidBrush(Color.HotPink), point);
                 }
             }
 
@@ -89,11 +89,16 @@ namespace Game.Rendering
             Debug.Assert(GL.GetError() == ErrorCode.NoError);
         }
 
-        public CharData[] GetChar(int[] index)
+        public CharData[] GetChar(List<int> index)
         {
-            CharData[] charData = new CharData[index.Length];
-            for (int i = 0; i < index.Length; i++)
+            CharData[] charData = new CharData[index.Count];
+            for (int i = 0; i < index.Count; i++)
             {
+                if (_chars.Length <= index[i])
+                {
+                    charData[i] = _chars[40];
+                    continue;
+                }
                 charData[i] = _chars[index[i]];
             }
             return charData;
@@ -103,8 +108,7 @@ namespace Game.Rendering
         {
             char[] charArray = index.ToCharArray();
             var charList = new List<char>(charArray);
-            var intList = charList.ConvertAll(Convert.ToInt32);
-            return GetChar(intList.ToArray());
+            return GetChar(charList.ConvertAll(Convert.ToInt32));
         }
 
         /// <summary>

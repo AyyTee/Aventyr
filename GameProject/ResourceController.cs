@@ -52,7 +52,7 @@ namespace Game
             //Create the default font
             PrivateFontCollection privateFonts = new PrivateFontCollection();
             privateFonts.AddFontFile(Path.Combine(AssetPaths.FontFolder, "times.ttf"));
-            var Default = new Font(privateFonts.Families[0], 14);
+            var Default = new Font(privateFonts.Families[0], 40);
             FontRenderer = new FontRenderer(Default);
 
             _soundEnabled = false;
@@ -70,7 +70,7 @@ namespace Game
         public void Run()
         {
             _stopwatch.Start();
-            _window.Run(60);
+            _window.Run(60, 60);
         }
 
         void Render()
