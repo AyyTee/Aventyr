@@ -75,7 +75,7 @@ namespace EditorLogic
             Clipboard = new EditorScene(Window);
 
             LevelCreate();
-            Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(Window.CanvasSize.Width / 2f, Window.CanvasSize.Height / 2f), Window.CanvasSize.Width), (float)Window.CanvasSize.WidthRatio()));
+            Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(Window.CanvasSize.Width / 2f, Window.CanvasSize.Height / 2f), Window.CanvasSize.Width), (float)Window.CanvasSize.WidthRatio));
 
             PortalCommon.UpdateWorldTransform(Hud);
             PortalCommon.UpdateWorldTransform(Level);
@@ -151,7 +151,7 @@ namespace EditorLogic
         {
             return Level == null ? 
                 Vector2.Zero : 
-                CameraExt.ScreenToWorld(Level.ActiveCamera, Window.Input.MousePos, Vector2Ext.ToOtk(Window.CanvasSize));
+                CameraExt.ScreenToWorld(Level.ActiveCamera, Window.Input.MousePos, (Vector2)Window.CanvasSize);
         }
 
         public Vector2 GetMouseWorldPortal(IEnumerable<IPortal> portals, bool ignorePortalViews)
@@ -165,7 +165,7 @@ namespace EditorLogic
                 return GetMouseWorld();
             }
             Transform2 transform = CameraExt.GetWorldViewpoint(Level.ActiveCamera);
-            Vector2 mousePos = CameraExt.ScreenToWorld(Level.ActiveCamera, Window.Input.MousePos, Vector2Ext.ToOtk(Window.CanvasSize));
+            Vector2 mousePos = CameraExt.ScreenToWorld(Level.ActiveCamera, Window.Input.MousePos, (Vector2)Window.CanvasSize);
             var portalable = new Portalable(null, transform, Transform2.CreateVelocity(mousePos - transform.Position));
             Ray.RayCast(portalable, Level.GetPortalList(), new Ray.Settings());
             return portalable.GetTransform().Position;

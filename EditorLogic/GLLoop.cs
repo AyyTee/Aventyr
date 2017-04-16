@@ -1,4 +1,5 @@
 ﻿using Game;
+using Game.Common;
 using Game.Rendering;
 using OpenTK;
 using System;
@@ -99,7 +100,7 @@ namespace EditorLogic
                     _stopwatch.Restart();
                     if (_resize)
                     {
-                        _window.CanvasSize = _control.ClientSize;
+                        _window.CanvasSize = (Size)_control.ClientSize;
                         _resize = false;
                     }
                     _window.Input.Update(_focused);

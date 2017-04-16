@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using ClipperLib;
 using Game.Common;
@@ -55,7 +54,7 @@ namespace Game.Rendering
                 _enableCap[e] = null;
             }
 
-            GL.ClearColor(Color.HotPink);
+            GL.ClearColor(System.Drawing.Color.HotPink);
             GL.CullFace(CullFaceMode.Back);
             GL.Enable(EnableCap.CullFace);
             GL.ClearStencil(0);

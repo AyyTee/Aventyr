@@ -22,7 +22,8 @@ namespace Game.Models
         {
             var vertices = mesh.GetVertices();
             var indices = mesh.GetIndices();
-            return indices.Count % 3 == 0 &&
+            return indices.Count % 3 == 0 && 
+                vertices.All(item => item != null) &&
                 (indices.Count == 0 ||
                 (indices.Max() < vertices.Count() && indices.Min() >= 0));
         }

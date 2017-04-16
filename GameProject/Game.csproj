@@ -140,6 +140,8 @@
     <Compile Include="Common\IAlmostEqual.cs" />
     <Compile Include="Common\IValueEquality.cs" />
     <Compile Include="Common\Line.cs" />
+    <Compile Include="Common\Size.cs" />
+    <Compile Include="Common\Point.cs" />
     <Compile Include="Common\Transform2d.cs" />
     <Compile Include="FakeInput.cs" />
     <Compile Include="FakeVirtualWindow.cs" />
@@ -206,7 +208,7 @@
     <Compile Include="Physics\FixtureExt.cs" />
     <Compile Include="Physics\FixtureData.cs" />
     <Compile Include="Portals\FloatPortal.cs" />
-    <Compile Include="Rendering\FontRenderer.cs" />
+    <Compile Include="Rendering\Font.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Physics\FixtureCoord.cs" />
     <Compile Include="Common\LineF.cs" />
@@ -235,7 +237,6 @@
     <Compile Include="Models\Model.cs" />
     <Compile Include="Common\Transform2.cs" />
     <Compile Include="Animation\BezierCurve.cs" />
-    <Compile Include="SizeEx.cs" />
     <Compile Include="Tree.cs" />
     <Compile Include="Models\Triangle.cs" />
     <Compile Include="Common\Vector2Ext.cs" />
@@ -246,6 +247,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="assets\fonts\arial\arial_0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\fonts\inconsolata\inconsolata_0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="assets\sounds\test_sound.ogg">
@@ -271,6 +275,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="assets\fonts\arial\config.bmfc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="assets\fonts\inconsolata\inconsolata.fnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="assets\shaders\fs_uber.glsl">

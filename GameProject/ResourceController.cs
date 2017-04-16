@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,6 +11,7 @@ using OpenTK.Input;
 using OpenTK;
 using OpenTK.Graphics;
 using System.Diagnostics;
+using Game.Common;
 
 namespace Game
 {
@@ -22,11 +21,11 @@ namespace Game
 
         readonly GameWindow _window;
 
-        public Size ClientSize => _window.ClientSize;
+        public Size ClientSize => (Size)_window.ClientSize;
 
         public IRenderer Renderer { get; private set; }
 
-        public FontRenderer FontRenderer { get; private set; }
+        public Dictionary<string, Font> Fonts { get; private set; } = new Dictionary<string, Font>();
 
         public IInput Input { get; private set; }
 
@@ -49,7 +48,8 @@ namespace Game
             Renderer = new Renderer(this);
             Input = new Input(_window);
 
-            FontRenderer = new FontRenderer(Path.Combine(AssetPaths.FontFolder, "arial", "arial.fnt"));
+            Fonts.Add("Arial", new Font(Path.Combine(AssetPaths.FontFolder, "arial", "arial.fnt")));
+            Fonts.Add("Inconsolata", new Font(Path.Combine(AssetPaths.FontFolder, "inconsolata", "inconsolata.fnt")));
 
             _soundEnabled = false;
             if (_soundEnabled)
@@ -117,12 +117,12 @@ namespace Game
             if (_window.WindowState == WindowState.Normal)
             {
                 _window.WindowState = WindowState.Fullscreen;
-                _window.ClientSize = new Size(800, 600);
+                _window.ClientSize = new System.Drawing.Size(800, 600);
             }
             else if (_window.WindowState == WindowState.Fullscreen)
             {
                 _window.WindowState = WindowState.Normal;
-                _window.ClientSize = new Size(800, 600);
+                _window.ClientSize = new System.Drawing.Size(800, 600);
             }
         }
 

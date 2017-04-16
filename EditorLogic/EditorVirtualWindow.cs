@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game;
-using System.Drawing;
 using OpenTK;
+using Game.Common;
 
 namespace EditorLogic
 {
@@ -23,7 +23,7 @@ namespace EditorLogic
 
         public IRenderer Renderer { get; private set; }
 
-        public FontRenderer FontRenderer { get; private set; }
+        public Dictionary<string, Font> Fonts { get; private set; }
 
         readonly GLControl _glControl;
 
@@ -33,7 +33,7 @@ namespace EditorLogic
         public EditorVirtualWindow(GLControl glControl, IRenderer renderer, IInput input)
         {
             _glControl = glControl;
-            CanvasSize = _glControl.ClientSize;
+            CanvasSize = (Size)_glControl.ClientSize;
             Renderer = renderer;
             Input = input;
 

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using Game.Common;
+using System.Collections.Generic;
 
 namespace Game.Rendering
 {
@@ -10,7 +10,7 @@ namespace Game.Rendering
         IInput Input { get; }
         Dictionary<string, ITexture> Textures { get; }
         List<IRenderLayer> Layers { get; }
-        FontRenderer FontRenderer { get; }
+        Dictionary<string, Font> Fonts { get; }
         float UpdatesPerSecond { get; }
         float RendersPerSecond { get; }
     }

@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using Game.Common;
 
 namespace Game.Rendering
 {

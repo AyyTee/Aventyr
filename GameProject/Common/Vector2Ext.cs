@@ -182,11 +182,6 @@ namespace Game.Common
             return new Vector2(v.Xf, v.Yf);
         }
 
-        public static Vector2 ToOtk(System.Drawing.Size v)
-        {
-            return new Vector2(v.Width, v.Height);
-        }
-
         public static Vector2 ToOtk(Vector3 v)
         {
             return new Vector2(v.X, v.Y);

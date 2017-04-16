@@ -1,7 +1,7 @@
-﻿using OpenTK;
+﻿using Game.Common;
+using OpenTK;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ namespace Game.Rendering
         public IInput Input => _resourceController.Input;
         public Dictionary<string, ITexture> Textures => _resourceController.Renderer.Textures;
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
-        public FontRenderer FontRenderer => _resourceController.FontRenderer;
+        public Dictionary<string, Font> Fonts => _resourceController.Fonts;
         public float UpdatesPerSecond => 60;
         public float RendersPerSecond => 60;
 

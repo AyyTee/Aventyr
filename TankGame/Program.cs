@@ -1,9 +1,9 @@
 ﻿using Game;
+using Game.Common;
 using Game.Rendering;
 using Lidgren.Network;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Text;

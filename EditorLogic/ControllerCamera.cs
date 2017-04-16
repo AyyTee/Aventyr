@@ -86,7 +86,7 @@ namespace EditorLogic
                 _zoomFactor = value;
             }
         }
-        public float Aspect => (float)Controller.Window.CanvasSize.WidthRatio();
+        public float Aspect => (float)Controller.Window.CanvasSize.WidthRatio;
         public Vector2 ViewOffset => new Vector2();
         public double Fov => Math.PI / 4;
         public float ZNear => -1000f;
@@ -217,8 +217,8 @@ namespace EditorLogic
                     _lazyPan.Enqueue(
                         CameraExt.ScreenToWorld(
                             this, InputExt.MousePosPrev - InputExt.MousePos, 
-                            Vector2Ext.ToOtk(Controller.Window.CanvasSize)) - CameraExt.ScreenToWorld(this, new Vector2(), 
-                            Vector2Ext.ToOtk(Controller.Window.CanvasSize)));
+                            (Vector2)Controller.Window.CanvasSize) - CameraExt.ScreenToWorld(this, new Vector2(),
+                            (Vector2)Controller.Window.CanvasSize));
                 }
                 else
                 {

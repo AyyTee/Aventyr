@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game;
-using System.Drawing;
+using Game.Common;
 
 namespace Game
 {
@@ -19,7 +19,7 @@ namespace Game
 
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
         public Dictionary<string, ITexture> Textures => new Dictionary<string, ITexture>();
-        public FontRenderer FontRenderer => null;
+        public Dictionary<string, Font> Fonts => null;
 
         public float UpdatesPerSecond => 60;
         public float RendersPerSecond => 60;

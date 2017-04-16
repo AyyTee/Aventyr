@@ -9,7 +9,6 @@ using System.Net;
 using Game;
 using OpenTK;
 using OpenTK.Input;
-using System.Drawing;
 using Game.Portals;
 using System.Diagnostics;
 using Game.Common;
@@ -94,7 +93,8 @@ namespace TankGame.Network
             _window.Layers.Add(new Layer(Scene));
 
             var gui = new Layer(Hud);
-            gui.Renderables.Add(new TextEntity(_window.FontRenderer, new Vector2(-40, 0), $"gFpPS: { (1 / timeDelta).ToString("#.##") }" + Environment.NewLine));
+            gui.Renderables.Add(new TextEntity(_window.Fonts["Inconsolata"], new Vector2(-_window.CanvasSize.Width / 2, 0), 
+                $@"FPS { Environment.NewLine }Avg { (1 / timeDelta).ToString("00.00") }{ Environment.NewLine }Max { (1 / timeDelta).ToString("00.00") }{ Environment.NewLine }Min { (1 / timeDelta).ToString("00.00") }"));
             _window.Layers.Add(gui);
         }
 
@@ -109,7 +109,7 @@ namespace TankGame.Network
                 MoveBackward = _window.Input.KeyDown(Key.S),
                 TurnLeft = _window.Input.KeyDown(Key.A),
                 TurnRight = _window.Input.KeyDown(Key.D),
-                ReticlePos = _window.Input.GetMouseWorldPos(_tankCamera.Camera, Vector2Ext.ToOtk(_window.CanvasSize)),
+                ReticlePos = _window.Input.GetMouseWorldPos(_tankCamera.Camera, (Vector2)_window.CanvasSize),
                 FireGun = _window.Input.KeyPress(Key.Space),
                 FirePortalLeft = _window.Input.MousePress(MouseButton.Left),
                 FirePortalRight = _window.Input.MousePress(MouseButton.Right)
