@@ -13,11 +13,8 @@ namespace Game.Models
     [DataContract]
     public class Model : IShallowClone<Model>
     {
-        public static object LockDelete { get; } = new object();
-
         [DataMember]
         public Transform3 Transform = new Transform3();
-
         /// <summary>If true then gl blending is enabled when rendering this model.</summary>
         [DataMember]
         public bool IsTransparent { get; set; }
@@ -25,6 +22,9 @@ namespace Game.Models
         public ITexture Texture;
         [DataMember]
         public Vector4 Color;
+        /// <summary>
+        /// Offset for the mesh uv coordinates.
+        /// </summary>
         [DataMember]
         public Transform2 TransformUv = new Transform2();
         [DataMember]

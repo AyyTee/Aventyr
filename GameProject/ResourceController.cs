@@ -49,11 +49,7 @@ namespace Game
             Renderer = new Renderer(this);
             Input = new Input(_window);
 
-            //Create the default font
-            PrivateFontCollection privateFonts = new PrivateFontCollection();
-            privateFonts.AddFontFile(Path.Combine(AssetPaths.FontFolder, "times.ttf"));
-            var Default = new Font(privateFonts.Families[0], 40);
-            FontRenderer = new FontRenderer(Default);
+            FontRenderer = new FontRenderer(Path.Combine(AssetPaths.FontFolder, "arial", "arial.fnt"));
 
             _soundEnabled = false;
             if (_soundEnabled)
@@ -104,7 +100,9 @@ namespace Game
 
             foreach (var controller in _controllers)
             {
-                double timeDelta = _stopwatch.ElapsedMilliseconds / 1000 - controller.LastUpdate;
+                double time = _stopwatch.ElapsedMilliseconds / 1000.0;
+                double timeDelta = time - controller.LastUpdate;
+                controller.LastUpdate = time;
                 controller.Controller.Update(timeDelta);
             }
         }

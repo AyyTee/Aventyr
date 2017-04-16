@@ -62,7 +62,7 @@ namespace TankGame.Network
             Hud = new Scene();
             Camera2 camera = new Camera2(
                 Scene,
-                new Transform2(new Vector2(), _window.CanvasSize.Width),
+                new Transform2(new Vector2(), _window.CanvasSize.Height),
                 _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
 
             Hud.SetActiveCamera(camera);
@@ -94,7 +94,7 @@ namespace TankGame.Network
             _window.Layers.Add(new Layer(Scene));
 
             var gui = new Layer(Hud);
-            gui.Renderables.Add(new TextEntity(_window.FontRenderer, new Vector2(), $"TEST0123456789") { Transform = new Transform2(new Vector2(), 1f)});
+            gui.Renderables.Add(new TextEntity(_window.FontRenderer, new Vector2(-40, 0), $"gFpPS: { (1 / timeDelta).ToString("#.##") }" + Environment.NewLine));
             _window.Layers.Add(gui);
         }
 

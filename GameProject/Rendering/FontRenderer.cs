@@ -6,109 +6,29 @@ using Game.Models;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System.Diagnostics;
+using System.Linq;
+using System.IO;
 
 namespace Game.Rendering
 {
     public class FontRenderer
     {
-        readonly int _charHeight;
-        OpenTK.Graphics.OpenGL.PixelFormat _format = OpenTK.Graphics.OpenGL.PixelFormat.Rgba;
+        readonly TextureFile[] _fontTextures;
+        readonly FontFile _fontFile;
+        const int _indicesPerGlyph = 6;
+        const int _verticesPerGlyph = 4;
 
-        public class CharData
+        public FontRenderer(string fontDataFile)
         {
-            public CharData(Rectangle pixelRegion, FontRenderer fontRenderer)
+            _fontFile = FontLoader.Load(fontDataFile);
+
+            _fontTextures = new TextureFile[_fontFile.Pages.Count];
+            Debug.Assert(_fontTextures.Length == 1, "Multiple texture pages not supported yet.");
+            var path = Path.GetDirectoryName(fontDataFile);
+            for (int i = 0; i < _fontTextures.Length; i++)
             {
-                _pixelRegion = pixelRegion;
-                _fontRenderer = fontRenderer;
+                _fontTextures[i] = new TextureFile(Path.Combine(path, _fontFile.Pages[i].File));
             }
-            readonly Rectangle _pixelRegion;
-            readonly FontRenderer _fontRenderer;
-
-            public Rectangle PixelRegion => _pixelRegion;
-
-            public Box2 UvRegion
-            {
-                get 
-                {
-                    var v0 = new Vector2(_pixelRegion.Left / (float)_fontRenderer._textureSize.Width, _pixelRegion.Bottom / (float)_fontRenderer._textureSize.Height);
-                    var v1 = new Vector2(_pixelRegion.Right / (float)_fontRenderer._textureSize.Width, _pixelRegion.Top / (float)_fontRenderer._textureSize.Height);
-                    return new Box2(v0, v1);
-                }
-            }
-        }
-
-        Size _textureSize = new Size(1024, 1024);
-        public Texture Texture;
-        readonly CharData[] _chars = new CharData[255];
-        public FontRenderer(Font font)
-        {
-            Font font1 = font;
-            _charHeight = -font1.Height;
-            var glyphBitmap = new Bitmap(_textureSize.Width, _textureSize.Height);
-            
-            Texture = new Texture(GL.GenTexture());
-            GL.BindTexture(TextureTarget.Texture2D, Texture.GetId());
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
-            
-            using (Graphics gfx = Graphics.FromImage(glyphBitmap))
-            {
-                var format = new StringFormat(StringFormat.GenericTypographic);
-                var charPoint = new Point(0, 0);
-                for (int i = 0; i < _chars.Length; i++)
-                {
-                    SizeF charSizeF = gfx.MeasureString(new string(new[] { Convert.ToChar(i) }), font1, 0, format);
-
-                    var charSize = new Size((int)Math.Ceiling(charSizeF.Width), (int)Math.Ceiling(charSizeF.Height));
-
-                    //fudge factor to prevent glyphs from overlapping
-                    //charSize.Width += 2;
-
-                    if (charSize.Width + charPoint.X > _textureSize.Width)
-                    {
-                        charPoint.X = 0;
-                        charPoint.Y += (int)Math.Ceiling(font1.GetHeight());
-                    }
-                    _chars[i] = new CharData(new Rectangle(charPoint, charSize), this);
-                    charPoint.X += charSize.Width;
-                }
-
-                gfx.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-                gfx.Clear(Color.Transparent);
-                for (int i = 0; i < _chars.Length; i++)
-                {
-                    var point = new PointF(_chars[i].PixelRegion.X, _chars[i].PixelRegion.Y);
-                    gfx.DrawString(new string(new[] { Convert.ToChar(i) }), font1, new SolidBrush(Color.HotPink), point);
-                }
-            }
-
-            BitmapData data = glyphBitmap.LockBits(new Rectangle(0, 0, glyphBitmap.Width, glyphBitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, _textureSize.Width, _textureSize.Height, 0, _format, PixelType.UnsignedByte, data.Scan0);
-            glyphBitmap.UnlockBits(data);
-
-            Debug.Assert(GL.GetError() == ErrorCode.NoError);
-        }
-
-        public CharData[] GetChar(List<int> index)
-        {
-            CharData[] charData = new CharData[index.Count];
-            for (int i = 0; i < index.Count; i++)
-            {
-                if (_chars.Length <= index[i])
-                {
-                    charData[i] = _chars[40];
-                    continue;
-                }
-                charData[i] = _chars[index[i]];
-            }
-            return charData;
-        }
-
-        public CharData[] GetChar(string index)
-        {
-            char[] charArray = index.ToCharArray();
-            var charList = new List<char>(charArray);
-            return GetChar(charList.ConvertAll(Convert.ToInt32));
         }
 
         /// <summary>
@@ -129,42 +49,93 @@ namespace Game.Rendering
         /// (0,0) is top-left aligned, (0.5,0.5) is centered, and (1,1) is bottom-right aligned.</param>
         /// <param name="charSpacing"></param>
         /// <returns></returns>
-        public Model GetModel(string text, Vector2 alignment, float charSpacing)
+        public Model GetModel(string text, Vector2 alignment, int charSpacing)
         {
             var textMesh = new Mesh();
-            
-            CharData[] charData = GetChar(text);
-            var vertices = new Vertex[charData.Length * 4];
-            var indices = new List<int>();
-            float x0 = 0;
-            for (int i = 0; i < charData.Length; i++)
-            {
-                int index = i * 4;
-                float x1 = x0 + charData[i].PixelRegion.Width;
-                vertices[index + 3] = new Vertex(new Vector3(x0, 0, 0), new Vector2(charData[i].UvRegion.Left, charData[i].UvRegion.Top));
-                vertices[index + 2] = new Vertex(new Vector3(x0, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UvRegion.Left, charData[i].UvRegion.Bottom));
-                vertices[index + 1] = new Vertex(new Vector3(x1, charData[i].PixelRegion.Height, 0), new Vector2(charData[i].UvRegion.Right, charData[i].UvRegion.Bottom));
-                vertices[index] = new Vertex(new Vector3(x1, 0, 0), new Vector2(charData[i].UvRegion.Right, charData[i].UvRegion.Top));
-                indices.AddRange(new[] { index, index + 1, index + 2, index, index + 2, index + 3 });
-                x0 = x1 + charSpacing;
-            }
-            var offset = new Vector3((float)Math.Round(-x0 * alignment.X), (float)Math.Round(_charHeight * (1 - alignment.Y)), 0);
-            for (int i = 0; i < vertices.Length; i++)
-            {
-                Vector3 pos = vertices[i].Position + offset;
-                vertices[i] = new Vertex(pos, vertices[i].TextureCoord);
-            }
-            textMesh.Vertices.AddRange(vertices);
-            //textModel.Indices.AddRange(indices);
-            //textMesh.AddTriangles(indices.ToArray());
-            textMesh.Indices.AddRange(indices);
 
+            //var lineBreakText = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            //var vertices = new Vertex[lineBreakText.Sum(textLine => textLine.Length) * _verticesPerGlyph];
+            var vertices = new Vertex[text.Length * _verticesPerGlyph];
+            int x0 = 0;
+            int y0 = 0;
+
+            //var glyphPositions = lineBreakText.Select(textLine => new Vector2[textLine.Length],);
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                // Get the data for this character. If it doesn't exist we use the question mark instead.
+                var fontChar = _fontFile.CharLookup.GetOrDefault(text[i]) ?? _fontFile.CharLookup['?'];
+
+                int index = i * _verticesPerGlyph;
+
+                int uvX = fontChar.X;
+                int uvY = fontChar.Y;
+                Vector2 uvSize = new Vector2(_fontFile.Common.ScaleW, _fontFile.Common.ScaleH);
+                var uvTopLeft = Vector2.Divide(new Vector2(uvX, uvY), uvSize);
+                var uvTopRight = Vector2.Divide(new Vector2(uvX + fontChar.Width, uvY), uvSize);
+                var uvBottomLeft = Vector2.Divide(new Vector2(uvX, uvY + fontChar.Height), uvSize);
+                var uvBottomRight = Vector2.Divide(new Vector2(uvX + fontChar.Width, uvY + fontChar.Height), uvSize);
+
+                var x2 = x0 + fontChar.XOffset;
+                var x3 = x0 + fontChar.Width + fontChar.XOffset;
+                var y2 = y0 - fontChar.YOffset;
+                var y3 = y0 - fontChar.Height - fontChar.YOffset;
+                
+                vertices[index + 0] = new Vertex(new Vector3(x3, y2, 0), uvTopRight);
+                vertices[index + 1] = new Vertex(new Vector3(x3, y3, 0), uvBottomRight);
+                vertices[index + 2] = new Vertex(new Vector3(x2, y3, 0), uvBottomLeft);
+                vertices[index + 3] = new Vertex(new Vector3(x2, y2, 0), uvTopLeft);
+
+                if (i + 1 < text.Length)
+                {
+                    x0 += GetKerning(text[i], text[i + 1]);
+                }
+
+                x0 += fontChar.XAdvance + charSpacing;
+            }
+            //var offset = new Vector3((float)Math.Round(-x0 * alignment.X), (float)Math.Round(_charHeight * (1 - alignment.Y)), 0);
+            //for (int i = 0; i < vertices.Length; i++)
+            //{
+            //    Vector3 pos = vertices[i].Position + offset;
+            //    vertices[i] = new Vertex(pos, vertices[i].TextureCoord);
+            //}
+            textMesh.Vertices = vertices.ToList();
+            textMesh.Indices = AddIndices(text.Length).ToList();
+
+            Debug.Assert(textMesh.IsValid());
             var textModel = new Model(textMesh)
             {
-                Texture = Texture,
+                Texture = _fontTextures[0],
                 IsTransparent = true
             };
             return textModel;
+        }
+
+        int GetKerning(Char first, Char second)
+        {
+            var fontCharNext = _fontFile.CharLookup.GetOrDefault(second);
+            if (fontCharNext == null)
+            {
+                return 0;
+            }
+            return _fontFile.KerningLookup[first].FirstOrDefault(item => item.Second == fontCharNext.ID)?.Amount ?? 0;
+        }
+
+        int[] AddIndices(int glyphCount)
+        {
+            var indices = new int[glyphCount * _indicesPerGlyph];
+            for (int i = 0; i < glyphCount; i++)
+            {
+                int vertexIndex = i * _verticesPerGlyph;
+                int indiceIndex = i * _indicesPerGlyph;
+                indices[indiceIndex] = vertexIndex;
+                indices[indiceIndex + 1] = vertexIndex + 1;
+                indices[indiceIndex + 2] = vertexIndex + 2;
+                indices[indiceIndex + 3] = vertexIndex;
+                indices[indiceIndex + 4] = vertexIndex + 2;
+                indices[indiceIndex + 5] = vertexIndex + 3;
+            }
+            return indices;
         }
     }
 }

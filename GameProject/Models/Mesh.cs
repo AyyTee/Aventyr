@@ -95,7 +95,6 @@ namespace Game.Models
 
         public List<int> GetIndices()
         {
-            Debug.Assert(Indices.Count == 0 || Indices.Max() < Vertices.Count());
             return Indices;
         }
 
