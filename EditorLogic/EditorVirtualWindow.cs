@@ -19,23 +19,24 @@ namespace EditorLogic
 
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
 
-        public Dictionary<string, ITexture> Textures => Renderer.Textures;
+        public TextureAssets Textures { get; private set; }
 
         public IRenderer Renderer { get; private set; }
 
-        public Dictionary<string, Font> Fonts { get; private set; }
+        public FontAssets Fonts { get; private set; }
 
         readonly GLControl _glControl;
 
         public float UpdatesPerSecond => 60;
         public float RendersPerSecond => 60;
 
-        public EditorVirtualWindow(GLControl glControl, IRenderer renderer, IInput input)
+        public EditorVirtualWindow(GLControl glControl, IRenderer renderer, IInput input, TextureAssets textures)
         {
             _glControl = glControl;
             CanvasSize = (Size)_glControl.ClientSize;
             Renderer = renderer;
             Input = input;
+            Textures = textures;
 
             renderer.Windows.Add(this);
         }

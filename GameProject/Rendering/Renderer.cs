@@ -31,11 +31,7 @@ namespace Game.Rendering
         Shader _activeShader;
         readonly Dictionary<EnableCap, bool?> _enableCap = new Dictionary<EnableCap, bool?>();
 
-        readonly Dictionary<string, ITexture> _textures = new Dictionary<string, ITexture>();
         readonly Dictionary<string, Shader> _shaders = new Dictionary<string, Shader>();
-
-        Dictionary<string, ITexture> IRenderer.Textures => new Dictionary<string, ITexture>(_textures);
-        Dictionary<string, Shader> IRenderer.Shaders => new Dictionary<string, Shader>(_shaders);
 
         readonly int _iboElements;
 
@@ -45,9 +41,12 @@ namespace Game.Rendering
 
         IClientSizeProvider _canvasSizeProvider;
 
-        public Renderer(IClientSizeProvider canvasSizeProvider)
+        readonly TextureAssets _textures;
+
+        public Renderer(IClientSizeProvider canvasSizeProvider, TextureAssets textures)
         {
             _canvasSizeProvider = canvasSizeProvider;
+            _textures = textures;
 
             foreach (EnableCap e in Enum.GetValues(typeof(EnableCap)))
             {
@@ -65,12 +64,6 @@ namespace Game.Rendering
             Debug.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
 
             GL.GenBuffers(1, out _iboElements);
-
-
-            // Load textures from file
-            _textures.Add("default.png", new TextureFile(Path.Combine(AssetPaths.TextureFolder, "default.png")));
-            _textures.Add("grid.png", new TextureFile(Path.Combine(AssetPaths.TextureFolder, "grid.png")));
-            _textures.Add("lineBlur.png", new TextureFile(Path.Combine(AssetPaths.TextureFolder, "lineBlur.png")));
 
             // Load shaders from file
             _shaders.Add("uber", new Shader(
@@ -277,7 +270,7 @@ namespace Game.Rendering
             GL.Clear(ClearBufferMask.StencilBufferBit);
 
             var portalEdges = new Model();
-            portalEdges.SetTexture(_textures["lineBlur.png"]);
+            portalEdges.SetTexture(_textures.lineBlur);
             SetEnable(EnableCap.Blend, true);
             for (int i = 1; i < iterations; i++)
             {

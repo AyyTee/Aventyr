@@ -18,8 +18,8 @@ namespace Game
         IInput IVirtualWindow.Input => Input;
 
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
-        public Dictionary<string, ITexture> Textures => new Dictionary<string, ITexture>();
-        public Dictionary<string, Font> Fonts => null;
+        public TextureAssets Textures => null;
+        public FontAssets Fonts => null;
 
         public float UpdatesPerSecond => 60;
         public float RendersPerSecond => 60;

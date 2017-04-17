@@ -8,9 +8,9 @@ namespace Game.Rendering
         Point CanvasPosition { get; }
         Size CanvasSize { get; }
         IInput Input { get; }
-        Dictionary<string, ITexture> Textures { get; }
+        TextureAssets Textures { get; }
         List<IRenderLayer> Layers { get; }
-        Dictionary<string, Font> Fonts { get; }
+        FontAssets Fonts { get; }
         float UpdatesPerSecond { get; }
         float RendersPerSecond { get; }
     }

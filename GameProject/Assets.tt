@@ -23,17 +23,33 @@ var Directories = new[] {
 };
 #>
 // This is generated code.
+using Game;
 using Game.Rendering;
 using Cgen.Audio;
 using System.Collections.Generic;
+using System.IO;
 
 <# for (int i = 0; i < ClassNames.Length; i++) { 
 	FieldNames.Clear();
 	ResourcePaths.Clear();
-	foreach (string file in Directory.EnumerateFiles(Directories[i], FileTypes[i], SearchOption.AllDirectories))
+	foreach (string filepath in Directory.EnumerateFiles(Directories[i], FileTypes[i], SearchOption.AllDirectories))
 	{
-		FieldNames.Add(Path.GetFileNameWithoutExtension(file));
-		ResourcePaths.Add(Path.Combine(AssetPaths.FontFolder, Path.GetFileName(file)));
+		FieldNames.Add(Path.GetFileNameWithoutExtension(filepath));
+
+		string[] folderNames = filepath.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
+
+		int index = Array.IndexOf(folderNames, AssetPaths.AssetFolder);
+		string pathCode = "Path.Combine(new[] { ";
+		for (int j = index; j < folderNames.Length; j++)
+		{
+			pathCode += "@\"" + folderNames[j] + "\"";
+			if (j + 1 < folderNames.Length)
+			{
+				pathCode += ", ";
+			}
+		}
+		pathCode += "})";
+		ResourcePaths.Add(pathCode);
 	}
 #>
 public class <#= ClassNames[i] #> 
@@ -41,7 +57,7 @@ public class <#= ClassNames[i] #>
 	public readonly List<<#= ResourceTypes[i]#>> <#= CollectionNames[i]#>;
 <# for (int j = 0; j < FieldNames.Count; j++) 
 { #> 
-	public readonly <#= ResourceTypes[i]#> @<#= FieldNames[j] #> = new <#= ResourceTypes[i]#>(@"<#= ResourcePaths[j] #>");<#}#> 
+	public readonly <#= ResourceTypes[i]#> @<#= FieldNames[j] #> = new <#= ResourceTypes[i]#>(<#= ResourcePaths[j] #>);<#}#> 
 	
 	public <#= ClassNames[i]#>()
 	{

@@ -14,9 +14,9 @@ namespace Game.Rendering
         public Size CanvasSize { get; set; }
         public Point CanvasPosition { get; set; }
         public IInput Input => _resourceController.Input;
-        public Dictionary<string, ITexture> Textures => _resourceController.Renderer.Textures;
+        public TextureAssets Textures => _resourceController.Textures;
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
-        public Dictionary<string, Font> Fonts => _resourceController.Fonts;
+        public FontAssets Fonts => _resourceController.Fonts;
         public float UpdatesPerSecond => 60;
         public float RendersPerSecond => 60;
 

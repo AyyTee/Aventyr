@@ -58,7 +58,7 @@ namespace TankGame.Network
 
             Entity entity2 = new Entity(_scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
-            entity2.ModelList[0].SetTexture(_window.Textures.GetOrDefault("default.png"));
+            entity2.ModelList[0].SetTexture(_window.Textures?.@default);
 
             Entity serverMarker = new Entity(_scene);
             serverMarker.AddModel(ModelFactory.CreateCircle(new Vector3(-3, -3, 1), 0.5f, 10));

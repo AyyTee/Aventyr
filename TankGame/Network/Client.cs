@@ -30,7 +30,6 @@ namespace TankGame.Network
         readonly Queue<InputTime> _inputQueue = new Queue<InputTime>();
         public Scene Scene { get; private set; }
         public Scene Hud { get; private set; }
-        Renderer _renderer;
         public string Name => "Client";
         double _lastTimestamp;
         bool _sceneUpdated;
@@ -82,7 +81,7 @@ namespace TankGame.Network
 
             Entity entity2 = new Entity(Scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
-            entity2.ModelList[0].SetTexture(_window.Textures.GetOrDefault("default.png"));
+            entity2.ModelList[0].SetTexture(_window.Textures?.@default);
 
             PortalCommon.UpdateWorldTransform(Scene);
         }
@@ -93,8 +92,8 @@ namespace TankGame.Network
             _window.Layers.Add(new Layer(Scene));
 
             var gui = new Layer(Hud);
-            gui.Renderables.Add(new TextEntity(_window.Fonts["Inconsolata"], new Vector2(-_window.CanvasSize.Width / 2, 0), 
-                $@"FPS { Environment.NewLine }Avg { (1 / timeDelta).ToString("00.00") }{ Environment.NewLine }Max { (1 / timeDelta).ToString("00.00") }{ Environment.NewLine }Min { (1 / timeDelta).ToString("00.00") }"));
+            gui.Renderables.Add(new TextEntity(_window.Fonts.inconsolata, new Vector2(-_window.CanvasSize.Width / 2, 0), 
+                $@"FPS{ Environment.NewLine }Avg { (1 / timeDelta).ToString("00.00") }{ Environment.NewLine }Max { (1 / timeDelta).ToString("00.00") }{ Environment.NewLine }Min { (1 / timeDelta).ToString("00.00") }"));
             _window.Layers.Add(gui);
         }
 
@@ -160,8 +159,7 @@ namespace TankGame.Network
 
         Tank GetTank()
         {
-            Tank tank;
-            _tanks.TryGetValue(ServerId, out tank);
+            _tanks.TryGetValue(ServerId, out Tank tank);
             return tank;
         }
 
@@ -221,8 +219,7 @@ namespace TankGame.Network
 
                 foreach (TankData tankData in data.TankData)
                 {
-                    Tank tank;
-                    _tanks.TryGetValue(tankData.OwnerId, out tank);
+                    _tanks.TryGetValue(tankData.OwnerId, out Tank tank);
 
                     if (tank == null)
                     {

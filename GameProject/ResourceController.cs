@@ -25,7 +25,8 @@ namespace Game
 
         public IRenderer Renderer { get; private set; }
 
-        public Dictionary<string, Font> Fonts { get; private set; } = new Dictionary<string, Font>();
+        public FontAssets Fonts;
+        public TextureAssets Textures;
 
         public IInput Input { get; private set; }
 
@@ -45,11 +46,11 @@ namespace Game
         public ResourceController(Size windowSize, string windowName = "Game")
         {
             _window = new GameWindow(windowSize.Width, windowSize.Height, DefaultGraphics, windowName, GameWindowFlags.FixedWindow);
-            Renderer = new Renderer(this);
+            Textures = new TextureAssets();
+            Renderer = new Renderer(this, Textures);
             Input = new Input(_window);
-
-            Fonts.Add("Arial", new Font(Path.Combine(AssetPaths.FontFolder, "arial", "arial.fnt")));
-            Fonts.Add("Inconsolata", new Font(Path.Combine(AssetPaths.FontFolder, "inconsolata", "inconsolata.fnt")));
+            Fonts = new FontAssets();
+            Textures = new TextureAssets();
 
             _soundEnabled = false;
             if (_soundEnabled)
@@ -77,7 +78,6 @@ namespace Game
 
         void Update()
         {
-
             Input.Update(_window.Focused);
             if (Input.KeyPress(Key.F4))
             {
