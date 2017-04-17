@@ -246,48 +246,48 @@
     <Compile Include="Physics\WorldExt.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="assets\fonts\arial\arial_0.png">
+    <Content Include="Assets\Fonts\Arial\arial_0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\fonts\inconsolata\inconsolata_0.png">
+    <Content Include="Assets\Fonts\Inconsolata\inconsolata_0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\sounds\test_sound.ogg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Assets\Sounds\test_sound.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\sounds\test_sound.wav">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Assets\Textures\default.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\textures\default.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Assets\Textures\grid.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="assets\textures\grid.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="assets\textures\lineBlur.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Assets\Textures\lineBlur.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="assets\fonts\arial\arial.fnt">
+    <None Include="Assets\Fonts\Arial\arial.fnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="assets\fonts\arial\config.bmfc">
+    <None Include="Assets\Fonts\Arial\config.bmfc">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="assets\fonts\inconsolata\inconsolata.fnt">
+    <None Include="Assets\Fonts\Inconsolata\inconsolata.fnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="assets\shaders\fs_uber.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Assets\Shaders\fs_uber.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="assets\shaders\vs_uber.glsl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="Assets\Shaders\vs_uber.glsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="assets\textures\Thumbs.db" />
-    <None Include="assets\Thumbs.db" />
+    <None Include="Assets\Sounds\test_sound.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Textures\Thumbs.db" />
+    <None Include="Assets\Thumbs.db" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
