@@ -9,14 +9,14 @@ public class FontAssets
 {
 	public readonly List<Font> Fonts;
  
-	public readonly Font @arial = new Font(Path.Combine(new[] { @"Assets", @"Fonts", @"Arial", @"arial.fnt"})); 
-	public readonly Font @inconsolata = new Font(Path.Combine(new[] { @"Assets", @"Fonts", @"Inconsolata", @"inconsolata.fnt"})); 
+	public readonly Font @Arial = new Font(Path.Combine(new[] { @"Assets", @"Fonts", @"Arial", @"Arial.fnt"})); 
+	public readonly Font @Inconsolata = new Font(Path.Combine(new[] { @"Assets", @"Fonts", @"Inconsolata", @"Inconsolata.fnt"})); 
 	
 	public FontAssets()
 	{
 		Fonts = new List<Font>() {
-			@arial,
-			@inconsolata,
+			@Arial,
+			@Inconsolata,
 		};
 	}
 }
@@ -25,16 +25,16 @@ public class TextureAssets
 {
 	public readonly List<TextureFile> Textures;
  
-	public readonly TextureFile @default = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"default.png"})); 
-	public readonly TextureFile @grid = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"grid.png"})); 
-	public readonly TextureFile @lineBlur = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"lineBlur.png"})); 
+	public readonly TextureFile @Default = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"Default.png"})); 
+	public readonly TextureFile @Grid = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"Grid.png"})); 
+	public readonly TextureFile @LineBlur = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"LineBlur.png"})); 
 	
 	public TextureAssets()
 	{
 		Textures = new List<TextureFile>() {
-			@default,
-			@grid,
-			@lineBlur,
+			@Default,
+			@Grid,
+			@LineBlur,
 		};
 	}
 }
@@ -43,12 +43,12 @@ public class SoundAssets
 {
 	public readonly List<Sound> Sounds;
  
-	public readonly Sound @test_sound = new Sound(Path.Combine(new[] { @"Assets", @"Sounds", @"test_sound.ogg"})); 
+	public readonly Sound @TestSound = new Sound(Path.Combine(new[] { @"Assets", @"Sounds", @"TestSound.ogg"})); 
 	
 	public SoundAssets()
 	{
 		Sounds = new List<Sound>() {
-			@test_sound,
+			@TestSound,
 		};
 	}
 }

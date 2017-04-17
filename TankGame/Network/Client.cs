@@ -81,7 +81,7 @@ namespace TankGame.Network
 
             Entity entity2 = new Entity(Scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
-            entity2.ModelList[0].SetTexture(_window.Textures?.@default);
+            entity2.ModelList[0].SetTexture(_window.Textures?.@Default);
 
             PortalCommon.UpdateWorldTransform(Scene);
         }
@@ -92,7 +92,7 @@ namespace TankGame.Network
             _window.Layers.Add(new Layer(Scene));
 
             var gui = new Layer(Hud);
-            gui.Renderables.Add(new TextEntity(_window.Fonts.inconsolata, new Vector2(-_window.CanvasSize.Width / 2, 0), 
+            gui.Renderables.Add(new TextEntity(_window.Fonts.Inconsolata, new Vector2(-_window.CanvasSize.Width / 2, 0), 
                 $@"FPS{ Environment.NewLine }Avg { (1 / timeDelta).ToString("00.00") }{ Environment.NewLine }Max { (1 / timeDelta).ToString("00.00") }{ Environment.NewLine }Min { (1 / timeDelta).ToString("00.00") }"));
             _window.Layers.Add(gui);
         }

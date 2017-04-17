@@ -270,7 +270,7 @@ namespace Game.Rendering
             GL.Clear(ClearBufferMask.StencilBufferBit);
 
             var portalEdges = new Model();
-            portalEdges.SetTexture(_textures.lineBlur);
+            portalEdges.SetTexture(_textures.LineBlur);
             SetEnable(EnableCap.Blend, true);
             for (int i = 1; i < iterations; i++)
             {
