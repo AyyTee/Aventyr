@@ -21,7 +21,7 @@ namespace Game.Rendering
         public Font(string fontDataFile)
         {
             _fontFile = FontLoader.Load(fontDataFile);
-
+            
             _fontTextures = new TextureFile[_fontFile.Pages.Count];
             Debug.Assert(_fontTextures.Length == 1, "Multiple texture pages not supported yet.");
             var path = Path.GetDirectoryName(fontDataFile);

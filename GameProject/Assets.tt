@@ -1,0 +1,56 @@
+﻿<#@ template debug="false" hostspecific="True" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(TargetDir)Game.dll" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Game" #>
+<#@ output extension=".cs" #>
+<#
+var ResourcePaths = new List<string>();
+var FieldNames = new List<string>();
+
+var FontPath = Host.ResolvePath(AssetPaths.FontFolder);
+var ClassNames = new[] { "FontAssets", "TextureAssets", "SoundAssets", };
+var ResourceTypes = new[] { "Font", "TextureFile", "Sound", };
+var FileTypes = new[] { "*.fnt", "*.png", "*.ogg", };
+var CollectionNames = new[] { "Fonts", "Textures", "Sounds", };
+var Directories = new[] {
+	Host.ResolvePath(AssetPaths.FontFolder),
+	Host.ResolvePath(AssetPaths.TextureFolder),
+	Host.ResolvePath(AssetPaths.SoundFolder),
+};
+#>
+// This is generated code.
+using Game.Rendering;
+using Cgen.Audio;
+using System.Collections.Generic;
+
+<# for (int i = 0; i < ClassNames.Length; i++) { 
+	FieldNames.Clear();
+	ResourcePaths.Clear();
+	foreach (string file in Directory.EnumerateFiles(Directories[i], FileTypes[i], SearchOption.AllDirectories))
+	{
+		FieldNames.Add(Path.GetFileNameWithoutExtension(file));
+		ResourcePaths.Add(Path.Combine(AssetPaths.FontFolder, Path.GetFileName(file)));
+	}
+#>
+public class <#= ClassNames[i] #> 
+{
+	public readonly List<<#= ResourceTypes[i]#>> <#= CollectionNames[i]#>;
+<# for (int j = 0; j < FieldNames.Count; j++) 
+{ #> 
+	public readonly <#= ResourceTypes[i]#> @<#= FieldNames[j] #> = new <#= ResourceTypes[i]#>(@"<#= ResourcePaths[j] #>");<#}#> 
+	
+	public <#= ClassNames[i]#>()
+	{
+		<#= CollectionNames[i]#> = new List<<#= ResourceTypes[i]#>>() {
+<# for (int j = 0; j < FieldNames.Count; j++) { #>
+			@<#= FieldNames[j]#>,
+<#}#>
+		};
+	}
+}
+
+<#}#>
