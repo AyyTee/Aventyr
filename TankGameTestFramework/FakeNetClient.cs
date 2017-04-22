@@ -11,6 +11,8 @@ namespace TankGameTestFramework
 {
     public class FakeNetClient : FakeNetPeer, INetClient
     {
-        public INetConnection ServerConnection => Connections.FirstOrDefault();
+        INetConnection INetClient.ServerConnection => Connections.FirstOrDefault();
+
+        public FakeNetConnection ServerConnection => Connections.FirstOrDefault();
     }
 }

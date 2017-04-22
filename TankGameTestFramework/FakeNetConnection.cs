@@ -22,7 +22,7 @@ namespace TankGameTestFramework
 
         public float AverageRoundtripTime => (float)Latency * 2;
 
-        public long RemoteUniqueIdentifier => StartPoint.UniqueIdentifier;
+        public long RemoteUniqueIdentifier => EndPoint.UniqueIdentifier;
 
         #region Not Implemented
         public int CurrentMTU
@@ -158,11 +158,11 @@ namespace TankGameTestFramework
             _msg.SendTime = NetTime.Now;
             if (Latency > 0)
             {
-                MessagesInTransit.Add(_msg.ToIncomingMessage(this));
+                MessagesInTransit.Add(new FakeNetIncomingMessage(_msg, this));
             }
             else
             {
-                EndPoint.Messages.Enqueue(_msg.ToIncomingMessage(this));
+                EndPoint.EnqueueMessage(new FakeNetIncomingMessage(_msg, this));
             }
             return NetSendResult.Sent;
         }
@@ -174,7 +174,7 @@ namespace TankGameTestFramework
                 .OrderBy(item => item.ReceiveTime)
                 .ToList();
             MessagesInTransit = MessagesInTransit.Except(arrivals).ToList();
-            arrivals.ForEach(EndPoint.Messages.Enqueue);
+            arrivals.ForEach(EndPoint.EnqueueMessage);
         }
 
         public double Latency { get; set; }

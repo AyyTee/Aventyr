@@ -9,17 +9,6 @@ namespace TankGameTestFramework
 {
     public class FakeNetOutgoingMessage : FakeNetMessage, INetOutgoingMessage
     {
-        public FakeNetIncomingMessage ToIncomingMessage(FakeNetConnection senderConnection)
-        {
-            return new FakeNetIncomingMessage
-            {
-                Data = Data,
-                SendTime = SendTime,
-                ReceiveTime = SendTime + senderConnection.Latency,
-                SenderConnection = senderConnection,
-            };
-        }
-
         public bool Encrypt(NetEncryption encryption)
         {
             throw new NotImplementedException();

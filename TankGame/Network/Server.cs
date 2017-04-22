@@ -85,7 +85,7 @@ namespace TankGame.Network
         /// <param name="data"></param>
         /// <param name="connection">Client to send the message to.  
         /// If null then the message will be sent to every client.</param>
-        public void SendMessage(ServerMessage data, INetConnection connection = null)
+        public void SendMessage(MessageToClient data, INetConnection connection = null)
         {
             if (connection != null)
             {
@@ -118,7 +118,7 @@ namespace TankGame.Network
 
                 foreach (long clientId in _loading.ToArray())
                 {
-                    var message = new ServerMessage
+                    var message = new MessageToClient
                     {
                         WallsAdded = _walls.Select(wall => new WallAdded(wall)).ToArray()
                     };
@@ -132,7 +132,7 @@ namespace TankGame.Network
                     InitNetObject(netObject);
                 }
 
-                SendMessage(new ServerMessage
+                SendMessage(new MessageToClient
                 {
                     TankData = _tanks.Keys.Select(id => new TankData(id, _tanks[id])).ToArray(),
                     BulletData = _scene.GetAll().OfType<Bullet>().Select(item => new BulletData(item)).ToArray(),
@@ -150,6 +150,8 @@ namespace TankGame.Network
 
             while ((msg = _server.ReadMessage()) != null)
             {
+                Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _server.UniqueIdentifier, 
+                    "Unique identifier should not be the same as the servers.");
                 switch (msg.MessageType)
                 {
                     case NetIncomingMessageType.VerboseDebugMessage:
@@ -187,7 +189,7 @@ namespace TankGame.Network
 
         void HandleData(INetIncomingMessage msg)
         {
-            ClientMessage data = NetworkHelper.ReadMessage<ClientMessage>(msg);
+            MessageToServer data = NetworkHelper.ReadMessage<MessageToServer>(msg);
             ClientInstance client = _clients.First(item => item.Id == msg.SenderConnection.RemoteUniqueIdentifier);
             Tank tank = _tanks[msg.SenderConnection.RemoteUniqueIdentifier];
 

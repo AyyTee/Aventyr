@@ -11,4 +11,12 @@ namespace Game.Rendering
         ICamera2 Camera { get; }
         bool RenderPortalViews { get; }
     }
+
+    public static class IRenderLayerEx
+    {
+        public static void DrawText(this IRenderLayer layer, Font font, Vector2 position, string text)
+        {
+            layer.Renderables.Add(new TextEntity(font, position, text));
+        }
+    }
 }

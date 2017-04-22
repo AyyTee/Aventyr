@@ -51,10 +51,10 @@ namespace Game.Rendering
         /// <returns></returns>
         public Model GetModel(string text, Vector2 alignment, int lineSpacing = 0, int charSpacing = 0)
         {
-            var lineBreakText = text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            var lineBreakText = text.Split('\n');
             var glyphData = lineBreakText.Select(textLine => new GlyphData[textLine.Length]).ToArray();
 
-            var posCurrent = new Point();
+            var posCurrent = new Vector2i();
             for (int i = 0; i < lineBreakText.Length; i++)
             {
                 for (int j = 0; j < lineBreakText[i].Length; j++)
@@ -86,7 +86,7 @@ namespace Game.Rendering
                     int xOffset = (int)(-lineWidth * alignment.X);
                     foreach (var data in line)
                     {
-                        data.Point += new Point(xOffset, yOffset);
+                        data.Point += new Vector2i(xOffset, yOffset);
                     }
                 }
             }
@@ -161,17 +161,17 @@ namespace Game.Rendering
 
         class GlyphData
         {
-            public Point Point;
+            public Vector2i Point;
             public FontChar FontChar;
 
-            public GlyphData(Point point, FontChar fontChar)
+            public GlyphData(Vector2i point, FontChar fontChar)
             {
                 Point = point;
                 FontChar = fontChar;
             }
 
-            public Point StartPoint => new Point(FontChar.XOffset, -FontChar.YOffset) + Point;
-            public Point EndPoint => new Point(FontChar.Width + FontChar.XOffset, -FontChar.Height - FontChar.YOffset) + Point;
+            public Vector2i StartPoint => new Vector2i(FontChar.XOffset, -FontChar.YOffset) + Point;
+            public Vector2i EndPoint => new Vector2i(FontChar.Width + FontChar.XOffset, -FontChar.Height - FontChar.YOffset) + Point;
         }
     }
 }

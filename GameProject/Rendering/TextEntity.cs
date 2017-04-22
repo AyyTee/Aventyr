@@ -67,7 +67,7 @@ namespace Game.Rendering
         {
             if (Dirty)
             {
-                TextModel = _fontRenderer.GetModel(Text, Alignment);
+                TextModel = _fontRenderer?.GetModel(Text, Alignment);
                 Dirty = false;
             }
             return new List<Model>() { TextModel };

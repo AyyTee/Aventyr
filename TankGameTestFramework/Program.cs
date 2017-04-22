@@ -21,7 +21,7 @@ namespace TankGameTestFramework
         static void Main(string[] args)
         {
             bool splitScreen = true;
-            //splitScreen = false;
+            splitScreen = false;
             if (splitScreen)
             {
                 RunSplitScreen();
@@ -36,23 +36,27 @@ namespace TankGameTestFramework
         {
             var controller = new ResourceController(new Size(1000, 800));
 
-            var center = new Point(controller.ClientSize.Width / 2, controller.ClientSize.Height / 2);
+            var center = new Vector2i(controller.ClientSize.Width / 2, controller.ClientSize.Height / 2);
 
             var server = new FakeNetServer();
             var client = new FakeNetClient();
             server.Connections.Add(new FakeNetConnection(server, client) { Latency = 0.5 });
             client.Connections.Add(new FakeNetConnection(client, server) { Latency = 0.5 });
 
-            server.Messages.Enqueue(new FakeNetIncomingMessage() { MessageType = NetIncomingMessageType.StatusChanged, SenderConnection = client.ServerConnection });
+            server.EnqueueMessage(new FakeNetIncomingMessage(new FakeNetOutgoingMessage(), client.ServerConnection) { MessageType = NetIncomingMessageType.StatusChanged});
 
-            var windowClient = new VirtualWindow(controller);
-            windowClient.CanvasSize = (Size)center;
-            windowClient.CanvasPosition = new Point(0, center.Y);
+            var windowClient = new VirtualWindow(controller)
+            {
+                CanvasSize = (Size)center,
+                CanvasPosition = new Vector2i(0, center.Y)
+            };
             controller.AddController(new Server(windowClient, server));
 
-            var windowServer = new VirtualWindow(controller);
-            windowServer.CanvasSize = (Size)center;
-            windowServer.CanvasPosition = center;
+            var windowServer = new VirtualWindow(controller)
+            {
+                CanvasSize = (Size)center,
+                CanvasPosition = center
+            };
             controller.AddController(new Client(windowServer, null, client));
 
             var netController = new NetworkController();

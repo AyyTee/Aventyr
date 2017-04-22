@@ -141,7 +141,7 @@
     <Compile Include="Common\IValueEquality.cs" />
     <Compile Include="Common\Line.cs" />
     <Compile Include="Common\Size.cs" />
-    <Compile Include="Common\Point.cs" />
+    <Compile Include="Common\Vector2i.cs" />
     <Compile Include="Common\Transform2d.cs" />
     <Compile Include="FakeInput.cs" />
     <Compile Include="FakeVirtualWindow.cs" />

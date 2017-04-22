@@ -1,11 +1,12 @@
 ﻿using Game.Common;
+using OpenTK;
 using System.Collections.Generic;
 
 namespace Game.Rendering
 {
     public interface IVirtualWindow
     {
-        Point CanvasPosition { get; }
+        Vector2i CanvasPosition { get; }
         Size CanvasSize { get; }
         IInput Input { get; }
         TextureAssets Textures { get; }

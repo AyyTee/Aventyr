@@ -92,8 +92,10 @@ namespace TankGame.Network
             _window.Layers.Add(new Layer(Scene));
 
             var gui = new Layer(Hud);
-            gui.Renderables.Add(new TextEntity(_window.Fonts.Inconsolata, new Vector2(-_window.CanvasSize.Width / 2, 0), 
-                $@"FPS{ Environment.NewLine }Avg { (1 / timeDelta).ToString("00.00") }{ Environment.NewLine }Max { (1 / timeDelta).ToString("00.00") }{ Environment.NewLine }Min { (1 / timeDelta).ToString("00.00") }"));
+            gui.DrawText(
+                _window.Fonts?.Inconsolata, 
+                new Vector2(-_window.CanvasSize.Width / 2, _window.CanvasSize.Height / 2),
+                $"FPS\nAvg { (1 / timeDelta).ToString("00.00") }\nMax { (1 / timeDelta).ToString("00.00") }\nMin { (1 / timeDelta).ToString("00.00") }");
             _window.Layers.Add(gui);
         }
 
@@ -101,7 +103,7 @@ namespace TankGame.Network
         {
             NetworkStep();
 
-            Tank tank = GetTank();
+            Tank tank = _tanks.GetOrDefault(ServerId);
             TankInput input = new TankInput
             {
                 MoveFoward = _window.Input.KeyDown(Key.W),
@@ -126,7 +128,7 @@ namespace TankGame.Network
                     _inputQueue.Dequeue();
                 }
 
-                SendMessage(new ClientMessage { Input = input });
+                SendMessage(new MessageToServer { Input = input });
             }
 
             if (_sceneUpdated)
@@ -157,13 +159,7 @@ namespace TankGame.Network
             Render(timeDelta);
         }
 
-        Tank GetTank()
-        {
-            _tanks.TryGetValue(ServerId, out Tank tank);
-            return tank;
-        }
-
-        public void SendMessage(ClientMessage data)
+        public void SendMessage(MessageToServer data)
         {
             _client.ServerConnection.SendMessage(
                 NetworkHelper.PrepareMessage(this, data), 
@@ -177,6 +173,8 @@ namespace TankGame.Network
 
             while ((msg = _client.ReadMessage()) != null)
             {
+                Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _client.UniqueIdentifier, 
+                    "Unique identifier should not be the same as this client.");
                 switch (msg.MessageType)
                 {
                     case NetIncomingMessageType.VerboseDebugMessage:
@@ -201,7 +199,7 @@ namespace TankGame.Network
 
         void HandleData(INetIncomingMessage msg)
         {
-            ServerMessage data = NetworkHelper.ReadMessage<ServerMessage>(msg);
+            MessageToClient data = NetworkHelper.ReadMessage<MessageToClient>(msg);
             bool outOfDate = data.LocalSendTime <= _lastTimestamp;
             if (!outOfDate)
             {

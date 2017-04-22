@@ -8,28 +8,29 @@
 <#@ import namespace="Game" #>
 <#@ output extension=".cs" #>
 <#
-var ResourcePaths = new List<string>();
-var FieldNames = new List<string>();
+	var ResourcePaths = new List<string>();
+	var FieldNames = new List<string>();
 
-var FontPath = Host.ResolvePath(AssetPaths.FontFolder);
-var ClassNames = new[] { "FontAssets", "TextureAssets", "SoundAssets", };
-var ResourceTypes = new[] { "Font", "TextureFile", "Sound", };
-var FileTypes = new[] { "*.fnt", "*.png", "*.ogg", };
-var CollectionNames = new[] { "Fonts", "Textures", "Sounds", };
-var Directories = new[] {
-	Host.ResolvePath(AssetPaths.FontFolder),
-	Host.ResolvePath(AssetPaths.TextureFolder),
-	Host.ResolvePath(AssetPaths.SoundFolder),
-};
+	var FontPath = Host.ResolvePath(AssetPaths.FontFolder);
+	var ClassNames = new[] { "FontAssets", "TextureAssets", "SoundAssets", };
+	var ResourceTypes = new[] { "Font", "TextureFile", "Sound", };
+	var FileTypes = new[] { "*.fnt", "*.png", "*.ogg", };
+	var CollectionNames = new[] { "Fonts", "Textures", "Sounds", };
+	var Directories = new[] {
+		Host.ResolvePath(AssetPaths.FontFolder),
+		Host.ResolvePath(AssetPaths.TextureFolder),
+		Host.ResolvePath(AssetPaths.SoundFolder),
+	};
 #>
 // This is generated code.
-using Game;
 using Game.Rendering;
 using Cgen.Audio;
 using System.Collections.Generic;
 using System.IO;
 
-<# for (int i = 0; i < ClassNames.Length; i++) { 
+<# 
+for (int i = 0; i < ClassNames.Length; i++) 
+{ 
 	FieldNames.Clear();
 	ResourcePaths.Clear();
 	foreach (string filepath in Directory.EnumerateFiles(Directories[i], FileTypes[i], SearchOption.AllDirectories))
@@ -55,18 +56,27 @@ using System.IO;
 public class <#= ClassNames[i] #> 
 {
 	public readonly List<<#= ResourceTypes[i]#>> <#= CollectionNames[i]#>;
-<# for (int j = 0; j < FieldNames.Count; j++) 
-{ #> 
+<# 
+	for (int j = 0; j < FieldNames.Count; j++) 
+	{ 
+#> 
 	public readonly <#= ResourceTypes[i]#> @<#= FieldNames[j] #> = new <#= ResourceTypes[i]#>(<#= ResourcePaths[j] #>);<#}#> 
 	
 	public <#= ClassNames[i]#>()
 	{
 		<#= CollectionNames[i]#> = new List<<#= ResourceTypes[i]#>>() {
-<# for (int j = 0; j < FieldNames.Count; j++) { #>
+<#		
+		for (int j = 0; j < FieldNames.Count; j++) 
+		{ 
+#>
 			@<#= FieldNames[j]#>,
-<#}#>
+<#		
+		}
+#>
 		};
 	}
 }
 
-<#}#>
+<#
+}
+#>

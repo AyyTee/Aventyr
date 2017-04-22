@@ -12,7 +12,7 @@ namespace Game.Rendering
     {
         readonly ResourceController _resourceController;
         public Size CanvasSize { get; set; }
-        public Point CanvasPosition { get; set; }
+        public Vector2i CanvasPosition { get; set; }
         public IInput Input => _resourceController.Input;
         public TextureAssets Textures => _resourceController.Textures;
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();

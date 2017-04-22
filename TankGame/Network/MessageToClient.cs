@@ -12,7 +12,7 @@ namespace TankGame.Network
     /// A message sent from the server.
     /// </summary>
     [DataContract]
-    public class ServerMessage : Message
+    public class MessageToClient : Message
     {
         [DataMember]
         public TankData[] TankData = new TankData[0];

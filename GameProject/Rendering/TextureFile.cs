@@ -10,11 +10,6 @@ namespace Game.Rendering
     [DataContract]
     public class TextureFile : ITexture
     {
-        /// <summary>
-        /// If Filename doesn't point to a valid texture then this is used instead.
-        /// </summary>
-        static readonly Texture TextureMissing;
-
         Texture _texture;
         [DataMember]
         public readonly string Filename;
@@ -74,7 +69,6 @@ namespace Game.Rendering
             catch (FileNotFoundException)
             {
                 Debug.Assert(false, "Texture missing.");
-                _texture = TextureMissing;
             }
         }
     }

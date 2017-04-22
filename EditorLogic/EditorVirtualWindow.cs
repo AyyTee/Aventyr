@@ -12,7 +12,7 @@ namespace EditorLogic
 {
     public class EditorVirtualWindow : IVirtualWindow
     {
-        public Point CanvasPosition => new Point();
+        public Vector2i CanvasPosition => new Vector2i();
         public Size CanvasSize { get; set; }
 
         public IInput Input { get; private set; }

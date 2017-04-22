@@ -6,12 +6,19 @@ using System.Threading;
 using Lidgren.Network;
 using System.Linq;
 using Game;
+using System.Diagnostics;
 
 namespace TankGameTestFramework
 {
     public class FakeNetPeer : INetPeer
     {
-        public Queue<FakeNetIncomingMessage> Messages { get; set; } = new Queue<FakeNetIncomingMessage>();
+        Queue<FakeNetIncomingMessage> Messages { get; set; } = new Queue<FakeNetIncomingMessage>();
+
+        public void EnqueueMessage(FakeNetIncomingMessage message)
+        {
+            Debug.Assert(message.SenderConnection.RemoteUniqueIdentifier != UniqueIdentifier);
+            Messages.Enqueue(message);
+        }
 
         public double Time { get; set; } = 0;
 

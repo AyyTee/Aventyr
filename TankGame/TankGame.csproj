@@ -71,13 +71,13 @@
     <Compile Include="Network\Client.cs" />
     <Compile Include="Network\IServer.cs" />
     <Compile Include="Network\NetworkHelper.cs" />
-    <Compile Include="Network\ClientMessage.cs" />
+    <Compile Include="Network\MessageToServer.cs" />
     <Compile Include="Network\Message.cs" />
     <Compile Include="Network\NetworkSerializer.cs" />
     <Compile Include="Network\PortalData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Network\ServerMessage.cs" />
+    <Compile Include="Network\MessageToClient.cs" />
     <Compile Include="Network\Server.cs" />
     <Compile Include="Tank.cs" />
     <Compile Include="TankInput.cs" />

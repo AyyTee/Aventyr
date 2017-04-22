@@ -54,11 +54,6 @@ namespace TankGameTests
         [TestCleanup]
         public void Cleanup()
         {
-            _client = null;
-            _netClient = null;
-            _server = null;
-            _netServer = null;
-
             NetTime.SetTime(0);
         }
 
@@ -69,7 +64,7 @@ namespace TankGameTests
             {
                 NetTime.SetTime(i / 60f);
 
-                ServerMessage data = new ServerMessage
+                MessageToClient data = new MessageToClient
                 {
                     TankData = new TankData[]
                     {
@@ -86,9 +81,11 @@ namespace TankGameTests
                         }
                     }
                 };
-                var message = ((FakeNetOutgoingMessage)NetworkHelper.PrepareMessage(_client, data)).ToIncomingMessage(_netServer.Connections[0]);
+                var message = new FakeNetIncomingMessage(
+                    ((FakeNetOutgoingMessage)NetworkHelper.PrepareMessage(_client, data)), 
+                    _netServer.Connections[0]);
                 message.MessageType = NetIncomingMessageType.Data;
-                _netClient.Messages.Enqueue(message);
+                _netServer.EnqueueMessage(message);
 
                 _clientWindow.Input.KeyCurrent.Add(Key.Space);
                 _client.Update(1 / 60.0);
@@ -103,21 +100,20 @@ namespace TankGameTests
         [TestMethod]
         public void ServerRecieveClient()
         {
-            _client.SendMessage(new ClientMessage { Input = new TankInput { FireGun = true } });
+            _client.SendMessage(new MessageToServer { Input = new TankInput { FireGun = true } });
 
-            NetTime.SetTime(NetTime.Now + 1);
-            _netClient.Connections.ForEach(item => item.SetTime(NetTime.Now));
+            AdvanceTime(1);
 
-            ClientMessage clientMessage = NetworkHelper.ReadMessage<ClientMessage>(_netServer.ReadMessage());
+            MessageToServer clientMessage = NetworkHelper.ReadMessage<MessageToServer>(_netServer.ReadMessage());
             Assert.IsTrue(clientMessage.Input.FireGun);
         }
 
         [TestMethod]
         public void ClientRecieveServer()
         {
-            _server.SendMessage(new ServerMessage { SceneTime = 1 });
+            _server.SendMessage(new MessageToClient { SceneTime = 1 });
             AdvanceTime(2);
-            ServerMessage serverMessage = NetworkHelper.ReadMessage<ServerMessage>(_netClient.ReadMessage());
+            MessageToClient serverMessage = NetworkHelper.ReadMessage<MessageToClient>(_netClient.ReadMessage());
             Assert.IsTrue(serverMessage.SceneTime == 1);
         }
 
@@ -127,7 +123,7 @@ namespace TankGameTests
             FakeNetPeer reader = _netClient;
 
             _netServer.Connections[0].Latency = 1;
-            _server.SendMessage(new ServerMessage());
+            _server.SendMessage(new MessageToClient());
 
             Assert.IsTrue(reader.ReadMessage() == null);
 
@@ -144,7 +140,7 @@ namespace TankGameTests
             FakeNetPeer reader = _netServer;
 
             _netClient.Connections[0].Latency = 1;
-            _client.SendMessage(new ClientMessage());
+            _client.SendMessage(new MessageToServer());
 
             Assert.IsTrue(reader.ReadMessage() == null);
 
@@ -153,6 +149,26 @@ namespace TankGameTests
 
             AdvanceTime(0.5);
             Assert.IsTrue(reader.ReadMessage() != null);
+        }
+
+        [TestMethod]
+        public void ClientTankDoesNotJitter()
+        {
+            double timeDelta = 1 / 60.0;
+
+            var client = new Client(_clientWindow, null, _netClient);
+            var server = new Server(_serverWindow, _netServer);
+
+            _netServer.EnqueueMessage(new FakeNetIncomingMessage(new FakeNetOutgoingMessage(), _netClient.ServerConnection) { MessageType = NetIncomingMessageType.StatusChanged });
+            AdvanceTime(1);
+            for (int i = 0; i < 100; i++)
+            {
+                _clientWindow.Input.KeyCurrent.Add(Key.W);
+                server.Update(timeDelta);
+                client.Update(timeDelta);
+                
+                AdvanceTime(timeDelta);
+            }
         }
 
         public void AdvanceTime(double amount)

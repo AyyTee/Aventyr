@@ -11,7 +11,7 @@ namespace TankGame.Network
     /// A message sent from a client.
     /// </summary>
     [DataContract]
-    public class ClientMessage : Message
+    public class MessageToServer : Message
     {
         [DataMember]
         public TankInput Input;

@@ -7,8 +7,12 @@ namespace TankGameTestFramework
 {
     public class FakeNetIncomingMessage : FakeNetMessage, INetIncomingMessage
     {
-        public FakeNetIncomingMessage()
+        public FakeNetIncomingMessage(FakeNetOutgoingMessage message, FakeNetConnection senderConnection)
         {
+            Data = message.Data;
+            SendTime = message.SendTime;
+            ReceiveTime = SendTime + senderConnection.Latency;
+            SenderConnection = senderConnection;
         }
 
         public NetDeliveryMethod DeliveryMethod
