@@ -215,9 +215,9 @@ namespace EditorLogic
                 if (InputExt.MouseInside && InputExt.MouseDown(MouseButton.Middle))
                 {
                     _lazyPan.Enqueue(
-                        CameraExt.ScreenToWorld(
-                            this, InputExt.MousePosPrev - InputExt.MousePos, 
-                            (Vector2)Controller.Window.CanvasSize) - CameraExt.ScreenToWorld(this, new Vector2(),
+                        this.ScreenToWorld(
+                            InputExt.MousePosPrev - InputExt.MousePos, 
+                            (Vector2)Controller.Window.CanvasSize) - this.ScreenToWorld(new Vector2(),
                             (Vector2)Controller.Window.CanvasSize));
                 }
                 else

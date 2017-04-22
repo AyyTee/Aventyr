@@ -173,7 +173,6 @@
     <Compile Include="RandomEx.cs" />
     <Compile Include="Rendering\BmFont.cs" />
     <Compile Include="Rendering\Camera2.cs" />
-    <Compile Include="Rendering\CameraExt.cs" />
     <Compile Include="Models\Clip.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="Rendering\IClientSizeProvider.cs" />

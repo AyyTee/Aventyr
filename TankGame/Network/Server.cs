@@ -26,6 +26,7 @@ namespace TankGame.Network
         HashSet<long> _loading = new HashSet<long>();
         int _idCount;
         public int MessagesSent { get; set; }
+        public Scene Hud { get; private set; }
 
         HashSet<ClientInstance> _clients = new HashSet<ClientInstance>();
         readonly IVirtualWindow _window;
@@ -70,6 +71,14 @@ namespace TankGame.Network
             _walls[1].SetTransform(new Transform2(new Vector2(1, 3)));
 
             PortalCommon.UpdateWorldTransform(_scene);
+
+            Hud = new Scene();
+            Camera2 camera = new Camera2(
+                _scene,
+                new Transform2(new Vector2(), _window.CanvasSize.Height),
+                _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
+
+            Hud.SetActiveCamera(camera);
         }
 
         public T InitNetObject<T>(T netObject) where T : INetObject
@@ -102,10 +111,16 @@ namespace TankGame.Network
             }
         }
 
-        public void Render()
+        public void Render(double timeDelta)
         {
             _window.Layers.Clear();
             _window.Layers.Add(new Layer(_scene));
+
+            var gui = new Layer(Hud);
+            gui.DrawText(
+                _window.Fonts?.Inconsolata,
+                new Vector2(-_window.CanvasSize.Width / 2, _window.CanvasSize.Height / 2),
+                $"Client\nId {_server.UniqueIdentifier}\n\nFPS\nAvg { (1 / timeDelta).ToString("00.00") }\nMax { (1 / timeDelta).ToString("00.00") }\nMin { (1 / timeDelta).ToString("00.00") }");
         }
 
         public void Update(double timeDelta)
@@ -141,7 +156,7 @@ namespace TankGame.Network
                 });
             }
 
-            Render();
+            Render(timeDelta);
         }
 
         public void NetworkStep()

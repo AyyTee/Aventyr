@@ -95,7 +95,7 @@ namespace TankGame.Network
             gui.DrawText(
                 _window.Fonts?.Inconsolata, 
                 new Vector2(-_window.CanvasSize.Width / 2, _window.CanvasSize.Height / 2),
-                $"FPS\nAvg { (1 / timeDelta).ToString("00.00") }\nMax { (1 / timeDelta).ToString("00.00") }\nMin { (1 / timeDelta).ToString("00.00") }");
+                $"Client\nId {_client.UniqueIdentifier}\n\nFPS\nAvg { (1 / timeDelta).ToString("00.00") }\nMax { (1 / timeDelta).ToString("00.00") }\nMin { (1 / timeDelta).ToString("00.00") }");
             _window.Layers.Add(gui);
         }
 

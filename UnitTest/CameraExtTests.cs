@@ -51,13 +51,13 @@ namespace GameTests
             SimpleCamera2 camera = new SimpleCamera2();
 
             Vector2 result;
-            result = CameraExt.ScreenToWorld(camera, new Vector2(), canvasSize);
+            result = camera.ScreenToWorld(new Vector2(), canvasSize);
             Assert.IsTrue(result == new Vector2(-0.5f, 0.5f));
 
-            result = CameraExt.ScreenToWorld(camera, new Vector2(400, 300), canvasSize);
+            result = camera.ScreenToWorld(new Vector2(400, 300), canvasSize);
             Assert.IsTrue(Vector2Ext.AlmostEqual(result, new Vector2(), 0.00001f));
 
-            result = CameraExt.ScreenToWorld(camera, new Vector2(800, 600), canvasSize);
+            result = camera.ScreenToWorld(new Vector2(800, 600), canvasSize);
             Assert.IsTrue(Vector2Ext.AlmostEqual(result, new Vector2(0.5f, -0.5f), 0.00001f));
         }
 
@@ -66,7 +66,7 @@ namespace GameTests
         {
             SimpleCamera2 camera = new SimpleCamera2();
 
-            Vector2 result = CameraExt.ScreenToClip(camera, new Vector2(), new Vector2(800, 600));
+            Vector2 result = camera.ScreenToClip(new Vector2(), new Vector2(800, 600));
             Assert.IsTrue(result == new Vector2(-1f, 1f));
         }
     }

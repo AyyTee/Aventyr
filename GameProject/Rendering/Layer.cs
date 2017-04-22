@@ -11,8 +11,8 @@ namespace Game.Rendering
     {
         public bool RenderPortalViews { get; set; } = true;
         public ICamera2 Camera { get; set; }
-        public List<IPortal> Portals { get; set; }
-        public List<IRenderable> Renderables { get; set; }
+        public List<IPortal> Portals { get; set; } = new List<IPortal>();
+        public List<IRenderable> Renderables { get; set; } = new List<IRenderable>();
 
         public Layer()
         {

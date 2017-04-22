@@ -150,8 +150,8 @@ namespace EditorLogic
         public Vector2 GetMouseWorld()
         {
             return Level == null ? 
-                Vector2.Zero : 
-                CameraExt.ScreenToWorld(Level.ActiveCamera, Window.Input.MousePos, (Vector2)Window.CanvasSize);
+                Vector2.Zero :
+                Level.ActiveCamera.ScreenToWorld(Window.Input.MousePos, (Vector2)Window.CanvasSize);
         }
 
         public Vector2 GetMouseWorldPortal(IEnumerable<IPortal> portals, bool ignorePortalViews)
@@ -164,8 +164,8 @@ namespace EditorLogic
             {
                 return GetMouseWorld();
             }
-            Transform2 transform = CameraExt.GetWorldViewpoint(Level.ActiveCamera);
-            Vector2 mousePos = CameraExt.ScreenToWorld(Level.ActiveCamera, Window.Input.MousePos, (Vector2)Window.CanvasSize);
+            Transform2 transform = Level.ActiveCamera.GetWorldViewpoint();
+            Vector2 mousePos = Level.ActiveCamera.ScreenToWorld(Window.Input.MousePos, (Vector2)Window.CanvasSize);
             var portalable = new Portalable(null, transform, Transform2.CreateVelocity(mousePos - transform.Position));
             Ray.RayCast(portalable, Level.GetPortalList(), new Ray.Settings());
             return portalable.GetTransform().Position;

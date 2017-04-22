@@ -181,7 +181,7 @@ namespace Game.Rendering
                         Vector2[] a = ClipperConvert.ToVector2(portalViewList[i].Paths[j]);
                         ModelFactory.AddPolygon(mesh, a);
                     }
-                    RenderModel(new Model(mesh), CameraExt.GetViewMatrix(cam));
+                    RenderModel(new Model(mesh), cam.GetViewMatrix());
                 }
             }
             #endregion
@@ -238,7 +238,7 @@ namespace Game.Rendering
                 GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
                 for (int i = 0; i < Math.Min(portalViewList.Count, StencilMaxValue); i++)
                 {
-                    SetScissor(window, portalViewList[i], CameraExt.GetViewMatrix(cam));
+                    SetScissor(window, portalViewList[i], cam.GetViewMatrix());
                     GL.StencilFunc(StencilFunction.Equal, i, StencilMask);
                     Draw(drawData.ToArray(), portalViewList[i].ViewMatrix);
                 }
@@ -329,7 +329,7 @@ namespace Game.Rendering
                     {
                         Vertex vertex = mesh.GetVertices()[k];
                         Vector3 pos = Vector3Ext.Transform(vertex.Position, homography);
-                        pos.Z = CameraExt.UnitZToWorld(cam, pos.Z);
+                        pos.Z = cam.UnitZToWorld(pos.Z);
 
                         var v = new Vector2(vertex.Position.X, vertex.Position.Y);
                         double distance = MathExt.PointLineDistance(v, line.GetPerpendicularLeft(), false);
@@ -345,7 +345,7 @@ namespace Game.Rendering
                     }
                 }
             }
-            RenderModel(portalEdges, CameraExt.GetViewMatrix(cam, false));
+            RenderModel(portalEdges, cam.GetViewMatrix(false));
             SetEnable(EnableCap.Blend, false);
             GL.Enable(EnableCap.DepthTest);
         }

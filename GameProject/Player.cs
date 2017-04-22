@@ -62,7 +62,7 @@ namespace Game
 
                     if (Camera != null)
                     {
-                        Camera.ViewOffset = CameraExt.ScreenToClip(Camera, Window.Input.MousePos, (Vector2)Window.CanvasSize) * 0.8f;
+                        Camera.ViewOffset = Camera.ScreenToClip(Window.Input.MousePos, (Vector2)Window.CanvasSize) * 0.8f;
                     }
                 }
                 else

@@ -350,12 +350,12 @@ namespace GameTests
             ICamera2 camera = GetCamera();
             for (int i = 0; i < vectors.Length; i++)
             {
-                vectors[i].Z = CameraExt.UnitZToWorld(camera, vectors[i].Z);
+                vectors[i].Z = camera.UnitZToWorld(vectors[i].Z);
             }
 
             for (int i = 0; i < vectors.Length; i++)
             {
-                Vector2 offset = CameraExt.GetOverlapOffset(camera, vectors[i], new Vector3(destination[i]));
+                Vector2 offset = camera.GetOverlapOffset(vectors[i], new Vector3(destination[i]));
                 Assert.IsTrue(offset.Length < 0.001f);
             }
         }
@@ -382,12 +382,12 @@ namespace GameTests
             Camera2 camera = GetCamera();
             for (int i = 0; i < vectors.Length; i++)
             {
-                vectors[i].Z = CameraExt.UnitZToWorld(camera, vectors[i].Z);
+                vectors[i].Z = camera.UnitZToWorld(vectors[i].Z);
             }
 
             for (int i = 0; i < vectors.Length; i++)
             {
-                Vector2 offset = CameraExt.GetOverlapOffset(camera, vectors[i], new Vector3(destination[i]));
+                Vector2 offset = camera.GetOverlapOffset(vectors[i], new Vector3(destination[i]));
                 Assert.IsTrue(offset.Length < 0.001f);
             }
         }
@@ -448,12 +448,12 @@ namespace GameTests
             Camera2 camera = GetCamera();
             for (int i = 0; i < vectors.Length; i++)
             {
-                vectors[i].Z = CameraExt.UnitZToWorld(camera, vectors[i].Z);
+                vectors[i].Z = camera.UnitZToWorld(vectors[i].Z);
             }
 
             for (int i = 0; i < vectors.Length; i++)
             {
-                Vector2 offset = CameraExt.GetOverlapOffset(camera, vectors[i], new Vector3(destination[i]));
+                Vector2 offset = camera.GetOverlapOffset(vectors[i], new Vector3(destination[i]));
                 Assert.IsTrue(offset.Length < 0.001f);
             }
         }
