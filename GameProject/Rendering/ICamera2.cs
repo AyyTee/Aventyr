@@ -1,16 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using Game.Common;
+﻿using Game.Common;
 using OpenTK;
+using System;
+using System.Collections.Generic;
 
 namespace Game.Rendering
 {
-    public static class CameraExt
+    public interface ICamera2 : ISceneObject
+    {
+        Transform2 GetWorldTransform(bool ignorePortals = false);
+        Transform2 GetWorldVelocity(bool ignorePortals = false);
+        float Aspect { get; }
+        /// <summary>
+        /// View offset in clip space coordinates [-1,1].
+        /// </summary>
+        Vector2 ViewOffset { get; }
+        /// <summary>
+        /// Field of view in radians.  Only affects perspective view matrices, not orthographic view matrices.
+        /// </summary>
+        double Fov { get; }
+        float ZNear { get; }
+        float ZFar { get; }
+    }
+
+    public static class ICamera2Ex
     {
         /// <summary>
         /// Create a view matrix for this Camera
         /// </summary>
-        public static Matrix4 GetViewMatrix(ICamera2 camera, bool isOrtho = true)
+        public static Matrix4 GetViewMatrix(this ICamera2 camera, bool isOrtho = true)
         {
             Transform2 transform = camera.GetWorldTransform();
             var m = Matrix4.CreateRotationZ(transform.Rotation);
@@ -31,25 +48,25 @@ namespace Game.Rendering
                 eye = new Vector3(transform.Position) + new Vector3(0, 0, 50);
                 return Matrix4.LookAt(eye, lookat, new Vector3(GetUp(camera))) * perspective;
             }
-            
+
             perspective = Matrix4.CreatePerspectiveFieldOfView((float)camera.Fov, camera.Aspect, 0.01f, 10000f);
             perspective = Matrix4.CreateScale(transform.Scale.X, transform.Scale.Y, Math.Abs(transform.Size)) * perspective;
             eye = new Vector3(transform.Position) + new Vector3(0, 0, (float)GetWorldZ(camera));
             return Matrix4.LookAt(eye, lookat, new Vector3(GetUp(camera))) * perspective * Matrix4.CreateTranslation(new Vector3(-camera.ViewOffset.X, -camera.ViewOffset.Y, 0));
         }
 
-        public static float UnitZToWorld(ICamera2 camera, float z)
+        public static float UnitZToWorld(this ICamera2 camera, float z)
         {
             return (1 - z) * (float)GetWorldZ(camera);
         }
 
-        static double GetWorldZ(ICamera2 camera)
+        static double GetWorldZ(this ICamera2 camera)
         {
             return Math.Abs(camera.GetWorldTransform().Size / (2 * Math.Tan(camera.Fov / 2)));
         }
 
         //get xy world offset needed to make v appear to overlap target in screen space.
-        public static Vector2 GetOverlapOffset(ICamera2 camera, Vector3 v, Vector3 target)
+        public static Vector2 GetOverlapOffset(this ICamera2 camera, Vector3 v, Vector3 target)
         {
             Vector3 cameraPos = new Vector3(camera.GetWorldTransform().Position);
             cameraPos.Z = (float)GetWorldZ(camera);
@@ -70,72 +87,72 @@ namespace Game.Rendering
             };
         }
 
-        public static Vector2[] GetWorldVerts(ICamera2 camera)
+        public static Vector2[] GetWorldVerts(this ICamera2 camera)
         {
             return Vector2Ext.Transform(GetVerts(), WorldToClipMatrix(camera).Inverted());
         }
 
-        static Matrix4 WorldToScreenMatrix(ICamera2 camera, Vector2 canvasSize)
+        static Matrix4 WorldToScreenMatrix(this ICamera2 camera, Vector2 canvasSize)
         {
             Matrix4 scale = Matrix4.CreateScale(canvasSize.X / 2, -canvasSize.Y / 2, 1);
             Matrix4 translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
-            return GetViewMatrix(camera) * translation * scale;
+            return camera.GetViewMatrix() * translation * scale;
         }
 
-        static Matrix4 WorldToClipMatrix(ICamera2 camera)
+        static Matrix4 WorldToClipMatrix(this ICamera2 camera)
         {
             Matrix4 scale = Matrix4.CreateScale(1, -1, 1);
             Matrix4 translation = Matrix4.CreateTranslation(new Vector3(0f, 0f, 0f));
-            return GetViewMatrix(camera) * translation * scale;
+            return camera.GetViewMatrix() * translation * scale;
         }
 
-        public static Vector2 WorldToScreen(ICamera2 camera, Vector2 worldCoord, Vector2 canvasSize)
+        public static Vector2 WorldToScreen(this ICamera2 camera, Vector2 worldCoord, Vector2 canvasSize)
         {
             return Vector2Ext.Transform(worldCoord, WorldToScreenMatrix(camera, canvasSize));
         }
 
-        public static Vector2[] WorldToScreen(ICamera2 camera, IList<Vector2> worldCoord, Vector2 canvasSize)
+        public static Vector2[] WorldToScreen(this ICamera2 camera, IList<Vector2> worldCoord, Vector2 canvasSize)
         {
             return Vector2Ext.Transform(worldCoord, WorldToScreenMatrix(camera, canvasSize)).ToArray();
         }
 
-        public static Vector2 ScreenToWorld(ICamera2 camera, Vector2 screenCoord, Vector2 canvasSize)
+        public static Vector2 ScreenToWorld(this ICamera2 camera, Vector2 screenCoord, Vector2 canvasSize)
         {
             return Vector2Ext.Transform(screenCoord, WorldToScreenMatrix(camera, canvasSize).Inverted());
         }
 
-        public static Vector2[] ScreenToWorld(ICamera2 camera, IList<Vector2> screenCoord, Vector2 canvasSize)
+        public static Vector2[] ScreenToWorld(this ICamera2 camera, IList<Vector2> screenCoord, Vector2 canvasSize)
         {
             return Vector2Ext.Transform(screenCoord, WorldToScreenMatrix(camera, canvasSize).Inverted()).ToArray();
         }
 
-        public static Vector2 ScreenToClip(ICamera2 camera, Vector2 screenCoord, Vector2 canvasSize)
+        public static Vector2 ScreenToClip(this ICamera2 camera, Vector2 screenCoord, Vector2 canvasSize)
         {
             return Vector2Ext.Transform(screenCoord, WorldToScreenMatrix(camera, canvasSize).Inverted() * GetViewMatrix(camera));
         }
 
-        public static Vector2[] ScreenToClip(ICamera2 camera, IList<Vector2> screenCoord, Vector2 canvasSize)
+        public static Vector2[] ScreenToClip(this ICamera2 camera, IList<Vector2> screenCoord, Vector2 canvasSize)
         {
             return Vector2Ext.Transform(screenCoord, WorldToScreenMatrix(camera, canvasSize).Inverted() * GetViewMatrix(camera)).ToArray();
         }
 
-        public static Vector2 ClipToWorld(ICamera2 camera, Vector2 screenCoord)
+        public static Vector2 ClipToWorld(this ICamera2 camera, Vector2 screenCoord)
         {
             return Vector2Ext.Transform(screenCoord, GetViewMatrix(camera).Inverted());
         }
 
-        public static Vector2[] ClipToWorld(ICamera2 camera, IList<Vector2> screenCoord)
+        public static Vector2[] ClipToWorld(this ICamera2 camera, IList<Vector2> screenCoord)
         {
             return Vector2Ext.Transform(screenCoord, GetViewMatrix(camera).Inverted()).ToArray();
         }
 
-        static Vector2 GetUp(ICamera2 camera)
+        static Vector2 GetUp(this ICamera2 camera)
         {
             Matrix4 m = Matrix4.CreateRotationZ(camera.GetWorldTransform().Rotation);
             return Vector2Ext.Transform(new Vector2(0, 1), m);
         }
 
-        public static Transform2 GetWorldViewpoint(ICamera2 camera)
+        public static Transform2 GetWorldViewpoint(this ICamera2 camera)
         {
             return new Transform2(camera.ViewOffset).Transform(camera.GetWorldTransform());
         }
