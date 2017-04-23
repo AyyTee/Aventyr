@@ -37,7 +37,7 @@ namespace Game.Rendering
 
         public List<IVirtualWindow> Windows { get; private set; } = new List<IVirtualWindow>();
 
-        Size ClientSize => _canvasSizeProvider.ClientSize;
+        Vector2i ClientSize => _canvasSizeProvider.ClientSize;
 
         IClientSizeProvider _canvasSizeProvider;
 
@@ -103,7 +103,7 @@ namespace Game.Rendering
             Debug.Assert(GL.GetError() == ErrorCode.NoError);
 
             SetScissor(null);
-            GL.Viewport(0, 0, ClientSize.Width, ClientSize.Height);
+            GL.Viewport(0, 0, ClientSize.X, ClientSize.Y);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit | ClearBufferMask.ColorBufferBit);
 
             var shaderList = _shaders.ToList();
@@ -117,7 +117,7 @@ namespace Game.Rendering
             foreach (var window in Windows)
             {
                 SetScissor(window);
-                GL.Viewport(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.Width, window.CanvasSize.Height);
+                GL.Viewport(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.X, window.CanvasSize.Y);
                 GL.Clear(ClearBufferMask.StencilBufferBit);
 
                 foreach (var layer in window.Layers)
@@ -422,7 +422,7 @@ namespace Game.Rendering
                 return;
             }
             Matrix4 scaleMatrix = viewMatrix * Matrix4.CreateTranslation(new Vector3(1, 1, 0));
-            scaleMatrix = scaleMatrix * Matrix4.CreateScale(new Vector3(ClientSize.Width / (float)2, ClientSize.Height / (float)2, 0));
+            scaleMatrix = scaleMatrix * Matrix4.CreateScale(new Vector3(ClientSize.X / (float)2, ClientSize.Y / (float)2, 0));
 
             Vector2 vMin = ClipperConvert.ToVector2(view.Paths[0][0]);
             Vector2 vMax = ClipperConvert.ToVector2(view.Paths[0][0]);
@@ -447,10 +447,10 @@ namespace Game.Rendering
         {
             if (window == null)
             {
-                GL.Scissor(0, 0, ClientSize.Width, ClientSize.Height);
+                GL.Scissor(0, 0, ClientSize.X, ClientSize.Y);
                 return;
             }
-            GL.Scissor(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.Width, window.CanvasSize.Height);
+            GL.Scissor(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.X, window.CanvasSize.Y);
         }
 
         void UpdateCullFace(Matrix4 viewMatrix)

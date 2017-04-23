@@ -140,7 +140,6 @@
     <Compile Include="Common\IAlmostEqual.cs" />
     <Compile Include="Common\IValueEquality.cs" />
     <Compile Include="Common\Line.cs" />
-    <Compile Include="Common\Size.cs" />
     <Compile Include="Common\Vector2i.cs" />
     <Compile Include="Common\Transform2d.cs" />
     <Compile Include="FakeInput.cs" />
@@ -179,7 +178,7 @@
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\IVirtualWindow.cs" />
     <Compile Include="Rendering\Layer.cs" />
-    <Compile Include="Rendering\SimpleCamera2.cs" />
+    <Compile Include="Rendering\HudCamera2.cs" />
     <Compile Include="Rendering\TextEntity.cs" />
     <Compile Include="ResourceController.cs" />
     <Compile Include="Rendering\VirtualWindow.cs" />

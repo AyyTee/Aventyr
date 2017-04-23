@@ -176,8 +176,6 @@ namespace EditorLogic
                     player.SetActor(actor);
                     actor.SetTransform(new Transform2(cast.GetWorldTransform().Position));
 
-                    //player.Camera = (Camera2)scene.ActiveCamera;
-
                     Entity entity = new Entity(scene, new Transform2());
                     entity.Name = cast.Name;
                     entity.SetParent(actor);

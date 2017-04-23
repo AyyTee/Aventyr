@@ -34,9 +34,9 @@ namespace TankGameTestFramework
 
         static void RunSplitScreen()
         {
-            var controller = new ResourceController(new Size(1000, 800));
+            var controller = new ResourceController(new Vector2i(1000, 800));
 
-            var center = new Vector2i(controller.ClientSize.Width / 2, controller.ClientSize.Height / 2);
+            var center = new Vector2i(controller.ClientSize.X / 2, controller.ClientSize.Y / 2);
 
             var server = new FakeNetServer();
             var client = new FakeNetClient();
@@ -47,14 +47,14 @@ namespace TankGameTestFramework
 
             var windowClient = new VirtualWindow(controller)
             {
-                CanvasSize = (Size)center,
+                CanvasSize = (Vector2i)center,
                 CanvasPosition = new Vector2i(0, center.Y)
             };
             controller.AddController(new Server(windowClient, server));
 
             var windowServer = new VirtualWindow(controller)
             {
-                CanvasSize = (Size)center,
+                CanvasSize = (Vector2i)center,
                 CanvasPosition = center
             };
             controller.AddController(new Client(windowServer, null, client));

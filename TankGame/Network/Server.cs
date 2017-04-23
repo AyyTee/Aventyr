@@ -55,15 +55,11 @@ namespace TankGame.Network
         {
             _scene = new Scene();
             _scene.Gravity = new Vector2();
-            new Camera2(_scene, new Transform2(new Vector2(), 10), _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
+            new Camera2(_scene, new Transform2(new Vector2(), 10), _window.CanvasSize.X / (float)_window.CanvasSize.Y);
 
             Entity entity2 = new Entity(_scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
             entity2.ModelList[0].SetTexture(_window.Textures?.Default);
-
-            Entity serverMarker = new Entity(_scene);
-            serverMarker.AddModel(ModelFactory.CreateCircle(new Vector3(-3, -3, 1), 0.5f, 10));
-
 
             _walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
             _walls[0].SetTransform(new Transform2(new Vector2(3, 0)));
@@ -75,8 +71,9 @@ namespace TankGame.Network
             Hud = new Scene();
             Camera2 camera = new Camera2(
                 Hud,
-                new Transform2(new Vector2(), _window.CanvasSize.Height),
-                _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
+                new Transform2(new Vector2(), _window.CanvasSize.Y),
+                _window.CanvasSize.X / (float)_window.CanvasSize.Y);
+            PortalCommon.UpdateWorldTransform(Hud);
         }
 
         public T InitNetObject<T>(T netObject) where T : INetObject
@@ -117,8 +114,9 @@ namespace TankGame.Network
             var gui = new Layer(Hud);
             gui.DrawText(
                 _window.Fonts?.Inconsolata,
-                new Vector2(-_window.CanvasSize.Width / 2, _window.CanvasSize.Height / 2),
-                $"Client\nId {_server.UniqueIdentifier}\n\nFPS\nAvg { (1 / timeDelta).ToString("00.00") }\nMax { (1 / timeDelta).ToString("00.00") }\nMin { (1 / timeDelta).ToString("00.00") }");
+                new Vector2(-_window.CanvasSize.X / 2, _window.CanvasSize.Y / 2),
+                $"Server\nId {_server.UniqueIdentifier}\n\nFPS\nAvg { (1 / timeDelta).ToString("00.00") }\nMax { (1 / timeDelta).ToString("00.00") }\nMin { (1 / timeDelta).ToString("00.00") }");
+            _window.Layers.Add(gui);
         }
 
         public void Update(double timeDelta)

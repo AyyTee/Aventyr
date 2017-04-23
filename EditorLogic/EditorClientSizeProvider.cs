@@ -13,7 +13,7 @@ namespace EditorLogic
     {
         readonly GLControl _glControl;
 
-        public Size ClientSize => (Size)_glControl.ClientSize;
+        public Vector2i ClientSize => (Vector2i)_glControl.ClientSize;
 
         public EditorClientSizeProvider(GLControl glControl)
         {

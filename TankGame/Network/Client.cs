@@ -60,8 +60,8 @@ namespace TankGame.Network
             Hud = new Scene();
             Camera2 camera = new Camera2(
                 Hud,
-                new Transform2(new Vector2(), _window.CanvasSize.Height),
-                _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
+                new Transform2(new Vector2(), _window.CanvasSize.Y),
+                _window.CanvasSize.X / (float)_window.CanvasSize.Y);
 
             PortalCommon.UpdateWorldTransform(Hud);
 
@@ -73,7 +73,7 @@ namespace TankGame.Network
             Camera2 camera = new Camera2(
                 Scene,
                 new Transform2(new Vector2(), 10),
-                _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
+                _window.CanvasSize.X / (float)_window.CanvasSize.Y);
 
             _tankCamera = new TankCamera(camera, null);
 
@@ -89,10 +89,11 @@ namespace TankGame.Network
             _window.Layers.Clear();
             _window.Layers.Add(new Layer(Scene));
 
-            var gui = new Layer(Hud);
+            var gui = new Layer();
+            gui.Camera = new HudCamera2(_window.CanvasSize);
             gui.DrawText(
                 _window.Fonts?.Inconsolata, 
-                new Vector2(-_window.CanvasSize.Width / 2, _window.CanvasSize.Height / 2),
+                new Vector2(-_window.CanvasSize.X / 2, _window.CanvasSize.Y / 2),
                 $"Client\nId {_client.UniqueIdentifier}\n\nFPS\nAvg { (1 / timeDelta).ToString("00.00") }\nMax { (1 / timeDelta).ToString("00.00") }\nMin { (1 / timeDelta).ToString("00.00") }");
             _window.Layers.Add(gui);
         }

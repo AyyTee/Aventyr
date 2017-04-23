@@ -12,7 +12,7 @@ namespace Game
     public class FakeVirtualWindow : IVirtualWindow
     {
         public Vector2i CanvasPosition => new Vector2i();
-        public Size CanvasSize => new Size(300, 200);
+        public Vector2i CanvasSize => new Vector2i(300, 200);
 
         public FakeInput Input { get; private set; } = new FakeInput();
         IInput IVirtualWindow.Input => Input;

@@ -100,7 +100,7 @@ namespace EditorLogic
                     _stopwatch.Restart();
                     if (_resize)
                     {
-                        _window.CanvasSize = (Size)_control.ClientSize;
+                        _window.CanvasSize = (Vector2i)_control.ClientSize;
                         _resize = false;
                     }
                     _window.Input.Update(_focused);

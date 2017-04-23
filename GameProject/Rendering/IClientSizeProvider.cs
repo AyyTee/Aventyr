@@ -4,6 +4,6 @@ namespace Game.Rendering
 {
     public interface IClientSizeProvider
     {
-        Size ClientSize { get; }
+        Vector2i ClientSize { get; }
     }
 }

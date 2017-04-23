@@ -21,7 +21,7 @@ namespace Game
 
         readonly GameWindow _window;
 
-        public Size ClientSize => (Size)_window.ClientSize;
+        public Vector2i ClientSize => (Vector2i)_window.ClientSize;
 
         public IRenderer Renderer { get; private set; }
 
@@ -43,9 +43,9 @@ namespace Game
         readonly SoundSystem _soundSystem;
         bool _soundEnabled;
 
-        public ResourceController(Size windowSize, string windowName = "Game")
+        public ResourceController(Vector2i windowSize, string windowName = "Game")
         {
-            _window = new GameWindow(windowSize.Width, windowSize.Height, DefaultGraphics, windowName, GameWindowFlags.FixedWindow);
+            _window = new GameWindow(windowSize.X, windowSize.Y, DefaultGraphics, windowName, GameWindowFlags.FixedWindow);
             Textures = new TextureAssets();
             Renderer = new Renderer(this, Textures);
             Input = new Input(_window);

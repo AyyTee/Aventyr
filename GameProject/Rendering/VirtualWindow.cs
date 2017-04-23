@@ -11,7 +11,7 @@ namespace Game.Rendering
     public class VirtualWindow : IVirtualWindow
     {
         readonly ResourceController _resourceController;
-        public Size CanvasSize { get; set; }
+        public Vector2i CanvasSize { get; set; }
         public Vector2i CanvasPosition { get; set; }
         public IInput Input => _resourceController.Input;
         public TextureAssets Textures => _resourceController.Textures;

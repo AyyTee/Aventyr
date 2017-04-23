@@ -21,7 +21,7 @@ namespace TankGame
                 args = new[] { "server", "45619" };
             }
             
-            var resourceController = new ResourceController(new Size(1000, 800), args[0]);
+            var resourceController = new ResourceController(new Vector2i(1000, 800), args[0]);
             var window = new VirtualWindow(resourceController);
             window.CanvasSize = resourceController.ClientSize;
 

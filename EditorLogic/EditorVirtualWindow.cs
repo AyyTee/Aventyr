@@ -13,7 +13,7 @@ namespace EditorLogic
     public class EditorVirtualWindow : IVirtualWindow
     {
         public Vector2i CanvasPosition => new Vector2i();
-        public Size CanvasSize { get; set; }
+        public Vector2i CanvasSize { get; set; }
 
         public IInput Input { get; private set; }
 
@@ -33,7 +33,7 @@ namespace EditorLogic
         public EditorVirtualWindow(GLControl glControl, IRenderer renderer, IInput input, TextureAssets textures)
         {
             _glControl = glControl;
-            CanvasSize = (Size)_glControl.ClientSize;
+            CanvasSize = (Vector2i)_glControl.ClientSize;
             Renderer = renderer;
             Input = input;
             Textures = textures;

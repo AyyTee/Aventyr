@@ -7,7 +7,7 @@ namespace Game.Rendering
     public interface IVirtualWindow
     {
         Vector2i CanvasPosition { get; }
-        Size CanvasSize { get; }
+        Vector2i CanvasSize { get; }
         IInput Input { get; }
         TextureAssets Textures { get; }
         List<IRenderLayer> Layers { get; }
