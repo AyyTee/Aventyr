@@ -25,7 +25,7 @@ namespace TankGame
         {
             Tank?.Scene.SceneObjects.Remove(this);
             Tank = tank;
-            Tank?.Scene.SceneObjects.Add(this);
+            Tank?.Scene.Add(this);
         }
 
         public void StepBegin(IScene scene, float stepSize)

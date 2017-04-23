@@ -50,7 +50,7 @@ namespace Game
         public SceneNode(Scene scene)
         {
             Scene = scene;
-            Scene.SceneObjects.Add(this);
+            Scene.Add(this);
             Name = GetType().Name;
         }
         #endregion

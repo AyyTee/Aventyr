@@ -59,11 +59,11 @@ namespace TankGame.Network
 
             Hud = new Scene();
             Camera2 camera = new Camera2(
-                Scene,
+                Hud,
                 new Transform2(new Vector2(), _window.CanvasSize.Height),
                 _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
 
-            Hud.SetActiveCamera(camera);
+            PortalCommon.UpdateWorldTransform(Hud);
 
             Init();
         }
@@ -74,8 +74,6 @@ namespace TankGame.Network
                 Scene,
                 new Transform2(new Vector2(), 10),
                 _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
-
-            Scene.SetActiveCamera(camera);
 
             _tankCamera = new TankCamera(camera, null);
 
@@ -173,8 +171,8 @@ namespace TankGame.Network
 
             while ((msg = _client.ReadMessage()) != null)
             {
-                Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _client.UniqueIdentifier, 
-                    "Unique identifier should not be the same as this client.");
+                //Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _client.UniqueIdentifier, 
+                //    "Unique identifier should not be the same as this client.");
                 switch (msg.MessageType)
                 {
                     case NetIncomingMessageType.VerboseDebugMessage:

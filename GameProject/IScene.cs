@@ -14,6 +14,5 @@ namespace Game
         List<IPortalable> GetPortalableList();
         /// <summary>Returns a list of all the objects that exist within an IScene.</summary>
         List<ISceneObject> GetAll();
-        ICamera2 GetCamera();
     }
 }

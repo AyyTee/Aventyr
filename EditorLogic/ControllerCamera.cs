@@ -14,7 +14,7 @@ using Game.Serialization;
 namespace EditorLogic
 {
     [DataContract]
-    public class ControllerCamera : ICamera2, IPortalable, IShallowClone<ControllerCamera>, IStep
+    public class ControllerCamera : ICamera2, IPortalable, IShallowClone<ControllerCamera>, IStep, ISceneObject
     {
         public delegate void CameraObjectHandler(ControllerCamera camera);
         /// <summary>Event is fired if the camera Transform is modified by this controller.</summary>

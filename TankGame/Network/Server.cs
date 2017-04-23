@@ -55,7 +55,7 @@ namespace TankGame.Network
         {
             _scene = new Scene();
             _scene.Gravity = new Vector2();
-            _scene.SetActiveCamera(new Camera2(_scene, new Transform2(new Vector2(), 10), _window.CanvasSize.Width / (float)_window.CanvasSize.Height));
+            new Camera2(_scene, new Transform2(new Vector2(), 10), _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
 
             Entity entity2 = new Entity(_scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
@@ -74,11 +74,9 @@ namespace TankGame.Network
 
             Hud = new Scene();
             Camera2 camera = new Camera2(
-                _scene,
+                Hud,
                 new Transform2(new Vector2(), _window.CanvasSize.Height),
                 _window.CanvasSize.Width / (float)_window.CanvasSize.Height);
-
-            Hud.SetActiveCamera(camera);
         }
 
         public T InitNetObject<T>(T netObject) where T : INetObject
@@ -165,8 +163,8 @@ namespace TankGame.Network
 
             while ((msg = _server.ReadMessage()) != null)
             {
-                Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _server.UniqueIdentifier, 
-                    "Unique identifier should not be the same as the servers.");
+                //Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _server.UniqueIdentifier, 
+                //    "Unique identifier should not be the same as the servers.");
                 switch (msg.MessageType)
                 {
                     case NetIncomingMessageType.VerboseDebugMessage:

@@ -40,7 +40,7 @@ namespace EditorLogic
                 {
                     ControllerCamera camera = level.ActiveCamera.ShallowClone();
                     camera.Scene = scene;
-                    scene.SetActiveCamera(camera);
+                    scene.Add(camera);
                 }
             }
 
@@ -61,7 +61,7 @@ namespace EditorLogic
 
             Dictionary<EditorObject, SceneNode> dictionary = new Dictionary<EditorObject, SceneNode>();
             AnimationDriver animation = new AnimationDriver();
-            scene.SceneObjects.Add(animation);
+            scene.Add(animation);
 
             List<EditorObject> editorObjects = level.GetAll().OfType<EditorObject>().ToList();
             foreach (EditorObject e in editorObjects)
@@ -183,7 +183,7 @@ namespace EditorLogic
                     entity.SetParent(actor);
                     entity.AddModel(Game.Rendering.ModelFactory.CreatePolygon(polygon));
 
-                    scene.SceneObjects.Add(player);
+                    scene.Add(player);
                     dictionary.Add(cast, player.Actor);
                 }
                 else

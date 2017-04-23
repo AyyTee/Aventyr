@@ -20,7 +20,7 @@ namespace Game.Rendering
 
         public Layer(IScene scene)
         {
-            Camera = scene.GetCamera();
+            Camera = scene.GetAll().OfType<ICamera2>().First();
             Portals = scene.GetAll().OfType<IPortal>().ToList();
             Renderables = scene.GetAll().OfType<IRenderable>().ToList();
         }

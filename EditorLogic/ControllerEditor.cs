@@ -75,7 +75,7 @@ namespace EditorLogic
             Clipboard = new EditorScene(Window);
 
             LevelCreate();
-            Hud.SetActiveCamera(new Camera2(Hud, new Transform2(new Vector2(Window.CanvasSize.Width / 2f, Window.CanvasSize.Height / 2f), Window.CanvasSize.Width), (float)Window.CanvasSize.WidthRatio));
+            new Camera2(Hud, new Transform2((Vector2)Window.CanvasSize, Window.CanvasSize.Width), (float)Window.CanvasSize.WidthRatio);
 
             PortalCommon.UpdateWorldTransform(Hud);
             PortalCommon.UpdateWorldTransform(Level);
@@ -96,7 +96,7 @@ namespace EditorLogic
 
             CamControl = new ControllerCamera(this, Window.Input, Level);
             Transform2.SetSize(CamControl, 10);
-            Hud.SetActiveCamera(CamControl);
+            Hud.Add(CamControl);
             Level.ActiveCamera = CamControl;
 
             LevelCreated(this, null);

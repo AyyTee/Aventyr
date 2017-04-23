@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Game.Rendering
 {
-    public interface ICamera2 : ISceneObject
+    public interface ICamera2
     {
         Transform2 GetWorldTransform(bool ignorePortals = false);
         Transform2 GetWorldVelocity(bool ignorePortals = false);

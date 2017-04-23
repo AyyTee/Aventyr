@@ -31,7 +31,6 @@ namespace TankGame
         public int GunReloadTime = 1;
         public int PortalReloadTime = 1;
         public readonly TankPortal[] PortalPair = new TankPortal[2];
-        
 
         public Tank(Scene scene)
             : base(scene, PolygonFactory.CreateRectangle(0.8f, 1))
@@ -45,8 +44,6 @@ namespace TankGame
                 portalEntity.ModelList[0].SetColor(new Vector3(1, 0, 0));
             }
             Portal.SetLinked(PortalPair[0], PortalPair[1]);
-
-            scene.SceneObjects.Add(this);
 
             Name = "Player Tank";
 

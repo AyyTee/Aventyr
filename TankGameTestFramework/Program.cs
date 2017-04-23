@@ -21,7 +21,7 @@ namespace TankGameTestFramework
         static void Main(string[] args)
         {
             bool splitScreen = true;
-            splitScreen = false;
+            //splitScreen = false;
             if (splitScreen)
             {
                 RunSplitScreen();

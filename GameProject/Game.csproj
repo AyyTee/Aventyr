@@ -179,6 +179,7 @@
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\IVirtualWindow.cs" />
     <Compile Include="Rendering\Layer.cs" />
+    <Compile Include="Rendering\SimpleCamera2.cs" />
     <Compile Include="Rendering\TextEntity.cs" />
     <Compile Include="ResourceController.cs" />
     <Compile Include="Rendering\VirtualWindow.cs" />

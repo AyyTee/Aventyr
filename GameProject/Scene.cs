@@ -18,7 +18,6 @@ namespace Game
     {
         public World World { get; private set; }
         PhyicsListener _contactListener;
-        public ICamera2 ActiveCamera { get; private set; }
 
         [DataMember]
         public List<ISceneObject> SceneObjects = new List<ISceneObject>();
@@ -45,6 +44,12 @@ namespace Game
             public Actor Actor;
             public Transform2 Previous;
             public Transform2 TrueVelocity;
+        }
+
+        public void Add(ISceneObject sceneObject)
+        {
+            Debug.Assert(!SceneObjects.Contains(sceneObject), "The same instance cannot be added twice.");
+            SceneObjects.Add(sceneObject);
         }
 
         public void MarkForRemoval(ISceneObject sceneObject) => ToBeRemoved.Add(sceneObject);
@@ -120,34 +125,22 @@ namespace Game
             {
                 s.Remove();
                 SceneObjects.Remove(s);
-                if (ActiveCamera == s)
-                {
-                    ActiveCamera = null;
-                }
             }
             ToBeRemoved.Clear();
 
             Time += stepSize;
         }
 
-        public ICamera2 GetCamera() => ActiveCamera;
-
         public List<ISceneObject> GetAll()
         {
             HashSet<ISceneObject> set = new HashSet<ISceneObject>();
             set.UnionWith(SceneObjects);
-            if (ActiveCamera != null)
-            {
-                set.Add(ActiveCamera);
-            }
             return set.ToList();
         }
 
         public List<IPortal> GetPortalList() => GetAll().OfType<IPortal>().ToList();
 
         public List<IPortalable> GetPortalableList() => GetAll().OfType<IPortalable>().ToList();
-
-        public void SetActiveCamera(ICamera2 camera) => ActiveCamera = camera;
 
         /// <summary>
         /// Assigns a physics world to this scene. Can only be done if there isn't already a physics world assigned.
