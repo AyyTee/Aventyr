@@ -20,7 +20,7 @@ namespace Game
         PhyicsListener _contactListener;
 
         [DataMember]
-        public List<ISceneObject> SceneObjects = new List<ISceneObject>();
+        public readonly List<ISceneObject> SceneObjects = new List<ISceneObject>();
         public readonly HashSet<ISceneObject> ToBeRemoved = new HashSet<ISceneObject>();
         /// <summary>
         /// Whether the scene is currently performing a physics step.  

@@ -70,10 +70,8 @@ namespace EditorLogic
             }
         }
 
-        public List<IPortalable> GetPortalableList()
-        {
-            return GetAll().OfType<IPortalable>().ToList();
-        }
+        public List<IPortalable> GetPortalableList() => GetAll().OfType<IPortalable>().ToList();
+
 
         public void AddKeyframe(EditorObject instance, Transform2 keyframe)
         {
@@ -101,15 +99,7 @@ namespace EditorLogic
             }
         }
 
-        public List<IPortal> GetPortalList()
-        {
-            return GetAll().OfType<IPortal>().ToList();
-        }
-
-        public ICamera2 GetCamera()
-        {
-            return ActiveCamera;
-        }
+        public List<IPortal> GetPortalList() => GetAll().OfType<IPortal>().ToList();
 
         public void Step(float stepSize)
         {

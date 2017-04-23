@@ -19,5 +19,9 @@ namespace TankGameTestFramework
         {
             SendMessage(msg, ((INetServer)this).Connections.Where(item => item != except).ToList(), method, 0);
         }
+
+        public FakeNetServer(long uniqueIdentifier) : base(uniqueIdentifier)
+        {
+        }
     }
 }

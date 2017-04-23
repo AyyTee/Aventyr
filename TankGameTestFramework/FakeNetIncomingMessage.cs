@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Net;
-using System.Reflection;
 using Lidgren.Network;
 
 namespace TankGameTestFramework
 {
     public class FakeNetIncomingMessage : FakeNetMessage, INetIncomingMessage
     {
-        public FakeNetIncomingMessage(FakeNetOutgoingMessage message, FakeNetConnection senderConnection)
+        public double ReceiveTime { get; }
+        public INetConnection SenderConnection { get; }
+        public NetIncomingMessageType MessageType { get; }
+
+        public FakeNetIncomingMessage(FakeNetOutgoingMessage message, FakeNetConnection senderConnection, NetIncomingMessageType messageType = NetIncomingMessageType.Data)
         {
             Data = message.Data;
             SendTime = message.SendTime;
             ReceiveTime = SendTime + senderConnection.Latency;
             SenderConnection = senderConnection;
+            MessageType = messageType;
         }
 
+        #region Not implemented
         public NetDeliveryMethod DeliveryMethod
         {
             get
@@ -22,10 +27,6 @@ namespace TankGameTestFramework
                 throw new NotImplementedException();
             }
         }
-
-        public double ReceiveTime { get; set; }
-
-        public INetConnection SenderConnection { get; set; }
 
         public IPEndPoint SenderEndPoint
         {
@@ -43,8 +44,6 @@ namespace TankGameTestFramework
             }
         }
 
-        public NetIncomingMessageType MessageType { get; set; } = NetIncomingMessageType.Data;
-
         public bool Decrypt(NetEncryption encryption)
         {
             throw new NotImplementedException();
@@ -59,5 +58,6 @@ namespace TankGameTestFramework
         {
             throw new NotImplementedException();
         }
+        #endregion
     }
 }

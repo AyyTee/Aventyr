@@ -14,5 +14,9 @@ namespace TankGameTestFramework
         INetConnection INetClient.ServerConnection => Connections.FirstOrDefault();
 
         public FakeNetConnection ServerConnection => Connections.FirstOrDefault();
+
+        public FakeNetClient(long uniqueIdentifier) : base(uniqueIdentifier)
+        {
+        }
     }
 }

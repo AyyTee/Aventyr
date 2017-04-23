@@ -10,6 +10,7 @@ using System.Linq;
 using Game.Common;
 using Game.Portals;
 using TankGameTestFramework;
+using OpenTK;
 
 namespace TankGameTests
 {
@@ -31,12 +32,12 @@ namespace TankGameTests
             NetTime.AutomaticTimeKeeping = false;
             NetTime.SetTime(0);
 
-            _netClient = new FakeNetClient();
+            _netClient = new FakeNetClient(TankGameTestFramework.Program.ClientUniqueId);
             _clientWindow = new FakeVirtualWindow();
             _client = new Client(_clientWindow, null, _netClient);
             _client.Init();
 
-            _netServer = new FakeNetServer();
+            _netServer = new FakeNetServer(TankGameTestFramework.Program.ServerUniqueId);
             _serverWindow = new FakeVirtualWindow();
             _server = new Server(_serverWindow, _netServer);
             _server.Init();
@@ -70,7 +71,7 @@ namespace TankGameTests
                     {
                         new TankData
                         {
-                            OwnerId = _client.ServerId,
+                            OwnerId = _client.ServerSideId,
                             GunFiredTime = -1,
                             Transform = new Transform2(),
                             WorldTransform = new Transform2(),
@@ -84,8 +85,7 @@ namespace TankGameTests
                 var message = new FakeNetIncomingMessage(
                     ((FakeNetOutgoingMessage)NetworkHelper.PrepareMessage(_client, data)), 
                     _netServer.Connections[0]);
-                message.MessageType = NetIncomingMessageType.Data;
-                _netServer.EnqueueMessage(message);
+                _netServer.EnqueueArrivedMessage(message);
 
                 _clientWindow.Input.KeyCurrent.Add(Key.Space);
                 _client.Update(1 / 60.0);
@@ -123,6 +123,7 @@ namespace TankGameTests
             FakeNetPeer reader = _netClient;
 
             _netServer.Connections[0].Latency = 1;
+            _netClient.ServerConnection.Latency = 1;
             _server.SendMessage(new MessageToClient());
 
             Assert.IsTrue(reader.ReadMessage() == null);
@@ -139,7 +140,8 @@ namespace TankGameTests
         {
             FakeNetPeer reader = _netServer;
 
-            _netClient.Connections[0].Latency = 1;
+            _netServer.Connections[0].Latency = 1;
+            _netClient.ServerConnection.Latency = 1;
             _client.SendMessage(new MessageToServer());
 
             Assert.IsTrue(reader.ReadMessage() == null);
@@ -156,19 +158,40 @@ namespace TankGameTests
         {
             double timeDelta = 1 / 60.0;
 
+            _netServer.Connections.ForEach(item => item.Latency = 0.5);
+            _netClient.Connections.ForEach(item => item.Latency = 0.5);
+
             var client = new Client(_clientWindow, null, _netClient);
             var server = new Server(_serverWindow, _netServer);
 
-            _netServer.EnqueueMessage(new FakeNetIncomingMessage(new FakeNetOutgoingMessage(), _netClient.ServerConnection) { MessageType = NetIncomingMessageType.StatusChanged });
+            _netServer.EnqueueArrivedMessage(new FakeNetIncomingMessage(new FakeNetOutgoingMessage(), _netServer.Connections[0], NetIncomingMessageType.StatusChanged));
             AdvanceTime(1);
+
+            var positions = new List<Vector2>();
+            var serverPositions = new List<Vector2>();
             for (int i = 0; i < 100; i++)
             {
                 _clientWindow.Input.KeyCurrent.Add(Key.W);
                 server.Update(timeDelta);
                 client.Update(timeDelta);
+
+                if (client.OwnedTank != null)
+                {
+                    positions.Add(client.OwnedTank.GetWorldTransform().Position);
+                }
+                if (server.Tanks.FirstOrDefault() != null)
+                {
+                    serverPositions.Add(server.Tanks.FirstOrDefault().GetWorldTransform().Position);
+                }
+
                 
+
                 AdvanceTime(timeDelta);
             }
+
+            var outOfOrder = positions.PairwiseFirstOrDefault((item, next) => item.Y > next.Y);
+            var outOfOrderServer = serverPositions.PairwiseFirstOrDefault((item, next) => item.Y > next.Y);
+            Assert.IsNull(outOfOrder);
         }
 
         public void AdvanceTime(double amount)

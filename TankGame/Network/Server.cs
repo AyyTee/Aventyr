@@ -16,6 +16,7 @@ namespace TankGame.Network
 {
     public class Server : INetController
     {
+        public List<Tank> Tanks => _tanks.Values.ToList();
         Dictionary<long, Tank> _tanks = new Dictionary<long, Tank>();
         readonly INetServer _server;
         public INetPeer Peer => _server;
@@ -26,7 +27,6 @@ namespace TankGame.Network
         HashSet<long> _loading = new HashSet<long>();
         int _idCount;
         public int MessagesSent { get; set; }
-        public Scene Hud { get; private set; }
 
         HashSet<ClientInstance> _clients = new HashSet<ClientInstance>();
         readonly IVirtualWindow _window;
@@ -55,25 +55,18 @@ namespace TankGame.Network
         {
             _scene = new Scene();
             _scene.Gravity = new Vector2();
-            new Camera2(_scene, new Transform2(new Vector2(), 10), _window.CanvasSize.X / (float)_window.CanvasSize.Y);
+            new Camera2(_scene, new Transform2(new Vector2(), 10), (float)_window.CanvasSize.XRatio);
 
             Entity entity2 = new Entity(_scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
             entity2.ModelList[0].SetTexture(_window.Textures?.Default);
 
-            _walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
-            _walls[0].SetTransform(new Transform2(new Vector2(3, 0)));
-            _walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
-            _walls[1].SetTransform(new Transform2(new Vector2(1, 3)));
+            //_walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
+            //_walls[0].SetTransform(new Transform2(new Vector2(3, 0)));
+            //_walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
+            //_walls[1].SetTransform(new Transform2(new Vector2(1, 3)));
 
-            PortalCommon.UpdateWorldTransform(_scene);
-
-            Hud = new Scene();
-            Camera2 camera = new Camera2(
-                Hud,
-                new Transform2(new Vector2(), _window.CanvasSize.Y),
-                _window.CanvasSize.X / (float)_window.CanvasSize.Y);
-            PortalCommon.UpdateWorldTransform(Hud);
+            //PortalCommon.UpdateWorldTransform(_scene);
         }
 
         public T InitNetObject<T>(T netObject) where T : INetObject
@@ -111,7 +104,8 @@ namespace TankGame.Network
             _window.Layers.Clear();
             _window.Layers.Add(new Layer(_scene));
 
-            var gui = new Layer(Hud);
+            var gui = new Layer();
+            gui.Camera = new HudCamera2(_window.CanvasSize);
             gui.DrawText(
                 _window.Fonts?.Inconsolata,
                 new Vector2(-_window.CanvasSize.X / 2, _window.CanvasSize.Y / 2),
@@ -161,8 +155,8 @@ namespace TankGame.Network
 
             while ((msg = _server.ReadMessage()) != null)
             {
-                //Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _server.UniqueIdentifier, 
-                //    "Unique identifier should not be the same as the servers.");
+                Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _server.UniqueIdentifier,
+                    "Unique identifier should not be the same as the servers.");
                 switch (msg.MessageType)
                 {
                     case NetIncomingMessageType.VerboseDebugMessage:

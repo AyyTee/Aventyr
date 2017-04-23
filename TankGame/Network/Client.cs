@@ -21,15 +21,14 @@ namespace TankGame.Network
         /// <summary>
         /// This client's id.
         /// </summary>
-        public long ServerId => _client.UniqueIdentifier;
-
+        public long ServerSideId => _client.UniqueIdentifier;
+        public Tank OwnedTank => _tanks.GetOrDefault(ServerSideId);
         readonly Dictionary<long, Tank> _tanks = new Dictionary<long, Tank>();
         readonly INetClient _client;
         public INetPeer Peer => _client;
         public bool IsConnected => _client.ServerConnection != null;
         readonly Queue<InputTime> _inputQueue = new Queue<InputTime>();
         public Scene Scene { get; private set; }
-        public Scene Hud { get; private set; }
         public string Name => "Client";
         double _lastTimestamp;
         bool _sceneUpdated;
@@ -56,14 +55,6 @@ namespace TankGame.Network
 
             Scene = new Scene();
             Scene.Gravity = new Vector2();
-
-            Hud = new Scene();
-            Camera2 camera = new Camera2(
-                Hud,
-                new Transform2(new Vector2(), _window.CanvasSize.Y),
-                _window.CanvasSize.X / (float)_window.CanvasSize.Y);
-
-            PortalCommon.UpdateWorldTransform(Hud);
 
             Init();
         }
@@ -102,7 +93,6 @@ namespace TankGame.Network
         {
             NetworkStep();
 
-            Tank tank = _tanks.GetOrDefault(ServerId);
             TankInput input = new TankInput
             {
                 MoveFoward = _window.Input.KeyDown(Key.W),
@@ -143,14 +133,14 @@ namespace TankGame.Network
                 InputTime[] inputArray = _inputQueue.ToArray();
                 for (int i = 0; i < inputArray.Length; i++)
                 {
-                    tank?.SetInput(inputArray[i].Input);
+                    OwnedTank?.SetInput(inputArray[i].Input);
                     Scene.Step(1 / _window.UpdatesPerSecond);
                 }
                 _sceneUpdated = false;
             }
             else
             {
-                tank?.SetInput(input);
+                OwnedTank?.SetInput(input);
                 Scene.Step(1 / _window.UpdatesPerSecond);
             }
             StepCount++;
@@ -172,8 +162,8 @@ namespace TankGame.Network
 
             while ((msg = _client.ReadMessage()) != null)
             {
-                //Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _client.UniqueIdentifier, 
-                //    "Unique identifier should not be the same as this client.");
+                Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _client.UniqueIdentifier,
+                    "Unique identifier should not be the same as this client.");
                 switch (msg.MessageType)
                 {
                     case NetIncomingMessageType.VerboseDebugMessage:
@@ -216,14 +206,14 @@ namespace TankGame.Network
 
                 foreach (TankData tankData in data.TankData)
                 {
-                    _tanks.TryGetValue(tankData.OwnerId, out Tank tank);
+                    Tank tank = _tanks.GetOrDefault(tankData.OwnerId);
 
                     if (tank == null)
                     {
                         tank = new Tank(Scene);
                         _tanks.Add(tankData.OwnerId, tank);
 
-                        if (tankData.OwnerId == ServerId)
+                        if (tankData.OwnerId == ServerSideId)
                         {
                             _tankCamera.SetTank(tank);
                         }

@@ -24,6 +24,8 @@ namespace TankGameTestFramework
 
         public long RemoteUniqueIdentifier => EndPoint.UniqueIdentifier;
 
+        public FakeNetConnection ConnectionPair => EndPoint.Connections.First(item => item.RemoteUniqueIdentifier == StartPoint.UniqueIdentifier);
+
         #region Not Implemented
         public int CurrentMTU
         {
@@ -158,11 +160,11 @@ namespace TankGameTestFramework
             _msg.SendTime = NetTime.Now;
             if (Latency > 0)
             {
-                MessagesInTransit.Add(new FakeNetIncomingMessage(_msg, this));
+                MessagesInTransit.Add(new FakeNetIncomingMessage(_msg, ConnectionPair));
             }
             else
             {
-                EndPoint.EnqueueMessage(new FakeNetIncomingMessage(_msg, this));
+                EndPoint.EnqueueArrivedMessage(new FakeNetIncomingMessage(_msg, ConnectionPair));
             }
             return NetSendResult.Sent;
         }
@@ -174,7 +176,7 @@ namespace TankGameTestFramework
                 .OrderBy(item => item.ReceiveTime)
                 .ToList();
             MessagesInTransit = MessagesInTransit.Except(arrivals).ToList();
-            arrivals.ForEach(EndPoint.EnqueueMessage);
+            arrivals.ForEach(EndPoint.EnqueueArrivedMessage);
         }
 
         public double Latency { get; set; }

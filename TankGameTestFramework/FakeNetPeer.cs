@@ -12,20 +12,9 @@ namespace TankGameTestFramework
 {
     public class FakeNetPeer : INetPeer
     {
-        Queue<FakeNetIncomingMessage> Messages { get; set; } = new Queue<FakeNetIncomingMessage>();
-
-        public void EnqueueMessage(FakeNetIncomingMessage message)
-        {
-            //Debug.Assert(message.SenderConnection.RemoteUniqueIdentifier != UniqueIdentifier);
-            Messages.Enqueue(message);
-        }
+        Queue<FakeNetIncomingMessage> ArrivedMessages { get; set; } = new Queue<FakeNetIncomingMessage>();
 
         public double Time { get; set; } = 0;
-
-        public void Step()
-        {
-            
-        }
 
         List<INetConnection> INetPeer.Connections => Connections.OfType<INetConnection>().ToList();
 
@@ -33,15 +22,32 @@ namespace TankGameTestFramework
 
         public int ConnectionsCount => Connections.Count;
 
+        public FakeNetPeer(long uniqueIdentifier)
+        {
+            UniqueIdentifier = uniqueIdentifier;
+        }
+
+        public void EnqueueArrivedMessage(FakeNetIncomingMessage message)
+        {
+            Debug.Assert(Connections.Contains(message.SenderConnection));
+            Debug.Assert(message.SenderConnection.RemoteUniqueIdentifier != UniqueIdentifier);
+            ArrivedMessages.Enqueue(message);
+        }
+
+        public void Step()
+        {
+            
+        }
+
         public INetIncomingMessage ReadMessage()
         {
-            if (Messages.Count == 0)
+            if (ArrivedMessages.Count == 0)
             {
                 return null;
             }
-            if (Messages.Peek().ReceiveTime <= NetTime.Now)
+            if (ArrivedMessages.Peek().ReceiveTime <= NetTime.Now)
             {
-                FakeNetIncomingMessage message = Messages.Dequeue();
+                FakeNetIncomingMessage message = ArrivedMessages.Dequeue();
                 return message;
             }
             return null;
@@ -49,8 +55,8 @@ namespace TankGameTestFramework
 
         public bool ReadMessage(out INetIncomingMessage message)
         {
-            message = Messages.Dequeue();
-            return Messages.Count <= 0;
+            message = ArrivedMessages.Dequeue();
+            return ArrivedMessages.Count <= 0;
         }
 
         public void Recycle(IEnumerable<INetIncomingMessage> toRecycle)
@@ -287,7 +293,7 @@ namespace TankGameTestFramework
         }
 #endregion
 
-        public long UniqueIdentifier { get; set; } = new Random().NextLong();
+        public long UniqueIdentifier { get; }
 
         public void Start()
         {

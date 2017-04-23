@@ -16,8 +16,11 @@ using TankGame.Network;
 
 namespace TankGameTestFramework
 {
-    internal class Program
+    public class Program
     {
+        public const long ServerUniqueId = 11111;
+        public const long ClientUniqueId = 22222;
+
         static void Main(string[] args)
         {
             bool splitScreen = true;
@@ -38,23 +41,24 @@ namespace TankGameTestFramework
 
             var center = new Vector2i(controller.ClientSize.X / 2, controller.ClientSize.Y / 2);
 
-            var server = new FakeNetServer();
-            var client = new FakeNetClient();
+            //var random = new Random(123);
+            var server = new FakeNetServer(ServerUniqueId);
+            var client = new FakeNetClient(ClientUniqueId);
             server.Connections.Add(new FakeNetConnection(server, client) { Latency = 0.5 });
             client.Connections.Add(new FakeNetConnection(client, server) { Latency = 0.5 });
 
-            server.EnqueueMessage(new FakeNetIncomingMessage(new FakeNetOutgoingMessage(), client.ServerConnection) { MessageType = NetIncomingMessageType.StatusChanged});
+            server.EnqueueArrivedMessage(new FakeNetIncomingMessage(new FakeNetOutgoingMessage(), server.Connections[0], NetIncomingMessageType.StatusChanged));
 
             var windowClient = new VirtualWindow(controller)
             {
-                CanvasSize = (Vector2i)center,
+                CanvasSize = center,
                 CanvasPosition = new Vector2i(0, center.Y)
             };
             controller.AddController(new Server(windowClient, server));
 
             var windowServer = new VirtualWindow(controller)
             {
-                CanvasSize = (Vector2i)center,
+                CanvasSize = center,
                 CanvasPosition = center
             };
             controller.AddController(new Client(windowServer, null, client));
