@@ -5,17 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EditorLogic
+namespace Game
 {
     public class RollingAverage
     {
-        Queue<float> _queue = new Queue<float>();
+        public Queue<float> Queue = new Queue<float>();
 
         public RollingAverage(int size, float startValue)
         {
             for (int i = 0; i < size; i++)
             {
-                _queue.Enqueue(startValue);
+                Queue.Enqueue(startValue);
             }
         }
 
@@ -23,8 +23,8 @@ namespace EditorLogic
         {
             lock (this)
             {
-                _queue.Enqueue(value);
-                _queue.Dequeue();
+                Queue.Enqueue(value);
+                Queue.Dequeue();
             }
         }
 
@@ -32,7 +32,7 @@ namespace EditorLogic
         {
             lock (this)
             {
-                return _queue.Average();
+                return Queue.Average();
             }
         }
     }

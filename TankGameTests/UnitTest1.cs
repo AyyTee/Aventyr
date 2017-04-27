@@ -167,31 +167,27 @@ namespace TankGameTests
             _netServer.EnqueueArrivedMessage(new FakeNetIncomingMessage(new FakeNetOutgoingMessage(), _netServer.Connections[0], NetIncomingMessageType.StatusChanged));
             AdvanceTime(1);
 
-            var positions = new List<Vector2>();
-            var serverPositions = new List<Vector2>();
-            for (int i = 0; i < 100; i++)
+            var prevPosition = new Vector2();
+            var prevVelocity = new Vector2();
+            for (int i = 0; i < 200; i++)
             {
-                _clientWindow.Input.KeyCurrent.Add(Key.W);
+                if (i < 100)
+                {
+                    _clientWindow.Input.KeyCurrent.Add(Key.W);
+                }
+                
                 server.Update(timeDelta);
                 client.Update(timeDelta);
 
-                if (client.OwnedTank != null)
+                if (prevPosition != new Vector2())
                 {
-                    positions.Add(client.OwnedTank.GetWorldTransform().Position);
+                    Assert.IsTrue((prevPosition + prevVelocity / 60 - client.OwnedTank.GetWorldTransform().Position).Length < 0.0001f);
                 }
-                if (server.Tanks.FirstOrDefault() != null)
-                {
-                    serverPositions.Add(server.Tanks.FirstOrDefault().GetWorldTransform().Position);
-                }
-
-                
+                prevPosition = client.OwnedTank?.GetWorldTransform().Position ?? new Vector2();
+                prevVelocity = client.OwnedTank?.GetWorldVelocity().Position ?? new Vector2();
 
                 AdvanceTime(timeDelta);
             }
-
-            var outOfOrder = positions.PairwiseFirstOrDefault((item, next) => item.Y > next.Y);
-            var outOfOrderServer = serverPositions.PairwiseFirstOrDefault((item, next) => item.Y > next.Y);
-            Assert.IsNull(outOfOrder);
         }
 
         public void AdvanceTime(double amount)

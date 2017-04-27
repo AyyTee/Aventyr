@@ -35,6 +35,7 @@ namespace TankGame.Network
         public int StepCount { get; private set; }
         TankCamera _tankCamera;
         readonly IVirtualWindow _window;
+        RollingAverage _fpsCounter = new RollingAverage(60, 0);
 
         public int MessagesSent { get; set; }
 
@@ -75,17 +76,18 @@ namespace TankGame.Network
             PortalCommon.UpdateWorldTransform(Scene);
         }
 
-        void Render(double timeDelta)
+        public void Render(double timeDelta)
         {
             _window.Layers.Clear();
             _window.Layers.Add(new Layer(Scene));
 
             var gui = new Layer();
             gui.Camera = new HudCamera2(_window.CanvasSize);
+            _fpsCounter.Enqueue((float)timeDelta);
             gui.DrawText(
                 _window.Fonts?.Inconsolata, 
                 new Vector2(-_window.CanvasSize.X / 2, _window.CanvasSize.Y / 2),
-                $"Client\nId {_client.UniqueIdentifier}\n\nFPS\nAvg { (1 / timeDelta).ToString("00.00") }\nMax { (1 / timeDelta).ToString("00.00") }\nMin { (1 / timeDelta).ToString("00.00") }");
+                $"Client\nId {_client.UniqueIdentifier}\n\nFPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }");
             _window.Layers.Add(gui);
         }
 
@@ -93,17 +95,7 @@ namespace TankGame.Network
         {
             NetworkStep();
 
-            TankInput input = new TankInput
-            {
-                MoveFoward = _window.Input.KeyDown(Key.W),
-                MoveBackward = _window.Input.KeyDown(Key.S),
-                TurnLeft = _window.Input.KeyDown(Key.A),
-                TurnRight = _window.Input.KeyDown(Key.D),
-                ReticlePos = _window.Input.GetMouseWorldPos(_tankCamera.Camera, (Vector2)_window.CanvasSize),
-                FireGun = _window.Input.KeyPress(Key.Space),
-                FirePortalLeft = _window.Input.MousePress(MouseButton.Left),
-                FirePortalRight = _window.Input.MousePress(MouseButton.Right)
-            };
+            var input = TankInput.CreateInput(_window, _tankCamera.Camera);
             
             if (IsConnected)
             {
@@ -112,8 +104,9 @@ namespace TankGame.Network
                     Input = input,
                     Timestamp = NetTime.Now
                 });
-                if (_inputQueue.Count > 60)
+                if (_inputQueue.Count > 100)
                 {
+                    Debug.Fail("Input queue is full.");
                     _inputQueue.Dequeue();
                 }
 
@@ -144,8 +137,6 @@ namespace TankGame.Network
                 Scene.Step(1 / _window.UpdatesPerSecond);
             }
             StepCount++;
-
-            Render(timeDelta);
         }
 
         public void SendMessage(MessageToServer data)

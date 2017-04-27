@@ -44,8 +44,8 @@ namespace TankGameTestFramework
             //var random = new Random(123);
             var server = new FakeNetServer(ServerUniqueId);
             var client = new FakeNetClient(ClientUniqueId);
-            server.Connections.Add(new FakeNetConnection(server, client) { Latency = 0.5 });
-            client.Connections.Add(new FakeNetConnection(client, server) { Latency = 0.5 });
+            server.Connections.Add(new FakeNetConnection(server, client) { Latency = 0.1 });
+            client.Connections.Add(new FakeNetConnection(client, server) { Latency = 0.1 });
 
             server.EnqueueArrivedMessage(new FakeNetIncomingMessage(new FakeNetOutgoingMessage(), server.Connections[0], NetIncomingMessageType.StatusChanged));
 

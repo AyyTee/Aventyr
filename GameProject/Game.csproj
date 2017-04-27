@@ -185,6 +185,7 @@
     <Compile Include="Rendering\TextEntity.cs" />
     <Compile Include="ResourceController.cs" />
     <Compile Include="Rendering\VirtualWindow.cs" />
+    <Compile Include="RollingAverage.cs" />
     <Compile Include="Serialization\DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="GlobalEnums.cs" />

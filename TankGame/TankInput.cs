@@ -1,4 +1,6 @@
-﻿using OpenTK;
+﻿using Game.Rendering;
+using OpenTK;
+using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,5 +39,20 @@ namespace TankGame
         }
         [DataMember]
         public bool FireGun;
+
+        public static TankInput CreateInput(IVirtualWindow window, ICamera2 camera)
+        {
+            return new TankInput
+            {
+                MoveFoward = window.Input.KeyDown(Key.W),
+                MoveBackward = window.Input.KeyDown(Key.S),
+                TurnLeft = window.Input.KeyDown(Key.A),
+                TurnRight = window.Input.KeyDown(Key.D),
+                ReticlePos = window.Input.GetMouseWorldPos(camera, (Vector2)window.CanvasSize),
+                FireGun = window.Input.KeyPress(Key.Space),
+                FirePortalLeft = window.Input.MousePress(MouseButton.Left),
+                FirePortalRight = window.Input.MousePress(MouseButton.Right)
+            };
+        }
     }
 }

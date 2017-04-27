@@ -17,6 +17,10 @@ namespace TankGameTestFramework
         {
         }
 
+        public void Render(double timeDelta)
+        {
+        }
+
         public void Update(double timeDelta)
         {
             NetTime.SetTime(NetTime.Now + 1 / 60.0);

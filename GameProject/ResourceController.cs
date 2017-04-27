@@ -72,6 +72,14 @@ namespace Game
 
         void Render()
         {
+            foreach (var controller in _controllers)
+            {
+                double time = _stopwatch.ElapsedMilliseconds / 1000.0;
+                double timeDelta = time - controller.LastRender;
+                controller.LastRender = time;
+                controller.Controller.Render(timeDelta);
+            }
+
             Renderer.Render();
             _window.SwapBuffers();
         }
@@ -130,6 +138,7 @@ namespace Game
         {
             public IUpdateable Controller;
             public double LastUpdate;
+            public double LastRender;
         }
     }
 }

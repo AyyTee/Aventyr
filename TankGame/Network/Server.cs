@@ -27,6 +27,7 @@ namespace TankGame.Network
         HashSet<long> _loading = new HashSet<long>();
         int _idCount;
         public int MessagesSent { get; set; }
+        RollingAverage _fpsCounter = new RollingAverage(60, 0);
 
         HashSet<ClientInstance> _clients = new HashSet<ClientInstance>();
         readonly IVirtualWindow _window;
@@ -61,8 +62,8 @@ namespace TankGame.Network
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10)));
             entity2.ModelList[0].SetTexture(_window.Textures?.Default);
 
-            //_walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
-            //_walls[0].SetTransform(new Transform2(new Vector2(3, 0)));
+            _walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
+            _walls[0].SetTransform(new Transform2(new Vector2(3, 0)));
             //_walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
             //_walls[1].SetTransform(new Transform2(new Vector2(1, 3)));
 
@@ -106,10 +107,12 @@ namespace TankGame.Network
 
             var gui = new Layer();
             gui.Camera = new HudCamera2(_window.CanvasSize);
+
+            _fpsCounter.Enqueue((float)timeDelta);
             gui.DrawText(
                 _window.Fonts?.Inconsolata,
                 new Vector2(-_window.CanvasSize.X / 2, _window.CanvasSize.Y / 2),
-                $"Server\nId {_server.UniqueIdentifier}\n\nFPS\nAvg { (1 / timeDelta).ToString("00.00") }\nMax { (1 / timeDelta).ToString("00.00") }\nMin { (1 / timeDelta).ToString("00.00") }");
+                $"Server\nId {_server.UniqueIdentifier}\n\nFPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }");
             _window.Layers.Add(gui);
         }
 
@@ -145,8 +148,6 @@ namespace TankGame.Network
                     SceneTime = _scene.Time,
                 });
             }
-
-            Render(timeDelta);
         }
 
         public void NetworkStep()
