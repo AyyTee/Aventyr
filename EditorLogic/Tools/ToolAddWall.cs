@@ -4,6 +4,7 @@ using Game.Common;
 using Game.Models;
 using OpenTK;
 using OpenTK.Input;
+using Game.Rendering;
 
 namespace EditorLogic.Tools
 {
@@ -33,7 +34,7 @@ namespace EditorLogic.Tools
         public override void Update()
         {
             base.Update();
-            if (Input.KeyPress(Key.Delete))
+            if (Input.ButtonPress(Key.Delete))
             {
                 if (_vertices.Count > 0)
                 {
@@ -41,11 +42,11 @@ namespace EditorLogic.Tools
                     UpdatePolygon();
                 }
             }
-            else if (Input.MousePress(MouseButton.Right))
+            else if (Input.ButtonPress(MouseButton.Right))
             {
                 Controller.SetTool(null);
             }
-            else if (Input.MousePress(MouseButton.Left))
+            else if (Input.ButtonPress(MouseButton.Left))
             {
                 Vector2 mousePos = Controller.GetMouseWorld();
                 if (mousePos != _vertices.LastOrDefault())

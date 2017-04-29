@@ -44,14 +44,14 @@ namespace TankGame
         {
             return new TankInput
             {
-                MoveFoward = window.Input.KeyDown(Key.W),
-                MoveBackward = window.Input.KeyDown(Key.S),
-                TurnLeft = window.Input.KeyDown(Key.A),
-                TurnRight = window.Input.KeyDown(Key.D),
-                ReticlePos = window.Input.GetMouseWorldPos(camera, (Vector2)window.CanvasSize),
-                FireGun = window.Input.KeyPress(Key.Space),
-                FirePortalLeft = window.Input.MousePress(MouseButton.Left),
-                FirePortalRight = window.Input.MousePress(MouseButton.Right)
+                MoveFoward = window.ButtonDown(Key.W),
+                MoveBackward = window.ButtonDown(Key.S),
+                TurnLeft = window.ButtonDown(Key.A),
+                TurnRight = window.ButtonDown(Key.D),
+                ReticlePos = window.MouseWorldPos(camera),
+                FireGun = window.ButtonPress(Key.Space),
+                FirePortalLeft = window.ButtonPress(MouseButton.Left),
+                FirePortalRight = window.ButtonPress(MouseButton.Right)
             };
         }
     }

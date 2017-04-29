@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Common;
+using Game.Rendering;
 
 namespace EditorLogic.Tools
 {
@@ -27,11 +28,11 @@ namespace EditorLogic.Tools
                 transform.Position = Controller.GetMouseWorld();
                 _mouseFollow.SetTransform(transform);
             }
-            if (Input.KeyPress(Key.Delete) || Input.KeyPress(Key.Escape) || Input.MousePress(MouseButton.Right))
+            if (Input.ButtonPress(Key.Delete) || Input.ButtonPress(Key.Escape) || Input.ButtonPress(MouseButton.Right))
             {
                 Controller.SetTool(null);
             }
-            else if (Input.MousePress(MouseButton.Left))
+            else if (Input.ButtonPress(MouseButton.Left))
             {
                 EditorPlayer editorActor = new EditorPlayer(Controller.Level);
                 Transform2.SetPosition(editorActor, Controller.GetMouseWorld());

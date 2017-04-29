@@ -2,6 +2,7 @@
 using Game.Common;
 using Game.Rendering;
 using OpenTK;
+using OpenTK.Input;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -103,7 +104,8 @@ namespace EditorLogic
                         _window.CanvasSize = (Vector2i)_control.ClientSize;
                         _resize = false;
                     }
-                    _window.Input.Update(_focused);
+
+                    _window.Update(Keyboard.GetState().KeysDown(), Mouse.GetState().ButtonsDown(),  _focused, 0);
                     _loopControl.Update();
                     _window.Renderer.Render();
 

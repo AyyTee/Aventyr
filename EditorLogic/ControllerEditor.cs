@@ -94,7 +94,7 @@ namespace EditorLogic
             Selection = new Selection(Level);
             StateList = new StateList();
 
-            CamControl = new ControllerCamera(this, Window.Input, Level);
+            CamControl = new ControllerCamera(this, Window, Level);
             Transform2.SetSize(CamControl, 10);
             Hud.Add(CamControl);
             Level.ActiveCamera = CamControl;
@@ -110,7 +110,7 @@ namespace EditorLogic
             SetTool(null);
             EditorScene load = Serializer.Deserialize(filepath);
             load.ActiveCamera.Controller = this;
-            load.ActiveCamera.InputExt = Window.Input;
+            load.ActiveCamera.InputExt = Window;
             Level = load;
             Selection = new Selection(Level);
 
@@ -151,7 +151,7 @@ namespace EditorLogic
         {
             return Level == null ? 
                 Vector2.Zero :
-                Level.ActiveCamera.ScreenToWorld(Window.Input.MousePos, (Vector2)Window.CanvasSize);
+                Level.ActiveCamera.ScreenToWorld(Window.MousePosition, Window.CanvasSize);
         }
 
         public Vector2 GetMouseWorldPortal(IEnumerable<IPortal> portals, bool ignorePortalViews)
@@ -165,7 +165,7 @@ namespace EditorLogic
                 return GetMouseWorld();
             }
             Transform2 transform = Level.ActiveCamera.GetWorldViewpoint();
-            Vector2 mousePos = Level.ActiveCamera.ScreenToWorld(Window.Input.MousePos, (Vector2)Window.CanvasSize);
+            Vector2 mousePos = Level.ActiveCamera.ScreenToWorld(Window.MousePosition, Window.CanvasSize);
             var portalable = new Portalable(null, transform, Transform2.CreateVelocity(mousePos - transform.Position));
             Ray.RayCast(portalable, Level.GetPortalList(), new Ray.Settings());
             return portalable.GetTransform().Position;

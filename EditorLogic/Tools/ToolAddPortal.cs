@@ -5,6 +5,7 @@ using Game;
 using Game.Common;
 using Game.Portals;
 using OpenTK.Input;
+using Game.Rendering;
 
 namespace EditorLogic.Tools
 {
@@ -26,13 +27,13 @@ namespace EditorLogic.Tools
             base.Update();
             _mouseFollow.SetTransform(GetPortalTransform());
 
-            if (Input.MouseDown(MouseButton.Right) || Input.KeyPress(Key.Delete) || Input.KeyPress(Key.Escape))
+            if (Input.ButtonDown(MouseButton.Right) || Input.ButtonPress(Key.Delete) || Input.ButtonPress(Key.Escape))
             {
                 Controller.SetTool(null);
             }
             else
             {
-                if (Input.MousePress(MouseButton.Left))
+                if (Input.ButtonPress(MouseButton.Left))
                 {
                     var portal = new EditorPortal(Controller.Level);
                     WallCoord coord = GetEdgeCoord();
@@ -57,7 +58,7 @@ namespace EditorLogic.Tools
                     }
                     Controller.StateList.Add(command);
                     
-                    if (!Input.KeyDown(KeyBoth.Shift))
+                    if (!Input.ButtonDown(KeyBoth.Shift))
                     {
                         Controller.SetTool(null);
                     }

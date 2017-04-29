@@ -1,20 +1,19 @@
 ﻿using System.Diagnostics;
 using Game;
+using Game.Rendering;
 
 namespace EditorLogic.Tools
 {
     public abstract class Tool
     {
-        protected IInput Input => Controller.Window.Input;
+        protected IVirtualWindow Input => Controller.Window;
         public bool Enabled { get; private set; }
         public bool Active { get; protected set; }
         public virtual bool EditorOnly { get; }
 
         public readonly ControllerEditor Controller;
 
-        #region Constructors
-        public Tool()
-            : this(null)
+        public Tool() : this(null)
         {
         }
 
@@ -23,7 +22,6 @@ namespace EditorLogic.Tools
             Enabled = false;
             Controller = controller;
         }
-        #endregion
 
         public virtual void Update()
         {

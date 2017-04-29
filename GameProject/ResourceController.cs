@@ -28,8 +28,6 @@ namespace Game
         public FontAssets Fonts;
         public TextureAssets Textures;
 
-        public IInput Input { get; private set; }
-
         readonly List<ControllerData> _controllers = new List<ControllerData>();
         readonly Stopwatch _stopwatch = new Stopwatch();
 
@@ -48,7 +46,6 @@ namespace Game
             _window = new GameWindow(windowSize.X, windowSize.Y, DefaultGraphics, windowName, GameWindowFlags.FixedWindow);
             Textures = new TextureAssets();
             Renderer = new Renderer(this, Textures);
-            Input = new Input(_window);
             Fonts = new FontAssets();
             Textures = new TextureAssets();
 
@@ -86,12 +83,14 @@ namespace Game
 
         void Update()
         {
-            Input.Update(_window.Focused);
-            if (Input.KeyPress(Key.F4))
-            {
-                ToggleFullScreen();
-            }
-            else if (Input.KeyPress(Key.Escape))
+            bool hasFocus = _window.Focused;
+            var keyboardState = Keyboard.GetState();
+            var mouseState = Mouse.GetState();
+            //if (Input.KeyPress(Key.F4))
+            //{
+            //    ToggleFullScreen();
+            //}
+            if (keyboardState.IsKeyDown(Key.Escape))
             {
                 _window.Exit();
             }
@@ -104,6 +103,11 @@ namespace Game
                     GL.DeleteTextures(1, ref a);
                 }
                 TextureGarbage.Clear();
+            }
+
+            foreach (var window in Renderer.Windows.OfType<VirtualWindow>())
+            {
+                window.Update(keyboardState.KeysDown(), mouseState.ButtonsDown(), new Vector2(_window.Mouse.X - window.CanvasPosition.X, _window.Mouse.Y/* + window.CanvasPosition.Y*/), hasFocus, mouseState.WheelPrecise);
             }
 
             foreach (var controller in _controllers)

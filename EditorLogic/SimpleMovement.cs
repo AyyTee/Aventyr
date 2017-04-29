@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Common;
+using Game.Rendering;
 
 namespace EditorLogic
 {
@@ -16,9 +17,9 @@ namespace EditorLogic
         public float Acceleration { get; set; }
         /// <summary>Friction coefficient.</summary>
         public float Friction { get; set; }
-        public Input Input { get; set; }
+        public IVirtualWindow Input { get; set; }
 
-        public SimpleMovement(Input input, float acceleration, float friction)
+        public SimpleMovement(IVirtualWindow input, float acceleration, float friction)
         {
             Acceleration = acceleration;
             Friction = friction;
@@ -29,19 +30,19 @@ namespace EditorLogic
         {
             Transform2 v = moveable.GetVelocity();
             Transform2 t = moveable.GetTransform();
-            if (Input.KeyDown(Key.Left))
+            if (Input.ButtonDown(Key.Left))
             {
                 v.Position += t.GetRight() * -Acceleration * Math.Abs(moveable.GetTransform().Size);
             }
-            if (Input.KeyDown(Key.Right))
+            if (Input.ButtonDown(Key.Right))
             {
                 v.Position += t.GetRight() * Acceleration * Math.Abs(moveable.GetTransform().Size);
             }
-            if (Input.KeyDown(Key.Up))
+            if (Input.ButtonDown(Key.Up))
             {
                 v.Position += t.GetUp() * Acceleration * Math.Abs(moveable.GetTransform().Size);
             }
-            if (Input.KeyDown(Key.Down))
+            if (Input.ButtonDown(Key.Down))
             {
                 v.Position += t.GetUp() * -Acceleration * Math.Abs(moveable.GetTransform().Size);
             }

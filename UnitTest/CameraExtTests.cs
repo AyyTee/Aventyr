@@ -46,7 +46,7 @@ namespace GameTests
         [TestMethod]
         public void ScreenToWorldTest0()
         {
-            var canvasSize = new Vector2(800, 600);
+            var canvasSize = new Vector2i(800, 600);
 
             SimpleCamera2 camera = new SimpleCamera2();
 
@@ -66,7 +66,7 @@ namespace GameTests
         {
             SimpleCamera2 camera = new SimpleCamera2();
 
-            Vector2 result = camera.ScreenToClip(new Vector2(), new Vector2(800, 600));
+            Vector2 result = camera.ScreenToClip(new Vector2(), new Vector2i(800, 600));
             Assert.IsTrue(result == new Vector2(-1f, 1f));
         }
     }

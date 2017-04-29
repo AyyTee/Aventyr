@@ -70,9 +70,9 @@ namespace EditorLogic.Tools
                         }
                     }
                 }*/
-                if (Input.KeyDown(KeyBoth.Control))
+                if (Input.ButtonDown(KeyBoth.Control))
                 {
-                    if (Input.KeyPress(Key.C))
+                    if (Input.ButtonPress(Key.C))
                     {
                         List<IDeepClone> cloneList = new List<IDeepClone>(Controller.Selection.GetAll());
                         if (cloneList.Count > 0)
@@ -82,38 +82,38 @@ namespace EditorLogic.Tools
                         }
                         
                     }
-                    else if (Input.KeyPress(Key.V))
+                    else if (Input.ButtonPress(Key.V))
                     {
                         List<EditorObject> cloned = EditorClone.Clone(Controller.Clipboard, Controller.Level);
                         Controller.Selection.SetRange(cloned);
                     }
                 }
-                if (Input.MousePress(MouseButton.Right))
+                if (Input.ButtonPress(MouseButton.Right))
                 {
                     Select();
                 }
                 if (selected != null)
                 {
-                    if (Input.KeyPress(Key.Delete))
+                    if (Input.ButtonPress(Key.Delete))
                     {
                         _translator.Visible = false;
                         Controller.RemoveRange(selected);
                     }
-                    else if (Input.MousePress(MouseButton.Left))
+                    else if (Input.ButtonPress(MouseButton.Left))
                     {
                         DragBegin(selected, false, Mode.Position);
                     }
-                    else if (!Input.KeyDown(KeyBoth.Control))
+                    else if (!Input.ButtonDown(KeyBoth.Control))
                     {
-                        if (Input.KeyPress(Key.G))
+                        if (Input.ButtonPress(Key.G))
                         {
                             DragBegin(Controller.Selection.GetAll(), true, Mode.Position);
                         }
-                        else if (Input.KeyPress(Key.R))
+                        else if (Input.ButtonPress(Key.R))
                         {
                             DragBegin(Controller.Selection.GetAll(), true, Mode.Rotate);
                         }
-                        else if (Input.KeyPress(Key.S))
+                        else if (Input.ButtonPress(Key.S))
                         {
                             DragBegin(Controller.Selection.GetAll(), true, Mode.Scale);
                         }
@@ -122,15 +122,15 @@ namespace EditorLogic.Tools
             }
             else
             {
-                if (Input.MousePress(MouseButton.Right))
+                if (Input.ButtonPress(MouseButton.Right))
                 {
                     DragEnd(true);
                 }
-                else if (Input.MouseRelease(MouseButton.Left) && _dragToggled == false)
+                else if (Input.ButtonRelease(MouseButton.Left) && _dragToggled == false)
                 {
                     DragEnd(false);
                 }
-                else if (Input.MousePress(MouseButton.Left) && _dragToggled)
+                else if (Input.ButtonPress(MouseButton.Left) && _dragToggled)
                 {
                     DragEnd(false);
                 }
@@ -150,7 +150,7 @@ namespace EditorLogic.Tools
             {
                 nearest = null;
             }
-            if (Input.KeyDown(KeyBoth.Shift))
+            if (Input.ButtonDown(KeyBoth.Shift))
             {
                 Controller.Selection.Toggle(nearest);
             }
@@ -282,7 +282,7 @@ namespace EditorLogic.Tools
                 angle = MathExt.AngleVector(mousePos - _translator.GetTransform().Position);
                 anglePrev = MathExt.AngleVector(_mousePosPrev - _translator.GetTransform().Position);
                 
-                if (Input.KeyDown(KeyBoth.Control))
+                if (Input.ButtonDown(KeyBoth.Control))
                 {
                     angle = MathExt.Round(angle, _rotateIncrementSize);
                     dragAmount.Rotation = (float)MathExt.Round(dragAmount.Rotation + MathExt.AngleDiff(angle, anglePrev), _rotateIncrementSize);

@@ -118,6 +118,9 @@
       <HintPath>..\packages\Poly2Tri.dll.1.0.4\lib\Net35\Poly2Tri.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.3.1\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
@@ -145,7 +148,6 @@
     <Compile Include="Common\Line.cs" />
     <Compile Include="Common\Vector2i.cs" />
     <Compile Include="Common\Transform2d.cs" />
-    <Compile Include="FakeInput.cs" />
     <Compile Include="FakeVirtualWindow.cs" />
     <Compile Include="Assets.cs">
       <AutoGen>True</AutoGen>
@@ -156,8 +158,7 @@
     <Compile Include="IGetTransform.cs" />
     <Compile Include="IGetTransformVelocity.cs" />
     <Compile Include="IGetVelocity.cs" />
-    <Compile Include="IInput.cs" />
-    <Compile Include="IResourceController.cs" />
+    <Compile Include="InputEx.cs" />
     <Compile Include="ITime.cs" />
     <Compile Include="Keyframe.cs" />
     <Compile Include="Keyframe2.cs" />
@@ -217,7 +218,6 @@
     <Compile Include="Physics\FixtureData.cs" />
     <Compile Include="Portals\FloatPortal.cs" />
     <Compile Include="Rendering\Font.cs" />
-    <Compile Include="Input.cs" />
     <Compile Include="Physics\FixtureCoord.cs" />
     <Compile Include="Common\LineF.cs" />
     <Compile Include="Common\MathExt.cs" />

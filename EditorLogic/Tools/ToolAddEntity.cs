@@ -2,6 +2,7 @@
 using Game;
 using Game.Common;
 using Game.Models;
+using Game.Rendering;
 using OpenTK.Input;
 
 namespace EditorLogic.Tools
@@ -24,11 +25,11 @@ namespace EditorLogic.Tools
                 transform.Position = Controller.GetMouseWorld();
                 _mouseFollow.SetTransform(transform);
             }
-            if (Input.KeyPress(Key.Delete) || Input.KeyPress(Key.Escape) || Input.MousePress(MouseButton.Right))
+            if (Input.ButtonPress(Key.Delete) || Input.ButtonPress(Key.Escape) || Input.ButtonPress(MouseButton.Right))
             {
                 Controller.SetTool(null);
             }
-            else if (Input.MousePress(MouseButton.Left))
+            else if (Input.ButtonPress(MouseButton.Left))
             {
                 EditorEntity editorEntity = new EditorEntity(Controller.Level);
                 Model m = Game.Rendering.ModelFactory.CreateCube();
@@ -42,7 +43,7 @@ namespace EditorLogic.Tools
                 AddEntity command = new AddEntity(Controller, editorEntity);
                 Controller.StateList.Add(command, true);
 
-                if (!Input.KeyDown(KeyBoth.Shift))
+                if (!Input.ButtonDown(KeyBoth.Shift))
                 {
                     Controller.SetTool(null);
                 }

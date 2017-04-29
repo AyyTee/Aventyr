@@ -71,7 +71,7 @@ namespace EditorWindow
         {
             var textureAssets = new TextureAssets();
             var renderer = new Renderer(new EditorClientSizeProvider(glControl), textureAssets);
-            var window = new EditorVirtualWindow(glControl, renderer, new Input(glControl), textureAssets);
+            var window = new EditorVirtualWindow(glControl, renderer, textureAssets);
             _controllerEditor = new ControllerEditor(window);
             _controllerEditor.ScenePlayEvent += ControllerEditor_ScenePlayed;
             _controllerEditor.ScenePauseEvent += ControllerEditor_ScenePaused;

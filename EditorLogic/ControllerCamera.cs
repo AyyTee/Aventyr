@@ -44,7 +44,6 @@ namespace EditorLogic
 
         [DataMember]
         public string Name { get; set; } = nameof(ControllerCamera);
-        public IInput InputExt { get; set; }
         [DataMember]
         public float ZoomMin = 0.5f;
         [DataMember]
@@ -91,8 +90,9 @@ namespace EditorLogic
         public double Fov => Math.PI / 4;
         public float ZNear => -1000f;
         public float ZFar => 1000f;
+        public IVirtualWindow InputExt;
 
-        public ControllerCamera(ControllerEditor controller, IInput inputExt, IScene scene)
+        public ControllerCamera(ControllerEditor controller, IVirtualWindow inputExt, IScene scene)
         {
             IsPortalable = true;
             Scene = scene;
@@ -147,7 +147,7 @@ namespace EditorLogic
             //Handle user input for zooming the camera.
             {
                 float scale = GetTransform().Size;
-                if (InputExt.MouseInside)
+                if (InputExt.MouseInside())
                 {
                     if (InputExt.MouseWheelDelta() != 0)
                     {
@@ -155,12 +155,12 @@ namespace EditorLogic
                         isMoved = true;
                     }
                 }
-                if (InputExt.KeyPress(Key.KeypadPlus) || InputExt.KeyPress(Key.Plus))
+                if (InputExt.ButtonPress(Key.KeypadPlus) || InputExt.ButtonPress(Key.Plus))
                 {
                     scale /= ZoomFactor;
                     isMoved = true;
                 }
-                if (InputExt.KeyPress(Key.KeypadMinus) || InputExt.KeyPress(Key.Minus))
+                if (InputExt.ButtonPress(Key.KeypadMinus) || InputExt.ButtonPress(Key.Minus))
                 {
                     scale *= ZoomFactor;
                     isMoved = true;
@@ -170,7 +170,7 @@ namespace EditorLogic
             }
 
             //Handle user input to reset the camera's orientation and center it on the current selected object if it exists.
-            if (InputExt.KeyPress(Key.Space))
+            if (InputExt.ButtonPress(Key.Space))
             {
                 Transform2 transform = GetTransform();
                 transform.Rotation = 0;
@@ -193,32 +193,29 @@ namespace EditorLogic
             //Handle user input to pan the camera.
             {
                 Vector2 v = new Vector2();
-                if (!InputExt.KeyDown(KeyBoth.Control))
+                if (!InputExt.ButtonDown(KeyBoth.Control))
                 {
-                    if (InputExt.KeyDown(Key.Left))
+                    if (InputExt.ButtonDown(Key.Left))
                     {
                         v += GetTransform().GetRight() * -KeyMoveSpeed * Math.Abs(GetTransform().Size);
                     }
-                    if (InputExt.KeyDown(Key.Right))
+                    if (InputExt.ButtonDown(Key.Right))
                     {
                         v += GetTransform().GetRight() * KeyMoveSpeed * Math.Abs(GetTransform().Size);
                     }
-                    if (InputExt.KeyDown(Key.Up))
+                    if (InputExt.ButtonDown(Key.Up))
                     {
                         v += GetTransform().GetUp() * KeyMoveSpeed * Math.Abs(GetTransform().Size);
                     }
-                    if (InputExt.KeyDown(Key.Down))
+                    if (InputExt.ButtonDown(Key.Down))
                     {
                         v += GetTransform().GetUp() * -KeyMoveSpeed * Math.Abs(GetTransform().Size);
                     }
                 }
-                if (InputExt.MouseInside && InputExt.MouseDown(MouseButton.Middle))
+                if (InputExt.MouseInside() && InputExt.ButtonDown(MouseButton.Middle))
                 {
-                    _lazyPan.Enqueue(
-                        this.ScreenToWorld(
-                            InputExt.MousePosPrev - InputExt.MousePos, 
-                            (Vector2)Controller.Window.CanvasSize) - this.ScreenToWorld(new Vector2(),
-                            (Vector2)Controller.Window.CanvasSize));
+                    var mouseVelocity = this.ScreenToWorld((Vector2)(InputExt.MousePositionPrevious - InputExt.MousePosition), Controller.Window.CanvasSize);
+                    _lazyPan.Enqueue(mouseVelocity - this.ScreenToWorld(new Vector2(), Controller.Window.CanvasSize));
                 }
                 else
                 {
