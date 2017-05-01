@@ -28,6 +28,16 @@ namespace Game
         public FontAssets Fonts;
         public TextureAssets Textures;
 
+        bool _lockInput = false;
+        KeyboardState _virtualKeyboardState = new KeyboardState();
+        MouseState _virtualMouseState = new MouseState();
+        Vector2 _virtualMousePos = new Vector2();
+
+        KeyboardState _keyboardStatePrevious = new KeyboardState();
+        KeyboardState _keyboardState = new KeyboardState();
+        MouseState _mouseState = new MouseState();
+        Vector2 _mousePos = new Vector2();
+
         readonly List<ControllerData> _controllers = new List<ControllerData>();
         readonly Stopwatch _stopwatch = new Stopwatch();
 
@@ -84,13 +94,31 @@ namespace Game
         void Update()
         {
             bool hasFocus = _window.Focused;
-            var keyboardState = Keyboard.GetState();
-            var mouseState = Mouse.GetState();
+
+            _keyboardStatePrevious = _keyboardState;
+
+            _keyboardState = Keyboard.GetState();
+            _mouseState = Mouse.GetState();
+            _mousePos = new Vector2(_window.Mouse.X, _window.Mouse.Y);
+
+            if (_keyboardState.IsKeyDown(Key.ControlLeft) && _keyboardStatePrevious.IsKeyUp(Key.I) && _keyboardState.IsKeyDown(Key.I))
+            {
+                _lockInput = !_lockInput;
+            }
+
+            if (!_lockInput)
+            {
+                _virtualKeyboardState = _keyboardState;
+                _virtualMouseState = _mouseState;
+                _virtualMousePos = _mousePos;
+            }
+
+            //if (keyboardState.IsKeyDown )
             //if (Input.KeyPress(Key.F4))
             //{
             //    ToggleFullScreen();
             //}
-            if (keyboardState.IsKeyDown(Key.Escape))
+            if (_keyboardState.IsKeyDown(Key.Escape))
             {
                 _window.Exit();
             }
@@ -107,7 +135,12 @@ namespace Game
 
             foreach (var window in Renderer.Windows.OfType<VirtualWindow>())
             {
-                window.Update(keyboardState.KeysDown(), mouseState.ButtonsDown(), new Vector2(_window.Mouse.X - window.CanvasPosition.X, _window.Mouse.Y/* + window.CanvasPosition.Y*/), hasFocus, mouseState.WheelPrecise);
+                window.Update(
+                    _virtualKeyboardState.KeysDown(),
+                    _virtualMouseState.ButtonsDown(),
+                    new Vector2(_virtualMousePos.X - window.CanvasPosition.X, _virtualMousePos.Y/* + window.CanvasPosition.Y*/),
+                    hasFocus,
+                    _virtualMouseState.WheelPrecise);   
             }
 
             foreach (var controller in _controllers)

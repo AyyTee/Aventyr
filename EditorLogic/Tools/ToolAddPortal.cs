@@ -106,7 +106,7 @@ namespace EditorLogic.Tools
             _isSecondPortal = false;
             _portalPrevious = null;
             _unsnapAngle = 0;
-            _mouseFollow = new Doodad(Controller.Level);
+            _mouseFollow = new Doodad(Controller.Level, "Add Portal");
             _mouseFollow.Models.Add(ModelFactory.CreatePortal());
         }
 

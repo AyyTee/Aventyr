@@ -142,16 +142,17 @@ namespace EditorLogic
             return !IsStopped;
         }
 
-        public double GetTime()
-        {
-            return IsStopped ? Level.Time : ActiveLevel.Time;
-        }
+        public double GetTime() => IsStopped ? Level.Time : ActiveLevel.Time;
 
         public Vector2 GetMouseWorld()
         {
-            return Level == null ? 
-                Vector2.Zero :
-                Level.ActiveCamera.ScreenToWorld(Window.MousePosition, Window.CanvasSize);
+            var v = Level.ActiveCamera.ScreenToWorld(Window.MousePosition, Window.CanvasSize);
+            if (Window.ButtonDown(KeyBoth.Control))
+            {
+                v = v.SnapToGrid(new Vector2(0.1f, 0.1f));
+            }
+
+            return Level == null ? Vector2.Zero : v;
         }
 
         public Vector2 GetMouseWorldPortal(IEnumerable<IPortal> portals, bool ignorePortalViews)

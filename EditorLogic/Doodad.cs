@@ -7,26 +7,32 @@ using System.Threading.Tasks;
 using Game.Common;
 using Game.Models;
 using Game.Rendering;
+using System.Runtime.Serialization;
 
 namespace EditorLogic
 {
+    [DataContract]
     public class Doodad : IRenderable, ITransformable2, ISceneObject
     {
         public bool DrawOverPortals => false;
+        [DataMember]
         public bool IsPortalable { get; set; }
-        public bool Visible { get; set; }
-        public string Name => "Doodad";
-
+        [DataMember]
+        public bool Visible { get; set; } = true;
+        [DataMember]
+        public string Name { get; set; } = "Doodad";
+        [DataMember]
         Transform2 _transform = new Transform2();
+        [DataMember]
         public List<Model> Models = new List<Model>();
 
-        public Doodad()
+        public Doodad(string name)
         {
-            Visible = true;
+            Name = name;
         }
 
-        public Doodad(EditorScene scene)
-            : this()
+        public Doodad(EditorScene scene, string name)
+            : this(name)
         {
             scene.Doodads.Add(this);
         }

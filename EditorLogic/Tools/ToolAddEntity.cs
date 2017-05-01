@@ -3,6 +3,7 @@ using Game;
 using Game.Common;
 using Game.Models;
 using Game.Rendering;
+using OpenTK;
 using OpenTK.Input;
 
 namespace EditorLogic.Tools
@@ -22,7 +23,9 @@ namespace EditorLogic.Tools
             if (_mouseFollow != null)
             {
                 Transform2 transform = _mouseFollow.GetTransform();
+
                 transform.Position = Controller.GetMouseWorld();
+                
                 _mouseFollow.SetTransform(transform);
             }
             if (Input.ButtonPress(Key.Delete) || Input.ButtonPress(Key.Escape) || Input.ButtonPress(MouseButton.Right))
@@ -53,7 +56,7 @@ namespace EditorLogic.Tools
         public override void Enable()
         {
             base.Enable();
-            _mouseFollow = new Doodad(Controller.Level);
+            _mouseFollow = new Doodad(Controller.Level, "Add Entity");
             _mouseFollow.Models.Add(Game.Rendering.ModelFactory.CreateCube());
             _mouseFollow.Models[0].SetTexture(Controller.Window.Textures.@Default);
             _mouseFollow.IsPortalable = true;

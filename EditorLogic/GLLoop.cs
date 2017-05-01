@@ -43,7 +43,6 @@ namespace EditorLogic
             _control.MouseEnter += delegate { _focused = true; };
             _control.MouseLeave += delegate { _focused = false; };
             _control.Resize += delegate { _resize = true; };
-            
             //_loopControl.OnLoad(new EventArgs());
         }
 
@@ -105,7 +104,8 @@ namespace EditorLogic
                         _resize = false;
                     }
 
-                    _window.Update(Keyboard.GetState().KeysDown(), Mouse.GetState().ButtonsDown(),  _focused, 0);
+                    var mouseState = Mouse.GetState();
+                    _window.Update(Keyboard.GetState().KeysDown(), mouseState.ButtonsDown(),  _focused);
                     _loopControl.Update();
                     _window.Renderer.Render();
 

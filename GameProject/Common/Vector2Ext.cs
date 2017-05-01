@@ -26,7 +26,7 @@ namespace Game.Common
         public static Vector2 LengthDir(double length, double direction)
         {
             return new Vector2(
-                (float)(Math.Cos(direction) * length), 
+                (float)(Math.Cos(direction) * length),
                 (float)(Math.Sin(direction) * length)
                 );
         }
@@ -85,6 +85,13 @@ namespace Game.Common
         {
             return v - 2 * (v - Project(v, normal));
         }
+
+        public static Vector2 SnapToGrid(this Vector2 vector, Vector2 grid)
+        {
+            var v = Vector2.Divide(vector, grid);
+            return new Vector2((float)Math.Round(v.X), (float)Math.Round(v.Y)) * grid;
+        }
+
 
         public static Vector2 Transform(Vector2 vector, Matrix4 matrix)
         {

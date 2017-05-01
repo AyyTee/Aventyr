@@ -149,9 +149,9 @@ namespace EditorLogic
                 float scale = GetTransform().Size;
                 if (InputExt.MouseInside())
                 {
-                    if (InputExt.MouseWheelDelta() != 0)
+                    if (InputExt.MouseWheelDelta != 0)
                     {
-                        scale /= (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta());
+                        scale /= (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta);
                         isMoved = true;
                     }
                 }

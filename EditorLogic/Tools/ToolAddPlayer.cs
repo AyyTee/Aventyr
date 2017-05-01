@@ -43,7 +43,7 @@ namespace EditorLogic.Tools
         public override void Enable()
         {
             base.Enable();
-            _mouseFollow = new Doodad(Controller.Level);
+            _mouseFollow = new Doodad(Controller.Level, "Add Player");
             _mouseFollow.Models.Add(ModelFactory.CreatePlayer());
             _mouseFollow.IsPortalable = true;
         }

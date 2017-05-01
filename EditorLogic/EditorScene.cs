@@ -43,7 +43,7 @@ namespace EditorLogic
             float size = 50;
             background.Transform.Scale = new Vector3(size, size, size);
             background.TransformUv.Size = size;
-            Doodad back = new Doodad();
+            Doodad back = new Doodad("Background");
             back.Models.Add(background);
             Doodads.Add(back);
             #endregion

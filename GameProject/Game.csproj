@@ -158,6 +158,7 @@
     <Compile Include="IGetTransform.cs" />
     <Compile Include="IGetTransformVelocity.cs" />
     <Compile Include="IGetVelocity.cs" />
+    <Compile Include="IName.cs" />
     <Compile Include="InputEx.cs" />
     <Compile Include="ITime.cs" />
     <Compile Include="Keyframe.cs" />

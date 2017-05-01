@@ -39,11 +39,12 @@ namespace EditorLogic
         public IImmutableSet<MouseButton> MousePrevious { get; private set; } = new HashSet<MouseButton>().ToImmutableHashSet();
 
         public float MouseWheel { get; private set; }
-        public float MouseWheelPrevious { get; private set; }
+        public float MouseWheelDelta { get; private set; }
         public Vector2 MousePosition { get; private set; }
         public Vector2 MousePositionPrevious { get; private set; }
 
         Vector2 _mousePos;
+        float _wheelDelta;
 
         public EditorVirtualWindow(GLControl glControl, IRenderer renderer, TextureAssets textures)
         {
@@ -53,11 +54,12 @@ namespace EditorLogic
             Textures = textures;
 
             _glControl.MouseMove += (_, e) => { _mousePos = new Vector2(e.X, e.Y); };
+            _glControl.MouseWheel += control_MouseWheel;
 
             renderer.Windows.Add(this);
         }
 
-        public void Update(ISet<Key> keyboardState, ISet<MouseButton> mouseState, bool hasFocus, float mouseWheel)
+        public void Update(ISet<Key> keyboardState, ISet<MouseButton> mouseState, bool hasFocus)
         {
             KeyPrevious = KeyCurrent;
             MousePrevious = MouseCurrent;
@@ -70,8 +72,17 @@ namespace EditorLogic
             MousePositionPrevious = MousePosition;
             MousePosition = _mousePos;
 
-            MouseWheelPrevious = MouseWheel;
-            MouseWheel = mouseWheel;
+            MouseWheel += _wheelDelta;
+            MouseWheelDelta = _wheelDelta;
+            _wheelDelta = 0;
+        }
+
+        void control_MouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (((GLControl)sender).Focus())
+            {
+                _wheelDelta += (float)e.Delta / 120;
+            }
         }
     }
 }

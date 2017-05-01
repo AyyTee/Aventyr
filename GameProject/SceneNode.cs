@@ -46,14 +46,12 @@ namespace Game
         IScene IPortalCommon.Scene => Scene;
         public virtual bool IsPortalable { get; set; } = true;
 
-        #region Constructors
         public SceneNode(Scene scene)
         {
             Scene = scene;
             Scene.Add(this);
             Name = GetType().Name;
         }
-        #endregion
 
         public virtual IDeepClone ShallowClone()
         {
@@ -72,10 +70,7 @@ namespace Game
             destination.IsPortalable = IsPortalable;
         }
 
-        public virtual HashSet<IDeepClone> GetCloneableRefs()
-        {
-            return new HashSet<IDeepClone>(Children);
-        }
+        public virtual HashSet<IDeepClone> GetCloneableRefs() => new HashSet<IDeepClone>(Children);
 
         public virtual void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
         {
@@ -145,10 +140,7 @@ namespace Game
             Scene = null;
         }
 
-        public virtual Transform2 GetTransform()
-        {
-            return new Transform2();
-        }
+        public virtual Transform2 GetTransform() => new Transform2();
 
         /// <summary>
         /// Set transform and update children.  This method is expected to only be called by classes extending SceneNode.
@@ -162,19 +154,10 @@ namespace Game
         {
         }
 
-        public virtual Transform2 GetVelocity()
-        {
-            return Transform2.CreateVelocity();
-        }
+        public virtual Transform2 GetVelocity() => Transform2.CreateVelocity();
 
-        public Transform2 GetWorldTransform(bool ignorePortals = false)
-        {
-            return WorldTransform;
-        }
+        public Transform2 GetWorldTransform(bool ignorePortals = false) => WorldTransform;
 
-        public Transform2 GetWorldVelocity(bool ignorePortals = false)
-        {
-            return WorldVelocity;
-        }
+        public Transform2 GetWorldVelocity(bool ignorePortals = false) => WorldVelocity;
     }
 }
