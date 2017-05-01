@@ -117,10 +117,7 @@ namespace EditorLogic
             Scene.Children.Add(this);
         }
 
-        public virtual HashSet<IDeepClone> GetCloneableRefs()
-        {
-            return new HashSet<IDeepClone>(Children);
-        }
+        public virtual HashSet<IDeepClone> GetCloneableRefs() => new HashSet<IDeepClone>(Children);
 
         public virtual void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
         {
@@ -242,10 +239,7 @@ namespace EditorLogic
             //return t;
         }
 
-        public Transform2 GetVelocity()
-        {
-            return new Transform2();
-        }
+        public Transform2 GetVelocity() => new Transform2();
 
         public void SetVelocity(Transform2 velocity)
         {
@@ -279,10 +273,7 @@ namespace EditorLogic
             RemoveSelf();
         }
 
-        public virtual void SetSelected(bool isSelected)
-        {
-            IsSelected = isSelected;
-        }
+        public virtual void SetSelected(bool isSelected) => IsSelected = isSelected;
 
         /// <summary>
         /// Set transform as FixtureEdgeCoord.  This EditorPortal's parent will become the EditorObject 
@@ -296,10 +287,7 @@ namespace EditorLogic
             SetParent((EditorObject)wall);
         }
 
-        public IPolygonCoord GetPolygonCoord()
-        {
-            return OnEdge ? PolygonTransform.ShallowClone() : null;
-        }
+        public IPolygonCoord GetPolygonCoord() => OnEdge ? PolygonTransform.ShallowClone() : null;
 
         /// <summary>
         /// Set name of this EditorObject and flag it as modified.
@@ -313,9 +301,6 @@ namespace EditorLogic
             }
         }
 
-        public List<IPortal> GetPortalChildren()
-        {
-            return Children.OfType<IPortal>().ToList();
-        }
+        public List<IPortal> GetPortalChildren() => Children.OfType<IPortal>().ToList();
     }
 }

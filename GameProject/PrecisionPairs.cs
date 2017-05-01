@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Game
 {
-    public static class PrecisionPairs
+    public static class GenerateSingles
     {
-        public static List<Tuple<string, string>> Pairs =>
+        static List<Tuple<string, string>> Pairs =>
             new List<Tuple<string, string>>()
             {
                 new Tuple<string, string>(nameof(Transform2d), "Transform2"),
@@ -23,5 +24,16 @@ namespace Game
                 new Tuple<string, string>(nameof(Quaterniond), nameof(Quaternion)),
                 new Tuple<string, string>("double", "float"),
             };
+
+        public static string ToSingle(string text)
+        {
+            var output = text;
+            foreach (var pair in Pairs)
+            {
+                output = new Regex(@"(?<prefix>\W)" + pair.Item1 + @"(?<suffix>\W)")
+                    .Replace(output, "${prefix}" + pair.Item2 + "${suffix}");
+            }
+            return output;
+        }
     }
 }

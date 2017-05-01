@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Game.Common
 {
-    public class Transform3
+    public partial class Transform3
     {
         Matrix4 _matrix;
         bool _matrixUpdate = true;

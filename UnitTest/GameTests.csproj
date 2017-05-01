@@ -86,6 +86,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CameraExtTests.cs" />
+    <Compile Include="CodeGenTests.cs" />
     <Compile Include="MathExtTests.cs" />
     <Compile Include="NodePortalable.cs" />
     <Compile Include="NodeWall.cs" />
