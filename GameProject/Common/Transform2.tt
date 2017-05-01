@@ -1,0 +1,22 @@
+﻿<#@ template debug="false" hostspecific="True" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ assembly name="$(TargetDir)Game.dll" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Game" #>
+<#@ output extension=".cs" #>
+<#
+	var fileName = "Transform2d.cs";
+	var file = File.ReadAllText(Host.ResolvePath(fileName));
+
+	var builder = new StringBuilder(file);
+	foreach (var pair in PrecisionPairs.Pairs)
+    {
+		builder.Replace(pair.Item1, pair.Item2);
+    }
+	var output = builder.ToString();
+#>
+// This is generated from <#=fileName#>.
+<#=output#>

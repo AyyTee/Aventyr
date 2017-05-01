@@ -1,16 +1,14 @@
-﻿using System;
+﻿// This is generated from Transform2d.cs.
+using OpenTK;
+using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using Game.Serialization;
-using OpenTK;
-using Vector2 = OpenTK.Vector2;
-using Vector3 = OpenTK.Vector3;
-using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Common
 {
     [DataContract]
-    public class Transform2 : IShallowClone<Transform2>, IAlmostEqual<Transform2>, IValueEquality<Transform2>
+    public partial class Transform2 : IShallowClone<Transform2>, IAlmostEqual<Transform2, float>, IValueEquality<Transform2>
     {
         [DataMember]
         Vector2 _position;
@@ -29,7 +27,7 @@ namespace Game.Common
             get { return _rotation; }
             set 
             {
-                Debug.Assert(!double.IsNaN(value));
+                Debug.Assert(!float.IsNaN(value));
                 _rotation = value; 
             }
         }
@@ -56,75 +54,35 @@ namespace Game.Common
             }
         }
 
-        #region Constructors
         public Transform2()
         {
         }
 
-        public Transform2(Vector2 position)
-            : this(position, 1)
-        {
-        }
-
-        public Transform2(Vector2 position, float size)
-            : this(position, size, 0f)
-        {
-        }
-
-        public Transform2(Vector2 position, float scale, float rotation)
-            : this(position, scale, rotation, false)
-        {
-        }
-
-        public Transform2(Xna.Vector2 position)
-            : this((Vector2)position)
-        {
-        }
-
-        public Transform2(Xna.Vector2 position, float scale, float rotation)
-            : this((Vector2)position, scale, rotation)
-        {
-        }
-
-        public Transform2(Vector2 position, float scale, float rotation, bool mirrorX)
+        public Transform2(Vector2 position, float scale = 1, float rotation = 0, bool mirrorX = false)
         {
             Position = position;
             Size = scale;
             Rotation = rotation;
             MirrorX = mirrorX;
         }
-        #endregion
 
-        public Transform2 ShallowClone()
-        {
-            return new Transform2
-            {
-                Position = Position,
-                Size = Size,
-                MirrorX = MirrorX,
-                Rotation = Rotation
-            };
-        }
+        public Transform2 ShallowClone() => (Transform2)MemberwiseClone();
 
         public Transform3 Get3D()
         {
             return new Transform3(new Vector3(Position), new Vector3(Scale.X, Scale.Y, 1), new Quaternion(0, 0, 1, Rotation));
         }
-        
+
         public Matrix4 GetMatrix()
         {
-            return Matrix4.CreateScale(new Vector3(Scale.X, Scale.Y, 1)) * Matrix4.CreateRotationZ(Rotation) * Matrix4.CreateTranslation(new Vector3(Position));
+            return Matrix4.Scale(new Vector3(Scale.X, Scale.Y, 1)) * 
+                Matrix4.CreateRotationZ(Rotation) * 
+                Matrix4.CreateTranslation(new Vector3(Position));
         }
 
-        public Vector2 GetUp(bool normalize = true)
-        {
-            return GetVector(new Vector2(0, 1), normalize);
-        }
+        public Vector2 GetUp(bool normalize = true) => GetVector(new Vector2(0, 1), normalize);
 
-        public Vector2 GetRight(bool normalize = true)
-        {
-            return GetVector(new Vector2(1, 0), normalize);
-        }
+        public Vector2 GetRight(bool normalize = true) => GetVector(new Vector2(1, 0), normalize);
 
         Vector2 GetVector(Vector2 vector, bool normalize)
         {
@@ -182,7 +140,7 @@ namespace Game.Common
                 invert.Rotation = Rotation;
             }
             invert.SetScale(new Vector2(1 / Scale.X, 1 / Scale.Y));
-            Matrix4 mat = Matrix4.CreateRotationZ(-Rotation) * Matrix4.CreateScale(new Vector3(invert.Scale));
+            Matrix4 mat = Matrix4.CreateRotationZ(-Rotation) * Matrix4.Scale(new Vector3(invert.Scale));
             invert.Position = Vector2Ext.Transform(-Position, mat);
             Debug.Assert(Matrix4Ext.AlmostEqual(GetMatrix().Inverted(), invert.GetMatrix()));
             return invert;
@@ -258,7 +216,7 @@ namespace Game.Common
             }
         }
 
-        public bool AlmostEqual(Transform2 transform, double delta = EqualityEpsilon)
+        public bool AlmostEqual(Transform2 transform, float delta = EqualityEpsilon)
         {
             if (transform == null)
             {
@@ -275,7 +233,7 @@ namespace Game.Common
             return false;
         }
 
-        public bool AlmostEqual(Transform2 transform, double delta, double ratioDelta)
+        public bool AlmostEqual(Transform2 transform, float delta, float ratioDelta)
         {
             if (transform == null)
             {
@@ -292,59 +250,11 @@ namespace Game.Common
             return false;
         }
 
-        public static Transform2 CreateVelocity()
-        {
-            return CreateVelocity(new Vector2());
-        }
+        public static Transform2 CreateVelocity() => CreateVelocity(new Vector2());
 
-        public static Transform2 CreateVelocity(Vector2 linearVelocity)
-        {
-            return CreateVelocity(linearVelocity, 0);
-        }
-
-        public static Transform2 CreateVelocity(Vector2 linearVelocity, float angularVelocity)
-        {
-            return CreateVelocity(linearVelocity, angularVelocity, 0);
-        }
-
-        public static Transform2 CreateVelocity(Vector2 linearVelocity, float angularVelocity, float scalarVelocity)
+        public static Transform2 CreateVelocity(Vector2 linearVelocity, float angularVelocity = 0, float scalarVelocity = 0)
         {
             return new Transform2(linearVelocity, scalarVelocity, angularVelocity);
-        }
-
-        public static void SetPosition(ITransformable2 transformable, Vector2 position)
-        {
-            Transform2 transform = transformable.GetTransform();
-            transform.Position = position;
-            transformable.SetTransform(transform);
-        }
-
-        public static void SetRotation(ITransformable2 transformable, float rotation)
-        {
-            Transform2 transform = transformable.GetTransform();
-            transform.Rotation = rotation;
-            transformable.SetTransform(transform);
-        }
-
-        public static void SetScale(ITransformable2 transformable, Vector2 scale)
-        {
-            Transform2 transform = transformable.GetTransform();
-            transform.SetScale(scale);
-            transformable.SetTransform(transform);
-        }
-
-        public static void SetSize(ITransformable2 transformable, float size)
-        {
-            Transform2 transform = transformable.GetTransform();
-            transform.Size = size;
-            transformable.SetTransform(transform);
-        }
-
-        public static void SetScale(ITransformable2 transformable, float size, bool mirrorX, bool mirrorY)
-        {
-            Transform2 transform = transformable.GetTransform();
-            transform.SetScale(size, mirrorX, mirrorY);
-            transformable.SetTransform(transform);
         }
 
         public bool EqualsValue(Transform2 other)

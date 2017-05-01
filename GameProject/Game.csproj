@@ -139,6 +139,7 @@
   <ItemGroup>
     <Compile Include="Animation\AnimationDriver.cs" />
     <Compile Include="AssetPaths.cs" />
+    <Compile Include="Common\Casting.cs" />
     <Compile Include="Common\GeometryUtil.cs" />
     <Compile Include="Animation\Curve.cs" />
     <Compile Include="Animation\Curve2.cs" />
@@ -146,8 +147,19 @@
     <Compile Include="Common\IAlmostEqual.cs" />
     <Compile Include="Common\IValueEquality.cs" />
     <Compile Include="Common\Line.cs" />
+    <Compile Include="Common\Transform3.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Transform3.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Transform2.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Transform2.tt</DependentUpon>
+    </Compile>
     <Compile Include="Common\Vector2i.cs" />
     <Compile Include="Common\Transform2d.cs" />
+    <Compile Include="PrecisionPairs.cs" />
     <Compile Include="FakeVirtualWindow.cs" />
     <Compile Include="Assets.cs">
       <AutoGen>True</AutoGen>
@@ -239,13 +251,12 @@
     <Compile Include="Serialization\Serializer.cs" />
     <Compile Include="Rendering\Texture.cs" />
     <Compile Include="Rendering\TextureFile.cs" />
-    <Compile Include="Common\Transform3.cs" />
     <Compile Include="Portals\FixturePortal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Shader.cs" />
     <Compile Include="Models\Model.cs" />
-    <Compile Include="Common\Transform2.cs" />
     <Compile Include="Animation\BezierCurve.cs" />
+    <Compile Include="Common\Transform3d.cs" />
     <Compile Include="Tree.cs" />
     <Compile Include="Models\Triangle.cs" />
     <Compile Include="Common\Vector2Ext.cs" />
@@ -269,6 +280,14 @@
     </Content>
     <Content Include="Assets\Textures\LineBlur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Common\Transform3.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Transform3.cs</LastGenOutput>
+    </Content>
+    <Content Include="Common\Transform2.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Transform2.cs</LastGenOutput>
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Assets.tt">

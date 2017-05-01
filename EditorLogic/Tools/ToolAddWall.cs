@@ -61,7 +61,7 @@ namespace EditorLogic.Tools
                         _vertices = PolygonExt.SetNormals(_vertices);
                         _vertices = (List<Vector2>)MathExt.SetWinding(_vertices, false);
                         EditorWall editorEntity = new EditorWall(Controller.Level, _vertices);
-                        Transform2.SetPosition(editorEntity, average);
+                        editorEntity.SetPosition(average);
                         Controller.SetTool(null);
                     }
                     else

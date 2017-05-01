@@ -148,7 +148,7 @@ namespace GameTests
                 Entity node = new Entity(scene);
                 FloatPortal p0 = new FloatPortal(scene);
                 p0.SetParent(node);
-                Transform2.SetRotation(node, (float)(i + Math.PI / 4));
+                node.SetRotation((float)(i + Math.PI / 4));
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2((float)Math.Cos(i + Math.PI), (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2((float)Math.Cos(i), (float)Math.Sin(i));
@@ -165,8 +165,8 @@ namespace GameTests
             {
                 Scene scene = new Scene();
                 Entity node = new Entity(scene);
-                Transform2.SetPosition(node, new Vector2(x, y));
-                Transform2.SetRotation(node, (float)(i + Math.PI / 4));
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
                 FloatPortal p0 = new FloatPortal(scene);
                 p0.SetParent(node);
                 PortalCommon.UpdateWorldTransform(scene);
@@ -185,8 +185,8 @@ namespace GameTests
             {
                 Scene scene = new Scene();
                 Entity node = new Entity(scene);
-                Transform2.SetPosition(node, new Vector2(x, y));
-                Transform2.SetRotation(node, (float)(i + Math.PI / 4));
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
                 FloatPortal p0 = new FloatPortal(scene);
                 p0.SetParent(node);
                 PortalCommon.UpdateWorldTransform(scene);
@@ -206,8 +206,8 @@ namespace GameTests
                 Scene scene = new Scene();
                 FloatPortal p0 = new FloatPortal(scene);
                 Entity node = new Entity(scene);
-                Transform2.SetPosition(node, new Vector2(x, y));
-                Transform2.SetRotation(node, (float)(i + Math.PI / 4));
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
                 p0.SetParent(node);
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x, y);
@@ -227,8 +227,8 @@ namespace GameTests
                 Scene scene = new Scene();
                 FloatPortal p0 = new FloatPortal(scene);
                 Entity node = new Entity(scene);
-                Transform2.SetPosition(node, new Vector2(x, y));
-                Transform2.SetRotation(node, (float)(i + Math.PI / 4));
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
                 p0.SetParent(node);
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
@@ -248,8 +248,8 @@ namespace GameTests
                 Scene scene = new Scene();
                 FloatPortal p0 = new FloatPortal(scene);
                 Entity node = new Entity(scene);
-                Transform2.SetPosition(node, new Vector2(x, y));
-                Transform2.SetRotation(node, (float)(i + Math.PI / 4));
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
                 p0.SetParent(node);
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
@@ -268,8 +268,8 @@ namespace GameTests
                 Scene scene = new Scene();
                 FloatPortal p0 = new FloatPortal(scene);
                 Entity node = new Entity(scene);
-                Transform2.SetPosition(node, new Vector2(x, y));
-                Transform2.SetRotation(node, (float)(i + Math.PI / 4));
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
                 p0.SetParent(node);
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i) * 2, y + (float)Math.Sin(i) * 2);
@@ -288,8 +288,8 @@ namespace GameTests
                 Scene scene = new Scene();
                 FloatPortal p0 = new FloatPortal(scene);
                 Entity node = new Entity(scene);
-                Transform2.SetPosition(node, new Vector2(x, y));
-                Transform2.SetRotation(node, (float)(i + Math.PI / 4));
+                node.SetPosition(new Vector2(x, y));
+                node.SetRotation((float)(i + Math.PI / 4));
                 p0.SetParent(node);
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));

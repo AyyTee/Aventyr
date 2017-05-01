@@ -1,5 +1,4 @@
-﻿// This is generated from Transform3d.cs.
-using OpenTK;
+﻿using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,21 +8,21 @@ using System.Threading.Tasks;
 
 namespace Game.Common
 {
-    public class Transform3
+    public partial class Transform3d
     {
-        Matrix4 _matrix;
+        Matrix4d _matrix;
         bool _matrixUpdate = true;
-        Vector3 _position;
-        Quaternion _rotation = new Quaternion(0, 0, 1, 0);
-        Vector3 _scale = new Vector3(1, 1, 1);
+        Vector3d _position;
+        Quaterniond _rotation = new Quaterniond(0, 0, 1, 0);
+        Vector3d _scale = new Vector3d(1, 1, 1);
 
         public bool FixedScale { get; private set; }
 
-        public Quaternion Rotation {
+        public Quaterniond Rotation {
             get { return _rotation; }
             set { _rotation = value; _matrixUpdate = true; }
         }
-        public Vector3 Scale
+        public Vector3d Scale
         {
             get { return _scale; }
             set
@@ -36,27 +35,27 @@ namespace Game.Common
                 _scale = value;
             }
         }
-        public Vector3 Position {
+        public Vector3d Position {
             get { return _position; }
             set { _position = value; _matrixUpdate = true; }
         }
 
-        public Transform3()
+        public Transform3d()
         {
         }
 
-        public Transform3(Vector3 position)
+        public Transform3d(Vector3d position)
         {
             Position = position;
         }
 
-        public Transform3(Vector3 position, Vector3 scale)
+        public Transform3d(Vector3d position, Vector3d scale)
         {
             Position = position;
             Scale = scale;
         }
 
-        public Transform3(Vector3 position, Vector3 scale, Quaternion rotation, bool fixedScale = false)
+        public Transform3d(Vector3d position, Vector3d scale, Quaterniond rotation, bool fixedScale = false)
         {
             Position = position;
             Scale = scale;
@@ -64,34 +63,34 @@ namespace Game.Common
             FixedScale = fixedScale;
         }
 
-        public Transform3 ShallowClone()
+        public Transform3d ShallowClone()
         {
-            return new Transform3
+            return new Transform3d
             {
-                Rotation = new Quaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W),
-                Position = new Vector3(Position),
-                Scale = new Vector3(Scale),
+                Rotation = new Quaterniond(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W),
+                Position = new Vector3d(Position),
+                Scale = new Vector3d(Scale),
                 FixedScale = FixedScale
             };
         }
 
-        public Matrix4 GetMatrix()
+        public Matrix4d GetMatrix()
         {
             if (_matrixUpdate)
             {
-                _matrix = Matrix4.Scale(Scale) * Matrix4.CreateFromAxisAngle(new Vector3(Rotation.X, Rotation.Y, Rotation.Z), Rotation.W) * Matrix4.CreateTranslation(Position);
+                _matrix = Matrix4d.Scale(Scale) * Matrix4d.CreateFromAxisAngle(new Vector3d(Rotation.X, Rotation.Y, Rotation.Z), Rotation.W) * Matrix4d.CreateTranslation(Position);
                 _matrixUpdate = false;
             }
             return _matrix;
         }
 
-        public static Transform3 Lerp(Transform3 a, Transform3 b, float t)
+        public static Transform3d Lerp(Transform3d a, Transform3d b, float t)
         {
-            return new Transform3
+            return new Transform3d
             {
-                Position = Vector3.Lerp(a.Position, b.Position, t),
-                Scale = Vector3.Lerp(a.Scale, b.Scale, t),
-                Rotation = Quaternion.Slerp(a.Rotation, b.Rotation, t)
+                Position = Vector3d.Lerp(a.Position, b.Position, t),
+                Scale = Vector3d.Lerp(a.Scale, b.Scale, t),
+                Rotation = Quaterniond.Slerp(a.Rotation, b.Rotation, t)
             };
         }
     }

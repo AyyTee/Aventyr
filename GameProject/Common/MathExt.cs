@@ -12,7 +12,7 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Common
 {
-    public class IntersectCoord : IAlmostEqual<IntersectCoord>
+    public class IntersectCoord : IAlmostEqual<IntersectCoord, double>
     {
         public readonly Vector2d Position;
         /// <summary>T value for the first line.</summary>
@@ -59,30 +59,15 @@ namespace Game.Common
         public const double Tau = Math.PI * 2;
 
         #region Lerp
-        public static double Lerp(double value0, double value1, double T)
-        {
-            return value0 * (1 - T) + value1 * T;
-        }
+        public static double Lerp(double value0, double value1, double T) => value0 * (1 - T) + value1 * T;
 
-        public static Vector2d Lerp(Vector2d vector0, Vector2d vector1, double T)
-        {
-            return vector0 * (1 - T) + vector1 * T;
-        }
+        public static Vector2d Lerp(Vector2d vector0, Vector2d vector1, double T) => vector0 * (1 - T) + vector1 * T;
 
-        public static Vector2 Lerp(Vector2 vector0, Vector2 vector1, float T)
-        {
-            return vector0 * (1 - T) + vector1 * T;
-        }
+        public static Vector2 Lerp(Vector2 vector0, Vector2 vector1, float T) => vector0 * (1 - T) + vector1 * T;
 
-        public static Vector3d Lerp(Vector3d vector0, Vector3d vector1, double T)
-        {
-            return vector0 * (1 - T) + vector1 * T;
-        }
+        public static Vector3d Lerp(Vector3d vector0, Vector3d vector1, double T) => vector0 * (1 - T) + vector1 * T;
 
-        public static Vector3 Lerp(Vector3 vector0, Vector3 vector1, float T)
-        {
-            return vector0 * (1 - T) + vector1 * T;
-        }
+        public static Vector3 Lerp(Vector3 vector0, Vector3 vector1, float T) => vector0 * (1 - T) + vector1 * T;
 
         public static double LerpAngle(double angle0, double angle1, double T, bool isClockwise)
         {
@@ -223,11 +208,7 @@ namespace Game.Common
         /// <returns></returns>
         public static bool LineInPolygon(LineF line, IList<Vector2> polygon)
         {
-            if (PointInPolygon(line[0], polygon))
-            {
-                return true;
-            }
-            if (PointInPolygon(line[1], polygon))
+            if (PointInPolygon(line[0], polygon) || PointInPolygon(line[1], polygon))
             {
                 return true;
             }
@@ -288,7 +269,11 @@ namespace Game.Common
 
         public static bool LineInRectangle(Vector2 topLeft, Vector2 bottomRight, Vector2 lineBegin, Vector2 lineEnd)
         {
-            return LineInRectangle(new Vector2d(topLeft.X, topLeft.Y), new Vector2d(bottomRight.X, bottomRight.Y), new Vector2d(lineBegin.X, lineBegin.Y), new Vector2d(lineEnd.X, lineEnd.Y));
+            return LineInRectangle(
+                new Vector2d(topLeft.X, topLeft.Y), 
+                new Vector2d(bottomRight.X, bottomRight.Y), 
+                new Vector2d(lineBegin.X, lineBegin.Y), 
+                new Vector2d(lineEnd.X, lineEnd.Y));
         }
         #endregion
         #region Convex Hull
@@ -767,14 +752,9 @@ namespace Game.Common
             return triangles;
         }
 
-        public static double AngleLine(Vector2d v0, Vector2d v1)
-        {
-            return AngleVector(v0 - v1);
-        }
-        public static double AngleLine(Vector2 v0, Vector2 v1)
-        {
-            return AngleLine(new Vector2d(v0.X, v0.Y), new Vector2d(v1.X, v1.Y));
-        }
+        public static double AngleLine(Vector2d v0, Vector2d v1) => AngleVector(v0 - v1);
+        
+        public static double AngleLine(Vector2 v0, Vector2 v1) => AngleLine(new Vector2d(v0.X, v0.Y), new Vector2d(v1.X, v1.Y));
 
         public static double AngleVector(Vector2d v0)
         {
@@ -788,15 +768,9 @@ namespace Game.Common
             return (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
         }
 
-        public static double AngleVector(Vector2 v0)
-        {
-            return AngleVector(new Vector2d(v0.X, v0.Y));
-        }
+        public static double AngleVector(Vector2 v0) => AngleVector(new Vector2d(v0.X, v0.Y));
 
-        public static double AngleDiff(Vector2 v0, Vector2 v1)
-        {
-            return AngleDiff(AngleVector(v0), AngleVector(v1));
-        }
+        public static double AngleDiff(Vector2 v0, Vector2 v1) => AngleDiff(AngleVector(v0), AngleVector(v1));
 
         public static double AngleDiff(double angle0, double angle1)
         {
@@ -825,25 +799,13 @@ namespace Game.Common
             return value;
         }
 
-        public static double Round(double value, double size)
-        {
-            return Math.Round(value / size) * size;
-        }
+        public static double Round(double value, double size) => Math.Round(value / size) * size;
 
-        public static double AngleWrap(double value)
-        {
-            return ((value % Tau) + Tau) % Tau;
-        }
+        public static double AngleWrap(double value) => ((value % Tau) + Tau) % Tau;
 
-        public static Vector2 AngularVelocity(Vector2 point, Vector2 pivotPoint, float rotationSpeed)
-        {
-            return AngularVelocity(point - pivotPoint, rotationSpeed);
-        }
+        public static Vector2 AngularVelocity(Vector2 point, Vector2 pivotPoint, float rotationSpeed) => AngularVelocity(point - pivotPoint, rotationSpeed);
 
-        public static Vector2 AngularVelocity(Vector2 offset, float rotationSpeed)
-        {
-            return offset.PerpendicularLeft * rotationSpeed;
-        }
+        public static Vector2 AngularVelocity(Vector2 offset, float rotationSpeed) => offset.PerpendicularLeft * rotationSpeed;
 
         /// <summary>
         /// Find the bounding box for an array of lines.  A mimimum of one line is required.

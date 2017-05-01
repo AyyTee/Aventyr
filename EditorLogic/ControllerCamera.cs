@@ -166,7 +166,7 @@ namespace EditorLogic
                     isMoved = true;
                 }
                 scale = MathHelper.Clamp(Math.Abs(scale), ZoomMin, ZoomMax) * Math.Sign(GetTransform().Size);
-                Transform2.SetSize(this, scale);
+                this.SetSize(scale);
             }
 
             //Handle user input to reset the camera's orientation and center it on the current selected object if it exists.

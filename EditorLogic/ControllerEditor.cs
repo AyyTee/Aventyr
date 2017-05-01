@@ -95,7 +95,7 @@ namespace EditorLogic
             StateList = new StateList();
 
             CamControl = new ControllerCamera(this, Window, Level);
-            Transform2.SetSize(CamControl, 10);
+            CamControl.SetSize(10);
             Hud.Add(CamControl);
             Level.ActiveCamera = CamControl;
 

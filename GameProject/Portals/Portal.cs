@@ -146,7 +146,7 @@ namespace Game.Portals
 
         public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)
         {
-            var transform = new Transform2(body.Position, 1, body.Rotation);
+            var transform = new Transform2((Vector2)body.Position, 1, body.Rotation);
             Transform2 velocity = Transform2.CreateVelocity((Vector2)body.LinearVelocity, body.AngularVelocity);
             velocity = EnterVelocity(portal, 0.5f, velocity, ignorePortalVelocity);
             transform = Enter(portal, transform);
