@@ -27,9 +27,6 @@ namespace Game.Common
             EdgeT = edgeT;
         }
 
-        public IPolygonCoord ShallowClone()
-        {
-            return new PolygonCoord(EdgeIndex, EdgeT);
-        }
+        public IPolygonCoord ShallowClone() => (PolygonCoord)MemberwiseClone();
     }
 }

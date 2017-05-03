@@ -32,57 +32,33 @@ namespace Game.Models
         [DataMember]
         public IMesh Mesh = new Mesh();
         
-        #region Constructors
         public Model()
         {
         }
 
-        public Model(IMesh mesh)
-            : this()
+        public Model(IMesh mesh) : this()
         {
             Mesh = mesh;
         }
 
-        #endregion
-
-        public Model ShallowClone()
-        {
-            return new Model
-            {
-                Mesh = Mesh,
-                Transform = Transform.ShallowClone(),
-                Texture = Texture,
-                TransformUv = TransformUv.ShallowClone(),
-                Wireframe = Wireframe,
-                Color = Color,
-                IsTransparent = IsTransparent
-            };
-        }
+        public Model ShallowClone() => (Model)MemberwiseClone();
 
         public Model DeepClone()
         {
             Model clone = ShallowClone();
+            clone.Transform = Transform.ShallowClone();
+            clone.TransformUv = TransformUv.ShallowClone();
             clone.Mesh = Mesh.ShallowClone();
             return clone;
         }
 
-        public void SetTexture(ITexture texture)
-        {
-            Texture = texture;
-        }
+        public void SetTexture(ITexture texture) => Texture = texture;
 
         /// <summary>
         /// Replaces all vertex colors with a single uniform color.
         /// </summary>
-        public void SetColor(Vector3 color)
-        {
-            Color = new Vector4(color, 1);
-        }
-
-        public void SetColor(Vector4 color)
-        {
-            Color = color;
-        }
+        public void SetColor(Vector3 color) => Color = new Vector4(color, 1);
+        public void SetColor(Vector4 color) => Color = color;
 
         public Vector3[] GetVerts()
         {
@@ -95,10 +71,7 @@ namespace Game.Models
             return val;
         }
 
-        public Vector3[] GetWorldVerts()
-        {
-            return Vector3Ext.Transform(GetVerts(), Transform.GetMatrix());
-        }
+        public Vector3[] GetWorldVerts() => Vector3Ext.Transform(GetVerts(), Transform.GetMatrix());
         
         /// <summary>
         /// Returns a convex hull of the model projected onto the z-plane in the world space
@@ -117,10 +90,7 @@ namespace Game.Models
         /// <summary>
         /// Gets a list of Vertex indices.  Each set of 3 indices defines a triangle.
         /// </summary>
-        public int[] GetIndices()
-        {
-            return Mesh.GetIndices().ToArray();
-        }
+        public int[] GetIndices() => Mesh.GetIndices().ToArray();
 
         public Vector3[] GetColorData()
         {
