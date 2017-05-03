@@ -43,29 +43,14 @@ namespace Game.Portals
             SetVelocity(velocity);
         }
 
-        public Transform2 GetTransform()
-        {
-            return Transform.ShallowClone();
-        }
+        public Transform2 GetTransform() => Transform.ShallowClone();
 
-        public Transform2 GetVelocity()
-        {
-            return Velocity.ShallowClone();
-        }
+        public Transform2 GetVelocity() => Velocity.ShallowClone();
 
-        public void SetTransform(Transform2 transform)
-        {
-            Transform = transform.ShallowClone();
-        }
+        public void SetTransform(Transform2 transform) => Transform = transform.ShallowClone();
 
-        public void SetVelocity(Transform2 velocity)
-        {
-            Velocity = velocity.ShallowClone();
-        }
+        public void SetVelocity(Transform2 velocity) => Velocity = velocity.ShallowClone();
 
-        public List<IPortal> GetPortalChildren()
-        {
-            return new List<IPortal>();
-        }
+        public List<IPortal> GetPortalChildren() => new List<IPortal>();
     }
 }

@@ -8,7 +8,7 @@ using Game.Serialization;
 namespace Game.Portals
 {
     [DataContract, DebuggerDisplay("FixturePortal {Name}")]
-    public class FixturePortal : SceneNode, IPortal
+    public class FixturePortal : SceneNode, IPortal, ISceneObject
     {
         [DataMember]
         public IPortal Linked { get; set; }

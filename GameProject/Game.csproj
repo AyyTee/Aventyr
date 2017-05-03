@@ -192,6 +192,7 @@
     <Compile Include="Models\Clip.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="Rendering\IClientSizeProvider.cs" />
+    <Compile Include="Rendering\IPortalRenderable.cs" />
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\IVirtualWindow.cs" />
     <Compile Include="Rendering\Layer.cs" />

@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugVisualizer", "CustomDe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugVisualizerTests", "VisualizerTests\DebugVisualizerTests.csproj", "{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeLoopInc", "TimeLoopInc\TimeLoopInc.csproj", "{9E41EC6B-89F1-429C-B18D-48A7035BA20D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E41EC6B-89F1-429C-B18D-48A7035BA20D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E41EC6B-89F1-429C-B18D-48A7035BA20D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E41EC6B-89F1-429C-B18D-48A7035BA20D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E41EC6B-89F1-429C-B18D-48A7035BA20D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
