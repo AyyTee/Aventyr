@@ -59,7 +59,7 @@ namespace TankGame
             turretModel.Transform = new Transform3(new Vector3(0.25f, 0f, 0.5f));
             turretModel.SetColor(new Vector3(0.5f, 0.5f, 0.5f));
             Turret.AddModel(turretModel);
-            //Turret.SetParent(this);
+            Turret.SetParent(this);
 
             OnCollision += Collision;
 
@@ -177,9 +177,6 @@ namespace TankGame
 
             Transform2 t = Turret.GetWorldTransform();
             double angle = MathExt.AngleDiff(t.Rotation, -MathExt.AngleVector(Input.ReticlePos - t.Position));
-
-            Turret.WorldTransform = GetWorldTransform();
-            Turret.SetTransform(GetWorldTransform());
 
             Transform2 tLocal = Turret.GetVelocity();
             tLocal.Rotation = Math.Sign(angle) * (float)Math.Min(turretSpeed, Math.Abs(angle / stepSize));

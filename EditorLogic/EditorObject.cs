@@ -99,7 +99,7 @@ namespace EditorLogic
             if (IsSelected)
             {
                 marker.SetColor(new Vector3(1f, 1f, 0f));
-                marker.Transform.Scale = new Vector3(1.5f, 1.5f, 1.5f);
+                marker.Transform.Scale *= 1.5f;
             }
             else
             {

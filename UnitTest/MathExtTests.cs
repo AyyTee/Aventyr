@@ -479,7 +479,7 @@ namespace GameTests
         public void BisectTriangleTest0()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, GetDefaultBisector());
+            Triangle[] result = triangle.Bisect(GetDefaultBisector());
 
             Assert.IsTrue(result.Length == 1);
             Triangle comparison = GetDefaultComparison();
@@ -490,7 +490,7 @@ namespace GameTests
         public void BisectTriangleTest1()
         {
             Triangle triangle = GetDefaultTriangle().Reverse();
-            Triangle[] result = MathExt.BisectTriangle(triangle, GetDefaultBisector());
+            Triangle[] result = triangle.Bisect(GetDefaultBisector());
 
             Assert.IsTrue(result.Length == 1);
             Triangle comparison = GetDefaultComparison().Reverse();
@@ -501,7 +501,7 @@ namespace GameTests
         public void BisectTriangleTest2()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, GetDefaultBisector());
+            Triangle[] result = triangle.Bisect(GetDefaultBisector());
 
             Assert.IsTrue(result.Length == 1);
             Triangle comparison = GetDefaultComparison();
@@ -512,7 +512,7 @@ namespace GameTests
         public void BisectTriangleTest3()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, GetDefaultBisector(), Side.Right);
+            Triangle[] result = triangle.Bisect(GetDefaultBisector(), Side.Right);
 
             Assert.IsTrue(result.Length == 2);
             Assert.IsTrue(Triangle.IsIsomorphic(result[0], new Triangle(new Vertex(0, 0), new Vertex(1, 0), new Vertex(0.5f, 0.5f))));
@@ -523,7 +523,7 @@ namespace GameTests
         public void BisectTriangleTest4()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(-1, 1), new Vector2(1, 1)));
+            Triangle[] result = triangle.Bisect(new LineF(new Vector2(-1, 1), new Vector2(1, 1)));
 
             Assert.IsTrue(result.Length == 0);
         }
@@ -532,7 +532,7 @@ namespace GameTests
         public void BisectTriangleTest5()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(1, 1), new Vector2(-1, 1)), Side.Right);
+            Triangle[] result = triangle.Bisect(new LineF(new Vector2(1, 1), new Vector2(-1, 1)), Side.Right);
 
             Assert.IsTrue(result.Length == 0);
         }
@@ -541,7 +541,7 @@ namespace GameTests
         public void BisectTriangleTest6()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(-1, 1), new Vector2(1, 1)), Side.Right);
+            Triangle[] result = triangle.Bisect(new LineF(new Vector2(-1, 1), new Vector2(1, 1)), Side.Right);
 
             Assert.IsTrue(result.Length == 1);
             Assert.IsTrue(result[0].Equals(triangle));
@@ -551,7 +551,7 @@ namespace GameTests
         public void BisectTriangleTest7()
         {
             Triangle triangle = GetDefaultTriangle();
-            Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(1, 1), new Vector2(-1, 1)));
+            Triangle[] result = triangle.Bisect(new LineF(new Vector2(1, 1), new Vector2(-1, 1)));
 
             Assert.IsTrue(result.Length == 1);
             Assert.IsTrue(result[0].Equals(triangle));
@@ -561,7 +561,7 @@ namespace GameTests
         public void BisectTriangleTest8()
         {
             Triangle triangle = new Triangle(new Vertex(0, 0, 5f), new Vertex(1, 0), new Vertex(0, 1, 2f));
-            Triangle[] result = MathExt.BisectTriangle(triangle, new LineF(new Vector2(-1, 0.6f), new Vector2(1, 0.6f)));
+            Triangle[] result = triangle.Bisect(new LineF(new Vector2(-1, 0.6f), new Vector2(1, 0.6f)));
 
             Assert.IsTrue(result.Length == 1);
             Triangle comparison = new Triangle(new Vertex(0.399999976f, 0.6f, 1.2f), new Vertex(0f, 1f, 2f), new Vertex(0f, 0.6f, 3.19999981f));

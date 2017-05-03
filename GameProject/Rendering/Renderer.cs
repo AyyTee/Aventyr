@@ -206,7 +206,7 @@ namespace Game.Rendering
                             Matrix4 transform = clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform;
                             for (int i = 0; i < clip.ClipLines.Length; i++)
                             {
-                                model.Mesh = model.Mesh.Bisect(clip.ClipLines[i], transform, Side.Right);
+                                model.Mesh = model.Mesh.Bisect(clip.ClipLines[i], clip.Model.Transform.GetMatrix() * transform, Side.Right);
                             }
                             models.Add(model);
                             drawData.Add(new DrawData(-1, model, transform));
