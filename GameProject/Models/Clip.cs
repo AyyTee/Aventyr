@@ -85,7 +85,7 @@ namespace Game.Models
             List<LineF> clipLines = new List<LineF>();
             foreach (IPortal portal in collisions)
             {
-                Vector2[] pv = Portal.GetWorldVerts(portal);
+                Vector2[] pv = portal.GetWorldVerts();
                 LineF clipLine = new LineF(pv);
 
                 LineF portalLine = new LineF(pv);
@@ -132,12 +132,12 @@ namespace Game.Models
             List<IPortal> collisions = new List<IPortal>();
             foreach (IPortal portal in portalList)
             {
-                if (!Portal.IsValid(portal))
+                if (!portal.IsValid())
                 {
                     continue;
                 }
 
-                LineF portalLine = new LineF(Portal.GetWorldVerts(portal));
+                LineF portalLine = new LineF(portal.GetWorldVerts());
 
                 List<Vector2> convexHull = new List<Vector2>(polygon);
                 convexHull.Add(centerPoint);
@@ -155,8 +155,8 @@ namespace Game.Models
                 IPortal portal = collisions[i];
                 for (int j = collisions.Count - 1; j > i; j--)
                 {
-                    LineF currentLine = new LineF(Portal.GetWorldVerts(collisions[i]));
-                    LineF checkLine = new LineF(Portal.GetWorldVerts(collisions[j]));
+                    LineF currentLine = new LineF(collisions[i].GetWorldVerts());
+                    LineF checkLine = new LineF(collisions[j].GetWorldVerts());
                     Side checkSide = currentLine.GetSideOf(checkLine);
                     if (checkSide != currentLine.GetSideOf(centerPoint))
                     {
@@ -168,7 +168,7 @@ namespace Game.Models
             List<LineF> clipLines = new List<LineF>();
             foreach (IPortal portal in collisions)
             {
-                Vector2[] pv = Portal.GetWorldVerts(portal);
+                Vector2[] pv = portal.GetWorldVerts();
                 LineF clipLine = new LineF(pv);
 
                 LineF portalLine = new LineF(pv);

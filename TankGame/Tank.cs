@@ -40,7 +40,7 @@ namespace TankGame
                 PortalPair[i] = new TankPortal(Scene);
                 var portalEntity = new Entity(Scene);
                 portalEntity.SetParent(PortalPair[i]);
-                portalEntity.AddModel(ModelFactory.CreateLinesWidth( new[] { new LineF(Portal.GetVerts(PortalPair[i])) }, 0.1f));
+                portalEntity.AddModel(ModelFactory.CreateLinesWidth( new[] { new LineF(Portal.Vertices) }, 0.1f));
                 portalEntity.ModelList[0].SetColor(new Vector3(1, 0, 0));
             }
             Portal.SetLinked(PortalPair[0], PortalPair[1]);

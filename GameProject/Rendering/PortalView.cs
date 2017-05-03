@@ -118,8 +118,8 @@ namespace Game.Rendering
                     continue;
                 }
                 //Skip this portal if it's inside the current portal's Fov.
-                LineF portalLine = new LineF(Portal.GetWorldVerts(portal));
-                LineF portalOtherLine = new LineF(Portal.GetWorldVerts(other));
+                LineF portalLine = new LineF(portal.GetWorldVerts());
+                LineF portalOtherLine = new LineF(other.GetWorldVerts());
                 if (portalLine.IsInsideFov(viewPos, portalOtherLine))
                 {
                     continue;
@@ -154,7 +154,7 @@ namespace Game.Rendering
             linesPrevious[0] = linesPrevious[0].Transform(portalMatrix);
             linesPrevious[1] = linesPrevious[1].Transform(portalMatrix);
 
-            LineF portalWorldLine = new LineF(Portal.GetWorldVerts(portal));
+            LineF portalWorldLine = new LineF(portal.GetWorldVerts());
             portalWorldLine = portalWorldLine.Transform(portalMatrix);
             PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNewer, lines, linesPrevious, portalWorldLine);
 
@@ -170,7 +170,7 @@ namespace Game.Rendering
         static bool _isPortalValid(IPortal previous, IPortal next, Vector2 viewPos)
         {
             //skip this portal if it isn't linked 
-            if (!Portal.IsValid(next))
+            if (!next.IsValid())
             {
                 return false;
             }
@@ -180,7 +180,7 @@ namespace Game.Rendering
                 return false;
             }
             //or if the portal is one sided and the view point is on the wrong side
-            Vector2[] pv2 = Portal.GetWorldVerts(next);
+            Vector2[] pv2 = next.GetWorldVerts();
             LineF portalLine = new LineF(pv2);
             if (next.OneSided)
             {
@@ -192,7 +192,7 @@ namespace Game.Rendering
             //or if this portal isn't inside the fov of the exit portal
             if (previous != null)
             {
-                LineF portalEnterLine = new LineF(Portal.GetWorldVerts(previous.Linked));
+                LineF portalEnterLine = new LineF(previous.Linked.GetWorldVerts());
                 if (!portalEnterLine.IsInsideFov(viewPos, portalLine))
                 {
                     return false;

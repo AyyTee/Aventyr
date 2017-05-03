@@ -127,7 +127,7 @@ namespace Game.Physics
             //If this isn't the root body then the center point will be just outside of the parent portal.
             if (data.IsChild)
             {
-                LineF portalLine = new LineF(Portal.GetWorldVerts(data.BodyParent.Portal.Linked));
+                LineF portalLine = new LineF(data.BodyParent.Portal.Linked.GetWorldVerts());
                 Vector2 offset = portalLine.Delta.PerpendicularLeft.Normalized() * 0.01f;
                 center = portalLine.Center + offset;
                 if (portalLine.GetSideOf(center + offset) == portalLine.GetSideOf(body.Position))
@@ -170,7 +170,7 @@ namespace Game.Physics
             List<List<IntPoint>> clipPaths = new List<List<IntPoint>>();
             foreach (IPortal p in data.PortalCollisions())
             {
-                Vector2[] verts = Portal.GetWorldVerts(p);
+                Vector2[] verts = p.GetWorldVerts();
                 float scale = 100;
 
                 Vector2 v0 = verts[0] + (verts[1] - verts[0]).Normalized() * scale;

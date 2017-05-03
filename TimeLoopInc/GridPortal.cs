@@ -7,53 +7,19 @@ using System.Threading.Tasks;
 using Game;
 using Game.Common;
 using Game.Serialization;
+using Game.Rendering;
 
 namespace TimeLoopInc
 {
-    public class GridPortal : Entity, IPortal
+    public class GridPortal : Entity, IPortalRenderable
     {
-        public IPortal Linked { get; set; }
+        public IPortalRenderable Linked { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public bool OneSided => true;
+        public bool OneSided => throw new NotImplementedException();
 
-        public PortalPath Path { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Transform2 WorldTransform { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public Transform2 WorldVelocity { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Transform2 WorldTransform => throw new NotImplementedException();
 
-        public bool IsPortalable => throw new NotImplementedException();
-
-        public IPortalCommon Parent => throw new NotImplementedException();
-
-        public List<IPortalCommon> Children => throw new NotImplementedException();
-
-        public IScene Scene => throw new NotImplementedException();
-
-        public HashSet<IDeepClone> GetCloneableRefs()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Transform2 GetTransform()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Transform2 GetVelocity()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Remove()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDeepClone ShallowClone()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateRefs(IReadOnlyDictionary<IDeepClone, IDeepClone> cloneMap)
+        public Transform2 GetWorldTransform()
         {
             throw new NotImplementedException();
         }

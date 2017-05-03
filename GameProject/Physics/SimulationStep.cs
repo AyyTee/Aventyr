@@ -74,14 +74,14 @@ namespace Game.Physics
             {
                 foreach (IPortal p in portals)
                 {
-                    if (!Portal.IsValid(p))
+                    if (!p.IsValid())
                     {
                         continue;
                     }
-                    var lineStart = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p)));
+                    var lineStart = new Line(Vector2Ext.ToDouble(p.GetWorldVerts()));
 
                     var t = (Transform2d)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
-                    var lineEnd = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p, (Transform2)t)));
+                    var lineEnd = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts((Transform2)t)));
 
                     lineMovement.Add(new PortalMovement(p, lineStart, lineEnd));
                 }
@@ -156,7 +156,7 @@ namespace Game.Physics
 
         static void PlaceOnPortal(IPortalCommon instance, IPortal portal, float t)
         {
-            Line portalLine = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(portal)));
+            Line portalLine = new Line(Vector2Ext.ToDouble(portal.GetWorldVerts()));
             var transform = (Transform2d)instance.WorldTransform;
             transform.Position = portalLine.Lerp(t);
             instance.WorldTransform = (Transform2)transform;
@@ -222,9 +222,9 @@ namespace Game.Physics
         static void AddMargin(IEnumerable<IPortal> portals, IPortalCommon instance)
         {
             var transform = (Transform2d)instance.WorldTransform;
-            foreach (IPortal p in portals.Where(item => item.OneSided && Portal.IsValid(item)))
+            foreach (IPortal p in portals.Where(item => item.OneSided && item.IsValid()))
             {
-                var exitLine = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts(p)));
+                var exitLine = new Line(Vector2Ext.ToDouble(p.GetWorldVerts()));
                 Vector2d position = transform.Position;
                 double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
                 if (distanceToPortal < Portal.EnterMinDistance)

@@ -269,7 +269,7 @@ namespace Game.Physics
             //Contact is invalid if it is too close to a portal.
             foreach (IPortal p in Scene.GetPortalList())
             {
-                if (!Portal.IsValid(p))
+                if (!p.IsValid())
                 {
                     continue;
                 }
@@ -282,7 +282,7 @@ namespace Game.Physics
                         continue;
                     }
 
-                    LineF line = new LineF(Portal.GetWorldVerts(portal));
+                    LineF line = new LineF(portal.GetWorldVerts());
                     double[] vDist = {
                         MathExt.PointLineDistance(vList[0], line, true),
                         MathExt.PointLineDistance(vList[1], line, true)
@@ -311,7 +311,7 @@ namespace Game.Physics
                 int iNext = (i + 1) % fixtureData.Length;
                 foreach (IPortal portal in fixtureData[i].PortalCollisions)
                 {
-                    LineF line = new LineF(Portal.GetWorldVerts(portal));
+                    LineF line = new LineF(portal.GetWorldVerts());
 
                     FixturePortal cast = portal as FixturePortal;
                     if (cast != null)

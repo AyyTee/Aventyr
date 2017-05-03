@@ -19,9 +19,14 @@ namespace Game.Portals
         public const float EnterMinDistance = 0.001f;
 
         /// <summary>
+        /// Returns an array of two Vectors defining the Portals local location
+        /// </summary>
+        public static Vector2[] Vertices => new[] { new Vector2(0, 0.5f), new Vector2(0, -0.5f) };
+
+        /// <summary>
         /// Returns whether a portal can be entered.
         /// </summary>
-        public static bool IsValid(IPortal portal)
+        public static bool IsValid(this IPortal portal)
         {
             return portal.Linked != null &&
                 portal.WorldTransform != null &&
@@ -52,7 +57,7 @@ namespace Game.Portals
 
         public static Transform2 Enter(IPortal portal, Transform2 transform)
         {
-            Debug.Assert(IsValid(portal));
+            Debug.Assert(portal.IsValid());
             return transform.Transform(GetLinkedTransform(portal, portal.Linked));
         }
 
@@ -65,7 +70,7 @@ namespace Game.Portals
         /// <param name="ignorePortalVelocity"></param>
         public static Transform2 EnterVelocity(IPortal portal, float intersectT, Transform2 velocity, bool ignorePortalVelocity = false)
         {
-            Debug.Assert(IsValid(portal));
+            Debug.Assert(portal.IsValid());
             Matrix4 matrix = GetLinkedMatrix(portal);
             Vector2 origin = Vector2Ext.Transform(new Vector2(), matrix);
             Transform2 velocityClone = velocity.ShallowClone();
@@ -74,7 +79,7 @@ namespace Game.Portals
             {
                 velocityClone.Position -= portal.WorldVelocity.Position;
                 velocityClone.Rotation -= portal.WorldVelocity.Rotation;
-                velocityClone.Position -= GetAngularVelocity(portal, intersectT);
+                velocityClone.Position -= portal.GetAngularVelocity(intersectT);
             }
             velocityClone.Position = Vector2Ext.Transform(velocityClone.Position, matrix);
             velocityClone.Position -= origin;
@@ -87,14 +92,14 @@ namespace Game.Portals
             {
                 velocityClone.Position += portal.Linked.WorldVelocity.Position;
                 velocityClone.Rotation += portal.Linked.WorldVelocity.Rotation;
-                velocityClone.Position += GetAngularVelocity(portal.Linked, intersectT);
+                velocityClone.Position += portal.Linked.GetAngularVelocity(intersectT);
             }
             return velocityClone;
         }
 
-        static Vector2 GetAngularVelocity(IPortal portal, float intersectT)
+        static Vector2 GetAngularVelocity(this IPortal portal, float intersectT)
         {
-            Vector2 intersect = new LineF(GetWorldVerts(portal)).Lerp(intersectT);
+            Vector2 intersect = new LineF(portal.GetWorldVerts()).Lerp(intersectT);
             return MathExt.AngularVelocity(intersect, portal.WorldTransform.Position, portal.WorldVelocity.Rotation);
         }
 
@@ -159,38 +164,30 @@ namespace Game.Portals
         }
 
         /// <summary>
-        /// Returns an array of two Vectors defining the Portals local location
+        /// Get the portal's vertices in world coordinates.
         /// </summary>
-        public static Vector2[] GetVerts(IPortal portal)
+        public static Vector2[] GetWorldVerts(this IPortal portal)
         {
-            return new[] { new Vector2(0, 0.5f), new Vector2(0, -0.5f) };
+            return GetWorldVerts(portal.WorldTransform);
         }
 
         /// <summary>
         /// Get the portal's vertices in world coordinates.
         /// </summary>
-        public static Vector2[] GetWorldVerts(IPortal portal)
+        public static Vector2[] GetWorldVerts(Transform2 worldTransform)
         {
-            return GetWorldVerts(portal, portal.WorldTransform);
-        }
-
-        /// <summary>
-        /// Get the portal's vertices in world coordinates.
-        /// </summary>
-        public static Vector2[] GetWorldVerts(IPortal portal, Transform2 worldTransform)
-        {
-            return Vector2Ext.Transform(GetVerts(portal), worldTransform.GetMatrix());
+            return Vector2Ext.Transform(Vertices, worldTransform.GetMatrix());
         }
 
         /// <summary>
         /// Get the portal's vertices in world coordinates after being scaled.
         /// </summary>
-        public static Vector2[] GetWorldVerts(IPortal portal, float scalar)
+        public static Vector2[] GetWorldVerts(this IPortal portal, float scalar)
         {
-            return Vector2Ext.Transform(Vector2Ext.Scale(GetVerts(portal), scalar), portal.WorldTransform.GetMatrix());
+            return Vector2Ext.Transform(Vector2Ext.Scale(Vertices, scalar), portal.WorldTransform.GetMatrix());
         }
 
-        public static Matrix4 GetLinkedMatrix(IPortal portalEnter)
+        public static Matrix4 GetLinkedMatrix(this IPortal portalEnter)
         {
             Debug.Assert(portalEnter.Linked != null, "Portal must be linked to another portal.");
             return GetLinkedMatrix(portalEnter, portalEnter.Linked);
@@ -205,7 +202,7 @@ namespace Game.Portals
             return m.Inverted() * transform.GetMatrix();
         }
 
-        public static Transform2 GetLinkedTransform(IPortal portalEnter)
+        public static Transform2 GetLinkedTransform(this IPortal portalEnter)
         {
             Debug.Assert(portalEnter.Linked != null, "Portal must be linked to another portal.");
             return GetLinkedTransform(portalEnter, portalEnter.Linked);
@@ -219,12 +216,12 @@ namespace Game.Portals
             return tEnter.Inverted().Transform(tExit);
         }
 
-        public static LineF[] GetFovLines(IPortal portal, Vector2 origin, float distance)
+        public static LineF[] GetFovLines(this IPortal portal, Vector2 origin, float distance)
         {
             return GetFovLines(portal, origin, distance, portal.WorldTransform);
         }
 
-        public static LineF[] GetFovLines(IPortal portal, Vector2 origin, float distance, Transform2 transform)
+        public static LineF[] GetFovLines(this IPortal portal, Vector2 origin, float distance, Transform2 transform)
         {
             Vector2[] vertices = GetFov(portal, origin, distance);
             LineF[] lines = {
@@ -238,7 +235,7 @@ namespace Game.Portals
         /// Returns a polygon in world space representing the 2D Fov through the portal.  
         /// Polygon is not guaranteed to be non-degenerate which can occur if the viewPoint is edge-on to the portal.
         /// </summary>
-        public static Vector2[] GetFov(IPortal portal, Vector2 origin, float distance)
+        public static Vector2[] GetFov(this IPortal portal, Vector2 origin, float distance)
         {
             return GetFov(portal, origin, distance, 10);
         }
@@ -252,14 +249,13 @@ namespace Game.Portals
         /// Returns a polygon in world space representing the 2D Fov through the portal.  
         /// Polygon is not guaranteed to be non-degenerate which can occur if the viewPoint is edge-on to the portal.
         /// </summary>
-        public static Vector2[] GetFov(IPortal portal, Vector2 viewPoint, float distance, int detail, Transform2 transform)
+        public static Vector2[] GetFov(this IPortal portal, Vector2 viewPoint, float distance, int detail, Transform2 transform)
         {
             Matrix4 a = transform.GetMatrix();
             var verts = new Vector2[detail + 2];
-            Vector2[] portalVerts = GetVerts(portal);
-            for (int i = 0; i < portalVerts.Length; i++)
+            for (int i = 0; i < Vertices.Length; i++)
             {
-                Vector4 b = Vector4.Transform(new Vector4(portalVerts[i].X, portalVerts[i].Y, 0, 1), a);
+                Vector4 b = Vector4.Transform(new Vector4(Vertices[i].X, Vertices[i].Y, 0, 1), a);
                 verts[i] = new Vector2(b.X, b.Y);
             }
             //Minumum distance in order to prevent self intersections.
@@ -305,7 +301,7 @@ namespace Game.Portals
             var portalLines = new LineF[path.Portals.Count];
             for (int i = 0; i < path.Portals.Count; i++)
             {
-                portalLines[i] = new LineF(GetWorldVerts(path.Portals[i]));
+                portalLines[i] = new LineF(path.Portals[i].GetWorldVerts());
             }
 
             for (int i = path.Portals.Count - 1; i >= 0; i--)
@@ -339,7 +335,7 @@ namespace Game.Portals
             var collisions = new List<IPortal>();
             foreach (IPortal p in portals.Where(IsValid))
             {
-                LineF portalLine = new LineF(GetWorldVerts(p));
+                LineF portalLine = new LineF(p.GetWorldVerts());
                 if (MathExt.LineInPolygon(portalLine, polygon) && 
                     (margin == 0 || 
                     MathExt.PointPolygonDistance(portalLine[0], polygon) > margin ||
@@ -354,8 +350,8 @@ namespace Game.Portals
             {
                 for (int j = ordered.Count - 1; j > i; j--)
                 {
-                    var currentLine = new LineF(GetWorldVerts(ordered[i]));
-                    var checkLine = new LineF(GetWorldVerts(ordered[j]));
+                    var currentLine = new LineF(ordered[i].GetWorldVerts());
+                    var checkLine = new LineF(ordered[j].GetWorldVerts());
                     Side checkSide = currentLine.GetSideOf(checkLine);
                     if (checkSide != currentLine.GetSideOf(center))
                     {

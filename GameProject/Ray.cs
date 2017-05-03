@@ -68,12 +68,12 @@ namespace Game
             LineF ray = new LineF(begin.Position, begin.Position + velocity.Position);
             foreach (IPortal p in portals)
             {
-                if (!Portal.IsValid(p) || portalPrevious == p)
+                if (!p.IsValid() || portalPrevious == p)
                 {
                     continue;
                 }
 
-                LineF portalLine = new LineF(Portal.GetWorldVerts(p));
+                LineF portalLine = new LineF(p.GetWorldVerts());
                 IntersectCoord intersect = MathExt.LineLineIntersect(portalLine, ray, true);
 
                 if (intersect != null)
@@ -133,11 +133,11 @@ namespace Game
             transform = transform.ShallowClone();
             foreach (IPortal p in portals)
             {
-                if (!Portal.IsValid(p))
+                if (!p.IsValid())
                 {
                     continue;
                 }
-                var exitLine = new LineF(Portal.GetWorldVerts(p));
+                var exitLine = new LineF(p.GetWorldVerts());
                 Vector2 position = transform.Position;
                 double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
                 if (distanceToPortal < Portal.EnterMinDistance)

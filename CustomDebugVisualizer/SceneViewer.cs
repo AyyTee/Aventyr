@@ -102,7 +102,7 @@ namespace CustomDebugVisualizer
                     {
                         vertices.Add(new Series
                         {
-                            Vertices = Portal.GetWorldVerts(portal).Select(v => (Vector2d)v).ToList(),
+                            Vertices = portal.GetWorldVerts().Select(v => (Vector2d)v).ToList(),
                             Name = item.Name
                         });
                     }

@@ -92,7 +92,7 @@ namespace Game.Physics
             //FixtureExt.GetUserData(Fixture).Entity.Scene.World.ProcessChanges();
             _fixtureChildren.Clear();
             var sortedPortals = GetChildPortals().ToArray().OrderBy(item => PolygonExt.EdgeIndexT(item.Position)).ToList();
-            sortedPortals.RemoveAll(item => !Portal.IsValid(item));
+            sortedPortals.RemoveAll(item => !item.IsValid());
             for (int i = 0; i < sortedPortals.Count(); i++)
             {
                 if (i == 0 || (i > 0 && sortedPortals[i].Position.EdgeIndex != sortedPortals[i - 1].Position.EdgeIndex))
@@ -140,10 +140,10 @@ namespace Game.Physics
 
             Vector2[] verts = 
             {
-                Vector2Ext.Transform(Portal.GetVerts(portal)[0], t0.GetMatrix()),
-                Vector2Ext.Transform(Portal.GetVerts(portal)[0] + new Vector2(-FixturePortal.EdgeMargin, 0), t0.GetMatrix()),
-                Vector2Ext.Transform(Portal.GetVerts(portalNext)[1] + new Vector2(-FixturePortal.EdgeMargin, 0), t1.GetMatrix()),
-                Vector2Ext.Transform(Portal.GetVerts(portalNext)[1], t1.GetMatrix())
+                Vector2Ext.Transform(Portal.Vertices[0], t0.GetMatrix()),
+                Vector2Ext.Transform(Portal.Vertices[0] + new Vector2(-FixturePortal.EdgeMargin, 0), t0.GetMatrix()),
+                Vector2Ext.Transform(Portal.Vertices[1] + new Vector2(-FixturePortal.EdgeMargin, 0), t1.GetMatrix()),
+                Vector2Ext.Transform(Portal.Vertices[1], t1.GetMatrix())
             };
             
             verts = MathExt.SetWinding(verts, false);
@@ -167,9 +167,9 @@ namespace Game.Physics
 
             Vector2[] verts = 
             {
-                Vector2Ext.Transform(Portal.GetVerts(portal)[iNext], t.GetMatrix()),
+                Vector2Ext.Transform(Portal.Vertices[iNext], t.GetMatrix()),
                 Actor.GetFixtureContour(Actor)[index],
-                Vector2Ext.Transform(Portal.GetVerts(portal)[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix())
+                Vector2Ext.Transform(Portal.Vertices[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix())
             };
             
             verts = MathExt.SetWinding(verts, false);
