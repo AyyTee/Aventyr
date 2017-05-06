@@ -61,10 +61,6 @@ namespace Game.Common
         #region Lerp
         public static double Lerp(double value0, double value1, double T) => value0 * (1 - T) + value1 * T;
 
-        public static Vector2d Lerp(Vector2d vector0, Vector2d vector1, double T) => vector0 * (1 - T) + vector1 * T;
-
-        public static Vector2 Lerp(Vector2 vector0, Vector2 vector1, float T) => vector0 * (1 - T) + vector1 * T;
-
         public static Vector3d Lerp(Vector3d vector0, Vector3d vector1, double T) => vector0 * (1 - T) + vector1 * T;
 
         public static Vector3 Lerp(Vector3 vector0, Vector3 vector1, float T) => vector0 * (1 - T) + vector1 * T;
@@ -437,7 +433,7 @@ namespace Game.Common
             {
                 return null;
             }
-            return new IntersectCoord(Lerp(new Vector2d(line0[0].X, line0[0].Y), new Vector2d(line0[1].X, line0[1].Y), ua), ua, ub);
+            return new IntersectCoord(line0[0].Lerp(line0[1], ua), ua, ub);
         }
 
         /// <summary>

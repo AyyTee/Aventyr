@@ -92,6 +92,9 @@ namespace Game.Common
             return new Vector2((float)Math.Round(v.X), (float)Math.Round(v.Y)) * grid;
         }
 
+        public static Vector2d Lerp(this Vector2d start, Vector2d end, double T) => start * (1 - T) + end * T;
+
+        public static Vector2 Lerp(this Vector2 start, Vector2 end, float T) => start * (1 - T) + end * T;
 
         public static Vector2 Transform(Vector2 vector, Matrix4 matrix)
         {

@@ -1,5 +1,4 @@
-﻿using Game.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace TimeLoopInc
 {
-    public class Entity
+    public enum Direction
     {
-        public List<Vector2i> Positions;
+        Right = 0, Up = 1, Left = 2, Down = 3
     }
 }

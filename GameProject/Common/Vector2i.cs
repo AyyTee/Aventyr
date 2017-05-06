@@ -40,7 +40,20 @@ namespace Game.Common
         public static Vector2i operator *(int p0, Vector2i p1) => p1.Multiply(p0);
         public static Vector2i operator /(Vector2i p0, int p1) => p0.Divide(p1);
         public static Vector2i operator /(Vector2i p0, Vector2i p1) => p0.Divide(p1);
+        public static bool operator ==(Vector2i p0, Vector2i p1) => p0.Equals(p1);
+        public static bool operator !=(Vector2i p0, Vector2i p1) => !p0.Equals(p1);
         public static explicit operator Vector2i(System.Drawing.Size size) => new Vector2i(size.Width, size.Height);
         public static explicit operator Vector2(Vector2i Vector2i) => new Vector2(Vector2i.X, Vector2i.Y);
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Vector2i v)
+            {
+                return X == v.X && Y == v.Y;
+            }
+            return false;
+        }
+
+        public override int GetHashCode() => base.GetHashCode() ^ X ^ Y;
     }
 }

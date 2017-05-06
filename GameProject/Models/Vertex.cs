@@ -70,7 +70,7 @@ namespace Game.Models
             }
             Vertex vNew = new Vertex(
                 MathExt.Lerp(v0.Position, v1.Position, t),
-                MathExt.Lerp(v0.TextureCoord, v1.TextureCoord, t),
+                v0.TextureCoord.Lerp(v1.TextureCoord, t),
                 MathExt.Lerp(v0.Color, v1.Color, t),
                 normal
                 );

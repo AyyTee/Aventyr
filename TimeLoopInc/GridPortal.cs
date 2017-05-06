@@ -11,17 +11,18 @@ using Game.Rendering;
 
 namespace TimeLoopInc
 {
-    public class GridPortal : Entity, IPortalRenderable
+    public class TimePortal
     {
-        public IPortalRenderable Linked { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Vector2i Position { get; }
+        public int TimeOffset { get; set; }
+        public TimePortal Linked { get; set; }
 
-        public bool OneSided => throw new NotImplementedException();
-
-        public Transform2 WorldTransform => throw new NotImplementedException();
-
-        public Transform2 GetWorldTransform()
+        public TimePortal(Vector2i position, int timeOffset)
         {
-            throw new NotImplementedException();
+            Position = position;
+            TimeOffset = timeOffset;
         }
+
+        public TimePortal DeepClone() => (TimePortal)MemberwiseClone();
     }
 }

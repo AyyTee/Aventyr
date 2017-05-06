@@ -209,7 +209,7 @@ namespace Game.Common
 
         public Vector2 Lerp(float t)
         {
-            return MathExt.Lerp(_vertices[0], _vertices[1], t);
+            return _vertices[0].Lerp(_vertices[1], t);
         }
 
         /// <summary>

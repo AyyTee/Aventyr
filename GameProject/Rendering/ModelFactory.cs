@@ -15,13 +15,15 @@ namespace Game.Rendering
 {
     public static class ModelFactory
     {
-        public static Model CreatePlane(Vector2 scale)
+        public static Model CreatePlane() => CreatePlane(new Vector2(1, 1));
+
+        public static Model CreatePlane(Vector2 scale, Vector3 offset = new Vector3())
         {
             Vertex[] vertices = {
-                new Vertex(new Vector3(-0.5f * scale.X, 0.5f * scale.Y,  0f), new Vector2(0, 0)),
-                new Vertex(new Vector3(0.5f * scale.X, 0.5f * scale.Y,  0f), new Vector2(1, 0)),
-                new Vertex(new Vector3(0.5f * scale.X, -0.5f * scale.Y,  0f), new Vector2(1, 1)),
-                new Vertex(new Vector3(-0.5f * scale.X, -0.5f * scale.Y,  0f), new Vector2(0, 1))
+                new Vertex(new Vector3(-0.5f * scale.X, 0.5f * scale.Y,  0f) + offset, new Vector2(0, 0)),
+                new Vertex(new Vector3(0.5f * scale.X, 0.5f * scale.Y,  0f) + offset, new Vector2(1, 0)),
+                new Vertex(new Vector3(0.5f * scale.X, -0.5f * scale.Y,  0f) + offset, new Vector2(1, 1)),
+                new Vertex(new Vector3(-0.5f * scale.X, -0.5f * scale.Y,  0f) + offset, new Vector2(0, 1))
             };
 
             /*int[] indices = new int[] {
@@ -37,20 +39,7 @@ namespace Game.Rendering
             return model;
         }
 
-        public static Model CreatePlane()
-        {
-            return CreatePlane(new Vector2(1, 1));
-        }
-
-        /*public static Model CreateCircle()
-        {
-            Model model = new Model();
-        }*/
-
-        public static Model CreateCube()
-        {
-            return CreateCube(new Vector3(1,1,1));
-        }
+        public static Model CreateCube() => CreateCube(new Vector3(1, 1, 1));
 
         public static Model CreateCube(Vector3 scale)
         {
@@ -289,10 +278,7 @@ namespace Game.Rendering
             return model;
         }
 
-        public static Model CreateLineStrip(Vector2[] vertices)
-        {
-            return CreateLineStrip(vertices, null);
-        }
+        public static Model CreateLineStrip(Vector2[] vertices) => CreateLineStrip(vertices, null);
 
         public static Model CreateCircle(Vector3 origin, float radius, int detail)
         {
