@@ -58,7 +58,7 @@ namespace TimeLoopInc
             worldLayer.Camera = new HudCamera2(_window.CanvasSize / 50);
 
             var gui = new Layer();
-            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(), scene.Time.ToString());
+            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(), scene.State.Time.ToString());
             gui.Camera = new HudCamera2(_window.CanvasSize);
             _window.Layers.Add(worldLayer);
             _window.Layers.Add(gui);

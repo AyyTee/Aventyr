@@ -16,7 +16,6 @@ namespace TimeLoopInc
         public List<TimePortal> Portals = new List<TimePortal>();
         public List<Block> Blocks = new List<Block>();
         public SceneState State = new SceneState();
-        public int Time;
         public int StartTime => Blocks.OfType<IGridEntity>().Concat(Players).Min(item => item.StartTime);
 
         public Scene()
@@ -29,22 +28,29 @@ namespace TimeLoopInc
             };
             CurrentPlayer = new Player(new Vector2i(), 0);
             Players.Add(CurrentPlayer);
-            Portals.Add(new TimePortal(new Vector2i(4, 0), -10));
+
+            var portal0 = new TimePortal(new Vector2i(4, 0), Direction.Right);
+            var portal1 = new TimePortal(new Vector2i(-2, -2), Direction.Left);
+            portal0.SetLinked(portal1);
+            portal0.SetTimeOffset(10);
+
+            Portals.Add(portal0);
+            Portals.Add(portal1);
             Blocks.Add(new Block(new Vector2i(2, 0), 0));
 
-            SetTime(0);
+            SetTime(StartTime);
         }
 
         public void Step(Input input)
         {
             CurrentPlayer.Input.Add(input);
-            _step();
+            SetTime(State.Time);
         }
 
         void SetTime(int time)
         {
-            Time = StartTime;
-            State.Entities.Clear();
+            State.Time = StartTime;
+            State = new SceneState();
             for (int i = StartTime; i <= time; i++)
             {
                 _step();
@@ -55,7 +61,7 @@ namespace TimeLoopInc
         {
             foreach (var entity in State.Entities.Keys.ToList())
             {
-                if (entity.EndTime == Time)
+                if (entity.EndTime == State.Time)
                 {
                     State.Entities.Remove(entity);
                 }
@@ -65,7 +71,7 @@ namespace TimeLoopInc
             {
                 if (entity is Player player)
                 {
-                    State.Entities[entity].SetPosition(Move(State.Entities[entity].Position, player.GetInput(Time).Heading));
+                    State.Entities[entity].SetPosition(Move(State.Entities[entity].Position, player.GetInput(State.Time).Heading));
                 }
             }
 
@@ -89,7 +95,7 @@ namespace TimeLoopInc
                     if (pushes.Count() >= block.Size && !blockInstant.IsPushed)
                     {
                         blockInstant.IsPushed = true;
-                        blockInstant.AddPosition(DirectionToVector(directions[i]));
+                        blockInstant.SetPosition(Move(blockInstant.Position, directions[i]));
                     }
                 }
             }
@@ -99,8 +105,8 @@ namespace TimeLoopInc
                 var portal = Portals.FirstOrDefault(item => item.Position == State.Entities[CurrentPlayer].Position);
                 if (portal != null)
                 {
-                    var newTime = Time + portal.TimeOffset;
-                    CurrentPlayer.EndTime = Time;
+                    var newTime = State.Time + portal.TimeOffset;
+                    CurrentPlayer.EndTime = State.Time;
                     CurrentPlayer = new Player(portal.Position, newTime);
                     Players.Add(CurrentPlayer);
                     SetTime(newTime);
@@ -110,20 +116,20 @@ namespace TimeLoopInc
 
             foreach (var player in Players)
             {
-                if (player.StartTime == Time)
+                if (player.StartTime == State.Time)
                 {
                     State.Entities.Add(player, new PlayerInstant(player.StartPosition));
                 }
             }
             foreach (var block in Blocks)
             {
-                if (block.StartTime == Time)
+                if (block.StartTime == State.Time)
                 {
                     State.Entities.Add(block, new BlockInstant(block.StartPosition));
                 }
             }
 
-            Time++;
+            State.Time++;
         }
 
         Vector2i Move(Vector2i position, Direction? heading)

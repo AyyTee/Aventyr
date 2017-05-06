@@ -14,15 +14,29 @@ namespace TimeLoopInc
     public class TimePortal
     {
         public Vector2i Position { get; }
-        public int TimeOffset { get; set; }
-        public TimePortal Linked { get; set; }
+        public int TimeOffset { get; private set; }
+        public TimePortal Linked { get; private set; }
+        public Direction Direction { get; }
 
-        public TimePortal(Vector2i position, int timeOffset)
+        public TimePortal(Vector2i position, Direction direction)
         {
             Position = position;
-            TimeOffset = timeOffset;
+            Direction = direction;
         }
 
         public TimePortal DeepClone() => (TimePortal)MemberwiseClone();
+
+        public void SetLinked(TimePortal p1)
+        {
+            Linked = p1;
+            p1.Linked = this;
+            p1.TimeOffset = -TimeOffset;
+        }
+
+        public void SetTimeOffset(int timeOffset)
+        {
+            TimeOffset = timeOffset;
+            Linked.TimeOffset = -timeOffset;
+        }
     }
 }
