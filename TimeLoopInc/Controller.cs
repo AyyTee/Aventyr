@@ -1,5 +1,6 @@
 ﻿using Game;
 using Game.Common;
+using Game.Models;
 using Game.Rendering;
 using OpenTK;
 using OpenTK.Graphics;
@@ -19,10 +20,13 @@ namespace TimeLoopInc
         List<Input> _input = new List<Input>();
         int _updatesSinceLastStep = 0;
         int _updatesPerAnimation = 4;
+        Model _grid;
 
         public Controller(IVirtualWindow window)
         {
             _window = window;
+
+            _grid = ModelFactory.CreateGrid(new Vector2i(10, 10), Vector2.One, Color4.LightGray, Color4.WhiteSmoke);
         }
 
         public void Render(double timeDelta)
@@ -45,7 +49,7 @@ namespace TimeLoopInc
             {
                 var posPrev = (Vector2)state.Entities[block].PreviousPosition;
                 var pos = (Vector2)state.Entities[block].Position;
-                worldLayer.Renderables.Add(new Renderable(posPrev.Lerp(pos, t)) { Color = new Color4(0.5f, 1f, 0.8f, 1f) });
+                worldLayer.Renderables.Add(new Renderable(posPrev.Lerp(pos, t)) { Size = block.Size, Color = new Color4(0.5f, 1f, 0.8f, 1f) });
             }
             foreach (var portal in scene.Portals)
             {
@@ -56,6 +60,8 @@ namespace TimeLoopInc
             {
                 worldLayer.Renderables.Add(new Renderable(wall) { Color = new Color4(0.8f, 1f, 0.5f, 1f) });
             }
+
+            //worldLayer.Renderables.Add(new Renderable() { Portalable = false });
 
             worldLayer.Camera = new HudCamera2(_window.CanvasSize / 50);
 

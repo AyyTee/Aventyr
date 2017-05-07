@@ -14,13 +14,9 @@ namespace TimeLoopInc
     public class Renderable : IRenderable
     {
         public bool Visible => true;
-
         public bool DrawOverPortals => false;
-
-        public bool IsPortalable => true;
-
+        public bool IsPortalable { get; set; } = true;
         public Color4 Color { get; set; }
-
         public float Size { get; set; } = 1;
 
         readonly Vector2 _position;
@@ -37,12 +33,12 @@ namespace TimeLoopInc
 
         public List<Model> GetModels()
         {
-            var model = ModelFactory.CreatePlane(new Vector2(1, 1) * Size, new Vector3(Size/2, Size/2, 0));
+            var model = ModelFactory.CreatePlane(Vector2.One * Size, new Vector3(-Size / 2));
             model.SetColor(Color);
             return new List<Model>() { model };
         }
 
-        public Transform2 GetWorldTransform(bool ignorePortals = false) => new Transform2(_position);
+        public Transform2 GetWorldTransform(bool ignorePortals = false) => new Transform2(_position + Vector2.One * 0.5f * Size);
 
         public Transform2 GetWorldVelocity(bool ignorePortals = false) => Transform2.CreateVelocity();
     }

@@ -18,26 +18,39 @@ namespace Game.Rendering
     {
         public static Model CreatePlane() => CreatePlane(new Vector2(1, 1));
 
-        public static Model CreatePlane(Vector2 scale, Vector3 offset = new Vector3())
+        public static Model CreatePlane(Vector2 scale, Vector3 offset = new Vector3(), Color4 color = new Color4()) => new Model(CreatePlaneMesh(scale, offset));
+
+        public static Mesh CreatePlaneMesh(Vector2 scale, Vector3 offset = new Vector3(), Color4 color = new Color4())
         {
             Vertex[] vertices = {
-                new Vertex(new Vector3(-0.5f * scale.X, 0.5f * scale.Y,  0f) + offset, new Vector2(0, 0)),
-                new Vertex(new Vector3(0.5f * scale.X, 0.5f * scale.Y,  0f) + offset, new Vector2(1, 0)),
-                new Vertex(new Vector3(0.5f * scale.X, -0.5f * scale.Y,  0f) + offset, new Vector2(1, 1)),
-                new Vertex(new Vector3(-0.5f * scale.X, -0.5f * scale.Y,  0f) + offset, new Vector2(0, 1))
+                new Vertex(new Vector3(0f, scale.Y,  0f) + offset, new Vector2(0, 0), color),
+                new Vertex(new Vector3(scale.X, scale.Y,  0f) + offset, new Vector2(1, 0), color),
+                new Vertex(new Vector3(scale.X, 0f,  0f) + offset, new Vector2(1, 1), color),
+                new Vertex(new Vector3(0f, 0f,  0f) + offset, new Vector2(0, 1), color)
             };
 
-            /*int[] indices = new int[] {
-                0, 2, 1,
-                0, 3, 2,
-            };*/
-            var mesh = new Mesh {Vertices = vertices.ToList()};
+            var mesh = new Mesh { Vertices = vertices.ToList() };
             mesh.Indices.AddRange(new[] { 0, 2, 1 });
             mesh.Indices.AddRange(new[] { 0, 3, 2 });
-            var model = new Model(mesh);
-            /*model.AddTriangle(0, 2, 1);
-            model.AddTriangle(0, 3, 2);*/
-            return model;
+
+            return mesh;
+        }
+
+        public static Model CreateGrid(Vector2i gridSize, Vector2 gridTileSize, Color4 evenTileColor, Color4 oddTileColor, Vector3 offset = new Vector3())
+        {
+            Mesh mesh = new Mesh();
+            for (int i = 0; i < gridSize.X; i++)
+            {
+                for (int j = 0; j < gridSize.Y; j++)
+                {
+                    var plane = CreatePlaneMesh(
+                        gridTileSize, 
+                        new Vector3(i * gridTileSize.X, j * gridTileSize.Y, 0) + offset, 
+                        (i + j) % 2 == 0 ? evenTileColor : oddTileColor);
+                    mesh.AddMesh(plane);
+                }
+            }
+            return new Model(mesh);
         }
 
         public static Model CreateCube() => CreateCube(new Vector3(1, 1, 1));

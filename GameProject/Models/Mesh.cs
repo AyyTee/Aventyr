@@ -88,19 +88,16 @@ namespace Game.Models
             }
         }
 
-        public List<Vertex> GetVertices()
-        {
-            return Vertices;
-        }
+        public List<Vertex> GetVertices() => Vertices;
 
-        public List<int> GetIndices()
-        {
-            return Indices;
-        }
+        public List<int> GetIndices() => Indices;
 
-        public IMesh ShallowClone()
+        public IMesh ShallowClone() => new Mesh(Vertices, Indices);
+
+        public void AddMesh(Mesh mesh)
         {
-            return new Mesh(Vertices, Indices);
+            Indices.AddRange(mesh.GetIndices().Select(item => item + Vertices.Count));
+            Vertices.AddRange(mesh.GetVertices());
         }
     }
 }

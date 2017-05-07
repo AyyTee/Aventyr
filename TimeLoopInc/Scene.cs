@@ -32,7 +32,7 @@ namespace TimeLoopInc
 
             Portals.Add(portal0);
             Portals.Add(portal1);
-            State.Blocks.Add(new Block(new Vector2i(2, 0), 0));
+            State.Blocks.Add(new Block(new Vector2i(2, 0), 0, 2));
 
             SetTime(State.StartTime);
         }

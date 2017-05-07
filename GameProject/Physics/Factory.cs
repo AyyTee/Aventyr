@@ -25,7 +25,7 @@ namespace Game.Physics
         static Actor CreateEntityBox(Entity entity, Transform2 transform)
         {
             entity.IsPortalable = true;
-            entity.AddModel(ModelFactory.CreatePlane(transform.Scale));
+            entity.AddModel(ModelFactory.CreatePlane(transform.Scale, new Vector3(-transform.Scale / 2)));
 
             Vector2[] vertices = new Vector2[] {
                 new Vector2(-0.5f, -0.5f),
