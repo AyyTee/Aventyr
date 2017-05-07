@@ -515,7 +515,7 @@ namespace Game.Rendering
             var indexList = new Dictionary<Model, int>();
 
             var vertices = new List<Vector3>();
-            var colors = new List<Color4>();
+            var colors = new List<Vector4>();
             var texCoords = new List<Vector2>();
             var indices = new List<int>();
             for (int i = 0; i < models.Length; i++)
@@ -541,7 +541,7 @@ namespace Game.Rendering
             return indexList;
         }
 
-        void BufferData(Vector3[] vertdata, Color4[] coldata, Vector2[] texcoorddata, int[] indices, int indexBuffer)
+        void BufferData(Vector3[] vertdata, Vector4[] coldata, Vector2[] texcoorddata, int[] indices, int indexBuffer)
         {
             Debug.Assert(coldata.Length == vertdata.Length);
             Debug.Assert(texcoorddata.Length == vertdata.Length);
@@ -553,8 +553,8 @@ namespace Game.Rendering
             if (_activeShader.GetAttribute("vColor") != -1)
             {
                 GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vColor"));
-                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector3.SizeInBytes), coldata.Select(item => new Vector3(item.ToVector())).ToArray(), BufferUsageHint.StreamDraw);
-                GL.VertexAttribPointer(_activeShader.GetAttribute("vColor"), 3, VertexAttribPointerType.Float, true, 0, 0);
+                GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector4.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
+                GL.VertexAttribPointer(_activeShader.GetAttribute("vColor"), 4, VertexAttribPointerType.Float, true, 0, 0);
             }
 
             // Buffer texture coordinates if shader supports it

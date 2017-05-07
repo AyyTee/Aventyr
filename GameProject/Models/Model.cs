@@ -92,13 +92,13 @@ namespace Game.Models
         /// </summary>
         public int[] GetIndices() => Mesh.GetIndices().ToArray();
 
-        public Color4[] GetColorData()
+        public Vector4[] GetColorData()
         {
             List<Vertex> vertices = Mesh.GetVertices();
-            var val = new Color4[vertices.Count];
+            var val = new Vector4[vertices.Count];
             for (int i = 0; i < val.Length; i++)
             {
-                val[i] = vertices[i].Color.Lerp(Color, Color.A);
+                val[i] = vertices[i].Color.Lerp(Color, Color.A).ToVector();
             }
             return val;
         }
