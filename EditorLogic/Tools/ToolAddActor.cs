@@ -41,7 +41,8 @@ namespace EditorLogic.Tools
         public override void Enable()
         {
             base.Enable();
-            _mouseFollow = new Doodad(Controller.Level, "Add Actor");
+            _mouseFollow = new Doodad("Add Actor");
+            Controller.Level.Doodads.Add(_mouseFollow);
             _mouseFollow.Models.Add(Game.Rendering.ModelFactory.CreatePolygon(PolygonFactory.CreateRectangle(4, 0.5f)));
             _mouseFollow.Models[0].SetTexture(Controller.Window.Textures.@Default);
             _mouseFollow.IsPortalable = true;

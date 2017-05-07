@@ -32,7 +32,7 @@ namespace TimeLoopInc
 
             Portals.Add(portal0);
             Portals.Add(portal1);
-            State.Blocks.Add(new Block(new Vector2i(2, 0), 0, 2));
+            State.Blocks.Add(new Block(new Vector2i(2, 0), 0, 1));
 
             SetTime(State.StartTime);
         }
@@ -84,7 +84,7 @@ namespace TimeLoopInc
                     var adjacent = State.Entities[block].Position - DirectionEx.ToVector(directions[i]);
                     var pushes = State.Entities.Values
                         .OfType<PlayerInstant>()
-                        .Where(item => item.PreviousPosition == adjacent && item.Position == State.Entities[block].Position);
+                        .Where(item => item.Position - item.PreviousVelocity == adjacent && item.Position == State.Entities[block].Position);
 
                     var blockInstant = (BlockInstant)State.Entities[block];
                     if (pushes.Count() >= block.Size && !blockInstant.IsPushed)
@@ -98,7 +98,7 @@ namespace TimeLoopInc
             if (State.Entities.ContainsKey(State.CurrentPlayer))
             {
                 var portal = Portals.FirstOrDefault(item => item.Position == State.Entities[State.CurrentPlayer].Position);
-                if (portal != null)
+                if (portal != null && portal.TimeOffset != 0)
                 {
                     var newTime = State.Time + portal.TimeOffset;
                     State.CurrentPlayer.EndTime = State.Time;

@@ -73,6 +73,11 @@ namespace Game.Common
             return (Vector3)Vector3d.Transform(new Vector3d(vector.X, vector.Y, vector.Z), mat);
         }
 
+        public static Vector2 ToVector2(this Vector3 v)
+        {
+            return new Vector2(v.X, v.Y);
+        }
+
         public static Xna.Vector2 ConvertToXna(Vector3 v)
         {
             return new Xna.Vector2(v.X, v.Y);

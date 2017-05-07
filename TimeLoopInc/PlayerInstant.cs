@@ -10,12 +10,11 @@ namespace TimeLoopInc
     public class PlayerInstant : IGridEntityInstant
     {
         public Vector2i Position { get; set; }
-        public Vector2i PreviousPosition { get; set; }
+        public Vector2i PreviousVelocity { get; set; }
 
         public PlayerInstant(Vector2i position)
         {
             Position = position;
-            PreviousPosition = position;
         }
 
         public IGridEntityInstant DeepClone() => (PlayerInstant)MemberwiseClone();

@@ -10,13 +10,12 @@ namespace TimeLoopInc
     public class BlockInstant : IGridEntityInstant
     {
         public Vector2i Position { get; set; }
-        public Vector2i PreviousPosition { get; set; }
+        public Vector2i PreviousVelocity { get; set; }
         public bool IsPushed { get; set; }
 
         public BlockInstant(Vector2i position)
         {
             Position = position;
-            PreviousPosition = position;
         }
 
         public IGridEntityInstant DeepClone() => (BlockInstant)MemberwiseClone();

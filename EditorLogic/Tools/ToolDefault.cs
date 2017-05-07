@@ -321,7 +321,8 @@ namespace EditorLogic.Tools
         public override void Enable()
         {
             base.Enable();
-            _translator = new Doodad(Controller.Level, "Translator");
+            _translator = new Doodad("Translator");
+            Controller.Level.Doodads.Add(_translator);
             //_translator.Models.Add(translationModel);
             //_translator.Visible = true;
             //_translator.DrawOverPortals = true;

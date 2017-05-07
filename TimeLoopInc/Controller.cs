@@ -26,7 +26,7 @@ namespace TimeLoopInc
         {
             _window = window;
 
-            _grid = ModelFactory.CreateGrid(new Vector2i(10, 10), Vector2.One, Color4.LightGray, Color4.WhiteSmoke);
+            _grid = ModelFactory.CreateGrid(new Vector2i(20, 20), Vector2.One, Color4.HotPink, Color4.LightPink, new Vector3(-10,-10,-2));
         }
 
         public void Render(double timeDelta)
@@ -41,27 +41,27 @@ namespace TimeLoopInc
 
             foreach (var player in state.Entities.Keys.OfType<Player>())
             {
-                var posPrev = (Vector2)state.Entities[player].PreviousPosition;
+                var velocity = (Vector2)state.Entities[player].PreviousVelocity;
                 var pos = (Vector2)state.Entities[player].Position;
-                worldLayer.Renderables.Add(new Renderable(posPrev.Lerp(pos, t)));
+                worldLayer.Renderables.Add(new Square(pos - velocity * (1 - t)));
             }
             foreach (var block in state.Entities.Keys.OfType<Block>())
             {
-                var posPrev = (Vector2)state.Entities[block].PreviousPosition;
+                var velocity = (Vector2)state.Entities[block].PreviousVelocity;
                 var pos = (Vector2)state.Entities[block].Position;
-                worldLayer.Renderables.Add(new Renderable(posPrev.Lerp(pos, t)) { Size = block.Size, Color = new Color4(0.5f, 1f, 0.8f, 1f) });
+                worldLayer.Renderables.Add(new Square(pos - velocity * (1 - t)) { Size = block.Size, Color = new Color4(0.5f, 1f, 0.8f, 1f) });
             }
             foreach (var portal in scene.Portals)
             {
-                worldLayer.Renderables.Add(new Renderable(portal.Position) { Color = new Color4(0.6f, 0.8f, 0.8f, 1f) });
+                worldLayer.Renderables.Add(new Square(portal.Position) { Color = new Color4(0.6f, 0.8f, 0.8f, 1f) });
                 worldLayer.Portals.Add(portal);
             }
             foreach (var wall in scene.Walls)
             {
-                worldLayer.Renderables.Add(new Renderable(wall) { Color = new Color4(0.8f, 1f, 0.5f, 1f) });
+                worldLayer.Renderables.Add(new Square(wall) { Color = new Color4(0.8f, 1f, 0.5f, 1f) });
             }
 
-            //worldLayer.Renderables.Add(new Renderable() { Portalable = false });
+            worldLayer.Renderables.Add(new Renderable() { Models = new List<Model> { _grid }, IsPortalable = false });
 
             worldLayer.Camera = new HudCamera2(_window.CanvasSize / 50);
 

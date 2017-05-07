@@ -95,7 +95,8 @@ namespace EditorLogic.Tools
         {
             base.Enable();
             _portalPrevious = null;
-            _line = new Doodad(Controller.Level, "Portal Linker Line");
+            _line = new Doodad("Portal Linker Line");
+            Controller.Level.Doodads.Add(_line);
         }
 
         public override void Disable()

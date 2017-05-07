@@ -137,7 +137,7 @@ namespace Game.Common
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
-                vList[i] = Vector2Ext.Transform(vectors[i], matrix);
+                vList[i] = Transform(vectors[i], matrix);
             }
             return vList;
         }
@@ -187,14 +187,9 @@ namespace Game.Common
             return vList;
         }
 
-        public static Vector2 ToOtk(Point2D v)
+        public static Vector2 ToOtk(this Point2D v)
         {
             return new Vector2(v.Xf, v.Yf);
-        }
-
-        public static Vector2 ToOtk(Vector3 v)
-        {
-            return new Vector2(v.X, v.Y);
         }
 
         public static Vector2[] ToOtk(FarseerPhysics.Common.Vertices v)
@@ -213,37 +208,37 @@ namespace Game.Common
             Vector2[] vNew = new Vector2[v.Length];
             for (int i = 0; i < v.Length; i++)
             {
-                vNew[i] = ToOtk(v[i]);
+                vNew[i] = v[i].ToVector2();
             }
             return vNew;
         }
 
-        public static Vector2 ToOtk(TriangulationPoint v)
+        public static Vector2 ToOtk(this TriangulationPoint v)
         {
             return new Vector2((float)v.X, (float)v.Y);
         }
 
-        public static Vector2 ToOtk(PolygonPoint v)
+        public static Vector2 ToOtk(this PolygonPoint v)
         {
             return new Vector2((float)v.X, (float)v.Y);
         }
 
-        public static Xna.Vector2 ToXna(TriangulationPoint v)
+        public static Xna.Vector2 ToXna(this TriangulationPoint v)
         {
             return new Xna.Vector2((float)v.X, (float)v.Y);
         }
 
-        public static bool IsNaN(Vector2 v)
+        public static bool IsNaN(this Vector2 v)
         {
             return double.IsNaN(v.X) || double.IsNaN(v.Y);
         }
 
-        public static bool IsNaN(Vector2d v)
+        public static bool IsNaN(this Vector2d v)
         {
             return double.IsNaN(v.X) || double.IsNaN(v.Y);
         }
 
-        public static bool IsReal(Vector2 v)
+        public static bool IsReal(this Vector2 v)
         {
             return !IsNaN(v) && !float.IsPositiveInfinity(v.X) && 
                 !float.IsNegativeInfinity(v.X) && 
@@ -251,7 +246,7 @@ namespace Game.Common
                 !float.IsNegativeInfinity(v.Y);
         }
 
-        public static bool IsReal(Vector2d v)
+        public static bool IsReal(this Vector2d v)
         {
             return !IsNaN(v) && !double.IsPositiveInfinity(v.X) &&
                 !double.IsNegativeInfinity(v.X) &&

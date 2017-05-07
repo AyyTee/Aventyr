@@ -10,20 +10,20 @@ namespace TimeLoopInc
     public interface IGridEntityInstant : IDeepClone<IGridEntityInstant>
     {
         Vector2i Position { get; set; }
-        Vector2i PreviousPosition { get; set; }
+        Vector2i PreviousVelocity { get; set; }
     }
 
     public static class IGridEntityInstantEx
     {
         public static void SetPosition(this IGridEntityInstant entity, Vector2i position)
         {
-            entity.PreviousPosition = entity.Position;
+            entity.PreviousVelocity = position - entity.Position;
             entity.Position = position;
         }
 
         public static void AddPosition(this IGridEntityInstant entity, Vector2i offset)
         {
-            entity.PreviousPosition = entity.Position;
+            entity.PreviousVelocity = offset;
             entity.Position += offset;
         }
     }

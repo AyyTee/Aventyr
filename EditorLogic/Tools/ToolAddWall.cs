@@ -21,7 +21,8 @@ namespace EditorLogic.Tools
         public override void Enable()
         {
             base.Enable();
-            _polygon = new Doodad(Controller.Level, "Add Wall Polygon");
+            _polygon = new Doodad("Add Wall Polygon");
+            Controller.Level.Doodads.Add(_polygon);
             _polygon.IsPortalable = true;
         }
 

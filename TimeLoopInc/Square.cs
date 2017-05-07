@@ -11,7 +11,7 @@ using OpenTK.Graphics;
 
 namespace TimeLoopInc
 {
-    public class Renderable : IRenderable
+    public class Square : IRenderable
     {
         public bool Visible => true;
         public bool DrawOverPortals => false;
@@ -24,12 +24,12 @@ namespace TimeLoopInc
         public Transform2 WorldTransform => new Transform2(_position + Vector2.One * 0.5f * Size);
         public Transform2 WorldVelocity => Transform2.CreateVelocity();
 
-        public Renderable(Vector2 position)
+        public Square(Vector2 position)
         {
             _position = position;
         }
 
-        public Renderable(Vector2i position)
+        public Square(Vector2i position)
         {
             _position = (Vector2)position;
         }

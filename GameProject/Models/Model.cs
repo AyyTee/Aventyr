@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Game.Common;
 using Game.Rendering;
@@ -19,6 +20,7 @@ namespace Game.Models
         /// <summary>If true then gl blending is enabled when rendering this model.</summary>
         [DataMember]
         public bool IsTransparent { get; set; }
+
         [DataMember]
         public ITexture Texture;
         /// <summary>
