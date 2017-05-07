@@ -145,6 +145,7 @@
     <Compile Include="Animation\Curve2.cs" />
     <Compile Include="Animation\CurveTransform2.cs" />
     <Compile Include="Common\IAlmostEqual.cs" />
+    <Compile Include="Common\IGetWorldTransformVelocity.cs" />
     <Compile Include="Common\IValueEquality.cs" />
     <Compile Include="Common\Line.cs" />
     <Compile Include="Common\Transform3.cs">
@@ -169,7 +170,6 @@
     <Compile Include="IController.cs" />
     <Compile Include="IGetTransform.cs" />
     <Compile Include="IGetTransformVelocity.cs" />
-    <Compile Include="IGetVelocity.cs" />
     <Compile Include="IName.cs" />
     <Compile Include="InputEx.cs" />
     <Compile Include="ITime.cs" />

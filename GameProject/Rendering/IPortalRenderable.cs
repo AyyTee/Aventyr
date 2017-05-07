@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Game.Rendering
 {
-    public interface IPortalRenderable
+    public interface IPortalRenderable : IGetWorldTransformVelocity
     {
-        Transform2 WorldTransform { get; }
         IPortalRenderable Linked { get; }
         bool OneSided { get; }
     }

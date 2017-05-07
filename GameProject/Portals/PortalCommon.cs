@@ -114,7 +114,7 @@ namespace Game.Portals
             velocity = Portal.EnterVelocity(portal, 0.5f, velocity);
             Vector2 endPosition = portalable.GetTransform().Position + portalable.GetVelocity().Position * (float)(1 - movementT);
             float angularVelocity = portal.Linked.WorldVelocity.Rotation;
-            if (((IPortalCommon)portal).WorldTransform.MirrorX != ((IPortalCommon)portal.Linked).WorldTransform.MirrorX)
+            if (portal.WorldTransform.MirrorX != portal.Linked.WorldTransform.MirrorX)
             {
                 angularVelocity -= portal.WorldVelocity.Rotation;
             }
@@ -122,7 +122,7 @@ namespace Game.Portals
             {
                 angularVelocity += portal.WorldVelocity.Rotation;
             }
-            velocity.Position += MathExt.AngularVelocity(endPosition, ((IPortalCommon)portal.Linked).WorldTransform.Position, angularVelocity);
+            velocity.Position += MathExt.AngularVelocity(endPosition, portal.Linked.WorldTransform.Position, angularVelocity);
             return velocity;
         }
 

@@ -30,9 +30,9 @@ namespace Game.Portals
         public static bool IsValid(this IPortal portal)
         {
             return portal.Linked != null &&
-                ((IPortalCommon)portal).WorldTransform != null &&
+                portal.WorldTransform != null &&
                 portal.WorldVelocity != null &&
-                ((IPortalCommon)portal.Linked).WorldTransform != null &&
+                portal.Linked.WorldTransform != null &&
                 portal.Linked.WorldVelocity != null;
         }
 
@@ -92,7 +92,7 @@ namespace Game.Portals
             velocityClone.Position = Vector2Ext.Transform(velocityClone.Position, matrix);
             velocityClone.Position -= origin;
 
-            if (((IPortalCommon)portal).WorldTransform.MirrorX == ((IPortalCommon)portal.Linked).WorldTransform.MirrorX)
+            if (portal.WorldTransform.MirrorX == portal.Linked.WorldTransform.MirrorX)
             {
                 velocityClone.Rotation = -velocityClone.Rotation;
             }
@@ -108,7 +108,7 @@ namespace Game.Portals
         static Vector2 GetAngularVelocity(this IPortal portal, float intersectT)
         {
             Vector2 intersect = new LineF(portal.GetWorldVerts()).Lerp(intersectT);
-            return MathExt.AngularVelocity(intersect, ((IPortalCommon)portal).WorldTransform.Position, portal.WorldVelocity.Rotation);
+            return MathExt.AngularVelocity(intersect, portal.WorldTransform.Position, portal.WorldVelocity.Rotation);
         }
 
         public static void Enter(IPortal portal, IPortalCommon portalable, float intersectT, bool ignorePortalVelocity = false, bool worldOnly = false)
