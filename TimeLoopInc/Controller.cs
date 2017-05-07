@@ -17,7 +17,7 @@ namespace TimeLoopInc
         Scene scene = new Scene();
         List<Input> _input = new List<Input>();
         int _updatesSinceLastStep = 0;
-        int _updatesPerAnimation = 5;
+        int _updatesPerAnimation = 4;
 
         public Controller(IVirtualWindow window)
         {

@@ -11,7 +11,7 @@ namespace Game.Rendering
     {
         public bool RenderPortalViews { get; set; } = true;
         public ICamera2 Camera { get; set; }
-        public List<IPortal> Portals { get; set; } = new List<IPortal>();
+        public List<IPortalRenderable> Portals { get; set; } = new List<IPortalRenderable>();
         public List<IRenderable> Renderables { get; set; } = new List<IRenderable>();
 
         public Layer()
@@ -21,7 +21,7 @@ namespace Game.Rendering
         public Layer(IScene scene)
         {
             Camera = scene.GetAll().OfType<ICamera2>().FirstOrDefault();
-            Portals = scene.GetAll().OfType<IPortal>().ToList();
+            Portals = scene.GetAll().OfType<IPortalRenderable>().ToList();
             Renderables = scene.GetAll().OfType<IRenderable>().ToList();
         }
     }

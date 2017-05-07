@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using Game.Common;
 using Game.Serialization;
+using Game.Rendering;
 
 namespace Game.Portals
 {
@@ -12,6 +13,7 @@ namespace Game.Portals
     {
         [DataMember]
         public IPortal Linked { get; set; }
+        IPortalRenderable IPortalRenderable.Linked => Linked;
         /// <summary>
         /// If OneSided is true then the portal can only be viewed through it's front side.
         /// Entities can still travel though the portal in both directions however.

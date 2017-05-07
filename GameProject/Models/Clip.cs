@@ -41,7 +41,7 @@ namespace Game.Models
             }
         }
 
-        public static List<ClipModel> GetClipModels(IRenderable entity, IList<IPortal> portalList, int depth)
+        public static List<ClipModel> GetClipModels(IRenderable entity, IEnumerable<IPortalRenderable> portalList, int depth)
         {
             var clipModels = new List<ClipModel>();
             if (entity.GetWorldTransform() == null)
@@ -67,7 +67,7 @@ namespace Game.Models
 
         /// <param name="depth">Number of iterations.</param>
         /// <param name="clipModels">Adds the ClipModel instances to this list.</param>
-        static List<ClipModel> _getClipModels(IRenderable entity, Model model, IList<IPortal> portalList, Vector2 centerPoint, IPortal portalEnter, Matrix4 modelMatrix, int depth, int count)
+        static List<ClipModel> _getClipModels(IRenderable entity, Model model, IEnumerable<IPortalRenderable> portalList, Vector2 centerPoint, IPortalRenderable portalEnter, Matrix4 modelMatrix, int depth, int count)
         {
             List<ClipModel> clipModels = new List<ClipModel>();
             if (depth <= 0)
@@ -75,7 +75,7 @@ namespace Game.Models
                 return clipModels;
             }
             
-            List<IPortal> collisions = Portal.GetCollisions(
+            var collisions = Portal.GetCollisions(
                 centerPoint, 
                 Vector2Ext.Transform(model.GetWorldConvexHull(), 
                 entity.GetWorldTransform().GetMatrix() * modelMatrix), 
@@ -83,7 +83,7 @@ namespace Game.Models
                 PortalClipMargin);
 
             List<LineF> clipLines = new List<LineF>();
-            foreach (IPortal portal in collisions)
+            foreach (var portal in collisions)
             {
                 Vector2[] pv = portal.GetWorldVerts();
                 LineF clipLine = new LineF(pv);
@@ -117,20 +117,20 @@ namespace Game.Models
             return clipModels;
         }
 
-        public static List<ClipPolygon> GetClipModels(IList<Vector2> polygon, Vector2 center, IList<IPortal> portalList, int depth)
+        public static List<ClipPolygon> GetClipModels(IList<Vector2> polygon, Vector2 center, IList<IPortalRenderable> portalList, int depth)
         {
             return _getClipModels(polygon, portalList, center, null, Matrix4.Identity, depth, 0);
         }
 
-        static List<ClipPolygon> _getClipModels(IList<Vector2> polygon, IList<IPortal> portalList, Vector2 centerPoint, IPortal portalEnter, Matrix4 modelMatrix, int depth, int count)
+        static List<ClipPolygon> _getClipModels(IList<Vector2> polygon, IList<IPortalRenderable> portalList, Vector2 centerPoint, IPortalRenderable portalEnter, Matrix4 modelMatrix, int depth, int count)
         {
             List<ClipPolygon> clipModels = new List<ClipPolygon>();
             if (depth <= 0)
             {
                 return clipModels;
             }
-            List<IPortal> collisions = new List<IPortal>();
-            foreach (IPortal portal in portalList)
+            var collisions = new List<IPortalRenderable>();
+            foreach (var portal in portalList)
             {
                 if (!portal.IsValid())
                 {
@@ -152,7 +152,7 @@ namespace Game.Models
             collisions = collisions.OrderBy(item => (item.WorldTransform.Position - centerPoint).Length).ToList();
             for (int i = 0; i < collisions.Count; i++)
             {
-                IPortal portal = collisions[i];
+                var portal = collisions[i];
                 for (int j = collisions.Count - 1; j > i; j--)
                 {
                     LineF currentLine = new LineF(collisions[i].GetWorldVerts());
@@ -166,7 +166,7 @@ namespace Game.Models
             }
 
             List<LineF> clipLines = new List<LineF>();
-            foreach (IPortal portal in collisions)
+            foreach (var portal in collisions)
             {
                 Vector2[] pv = portal.GetWorldVerts();
                 LineF clipLine = new LineF(pv);

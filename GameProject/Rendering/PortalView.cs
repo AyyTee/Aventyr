@@ -47,7 +47,7 @@ namespace Game.Rendering
             return list;
         }
 
-        public static PortalView CalculatePortalViews(float shutterTime, IList<IPortal> portals, ICamera2 camera, int depth)
+        public static PortalView CalculatePortalViews(float shutterTime, IList<IPortalRenderable> portals, ICamera2 camera, int depth)
         {
             Debug.Assert(camera != null);
             Debug.Assert(depth >= 0);
@@ -58,7 +58,7 @@ namespace Game.Rendering
 
             var actionList = new List<Func<bool>>();
 
-            foreach (IPortal p in portals)
+            foreach (var p in portals)
             {
                 actionList.Add(() => CalculatePortalViews(p, null, portals, camera.GetViewMatrix(), camPos, camPos - camera.GetWorldVelocity().Position * shutterTime, portalView, Matrix4.Identity, actionList));
             }
@@ -76,7 +76,7 @@ namespace Game.Rendering
             return portalView;
         }
 
-        static bool CalculatePortalViews(IPortal portal, IPortal portalEnter, IList<IPortal> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, PortalView portalView, Matrix4 portalMatrix, List<Func<bool>> actionList)
+        static bool CalculatePortalViews(IPortalRenderable portal, IPortalRenderable portalEnter, IList<IPortalRenderable> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, PortalView portalView, Matrix4 portalMatrix, List<Func<bool>> actionList)
         {
             const float areaEpsilon = 0.0001f;
 
@@ -107,7 +107,7 @@ namespace Game.Rendering
                 return false;
             }
             c.AddPaths(viewNew, PolyType.ptSubject, true);
-            foreach (IPortal other in portals)
+            foreach (var other in portals)
             {
                 if (other == portal)
                 {
@@ -158,7 +158,7 @@ namespace Game.Rendering
             portalWorldLine = portalWorldLine.Transform(portalMatrix);
             PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNewer, lines, linesPrevious, portalWorldLine);
 
-            foreach (IPortal p in portals)
+            foreach (IPortalRenderable p in portals)
             {
                 actionList.Add(() =>
                     CalculatePortalViews(p, portal, portals, viewMatrix, viewPosNew, viewPosPreviousNew, portalViewNew, portalMatrixNew, actionList)
@@ -167,7 +167,7 @@ namespace Game.Rendering
             return true;
         }
 
-        static bool _isPortalValid(IPortal previous, IPortal next, Vector2 viewPos)
+        static bool _isPortalValid(IPortalRenderable previous, IPortalRenderable next, Vector2 viewPos)
         {
             //skip this portal if it isn't linked 
             if (!next.IsValid())

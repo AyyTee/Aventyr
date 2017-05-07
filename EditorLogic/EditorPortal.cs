@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Game.Models;
 using Game.Serialization;
+using Game.Rendering;
 
 namespace EditorLogic
 {
@@ -18,6 +19,7 @@ namespace EditorLogic
     {
         [DataMember]
         public IPortal Linked { get; set; }
+        IPortalRenderable IPortalRenderable.Linked => Linked;
         public bool OneSided => false;
         Model _portalModel;
 

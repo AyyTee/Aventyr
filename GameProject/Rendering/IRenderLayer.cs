@@ -7,7 +7,7 @@ namespace Game.Rendering
     public interface IRenderLayer
     {
         List<IRenderable> Renderables { get; }
-        List<IPortal> Portals { get; }
+        List<IPortalRenderable> Portals { get; }
         ICamera2 Camera { get; }
         bool RenderPortalViews { get; }
     }

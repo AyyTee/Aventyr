@@ -1,11 +1,11 @@
 ﻿
+using Game.Rendering;
 using Game.Serialization;
 
 namespace Game.Portals
 {
-    public interface IPortal : IDeepClone, IPortalCommon
+    public interface IPortal : IDeepClone, IPortalCommon, IPortalRenderable
     {
-        IPortal Linked { get; set; }
-        bool OneSided { get; }
+        new IPortal Linked { get; set; }
     }
 }

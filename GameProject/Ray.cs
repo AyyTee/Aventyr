@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Game.Common;
+using Game.Rendering;
 
 namespace Game
 {
@@ -128,10 +129,10 @@ namespace Game
         /// <param name="portalPrevious">The last portal that was exited.</param>
         /// <param name="transform"></param>
         /// <param name="velocity"></param>
-        static Transform2 AddMargin(IEnumerable<IPortal> portals, IPortal portalPrevious, Transform2 transform, Transform2 velocity)
+        static Transform2 AddMargin(IEnumerable<IPortalRenderable> portals, IPortalRenderable portalPrevious, Transform2 transform, Transform2 velocity)
         {
             transform = transform.ShallowClone();
-            foreach (IPortal p in portals)
+            foreach (var p in portals)
             {
                 if (!p.IsValid())
                 {

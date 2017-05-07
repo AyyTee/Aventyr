@@ -7,6 +7,8 @@ using OpenTK;
 using System.Collections.Generic;
 using Game.Common;
 using Game.Models;
+using System.Linq;
+using Game.Rendering;
 
 namespace GameTests
 {
@@ -47,7 +49,7 @@ namespace GameTests
             for (float i = 0; i < MathExt.Tau; i += 0.01f)
             {
                 polygon.SetTransform(new Transform2(new Vector2(100000, -123), 1, i));
-                List<Clip.ClipModel> clipmodels = Clip.GetClipModels(polygon, scene.GetPortalList(), 2);
+                List<Clip.ClipModel> clipmodels = Clip.GetClipModels(polygon, scene.GetPortalList().OfType<IPortalRenderable>(), 2);
                 Assert.IsTrue(clipmodels.Count == polygon.GetModels().Count);
             }
         }

@@ -9,7 +9,7 @@ namespace Game.Rendering
 {
     public interface IPortalRenderable
     {
-        Transform2 GetWorldTransform();
+        Transform2 WorldTransform { get; }
         IPortalRenderable Linked { get; }
         bool OneSided { get; }
     }

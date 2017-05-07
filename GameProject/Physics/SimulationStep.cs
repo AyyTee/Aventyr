@@ -80,7 +80,7 @@ namespace Game.Physics
                     }
                     var lineStart = new Line(Vector2Ext.ToDouble(p.GetWorldVerts()));
 
-                    var t = (Transform2d)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
+                    var t = (Transform2d)((IPortalCommon)p).WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
                     var lineEnd = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts((Transform2)t)));
 
                     lineMovement.Add(new PortalMovement(p, lineStart, lineEnd));
@@ -229,7 +229,7 @@ namespace Game.Physics
                 double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
                 if (distanceToPortal < Portal.EnterMinDistance)
                 {
-                    Vector2d exitNormal = (Vector2d)p.WorldTransform.GetRight();
+                    Vector2d exitNormal = (Vector2d)((IPortalCommon)p).WorldTransform.GetRight();
 
                     Vector2d pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
                     transform.Position += pos;

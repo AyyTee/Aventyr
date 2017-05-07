@@ -8,6 +8,7 @@ using Game.Common;
 using Game.Portals;
 using Vector2 = OpenTK.Vector2;
 using Xna = Microsoft.Xna.Framework;
+using Game.Rendering;
 
 namespace Game.Physics
 {
@@ -180,16 +181,21 @@ namespace Game.Physics
         public static List<IPortal> GetPortalCollisions(Fixture fixture, IList<IPortal> portals, bool ignoreAttachedPortals = true)
         {
             Vector2[] vertices = GetWorldPoints(fixture);
-            List<IPortal> collisions = Portal.GetCollisions(
-                BodyExt.GetLocalOrigin(fixture.Body), 
-                vertices, 
-                portals.Where(item => !ignoreAttachedPortals || GetFixtureAttached(item as FixturePortal) != fixture).ToList());
+            List<IPortal> collisions = 
+                Portal.GetCollisions(
+                    BodyExt.GetLocalOrigin(fixture.Body), 
+                    vertices, 
+                    portals.Where(item => !ignoreAttachedPortals || GetFixtureAttached(item as FixturePortal) != fixture)
+                        .OfType<IPortalRenderable>()
+                        .ToList())
+                .OfType<IPortal>()
+                .ToList();
 
             if (ignoreAttachedPortals)
             {
                 var attached = GetData(fixture).GetPortalChildren();
                 //We don't exclude attached portals that this fixture's body is travelling through.
-                attached.Where(item => item != (IPortal)BodyExt.GetData(fixture.Body).BodyParent.Portal.Linked);
+                attached.Where(item => item != BodyExt.GetData(fixture.Body).BodyParent.Portal.Linked);
                 return collisions.Except(attached).ToList();
             }
             return collisions;
