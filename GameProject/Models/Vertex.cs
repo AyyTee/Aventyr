@@ -63,15 +63,15 @@ namespace Game.Models
 
         public static Vertex Lerp(Vertex v0, Vertex v1, float t, bool normalizeNormals = true)
         {
-            Vector3 normal = MathExt.Lerp(v0.Normal, v1.Normal, t);
+            Vector3 normal = v0.Normal.Lerp(v1.Normal, t);
             if (normalizeNormals && normal.Length > 0)
             {
                 normal.Normalize();
             }
             Vertex vNew = new Vertex(
-                MathExt.Lerp(v0.Position, v1.Position, t),
+                v0.Position.Lerp(v1.Position, t),
                 v0.TextureCoord.Lerp(v1.TextureCoord, t),
-                MathExt.Lerp(v0.Color, v1.Color, t),
+                v0.Color.Lerp(v1.Color, t),
                 normal
                 );
             return vNew;

@@ -49,6 +49,7 @@ namespace TimeLoopInc
             foreach (var portal in scene.Portals)
             {
                 worldLayer.Renderables.Add(new Renderable(portal.Position) { Color = new Vector4(0.6f, 0.8f, 0.8f, 1f) });
+                worldLayer.Portals.Add(portal);
             }
             foreach (var wall in scene.Walls)
             {

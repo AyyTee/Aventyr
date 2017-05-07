@@ -8,6 +8,10 @@ namespace Game.Common
 {
     public static class Vector3Ext
     {
+        public static Vector3d Lerp(this Vector3d start, Vector3d end, double t) => start * (1 - t) + end * t;
+
+        public static Vector3 Lerp(this Vector3 start, Vector3 end, float t) => start * (1 - t) + end * t;
+
         public static Vector3[] Transform(Vector3[] vectors, Matrix4 matrix)
         {
             Vector3[] vList = new Vector3[vectors.Length];

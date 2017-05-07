@@ -61,10 +61,6 @@ namespace Game.Common
         #region Lerp
         public static double Lerp(double value0, double value1, double T) => value0 * (1 - T) + value1 * T;
 
-        public static Vector3d Lerp(Vector3d vector0, Vector3d vector1, double T) => vector0 * (1 - T) + vector1 * T;
-
-        public static Vector3 Lerp(Vector3 vector0, Vector3 vector1, float T) => vector0 * (1 - T) + vector1 * T;
-
         public static double LerpAngle(double angle0, double angle1, double T, bool isClockwise)
         {
             if (isClockwise)

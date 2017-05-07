@@ -8,15 +8,24 @@ using Game;
 using Game.Common;
 using Game.Serialization;
 using Game.Rendering;
+using OpenTK;
 
 namespace TimeLoopInc
 {
-    public class TimePortal
+    public class TimePortal : IPortalRenderable
     {
         public Vector2i Position { get; }
         public int TimeOffset { get; private set; }
         public TimePortal Linked { get; private set; }
         public Direction Direction { get; }
+        IPortalRenderable IPortalRenderable.Linked => Linked;
+        public bool OneSided => false;
+
+        public Transform2 WorldTransform => new Transform2(
+            (Vector2)Position + (Vector2.One + (Vector2)DirectionEx.ToVector(Direction)) * 0.5f, 
+            1.75f, 
+            (float)((int)Direction * MathExt.Tau / 4));
+        public Transform2 WorldVelocity => Transform2.CreateVelocity();
 
         public TimePortal(Vector2i position, Direction direction)
         {

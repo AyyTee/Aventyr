@@ -10,6 +10,7 @@ namespace Game.Rendering
     {
         Vector2i CanvasPosition { get; }
         Vector2i CanvasSize { get; }
+        float DpiScale { get; }
         TextureAssets Textures { get; }
         List<IRenderLayer> Layers { get; }
         FontAssets Fonts { get; }

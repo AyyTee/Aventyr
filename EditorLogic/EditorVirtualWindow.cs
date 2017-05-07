@@ -15,7 +15,8 @@ namespace EditorLogic
     public class EditorVirtualWindow : IVirtualWindow
     {
         public Vector2i CanvasPosition => new Vector2i();
-        public Vector2i CanvasSize { get; set; }
+        public Vector2i CanvasSize => (Vector2i)_glControl.ClientSize;
+        public float DpiScale => _glControl.ClientSize.Width / (float)_glControl.Width;
 
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
 
@@ -49,7 +50,6 @@ namespace EditorLogic
         public EditorVirtualWindow(GLControl glControl, IRenderer renderer, TextureAssets textures)
         {
             _glControl = glControl;
-            CanvasSize = (Vector2i)_glControl.ClientSize;
             Renderer = renderer;
             Textures = textures;
 

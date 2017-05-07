@@ -22,6 +22,7 @@ namespace Game
         readonly GameWindow _window;
 
         public Vector2i ClientSize => (Vector2i)_window.ClientSize;
+        public float DpiScale { get; }
 
         public IRenderer Renderer { get; private set; }
 
@@ -54,6 +55,9 @@ namespace Game
         public ResourceController(Vector2i windowSize, string windowName = "Game")
         {
             _window = new GameWindow(windowSize.X, windowSize.Y, DefaultGraphics, windowName, GameWindowFlags.FixedWindow);
+
+            DpiScale = ClientSize.X / (float)windowSize.X;
+
             Textures = new TextureAssets();
             Renderer = new Renderer(this, Textures);
             Fonts = new FontAssets();
