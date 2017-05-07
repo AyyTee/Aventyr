@@ -160,6 +160,7 @@
     </Compile>
     <Compile Include="Common\Vector2i.cs" />
     <Compile Include="Common\Transform2d.cs" />
+    <Compile Include="Common\Vector4Ex.cs" />
     <Compile Include="PrecisionPairs.cs" />
     <Compile Include="FakeVirtualWindow.cs" />
     <Compile Include="Assets.cs">
@@ -191,6 +192,7 @@
     <Compile Include="Rendering\Camera2.cs" />
     <Compile Include="Models\Clip.cs" />
     <Compile Include="ClipperConvert.cs" />
+    <Compile Include="Rendering\Color4Ex.cs" />
     <Compile Include="Rendering\IClientSizeProvider.cs" />
     <Compile Include="Rendering\IPortalRenderable.cs" />
     <Compile Include="Rendering\IRenderer.cs" />

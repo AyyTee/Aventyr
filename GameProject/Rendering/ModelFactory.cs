@@ -10,6 +10,7 @@ using Game.Models;
 using Game.Physics;
 using OpenTK;
 using Poly2Tri;
+using OpenTK.Graphics;
 
 namespace Game.Rendering
 {
@@ -256,13 +257,15 @@ namespace Game.Rendering
             mesh.AddTriangle(index, index + 3, index + 2);
         }
 
-        public static Model CreateLineStrip(Vector2[] vertices, Vector3[] colors)
+        public static Model CreateLineStrip(Vector2[] vertices, Color4[] colors)
         {
             Debug.Assert(vertices.Length >= 2);
+            Debug.Assert(colors == null || vertices.Length == colors.Length);
+
             var mesh = new Mesh();
             for (int i = 0; i < vertices.Length - 1; i++)
             {
-                var color = new Vector3();
+                var color = new Color4();
                 if (colors != null)
                 {
                     color = colors[i];

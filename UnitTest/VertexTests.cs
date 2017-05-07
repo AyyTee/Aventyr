@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Game;
 using Game.Models;
 using OpenTK;
+using OpenTK.Graphics;
 
 namespace GameTests
 {
@@ -29,8 +30,8 @@ namespace GameTests
         [TestMethod]
         public void EqualTest1()
         {
-            Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 24.4f, 330f), new Vector3(255f, 2.4f, 10.315f));
-            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 24.4f, 330f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
 
             Assert.IsTrue(v0.Equals(v1));
             Assert.IsTrue(v1.Equals(v0));
@@ -46,8 +47,8 @@ namespace GameTests
         public void EqualTest2()
         {
             //Position is different
-            Vertex v0 = new Vertex(new Vector3(0f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 24.4f, 330f), new Vector3(255f, 2.4f, 10.315f));
-            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 24.4f, 330f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v0 = new Vertex(new Vector3(0f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
 
             Assert.IsFalse(v0.Equals(v1));
             Assert.IsFalse(v1.Equals(v0));
@@ -63,8 +64,8 @@ namespace GameTests
         public void EqualTest3()
         {
             //Texture coord is different
-            Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 99000f), new Vector3(9f, 24.4f, 330f), new Vector3(255f, 2.4f, 10.315f));
-            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 24.4f, 330f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 99000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
 
             Assert.IsFalse(v0.Equals(v1));
             Assert.IsFalse(v1.Equals(v0));
@@ -80,8 +81,8 @@ namespace GameTests
         public void EqualTest4()
         {
             //Color is different
-            Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 21f, 330f), new Vector3(255f, 2.4f, 10.315f));
-            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 24.4f, 330f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 21f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
 
             Assert.IsFalse(v0.Equals(v1));
             Assert.IsFalse(v1.Equals(v0));
@@ -97,8 +98,8 @@ namespace GameTests
         public void EqualTest5()
         {
             //Normal is different
-            Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 24.4f, 330f), new Vector3(-123f, 2.4f, 10.315f));
-            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 24.4f, 330f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(-123f, 2.4f, 10.315f));
+            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
 
             Assert.IsFalse(v0.Equals(v1));
             Assert.IsFalse(v1.Equals(v0));
@@ -124,8 +125,8 @@ namespace GameTests
         [TestMethod]
         public void GetHashCodeTest1()
         {
-            Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 24.4f, 330f), new Vector3(255f, 2.4f, 10.315f));
-            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Vector3(9f, 24.4f, 330f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
+            Vertex v1 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
 
             Assert.IsTrue(v0.GetHashCode() == v1.GetHashCode());
         }
@@ -152,7 +153,7 @@ namespace GameTests
         public static Vertex[] GetRandomVertexPair(Random random)
         {
             Vector3 position = new Vector3((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
-            Vector3 color = new Vector3((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
+            Color4 color = new Color4((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
             Vector3 normal = new Vector3((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
             Vector2 textureCoord = new Vector2((float)random.NextDouble(), (float)random.NextDouble());
             return new Vertex[]

@@ -4,6 +4,7 @@ using Game.Common;
 using Game.Rendering;
 using Game.Serialization;
 using OpenTK;
+using OpenTK.Graphics;
 
 namespace Game.Models
 {
@@ -20,8 +21,11 @@ namespace Game.Models
         public bool IsTransparent { get; set; }
         [DataMember]
         public ITexture Texture;
+        /// <summary>
+        /// Color that is blended over top of mesh vertex colors.
+        /// </summary>
         [DataMember]
-        public Vector4 Color;
+        public Color4 Color;
         /// <summary>
         /// Offset for the mesh uv coordinates.
         /// </summary>
@@ -54,11 +58,7 @@ namespace Game.Models
 
         public void SetTexture(ITexture texture) => Texture = texture;
 
-        /// <summary>
-        /// Replaces all vertex colors with a single uniform color.
-        /// </summary>
-        public void SetColor(Vector3 color) => Color = new Vector4(color, 1);
-        public void SetColor(Vector4 color) => Color = color;
+        public void SetColor(Color4 color) => Color = color;
 
         public Vector3[] GetVerts()
         {
@@ -88,17 +88,17 @@ namespace Game.Models
         }
 
         /// <summary>
-        /// Gets a list of Vertex indices.  Each set of 3 indices defines a triangle.
+        /// Gets a list of Vertex indices. Each set of 3 indices defines a triangle.
         /// </summary>
         public int[] GetIndices() => Mesh.GetIndices().ToArray();
 
-        public Vector3[] GetColorData()
+        public Color4[] GetColorData()
         {
             List<Vertex> vertices = Mesh.GetVertices();
-            var val = new Vector3[vertices.Count];
+            var val = new Color4[vertices.Count];
             for (int i = 0; i < val.Length; i++)
             {
-                val[i] = vertices[i].Color * (1 - Color.W) + new Vector3(Color * Color.W);
+                val[i] = vertices[i].Color.Lerp(Color, Color.A);
             }
             return val;
         }
@@ -107,7 +107,6 @@ namespace Game.Models
         {
             List<Vertex> vertices = Mesh.GetVertices();
             Vector2[] val = new Vector2[vertices.Count];
-            
             for (int i = 0; i < val.Length; i++)
             {
                 val[i] = vertices[i].TextureCoord;

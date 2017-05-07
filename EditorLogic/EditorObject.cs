@@ -13,6 +13,7 @@ using Game.Common;
 using Game.Models;
 using Game.Rendering;
 using Game.Serialization;
+using OpenTK.Graphics;
 
 namespace EditorLogic
 {
@@ -98,12 +99,12 @@ namespace EditorLogic
 
             if (IsSelected)
             {
-                marker.SetColor(new Vector3(1f, 1f, 0f));
+                marker.SetColor(new Color4(1f, 1f, 0f, 1f));
                 marker.Transform.Scale *= 1.5f;
             }
             else
             {
-                marker.SetColor(new Vector3(1f, 0.5f, 0f));
+                marker.SetColor(new Color4(1f, 0.5f, 0f, 1f));
             }
 
             models.Add(marker);

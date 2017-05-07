@@ -5,6 +5,7 @@ using Game.Models;
 using OpenTK;
 using OpenTK.Input;
 using Game.Rendering;
+using OpenTK.Graphics;
 
 namespace EditorLogic.Tools
 {
@@ -79,14 +80,14 @@ namespace EditorLogic.Tools
             if (_vertices.Count() >= 2)
             {
                 PolygonCoord[] intersects = MathExt.LineStripIntersect(_vertices.ToArray(), true);
-                Vector3[] colors = new Vector3[_vertices.Count() - 1];
+                var colors = new Color4[_vertices.Count()];
                 for (int i = 0; i < colors.Length; i++)
                 {
-                    colors[i] = new Vector3(0, 0.5f, 0);
+                    colors[i] = new Color4(0, 0.5f, 0, 1);
                 }
                 foreach (PolygonCoord p in intersects)
                 {
-                    colors[p.EdgeIndex] = new Vector3(1f, 0.2f, 0.2f);
+                    colors[p.EdgeIndex] = new Color4(1f, 0.2f, 0.2f, 1f);
                 }
                 Model model = Game.Rendering.ModelFactory.CreateLineStrip(_vertices.ToArray(), colors);
                 model.Transform.Position = new Vector3(0, 0, 6);

@@ -6,12 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Models;
+using OpenTK.Graphics;
 
 namespace EditorLogic
 {
     public static class ModelFactory
     {
-        public static Vector3 ColorPortalDefault => new Vector3(0.1f, 0.1f, 0.5f);
+        public static Color4 ColorPortalDefault => new Color4(0.1f, 0.1f, 0.5f, 1);
 
         public static Model CreatePortal()
         {

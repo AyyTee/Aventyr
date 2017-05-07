@@ -5,6 +5,7 @@ using Game.Models;
 using OpenTK;
 using OpenTK.Input;
 using Game.Rendering;
+using OpenTK.Graphics;
 
 namespace EditorLogic.Tools
 {
@@ -85,7 +86,7 @@ namespace EditorLogic.Tools
                     Controller.GetMouseWorld(),
                     _portalPrevious.GetWorldTransform().Position
                 });
-                lineModel.SetColor(new Vector3(0.1f, 0.7f, 0.1f));
+                lineModel.SetColor(new Color4(0.1f, 0.7f, 0.1f, 1f));
                 _line.Models.Add(lineModel);
             }
         }

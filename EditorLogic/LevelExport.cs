@@ -13,6 +13,7 @@ using Game.Common;
 using Game.Models;
 using Game.Physics;
 using Game.Rendering;
+using OpenTK.Graphics;
 
 namespace EditorLogic
 {
@@ -47,7 +48,7 @@ namespace EditorLogic
             #region create background
             Model background = Game.Rendering.ModelFactory.CreatePlane();
             background.Texture = window.Textures.Grid;
-            background.SetColor(new Vector3(1, 1, 0.5f));
+            background.SetColor(new Color4(1f, 1f, 0.5f, 1f));
             background.Transform.Position = new Vector3(0, 0, -5f);
             float size = 50;
             background.Transform.Scale = new Vector3(size, size, size);

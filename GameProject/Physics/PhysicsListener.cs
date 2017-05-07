@@ -15,6 +15,7 @@ using OpenTK;
 using Vector2 = OpenTK.Vector2;
 using Vector3 = OpenTK.Vector3;
 using Xna = Microsoft.Xna.Framework;
+using OpenTK.Graphics;
 
 namespace Game.Physics
 {
@@ -88,7 +89,7 @@ namespace Game.Physics
                     model.Transform.Scale = new Vector3(0.03f, 0.03f, 0.03f);
                     _debugEntity.AddModel(model);
                     model.Transform.Position = new Vector3(body.Position.X, body.Position.Y, 10);
-                    model.SetColor(new Vector3(1, 0.5f, 0.5f));
+                    model.SetColor(new Color4(1, 0.5f, 0.5f, 1f));
 
                     BodyData bodyUserData = BodyExt.GetData(body);
                     Model positionPrev = ModelFactory.CreateCube();
@@ -96,7 +97,7 @@ namespace Game.Physics
                     positionPrev.Transform.Rotation = new Quaternion(0, 1, 1, (float)Math.PI / 2);
                     _debugEntity.AddModel(positionPrev);
                     positionPrev.Transform.Position = new Vector3(bodyUserData.PreviousPosition.X, bodyUserData.PreviousPosition.Y, 10);
-                    positionPrev.SetColor(new Vector3(1, 0, 0));
+                    positionPrev.SetColor(new Color4(1f, 0f, 0f, 1f));
                 }
             }
             #endregion
@@ -157,8 +158,8 @@ namespace Game.Physics
                             new LineF(vList[0], vList[1])
                             });
                         line.SetColor(contact.Enabled ? 
-                            new Vector3(1, 1, 0.2f) : 
-                            new Vector3(0.5f, 0.5f, 0));
+                            new Color4(1f, 1f, 0.2f, 1f) : 
+                            new Color4(0.5f, 0.5f, 0f, 1f));
                         line.Transform.Position += new Vector3(0, 0, 5);
                         _debugEntity.AddModel(line);
                     }
@@ -186,17 +187,17 @@ namespace Game.Physics
                         _debugEntity.AddModel(model);
                         if (contact.Enabled)
                         {
-                            model.SetColor(new Vector3(1, 1, 0.2f));
-                            arrow.SetColor(new Vector3(1, 1, 0.2f));
+                            model.SetColor(new Color4(1f, 1f, 0.2f, 1f));
+                            arrow.SetColor(new Color4(1f, 1f, 0.2f, 1f));
                         }
                         else
                         {
-                            model.SetColor(new Vector3(0.5f, 0.5f, 0));
-                            arrow.SetColor(new Vector3(0.5f, 0.5f, 0));
+                            model.SetColor(new Color4(0.5f, 0.5f, 0f, 1f));
+                            arrow.SetColor(new Color4(0.5f, 0.5f, 0f, 1f));
                         }
                         if (userData[0].IsPortalParentless() && userData[1].IsPortalParentless())
                         {
-                            arrow.SetColor(new Vector3(0.7f, 0.5f, 0.2f));
+                            arrow.SetColor(new Color4(0.7f, 0.5f, 0.2f, 1f));
                         }
                         model.Transform.Position = pos;
 
@@ -204,7 +205,7 @@ namespace Game.Physics
                         {
                             IList<Vector2> vertices = Vector2Ext.ToOtk(((PolygonShape)userData[i].Fixture.Shape).Vertices);
                             Model fixtureModel = ModelFactory.CreatePolygon(vertices);
-                            fixtureModel.SetColor(new Vector3(0, 1, 1));
+                            fixtureModel.SetColor(new Color4(0f, 1f, 1f, 1f));
                             fixtureModel.Transform = userData[i].Actor.GetTransform().Get3D();
                             fixtureModel.Transform.Position += new Vector3(0, 0, 5);
                             fixtureModel.Transform.Scale = Vector3.One;

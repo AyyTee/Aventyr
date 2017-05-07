@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Game.Common;
 using Game.Models;
 using OpenTK;
+using OpenTK.Graphics;
 
 namespace TimeLoopInc
 {
@@ -18,7 +19,7 @@ namespace TimeLoopInc
 
         public bool IsPortalable => true;
 
-        public Vector4 Color { get; set; }
+        public Color4 Color { get; set; }
 
         public float Size { get; set; } = 1;
 

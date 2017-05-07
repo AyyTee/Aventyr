@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Game.Models;
 using Game.Serialization;
 using Game.Rendering;
+using OpenTK.Graphics;
 
 namespace EditorLogic
 {
@@ -50,7 +51,7 @@ namespace EditorLogic
             List<Model> models = base.GetModels();
             if (OnEdge)
             {
-                _portalModel.SetColor(new Vector3(0, 0.8f, 0.5f));
+                _portalModel.SetColor(new Color4(0, 0.8f, 0.5f, 1));
             }
             else
             {

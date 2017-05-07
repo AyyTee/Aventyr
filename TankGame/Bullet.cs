@@ -12,6 +12,7 @@ using Game.Physics;
 using Game.Rendering;
 using TankGame.Network;
 using System.Diagnostics;
+using OpenTK.Graphics;
 
 namespace TankGame
 {
@@ -30,7 +31,7 @@ namespace TankGame
 
             Model model = ModelFactory.CreatePolygon(Vertices, new Vector3(0, 0, 1));
             //Model model = ModelFactory.CreateArrow(new Vector3(0f, 0f, 1f), velocity.Normalized() * 0.1f, 0.1f, 0.3f, 0.15f);
-            model.SetColor(new Vector3(1, 1, 0));
+            model.SetColor(new Color4(1f, 1f, 0, 1f));
             Entity.AddModel(model);
 
             OnCollision += Bullet_OnCollision;

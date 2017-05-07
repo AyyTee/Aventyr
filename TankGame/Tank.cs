@@ -15,6 +15,7 @@ using Game.Physics;
 using Game.Portals;
 using Game.Rendering;
 using System.Diagnostics;
+using OpenTK.Graphics;
 
 namespace TankGame
 {
@@ -41,7 +42,7 @@ namespace TankGame
                 var portalEntity = new Entity(Scene);
                 portalEntity.SetParent(PortalPair[i]);
                 portalEntity.AddModel(ModelFactory.CreateLinesWidth( new[] { new LineF(Portal.Vertices) }, 0.1f));
-                portalEntity.ModelList[0].SetColor(new Vector3(1, 0, 0));
+                portalEntity.ModelList[0].SetColor(new Color4(1f, 0f, 0f, 1f));
             }
             Portal.SetLinked(PortalPair[0], PortalPair[1]);
 
@@ -57,7 +58,7 @@ namespace TankGame
             Turret.Name = "Tank Turret";
             Model turretModel = ModelFactory.CreateCube(new Vector3(0.6f, 0.3f, 0.3f));
             turretModel.Transform = new Transform3(new Vector3(0.25f, 0f, 0.5f));
-            turretModel.SetColor(new Vector3(0.5f, 0.5f, 0.5f));
+            turretModel.SetColor(new Color4(0.5f, 0.5f, 0.5f, 1f));
             Turret.AddModel(turretModel);
             Turret.SetParent(this);
 

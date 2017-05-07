@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Runtime.Serialization;
 using Game.Common;
+using Game.Rendering;
 using Game.Serialization;
 using OpenTK;
+using OpenTK.Graphics;
 
 namespace Game.Models
 {
@@ -12,7 +14,7 @@ namespace Game.Models
         [DataMember]
         public readonly Vector3 Position;
         [DataMember]
-        public readonly Vector3 Color;
+        public readonly Color4 Color;
         [DataMember]
         public readonly Vector2 TextureCoord;
         [DataMember]
@@ -34,21 +36,21 @@ namespace Game.Models
         }
 
         public Vertex(Vector3 position)
-            : this(position, new Vector2(), new Vector3(), new Vector3())
+            : this(position, new Vector2(), new Color4(), new Vector3())
         {
         }
 
         public Vertex(Vector3 position, Vector2 textureCoord)
-            : this(position, textureCoord, new Vector3(), new Vector3())
+            : this(position, textureCoord, new Color4(), new Vector3())
         {
         }
 
-        public Vertex(Vector3 position, Vector2 textureCoord, Vector3 color)
+        public Vertex(Vector3 position, Vector2 textureCoord, Color4 color)
             : this(position, textureCoord, color, new Vector3())
         {
         }
 
-        public Vertex(Vector3 position, Vector2 textureCoord, Vector3 color, Vector3 normal)
+        public Vertex(Vector3 position, Vector2 textureCoord, Color4 color, Vector3 normal)
         {
             Position = position;
             TextureCoord = textureCoord;

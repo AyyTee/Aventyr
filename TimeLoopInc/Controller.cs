@@ -2,6 +2,7 @@
 using Game.Common;
 using Game.Rendering;
 using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Input;
 using System;
 using System.Collections.Generic;
@@ -44,16 +45,16 @@ namespace TimeLoopInc
             {
                 var posPrev = (Vector2)state.Entities[block].PreviousPosition;
                 var pos = (Vector2)state.Entities[block].Position;
-                worldLayer.Renderables.Add(new Renderable(posPrev.Lerp(pos, t)) { Color = new Vector4(0.5f, 1f, 0.8f, 1f) });
+                worldLayer.Renderables.Add(new Renderable(posPrev.Lerp(pos, t)) { Color = new Color4(0.5f, 1f, 0.8f, 1f) });
             }
             foreach (var portal in scene.Portals)
             {
-                worldLayer.Renderables.Add(new Renderable(portal.Position) { Color = new Vector4(0.6f, 0.8f, 0.8f, 1f) });
+                worldLayer.Renderables.Add(new Renderable(portal.Position) { Color = new Color4(0.6f, 0.8f, 0.8f, 1f) });
                 worldLayer.Portals.Add(portal);
             }
             foreach (var wall in scene.Walls)
             {
-                worldLayer.Renderables.Add(new Renderable(wall) { Color = new Vector4(0.8f, 1f, 0.5f, 1f) });
+                worldLayer.Renderables.Add(new Renderable(wall) { Color = new Color4(0.8f, 1f, 0.5f, 1f) });
             }
 
             worldLayer.Camera = new HudCamera2(_window.CanvasSize / 50);

@@ -2,6 +2,7 @@
 using System.IO;
 using Game.Models;
 using OpenTK;
+using OpenTK.Graphics;
 
 namespace Game.Rendering
 {
@@ -110,7 +111,7 @@ namespace Game.Rendering
                 }
                 else
                 {
-                    Vertex vertex = new Vertex(points[vertId], texCoord, new Vector3(), normal);
+                    Vertex vertex = new Vertex(points[vertId], texCoord, new Color4(), normal);
                     int index = mesh.AddVertex(vertex);
                     vectorMap.Add(key, index);
                     vertIndices.Add(index);
