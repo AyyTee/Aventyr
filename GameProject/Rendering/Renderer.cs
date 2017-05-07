@@ -203,7 +203,7 @@ namespace Game.Rendering
                         if (clip.ClipLines.Length > 0)
                         {
                             Model model = clip.Model.DeepClone();
-                            Matrix4 transform = clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform;
+                            Matrix4 transform = clip.Entity.WorldTransform.GetMatrix() * clip.Transform;
                             for (int i = 0; i < clip.ClipLines.Length; i++)
                             {
                                 model.Mesh = model.Mesh.Bisect(clip.ClipLines[i], clip.Model.Transform.GetMatrix() * transform, Side.Right);
@@ -217,7 +217,7 @@ namespace Game.Rendering
                             drawData.Add(new DrawData(
                                 -1,
                                 clip.Model,
-                                clip.Entity.GetWorldTransform().GetMatrix() * clip.Transform));
+                                clip.Entity.WorldTransform.GetMatrix() * clip.Transform));
                         }
                     }
                 }
@@ -277,14 +277,14 @@ namespace Game.Rendering
                 for (int j = 0; j < 2; j++)
                 {
                     LineF line = portalViewList[i].FovLines[j];
-                    float minWidth = Math.Abs(cam.GetWorldTransform().Size) / 300;
+                    float minWidth = Math.Abs(cam.WorldTransform.Size) / 300;
                     double angleDiff = GetLineBlurAngle(line, portalViewList[i].FovLinesPrevious[j]);
                     float widthEnd = (float)Math.Tan(angleDiff) * line.Length;
                     widthEnd = Math.Max(widthEnd, minWidth);
 
                     Vector2[] lineWidth = PolygonFactory.CreateLineWidth(line, minWidth);
 
-                    Vector2 camPos = cam.GetWorldTransform().Position;
+                    Vector2 camPos = cam.WorldTransform.Position;
                     Vector2[] lineWidthOff = Vector2Ext.Transform(lineWidth, Matrix4.CreateTranslation(new Vector3(-camPos)));
                     Vector2[] lineTarget = PolygonFactory.CreateLineWidth(line.Translate(-camPos), minWidth, widthEnd);
                     Matrix4d homography = Matrix4d.CreateTranslation(new Vector3d((Vector2d)(-camPos)));

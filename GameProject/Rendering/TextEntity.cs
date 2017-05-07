@@ -29,6 +29,9 @@ namespace Game.Rendering
         [DataMember]
         public Transform2 Transform { get; set; } = new Transform2();
 
+        public Transform2 WorldTransform => Transform;
+        public Transform2 WorldVelocity => Transform2.CreateVelocity();
+
         bool Dirty = true;
         readonly Font _fontRenderer;
 
@@ -72,9 +75,5 @@ namespace Game.Rendering
             }
             return new List<Model>() { TextModel };
         }
-
-        public Transform2 GetWorldTransform(bool ignorePortals = false) => Transform;
-
-        public Transform2 GetWorldVelocity(bool ignorePortals = false) => Transform2.CreateVelocity();
     }
 }

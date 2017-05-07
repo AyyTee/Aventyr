@@ -50,7 +50,7 @@ namespace TankGame.Network
             Velocity = tank.GetVelocity();
             WorldVelocity = tank.WorldVelocity;
             TurretTransform = tank.Turret.GetTransform();
-            TurretWorldTransform = tank.Turret.GetWorldTransform();
+            TurretWorldTransform = tank.Turret.WorldTransform;
 
             GunFiredTime = tank.GunFiredTime;
 

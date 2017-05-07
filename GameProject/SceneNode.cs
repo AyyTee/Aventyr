@@ -155,9 +155,5 @@ namespace Game
         }
 
         public virtual Transform2 GetVelocity() => Transform2.CreateVelocity();
-
-        public Transform2 GetWorldTransform(bool ignorePortals = false) => WorldTransform;
-
-        public Transform2 GetWorldVelocity(bool ignorePortals = false) => WorldVelocity;
     }
 }

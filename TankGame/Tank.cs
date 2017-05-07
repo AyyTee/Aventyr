@@ -86,7 +86,7 @@ namespace TankGame
 
             if (_attemptFireGun && (GunFiredTime == -1 || GunFiredTime + GunReloadTime <= scene.Time))
             {
-                Transform2 t = Turret.GetWorldTransform();
+                Transform2 t = Turret.WorldTransform;
                 new Bullet(Scene, t.Position, Vector2Ext.LengthDir(2, t.Rotation));
                 GunFiredTime = scene.Time;
             }
@@ -176,7 +176,7 @@ namespace TankGame
         {
             float turretSpeed = 1.5f;
 
-            Transform2 t = Turret.GetWorldTransform();
+            Transform2 t = Turret.WorldTransform;
             double angle = MathExt.AngleDiff(t.Rotation, -MathExt.AngleVector(Input.ReticlePos - t.Position));
 
             Transform2 tLocal = Turret.GetVelocity();

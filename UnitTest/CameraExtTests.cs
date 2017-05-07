@@ -28,16 +28,6 @@ namespace GameTests
             public Transform2 WorldVelocity { get; set; } = Transform2.CreateVelocity();
             public string Name { get; set; } = nameof(SimpleCamera2);
 
-            public Transform2 GetWorldTransform(bool ignorePortals = false)
-            {
-                return WorldTransform.ShallowClone();
-            }
-
-            public Transform2 GetWorldVelocity(bool ignorePortals = false)
-            {
-                return WorldVelocity.ShallowClone();
-            }
-
             public void Remove()
             {
             }

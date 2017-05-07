@@ -46,12 +46,11 @@ namespace EditorLogic
             }
 
             #region create background
-            Model background = Game.Rendering.ModelFactory.CreatePlane();
+            float size = 50;
+            Model background = Game.Rendering.ModelFactory.CreatePlane(Vector2.One * size, new Vector3(-size / 2, -size / 2, 0));
             background.Texture = window.Textures.Grid;
             background.SetColor(new Color4(1f, 1f, 0.5f, 1f));
             background.Transform.Position = new Vector3(0, 0, -5f);
-            float size = 50;
-            background.Transform.Scale = new Vector3(size, size, size);
             background.TransformUv.Size = size;
             Entity back = new Entity(scene, new Vector2(0f, 0f));
             back.Name = "Background";

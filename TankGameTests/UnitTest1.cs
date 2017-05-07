@@ -181,10 +181,10 @@ namespace TankGameTests
 
                 if (prevPosition != new Vector2())
                 {
-                    Assert.IsTrue((prevPosition + prevVelocity / 60 - client.OwnedTank.GetWorldTransform().Position).Length < 0.0001f);
+                    Assert.IsTrue((prevPosition + prevVelocity / 60 - client.OwnedTank.WorldTransform.Position).Length < 0.0001f);
                 }
-                prevPosition = client.OwnedTank?.GetWorldTransform().Position ?? new Vector2();
-                prevVelocity = client.OwnedTank?.GetWorldVelocity().Position ?? new Vector2();
+                prevPosition = client.OwnedTank?.WorldTransform.Position ?? new Vector2();
+                prevVelocity = client.OwnedTank?.WorldVelocity.Position ?? new Vector2();
 
                 AdvanceTime(timeDelta);
             }

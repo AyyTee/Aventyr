@@ -26,41 +26,24 @@ namespace EditorLogic
         [DataMember]
         public List<Model> Models = new List<Model>();
 
+        public Transform2 WorldTransform => GetTransform();
+        public Transform2 WorldVelocity => new Transform2();
+
         public Doodad(string name)
         {
             Name = name;
         }
 
-        public Doodad(EditorScene scene, string name)
-            : this(name)
+        public Doodad(EditorScene scene, string name) : this(name)
         {
             scene.Doodads.Add(this);
         }
 
-        public List<Model> GetModels()
-        {
-            return Models;
-        }
+        public List<Model> GetModels() => Models;
 
-        public Transform2 GetWorldTransform(bool ignorePortals = false)
-        {
-            return GetTransform();
-        }
+        public Transform2 GetTransform() => _transform.ShallowClone();
 
-        public Transform2 GetWorldVelocity(bool ignorePortals = false)
-        {
-            return new Transform2();
-        }
-
-        public Transform2 GetTransform()
-        {
-            return _transform.ShallowClone();
-        }
-
-        public void SetTransform(Transform2 transform)
-        {
-            _transform = transform.ShallowClone();
-        }
+        public void SetTransform(Transform2 transform) => _transform = transform.ShallowClone();
 
         public void Remove()
         {

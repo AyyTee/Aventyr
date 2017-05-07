@@ -44,7 +44,7 @@ namespace Game.Models
         public static List<ClipModel> GetClipModels(IRenderable entity, IEnumerable<IPortalRenderable> portalList, int depth)
         {
             var clipModels = new List<ClipModel>();
-            if (entity.GetWorldTransform() == null)
+            if (entity.WorldTransform == null)
             {
                 return clipModels;
             }
@@ -52,7 +52,7 @@ namespace Game.Models
             {
                 foreach (Model m in entity.GetModels())
                 {
-                    clipModels.AddRange(_getClipModels(entity, m, portalList, entity.GetWorldTransform().Position, null, Matrix4.Identity, depth, 0));
+                    clipModels.AddRange(_getClipModels(entity, m, portalList, entity.WorldTransform.Position, null, Matrix4.Identity, depth, 0));
                 }
             }
             else
@@ -78,7 +78,7 @@ namespace Game.Models
             var collisions = Portal.GetCollisions(
                 centerPoint, 
                 Vector2Ext.Transform(model.GetWorldConvexHull(), 
-                entity.GetWorldTransform().GetMatrix() * modelMatrix), 
+                entity.WorldTransform.GetMatrix() * modelMatrix), 
                 portalList, 
                 PortalClipMargin);
 

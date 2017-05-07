@@ -289,7 +289,7 @@ namespace Game.Physics
         /// </summary>
         public IList<Vector2> GetWorldVertices()
         {
-            Vector2[] worldVertices = Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix()).ToArray();
+            Vector2[] worldVertices = Vector2Ext.Transform(Vertices, WorldTransform.GetMatrix()).ToArray();
             return worldVertices;
         }
 

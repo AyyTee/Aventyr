@@ -5,10 +5,8 @@ using System.Collections.Generic;
 
 namespace Game.Rendering
 {
-    public interface ICamera2
+    public interface ICamera2 : IGetWorldTransformVelocity
     {
-        Transform2 GetWorldTransform(bool ignorePortals = false);
-        Transform2 GetWorldVelocity(bool ignorePortals = false);
         float Aspect { get; }
         /// <summary>
         /// View offset in clip space coordinates [-1,1].
@@ -29,7 +27,7 @@ namespace Game.Rendering
         /// </summary>
         public static Matrix4 GetViewMatrix(this ICamera2 camera, bool isOrtho = true)
         {
-            Transform2 transform = camera.GetWorldTransform();
+            Transform2 transform = camera.WorldTransform;
             var m = Matrix4.CreateRotationZ(transform.Rotation);
             Vector3 lookat = new Vector3(transform.Position) + Vector3.Transform(new Vector3(0, 0, -1), m);
             Vector3 eye;
@@ -62,13 +60,13 @@ namespace Game.Rendering
 
         static double GetWorldZ(this ICamera2 camera)
         {
-            return Math.Abs(camera.GetWorldTransform().Size / (2 * Math.Tan(camera.Fov / 2)));
+            return Math.Abs(camera.WorldTransform.Size / (2 * Math.Tan(camera.Fov / 2)));
         }
 
         //get xy world offset needed to make v appear to overlap target in screen space.
         public static Vector2 GetOverlapOffset(this ICamera2 camera, Vector3 v, Vector3 target)
         {
-            Vector3 cameraPos = new Vector3(camera.GetWorldTransform().Position);
+            Vector3 cameraPos = new Vector3(camera.WorldTransform.Position);
             cameraPos.Z = (float)GetWorldZ(camera);
             float x = (v.X - cameraPos.X) / (v.Z - cameraPos.Z) - (target.X - cameraPos.X) / (target.Z - cameraPos.Z);
             float y = (v.Y - cameraPos.Y) / (v.Z - cameraPos.Z) - (target.Y - cameraPos.Y) / (target.Z - cameraPos.Z);
@@ -148,13 +146,13 @@ namespace Game.Rendering
 
         static Vector2 GetUp(this ICamera2 camera)
         {
-            Matrix4 m = Matrix4.CreateRotationZ(camera.GetWorldTransform().Rotation);
+            Matrix4 m = Matrix4.CreateRotationZ(camera.WorldTransform.Rotation);
             return Vector2Ext.Transform(new Vector2(0, 1), m);
         }
 
         public static Transform2 GetWorldViewpoint(this ICamera2 camera)
         {
-            return new Transform2(camera.ViewOffset).Transform(camera.GetWorldTransform());
+            return new Transform2(camera.ViewOffset).Transform(camera.WorldTransform);
         }
     }
 }

@@ -111,16 +111,6 @@ namespace EditorLogic
         {
         }
 
-        public Transform2 GetWorldVelocity(bool ignorePortals = false)
-        {
-            return GetVelocity();
-        }
-
-        public Transform2 GetWorldTransform(bool ignorePortals = false)
-        {
-            return GetTransform();
-        }
-
         public Transform2 GetTransform()
         {
             return Transform.ShallowClone();
@@ -225,7 +215,7 @@ namespace EditorLogic
             }
 
             //If the camera has been moved then call events.
-            if ((isMoved || GetWorldVelocity().Position != new Vector2()))
+            if ((isMoved || WorldVelocity.Position != new Vector2()))
             {
                 CameraMoved?.Invoke(this);
             }
@@ -233,16 +223,9 @@ namespace EditorLogic
 
         public void StepEnd(IScene scene, float stepSize)
         {
-            if (true)//Controller.Renderer.PortalRenderEnabled)
-            {
-                var settings = new Ray.Settings();
-                //settings.IgnorePortalVelocity = true;
-                Ray.RayCast(this, Scene.GetPortalList(), settings);
-            }
-            else
-            {
-                Transform = Transform.Add(GetWorldVelocity());
-            }
+            var settings = new Ray.Settings();
+            //settings.IgnorePortalVelocity = true;
+            Ray.RayCast(this, Scene.GetPortalList(), settings);
             WorldTransform = GetTransform();
         }
 

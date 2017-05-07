@@ -213,7 +213,7 @@ namespace EditorLogic.Tools
                 DragSet(selected, mode, DragState.Both);
                 return;
             }
-            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Level.ActiveCamera.GetWorldTransform().Size;
+            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Level.ActiveCamera.WorldTransform.Size;
             if (mouseDiff.Length < 1.3f * TranslationScaleOffset)
             {
                 float margin = 0.2f * TranslationScaleOffset;
@@ -345,7 +345,7 @@ namespace EditorLogic.Tools
         void UpdateTranslation(ControllerCamera camera)
         {
             Transform2 transform = _translator.GetTransform();
-            Transform2 camT = camera.GetWorldTransform();
+            Transform2 camT = camera.WorldTransform;
             transform.Size = camT.Size * TranslationScaleOffset;
             _translator.SetTransform(transform);
         }

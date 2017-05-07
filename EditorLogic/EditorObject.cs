@@ -246,10 +246,7 @@ namespace EditorLogic
         {
         }
 
-        public Transform2 GetWorldVelocity(bool ignorePortals = false)
-        {
-            return new Transform2();
-        }
+        public Transform2 GetWorldVelocity(bool ignorePortals = false) => new Transform2();
 
         void RemoveSelf()
         {

@@ -21,6 +21,9 @@ namespace TimeLoopInc
 
         readonly Vector2 _position;
 
+        public Transform2 WorldTransform => new Transform2(_position + Vector2.One * 0.5f * Size);
+        public Transform2 WorldVelocity => Transform2.CreateVelocity();
+
         public Renderable(Vector2 position)
         {
             _position = position;
@@ -37,9 +40,5 @@ namespace TimeLoopInc
             model.SetColor(Color);
             return new List<Model>() { model };
         }
-
-        public Transform2 GetWorldTransform(bool ignorePortals = false) => new Transform2(_position + Vector2.One * 0.5f * Size);
-
-        public Transform2 GetWorldVelocity(bool ignorePortals = false) => Transform2.CreateVelocity();
     }
 }

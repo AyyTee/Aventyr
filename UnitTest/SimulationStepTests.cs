@@ -331,7 +331,7 @@ namespace GameTests
             }
             
             Transform2 expectedWorldTransform = child.GetTransform().Transform(node.GetTransform());
-            Assert.IsTrue(expectedWorldTransform.AlmostEqual(child.GetWorldTransform(), 0.001f));
+            Assert.IsTrue(expectedWorldTransform.AlmostEqual(child.WorldTransform, 0.001f));
         }
 
         [TestMethod]
@@ -351,7 +351,7 @@ namespace GameTests
 
             scene.Step(1);
 
-            Assert.AreEqual(node.GetWorldTransform().Rotation, Math.PI/2, 0.0001f);
+            Assert.AreEqual(node.WorldTransform.Rotation, Math.PI/2, 0.0001f);
         }
     }
 }
