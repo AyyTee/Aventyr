@@ -25,6 +25,8 @@ namespace TimeLoopInc
             return Input.ElementAtOrDefault(time - StartTime - 1) ?? new Input(null);
         }
 
+        public IGridEntityInstant CreateInstant() => new PlayerInstant(StartPosition);
+
         public IGridEntity DeepClone() => (Player)MemberwiseClone();
     }
 }

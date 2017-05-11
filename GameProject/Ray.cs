@@ -20,6 +20,13 @@ namespace Game
             public bool AdjustEndpoint = true;
         }
 
+        public static (Transform2 Transform, Transform2 Velocity) RayCast(Transform2 transform, Transform2 velocity, IEnumerable<IPortal> portals, Settings settings)
+        {
+            var portalable = new Portalable(null, transform, velocity);
+            RayCast(portalable, portals, settings);
+            return ValueTuple.Create(portalable.Transform, portalable.Velocity);
+        }
+
         /// <summary>
         /// Moves a portable object along a ray, taking into account portal teleportation.  Portal velocity is ignored for this method.
         /// </summary>

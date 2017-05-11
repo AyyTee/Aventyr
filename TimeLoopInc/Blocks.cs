@@ -21,6 +21,8 @@ namespace TimeLoopInc
             Size = size;
         }
 
+        public IGridEntityInstant CreateInstant() => new BlockInstant(StartPosition);
+
         public IGridEntity DeepClone() => (Block)MemberwiseClone();
     }
 }

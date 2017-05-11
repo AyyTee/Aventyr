@@ -10,10 +10,13 @@ namespace TimeLoopInc
     {
         public Dictionary<IGridEntity, IGridEntityInstant> Entities { get; private set; } = new Dictionary<IGridEntity, IGridEntityInstant>();
         public int Time;
-        public List<Player> Players = new List<Player>();
-        public List<Block> Blocks = new List<Block>();
+        public Timeline<Player> PlayerTimeline = new Timeline<Player>();
+        public List<Timeline<Block>> BlockTimelines = new List<Timeline<Block>>();
+        public IEnumerable<ITimeline> Timelines => BlockTimelines
+            .OfType<ITimeline>()
+            .Concat(new[] { PlayerTimeline });
         public Player CurrentPlayer;
-        public int StartTime => Blocks.OfType<IGridEntity>().Concat(Players).Min(item => item.StartTime);
+        public int StartTime => Timelines.Min(item => item.Path.Min(entity => entity.StartTime));
 
         public void SetTimeToStart()
         {

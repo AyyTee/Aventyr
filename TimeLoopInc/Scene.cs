@@ -1,5 +1,7 @@
 ﻿using Game;
 using Game.Common;
+using Game.Portals;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,16 +25,19 @@ namespace TimeLoopInc
                 new Vector2i(1, 4),
             };
             State.CurrentPlayer = new Player(new Vector2i(), 0);
-            State.Players.Add(State.CurrentPlayer);
+            State.PlayerTimeline.Path.Add(State.CurrentPlayer);
 
             var portal0 = new TimePortal(new Vector2i(4, 0), Direction.Right);
             var portal1 = new TimePortal(new Vector2i(-2, -2), Direction.Left);
             portal0.SetLinked(portal1);
-            portal0.SetTimeOffset(10);
+            portal0.SetTimeOffset(0);
 
             Portals.Add(portal0);
             Portals.Add(portal1);
-            State.Blocks.Add(new Block(new Vector2i(2, 0), 0, 1));
+
+            var blockTimeline = new Timeline<Block>();
+            blockTimeline.Path.Add(new Block(new Vector2i(2, 0), 0, 1));
+            State.BlockTimelines.Add(blockTimeline);
 
             SetTime(State.StartTime);
         }
@@ -103,24 +108,17 @@ namespace TimeLoopInc
                     var newTime = State.Time + portal.TimeOffset;
                     State.CurrentPlayer.EndTime = State.Time;
                     State.CurrentPlayer = new Player(portal.Position, newTime);
-                    State.Players.Add(State.CurrentPlayer);
+                    State.PlayerTimeline.Path.Add(State.CurrentPlayer);
                     SetTime(newTime);
                     return;
                 }
             }
 
-            foreach (var player in State.Players)
+            foreach (var entity in State.Timelines.SelectMany(item => item.Path))
             {
-                if (player.StartTime == State.Time)
+                if (entity.StartTime == State.Time)
                 {
-                    State.Entities.Add(player, new PlayerInstant(player.StartPosition));
-                }
-            }
-            foreach (var block in State.Blocks)
-            {
-                if (block.StartTime == State.Time)
-                {
-                    State.Entities.Add(block, new BlockInstant(block.StartPosition));
+                    State.Entities.Add(entity, entity.CreateInstant());
                 }
             }
 
@@ -129,11 +127,18 @@ namespace TimeLoopInc
 
         Vector2i Move(Vector2i position, Direction? heading)
         {
-            var posNext = position + DirectionEx.ToVector(heading);
-            if (!Walls.Contains(posNext))
-            {
-                return posNext;
-            }
+            //var transform = Ray.RayCast(
+            //    new Transform2((Vector2)position), 
+            //    Transform2.CreateVelocity((Vector2)DirectionEx.ToVector(heading)), 
+            //    Portals, 
+            //    new Ray.Settings()).Transform;
+
+            //var posNext = (Vector2i)transform.Position.SnapToGrid(Vector2.One);
+
+            //if (!Walls.Contains(posNext)) 
+            //{
+            //    return posNext;
+            //}
             return position;
         }
     }

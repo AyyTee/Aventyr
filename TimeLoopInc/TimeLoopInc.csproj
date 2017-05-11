@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Timeline.cs" />
     <Compile Include="IDeepClone.cs" />
     <Compile Include="BlockInstant.cs" />
     <Compile Include="Blocks.cs" />

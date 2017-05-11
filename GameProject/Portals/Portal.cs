@@ -63,7 +63,7 @@ namespace Game.Portals
             }
         }
 
-        public static Transform2 Enter(IPortal portal, Transform2 transform)
+        public static Transform2 Enter(IPortalRenderable portal, Transform2 transform)
         {
             Debug.Assert(portal.IsValid());
             return transform.Transform(GetLinkedTransform(portal, portal.Linked));
@@ -105,7 +105,7 @@ namespace Game.Portals
             return velocityClone;
         }
 
-        static Vector2 GetAngularVelocity(this IPortal portal, float intersectT)
+        static Vector2 GetAngularVelocity(this IPortalRenderable portal, float intersectT)
         {
             Vector2 intersect = new LineF(portal.GetWorldVerts()).Lerp(intersectT);
             return MathExt.AngularVelocity(intersect, portal.WorldTransform.Position, portal.WorldVelocity.Rotation);

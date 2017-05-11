@@ -43,7 +43,8 @@ namespace Game.Common
         public static bool operator ==(Vector2i p0, Vector2i p1) => p0.Equals(p1);
         public static bool operator !=(Vector2i p0, Vector2i p1) => !p0.Equals(p1);
         public static explicit operator Vector2i(System.Drawing.Size size) => new Vector2i(size.Width, size.Height);
-        public static explicit operator Vector2(Vector2i Vector2i) => new Vector2(Vector2i.X, Vector2i.Y);
+        public static explicit operator Vector2(Vector2i v) => new Vector2(v.X, v.Y);
+        public static explicit operator Vector2i(Vector2 v) => new Vector2i((int)v.X, (int)v.Y);
 
         public override bool Equals(object obj)
         {

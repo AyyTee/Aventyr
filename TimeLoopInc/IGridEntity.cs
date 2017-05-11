@@ -15,5 +15,7 @@ namespace TimeLoopInc
         Vector2i StartPosition { get; }
         int StartTime { get; }
         int EndTime { get; }
+
+        IGridEntityInstant CreateInstant(); 
     }
 }
