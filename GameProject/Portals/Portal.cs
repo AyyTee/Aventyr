@@ -137,7 +137,7 @@ namespace Game.Portals
             }
 
             //If a static actor enters a portal then it's no longer static.
-            Actor actorCast = portalable as Actor;
+            var actorCast = portalable as Actor;
             if (actorCast != null && actorCast.BodyType == BodyType.Static)
             {
                 actorCast.SetBodyType(BodyType.Kinematic);
@@ -154,7 +154,7 @@ namespace Game.Portals
 
             Debug.Assert(transform.EqualsValue(transformCopy) && velocity.EqualsValue(velocityCopy));
 
-            cast?.EnterPortal?.Invoke(new EnterCallbackData(portal, cast, intersectT), transform, velocity);
+            cast?.EnterPortal?.Invoke(new EnterCallbackData(portal, cast, cast.Transform, cast.Velocity, intersectT), transform, velocity);
         }
 
         public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)

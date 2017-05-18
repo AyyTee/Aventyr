@@ -2,6 +2,7 @@
 using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using Game.Common;
 using Game.Rendering;
@@ -20,11 +21,28 @@ namespace Game
             public bool AdjustEndpoint = true;
         }
 
-        public static (Transform2 Transform, Transform2 Velocity) RayCast(Transform2 transform, Transform2 velocity, IEnumerable<IPortal> portals, Settings settings)
+        public class Result : IGetTransformVelocity
         {
-            var portalable = new Portalable(null, transform, velocity);
-            RayCast(portalable, portals, settings);
-            return ValueTuple.Create(portalable.Transform, portalable.Velocity);
+            Transform2 _transform;
+            Transform2 _velocity;
+
+            public IReadOnlyCollection<(EnterCallbackData EnterData, double MovementT)> PortalsEntered;
+
+            public Result(Transform2 transform, Transform2 velocity)
+                : this(transform, velocity, new List<(EnterCallbackData EnterData, double MovementT)>())
+            {
+            }
+
+            public Result(Transform2 transform, Transform2 velocity, List<(EnterCallbackData EnterData, double MovementT)> portalsEntered)
+            {
+                Debug.Assert(portalsEntered != null);
+                _transform = transform.ShallowClone();
+                _velocity = velocity.ShallowClone();
+                PortalsEntered = portalsEntered.AsReadOnly();
+            }
+
+            public Transform2 GetTransform() => _transform.ShallowClone();
+            public Transform2 GetVelocity() => _velocity.ShallowClone();
         }
 
         /// <summary>
@@ -34,47 +52,43 @@ namespace Game
         /// <param name="portals">Collection of portals used for portal teleportation.</param>
         /// <param name="settings"></param>
         /// <param name="portalEnter">Callback that is executed after entering a portal.</param>
-        public static void RayCast(IPortalable portalable, IEnumerable<IPortal> portals, Settings settings, Action<EnterCallbackData, double> portalEnter = null)
+        public static Result RayCast(Transform2 transform, Transform2 velocity, IEnumerable<IPortal> portals, Settings settings, Action<EnterCallbackData, double> portalEnter = null)
         {
             Debug.Assert(settings.MaxIterations >= 0);
-            Debug.Assert(portalable != null);
             Debug.Assert(portals != null);
             Debug.Assert(settings.TimeScale >= 0);
-            Debug.Assert(!(portalable is IPortal));
-            if (portalable.GetVelocity().Position.Length == 0 || settings.TimeScale == 0)
+            if (velocity.Position.Length == 0 || settings.TimeScale == 0)
             {
-                return;
+                return new Result(transform, velocity);
             }
-            _rayCast(
-                portalable,
+
+            return _rayCast(
+                transform.ShallowClone(),
+                velocity.ShallowClone(),
                 portals,
-                portalable.GetVelocity().Position.Length * settings.TimeScale,
+                velocity.Position.Length * settings.TimeScale,
                 null,
                 portalEnter,
                 settings,
                 0);
         }
 
-        static void _rayCast(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Action<EnterCallbackData, double> portalEnter, Settings settings, int count)
+        static Result _rayCast(Transform2 transform, Transform2 velocityCurrent, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Action<EnterCallbackData, double> portalEnter, Settings settings, int count)
         {
-            Transform2 begin = placeable.GetTransform();
-            Transform2 velocity = placeable.GetVelocity().Multiply(settings.TimeScale);
+            Transform2 begin = transform;
+            Transform2 velocity = velocityCurrent.Multiply(settings.TimeScale);
             if (settings.MaxIterations <= count)
             {
                 //If we run out of iterations before running out of movement, call _rayEnd with 0 movementLeft just to make sure the AdjustEnpoint setting is handled.
-                _rayEnd(placeable, portals, 0, portalPrevious, settings, begin, velocity);
-                return;
+                var end = _rayEnd(portals, 0, portalPrevious, settings, begin, velocity);
+                return new Result(end, velocity);
             }
-            if (!placeable.IsPortalable)
-            {
-                _rayEnd(placeable, portals, movementLeft, portalPrevious, settings, begin, velocity);
-                return;
-            }
+
             double distanceMin = movementLeft;
             IPortal portalNearest = null;
             IntersectCoord intersectNearest = null;
             LineF ray = new LineF(begin.Position, begin.Position + velocity.Position);
-            foreach (IPortal p in portals)
+            foreach (var p in portals)
             {
                 if (!p.IsValid() || portalPrevious == p)
                 {
@@ -102,21 +116,27 @@ namespace Game
                 double t = (velocity.Position.Length - movementLeft) / velocity.Position.Length;
 
                 begin.Position = (Vector2)intersectNearest.Position;
-                placeable.SetTransform(begin);
-                Portal.Enter(portalNearest, placeable, (float)intersectNearest.First, true);
 
-                portalEnter?.Invoke(new EnterCallbackData(portalNearest, placeable, intersectNearest.First), t);
+                transform = Portal.Enter(portalNearest, begin);
+                velocity = Portal.EnterVelocity(portalNearest, (float)intersectNearest.First, velocity, true);
 
-                movementLeft *= Math.Abs(placeable.GetTransform().Size / begin.Size);
-                _rayCast(placeable, portals, movementLeft, portalNearest.Linked, portalEnter, settings, count + 1);
+
+                //portalEnter?.Invoke(new EnterCallbackData(portalNearest, placeable, intersectNearest.First), t);
+
+                movementLeft *= Math.Abs(transform.Size / begin.Size);
+                var result = _rayCast(transform.ShallowClone(), velocity.ShallowClone(), portals, movementLeft, portalNearest.Linked, portalEnter, settings, count + 1);
+                var list = new List<(EnterCallbackData EnterData, double MovementT)>(result.PortalsEntered);
+                list.Insert(0, ValueTuple.Create(new EnterCallbackData(portalNearest, null, transform, velocity, intersectNearest.First), t));
+                return new Result(result.GetTransform(), result.GetVelocity(), list);
             }
             else
             {
-                _rayEnd(placeable, portals, movementLeft, portalPrevious, settings, begin, velocity);
+                var end = _rayEnd(portals, movementLeft, portalPrevious, settings, begin, velocity);
+                return new Result(end, velocity);
             }
         }
 
-        static void _rayEnd(IPortalable placeable, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Settings settings, Transform2 begin, Transform2 velocity)
+        static Transform2 _rayEnd(IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Settings settings, Transform2 begin, Transform2 velocity)
         {
             begin.Position += velocity.Position.Normalized() * (float)movementLeft;
             if (settings.AdjustEndpoint)
@@ -125,7 +145,7 @@ namespace Game
                  * any portal.  Otherwise there is a risk of ambiguity as to which side of a portal the end point is on.*/
                 begin = AddMargin(portals, portalPrevious, begin, velocity);
             }
-            placeable.SetTransform(begin);
+            return begin;
         }
 
         /// <summary>

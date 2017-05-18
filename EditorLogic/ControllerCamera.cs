@@ -57,7 +57,7 @@ namespace EditorLogic
         /// <summary>
         /// This is not used for anything.
         /// </summary>
-        public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
+        public Transform2 Velocity { get { throw new NotImplementedException(); } set { throw new NotImplementedException(); } }
         const int QueueSize = 3;
         [DataMember]
         public IScene Scene { get; set; }
@@ -111,20 +111,11 @@ namespace EditorLogic
         {
         }
 
-        public Transform2 GetTransform()
-        {
-            return Transform.ShallowClone();
-        }
+        public Transform2 GetTransform() => Transform.ShallowClone();
 
-        public void SetTransform(Transform2 transform)
-        {
-            Transform = transform.ShallowClone();
-        }
+        public void SetTransform(Transform2 transform) => Transform = transform.ShallowClone();
 
-        public bool IsLocked()
-        {
-            return Controller.ActiveTool.LockCamera();
-        }
+        public bool IsLocked() => Controller.ActiveTool.LockCamera();
 
         public void StepBegin(IScene scene, float stepSize)
         {
@@ -204,7 +195,7 @@ namespace EditorLogic
                 }
                 if (InputExt.MouseInside() && InputExt.ButtonDown(MouseButton.Middle))
                 {
-                    var mouseVelocity = this.ScreenToWorld((Vector2)(InputExt.MousePositionPrevious - InputExt.MousePosition), Controller.Window.CanvasSize);
+                    var mouseVelocity = this.ScreenToWorld(InputExt.MousePositionPrevious - InputExt.MousePosition, Controller.Window.CanvasSize);
                     _lazyPan.Enqueue(mouseVelocity - this.ScreenToWorld(new Vector2(), Controller.Window.CanvasSize));
                 }
                 else
@@ -225,8 +216,17 @@ namespace EditorLogic
         {
             var settings = new Ray.Settings();
             //settings.IgnorePortalVelocity = true;
-            Ray.RayCast(this, Scene.GetPortalList(), settings);
+            var result = Ray.RayCast(Transform, GetVelocity(), Scene.GetPortalList(), settings);
+            Transform = result.GetTransform();
+            //SetVelocity(result.GetVelocity());
             WorldTransform = GetTransform();
+
+            var velocity = GetVelocity();
+            foreach (var portalEnter in result.PortalsEntered)
+            {
+                velocity = Portal.EnterVelocity(portalEnter.EnterData.EntrancePortal, (float)portalEnter.EnterData.PortalT, velocity);
+            }
+            SetVelocity(velocity);
         }
 
         public Transform2 GetVelocity()
@@ -258,9 +258,6 @@ namespace EditorLogic
             return clone;
         }
 
-        public List<IPortal> GetPortalChildren()
-        {
-            return new List<IPortal>();
-        }
+        public List<IPortal> GetPortalChildren() => new List<IPortal>();
     }
 }

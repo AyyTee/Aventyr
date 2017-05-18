@@ -82,11 +82,12 @@ namespace Game.Portals
             Transform2 parent = instance.Parent.WorldTransform;
             Transform2 t = local.Transform(parent);
 
-            var settings = new Ray.Settings();
-            IPortalable portalable = new Portalable(null, new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), Transform2.CreateVelocity(t.Position - parent.Position));
-
-            Ray.RayCast(portalable, GetPortalsForPortal(instance, portals), settings);
-            return portalable.GetTransform();
+            var result = Ray.RayCast(
+                new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), 
+                Transform2.CreateVelocity(t.Position - parent.Position), 
+                GetPortalsForPortal(instance, portals), 
+                new Ray.Settings());
+            return result.GetTransform();
         }
 
         public static Transform2 GetWorldTransformUsingPath(IPortalCommon instance)
@@ -108,11 +109,11 @@ namespace Game.Portals
             return t.Transform(instance.Path.GetPortalTransform());
         }
 
-        public static Transform2 TransformVelocity(IGetTransformVelocity portalable, IPortal portal, Transform2 velocity, double movementT)
+        public static Transform2 TransformVelocity(Transform2 portalableTransform, Transform2 portalableVelocity, IPortal portal, Transform2 velocity, double movementT)
         {
             velocity = velocity.ShallowClone();
             velocity = Portal.EnterVelocity(portal, 0.5f, velocity);
-            Vector2 endPosition = portalable.GetTransform().Position + portalable.GetVelocity().Position * (float)(1 - movementT);
+            Vector2 endPosition = portalableTransform.Position + portalableVelocity.Position * (float)(1 - movementT);
             float angularVelocity = portal.Linked.WorldVelocity.Rotation;
             if (portal.WorldTransform.MirrorX != portal.Linked.WorldTransform.MirrorX)
             {
@@ -165,11 +166,22 @@ namespace Game.Portals
                 MathExt.AngularVelocity(positionDelta, parentVelocity.Rotation) + 
                 positionDelta * parentVelocity.Size / parentTransform.Size;
 
-            IPortalable portalable = new Portalable(null, new Transform2(parentTransform.Position, worldTransform.Size, worldTransform.Rotation, worldTransform.MirrorX), Transform2.CreateVelocity(positionDelta));
             HashSet<IPortal> portals = GetPortalsForPortal(instance, instance.Scene.GetPortalList());
-            Ray.RayCast(portalable, portals, new Ray.Settings(), (data, movementT) => {
-                worldVelocity = TransformVelocity(data.Instance, data.EntrancePortal, worldVelocity, movementT);
-            });
+            var result = Ray.RayCast(
+                new Transform2(parentTransform.Position, worldTransform.Size, worldTransform.Rotation, worldTransform.MirrorX), 
+                Transform2.CreateVelocity(positionDelta), 
+                portals, 
+                new Ray.Settings());
+
+            foreach (var callback in result.PortalsEntered)
+            {
+                worldVelocity = TransformVelocity(
+                    callback.EnterData.GetTransform(),
+                    callback.EnterData.GetVelocity(),
+                    callback.EnterData.EntrancePortal, 
+                    worldVelocity, 
+                    callback.MovementT);
+            }
 
             return worldVelocity;
         }

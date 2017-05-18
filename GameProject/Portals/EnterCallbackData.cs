@@ -1,28 +1,39 @@
-﻿namespace Game.Portals
+﻿using System;
+using Game.Common;
+
+namespace Game.Portals
 {
     /// <summary>
     /// Callback data often provided when entering a portal.
     /// </summary>
-    public struct EnterCallbackData
+    public struct EnterCallbackData : IGetTransformVelocity
     {
 		/// <summary>
 		/// Portal being entered (not exited).
 		/// </summary>
-        public IPortal EntrancePortal;
+        public readonly IPortal EntrancePortal;
 		/// <summary>
 		/// Instance entering portal.
 		/// </summary>
-        public IPortalCommon Instance;
+        public readonly IPortalCommon Instance;
 		/// <summary>
 		/// Intersection t value for the portal.
 		/// </summary>
-        public double PortalT;
+        public readonly double PortalT;
 
-        public EnterCallbackData(IPortal entrancePortal, IPortalCommon instance, double portalT)
+        readonly Transform2 _transform;
+        readonly Transform2 _velocity;
+
+        public EnterCallbackData(IPortal entrancePortal, IPortalCommon instance, Transform2 transform, Transform2 velocity, double portalT)
         {
             EntrancePortal = entrancePortal;
             Instance = instance;
+            _transform = transform.ShallowClone();
+            _velocity = velocity.ShallowClone();
             PortalT = portalT;
         }
+
+        public Transform2 GetTransform() => _transform.ShallowClone();
+        public Transform2 GetVelocity() => _velocity.ShallowClone();
     }
 }

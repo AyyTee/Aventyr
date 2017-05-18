@@ -167,9 +167,8 @@ namespace EditorLogic
             }
             Transform2 transform = Level.ActiveCamera.GetWorldViewpoint();
             Vector2 mousePos = Level.ActiveCamera.ScreenToWorld(Window.MousePosition, Window.CanvasSize);
-            var portalable = new Portalable(null, transform, Transform2.CreateVelocity(mousePos - transform.Position));
-            Ray.RayCast(portalable, Level.GetPortalList(), new Ray.Settings());
-            return portalable.GetTransform().Position;
+            var result = Ray.RayCast(transform, Transform2.CreateVelocity(mousePos - transform.Position), Level.GetPortalList(), new Ray.Settings());
+            return result.GetTransform().Position;
         }
 
         public void Remove(EditorObject editorObject)

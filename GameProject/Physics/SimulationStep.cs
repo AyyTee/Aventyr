@@ -144,7 +144,7 @@ namespace Game.Physics
 
                 bool worldOnly = !PortalCommon.IsRoot(instance);
                 Portal.Enter(sweep.Portal.Portal, instance, intersectT, false, worldOnly);
-                portalEnter?.Invoke(new EnterCallbackData(sweep.Portal.Portal, sweep.Portalable.Instance, intersectT));
+                portalEnter?.Invoke(new EnterCallbackData(sweep.Portal.Portal, instance, instance.GetTransform(), instance.GetVelocity(), intersectT));
 
                 /*After this instance has entered the portal we again go ahead and place it exactly on the 
                  * portal (this time on the exit) to reduce precision errors.*/
