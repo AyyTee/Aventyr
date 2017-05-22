@@ -168,7 +168,7 @@ namespace EditorLogic
             Transform2 transform = Level.ActiveCamera.GetWorldViewpoint();
             Vector2 mousePos = Level.ActiveCamera.ScreenToWorld(Window.MousePosition, Window.CanvasSize);
             var result = Ray.RayCast(transform, Transform2.CreateVelocity(mousePos - transform.Position), Level.GetPortalList(), new Ray.Settings());
-            return result.GetTransform().Position;
+            return result.WorldTransform.Position;
         }
 
         public void Remove(EditorObject editorObject)

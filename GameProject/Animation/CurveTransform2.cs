@@ -3,6 +3,7 @@ using OpenTK;
 using System.Runtime.Serialization;
 using Game.Common;
 using Game.Serialization;
+using Game.Rendering;
 
 namespace Game.Animation
 {
@@ -49,7 +50,7 @@ namespace Game.Animation
             return velocityTransformed;
         }
 
-        public void EnterPortal(IPortal enter, IPortal exit)
+        public void EnterPortal(IPortalRenderable enter, IPortalRenderable exit)
         {
             TransformOffset = TransformOffset.Transform(Portal.GetLinkedTransform(enter, exit));
             //TransformVelocity = 

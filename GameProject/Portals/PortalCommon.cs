@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Game.Common;
+using Game.Rendering;
 
 namespace Game.Portals
 {
@@ -87,7 +88,7 @@ namespace Game.Portals
                 Transform2.CreateVelocity(t.Position - parent.Position), 
                 GetPortalsForPortal(instance, portals), 
                 new Ray.Settings());
-            return result.GetTransform();
+            return result.WorldTransform;
         }
 
         public static Transform2 GetWorldTransformUsingPath(IPortalCommon instance)
@@ -109,10 +110,9 @@ namespace Game.Portals
             return t.Transform(instance.Path.GetPortalTransform());
         }
 
-        public static Transform2 TransformVelocity(Transform2 portalableTransform, Transform2 portalableVelocity, IPortal portal, Transform2 velocity, double movementT)
+        public static Transform2 TransformVelocity(Transform2 portalableTransform, Transform2 portalableVelocity, IPortalRenderable portal, Transform2 velocity, double movementT)
         {
-            velocity = velocity.ShallowClone();
-            velocity = Portal.EnterVelocity(portal, 0.5f, velocity);
+            var newVelocity = Portal.EnterVelocity(portal, 0.5f, velocity.ShallowClone());
             Vector2 endPosition = portalableTransform.Position + portalableVelocity.Position * (float)(1 - movementT);
             float angularVelocity = portal.Linked.WorldVelocity.Rotation;
             if (portal.WorldTransform.MirrorX != portal.Linked.WorldTransform.MirrorX)
@@ -123,8 +123,8 @@ namespace Game.Portals
             {
                 angularVelocity += portal.WorldVelocity.Rotation;
             }
-            velocity.Position += MathExt.AngularVelocity(endPosition, portal.Linked.WorldTransform.Position, angularVelocity);
-            return velocity;
+            newVelocity.Position += MathExt.AngularVelocity(endPosition, portal.Linked.WorldTransform.Position, angularVelocity);
+            return newVelocity;
         }
 
         /// <summary>

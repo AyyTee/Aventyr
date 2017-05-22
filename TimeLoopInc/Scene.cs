@@ -127,18 +127,20 @@ namespace TimeLoopInc
 
         Vector2i Move(Vector2i position, Direction? heading)
         {
-            //var transform = Ray.RayCast(
-            //    new Transform2((Vector2)position), 
-            //    Transform2.CreateVelocity((Vector2)DirectionEx.ToVector(heading)), 
-            //    Portals, 
-            //    new Ray.Settings()).Transform;
+            var offset = Vector2.One / 2;
+            var result = Ray.RayCast(
+                new Transform2((Vector2)position + offset),
+                Transform2.CreateVelocity((Vector2)DirectionEx.ToVector(heading)),
+                Portals,
+                new Ray.Settings());
 
-            //var posNext = (Vector2i)transform.Position.SnapToGrid(Vector2.One);
+            var posNext = result.WorldTransform.Position - offset;
+            var posNextGrid = (Vector2i)posNext.SnapToGrid(Vector2.One);
 
-            //if (!Walls.Contains(posNext)) 
-            //{
-            //    return posNext;
-            //}
+            if (!Walls.Contains(posNextGrid))
+            {
+                return posNextGrid;
+            }
             return position;
         }
     }

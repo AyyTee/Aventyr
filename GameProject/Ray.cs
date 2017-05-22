@@ -21,28 +21,28 @@ namespace Game
             public bool AdjustEndpoint = true;
         }
 
-        public class Result : IGetTransformVelocity
+        public class Result : IGetWorldTransformVelocity
         {
-            Transform2 _transform;
-            Transform2 _velocity;
+            Transform2 _worldTransform;
+            Transform2 _worldVelocity;
+
+            public Transform2 WorldTransform => _worldTransform.ShallowClone();
+            public Transform2 WorldVelocity => _worldVelocity.ShallowClone();
 
             public IReadOnlyCollection<(EnterCallbackData EnterData, double MovementT)> PortalsEntered;
 
-            public Result(Transform2 transform, Transform2 velocity)
-                : this(transform, velocity, new List<(EnterCallbackData EnterData, double MovementT)>())
+            public Result(Transform2 worldTransform, Transform2 worldVelocity)
+                : this(worldTransform, worldVelocity, new List<(EnterCallbackData EnterData, double MovementT)>())
             {
             }
 
-            public Result(Transform2 transform, Transform2 velocity, List<(EnterCallbackData EnterData, double MovementT)> portalsEntered)
+            public Result(Transform2 worldTransform, Transform2 worldVelocity, List<(EnterCallbackData EnterData, double MovementT)> portalsEntered)
             {
                 Debug.Assert(portalsEntered != null);
-                _transform = transform.ShallowClone();
-                _velocity = velocity.ShallowClone();
+                _worldTransform = worldTransform.ShallowClone();
+                _worldVelocity = worldVelocity.ShallowClone();
                 PortalsEntered = portalsEntered.AsReadOnly();
             }
-
-            public Transform2 GetTransform() => _transform.ShallowClone();
-            public Transform2 GetVelocity() => _velocity.ShallowClone();
         }
 
         /// <summary>
@@ -52,30 +52,30 @@ namespace Game
         /// <param name="portals">Collection of portals used for portal teleportation.</param>
         /// <param name="settings"></param>
         /// <param name="portalEnter">Callback that is executed after entering a portal.</param>
-        public static Result RayCast(Transform2 transform, Transform2 velocity, IEnumerable<IPortal> portals, Settings settings, Action<EnterCallbackData, double> portalEnter = null)
+        public static Result RayCast(Transform2 worldTransform, Transform2 worldVelocity, IEnumerable<IPortalRenderable> portals, Settings settings, Action<EnterCallbackData, double> portalEnter = null)
         {
             Debug.Assert(settings.MaxIterations >= 0);
             Debug.Assert(portals != null);
             Debug.Assert(settings.TimeScale >= 0);
-            if (velocity.Position.Length == 0 || settings.TimeScale == 0)
+            if (worldVelocity.Position.Length == 0 || settings.TimeScale == 0)
             {
-                return new Result(transform, velocity);
+                return new Result(worldTransform, worldVelocity);
             }
 
             return _rayCast(
-                transform.ShallowClone(),
-                velocity.ShallowClone(),
+                worldTransform.ShallowClone(),
+                worldVelocity.ShallowClone(),
                 portals,
-                velocity.Position.Length * settings.TimeScale,
+                worldVelocity.Position.Length * settings.TimeScale,
                 null,
                 portalEnter,
                 settings,
                 0);
         }
 
-        static Result _rayCast(Transform2 transform, Transform2 velocityCurrent, IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Action<EnterCallbackData, double> portalEnter, Settings settings, int count)
+        static Result _rayCast(Transform2 worldTransform, Transform2 velocityCurrent, IEnumerable<IPortalRenderable> portals, double movementLeft, IPortalRenderable portalPrevious, Action<EnterCallbackData, double> portalEnter, Settings settings, int count)
         {
-            Transform2 begin = transform;
+            Transform2 begin = worldTransform;
             Transform2 velocity = velocityCurrent.Multiply(settings.TimeScale);
             if (settings.MaxIterations <= count)
             {
@@ -85,7 +85,7 @@ namespace Game
             }
 
             double distanceMin = movementLeft;
-            IPortal portalNearest = null;
+            IPortalRenderable portalNearest = null;
             IntersectCoord intersectNearest = null;
             LineF ray = new LineF(begin.Position, begin.Position + velocity.Position);
             foreach (var p in portals)
@@ -117,17 +117,17 @@ namespace Game
 
                 begin.Position = (Vector2)intersectNearest.Position;
 
-                transform = Portal.Enter(portalNearest, begin);
+                worldTransform = Portal.Enter(portalNearest, begin);
                 velocity = Portal.EnterVelocity(portalNearest, (float)intersectNearest.First, velocity, true);
 
 
                 //portalEnter?.Invoke(new EnterCallbackData(portalNearest, placeable, intersectNearest.First), t);
 
-                movementLeft *= Math.Abs(transform.Size / begin.Size);
-                var result = _rayCast(transform.ShallowClone(), velocity.ShallowClone(), portals, movementLeft, portalNearest.Linked, portalEnter, settings, count + 1);
+                movementLeft *= Math.Abs(worldTransform.Size / begin.Size);
+                var result = _rayCast(worldTransform.ShallowClone(), velocity.ShallowClone(), portals, movementLeft, portalNearest.Linked, portalEnter, settings, count + 1);
                 var list = new List<(EnterCallbackData EnterData, double MovementT)>(result.PortalsEntered);
-                list.Insert(0, ValueTuple.Create(new EnterCallbackData(portalNearest, null, transform, velocity, intersectNearest.First), t));
-                return new Result(result.GetTransform(), result.GetVelocity(), list);
+                list.Insert(0, ValueTuple.Create(new EnterCallbackData(portalNearest, null, worldTransform, velocity, intersectNearest.First), t));
+                return new Result(result.WorldTransform, result.WorldVelocity, list);
             }
             else
             {
@@ -136,7 +136,7 @@ namespace Game
             }
         }
 
-        static Transform2 _rayEnd(IEnumerable<IPortal> portals, double movementLeft, IPortal portalPrevious, Settings settings, Transform2 begin, Transform2 velocity)
+        static Transform2 _rayEnd(IEnumerable<IPortalRenderable> portals, double movementLeft, IPortalRenderable portalPrevious, Settings settings, Transform2 begin, Transform2 velocity)
         {
             begin.Position += velocity.Position.Normalized() * (float)movementLeft;
             if (settings.AdjustEndpoint)

@@ -27,7 +27,7 @@ namespace Game.Portals
         /// <summary>
         /// Returns whether a portal can be entered.
         /// </summary>
-        public static bool IsValid(this IPortal portal)
+        public static bool IsValid(this IPortalRenderable portal)
         {
             return portal.Linked != null &&
                 portal.WorldTransform != null &&
@@ -36,15 +36,9 @@ namespace Game.Portals
                 portal.Linked.WorldVelocity != null;
         }
 
-        public static bool IsValid(this IPortalRenderable portal)
-        {
-            return portal.Linked != null &&
-                portal.WorldTransform != null &&
-                portal.Linked.WorldTransform != null;
-        }
-
         public static void SetLinked(IPortal p0, IPortal p1)
         {
+            Debug.Assert(p0 != p1);
             if (p0?.Linked != null)
             {
                 p0.Linked.Linked = null;
@@ -76,7 +70,7 @@ namespace Game.Portals
         /// <param name="intersectT">Intersection point on the portal.</param>
         /// <param name="velocity">Velocity before entering.</param>
         /// <param name="ignorePortalVelocity"></param>
-        public static Transform2 EnterVelocity(IPortal portal, float intersectT, Transform2 velocity, bool ignorePortalVelocity = false)
+        public static Transform2 EnterVelocity(IPortalRenderable portal, float intersectT, Transform2 velocity, bool ignorePortalVelocity = false)
         {
             Debug.Assert(portal.IsValid());
             Matrix4 matrix = GetLinkedMatrix(portal);

@@ -1,5 +1,6 @@
 ﻿using System;
 using Game.Common;
+using Game.Rendering;
 
 namespace Game.Portals
 {
@@ -11,7 +12,7 @@ namespace Game.Portals
 		/// <summary>
 		/// Portal being entered (not exited).
 		/// </summary>
-        public readonly IPortal EntrancePortal;
+        public readonly IPortalRenderable EntrancePortal;
 		/// <summary>
 		/// Instance entering portal.
 		/// </summary>
@@ -24,7 +25,7 @@ namespace Game.Portals
         readonly Transform2 _transform;
         readonly Transform2 _velocity;
 
-        public EnterCallbackData(IPortal entrancePortal, IPortalCommon instance, Transform2 transform, Transform2 velocity, double portalT)
+        public EnterCallbackData(IPortalRenderable entrancePortal, IPortalCommon instance, Transform2 transform, Transform2 velocity, double portalT)
         {
             EntrancePortal = entrancePortal;
             Instance = instance;

@@ -217,7 +217,7 @@ namespace EditorLogic
             var settings = new Ray.Settings();
             //settings.IgnorePortalVelocity = true;
             var result = Ray.RayCast(Transform, GetVelocity(), Scene.GetPortalList(), settings);
-            Transform = result.GetTransform();
+            Transform = result.WorldTransform;
             //SetVelocity(result.GetVelocity());
             WorldTransform = GetTransform();
 

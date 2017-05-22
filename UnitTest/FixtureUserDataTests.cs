@@ -36,8 +36,7 @@ namespace GameTests
             Fixture fixture = ground.Body.FixtureList[0];
             FixturePortal portal = new FixturePortal(scene, ground, new PolygonCoord(0, 0.3f));
             FloatPortal portalExit = new FloatPortal(scene);
-            portalExit.Linked = portal;
-            portal.Linked = portal;
+            Portal.SetLinked(portal, portalExit);
             PortalCommon.UpdateWorldTransform(scene);
             FixtureExt.GetData(fixture).ProcessChanges();
             return scene;
