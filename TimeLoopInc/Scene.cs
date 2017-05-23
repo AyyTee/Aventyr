@@ -36,7 +36,7 @@ namespace TimeLoopInc
             Portals.Add(portal1);
 
             var blockTimeline = new Timeline<Block>();
-            blockTimeline.Path.Add(new Block(new Vector2i(2, 0), 0, 1));
+            blockTimeline.Path.Add(new Block(new Vector2i(2, 0), 0, 2));
             State.BlockTimelines.Add(blockTimeline);
 
             SetTime(State.StartTime);
@@ -71,7 +71,8 @@ namespace TimeLoopInc
             {
                 if (entity is Player player)
                 {
-                    State.Entities[entity].SetPosition(Move(State.Entities[entity].Position, player.GetInput(State.Time).Heading));
+                    State.Entities[entity].PreviousVelocity = DirectionEx.ToVector(player.GetInput(State.Time).Heading);
+                    State.Entities[entity].Position = Move(State.Entities[entity].Position, player.GetInput(State.Time).Heading);
                 }
             }
 

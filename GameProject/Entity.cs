@@ -39,7 +39,6 @@ namespace Game
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 
-        #region Constructors
         public Entity(Scene scene)
             : base(scene)
         {
@@ -48,18 +47,11 @@ namespace Game
             Visible = true;
         }
 
-        public Entity(Scene scene, Vector2 position)
-            : this(scene)
-        {
-            SetTransform(new Transform2(position));
-        }
-
         public Entity(Scene scene, Transform2 transform) 
             : this(scene)
         {
             SetTransform(transform);
         }
-        #endregion
 
         public override IDeepClone ShallowClone()
         {

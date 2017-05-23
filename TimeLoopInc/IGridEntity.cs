@@ -16,6 +16,6 @@ namespace TimeLoopInc
         int StartTime { get; }
         int EndTime { get; }
 
-        IGridEntityInstant CreateInstant(); 
+        IGridEntityInstant CreateInstant();
     }
 }

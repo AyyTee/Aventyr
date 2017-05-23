@@ -52,7 +52,7 @@ namespace EditorLogic
             background.SetColor(new Color4(1f, 1f, 0.5f, 1f));
             background.Transform.Position = new Vector3(0, 0, -5f);
             background.TransformUv.Size = size;
-            Entity back = new Entity(scene, new Vector2(0f, 0f));
+            Entity back = new Entity(scene, new Transform2(new Vector2(0f, 0f)));
             back.Name = "Background";
             back.AddModel(background);
             back.IsPortalable = false;

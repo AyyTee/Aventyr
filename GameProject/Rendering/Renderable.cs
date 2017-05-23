@@ -33,5 +33,14 @@ namespace Game.Rendering
 
         public void SetTransform(Transform2 transform) => _transform = transform.ShallowClone();
         public Transform2 GetTransform() => _transform.ShallowClone();
+
+        public Renderable()
+        {
+        }
+
+        public Renderable(Transform2 transform)
+        {
+            SetTransform(transform);
+        }
     }
 }

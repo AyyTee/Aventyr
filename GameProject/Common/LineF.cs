@@ -139,25 +139,25 @@ namespace Game.Common
         /// </summary>
         public bool IsInsideFov(Vector2 viewPoint, LineF line)
         {
-            //Check if there is an intersection between the two lines.
+            // Check if there is an intersection between the two lines.
             if (MathExt.LineLineIntersect(this, line, true) != null)
             {
                 return true;
             }
-            //Check if there is an intersection between the first Fov line and line.
+            // Check if there is an intersection between the first Fov line and line.
             IntersectCoord intersect0 = MathExt.LineLineIntersect(new LineF(_vertices[0], 2 * _vertices[0] - viewPoint), line, false);
-            if (intersect0.First >= 0 && intersect0.Last >= 0 && intersect0.Last < 1)
+            if (intersect0 != null && intersect0.First >= 0 && intersect0.Last >= 0 && intersect0.Last < 1)
             {
                 return true;
             }
-            //Check if there is an intersection between the second Fov line and line.
+            // Check if there is an intersection between the second Fov line and line.
             IntersectCoord intersect1 = MathExt.LineLineIntersect(new LineF(_vertices[1], 2 * _vertices[1] - viewPoint), line, false);
-            if (intersect1.First >= 0 && intersect1.Last >= 0 && intersect1.Last < 1)
+            if (intersect1 != null && intersect1.First >= 0 && intersect1.Last >= 0 && intersect1.Last < 1)
             {
                 return true;
             }
 
-            //Check if the lookPoint is within the Fov angles.
+            // Check if the lookPoint is within the Fov angles.
             double angle0 = MathExt.AngleVector(_vertices[0] - viewPoint);
             double angle1 = MathExt.AngleVector(_vertices[1] - viewPoint);
             double angleDiff = MathExt.AngleDiff(angle0, angle1);
@@ -165,7 +165,7 @@ namespace Game.Common
             double angleLookDiff = MathExt.AngleDiff(angle0, angleLook);
             double angleLook2 = MathExt.AngleVector(line[1] - viewPoint);
             double angleLookDiff2 = MathExt.AngleDiff(angle0, angleLook2);
-            //check if the first point is in the Fov
+            // Check if the first point is in the Fov
             if (Math.Abs(angleDiff) >= Math.Abs(angleLookDiff) && Math.Sign(angleDiff) == Math.Sign(angleLookDiff))
             {
                 if (GetSideOf(viewPoint) != GetSideOf(line[0]))
@@ -173,7 +173,7 @@ namespace Game.Common
                     return true;
                 }
             }
-            //check if the second point is in the Fov
+            // Check if the second point is in the Fov
             if (Math.Abs(angleDiff) >= Math.Abs(angleLookDiff2) && Math.Sign(angleDiff) == Math.Sign(angleLookDiff2))
             {
                 if (GetSideOf(viewPoint) != GetSideOf(line[1]))

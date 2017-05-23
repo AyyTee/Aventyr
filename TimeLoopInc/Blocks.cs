@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Common;
+using Game.Models;
+using OpenTK.Graphics;
+using Game.Rendering;
+using OpenTK;
 
 namespace TimeLoopInc
 {
@@ -24,5 +28,12 @@ namespace TimeLoopInc
         public IGridEntityInstant CreateInstant() => new BlockInstant(StartPosition);
 
         public IGridEntity DeepClone() => (Block)MemberwiseClone();
+
+        public List<Model> GetModels()
+        {
+            var model = ModelFactory.CreatePlane(Vector2.One * Size, new Vector3(-Size / 2));
+            model.SetColor(new Color4(0.5f, 1f, 0.8f, 1f));
+            return new List<Model>() { model };
+        }
     }
 }

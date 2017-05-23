@@ -38,7 +38,8 @@ namespace TimeLoopInc
         {
             var model = ModelFactory.CreatePlane(Vector2.One * Size, new Vector3(-Size / 2));
             model.SetColor(Color);
-            return new List<Model>() { model };
+
+            return new List<Model> { model };
         }
     }
 }

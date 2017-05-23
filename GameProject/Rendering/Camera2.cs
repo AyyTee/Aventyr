@@ -40,7 +40,6 @@ namespace Game.Rendering
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }
 
-        #region Constructors
         public Camera2(Scene scene)
             : this(scene, new Transform2(), 1)
         {
@@ -57,7 +56,6 @@ namespace Game.Rendering
             SetTransform(transform);
             Aspect = aspectRatio;
         }
-        #endregion
 
         public override IDeepClone ShallowClone()
         {
@@ -79,15 +77,9 @@ namespace Game.Rendering
             base.SetTransform(transform);
         }
 
-        public override Transform2 GetTransform()
-        {
-            return Transform.ShallowClone();
-        }
+        public override Transform2 GetTransform() => Transform.ShallowClone();
 
-        public override Transform2 GetVelocity()
-        {
-            return Velocity.ShallowClone();
-        }
+        public override Transform2 GetVelocity() => Velocity.ShallowClone();
 
         public override void SetVelocity(Transform2 velocity)
         {
@@ -95,9 +87,6 @@ namespace Game.Rendering
             base.SetVelocity(velocity);
         }
 
-        public List<IPortal> GetPortalChildren()
-        {
-            return Children.OfType<IPortal>().ToList();
-        }
+        public List<IPortal> GetPortalChildren() => Children.OfType<IPortal>().ToList();
     }
 }

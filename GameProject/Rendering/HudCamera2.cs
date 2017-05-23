@@ -23,11 +23,14 @@ namespace Game.Rendering
 
         public Vector2i CanvasSize { get; set; }
 
-        public Transform2 WorldTransform => new Transform2(new Vector2(), CanvasSize.Y);
+        public Vector2 Position { get; set; }
+
+        public Transform2 WorldTransform => new Transform2(Position, CanvasSize.Y);
         public Transform2 WorldVelocity => Transform2.CreateVelocity();
 
-        public HudCamera2(Vector2i canvasSize)
+        public HudCamera2(Vector2 position, Vector2i canvasSize)
         {
+            Position = position;
             CanvasSize = canvasSize;
         }
     }
