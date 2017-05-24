@@ -71,16 +71,16 @@ namespace TimeLoopInc
             {
                 if (entity is Player player)
                 {
-                    var result = Move(State.Entities[entity].Position, player.GetInput(State.Time).Heading);
+                    var result = Move(State.Entities[entity].Transform, player.GetInput(State.Time).Heading);
                     State.Entities[entity].PreviousVelocity = result.Velocity;
-                    State.Entities[entity].Position = result.Position;
+                    State.Entities[entity].Transform = result.Transform;
                 }
             }
 
             foreach (var block in State.Entities.Values.OfType<BlockInstant>())
             {
                 block.IsPushed = false;
-                block.AddPosition(new Vector2i());
+                block.PreviousVelocity = new Vector2i();
             }
 
             var directions = new[] { Direction.Left, Direction.Right, Direction.Up, Direction.Down };
@@ -88,17 +88,17 @@ namespace TimeLoopInc
             {
                 foreach (var block in State.Entities.Keys.OfType<Block>())
                 {
-                    var adjacent = State.Entities[block].Position - DirectionEx.ToVector(directions[i]);
+                    var adjacent = State.Entities[block].Transform.Position - DirectionEx.ToVector(directions[i]);
                     var pushes = State.Entities.Values
                         .OfType<PlayerInstant>()
-                        .Where(item => item.Position - item.PreviousVelocity == adjacent && item.Position == State.Entities[block].Position);
+                        .Where(item => item.Transform.Position - item.PreviousVelocity == adjacent && item.Transform.Position == State.Entities[block].Transform.Position);
 
                     var blockInstant = (BlockInstant)State.Entities[block];
                     if (pushes.Count() >= block.Size && !blockInstant.IsPushed)
                     {
                         blockInstant.IsPushed = true;
-                        var result = Move(blockInstant.Position, directions[i]);
-                        blockInstant.Position = result.Position;
+                        var result = Move(blockInstant.Transform, directions[i]);
+                        blockInstant.Transform = result.Transform;
                         blockInstant.PreviousVelocity = result.Velocity;
                     }
                 }
@@ -106,7 +106,7 @@ namespace TimeLoopInc
 
             if (State.Entities.ContainsKey(State.CurrentPlayer))
             {
-                var portal = Portals.FirstOrDefault(item => item.Position == State.Entities[State.CurrentPlayer].Position);
+                var portal = Portals.FirstOrDefault(item => item.Position == State.Entities[State.CurrentPlayer].Transform.Position);
                 if (portal != null && portal.TimeOffset != 0)
                 {
                     var newTime = State.Time + portal.TimeOffset;
@@ -129,25 +129,28 @@ namespace TimeLoopInc
             State.Time++;
         }
 
-        (Vector2i Position, Vector2i Velocity) Move(Vector2i position, Direction? heading)
+        (Transform2i Transform, Vector2i Velocity) Move(Transform2i transform, Direction? heading)
         {
             var offset = Vector2.One / 2;
+            var transform2 = transform.ToTransform2();
+            transform2.Position += offset;
             var result = Ray.RayCast(
-                new Transform2((Vector2)position + offset),
+                transform2,
                 Transform2.CreateVelocity((Vector2)DirectionEx.ToVector(heading)),
                 Portals,
                 new Ray.Settings());
 
-            var posNext = result.WorldTransform.Position - offset;
-            var posNextGrid = (Vector2i)posNext.SnapToGrid(Vector2.One);
+            var resultTransform = result.WorldTransform;
+            resultTransform.Position -= offset;
+            var posNextGrid = Transform2i.RoundTransform2(resultTransform);
 
-            if (!Walls.Contains(posNextGrid))
+            if (!Walls.Contains(posNextGrid.Position))
             {
                 return ValueTuple.Create(
                     posNextGrid, 
                     (Vector2i)result.WorldVelocity.Position.SnapToGrid(Vector2.One));
             }
-            return ValueTuple.Create(position, new Vector2i());
+            return ValueTuple.Create(transform, new Vector2i());
         }
     }
 }

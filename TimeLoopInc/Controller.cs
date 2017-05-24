@@ -130,7 +130,7 @@ namespace TimeLoopInc
         {
             var offset = Vector2.One / 2;
             var velocity = (Vector2)scene.State.Entities[gridEntity].PreviousVelocity;
-            var pos = (Vector2)scene.State.Entities[gridEntity].Position + offset;
+            var pos = (Vector2)scene.State.Entities[gridEntity].Transform.Position + offset;
             var result = Ray.RayCast(new Transform2(pos), new Transform2(-velocity * (1 - t)), scene.Portals, new Ray.Settings());
 
             return result.WorldTransform;
