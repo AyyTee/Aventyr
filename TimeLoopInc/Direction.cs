@@ -2,11 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TimeLoopInc
 {
+    [DataContract]
     public enum Direction
     {
         Right = 0, Up = 1, Left = 2, Down = 3
@@ -26,6 +28,8 @@ namespace TimeLoopInc
                 default: throw new Exception();
             }
         }
+
+        public static double ToAngle(Direction heading) => (int)heading * Math.PI / 2;
 
         /// <summary>
         /// Returns a rotated copy of direction.
