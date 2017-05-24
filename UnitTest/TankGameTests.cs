@@ -83,7 +83,7 @@ namespace TankGameTests
                     }
                 };
                 var message = new FakeNetIncomingMessage(
-                    ((FakeNetOutgoingMessage)NetworkHelper.PrepareMessage(_client, data)), 
+                    ((FakeNetOutgoingMessage)NetworkHelper.PrepareMessage(_client, data)),
                     _netServer.Connections[0]);
                 _netServer.EnqueueArrivedMessage(message);
 
@@ -175,7 +175,7 @@ namespace TankGameTests
                 {
                     _clientWindow.Update(new HashSet<Key>() { Key.W }, new HashSet<MouseButton>(), new Vector2());
                 }
-                
+
                 server.Update(timeDelta);
                 client.Update(timeDelta);
 

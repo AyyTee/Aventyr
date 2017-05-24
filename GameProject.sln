@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TankGameTestFramework", "Ta
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lidgren.Network", "Lidgren.Network\Lidgren.Network.csproj", "{49BA1C69-6104-41AC-A5D8-B54FA9F696E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TankGameTests", "TankGameTests\TankGameTests.csproj", "{901311F0-4DDC-4AD7-9AD2-867E9C2ECA56}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugVisualizer", "CustomDebugVisualizer\DebugVisualizer.csproj", "{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugVisualizerTests", "VisualizerTests\DebugVisualizerTests.csproj", "{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}"
@@ -65,10 +63,6 @@ Global
 		{49BA1C69-6104-41AC-A5D8-B54FA9F696E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49BA1C69-6104-41AC-A5D8-B54FA9F696E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49BA1C69-6104-41AC-A5D8-B54FA9F696E8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{901311F0-4DDC-4AD7-9AD2-867E9C2ECA56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{901311F0-4DDC-4AD7-9AD2-867E9C2ECA56}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{901311F0-4DDC-4AD7-9AD2-867E9C2ECA56}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{901311F0-4DDC-4AD7-9AD2-867E9C2ECA56}.Release|Any CPU.Build.0 = Release|Any CPU
 		{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
