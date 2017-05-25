@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using Game.Models;
 using OpenTK;
@@ -7,11 +7,11 @@ using OpenTK.Graphics;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class VertexTests
     {
         #region Equal tests
-        [TestMethod]
+        [Test]
         public void EqualTest0()
         {
             Vertex v0 = new Vertex();
@@ -27,7 +27,7 @@ namespace GameTests
             Assert.IsFalse(v0 != v1);
         }
 
-        [TestMethod]
+        [Test]
         public void EqualTest1()
         {
             Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
@@ -43,7 +43,7 @@ namespace GameTests
             Assert.IsFalse(v0 != v1);
         }
 
-        [TestMethod]
+        [Test]
         public void EqualTest2()
         {
             //Position is different
@@ -60,7 +60,7 @@ namespace GameTests
             Assert.IsTrue(v0 != v1);
         }
 
-        [TestMethod]
+        [Test]
         public void EqualTest3()
         {
             //Texture coord is different
@@ -77,7 +77,7 @@ namespace GameTests
             Assert.IsTrue(v0 != v1);
         }
 
-        [TestMethod]
+        [Test]
         public void EqualTest4()
         {
             //Color is different
@@ -94,7 +94,7 @@ namespace GameTests
             Assert.IsTrue(v0 != v1);
         }
 
-        [TestMethod]
+        [Test]
         public void EqualTest5()
         {
             //Normal is different
@@ -111,7 +111,7 @@ namespace GameTests
             Assert.IsTrue(v0 != v1);
         }
 
-        [TestMethod]
+        [Test]
         public void GetHashCodeTest0()
         {
             Vertex v0 = new Vertex();
@@ -122,7 +122,7 @@ namespace GameTests
 #endregion
 
         #region GetHashCode tests
-        [TestMethod]
+        [Test]
         public void GetHashCodeTest1()
         {
             Vertex v0 = new Vertex(new Vector3(2f, 234.4f, 30f), new Vector2(-341f, 234000f), new Color4(9f, 24.4f, 330f, 1f), new Vector3(255f, 2.4f, 10.315f));
@@ -131,7 +131,7 @@ namespace GameTests
             Assert.IsTrue(v0.GetHashCode() == v1.GetHashCode());
         }
 
-        [TestMethod]
+        [Test]
         public void GetHashCodeTest2()
         {
             Random random = new Random(13245);

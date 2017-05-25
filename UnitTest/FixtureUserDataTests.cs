@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using OpenTK;
 using FarseerPhysics.Dynamics;
@@ -11,7 +11,7 @@ using Game.Physics;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class FixtureUserDataTests
     {
         public Actor CreateGround(Scene scene)
@@ -42,7 +42,7 @@ namespace GameTests
             return scene;
         }
 
-        [TestMethod]
+        [Test]
         public void PortalParentTest0()
         {
             Actor ground = null;
@@ -51,7 +51,7 @@ namespace GameTests
             Assert.IsTrue(ground.Body.FixtureList.Count == 3, "There should be three fixtures.  The original fixture and two fixtures that are a part of the FixturePortal.");
         }
 
-        [TestMethod]
+        [Test]
         public void PortalParentTest1()
         {
             Actor ground = null;
@@ -68,7 +68,7 @@ namespace GameTests
             Assert.IsTrue(parentCount == 2);
         }
 
-        [TestMethod]
+        [Test]
         public void PortalParentTest2()
         {
             Actor ground = null;
@@ -84,7 +84,7 @@ namespace GameTests
             Assert.IsTrue(userData.PartOfPortal(portal));
         }
 
-        [TestMethod]
+        [Test]
         public void PortalParentTest3()
         {
             Actor ground = null;
@@ -113,7 +113,7 @@ namespace GameTests
             Assert.IsTrue(parentCount == 3);
         }
 
-        [TestMethod]
+        [Test]
         public void PortalParentTest4()
         {
             Actor ground = null;
@@ -141,7 +141,7 @@ namespace GameTests
             Assert.IsTrue(shape.Vertices.Count == 3);
         }
 
-        [TestMethod]
+        [Test]
         public void PortalParentTest5()
         {
             Actor ground = null;
@@ -176,7 +176,7 @@ namespace GameTests
             Assert.IsTrue(userData3.PartOfPortal(portal1));
         }
 
-        [TestMethod]
+        [Test]
         public void PortalParentTest6()
         {
             Scene scene = new Scene();
@@ -243,7 +243,7 @@ namespace GameTests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ProcessChangesTest0()
         {
             Scene scene = new Scene();
@@ -259,7 +259,7 @@ namespace GameTests
             ProcessChangesAssert(ground);
         }
 
-        [TestMethod]
+        [Test]
         public void ProcessChangesTest1()
         {
             Scene scene = new Scene();
@@ -275,7 +275,7 @@ namespace GameTests
             ProcessChangesAssert(ground);
         }
 
-        [TestMethod]
+        [Test]
         public void ProcessChangesTest2()
         {
             Scene scene = new Scene();
@@ -291,7 +291,7 @@ namespace GameTests
             ProcessChangesAssert(ground);
         }
 
-        [TestMethod]
+        [Test]
         public void ProcessChangesTest3()
         {
             Scene scene = new Scene();
@@ -308,7 +308,7 @@ namespace GameTests
             ProcessChangesAssert(ground);
         }
 
-        [TestMethod]
+        [Test]
         public void ProcessChangesTest4()
         {
             Scene scene = new Scene();
@@ -325,7 +325,7 @@ namespace GameTests
             ProcessChangesAssert(ground);
         }
 
-        [TestMethod]
+        [Test]
         public void ProcessChangesTest5()
         {
             Scene scene = new Scene();
@@ -344,7 +344,7 @@ namespace GameTests
             ProcessChangesAssert(ground);
         }
 
-        [TestMethod]
+        [Test]
         public void ProcessChangesTest6()
         {
             Scene scene = new Scene();
@@ -362,7 +362,7 @@ namespace GameTests
             ProcessChangesAssert(ground);
         }
 
-        [TestMethod]
+        [Test]
         public void ProcessChangesTest7()
         {
             Scene scene = new Scene();

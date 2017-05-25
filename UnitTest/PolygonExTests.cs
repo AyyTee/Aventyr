@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OpenTK;
 using Game;
 using System.Linq;
@@ -8,11 +8,11 @@ using Game.Common;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class PolygonExTests
     {
         #region GetCentroid tests
-        [TestMethod]
+        [Test]
         public void GetCentroidTest0()
         {
             Vector2[] vertices = new Vector2[] {
@@ -25,7 +25,7 @@ namespace GameTests
             Assert.IsTrue(PolygonEx.GetCentroid(vertices) == new Vector2(0.5f, 0.5f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetCentroidTest1()
         {
             Vector2[] vertices = new Vector2[] {
@@ -39,7 +39,7 @@ namespace GameTests
             Assert.IsTrue(PolygonEx.GetCentroid(vertices) == new Vector2(0.5f, 1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetCentroidTest2()
         {
             Vector2[] vertices = new Vector2[] {
@@ -54,7 +54,7 @@ namespace GameTests
         #endregion
 
         #region DecomposeConcave tests
-        [TestMethod]
+        [Test]
         public void DecomposeConcaveTest0()
         {
             Vector2[] vertices = new Vector2[] {
@@ -69,7 +69,7 @@ namespace GameTests
             Assert.IsTrue(concaveList[0].SequenceEqual(vertices));
         }
 
-        [TestMethod]
+        [Test]
         public void DecomposeConcaveTest1()
         {
             Vector2[] vertices = new Vector2[] {
@@ -85,7 +85,7 @@ namespace GameTests
             Assert.IsTrue(concaveList[0].SequenceEqual(vertices));
         }
 
-        [TestMethod]
+        [Test]
         public void DecomposeConcaveTest2()
         {
             Vector2[] vertices = new Vector2[] {
@@ -112,7 +112,7 @@ namespace GameTests
             Assert.IsTrue(concaveList[1].SequenceEqual(convex1));
         }
 
-        [TestMethod]
+        [Test]
         public void DecomposeConcaveTest3()
         {
             Vector2[] vertices = new Vector2[] {
@@ -180,7 +180,7 @@ namespace GameTests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void DecomposeConcaveTest4()
         {
             Vector2[] vertices = new Vector2[] {

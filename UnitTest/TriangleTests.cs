@@ -1,14 +1,14 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using Game.Models;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class TriangleTests
     {
-        [TestMethod]
+        [Test]
         public void EqualsTest0()
         {
             Triangle t0 = new Triangle(new Vertex(), new Vertex(), new Vertex());
@@ -18,7 +18,7 @@ namespace GameTests
             Assert.IsTrue(t0.GetHashCode() == t1.GetHashCode());
         }
 
-        [TestMethod]
+        [Test]
         public void EqualsTest1()
         {
             Random random = new Random();
@@ -29,7 +29,7 @@ namespace GameTests
             Assert.IsFalse(triangleRotated.Equals(triangles[0]));
         }
 
-        [TestMethod]
+        [Test]
         public void EqualsTest2()
         {
             Random random = new Random();
@@ -40,7 +40,7 @@ namespace GameTests
             Assert.IsFalse(triangleModified.Equals(triangles[0]));
         }
 
-        [TestMethod]
+        [Test]
         public void EqualsTest3()
         {
             Random random = new Random();

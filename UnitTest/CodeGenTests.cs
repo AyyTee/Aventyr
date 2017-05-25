@@ -1,5 +1,5 @@
 ﻿using Game;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +8,17 @@ using System.Threading.Tasks;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class CodeGenTests
     {
-        [TestMethod]
+        [Test]
         public void ToSingleTest0()
         {
             var result = GenerateSingles.ToSingle(" Transform2d ");
             Assert.AreEqual(" Transform2 ", result);
         }
 
-        [TestMethod]
+        [Test]
         public void ToSingleTest1()
         {
             var input = " tTransform2d ";

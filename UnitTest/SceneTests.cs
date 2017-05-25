@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using EditorLogic;
 using Game;
 using System.Linq;
@@ -13,14 +13,14 @@ using Game.Portals;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class SceneTests
     {
         /// <summary>
         /// Tests to see if an actor partway into a portal stays in place when there is no gravity and the 
         /// exit portal is a different size compared to the entrance portal.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void AsymmetricPortalSizeBugTest()
         {
             Scene scene = new Scene();

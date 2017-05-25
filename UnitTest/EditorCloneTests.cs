@@ -1,11 +1,11 @@
 ﻿using EditorLogic;
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class EditorCloneTests
     {
         EditorScene _scene;
@@ -18,7 +18,7 @@ namespace GameTests
             _clipboard = new EditorScene(fakeWindow);
         }
 
-        /*[TestMethod]
+        /*[Test]
         public void CloneNothing()
         {
             Init();
@@ -29,7 +29,7 @@ namespace GameTests
             Assert.IsTrue(_scene.Scene.SceneNodeList.Count == 1);
         }
 
-        [TestMethod]
+        [Test]
         public void CloneEditorEntity()
         {
             Init();
@@ -48,7 +48,7 @@ namespace GameTests
             Assert.IsTrue(clone.Entity.Children.Count == 0);
         }
 
-        [TestMethod]
+        [Test]
         public void CloneEditorPortal()
         {
             Init();

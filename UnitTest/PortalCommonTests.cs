@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using Game.Portals;
 using OpenTK;
@@ -9,10 +9,10 @@ using Game.Physics;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class PortalCommonTests
     {
-        [TestMethod]
+        [Test]
         public void UpdateWorldTransformTest0()
         {
             /*Scene scene = new Scene();

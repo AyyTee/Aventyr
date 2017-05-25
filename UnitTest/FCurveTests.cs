@@ -1,11 +1,11 @@
 ﻿using System;
 using Game;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game.Animation;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class FCurveTests
     {
         public const float ErrorMargin = 0.0001f;
@@ -19,21 +19,21 @@ namespace GameTests
             return fCurve;
         }
 
-        [TestMethod]
+        [Test]
         public void GetLengthTest0()
         {
             Curve fCurve = new Curve();
             Assert.AreEqual(fCurve.Length, 0);
         }
 
-        [TestMethod]
+        [Test]
         public void GetLengthTest1()
         {
             Curve fCurve = CreateFCurve();
             Assert.AreEqual(fCurve.Length, 6f);
         }
 
-        [TestMethod]
+        [Test]
         public void GetValuesTest0()
         {
             Curve fCurve = CreateFCurve();
@@ -44,7 +44,7 @@ namespace GameTests
         /// <summary>
         /// Test that out of range time values return the first or last value for a non-looping FCurve.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void GetValuesTest1()
         {
             Curve fCurve = CreateFCurve();
@@ -53,14 +53,14 @@ namespace GameTests
             Assert.AreEqual(fCurve.GetValue(100f), 10f, ErrorMargin);
         }
 
-        [TestMethod]
+        [Test]
         public void GetValuesTest2()
         {
             Curve fCurve = CreateFCurve();
             Assert.AreEqual(fCurve.GetValue(2f), 2f, ErrorMargin);
         }
 
-        [TestMethod]
+        [Test]
         public void GetValuesTest3()
         {
             Curve fCurve = CreateFCurve();

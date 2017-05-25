@@ -1,24 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using CustomDebugVisualizer;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenTK;
 using Game;
 using Game.Common;
 using Game.Physics;
 using Game.Portals;
+using NUnit.Framework;
 
 namespace VisualizerTests
 {
-    [TestClass]
+    [TestFixture]
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class PolygonViewerTests
     {
         /// <summary>
         /// This is less of a unit test and more of a way to quickly preview the polygon visualizer.
         /// </summary>
-        [TestMethod]
-        [Ignore]
+        [Test]
+        [Explicit]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void ShowVisualizerTest()
         {
             var vectors = new List<List<Vector2d>>
@@ -38,7 +39,8 @@ namespace VisualizerTests
             PolygonViewer.TestShowVisualizer(vectors);
         }
 
-        [TestMethod]
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void Vector2ArrayTest()
         {
             var vectors = new[]
@@ -51,7 +53,8 @@ namespace VisualizerTests
             Assert.IsTrue(PolygonViewer.GetGrid(vectors) != null);
         }
 
-        [TestMethod]
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void Vector2dArrayTest()
         {
             var vectors = new[]
@@ -64,7 +67,8 @@ namespace VisualizerTests
             Assert.IsTrue(PolygonViewer.GetGrid(vectors) != null);
         }
 
-        [TestMethod]
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void Vector2ListTest()
         {
             var vectors = new List<Vector2>
@@ -77,7 +81,8 @@ namespace VisualizerTests
             Assert.IsTrue(PolygonViewer.GetGrid(vectors) != null);
         }
 
-        [TestMethod]
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void Vector2dListTest()
         {
             var vectors = new List<Vector2d>
@@ -90,7 +95,8 @@ namespace VisualizerTests
             Assert.IsTrue(PolygonViewer.GetGrid(vectors) != null);
         }
 
-        [TestMethod]
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void Vector2dListListTest()
         {
             var vectors = new List<List<Vector2d>>
@@ -110,7 +116,8 @@ namespace VisualizerTests
             Assert.IsTrue(PolygonViewer.GetGrid(vectors) != null);
         }
 
-        [TestMethod]
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void Vector2ListListTest()
         {
             var vectors = new List<List<Vector2>>
@@ -130,7 +137,8 @@ namespace VisualizerTests
             Assert.IsTrue(PolygonViewer.GetGrid(vectors) != null);
         }
 
-        [TestMethod]
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void Vector2dListArrayTest()
         {
             var vectors = new[]
@@ -150,7 +158,8 @@ namespace VisualizerTests
             Assert.IsTrue(PolygonViewer.GetGrid(vectors) != null);
         }
 
-        [TestMethod]
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void Vector2ListArrayTest()
         {
             var vectors = new[]
@@ -170,7 +179,8 @@ namespace VisualizerTests
             Assert.IsTrue(PolygonViewer.GetGrid(vectors) != null);
         }
 
-        [TestMethod]
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void SceneTest()
         {
             var scene = new Scene();
@@ -180,7 +190,8 @@ namespace VisualizerTests
             Assert.IsTrue(SceneViewer.GetGrid(scene) != null);
         }
 
-        [TestMethod]
+        [Test]
+        [Apartment(System.Threading.ApartmentState.STA)]
         public void InvalidTypeTest()
         {
             Assert.IsTrue(PolygonViewer.GetGrid(new object()) == null);

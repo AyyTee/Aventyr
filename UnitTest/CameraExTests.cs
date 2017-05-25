@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using Game.Common;
 using Game.Rendering;
@@ -11,7 +11,7 @@ using OpenTK;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class CameraExTests
     {
         /// <summary>
@@ -33,7 +33,7 @@ namespace GameTests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ScreenToWorldTest0()
         {
             var canvasSize = new Vector2i(800, 600);
@@ -51,7 +51,7 @@ namespace GameTests
             Assert.IsTrue(Vector2Ex.AlmostEqual(result, new Vector2(0.5f, -0.5f), 0.00001f));
         }
 
-        [TestMethod]
+        [Test]
         public void ScreenToWorldTest1()
         {
             SimpleCamera2 camera = new SimpleCamera2();

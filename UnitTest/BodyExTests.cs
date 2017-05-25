@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using Game.Common;
 using Game.Physics;
@@ -9,12 +9,12 @@ using static Game.Physics.BodyEx;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class BodyExTests
     {
         public const double Delta = 0.0001f;
 
-        [TestMethod]
+        [Test]
         public void GetLocalMassDataTest0()
         {
             Scene scene = new Scene();
@@ -27,7 +27,7 @@ namespace GameTests
             Assert.AreEqual(new Vector2(), result.Centroid);
         }
 
-        [TestMethod]
+        [Test]
         public void GetLocalMassDataTest1()
         {
             Scene scene = new Scene();
@@ -49,7 +49,7 @@ namespace GameTests
             Assert.IsTrue((new Vector2(-0.5f, 0) - result.Centroid).Length < Delta);
         }
 
-        [TestMethod]
+        [Test]
         public void GetLocalMassDataTest2()
         {
             Scene scene = new Scene();
@@ -78,7 +78,7 @@ namespace GameTests
             Assert.IsTrue((new Vector2() - result.Centroid).Length < Delta);
         }
 
-        [TestMethod]
+        [Test]
         public void GetLocalMassDataTest3()
         {
             Scene scene = new Scene();
@@ -100,7 +100,7 @@ namespace GameTests
             Assert.IsTrue((new Vector2(-0.5f, 0) - result.Centroid).Length < Delta);
         }
 
-        [TestMethod]
+        [Test]
         public void GetLocalMassDataTest4()
         {
             Scene scene = new Scene();

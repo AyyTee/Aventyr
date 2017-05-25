@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +10,11 @@ using OpenTK;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class Vector2ExTests
     {
         #region Project tests
-        [TestMethod]
+        [Test]
         public void ProjectTest0()
         {
             var v0 = new Vector2d(1, 0);
@@ -24,7 +24,7 @@ namespace GameTests
             Assert.IsTrue(result == new Vector2d(1, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void ProjectTest1()
         {
             var v0 = new Vector2d(1, 1);
@@ -34,7 +34,7 @@ namespace GameTests
             Assert.IsTrue(result == new Vector2d(1, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void ProjectTest2()
         {
             var v0 = new Vector2d(1, 1);
@@ -44,7 +44,7 @@ namespace GameTests
             Assert.IsTrue(result == new Vector2d(1, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void ProjectTest3()
         {
             var v0 = new Vector2d(0, 0);
@@ -54,7 +54,7 @@ namespace GameTests
             Assert.IsTrue(result == new Vector2d(0, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void ProjectTest4()
         {
             var v0 = new Vector2d(1, 0);
@@ -66,7 +66,7 @@ namespace GameTests
         #endregion
 
         #region Mirror tests
-        [TestMethod]
+        [Test]
         public void MirrorTest0()
         {
             var v0 = new Vector2d(1, 0);
@@ -76,7 +76,7 @@ namespace GameTests
             Assert.IsTrue(result == v0);
         }
 
-        [TestMethod]
+        [Test]
         public void MirrorTest1()
         {
             var v0 = new Vector2d(1, 1);
@@ -86,7 +86,7 @@ namespace GameTests
             Assert.IsTrue(result == new Vector2d(1, -1));
         }
 
-        [TestMethod]
+        [Test]
         public void MirrorTest2()
         {
             var v0 = new Vector2d(1, 1);
@@ -96,7 +96,7 @@ namespace GameTests
             Assert.IsTrue(result == new Vector2d(1, -1));
         }
 
-        [TestMethod]
+        [Test]
         public void MirrorTest3()
         {
             var v0 = new Vector2d(5, 1);

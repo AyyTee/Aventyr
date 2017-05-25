@@ -2,7 +2,7 @@
 using Game.Portals;
 using EditorLogic;
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OpenTK;
 using System.Collections.Generic;
 using Game.Common;
@@ -12,7 +12,7 @@ using Game.Rendering;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class ClipModelTests
     {
         public Tuple<EditorScene, EditorWall> CreateTestScene()
@@ -32,7 +32,7 @@ namespace GameTests
         /// <summary>
         /// Portals attached to a square should have no clipping regardless of its orientation and position.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void FixturePortal()
         {
             EditorPortal portal0, portal1;

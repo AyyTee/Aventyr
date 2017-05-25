@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game.Portals;
 using Game;
 using OpenTK;
@@ -9,11 +9,11 @@ using Game.Physics;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class SimulationStepTests
     {
         #region Step tests
-        [TestMethod]
+        [Test]
         public void StepTest0()
         {
             Scene scene = new Scene();
@@ -31,7 +31,7 @@ namespace GameTests
         /// <summary>
         /// Portal and portalable shouldn't collide so the result should be the same as in StepTest0.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void StepTest1()
         {
             Scene scene = new Scene();
@@ -49,7 +49,7 @@ namespace GameTests
             Assert.IsTrue(p.GetTransform().AlmostEqual(start.Add(velocity)));
         }
 
-        [TestMethod]
+        [Test]
         public void StepTest2()
         {
             Scene scene = new Scene();
@@ -74,7 +74,7 @@ namespace GameTests
             Assert.IsTrue(p.GetTransform().Position == new Vector2(8, 10));
         }
 
-        [TestMethod]
+        [Test]
         public void StepTest3()
         {
             Scene scene = new Scene();
@@ -104,7 +104,7 @@ namespace GameTests
             Assert.IsTrue(p.GetVelocity().Position == new Vector2(-2, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void StepTest4()
         {
             Scene scene = new Scene();
@@ -133,7 +133,7 @@ namespace GameTests
             Assert.IsTrue(p.GetVelocity().Position == new Vector2(8, 0));
         }
 
-        [TestMethod]
+        [Test]
         public void StepTest5()
         {
             Scene scene = new Scene();
@@ -167,7 +167,7 @@ namespace GameTests
         /// <summary>
         /// A child entity with no offset from its parent should have the same WorldTransform when travelling through a portal.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void StepTest6()
         {
             Scene scene = new Scene();
@@ -201,7 +201,7 @@ namespace GameTests
             Assert.IsTrue(actor.GetTransform().EqualsValue(actor.WorldTransform));
         }
 
-        [TestMethod]
+        [Test]
         public void StepTest7()
         {
             Scene scene = new Scene();
@@ -233,7 +233,7 @@ namespace GameTests
             Assert.IsTrue(actor.GetVelocity().EqualsValue(actor.WorldVelocity));
         }
 
-        [TestMethod]
+        [Test]
         public void StepTest8()
         {
             Scene scene = new Scene();
@@ -269,7 +269,7 @@ namespace GameTests
         /// <summary>
         /// Make sure that an Actor travelling through a portal attached to itself doesn't have the portal detach.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void StepTest9()
         {
             Scene scene = new Scene();
@@ -287,7 +287,7 @@ namespace GameTests
             Assert.IsTrue(PortalCommon.GetWorldTransform(exit).EqualsValue(exit.WorldTransform));
         }
 
-        /*[TestMethod]
+        /*[Test]
         public void StepTest10()
         {
             Scene scene = new Scene();
@@ -314,7 +314,7 @@ namespace GameTests
         /// <summary>
         /// Test that as an object rotates, a child object remains in the same place relative to it and doesn't "drift".
         /// </summary>
-        [TestMethod]
+        [Test]
         public void WorldTransformMatchesLocalTransformTest0()
         {
             Scene scene = new Scene();
@@ -334,7 +334,7 @@ namespace GameTests
             Assert.IsTrue(expectedWorldTransform.AlmostEqual(child.WorldTransform, 0.001f));
         }
 
-        [TestMethod]
+        [Test]
         public void PortalSelfEntryTest0()
         {
             Scene scene = new Scene();

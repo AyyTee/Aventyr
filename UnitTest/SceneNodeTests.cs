@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using Game.Portals;
 using System.Collections.Generic;
@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class SceneNodeTests
     {
         #region SetScene tests
-        /*[TestMethod]
+        /*[Test]
         public void SetSceneTest0()
         {
             Scene source = new Scene();
@@ -27,7 +27,7 @@ namespace GameTests
             Assert.IsTrue(source.Root.Children.Count == 0);
         }
 
-        [TestMethod]
+        [Test]
         public void SetSceneTest1()
         {
             Scene source = new Scene();
@@ -45,7 +45,7 @@ namespace GameTests
             Assert.IsTrue(source.Root.Children.Count == 0);
         }
 
-        [TestMethod]
+        [Test]
         public void SetSceneTest2()
         {
             Scene source = new Scene();
@@ -67,7 +67,7 @@ namespace GameTests
         }*/
         #endregion
         /*#region GetWorldTransform tests
-        [TestMethod]
+        [Test]
         public void GetWorldTransformTest0()
         {
             Scene scene = new Scene();
@@ -89,7 +89,7 @@ namespace GameTests
             p0.GetWorldTransform();
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldTransformTest1()
         {
             Scene scene = new Scene();
@@ -112,7 +112,7 @@ namespace GameTests
             p0.GetWorldTransform();
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldTransformTest2()
         {
             Scene scene = new Scene();
@@ -179,7 +179,7 @@ namespace GameTests
         /// <summary>
         /// If the node has no parent then its world velocity equals its local velocity.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest0()
         {
             Scene scene = new Scene();
@@ -191,7 +191,7 @@ namespace GameTests
         /// <summary>
         /// Changing the node's transform should have no effect on the world velocity.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest1()
         {
             Scene scene = new Scene();
@@ -205,7 +205,7 @@ namespace GameTests
         /// If the node is parented to another node that has default orientation and no velocity 
         /// then the child node's world velocity equals it's local velocity.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest2()
         {
             Scene scene = new Scene();
@@ -223,7 +223,7 @@ namespace GameTests
         /// The child nodes angular velocity should equal it's angular velocity plus parent angular 
         /// velocity if everything else is at default.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest3()
         {
             Scene scene = new Scene();
@@ -240,7 +240,7 @@ namespace GameTests
             Assert.AreEqual(node.GetWorldVelocity().Scale, Vector2.Zero);
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest4()
         {
             Scene scene = new Scene();
@@ -257,7 +257,7 @@ namespace GameTests
             Assert.AreEqual(Vector2.Zero, worldVelocity.Scale);
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest5()
         {
             Scene scene = new Scene();
@@ -274,7 +274,7 @@ namespace GameTests
             Assert.AreEqual(Vector2.Zero, worldVelocity.Scale);
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest6()
         {
             Scene scene = new Scene();
@@ -290,7 +290,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest7()
         {
             Scene scene = new Scene();
@@ -307,7 +307,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest8()
         {
             Scene scene = new Scene();
@@ -324,7 +324,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest9()
         {
             Scene scene = new Scene();
@@ -341,7 +341,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest10()
         {
             Scene scene = new Scene();
@@ -358,7 +358,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest11()
         {
             Scene scene = new Scene();
@@ -375,7 +375,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest12()
         {
             Scene scene = new Scene();
@@ -392,7 +392,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest13()
         {
             Scene scene = new Scene();
@@ -409,7 +409,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest14()
         {
             Scene scene = new Scene();
@@ -427,7 +427,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest15()
         {
             Scene scene = new Scene();
@@ -445,7 +445,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest16()
         {
             Scene scene = new Scene();
@@ -463,7 +463,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest17()
         {
             Scene scene = new Scene();
@@ -481,7 +481,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityTest18()
         {
             Random random = new Random(0);
@@ -503,7 +503,7 @@ namespace GameTests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest0()
         {
             Scene scene = new Scene();
@@ -528,7 +528,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest1()
         {
             Scene scene = new Scene();
@@ -555,7 +555,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest2()
         {
             Scene scene = new Scene();
@@ -582,7 +582,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest3()
         {
             Scene scene = new Scene();
@@ -608,7 +608,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest4()
         {
             Scene scene = new Scene();
@@ -633,7 +633,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.05f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest5()
         {
             Scene scene = new Scene();
@@ -659,7 +659,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.06f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest6()
         {
             Scene scene = new Scene();
@@ -685,7 +685,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.06f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest7()
         {
             Scene scene = new Scene();
@@ -712,7 +712,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.06f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest8()
         {
             Scene scene = new Scene();
@@ -740,7 +740,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.06f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest9()
         {
             Scene scene = new Scene();
@@ -768,7 +768,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.06f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest10()
         {
             Scene scene = new Scene();
@@ -796,7 +796,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest11()
         {
             Scene scene = new Scene();
@@ -824,7 +824,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest12()
         {
             Scene scene = new Scene();
@@ -852,7 +852,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest13()
         {
             Scene scene = new Scene();
@@ -880,7 +880,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest14()
         {
             Scene scene = new Scene();
@@ -908,7 +908,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest15()
         {
             Scene scene = new Scene();
@@ -936,7 +936,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest16()
         {
             Scene scene = new Scene();
@@ -975,7 +975,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityWithPortalTest17()
         {
             Scene scene = new Scene();
@@ -1014,7 +1014,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityFixturePortalTest0()
         {
             Scene scene = new Scene();
@@ -1033,7 +1033,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityFixturePortalTest1()
         {
             Scene scene = new Scene();
@@ -1058,7 +1058,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityFixturePortalTest1Temp()
         {
             Scene scene = new Scene();
@@ -1083,7 +1083,7 @@ namespace GameTests
             Assert.IsTrue(result.AlmostEqual(expected, 0.1f));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldVelocityFixturePortalTest2()
         {
             Scene scene = new Scene();
@@ -1115,7 +1115,7 @@ namespace GameTests
         #endregion
 
         #region TransformUpdate tests
-        [TestMethod]
+        [Test]
         public void TransformUpdateTest0()
         {
             Scene scene = new Scene();
@@ -1138,7 +1138,7 @@ namespace GameTests
             Assert.IsTrue(child.WorldTransformPrevious.AlmostEqual(begin.Transform(t)));
         }
 
-        [TestMethod]
+        [Test]
         public void TransformUpdateTest1()
         {
             Scene scene = new Scene();
@@ -1160,7 +1160,7 @@ namespace GameTests
             Assert.IsTrue(child.WorldTransformPrevious.AlmostEqual(moved.Transform(t)));
         }
 
-        [TestMethod]
+        [Test]
         public void TransformUpdateTest2()
         {
             Scene scene = new Scene();
@@ -1181,7 +1181,7 @@ namespace GameTests
             Assert.IsTrue(child.WorldTransformPrevious.AlmostEqual(moved.Transform(t)));
         }
 
-        [TestMethod]
+        [Test]
         public void TransformUpdateTest3()
         {
             Scene scene = new Scene();

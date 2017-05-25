@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using Game.Common;
 using OpenTK;
@@ -7,12 +7,12 @@ using Game.Portals;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class PortalTests
     {
         const double PathIntersectionDelta = 0.0001;
 
-        [TestMethod]
+        [Test]
         public void GetPortalTransformTest0()
         {
             Scene scene = new Scene();
@@ -28,7 +28,7 @@ namespace GameTests
             Assert.IsTrue(Matrix4Ex.AlmostEqual(result, expected));
         }
 
-        [TestMethod]
+        [Test]
         public void GetPortalTransformTest1()
         {
             Scene scene = new Scene();
@@ -44,7 +44,7 @@ namespace GameTests
             Assert.IsTrue(Matrix4Ex.AlmostEqual(result, expected));
         }
 
-        [TestMethod]
+        [Test]
         public void GetPortalTransformTest2()
         {
             Scene scene = new Scene();
@@ -59,7 +59,7 @@ namespace GameTests
         }
 
         #region PathIntersections tests
-        [TestMethod]
+        [Test]
         public void PathIntersectionsTest0()
         {
             Scene scene = new Scene();
@@ -81,7 +81,7 @@ namespace GameTests
             Assert.AreEqual(1.0 / 3, intersections[0].Last, PathIntersectionDelta);
         }
 
-        [TestMethod]
+        [Test]
         public void PathIntersectionsTest1()
         {
             Scene scene = new Scene();
@@ -117,7 +117,7 @@ namespace GameTests
             Assert.AreEqual(2.0 / 3, intersections[1].Last, PathIntersectionDelta);
         }
 
-        [TestMethod]
+        [Test]
         public void PathIntersectionsTest2()
         {
             Scene scene = new Scene();
@@ -155,7 +155,7 @@ namespace GameTests
         #endregion
 
         #region Enter tests
-        [TestMethod]
+        [Test]
         public void EnterTest0()
         {
             Scene scene = new Scene();
@@ -182,7 +182,7 @@ namespace GameTests
 
         #region SetLinked tests
 
-        [TestMethod]
+        [Test]
         public void SetLinkedTest0()
         {
             Scene scene = new Scene();
@@ -194,7 +194,7 @@ namespace GameTests
             Assert.IsTrue(p0.Linked == p1 && p1.Linked == p0);
         }
 
-        [TestMethod]
+        [Test]
         public void SetLinkedTest1()
         {
             Scene scene = new Scene();
@@ -205,7 +205,7 @@ namespace GameTests
             Assert.IsTrue(p0.Linked == null);
         }
 
-        [TestMethod]
+        [Test]
         public void SetLinkedTest2()
         {
             Scene scene = new Scene();
@@ -216,7 +216,7 @@ namespace GameTests
             Assert.IsTrue(p0.Linked == null);
         }
 
-        [TestMethod]
+        [Test]
         public void SetLinkedTest3()
         {
             Scene scene = new Scene();
@@ -229,7 +229,7 @@ namespace GameTests
             Assert.IsTrue(p0.Linked == null && p1.Linked == null);
         }
 
-        [TestMethod]
+        [Test]
         public void SetLinkedTest4()
         {
             Scene scene = new Scene();

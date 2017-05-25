@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
 using Xna = Microsoft.Xna.Framework;
@@ -12,7 +12,7 @@ using Game.Common;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class PortalJointTests
     {
         public const double Delta = 0.0001f;
@@ -26,7 +26,7 @@ namespace GameTests
             Assert.AreEqual(exitBody.AngularVelocity, enterBody.AngularVelocity, Delta);
         }
 
-        [TestMethod]
+        [Test]
         public void PortalJointTest0()
         {
             Scene scene = new Scene();
@@ -50,7 +50,7 @@ namespace GameTests
             AssertPortalJoint(body0, body1, portal0);
         }
 
-        [TestMethod]
+        [Test]
         public void PortalJointTest1()
         {
             Scene scene = new Scene();
@@ -74,7 +74,7 @@ namespace GameTests
             AssertPortalJoint(body0, body1, portal0);
         }
 
-        [TestMethod]
+        [Test]
         public void PortalJointTest2()
         {
             Scene scene = new Scene();
@@ -98,7 +98,7 @@ namespace GameTests
             AssertPortalJoint(body0, body1, portal0);
         }
 
-        [TestMethod]
+        [Test]
         public void PortalJointTest3()
         {
             Scene scene = new Scene();
@@ -122,7 +122,7 @@ namespace GameTests
             AssertPortalJoint(body0, body1, portal0);
         }
 
-        [TestMethod]
+        [Test]
         public void PortalJointTest4()
         {
             Scene scene = new Scene();
@@ -146,7 +146,7 @@ namespace GameTests
             AssertPortalJoint(body0, body1, portal0);
         }
 
-        [TestMethod]
+        [Test]
         public void ChangeCentroidTest0()
         {
             Scene scene = new Scene();

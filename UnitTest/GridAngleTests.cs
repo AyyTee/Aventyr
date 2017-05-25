@@ -1,5 +1,5 @@
 ﻿using Game.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -10,10 +10,10 @@ using TimeLoopInc;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class GridAngleTests
     {
-        [TestMethod]
+        [Test]
         public void LeftTest()
         {
             var v = MathEx.AngleToVector(GridAngle.Left.Radians);

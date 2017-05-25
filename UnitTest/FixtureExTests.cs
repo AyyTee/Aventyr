@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using OpenTK;
 using FarseerPhysics.Collision.Shapes;
@@ -9,10 +9,10 @@ using Game.Portals;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class FixtureExTests
     {
-        [TestMethod]
+        [Test]
         public void GetFixtureEdgeCoordTest0()
         {
             Scene scene = new Scene();
@@ -41,7 +41,7 @@ namespace GameTests
             };
         }
 
-        [TestMethod]
+        [Test]
         public void GetFixtureEdgeCoordTest1()
         {
             Scene scene = new Scene();
@@ -54,7 +54,7 @@ namespace GameTests
             Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
         }
 
-        [TestMethod]
+        [Test]
         public void GetFixtureEdgeCoordTest2()
         {
             Scene scene = new Scene();
@@ -74,7 +74,7 @@ namespace GameTests
             Assert.IsTrue(expected.AlmostEqual(result));
         }
 
-        [TestMethod]
+        [Test]
         public void GetFixtureEdgeCoordTest3()
         {
             Scene scene = new Scene();
@@ -87,7 +87,7 @@ namespace GameTests
             Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
         }
 
-        [TestMethod]
+        [Test]
         public void GetFixtureEdgeCoordTest4()
         {
             Scene scene = new Scene();
@@ -100,7 +100,7 @@ namespace GameTests
             Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldPointsTest0()
         {
             Scene scene = new Scene();
@@ -117,7 +117,7 @@ namespace GameTests
             Assert.IsTrue(MathEx.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldPointsTest1()
         {
             Scene scene = new Scene();
@@ -136,7 +136,7 @@ namespace GameTests
             Assert.IsTrue(MathEx.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldPointsTest2()
         {
             Scene scene = new Scene();
@@ -155,7 +155,7 @@ namespace GameTests
             Assert.IsTrue(MathEx.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
         }
 
-        [TestMethod]
+        [Test]
         public void GetWorldPointsTest3()
         {
             Scene scene = new Scene();

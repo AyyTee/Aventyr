@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using TankGame.Network;
 using System.Collections.Generic;
 using Lidgren.Network;
@@ -12,10 +12,10 @@ using Game.Portals;
 using TankGameTestFramework;
 using OpenTK;
 
-namespace TankGameTests
+namespace GameTests
 {
-    [TestClass]
-    public class UnitTest1
+    [TestFixture]
+    public class TankGameTests
     {
         Client _client;
         FakeNetClient _netClient;
@@ -26,7 +26,7 @@ namespace TankGameTests
 
         FakeNetPeer[] _netPeers => new FakeNetPeer[] { _netClient, _netServer };
 
-        [TestInitialize]
+        [SetUp]
         public void Initialize()
         {
             NetTime.AutomaticTimeKeeping = false;
@@ -52,13 +52,13 @@ namespace TankGameTests
             });
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             NetTime.SetTime(0);
         }
 
-        [TestMethod]
+        [Test]
         public void ClientTankFiresOnce()
         {
             for (int i = 0; i < 60; i++)
@@ -97,7 +97,7 @@ namespace TankGameTests
         /// <summary>
         /// See if the fake net implementation can pass messages.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void ServerRecieveClient()
         {
             _client.SendMessage(new MessageToServer { Input = new TankInput { FireGun = true } });
@@ -108,7 +108,7 @@ namespace TankGameTests
             Assert.IsTrue(clientMessage.Input.FireGun);
         }
 
-        [TestMethod]
+        [Test]
         public void ClientRecieveServer()
         {
             _server.SendMessage(new MessageToClient { SceneTime = 1 });
@@ -117,7 +117,7 @@ namespace TankGameTests
             Assert.IsTrue(serverMessage.SceneTime == 1);
         }
 
-        [TestMethod]
+        [Test]
         public void ServerRecieveClientWithLatency()
         {
             FakeNetPeer reader = _netClient;
@@ -135,7 +135,7 @@ namespace TankGameTests
             Assert.IsTrue(reader.ReadMessage() != null);
         }
 
-        [TestMethod]
+        [Test]
         public void ClientRecieveServerWithLatency()
         {
             FakeNetPeer reader = _netServer;
@@ -153,7 +153,7 @@ namespace TankGameTests
             Assert.IsTrue(reader.ReadMessage() != null);
         }
 
-        [TestMethod]
+        [Test]
         public void ClientTankDoesNotJitter()
         {
             double timeDelta = 1 / 60.0;

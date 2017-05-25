@@ -1,15 +1,15 @@
 ﻿using Game;
 using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System.Collections.Generic;
 using Game.Serialization;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class DeepCloneTests
     {
-        [TestMethod]
+        [Test]
         public void CloneTest0()
         {
             Scene scene = new Scene();
@@ -24,7 +24,7 @@ namespace GameTests
             Assert.IsTrue(scene.SceneObjects.Count == 2);
         }
 
-        [TestMethod]
+        [Test]
         public void CloneTest1()
         {
             Scene scene = new Scene();

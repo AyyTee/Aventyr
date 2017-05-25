@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using OpenTK;
 using FarseerPhysics.Collision.Shapes;
@@ -12,12 +12,12 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class ActorTests
     {
         public const float EqualityEpsilon = 0.0001f;
 
-        [TestMethod]
+        [Test]
         public void SetTransformTest0()
         {
             Scene scene = new Scene();
@@ -33,7 +33,7 @@ namespace GameTests
             Assert.IsTrue(actor.GetTransform().EqualsValue(t));
         }
 
-        [TestMethod]
+        [Test]
         public void SetTransformTest1()
         {
             Scene scene = new Scene();
@@ -57,7 +57,7 @@ namespace GameTests
             }
         }
 
-        [TestMethod]
+        [Test]
         public void SetTransformTest2()
         {
         }
@@ -65,7 +65,7 @@ namespace GameTests
         /// <summary>
         /// If local vertices are interior then the world verticies should also be interior even when the actor is mirrored.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void GetWorldVerticesTest0()
         {
             Vector2[] vertices = new Vector2[]
@@ -93,7 +93,7 @@ namespace GameTests
         }
 
         #region GetCentroid tests
-        [TestMethod]
+        [Test]
         public void GetCentroidTest0()
         {
             Scene scene = new Scene();
@@ -109,7 +109,7 @@ namespace GameTests
             Assert.IsTrue(centroid == new Vector2());
         }
 
-        [TestMethod]
+        [Test]
         public void GetCentroidTest1()
         {
             Scene scene = new Scene();
@@ -134,7 +134,7 @@ namespace GameTests
             Assert.IsTrue((centroid - new Vector2()).Length < 0.0001f);
         }
 
-        [TestMethod]
+        [Test]
         public void GetCentroidTest2()
         {
             Scene scene = new Scene();
@@ -159,7 +159,7 @@ namespace GameTests
             Assert.IsTrue((centroid - new Vector2(0, 1.6959f)).Length < 0.0001f);
         }
 
-        [TestMethod]
+        [Test]
         public void GetCentroidTest3()
         {
             Scene scene = new Scene();
@@ -184,7 +184,7 @@ namespace GameTests
             Assert.IsTrue((centroid - new Vector2(0, 1.6959f)).Length < 0.0001f);
         }
 
-        [TestMethod]
+        [Test]
         public void GetCentroidTest4()
         {
             Scene scene = new Scene();
@@ -226,7 +226,7 @@ namespace GameTests
         /// <summary>
         /// Fixture contour and world vertices should be equal if rotation and position are 0.
         /// </summary>
-        [TestMethod]
+        [Test]
         public void GetFixtureContourTest0()
         {
             Scene scene = new Scene();
@@ -234,7 +234,7 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
-        [TestMethod]
+        [Test]
         public void GetFixtureContourTest1()
         {
             Scene scene = new Scene();
@@ -243,7 +243,7 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
-        [TestMethod]
+        [Test]
         public void GetFixtureContourTest2()
         {
             Scene scene = new Scene();
@@ -252,7 +252,7 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
-        [TestMethod]
+        [Test]
         public void GetFixtureContourTest3()
         {
             Scene scene = new Scene();
@@ -261,7 +261,7 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
-        [TestMethod]
+        [Test]
         public void GetFixtureContourTest4()
         {
             Scene scene = new Scene();

@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using Game;
 using OpenTK;
 using FarseerPhysics;
@@ -8,11 +8,11 @@ using Game.Portals;
 
 namespace GameTests
 {
-    [TestClass]
+    [TestFixture]
     public class LineTests
     {
         #region Constructor tests
-        [TestMethod]
+        [Test]
         public void ConstructorTest0()
         {
             LineF line = new LineF();
@@ -21,92 +21,92 @@ namespace GameTests
         }
         #endregion
         #region GetSideOf tests
-        [TestMethod]
+        [Test]
         public void GetSideOfTest0()
         {
             LineF line = new LineF(new Vector2(0, 0), new Vector2(1, 0));
             Assert.IsFalse(line.GetSideOf(new Vector2(0, 0)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest1()
         {
             LineF line = new LineF(new Vector2(0, 0), new Vector2(1, 0));
             Assert.IsTrue(line.GetSideOf(new Vector2(0, 100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest2()
         {
             LineF line = new LineF(new Vector2(0, 0), new Vector2(1, 0));
             Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest3()
         {
             LineF line = new LineF(new Vector2(0, 0), new Vector2(0, 1));
             Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest4()
         {
             LineF line = new LineF(new Vector2(0, 0), new Vector2(0, 0));
             Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest5()
         {
             LineF line = new LineF(new Vector2(0, 0), new Vector2(0, 0));
             Assert.IsFalse(line.GetSideOf(new Vector2(0, 100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest6()
         {
             LineF line = new LineF(new Vector2(0, 0), new Vector2(1, 1));
             Assert.IsTrue(line.GetSideOf(new Vector2(0.5f, 100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest7()
         {
             LineF line = new LineF(new Vector2(0, 0), new Vector2(-1, -1));
             Assert.IsFalse(line.GetSideOf(new Vector2(0, 100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest8()
         {
             LineF line = new LineF(new Vector2(1, -1), new Vector2(0, 0));
             Assert.IsFalse(line.GetSideOf(new Vector2(0, 100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest9()
         {
             LineF line = new LineF(new Vector2(-1, 1), new Vector2(0, 0));
             Assert.IsTrue(line.GetSideOf(new Vector2(0, 100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest10()
         {
             LineF line = new LineF(new Vector2(-1, 1), new Vector2(0, 0));
             Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest11()
         {
             LineF line = new LineF(new Vector2(-1, 1), new Vector2(0, 0));
             Assert.IsFalse(line.GetSideOf(new Vector2(0, -100)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest12()
         {
             LineF line = new LineF(new Vector2(-5, 20), new Vector2(20, 0));
             Assert.IsFalse(line.GetSideOf(new Vector2(0, 0)) == Side.Left);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest13()
         {
             LineF line = new LineF(new Vector2(5, 20), new Vector2(10, 25));
             LineF lineCheck = new LineF(new Vector2(-25, 10), new Vector2(25, 10));
             Assert.IsTrue(line.GetSideOf(lineCheck) == Side.Neither);
         }
-        [TestMethod]
+        [Test]
         public void GetSideOfTest14()
         {
             float rot = 0;
@@ -121,14 +121,14 @@ namespace GameTests
         }
         #endregion
         #region ArrayAccessor tests
-        [TestMethod]
+        [Test]
         public void ArrayAccessorTest0()
         {
             LineF line = new LineF(new Vector2(1f, 5f), new Vector2(100.1f, 2f));
             Assert.IsTrue(line[0] == new Vector2(1f, 5f));
             Assert.IsTrue(line[1] == new Vector2(100.1f, 2f));
         }
-        [TestMethod]
+        [Test]
         public void ArrayAccessorTest1()
         {
             LineF line = new LineF(new Vector2(1f, 5f), new Vector2(100.1f, 2f));
@@ -139,7 +139,7 @@ namespace GameTests
         }
         #endregion
         #region IsInsideFOV test
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest0()
         {
             for (double i = 0; i < Math.PI * 2; i += Math.PI / 20)
@@ -156,7 +156,7 @@ namespace GameTests
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest1()
         {
             float x = 100;
@@ -176,7 +176,7 @@ namespace GameTests
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest2()
         {
             float x = 0;
@@ -196,7 +196,7 @@ namespace GameTests
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest3()
         {
             float x = 0;
@@ -217,7 +217,7 @@ namespace GameTests
                 Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest4()
         {
             float x = 0;
@@ -238,7 +238,7 @@ namespace GameTests
                 Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest5()
         {
             float x = 0;
@@ -258,7 +258,7 @@ namespace GameTests
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest6()
         {
             float x = 0;
@@ -278,7 +278,7 @@ namespace GameTests
                 Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest7()
         {
             float x = 0;
@@ -298,7 +298,7 @@ namespace GameTests
                 Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest8()
         {
             float x = -2;
@@ -311,7 +311,7 @@ namespace GameTests
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookLine));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest9()
         {
             float x = -2;
@@ -324,7 +324,7 @@ namespace GameTests
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookLine));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest10()
         {
             float x = -2;
@@ -337,7 +337,7 @@ namespace GameTests
                 Assert.IsFalse(lookLine.IsInsideFov(viewPoint, line));
             }
         }
-        [TestMethod]
+        [Test]
         public void IsInsideFovTest11()
         {
             float x = -2;
@@ -352,19 +352,19 @@ namespace GameTests
         }
         #endregion
         #region NearestT tests
-        [TestMethod]
+        [Test]
         public void NearestTTest0()
         {
             LineF line = new LineF(new Vector2(), new Vector2(1, 0));
             Assert.IsTrue(line.NearestT(new Vector2(1, 5), false) == 1);
         }
-        [TestMethod]
+        [Test]
         public void NearestTTest1()
         {
             LineF line = new LineF(new Vector2(), new Vector2(0, 1));
             Assert.IsTrue(line.NearestT(new Vector2(-4, 2), false) == 2);
         }
-        [TestMethod]
+        [Test]
         public void NearestTTest2()
         {
             LineF line = new LineF(new Vector2(3.3f, -4.9f), new Vector2(-5.3f, -6.1f));
@@ -372,7 +372,7 @@ namespace GameTests
         }
         #endregion
         #region Intersect tests
-        [TestMethod]
+        [Test]
         public void IntersectTest0()
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, 1f));
@@ -383,7 +383,7 @@ namespace GameTests
             Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
-        [TestMethod]
+        [Test]
         public void IntersectTest1()
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, 1f));
@@ -394,7 +394,7 @@ namespace GameTests
             Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
-        [TestMethod]
+        [Test]
         public void IntersectTest2()
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, -1f));
@@ -405,7 +405,7 @@ namespace GameTests
             Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
-        [TestMethod]
+        [Test]
         public void IntersectTest3()
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, -1000000f));
@@ -416,7 +416,7 @@ namespace GameTests
             Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
-        [TestMethod]
+        [Test]
         public void IntersectTest4()
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, -1f));
@@ -427,7 +427,7 @@ namespace GameTests
             Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
-        [TestMethod]
+        [Test]
         public void IntersectTest5()
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, -1000000f));
@@ -438,7 +438,7 @@ namespace GameTests
             Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
-        [TestMethod]
+        [Test]
         public void IntersectTest6()
         {
             LineF line0 = new LineF(new Vector2(1f, 1f), new Vector2(2f, 2f));
@@ -449,7 +449,7 @@ namespace GameTests
             Assert.IsTrue(intersect.AlmostEqual(comparison));
         }
 
-        [TestMethod]
+        [Test]
         public void IntersectTest7()
         {
             LineF line0 = new LineF(new Vector2(1f, 1f), new Vector2(2f, 2f));
@@ -459,7 +459,7 @@ namespace GameTests
             Assert.IsTrue(intersect == null);
         }
 
-        [TestMethod]
+        [Test]
         public void IntersectTest8()
         {
             LineF line0 = new LineF(new Vector2(1f, 1f), new Vector2(2f, 2f));
@@ -471,7 +471,7 @@ namespace GameTests
         }
         #endregion
         #region IntersectParametric tests
-        /*[TestMethod]
+        /*[Test]
         public void IntersectParametricTest0()
         {
             Line line = new Line(new Vector2(), new Vector2(0, 1));
@@ -481,7 +481,7 @@ namespace GameTests
             Assert.IsTrue(intersect.Exists);
             Assert.IsTrue(intersect.TFirst >= 0 && intersect.TFirst <= 1);
         }
-        [TestMethod]
+        [Test]
         public void IntersectParametricTest1()
         {
             Line line = new Line(new Vector2(), new Vector2(0, 1));
@@ -491,7 +491,7 @@ namespace GameTests
             Assert.IsTrue(intersect.Exists);
             Assert.IsTrue(intersect.TFirst >= 0 && intersect.TFirst <= 1);
         }
-        [TestMethod]
+        [Test]
         public void IntersectParametricTest2()
         {
             Line line = new Line(new Vector2(), new Vector2(0, 1));
@@ -501,7 +501,7 @@ namespace GameTests
             Assert.IsTrue(intersect.Exists);
             Assert.IsTrue(intersect.TFirst >= 0 && intersect.TFirst <= 1);
         }
-        [TestMethod]
+        [Test]
         public void IntersectParametricTest3()
         {
             Line line = new Line(new Vector2(), new Vector2(0, 1));
