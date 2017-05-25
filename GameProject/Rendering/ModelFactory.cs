@@ -365,7 +365,7 @@ namespace Game.Rendering
                     new Vector2(arrowThickness, length - arrowLength),
                 };
             }
-            polygon = Vector2Ext.Transform(polygon, Matrix4.CreateRotationZ((float)-(MathExt.AngleVector(pointAt) + Math.PI / 2)));
+            polygon = Vector2Ext.Transform(polygon, Matrix4.CreateRotationZ((float)-(MathExt.VectorToAngle(pointAt) + Math.PI / 2)));
             AddPolygon(mesh, polygon, origin);
         }
 

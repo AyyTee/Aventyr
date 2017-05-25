@@ -279,8 +279,8 @@ namespace EditorLogic.Tools
             else if (_mode == Mode.Rotate)
             {
                 double angle, anglePrev;
-                angle = MathExt.AngleVector(mousePos - _translator.GetTransform().Position);
-                anglePrev = MathExt.AngleVector(_mousePosPrev - _translator.GetTransform().Position);
+                angle = MathExt.VectorToAngle(mousePos - _translator.GetTransform().Position);
+                anglePrev = MathExt.VectorToAngle(_mousePosPrev - _translator.GetTransform().Position);
                 
                 if (Input.ButtonDown(KeyBoth.Control))
                 {

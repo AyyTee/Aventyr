@@ -664,5 +664,33 @@ namespace GameTests
             Assert.AreEqual(0.1f, result[0].AcrossProportion, 0.00001);*/
         }
         #endregion
+
+        [TestMethod]
+        public void AngleVectorTest0()
+        {
+            var result = MathExt.VectorToAngle(new Vector2d(1, 0));
+            Assert.AreEqual(0, result);
+        }
+
+        [TestMethod]
+        public void AngleVectorTest1()
+        {
+            var result = MathExt.VectorToAngle(new Vector2d(0, -1));
+            Assert.AreEqual(Math.PI / 2, result, 0.0000001);
+        }
+
+        [TestMethod]
+        public void VectorToAngleTest0()
+        {
+            var result = MathExt.AngleToVector(0);
+            Assert.AreEqual(new Vector2d(1, 0), result);
+        }
+
+        [TestMethod]
+        public void VectorToAngleTest1()
+        {
+            var result = MathExt.AngleToVector(Math.PI / 2);
+            Assert.IsTrue((new Vector2d(0, -1) - result).Length < 0.00001);
+        }
     }
 }

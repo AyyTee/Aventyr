@@ -26,7 +26,6 @@ namespace Game.Common
             }
         }
 
-        #region Constructors
         public Line()
         {
         }
@@ -44,10 +43,9 @@ namespace Game.Common
         }
 
         public Line(Vector2d start, double direction, double length)
-            : this(start, start + new Vector2d(Math.Cos(direction), Math.Sin(direction)) * length)
+            : this(start, start + MathExt.AngleToVector(direction) * length)
         {
         }
-        #endregion
 
         /// <summary>
         /// Returns whether a point is left or right of this line.
@@ -100,10 +98,10 @@ namespace Game.Common
                 return false;
             }
             //Check if the lookPoint is within the Fov angles.
-            double angle0 = MathExt.AngleVector(_vertices[0] - viewPoint);
-            double angle1 = MathExt.AngleVector(_vertices[1] - viewPoint);
+            double angle0 = MathExt.VectorToAngle(_vertices[0] - viewPoint);
+            double angle1 = MathExt.VectorToAngle(_vertices[1] - viewPoint);
             double angleDiff = MathExt.AngleDiff(angle0, angle1);
-            double angleLook = MathExt.AngleVector(v - viewPoint);
+            double angleLook = MathExt.VectorToAngle(v - viewPoint);
             double angleLookDiff = MathExt.AngleDiff(angle0, angleLook);
             return Math.Abs(angleDiff) >= Math.Abs(angleLookDiff) && Math.Sign(angleDiff) == Math.Sign(angleLookDiff);
         }
@@ -132,12 +130,12 @@ namespace Game.Common
             }
 
             //Check if the lookPoint is within the Fov angles.
-            double angle0 = MathExt.AngleVector(_vertices[0] - viewPoint);
-            double angle1 = MathExt.AngleVector(_vertices[1] - viewPoint);
+            double angle0 = MathExt.VectorToAngle(_vertices[0] - viewPoint);
+            double angle1 = MathExt.VectorToAngle(_vertices[1] - viewPoint);
             double angleDiff = MathExt.AngleDiff(angle0, angle1);
-            double angleLook = MathExt.AngleVector(line[0] - viewPoint);
+            double angleLook = MathExt.VectorToAngle(line[0] - viewPoint);
             double angleLookDiff = MathExt.AngleDiff(angle0, angleLook);
-            double angleLook2 = MathExt.AngleVector(line[1] - viewPoint);
+            double angleLook2 = MathExt.VectorToAngle(line[1] - viewPoint);
             double angleLookDiff2 = MathExt.AngleDiff(angle0, angleLook2);
             //check if the first point is in the Fov
             if (Math.Abs(angleDiff) >= Math.Abs(angleLookDiff) && Math.Sign(angleDiff) == Math.Sign(angleLookDiff))
@@ -211,7 +209,7 @@ namespace Game.Common
 
         public double Angle()
         {
-            return MathExt.AngleLine(_vertices[0], _vertices[1]);
+            return MathExt.LineToAngle(_vertices[0], _vertices[1]);
         }
 
         public Line ShallowClone()

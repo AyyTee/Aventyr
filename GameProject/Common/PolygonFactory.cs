@@ -183,10 +183,7 @@ namespace Game.Common
         /// <summary>
         /// Creates a square centered at the origin with normals facing outward.
         /// </summary>
-        public static Vector2[] CreateRectangle()
-        {
-            return CreateRectangle(1, 1);
-        }
+        public static Vector2[] CreateRectangle() => CreateRectangle(1, 1);
 
         /// <summary>
         /// Creates a rectangle centered at the origin with normals facing outward.
@@ -218,10 +215,7 @@ namespace Game.Common
             for (int i = 0; i < sides; i++)
             {
                 double angle = (MathExt.Tau * i) / sides;
-                float x, y;
-                x = (float)Math.Cos(angle);
-                y = (float)Math.Sin(angle);
-                vertices[i] = new Vector2(x, y) * scale + origin;
+                vertices[i] = (Vector2)MathExt.AngleToVector(-angle) * scale + origin;
             }
             Debug.Assert(PolygonExt.IsInterior(vertices));
             return vertices;

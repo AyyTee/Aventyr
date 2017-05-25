@@ -268,8 +268,8 @@ namespace Game.Portals
             verts[verts.Length - 1] = (verts[0] - viewPoint).Normalized() * distance + viewPoint;
             verts[2] = (verts[1] - viewPoint).Normalized() * distance + viewPoint;
             //find the angle between the edges of the Fov
-            double angle0 = MathExt.AngleLine(verts[verts.Length - 1], viewPoint);
-            double angle1 = MathExt.AngleLine(verts[2], viewPoint);
+            double angle0 = MathExt.LineToAngle(verts[verts.Length - 1], viewPoint);
+            double angle1 = MathExt.LineToAngle(verts[2], viewPoint);
             double diff = MathExt.AngleDiff(angle0, angle1);
             Debug.Assert(diff <= Math.PI + double.Epsilon && diff >= -Math.PI);
             //handle case where lines overlap eachother

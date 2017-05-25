@@ -22,7 +22,7 @@ namespace Game.Common
                 new Vector2(0, 0)
             };
             mirrorTest = Vector2Ext.Transform(mirrorTest, matrix);
-            return MathExt.AngleDiff(MathExt.AngleVector(mirrorTest[0] - mirrorTest[2]), MathExt.AngleVector(mirrorTest[1] - mirrorTest[2])) > 0;
+            return MathExt.AngleDiff(MathExt.VectorToAngle(mirrorTest[0] - mirrorTest[2]), MathExt.VectorToAngle(mirrorTest[1] - mirrorTest[2])) > 0;
         }
 
         public static bool AlmostEqual(Matrix4 matrix0, Matrix4 matrix1)

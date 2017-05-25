@@ -15,7 +15,7 @@ namespace Game.Common
             Transform2 transform = new Transform2();
             LineF line = GetEdge(vertices, coord);
             transform.Position = line.Lerp(coord.EdgeT);
-            transform.Rotation = -(float)MathExt.AngleVector(GetEdge(vertices, coord).GetNormal());
+            transform.Rotation = -(float)MathExt.VectorToAngle(GetEdge(vertices, coord).GetNormal());
             return transform;
         }
 
@@ -210,8 +210,8 @@ namespace Game.Common
 
         static bool IsReflex(Vector2 prev, Vector2 current, Vector2 next, bool isClockwise)
         {
-            double angleNext = MathExt.AngleVector(next - current);
-            double anglePrev = MathExt.AngleVector(prev - current);
+            double angleNext = MathExt.VectorToAngle(next - current);
+            double anglePrev = MathExt.VectorToAngle(prev - current);
             double angleDiff = MathExt.AngleDiff(anglePrev, angleNext);
             return Math.Sign(angleDiff) < 0 != isClockwise;
         }

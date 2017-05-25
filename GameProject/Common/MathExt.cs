@@ -647,11 +647,11 @@ namespace Game.Common
         }
         #endregion
 
-        public static double AngleLine(Vector2d v0, Vector2d v1) => AngleVector(v0 - v1);
+        public static double LineToAngle(Vector2d v0, Vector2d v1) => VectorToAngle(v0 - v1);
         
-        public static double AngleLine(Vector2 v0, Vector2 v1) => AngleLine(new Vector2d(v0.X, v0.Y), new Vector2d(v1.X, v1.Y));
+        public static double LineToAngle(Vector2 v0, Vector2 v1) => LineToAngle(new Vector2d(v0.X, v0.Y), new Vector2d(v1.X, v1.Y));
 
-        public static double AngleVector(Vector2d v0)
+        public static double VectorToAngle(Vector2d v0)
         {
             //Debug.Assert(V0 == Vector2d.Zero, "Vector must have non-zero length.");
             double val = Math.Atan2(v0.X, v0.Y);
@@ -663,13 +663,23 @@ namespace Game.Common
             return (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
         }
 
-        public static double AngleVector(Vector2 v0) => AngleVector(new Vector2d(v0.X, v0.Y));
+        public static double VectorToAngle(Vector2 v0) => VectorToAngle(new Vector2d(v0.X, v0.Y));
 
-        public static double AngleDiff(Vector2 v0, Vector2 v1) => AngleDiff(AngleVector(v0), AngleVector(v1));
+        public static double AngleDiff(Vector2 v0, Vector2 v1) => AngleDiff(VectorToAngle(v0), VectorToAngle(v1));
 
         public static double AngleDiff(double angle0, double angle1)
         {
             return ((angle1 - angle0) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
+        }
+
+        public static Vector2 AngleToVector(float angle)
+        {
+            return new Vector2((float)Math.Cos(angle), (float)-Math.Sin(angle));
+        }
+
+        public static Vector2d AngleToVector(double angle)
+        {
+            return new Vector2d(Math.Cos(angle), -Math.Sin(angle));
         }
 
         /// <summary>
