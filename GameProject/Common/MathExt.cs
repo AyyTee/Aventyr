@@ -647,7 +647,7 @@ namespace Game.Common
         }
         #endregion
 
-        public static double LineToAngle(Vector2d v0, Vector2d v1) => VectorToAngle(v0 - v1);
+        public static double LineToAngle(Vector2d v0, Vector2d v1) => VectorToAngle(v1 - v0);
         
         public static double LineToAngle(Vector2 v0, Vector2 v1) => LineToAngle(new Vector2d(v0.X, v0.Y), new Vector2d(v1.X, v1.Y));
 
