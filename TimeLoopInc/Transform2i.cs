@@ -1,4 +1,5 @@
-﻿using Game.Common;
+﻿using Equ;
+using Game.Common;
 using Game.Serialization;
 using OpenTK;
 using System;
@@ -12,33 +13,26 @@ using System.Threading.Tasks;
 namespace TimeLoopInc
 {
     [DataContract]
-    public class Transform2i : IShallowClone<Transform2i>
+    public class Transform2i : MemberwiseEquatable<Transform2i>, IShallowClone<Transform2i>
     {
         [DataMember]
-        public Vector2i Position;
+        public Vector2i Position { get; private set; }
         [DataMember]
-        public Direction Rotation;
+        public Direction Rotation { get; private set; }
         [DataMember]
-        public bool MirrorX { get; set; }
+        public int Size { get; private set; }
         [DataMember]
-        public int _size = 1;
-        public int Size
-        {
-            get { return _size; }
-            set
-            {
-                Debug.Assert(!double.IsNaN(value) && !double.IsPositiveInfinity(value) && !double.IsNegativeInfinity(value));
-                _size = value;
-            }
-        }
+        public bool MirrorX { get; private set; }
 
         public Vector2i Scale => MirrorX ? new Vector2i(-Size, Size) : new Vector2i(Size, Size);
 
         public Transform2i(Vector2i position, Direction rotation = Direction.Right, int size = 1, bool mirrorX = false)
         {
+            Debug.Assert(size != 0);
             Position = position;
             Rotation = rotation;
             Size = size;
+            MirrorX = mirrorX;
         }
 
         public Transform2 ToTransform2()
@@ -56,5 +50,10 @@ namespace TimeLoopInc
                 (int)Math.Round(transform.Size), 
                 transform.MirrorX);
         }
+
+        public Transform2i SetPosition(Vector2i position) => new Transform2i(position, Rotation, Size, MirrorX);
+        public Transform2i SetRotation(Direction rotation) => new Transform2i(Position, rotation, Size, MirrorX);
+        public Transform2i SetSize(int size) => new Transform2i(Position, Rotation, size, MirrorX);
+        public Transform2i SetMirrorX(bool mirrorX) => new Transform2i(Position, Rotation, Size, mirrorX);
     }
 }

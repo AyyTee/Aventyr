@@ -653,14 +653,10 @@ namespace Game.Common
 
         public static double VectorToAngle(Vector2d v0)
         {
-            //Debug.Assert(V0 == Vector2d.Zero, "Vector must have non-zero length.");
             double val = Math.Atan2(v0.X, v0.Y);
-
-            if (double.IsNaN(val))
-            {
-                return 0;
-            }
-            return (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
+            return double.IsNaN(val) ?
+                0 :
+                (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
         }
 
         public static double VectorToAngle(Vector2 v0) => VectorToAngle(new Vector2d(v0.X, v0.Y));

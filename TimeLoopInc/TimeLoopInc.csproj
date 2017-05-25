@@ -35,6 +35,9 @@
     <Reference Include="Cgen.Audio, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Cgen.Audio.0.8.5.0\lib\net20\Cgen.Audio.dll</HintPath>
     </Reference>
+    <Reference Include="Equ, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Equ.1.0.4\lib\net45\Equ.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
     </Reference>

@@ -666,14 +666,14 @@ namespace GameTests
         #endregion
 
         [TestMethod]
-        public void AngleVectorTest0()
+        public void AngleToVectorTest0()
         {
             var result = MathEx.VectorToAngle(new Vector2d(1, 0));
             Assert.AreEqual(0, result);
         }
 
         [TestMethod]
-        public void AngleVectorTest1()
+        public void AngleToVectorTest1()
         {
             var result = MathEx.VectorToAngle(new Vector2d(0, -1));
             Assert.AreEqual(Math.PI / 2, result, 0.0000001);
@@ -682,8 +682,8 @@ namespace GameTests
         [TestMethod]
         public void VectorToAngleTest0()
         {
-            var result = MathEx.AngleToVector(0);
-            Assert.AreEqual(new Vector2d(1, 0), result);
+            var result = MathEx.AngleToVector(0.0);
+            Assert.IsTrue((new Vector2d(1, 0) - result).Length < 0.00001);
         }
 
         [TestMethod]
