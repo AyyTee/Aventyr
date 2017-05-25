@@ -131,24 +131,24 @@ namespace TimeLoopInc
 
         (Transform2i Transform, Vector2i Velocity) Move(Transform2i transform, GridAngle? heading)
         {
-            var offset = Vector2.One / 2;
-            var transform2 = transform.ToTransform2();
-            transform2.Position += offset;
+            var offset = Vector2d.One / 2;
+            var transform2d = transform.ToTransform2d();
+            transform2d.Position += offset;
             var result = Ray.RayCast(
-                transform2,
+                (Transform2)transform2d,
                 Transform2.CreateVelocity((Vector2)(heading?.Vector ?? new Vector2i())),
                 Portals,
                 new Ray.Settings());
 
-            var resultTransform = result.WorldTransform;
+            var resultTransform = (Transform2d)result.WorldTransform;
             resultTransform.Position -= offset;
-            var posNextGrid = Transform2i.RoundTransform2(resultTransform);
+            var posNextGrid = Transform2i.RoundTransform2d(resultTransform);
 
             if (!Walls.Contains(posNextGrid.Position))
             {
                 return ValueTuple.Create(
                     posNextGrid, 
-                    (Vector2i)result.WorldVelocity.Position.SnapToGrid(Vector2.One));
+                    (Vector2i)result.WorldVelocity.Position.Round(Vector2.One));
             }
             return ValueTuple.Create(transform, new Vector2i());
         }

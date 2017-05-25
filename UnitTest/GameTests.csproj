@@ -52,6 +52,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\clipper_library.6.2.1\lib\net40\clipper_library.dll</HintPath>
     </Reference>
+    <Reference Include="Equ, Version=1.0.4.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="nunit.framework, Version=3.6.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.6.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
@@ -92,6 +93,7 @@
     <Compile Include="PortalTests.cs" />
     <Compile Include="LineTests.cs" />
     <Compile Include="TankGameTests.cs" />
+    <Compile Include="Transform2iTests.cs" />
     <Compile Include="Transform2Tests.cs" />
     <Compile Include="SceneNodeTests.cs" />
     <Compile Include="FixtureUserDataTests.cs" />

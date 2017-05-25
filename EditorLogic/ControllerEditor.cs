@@ -149,7 +149,7 @@ namespace EditorLogic
             var v = Level.ActiveCamera.ScreenToWorld(Window.MousePosition, Window.CanvasSize);
             if (Window.ButtonDown(KeyBoth.Control))
             {
-                v = v.SnapToGrid(new Vector2(0.1f, 0.1f));
+                v = v.Round(new Vector2(0.1f, 0.1f));
             }
 
             return Level == null ? Vector2.Zero : v;

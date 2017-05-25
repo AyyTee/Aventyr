@@ -13,11 +13,17 @@ namespace GameTests
     [TestFixture]
     public class GridAngleTests
     {
-        [Test]
-        public void LeftTest()
+        [TestCase(-1)]
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        [TestCase(4)]
+        public void VectorMatchesAngle(int angle)
         {
-            var v = MathEx.AngleToVector(GridAngle.Left.Radians);
-            Assert.IsTrue((v - (Vector2d)GridAngle.Left.Vector).Length < 0.0001);
+            var gridAngle = new GridAngle(angle);
+            var v = MathEx.AngleToVector(gridAngle.Radians);
+            Assert.IsTrue((v - (Vector2d)gridAngle.Vector).Length < 0.0001);
         }
     }
 }

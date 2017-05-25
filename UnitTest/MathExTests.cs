@@ -699,5 +699,17 @@ namespace GameTests
             var result = (int)MathEx.Round(100001, 10);
             Assert.AreEqual(100000, result);
         }
+
+        [TestCase(0, 0)]
+        [TestCase(2, 2)]
+        [TestCase(13, 3)]
+        [TestCase(-2, 8)]
+        [TestCase(-12, 8)]
+        [TestCase(-10, 0)]
+        public void ValueWrapTest(int value, int expected)
+        {
+            var result = MathEx.ValueWrap(value, 10);
+            Assert.AreEqual(expected, result);
+        }
     }
 }

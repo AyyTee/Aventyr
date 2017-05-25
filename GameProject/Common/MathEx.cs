@@ -692,22 +692,20 @@ namespace Game.Common
 
         public static double ValueWrap(double value, double mod)
         {
-            value = value % mod;
-            if (value < 0)
-            {
-                return mod + value;
-            }
-            return value;
+            Debug.Assert(mod > 0);
+            var newValue = value % mod;
+            return newValue < 0 ?
+                mod + newValue :
+                newValue;
         }
 
-        public static double ValueWrap(int value, int mod)
+        public static int ValueWrap(int value, int mod)
         {
-            value = value % mod;
-            if (value < 0)
-            {
-                return mod + value;
-            }
-            return value;
+            Debug.Assert(mod > 0);
+            var newValue = value % mod;
+            return newValue < 0 ?
+                mod + newValue :
+                newValue;
         }
 
         public static double Round(double value, double size) => Math.Round(value / size) * size;

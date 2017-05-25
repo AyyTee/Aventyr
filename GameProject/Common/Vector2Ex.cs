@@ -86,10 +86,16 @@ namespace Game.Common
             return v - 2 * (v - Project(v, normal));
         }
 
-        public static Vector2 SnapToGrid(this Vector2 vector, Vector2 grid)
+        public static Vector2 Round(this Vector2 vector, Vector2 roundBy)
         {
-            var v = Vector2.Divide(vector, grid);
-            return new Vector2((float)Math.Round(v.X), (float)Math.Round(v.Y)) * grid;
+            var v = Vector2.Divide(vector, roundBy);
+            return new Vector2((float)Math.Round(v.X), (float)Math.Round(v.Y)) * roundBy;
+        }
+
+        public static Vector2d Round(this Vector2d vector, Vector2d roundBy)
+        {
+            var v = Vector2d.Divide(vector, roundBy);
+            return new Vector2d(Math.Round(v.X), Math.Round(v.Y)) * roundBy;
         }
 
         public static Vector2d Lerp(this Vector2d start, Vector2d end, double T) => start * (1 - T) + end * T;
