@@ -35,10 +35,10 @@ namespace Game.Common
             {
                 return false;
             }
-            return MathExt.AlmostEqual(Position.X, intersect.Position.X, delta) &&
-                MathExt.AlmostEqual(Position.Y, intersect.Position.Y, delta) &&
-                MathExt.AlmostEqual(First, intersect.First, delta) &&
-                MathExt.AlmostEqual(Last, intersect.Last, delta);
+            return MathEx.AlmostEqual(Position.X, intersect.Position.X, delta) &&
+                MathEx.AlmostEqual(Position.Y, intersect.Position.Y, delta) &&
+                MathEx.AlmostEqual(First, intersect.First, delta) &&
+                MathEx.AlmostEqual(Last, intersect.Last, delta);
         }
 
         public bool AlmostEqual(IntersectCoord intersect, double delta, double ratioDelta)
@@ -47,14 +47,14 @@ namespace Game.Common
             {
                 return false;
             }
-            return MathExt.AlmostEqual(Position.X, intersect.Position.X, delta, ratioDelta) &&
-                MathExt.AlmostEqual(Position.Y, intersect.Position.Y, delta, ratioDelta) &&
-                MathExt.AlmostEqual(First, intersect.First, delta, ratioDelta) &&
-                MathExt.AlmostEqual(Last, intersect.Last, delta, ratioDelta);
+            return MathEx.AlmostEqual(Position.X, intersect.Position.X, delta, ratioDelta) &&
+                MathEx.AlmostEqual(Position.Y, intersect.Position.Y, delta, ratioDelta) &&
+                MathEx.AlmostEqual(First, intersect.First, delta, ratioDelta) &&
+                MathEx.AlmostEqual(Last, intersect.Last, delta, ratioDelta);
         }
     }
 
-    public static class MathExt
+    public static class MathEx
     {
         public const double Tau = Math.PI * 2;
 
@@ -294,7 +294,7 @@ namespace Game.Common
                 Vector2 p = points[i];
 
                 // build lower hull (at end of output list)
-                while (l >= 2 && Vector2Ext.Cross(hull[hull.Count - 1] - hull[hull.Count - 2], p - hull[hull.Count - 1]) >= 0)
+                while (l >= 2 && Vector2Ex.Cross(hull[hull.Count - 1] - hull[hull.Count - 2], p - hull[hull.Count - 1]) >= 0)
                 {
                     hull.RemoveAt(hull.Count - 1);
                     l--;
@@ -304,7 +304,7 @@ namespace Game.Common
 
                 // build upper hull (at beginning of output list)
 
-                while (u >= 2 && Vector2Ext.Cross(hull[0] - hull[1], p - hull[0]) <= 0)
+                while (u >= 2 && Vector2Ex.Cross(hull[0] - hull[1], p - hull[0]) <= 0)
                 {
                     hull.RemoveAt(0);
                     u--;
@@ -327,7 +327,7 @@ namespace Game.Common
         public static bool IsClockwise(IList<Vector2> polygon)
         {
             Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
-            Debug.Assert(PolygonExt.IsSimple(polygon));
+            Debug.Assert(PolygonEx.IsSimple(polygon));
             double signedArea = 0;
             for (int i = 0; i < polygon.Count; i++)
             {
@@ -891,7 +891,7 @@ namespace Game.Common
         /// <returns></returns>
         public static Vector2 GetTriangleIncenter(Vector2[] triangle)
         {
-            return (Vector2)GetTriangleIncenter(Vector2Ext.ToDouble(triangle));
+            return (Vector2)GetTriangleIncenter(Vector2Ex.ToDouble(triangle));
         }
     }
 }

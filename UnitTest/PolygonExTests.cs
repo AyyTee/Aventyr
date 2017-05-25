@@ -9,7 +9,7 @@ using Game.Common;
 namespace GameTests
 {
     [TestClass]
-    public class PolygonExtTests
+    public class PolygonExTests
     {
         #region GetCentroid tests
         [TestMethod]
@@ -22,7 +22,7 @@ namespace GameTests
                 new Vector2(0, 1)
             };
 
-            Assert.IsTrue(PolygonExt.GetCentroid(vertices) == new Vector2(0.5f, 0.5f));
+            Assert.IsTrue(PolygonEx.GetCentroid(vertices) == new Vector2(0.5f, 0.5f));
         }
 
         [TestMethod]
@@ -36,7 +36,7 @@ namespace GameTests
             };
             vertices = vertices.Reverse().ToArray();
 
-            Assert.IsTrue(PolygonExt.GetCentroid(vertices) == new Vector2(0.5f, 1f));
+            Assert.IsTrue(PolygonEx.GetCentroid(vertices) == new Vector2(0.5f, 1f));
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace GameTests
                 new Vector2(1, 1)
             };
 
-            Assert.IsTrue(PolygonExt.GetCentroid(vertices) == new Vector2(-0.5f, 0f));
+            Assert.IsTrue(PolygonEx.GetCentroid(vertices) == new Vector2(-0.5f, 0f));
         }
         #endregion
 
@@ -64,7 +64,7 @@ namespace GameTests
                 new Vector2(0, 1)
             };
 
-            var concaveList = PolygonExt.DecomposeConcave(vertices);
+            var concaveList = PolygonEx.DecomposeConcave(vertices);
             Assert.IsTrue(concaveList.Count == 1);
             Assert.IsTrue(concaveList[0].SequenceEqual(vertices));
         }
@@ -80,7 +80,7 @@ namespace GameTests
             };
             vertices = vertices.Reverse().ToArray();
 
-            var concaveList = PolygonExt.DecomposeConcave(vertices);
+            var concaveList = PolygonEx.DecomposeConcave(vertices);
             Assert.IsTrue(concaveList.Count == 1);
             Assert.IsTrue(concaveList[0].SequenceEqual(vertices));
         }
@@ -95,7 +95,7 @@ namespace GameTests
                 new Vector2(0, 1)
             };
 
-            var concaveList = PolygonExt.DecomposeConcave(vertices);
+            var concaveList = PolygonEx.DecomposeConcave(vertices);
 
             Vector2[] convex0 = new Vector2[] {
                 new Vector2(0, 0),
@@ -171,12 +171,12 @@ namespace GameTests
                 new Vector2(1.160351f, -2.24939227f),
                 new Vector2(1.275958f, -2.57757759f)
             };
-            Assert.IsTrue(PolygonExt.IsSimple(vertices));
+            Assert.IsTrue(PolygonEx.IsSimple(vertices));
 
-            var concaveList = PolygonExt.DecomposeConcave(vertices);
+            var concaveList = PolygonEx.DecomposeConcave(vertices);
             foreach (List<Vector2> concave in concaveList)
             {
-                Assert.IsTrue(MathExt.IsConvex(concave));
+                Assert.IsTrue(MathEx.IsConvex(concave));
             }
         }
 
@@ -244,12 +244,12 @@ namespace GameTests
                 new Vector2(3.33950448f, 0.30195576f)
             };
 
-            Assert.IsTrue(PolygonExt.IsSimple(vertices));
+            Assert.IsTrue(PolygonEx.IsSimple(vertices));
 
-            var concaveList = PolygonExt.DecomposeConcave(vertices);
+            var concaveList = PolygonEx.DecomposeConcave(vertices);
             foreach (List<Vector2> concave in concaveList)
             {
-                Assert.IsTrue(MathExt.IsConvex(concave));
+                Assert.IsTrue(MathEx.IsConvex(concave));
             }
         }
         #endregion

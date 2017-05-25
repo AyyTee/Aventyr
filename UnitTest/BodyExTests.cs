@@ -5,12 +5,12 @@ using Game.Common;
 using Game.Physics;
 using Game.Portals;
 using OpenTK;
-using static Game.Physics.BodyExt;
+using static Game.Physics.BodyEx;
 
 namespace GameTests
 {
     [TestClass]
-    public class BodyExtTests
+    public class BodyExTests
     {
         public const double Delta = 0.0001f;
 

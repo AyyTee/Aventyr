@@ -19,7 +19,7 @@ namespace Game.Physics
         /// <summary>
         /// Return the Actor linked to the Body that is linked to the Fixture being intersected.
         /// </summary>
-        public Actor Actor => BodyExt.GetData(Fixture.Body).Actor;
+        public Actor Actor => BodyEx.GetData(Fixture.Body).Actor;
 
         int _edgeIndex;
         /// <summary>Index value of edge in Fixture's Shape.</summary>

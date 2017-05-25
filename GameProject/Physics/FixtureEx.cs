@@ -12,7 +12,7 @@ using Game.Rendering;
 
 namespace Game.Physics
 {
-    public static class FixtureExt
+    public static class FixtureEx
     {
         const float ErrorMargin = 0.0001f;
 
@@ -51,13 +51,13 @@ namespace Game.Physics
 
             List<Vector2> fixtureContour = Actor.GetFixtureContour(actor);
 
-            LineF edge = PolygonExt.GetEdge(fixtureContour, coord);
+            LineF edge = PolygonEx.GetEdge(fixtureContour, coord);
             Debug.Assert(
                 edge[0] == fixtureContour[coord.EdgeIndex] &&
                 edge[1] == fixtureContour[(coord.EdgeIndex + 1) % fixtureContour.Count]
                 );
 
-            if (!PolygonExt.IsInterior(fixtureContour))
+            if (!PolygonEx.IsInterior(fixtureContour))
             {
                 edge = edge.Reverse();
             }
@@ -128,7 +128,7 @@ namespace Game.Physics
                         {
                             int iNext = (i + 1) % polygon.Vertices.Count;
                             LineF edge = new LineF(polygon.Vertices[i], polygon.Vertices[iNext]);
-                            IntersectCoord[] intersects = MathExt.LineCircleIntersect(new Vector2(relativePoint.X, relativePoint.Y), radius, edge, true);
+                            IntersectCoord[] intersects = MathEx.LineCircleIntersect(new Vector2(relativePoint.X, relativePoint.Y), radius, edge, true);
                             for (int j = 0; i < intersects.Length; i++)
                             {
                                 collisions.Add(new FixtureCoord(f, i, (float)intersects[j].First));
@@ -183,7 +183,7 @@ namespace Game.Physics
             Vector2[] vertices = GetWorldPoints(fixture);
             List<IPortal> collisions = 
                 Portal.GetCollisions(
-                    BodyExt.GetLocalOrigin(fixture.Body), 
+                    BodyEx.GetLocalOrigin(fixture.Body), 
                     vertices, 
                     portals.Where(item => !ignoreAttachedPortals || GetFixtureAttached(item as FixturePortal) != fixture)
                         .OfType<IPortalRenderable>()
@@ -195,7 +195,7 @@ namespace Game.Physics
             {
                 var attached = GetData(fixture).GetPortalChildren();
                 //We don't exclude attached portals that this fixture's body is travelling through.
-                attached.Where(item => item != BodyExt.GetData(fixture.Body).BodyParent.Portal.Linked);
+                attached.Where(item => item != BodyEx.GetData(fixture.Body).BodyParent.Portal.Linked);
                 return collisions.Except(attached).ToList();
             }
             return collisions;

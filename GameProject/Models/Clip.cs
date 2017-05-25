@@ -77,7 +77,7 @@ namespace Game.Models
             
             var collisions = Portal.GetCollisions(
                 centerPoint, 
-                Vector2Ext.Transform(model.GetWorldConvexHull(), 
+                Vector2Ex.Transform(model.GetWorldConvexHull(), 
                 entity.WorldTransform.GetMatrix() * modelMatrix), 
                 portalList, 
                 PortalClipMargin);
@@ -109,7 +109,7 @@ namespace Game.Models
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = Vector2Ext.Transform(portal.WorldTransform.Position + normal, Portal.GetLinkedMatrix(portal));
+                    Vector2 centerPointNext = Vector2Ex.Transform(portal.WorldTransform.Position + normal, Portal.GetLinkedMatrix(portal));
                     clipModels.AddRange(_getClipModels(entity, model, portalList, centerPointNext, portal, modelMatrix * Portal.GetLinkedMatrix(portal), depth - 1, count + 1));
                 }
             }
@@ -141,9 +141,9 @@ namespace Game.Models
 
                 List<Vector2> convexHull = new List<Vector2>(polygon);
                 convexHull.Add(centerPoint);
-                convexHull = Vector2Ext.Transform(MathExt.GetConvexHull(convexHull, true), modelMatrix);
+                convexHull = Vector2Ex.Transform(MathEx.GetConvexHull(convexHull, true), modelMatrix);
 
-                if (MathExt.LinePolygonDistance(portalLine, convexHull) < PortalClipMargin)
+                if (MathEx.LinePolygonDistance(portalLine, convexHull) < PortalClipMargin)
                 {
                     collisions.Add(portal);
                 }
@@ -192,7 +192,7 @@ namespace Game.Models
                 clipLines.Add(clipLine);
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
-                    Vector2 centerPointNext = Vector2Ext.Transform(portal.WorldTransform.Position + normal, Portal.GetLinkedMatrix(portal));
+                    Vector2 centerPointNext = Vector2Ex.Transform(portal.WorldTransform.Position + normal, Portal.GetLinkedMatrix(portal));
                     clipModels.AddRange(_getClipModels(polygon, portalList, centerPointNext, portal, modelMatrix * Portal.GetLinkedMatrix(portal), depth - 1, count + 1));
                 }
             }

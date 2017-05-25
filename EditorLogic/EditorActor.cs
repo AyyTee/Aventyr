@@ -48,7 +48,7 @@ namespace EditorLogic
 
         public IList<Vector2> GetWorldVertices()
         {
-            return Vector2Ext.Transform(Vertices, GetWorldTransform().GetMatrix());
+            return Vector2Ex.Transform(Vertices, GetWorldTransform().GetMatrix());
         }
 
         public Model GetActorModel(EditorActor actor)

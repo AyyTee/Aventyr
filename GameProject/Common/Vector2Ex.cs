@@ -9,7 +9,7 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Common
 {
-    public static class Vector2Ext
+    public static class Vector2Ex
     {
         const float EqualityEpsilon = 0.0001f;
 

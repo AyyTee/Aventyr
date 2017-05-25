@@ -96,7 +96,7 @@ namespace Game
                 }
 
                 LineF portalLine = new LineF(p.GetWorldVerts());
-                IntersectCoord intersect = MathExt.LineLineIntersect(portalLine, ray, true);
+                IntersectCoord intersect = MathEx.LineLineIntersect(portalLine, ray, true);
 
                 if (intersect != null)
                 {
@@ -167,7 +167,7 @@ namespace Game
                 }
                 var exitLine = new LineF(p.GetWorldVerts());
                 Vector2 position = transform.Position;
-                double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
+                double distanceToPortal = MathEx.PointLineDistance(position, exitLine, true);
                 if (distanceToPortal < Portal.EnterMinDistance)
                 {
                     Vector2 exitNormal = p.WorldTransform.GetRight();

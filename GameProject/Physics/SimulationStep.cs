@@ -78,10 +78,10 @@ namespace Game.Physics
                     {
                         continue;
                     }
-                    var lineStart = new Line(Vector2Ext.ToDouble(p.GetWorldVerts()));
+                    var lineStart = new Line(Vector2Ex.ToDouble(p.GetWorldVerts()));
 
                     var t = (Transform2d)p.WorldTransform.Add(p.WorldVelocity.Multiply((float)stepSize));
-                    var lineEnd = new Line(Vector2Ext.ToDouble(Portal.GetWorldVerts((Transform2)t)));
+                    var lineEnd = new Line(Vector2Ex.ToDouble(Portal.GetWorldVerts((Transform2)t)));
 
                     lineMovement.Add(new PortalMovement(p, lineStart, lineEnd));
                 }
@@ -156,7 +156,7 @@ namespace Game.Physics
 
         static void PlaceOnPortal(IPortalCommon instance, IPortal portal, float t)
         {
-            Line portalLine = new Line(Vector2Ext.ToDouble(portal.GetWorldVerts()));
+            Line portalLine = new Line(Vector2Ex.ToDouble(portal.GetWorldVerts()));
             var transform = (Transform2d)instance.WorldTransform;
             transform.Position = portalLine.Lerp(t);
             instance.WorldTransform = (Transform2)transform;
@@ -184,7 +184,7 @@ namespace Game.Physics
                         {
                             continue;
                         }
-                        var collisionList = MathExt.MovingPointLineIntersect(move.StartEnd, portal.Start, portal.End);
+                        var collisionList = MathEx.MovingPointLineIntersect(move.StartEnd, portal.Start, portal.End);
                         if (collisionList.Count == 0)
                         {
                             continue;
@@ -224,9 +224,9 @@ namespace Game.Physics
             var transform = (Transform2d)instance.WorldTransform;
             foreach (IPortal p in portals.Where(item => item.OneSided && item.IsValid()))
             {
-                var exitLine = new Line(Vector2Ext.ToDouble(p.GetWorldVerts()));
+                var exitLine = new Line(Vector2Ex.ToDouble(p.GetWorldVerts()));
                 Vector2d position = transform.Position;
-                double distanceToPortal = MathExt.PointLineDistance(position, exitLine, true);
+                double distanceToPortal = MathEx.PointLineDistance(position, exitLine, true);
                 if (distanceToPortal < Portal.EnterMinDistance)
                 {
                     Vector2d exitNormal = (Vector2d)p.WorldTransform.GetRight();

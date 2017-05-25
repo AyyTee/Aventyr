@@ -46,8 +46,8 @@ namespace GameTests
             Transform2 t = new Transform2(new Vector2(1, 2), 2, 4.23f, true);
             actor.SetTransform(t);
 
-            List<Vector2> fixture = new List<Vector2>(Vector2Ext.Transform(vertices, Matrix4.CreateScale(new Vector3(t.Scale))));
-            fixture = PolygonExt.SetNormals(fixture);
+            List<Vector2> fixture = new List<Vector2>(Vector2Ex.Transform(vertices, Matrix4.CreateScale(new Vector3(t.Scale))));
+            fixture = PolygonEx.SetNormals(fixture);
             PolygonShape polygon = (PolygonShape)actor.Body.FixtureList[0].Shape;
 
             for (int i = 0; i < fixture.Count; i++)
@@ -74,22 +74,22 @@ namespace GameTests
                 new Vector2(1, 0),
                 new Vector2(0, 1)
             };
-            vertices = PolygonExt.SetNormals(vertices);
+            vertices = PolygonEx.SetNormals(vertices);
             Scene scene = new Scene();
             Actor actor = new Actor(scene, vertices);
             PortalCommon.UpdateWorldTransform(scene);
 
             actor.SetTransform(new Transform2(new Vector2(), 1, 0, false));
-            Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));
+            Assert.IsTrue(PolygonEx.IsInterior(actor.GetWorldVertices()));
 
             actor.SetTransform(new Transform2(new Vector2(), 1, 0, true));
-            Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));
+            Assert.IsTrue(PolygonEx.IsInterior(actor.GetWorldVertices()));
 
             actor.SetTransform(new Transform2(new Vector2(), -1, 0, false));
-            Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));
+            Assert.IsTrue(PolygonEx.IsInterior(actor.GetWorldVertices()));
 
             actor.SetTransform(new Transform2(new Vector2(), -1, 0, true));
-            Assert.IsTrue(PolygonExt.IsInterior(actor.GetWorldVertices()));
+            Assert.IsTrue(PolygonEx.IsInterior(actor.GetWorldVertices()));
         }
 
         #region GetCentroid tests
@@ -99,7 +99,7 @@ namespace GameTests
             Scene scene = new Scene();
             Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(0.5f, 3f));
             Vector2 centroid = actor.GetCentroid();
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(actor.Body)))
             {
                 data.Body.LocalCenter = actor.Body.GetLocalPoint((Xna.Vector2)centroid);
             }
@@ -125,7 +125,7 @@ namespace GameTests
             scene.Step(1 / 60f);
 
             Vector2 centroid = actor.GetCentroid();
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(actor.Body)))
             {
                 data.Body.LocalCenter = actor.Body.GetLocalPoint((Xna.Vector2)centroid);
             }
@@ -150,7 +150,7 @@ namespace GameTests
             scene.Step();
 
             Vector2 centroid = actor.GetCentroid();
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(actor.Body)))
             {
                 data.Body.LocalCenter = actor.Body.GetLocalPoint((Xna.Vector2)centroid);
             }
@@ -175,7 +175,7 @@ namespace GameTests
             scene.Step();
 
             Vector2 centroid = actor.GetCentroid();
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(actor.Body)))
             {
                 data.Body.LocalCenter = actor.Body.GetLocalPoint((Xna.Vector2)centroid);
             }

@@ -365,7 +365,7 @@ namespace Game.Rendering
                     new Vector2(arrowThickness, length - arrowLength),
                 };
             }
-            polygon = Vector2Ext.Transform(polygon, Matrix4.CreateRotationZ((float)-(MathExt.VectorToAngle(pointAt) + Math.PI / 2)));
+            polygon = Vector2Ex.Transform(polygon, Matrix4.CreateRotationZ((float)-(MathEx.VectorToAngle(pointAt) + Math.PI / 2)));
             AddPolygon(mesh, polygon, origin);
         }
 
@@ -376,7 +376,7 @@ namespace Game.Rendering
             foreach (Fixture f in actor.Body.FixtureList)
             {
                 var polygon = (PolygonShape)f.Shape;
-                Vector2[] vertices = Vector2Ext.ToOtk(polygon.Vertices);
+                Vector2[] vertices = Vector2Ex.ToOtk(polygon.Vertices);
                 AddLineStripWidth(mesh, vertices, 0.05f, true);
             }
             model.Mesh = mesh;

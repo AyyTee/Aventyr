@@ -285,10 +285,10 @@ namespace Game.Rendering
                     Vector2[] lineWidth = PolygonFactory.CreateLineWidth(line, minWidth);
 
                     Vector2 camPos = cam.WorldTransform.Position;
-                    Vector2[] lineWidthOff = Vector2Ext.Transform(lineWidth, Matrix4.CreateTranslation(new Vector3(-camPos)));
+                    Vector2[] lineWidthOff = Vector2Ex.Transform(lineWidth, Matrix4.CreateTranslation(new Vector3(-camPos)));
                     Vector2[] lineTarget = PolygonFactory.CreateLineWidth(line.Translate(-camPos), minWidth, widthEnd);
                     Matrix4d homography = Matrix4d.CreateTranslation(new Vector3d((Vector2d)(-camPos)));
-                    homography *= MathExt.GetHomography(lineWidthOff, lineTarget);
+                    homography *= MathEx.GetHomography(lineWidthOff, lineTarget);
                     homography *= Matrix4d.CreateTranslation(new Vector3d((Vector2d)camPos));
 
                     bool obscured = true;
@@ -328,12 +328,12 @@ namespace Game.Rendering
                     for (int k = index; k < mesh.GetVertices().Count; k++)
                     {
                         Vertex vertex = mesh.GetVertices()[k];
-                        Vector3 pos = Vector3Ext.Transform(vertex.Position, homography);
+                        Vector3 pos = Vector3Ex.Transform(vertex.Position, homography);
                         pos.Z = cam.UnitZToWorld(pos.Z);
 
                         var v = new Vector2(vertex.Position.X, vertex.Position.Y);
-                        double distance = MathExt.PointLineDistance(v, line.GetPerpendicularLeft(), false);
-                        double texCoordX = MathExt.PointLineDistance(v, line, false) / minWidth;
+                        double distance = MathEx.PointLineDistance(v, line.GetPerpendicularLeft(), false);
+                        double texCoordX = MathEx.PointLineDistance(v, line, false) / minWidth;
                         if (line.GetSideOf(v) == Side.Left)
                         {
                             texCoordX *= -1;
@@ -354,7 +354,7 @@ namespace Game.Rendering
         {
             const float angleMax = (float)(1f * Math.PI / 4);
             float angleScale = 80f;
-            float angleDiff = (float)Math.Abs(MathExt.AngleDiff(line.Angle(), linePrev.Angle()) * angleScale);
+            float angleDiff = (float)Math.Abs(MathEx.AngleDiff(line.Angle(), linePrev.Angle()) * angleScale);
             return Math.Min(angleDiff, angleMax);
         }
 
@@ -430,7 +430,7 @@ namespace Game.Rendering
             {
                 for (int j = 0; j < view.Paths[i].Count; j++)
                 {
-                    Vector2 vTransform = Vector2Ext.Transform(ClipperConvert.ToVector2(view.Paths[i][j]), scaleMatrix);
+                    Vector2 vTransform = Vector2Ex.Transform(ClipperConvert.ToVector2(view.Paths[i][j]), scaleMatrix);
                     vMax = Vector2.ComponentMax(vMax, vTransform);
                     vMin = Vector2.ComponentMin(vMin, vTransform);
                 }
@@ -456,7 +456,7 @@ namespace Game.Rendering
         void UpdateCullFace(Matrix4 viewMatrix)
         {
             SetEnable(EnableCap.CullFace, false);
-            GL.CullFace(Matrix4Ext.IsMirrored(viewMatrix) ? CullFaceMode.Front : CullFaceMode.Back);
+            GL.CullFace(Matrix4Ex.IsMirrored(viewMatrix) ? CullFaceMode.Front : CullFaceMode.Back);
         }
 
         public void RenderModel(Model model, Matrix4 viewMatrix)

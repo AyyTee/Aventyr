@@ -279,18 +279,18 @@ namespace EditorLogic.Tools
             else if (_mode == Mode.Rotate)
             {
                 double angle, anglePrev;
-                angle = MathExt.VectorToAngle(mousePos - _translator.GetTransform().Position);
-                anglePrev = MathExt.VectorToAngle(_mousePosPrev - _translator.GetTransform().Position);
+                angle = MathEx.VectorToAngle(mousePos - _translator.GetTransform().Position);
+                anglePrev = MathEx.VectorToAngle(_mousePosPrev - _translator.GetTransform().Position);
                 
                 if (Input.ButtonDown(KeyBoth.Control))
                 {
-                    angle = MathExt.Round(angle, _rotateIncrementSize);
-                    dragAmount.Rotation = (float)MathExt.Round(dragAmount.Rotation + MathExt.AngleDiff(angle, anglePrev), _rotateIncrementSize);
+                    angle = MathEx.Round(angle, _rotateIncrementSize);
+                    dragAmount.Rotation = (float)MathEx.Round(dragAmount.Rotation + MathEx.AngleDiff(angle, anglePrev), _rotateIncrementSize);
                     _mousePosPrev = new Vector2((float)Math.Cos(-angle), (float)Math.Sin(-angle)) + _translator.GetTransform().Position;
                 }
                 else
                 {
-                    dragAmount.Rotation += (float)MathExt.AngleDiff(angle, anglePrev);
+                    dragAmount.Rotation += (float)MathEx.AngleDiff(angle, anglePrev);
                     _mousePosPrev = mousePos;
                 }
             }

@@ -11,7 +11,7 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Physics
 {
-    public static class BodyExt
+    public static class BodyEx
     {
         public static Body CreateBody(World world)
         {
@@ -72,7 +72,7 @@ namespace Game.Physics
         {
             foreach (Fixture f in body.FixtureList)
             {
-                FixtureData data = FixtureExt.GetData(f);
+                FixtureData data = FixtureEx.GetData(f);
                 PolygonShape shape = (PolygonShape)f.Shape;
                 Debug.Assert(data.DefaultShape.Length == shape.Vertices.Count);
 
@@ -111,9 +111,9 @@ namespace Game.Physics
             Vector2 centroid = new Vector2();
             foreach (Tuple<Fixture, Vector2[]> tuple in clipped)
             {
-                float mass = tuple.Item1.Shape.Density * (float)MathExt.GetArea(tuple.Item2);
+                float mass = tuple.Item1.Shape.Density * (float)MathEx.GetArea(tuple.Item2);
                 totalMass += mass;
-                centroid += PolygonExt.GetCentroid(tuple.Item2) * mass;
+                centroid += PolygonEx.GetCentroid(tuple.Item2) * mass;
             }
             centroid /= totalMass;
 
@@ -160,7 +160,7 @@ namespace Game.Physics
                 List<Tuple<Fixture, Vector2[]>> fixtures = new List<Tuple<Fixture, Vector2[]>>();
                 foreach (Fixture f in body.FixtureList)
                 {
-                    fixtures.Add(new Tuple<Fixture, Vector2[]>(f, FixtureExt.GetWorldPoints(f)));
+                    fixtures.Add(new Tuple<Fixture, Vector2[]>(f, FixtureEx.GetWorldPoints(f)));
                 }
                 return fixtures;
             }
@@ -185,7 +185,7 @@ namespace Game.Physics
                 {
                     v0, v1, v1 + depth, v0 + depth
                 };
-                box = MathExt.SetWinding(box, true);
+                box = MathEx.SetWinding(box, true);
 
                 clipPaths.Add(ClipperConvert.ToIntPoint(box));
             }
@@ -195,7 +195,7 @@ namespace Game.Physics
             Clipper clipper = new Clipper();
             foreach (Fixture f in body.FixtureList)
             {
-                if (!FixtureExt.GetData(f).IsPortalParentless())
+                if (!FixtureEx.GetData(f).IsPortalParentless())
                 {
                     continue;
                 }
@@ -204,7 +204,7 @@ namespace Game.Physics
                 clipper.AddPaths(clipPaths, PolyType.ptClip, true);
 
                 clipper.AddPath(
-                    ClipperConvert.ToIntPoint(FixtureExt.GetWorldPoints(f)),
+                    ClipperConvert.ToIntPoint(FixtureEx.GetWorldPoints(f)),
                     PolyType.ptSubject,
                     true);
 

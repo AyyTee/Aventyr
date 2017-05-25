@@ -38,16 +38,16 @@ namespace Game.Physics
                 //The number of fixtures is going to change so a copy of FixtureList is made.
                 List<Fixture> fixtures = new List<Fixture>(body.FixtureList);
                 //Don't include fixtures that are used for FixturePortal collisions.
-                fixtures.RemoveAll(item => !FixtureExt.GetData(item).IsPortalParentless());
+                fixtures.RemoveAll(item => !FixtureEx.GetData(item).IsPortalParentless());
                 foreach (Fixture f in fixtures)
                 {
-                    FixtureData userData = FixtureExt.GetData(f);
+                    FixtureData userData = FixtureEx.GetData(f);
                     userData.ProcessChanges();
                     userData.PortalCollisionsPrevious = new HashSet<IPortal>(userData.PortalCollisions);
                     userData.PortalCollisions.Clear();
-                    userData.PortalCollisions.UnionWith(FixtureExt.GetPortalCollisions(f, Scene.GetPortalList()));
+                    userData.PortalCollisions.UnionWith(FixtureEx.GetPortalCollisions(f, Scene.GetPortalList()));
                 }
-                BodyExt.GetData(body).PreviousPosition = body.Position;
+                BodyEx.GetData(body).PreviousPosition = body.Position;
             }
 
             foreach (Actor actor in Scene.GetAll().OfType<Actor>())
@@ -55,7 +55,7 @@ namespace Game.Physics
                 actor.Update();
 
                 Vector2 centroid = actor.GetCentroid();
-                foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
+                foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(actor.Body)))
                 {
                     //data.Body.LocalCenter = actor.Body.GetLocalPoint((Xna.Vector2)centroid);
                 }
@@ -91,7 +91,7 @@ namespace Game.Physics
                     model.Transform.Position = new Vector3(body.Position.X, body.Position.Y, 10);
                     model.SetColor(new Color4(1, 0.5f, 0.5f, 1f));
 
-                    BodyData bodyUserData = BodyExt.GetData(body);
+                    BodyData bodyUserData = BodyEx.GetData(body);
                     Model positionPrev = ModelFactory.CreateCube();
                     positionPrev.Transform.Scale = new Vector3(0.03f, 0.03f, 0.03f);
                     positionPrev.Transform.Rotation = new Quaternion(0, 1, 1, (float)Math.PI / 2);
@@ -114,16 +114,16 @@ namespace Game.Physics
                  * is facing from fixtureB to fixtureA (it should always face from A to B 
                  * according to the Box2D documentation) and then reversing the normal if it is  
                  * helps prevent tunneling from occuring.*/
-                if (!FixtureExt.GetData(contact.FixtureA).IsPortalParentless() || !FixtureExt.GetData(contact.FixtureB).IsPortalParentless())
+                if (!FixtureEx.GetData(contact.FixtureA).IsPortalParentless() || !FixtureEx.GetData(contact.FixtureB).IsPortalParentless())
                 {
                     Xna.Vector2 normal;
                     FixedArray2<Xna.Vector2> vList;
                     contact.GetWorldManifold(out normal, out vList);
 
-                    Vector2 center0 = FixtureExt.GetCenterWorld(contact.FixtureA);
-                    Vector2 center1 = FixtureExt.GetCenterWorld(contact.FixtureB);
+                    Vector2 center0 = FixtureEx.GetCenterWorld(contact.FixtureA);
+                    Vector2 center1 = FixtureEx.GetCenterWorld(contact.FixtureB);
 
-                    if (Math.Abs(MathExt.AngleDiff(center1 - center0, (Vector2)normal)) > Math.PI / 2)
+                    if (Math.Abs(MathEx.AngleDiff(center1 - center0, (Vector2)normal)) > Math.PI / 2)
                     {
                         contact.Manifold.LocalNormal *= -1;
                     }
@@ -136,8 +136,8 @@ namespace Game.Physics
                 }
                 else
                 {
-                    Actor actor0 = BodyExt.GetData(contact.FixtureA.Body).Actor;
-                    Actor actor1 = BodyExt.GetData(contact.FixtureB.Body).Actor;
+                    Actor actor0 = BodyEx.GetData(contact.FixtureA.Body).Actor;
+                    Actor actor1 = BodyEx.GetData(contact.FixtureB.Body).Actor;
                     actor0.CallOnCollision(actor1, true);
                     actor1.CallOnCollision(actor0, false);
                 }
@@ -145,8 +145,8 @@ namespace Game.Physics
                 if (_debugMode)
                 {
                     FixtureData[] userData = new FixtureData[2];
-                    userData[0] = FixtureExt.GetData(contact.FixtureA);
-                    userData[1] = FixtureExt.GetData(contact.FixtureB);
+                    userData[0] = FixtureEx.GetData(contact.FixtureA);
+                    userData[1] = FixtureEx.GetData(contact.FixtureB);
                     Xna.Vector2 normal;
                     FixedArray2<Xna.Vector2> vList;
                     contact.GetWorldManifold(out normal, out vList);
@@ -203,7 +203,7 @@ namespace Game.Physics
 
                         if (!userData[i].IsPortalParentless())
                         {
-                            IList<Vector2> vertices = Vector2Ext.ToOtk(((PolygonShape)userData[i].Fixture.Shape).Vertices);
+                            IList<Vector2> vertices = Vector2Ex.ToOtk(((PolygonShape)userData[i].Fixture.Shape).Vertices);
                             Model fixtureModel = ModelFactory.CreatePolygon(vertices);
                             fixtureModel.SetColor(new Color4(0f, 1f, 1f, 1f));
                             fixtureModel.Transform = userData[i].Actor.GetTransform().Get3D();
@@ -224,12 +224,12 @@ namespace Game.Physics
         bool IsContactValid(Contact contact)
         {
             FixtureData[] fixtureData = new FixtureData[2];
-            fixtureData[0] = FixtureExt.GetData(contact.FixtureA);
-            fixtureData[1] = FixtureExt.GetData(contact.FixtureB);
+            fixtureData[0] = FixtureEx.GetData(contact.FixtureA);
+            fixtureData[1] = FixtureEx.GetData(contact.FixtureB);
 
             BodyData[] bodyData = new BodyData[2];
-            bodyData[0] = BodyExt.GetData(contact.FixtureA.Body);
-            bodyData[1] = BodyExt.GetData(contact.FixtureB.Body);
+            bodyData[0] = BodyEx.GetData(contact.FixtureA.Body);
+            bodyData[1] = BodyEx.GetData(contact.FixtureB.Body);
 
             Xna.Vector2 normal;
             FixedArray2<Xna.Vector2> vList;
@@ -285,11 +285,11 @@ namespace Game.Physics
 
                     LineF line = new LineF(portal.GetWorldVerts());
                     double[] vDist = {
-                        MathExt.PointLineDistance(vList[0], line, true),
-                        MathExt.PointLineDistance(vList[1], line, true)
+                        MathEx.PointLineDistance(vList[0], line, true),
+                        MathEx.PointLineDistance(vList[1], line, true)
                     };
                     //Only consider contacts that are between the fixture this portal is parented too and some other fixture.
-                    if (contact.FixtureA == FixtureExt.GetFixtureAttached(portal) || contact.FixtureB == FixtureExt.GetFixtureAttached(portal))
+                    if (contact.FixtureA == FixtureEx.GetFixtureAttached(portal) || contact.FixtureB == FixtureEx.GetFixtureAttached(portal))
                     {
                         if (contact.Manifold.PointCount == 1)
                         {
@@ -325,7 +325,7 @@ namespace Game.Physics
 
                     //Contact is invalid if it is on the opposite side of the portal from its body origin.
                     //Xna.Vector2 pos = BodyExt.GetData(fixtureData[i].Fixture.Body).PreviousPosition;
-                    Vector2 pos = BodyExt.GetLocalOrigin(fixtureData[i].Fixture.Body);
+                    Vector2 pos = BodyEx.GetLocalOrigin(fixtureData[i].Fixture.Body);
                     bool oppositeSides0 = line.GetSideOf(vList[0]) != line.GetSideOf(pos);
                     Debug.Assert(contact.Manifold.PointCount > 0);
                     if (contact.Manifold.PointCount == 1)

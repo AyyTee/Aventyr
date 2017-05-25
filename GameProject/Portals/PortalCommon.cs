@@ -123,7 +123,7 @@ namespace Game.Portals
             {
                 angularVelocity += portal.WorldVelocity.Rotation;
             }
-            newVelocity.Position += MathExt.AngularVelocity(endPosition, portal.Linked.WorldTransform.Position, angularVelocity);
+            newVelocity.Position += MathEx.AngularVelocity(endPosition, portal.Linked.WorldTransform.Position, angularVelocity);
             return newVelocity;
         }
 
@@ -161,9 +161,9 @@ namespace Game.Portals
             Vector2 positionDelta = (worldTransform.Position - parentTransform.Position);
 
             worldVelocity.Position = 
-                Vector2Ext.Transform(velocity.Position, mat) + 
+                Vector2Ex.Transform(velocity.Position, mat) + 
                 parentVelocity.Position + 
-                MathExt.AngularVelocity(positionDelta, parentVelocity.Rotation) + 
+                MathEx.AngularVelocity(positionDelta, parentVelocity.Rotation) + 
                 positionDelta * parentVelocity.Size / parentTransform.Size;
 
             HashSet<IPortal> portals = GetPortalsForPortal(instance, instance.Scene.GetPortalList());

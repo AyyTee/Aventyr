@@ -29,7 +29,7 @@ namespace Game.Physics
         public Transform2 Velocity
         {
             get { return GetVelocity(); }
-            set { BodyExt.SetVelocity(Body, value); }
+            set { BodyEx.SetVelocity(Body, value); }
         }
         /// <summary>
         /// Physics rigid body associated with this Actor.
@@ -65,7 +65,7 @@ namespace Game.Physics
             _vertices = vertices.ToArray();
             _scale = transform.Scale;
             Body = Factory.CreatePolygon(Scene.World, transform, Vertices);
-            BodyExt.SetData(Body, this);
+            BodyEx.SetData(Body, this);
             SetBodyType(BodyType.Dynamic);
         }
 
@@ -94,10 +94,10 @@ namespace Game.Physics
         protected void ShallowClone(Actor destination)
         {
             base.ShallowClone(destination);
-            BodyExt.SetData(destination.Body, destination);
+            BodyEx.SetData(destination.Body, destination);
             foreach (Fixture f in destination.Body.FixtureList)
             {
-                FixtureExt.SetData(f);
+                FixtureEx.SetData(f);
             }
         }
 
@@ -109,7 +109,7 @@ namespace Game.Physics
 
         public void SetCollisionCategory(Category category)
         {
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(Body)))
             {
                 data.Body.CollisionCategories = category;
             }
@@ -117,7 +117,7 @@ namespace Game.Physics
 
         public void SetCollidesWith(Category category)
         {
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(Body)))
             {
                 data.Body.CollidesWith = category;
             }
@@ -131,9 +131,9 @@ namespace Game.Physics
         public float GetMass()
         {
             float mass = 0;
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(Body)))
             {
-                mass += BodyExt.GetLocalMassData(data.Body).Mass;
+                mass += BodyEx.GetLocalMassData(data.Body).Mass;
             }
             return mass;
         }
@@ -146,9 +146,9 @@ namespace Game.Physics
         {
             var centroid = new Vector2();
             float massTotal = 0;
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(Body)))
             {
-                var massData = BodyExt.GetLocalMassData(data.Body);
+                var massData = BodyEx.GetLocalMassData(data.Body);
                 centroid += UndoPortalTransform(data, new Transform2(massData.Centroid)).Position * massData.Mass;
                 massTotal += massData.Mass;
             }
@@ -167,7 +167,7 @@ namespace Game.Physics
         {
             Debug.Assert(!Scene.InWorldStep);
             body.BodyType = type;
-            foreach (var b in BodyExt.GetData(body).BodyChildren)
+            foreach (var b in BodyEx.GetData(body).BodyChildren)
             {
                 _setBodyType(b.Body, BodyType == BodyType.Dynamic ? BodyType.Dynamic : BodyType.Kinematic);
             }
@@ -175,7 +175,7 @@ namespace Game.Physics
 
         public void Update()
         {
-            BodyExt.GetData(Body).Update();
+            BodyEx.GetData(Body).Update();
         }
 
         public override void Remove()
@@ -222,9 +222,9 @@ namespace Game.Physics
 
         public void ApplyGravity(Vector2 force)
         {
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(Body)))
             {
-                var massData = BodyExt.GetLocalMassData(data.Body);
+                var massData = BodyEx.GetLocalMassData(data.Body);
                 data.Body.ApplyForce(
                     (Xna.Vector2)force * massData.Mass,
                     (Xna.Vector2)massData.Centroid);
@@ -234,7 +234,7 @@ namespace Game.Physics
         public void SetSensor(bool isSensor)
         {
             IsSensor = isSensor;
-            foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(Body)))
+            foreach (BodyData data in Tree<BodyData>.GetAll(BodyEx.GetData(Body)))
             {
                 data.Body.IsSensor = isSensor;
             }
@@ -242,7 +242,7 @@ namespace Game.Physics
 
         public override Transform2 GetTransform()
         {
-            Transform2 bodyTransform = BodyExt.GetTransform(Body);
+            Transform2 bodyTransform = BodyEx.GetTransform(Body);
             bodyTransform.SetScale(_scale);
             return bodyTransform;
         }
@@ -260,11 +260,11 @@ namespace Game.Physics
             {
                 Debug.Assert(!Scene.InWorldStep, "Scale cannot change during a physics step.");
 
-                BodyExt.ScaleFixtures(body, transform.Scale);
+                BodyEx.ScaleFixtures(body, transform.Scale);
             }
-            BodyExt.SetTransform(body, transform);
+            BodyEx.SetTransform(body, transform);
 
-            foreach (BodyData data in BodyExt.GetData(body).Children)
+            foreach (BodyData data in BodyEx.GetData(body).Children)
             {
                 _setTransform(data.Body, Portal.Enter(data.BodyParent.Portal, transform));
             }
@@ -272,7 +272,7 @@ namespace Game.Physics
 
         public override Transform2 GetVelocity()
         {
-            return BodyExt.GetVelocity(Body);
+            return BodyEx.GetVelocity(Body);
         }
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace Game.Physics
         /// </summary>
         public override void SetVelocity(Transform2 velocity)
         {
-            BodyExt.SetVelocity(Body, velocity);
+            BodyEx.SetVelocity(Body, velocity);
             base.SetVelocity(velocity);
         }
 
@@ -289,7 +289,7 @@ namespace Game.Physics
         /// </summary>
         public IList<Vector2> GetWorldVertices()
         {
-            Vector2[] worldVertices = Vector2Ext.Transform(Vertices, WorldTransform.GetMatrix()).ToArray();
+            Vector2[] worldVertices = Vector2Ex.Transform(Vertices, WorldTransform.GetMatrix()).ToArray();
             return worldVertices;
         }
 
@@ -306,7 +306,7 @@ namespace Game.Physics
         {
             Debug.Assert(scale.X != 0 && scale.Y != 0);
             Matrix4 scaleMat = Matrix4.CreateScale(new Vector3(scale));
-            List<Vector2> contour = Vector2Ext.Transform(vertices, scaleMat);
+            List<Vector2> contour = Vector2Ex.Transform(vertices, scaleMat);
             if (Math.Sign(scale.X) != Math.Sign(scale.Y))
             {
                 contour.Reverse();
@@ -351,7 +351,7 @@ namespace Game.Physics
             {
                 Debug.Fail("");
             }
-            foreach (BodyData data in BodyExt.GetData(actor.Body).Children)
+            foreach (BodyData data in BodyEx.GetData(actor.Body).Children)
             {
                 _assertBodyType(data);
             }

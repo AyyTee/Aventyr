@@ -88,12 +88,12 @@ namespace Game.Rendering
 
         public Vector2 WorldToScreen(Vector2 worldCoord, Vector2 canvasSize)
         {
-            return Vector2Ext.Transform(worldCoord, GetWorldToScreenMatrix(canvasSize));
+            return Vector2Ex.Transform(worldCoord, GetWorldToScreenMatrix(canvasSize));
         }
 
         public Vector2 ScreenToWorld(Vector2 screenCoord, Vector2 canvasSize)
         {
-            return Vector2Ext.Transform(screenCoord, GetWorldToScreenMatrix(canvasSize).Inverted());
+            return Vector2Ex.Transform(screenCoord, GetWorldToScreenMatrix(canvasSize).Inverted());
         }
 
         Matrix4 GetWorldToScreenMatrix(Vector2 canvasSize)

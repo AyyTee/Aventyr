@@ -8,20 +8,20 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Common
 {
-    public static class PolygonExt
+    public static class PolygonEx
     {
         public static Transform2 GetTransform(IList<Vector2> vertices, IPolygonCoord coord)
         {
             Transform2 transform = new Transform2();
             LineF line = GetEdge(vertices, coord);
             transform.Position = line.Lerp(coord.EdgeT);
-            transform.Rotation = -(float)MathExt.VectorToAngle(GetEdge(vertices, coord).GetNormal());
+            transform.Rotation = -(float)MathEx.VectorToAngle(GetEdge(vertices, coord).GetNormal());
             return transform;
         }
 
         public static Transform2 GetTransform(FixtureCoord fixtureCoord)
         {
-            Vector2[] vertices = Vector2Ext.ToOtk(((PolygonShape)fixtureCoord.Fixture.Shape).Vertices);
+            Vector2[] vertices = Vector2Ex.ToOtk(((PolygonShape)fixtureCoord.Fixture.Shape).Vertices);
             return GetTransform(vertices, fixtureCoord);
         }
 
@@ -41,7 +41,7 @@ namespace Game.Common
         /// </summary>
         public static List<Vector2> SetNormals(List<Vector2> polygon, bool faceOutward = false)
         {
-            return MathExt.SetWinding(polygon, faceOutward);
+            return MathEx.SetWinding(polygon, faceOutward);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Game.Common
         /// </summary>
         public static Vector2[] SetNormals(Vector2[] polygon, bool faceOutward = false)
         {
-            return MathExt.SetWinding(polygon, faceOutward);
+            return MathEx.SetWinding(polygon, faceOutward);
         }
 
         /// <summary>
@@ -57,12 +57,12 @@ namespace Game.Common
         /// </summary>
         public static IList<Xna.Vector2> SetInterior(IList<Xna.Vector2> polygon)
         {
-            return MathExt.SetWinding(polygon, false);
+            return MathEx.SetWinding(polygon, false);
         }
 
         public static bool IsInterior(IList<Vector2> polygon)
         {
-            return !MathExt.IsClockwise(polygon);
+            return !MathEx.IsClockwise(polygon);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Game.Common
                     {
                         continue;
                     }
-                    var intersect = MathExt.LineLineIntersect(line, new LineF(polygon[j], polygon[jNext]), true);
+                    var intersect = MathEx.LineLineIntersect(line, new LineF(polygon[j], polygon[jNext]), true);
                     if (intersect != null)
                     {
                         return false;
@@ -146,7 +146,7 @@ namespace Game.Common
                 vertices.Add(polygon[i].V);
             }
 
-            if (MathExt.IsConvex(vertices))
+            if (MathEx.IsConvex(vertices))
             {
                 concaveList.Add(vertices);
                 return concaveList;
@@ -170,7 +170,7 @@ namespace Game.Common
                 {
                     diagonalIndex = polygon.FindIndex(item => item == vert);
                     //Check that this diagonal exists in the current polygon and that it isn't the next or previous vertice.
-                    if (diagonalIndex != -1 && Math.Abs(MathExt.ValueDiff(diagonalIndex, i, polygon.Count)) > 1)
+                    if (diagonalIndex != -1 && Math.Abs(MathEx.ValueDiff(diagonalIndex, i, polygon.Count)) > 1)
                     {
                         diagonal = vert;
                         break;
@@ -210,9 +210,9 @@ namespace Game.Common
 
         static bool IsReflex(Vector2 prev, Vector2 current, Vector2 next, bool isClockwise)
         {
-            double angleNext = MathExt.VectorToAngle(next - current);
-            double anglePrev = MathExt.VectorToAngle(prev - current);
-            double angleDiff = MathExt.AngleDiff(anglePrev, angleNext);
+            double angleNext = MathEx.VectorToAngle(next - current);
+            double anglePrev = MathEx.VectorToAngle(prev - current);
+            double angleDiff = MathEx.AngleDiff(anglePrev, angleNext);
             return Math.Sign(angleDiff) < 0 != isClockwise;
         }
 
@@ -224,7 +224,7 @@ namespace Game.Common
         public static List<List<Vector2>> DecomposeConcave(IList<Vector2> polygon)
         {
             Debug.Assert(polygon.Count >= 3);
-            if (MathExt.IsConvex(polygon))
+            if (MathEx.IsConvex(polygon))
             {
                 List<List<Vector2>> concave = new List<List<Vector2>>();
                 concave.Add(new List<Vector2>(polygon));
@@ -236,7 +236,7 @@ namespace Game.Common
             List<ConvexVert> verts = new List<ConvexVert>();
             for (int i = 0; i < tris.Points.Count; i++)
             {
-                verts.Add(new ConvexVert(Vector2Ext.ToOtk(tris.Points[i])));
+                verts.Add(new ConvexVert(Vector2Ex.ToOtk(tris.Points[i])));
             }
 
             for (int i = 0; i < tris.Triangles.Count; i++)
@@ -248,14 +248,14 @@ namespace Game.Common
                     if (!tri.EdgeIsConstrained[(j + 2) % 3])
                     {
                         int jNext = (j + 1) % 3;
-                        var v0 = Vector2Ext.ToOtk(tri.Points[j]);
-                        var v1 = Vector2Ext.ToOtk(tri.Points[jNext]);
+                        var v0 = Vector2Ex.ToOtk(tri.Points[j]);
+                        var v1 = Vector2Ex.ToOtk(tri.Points[jNext]);
                         ConvexVert vert0 = verts.Find(item => item.V == v0);
                         ConvexVert vert1 = verts.Find(item => item.V == v1);
 
                         int vertIndex0 = verts.FindIndex(item => item == vert0);
                         int vertIndex1 = verts.FindIndex(item => item == vert1);
-                        Debug.Assert(Math.Abs(MathExt.ValueDiff(vertIndex0, vertIndex1, verts.Count)) > 1);
+                        Debug.Assert(Math.Abs(MathEx.ValueDiff(vertIndex0, vertIndex1, verts.Count)) > 1);
 
                         vert0.Diagonals.Add(vert1);
                         vert1.Diagonals.Add(vert0);
@@ -263,7 +263,7 @@ namespace Game.Common
                 }
             }
 
-            return DecomposeConcave(verts, MathExt.IsClockwise(polygon));
+            return DecomposeConcave(verts, MathEx.IsClockwise(polygon));
         }
     }
 }

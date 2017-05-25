@@ -17,13 +17,13 @@ namespace Game.Physics
         public ChildBody BodyParent { get; private set; } = new ChildBody(null, null);
         public bool IsChild => BodyParent.Body != null;
 
-        public BodyData Parent => BodyParent.Body == null ? null : BodyExt.GetData(BodyParent.Body);
+        public BodyData Parent => BodyParent.Body == null ? null : BodyEx.GetData(BodyParent.Body);
 
         public List<BodyData> Children {
             get
             {
                 return BodyChildren.Select(
-                    item => item.Body == null ? null : BodyExt.GetData(item.Body)).ToList();
+                    item => item.Body == null ? null : BodyEx.GetData(item.Body)).ToList();
             }
         }
 
@@ -71,14 +71,14 @@ namespace Game.Physics
                 Body bodyClone = Body.DeepClone();
 
                 bodyClone.BodyType = Actor.BodyType == BodyType.Dynamic ? BodyType.Dynamic : BodyType.Kinematic;
-                BodyData userData = BodyExt.SetData(bodyClone, Actor);
+                BodyData userData = BodyEx.SetData(bodyClone, Actor);
                 userData.BodyParent = new ChildBody(Body, portal);
 
                 Portal.Enter(portal, bodyClone);
                 foreach (Fixture f in bodyClone.FixtureList)
                 {
-                    FixtureData fixtureData = FixtureExt.SetData(f);
-                    fixtureData.PortalCollisions.UnionWith(FixtureExt.GetPortalCollisions(f, Actor.Scene.GetPortalList()));
+                    FixtureData fixtureData = FixtureEx.SetData(f);
+                    fixtureData.PortalCollisions.UnionWith(FixtureEx.GetPortalCollisions(f, Actor.Scene.GetPortalList()));
                     fixtureData.ProcessChanges();
                 }
 
@@ -92,7 +92,7 @@ namespace Game.Physics
                 ChildBody child = BodyChildren.Find(item => item.Portal == portal);
                 if (child != null)
                 {
-                    BodyExt.Remove(child.Body);
+                    BodyEx.Remove(child.Body);
                 }
             }
 
@@ -107,7 +107,7 @@ namespace Game.Physics
             HashSet<IPortal> collisions = new HashSet<IPortal>();
             foreach (Fixture f in Body.FixtureList)
             {
-                collisions.UnionWith(FixtureExt.GetData(f).PortalCollisions);
+                collisions.UnionWith(FixtureEx.GetData(f).PortalCollisions);
             }
             Debug.Assert(!collisions.Contains(null));
             return collisions;
@@ -118,7 +118,7 @@ namespace Game.Physics
             HashSet<IPortal> collisionsPrevious = new HashSet<IPortal>();
             foreach (Fixture f in Body.FixtureList)
             {
-                collisionsPrevious.UnionWith(FixtureExt.GetData(f).PortalCollisionsPrevious);
+                collisionsPrevious.UnionWith(FixtureEx.GetData(f).PortalCollisionsPrevious);
             }
             Debug.Assert(!collisionsPrevious.Contains(null));
             return collisionsPrevious;

@@ -152,7 +152,7 @@ namespace GameTests
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2((float)Math.Cos(i + Math.PI), (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2((float)Math.Cos(i), (float)Math.Sin(i));
-                LineF line = new LineF(Vector2Ext.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
+                LineF line = new LineF(Vector2Ex.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
@@ -172,7 +172,7 @@ namespace GameTests
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
-                LineF line = new LineF(Vector2Ext.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
+                LineF line = new LineF(Vector2Ex.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
@@ -192,7 +192,7 @@ namespace GameTests
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI) / 100000, y + (float)Math.Sin(i + Math.PI) / 100000);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i) / 100000, y + (float)Math.Sin(i) / 100000);
-                LineF line = new LineF(Vector2Ext.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
+                LineF line = new LineF(Vector2Ex.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
@@ -212,7 +212,7 @@ namespace GameTests
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x, y);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
-                LineF line = new LineF(Vector2Ext.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
+                LineF line = new LineF(Vector2Ex.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
 
                 Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
@@ -233,7 +233,7 @@ namespace GameTests
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i + Math.PI), y + (float)Math.Sin(i + Math.PI));
                 Vector2 lookPoint = new Vector2(x, y);
-                LineF line = new LineF(Vector2Ext.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
+                LineF line = new LineF(Vector2Ex.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
 
                 Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
@@ -254,7 +254,7 @@ namespace GameTests
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
                 Vector2 lookPoint = new Vector2(x, y);
-                LineF line = new LineF(Vector2Ext.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
+                LineF line = new LineF(Vector2Ex.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
                 Assert.IsTrue(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
@@ -274,7 +274,7 @@ namespace GameTests
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i) * 2, y + (float)Math.Sin(i) * 2);
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
-                LineF line = new LineF(Vector2Ext.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
+                LineF line = new LineF(Vector2Ex.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
                 Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
@@ -294,7 +294,7 @@ namespace GameTests
                 PortalCommon.UpdateWorldTransform(scene);
                 Vector2 viewPoint = new Vector2(x + (float)Math.Cos(i), y + (float)Math.Sin(i));
                 Vector2 lookPoint = new Vector2(x + (float)Math.Cos(i) * 2, y + (float)Math.Sin(i) * 2);
-                LineF line = new LineF(Vector2Ext.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
+                LineF line = new LineF(Vector2Ex.Transform(Portal.Vertices, p0.WorldTransform.GetMatrix()));
                 Assert.IsFalse(line.IsInsideFov(viewPoint, lookPoint));
             }
         }
@@ -377,7 +377,7 @@ namespace GameTests
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, 1f));
             LineF line1 = new LineF(new Vector2(-0.5f, 0.6f), new Vector2(0.5f, 0.6f));
-            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathEx.LineLineIntersect(line0, line1, false);
 
             IntersectCoord comparison = new IntersectCoord(new Vector2d(0, 0.6), 0.6, 0.5);
             Assert.IsTrue(intersect.AlmostEqual(comparison));
@@ -388,7 +388,7 @@ namespace GameTests
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, 1f));
             LineF line1 = new LineF(new Vector2(-0.5f, 1f), new Vector2(0.5f, 1f));
-            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathEx.LineLineIntersect(line0, line1, false);
 
             IntersectCoord comparison = new IntersectCoord(new Vector2d(0, 1), 1, 0.5);
             Assert.IsTrue(intersect.AlmostEqual(comparison));
@@ -399,7 +399,7 @@ namespace GameTests
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, -1f));
             LineF line1 = new LineF(new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f));
-            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathEx.LineLineIntersect(line0, line1, false);
 
             IntersectCoord comparison = new IntersectCoord(new Vector2d(0, -1), 1, 0.5);
             Assert.IsTrue(intersect.AlmostEqual(comparison));
@@ -410,7 +410,7 @@ namespace GameTests
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, -1000000f));
             LineF line1 = new LineF(new Vector2(-0.5f, -1000000), new Vector2(0.5f, -1000000f));
-            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathEx.LineLineIntersect(line0, line1, false);
 
             IntersectCoord comparison = new IntersectCoord(new Vector2d(0, -1000000), 1, 0.5);
             Assert.IsTrue(intersect.AlmostEqual(comparison));
@@ -421,7 +421,7 @@ namespace GameTests
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, -1f));
             LineF line1 = new LineF(new Vector2(-0.5f, -1f), new Vector2(0.5f, -1f));
-            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, true);
+            IntersectCoord intersect = MathEx.LineLineIntersect(line0, line1, true);
 
             IntersectCoord comparison = new IntersectCoord(new Vector2d(0, -1), 1, 0.5);
             Assert.IsTrue(intersect.AlmostEqual(comparison));
@@ -432,7 +432,7 @@ namespace GameTests
         {
             LineF line0 = new LineF(new Vector2(), new Vector2(0, -1000000f));
             LineF line1 = new LineF(new Vector2(-0.5f, -1000000), new Vector2(0.5f, -1000000f));
-            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, true);
+            IntersectCoord intersect = MathEx.LineLineIntersect(line0, line1, true);
 
             IntersectCoord comparison = new IntersectCoord(new Vector2d(0, -1000000), 1, 0.5);
             Assert.IsTrue(intersect.AlmostEqual(comparison));
@@ -443,7 +443,7 @@ namespace GameTests
         {
             LineF line0 = new LineF(new Vector2(1f, 1f), new Vector2(2f, 2f));
             LineF line1 = new LineF(new Vector2(1.5f, 3f), new Vector2(1.5f, -1.5f));
-            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathEx.LineLineIntersect(line0, line1, false);
 
             IntersectCoord comparison = new IntersectCoord(new Vector2d(1.5, 1.5), 0.5, 1.0 / 3.0);
             Assert.IsTrue(intersect.AlmostEqual(comparison));
@@ -454,7 +454,7 @@ namespace GameTests
         {
             LineF line0 = new LineF(new Vector2(1f, 1f), new Vector2(2f, 2f));
             LineF line1 = new LineF(new Vector2(3f, 9f), new Vector2(12f, -6f));
-            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, true);
+            IntersectCoord intersect = MathEx.LineLineIntersect(line0, line1, true);
 
             Assert.IsTrue(intersect == null);
         }
@@ -464,7 +464,7 @@ namespace GameTests
         {
             LineF line0 = new LineF(new Vector2(1f, 1f), new Vector2(2f, 2f));
             LineF line1 = new LineF(new Vector2(3f, 9f), new Vector2(12f, -6f));
-            IntersectCoord intersect = MathExt.LineLineIntersect(line0, line1, false);
+            IntersectCoord intersect = MathEx.LineLineIntersect(line0, line1, false);
 
             IntersectCoord comparison = new IntersectCoord(new Vector2d(5.25, 5.25), 4.25, 0.25);
             Assert.IsTrue(intersect.AlmostEqual(comparison));

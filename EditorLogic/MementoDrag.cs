@@ -46,7 +46,7 @@ namespace EditorLogic
         {
             if (_transform == null)
             {
-                return PolygonExt.GetTransform(_parent.Vertices, _polygonCoord);
+                return PolygonEx.GetTransform(_parent.Vertices, _polygonCoord);
             }
             return _transform.ShallowClone();
         }

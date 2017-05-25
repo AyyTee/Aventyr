@@ -73,7 +73,7 @@ namespace Game.Models
             return val;
         }
 
-        public Vector3[] GetWorldVerts() => Vector3Ext.Transform(GetVerts(), Transform.GetMatrix());
+        public Vector3[] GetWorldVerts() => Vector3Ex.Transform(GetVerts(), Transform.GetMatrix());
         
         /// <summary>
         /// Returns a convex hull of the model projected onto the z-plane in the world space
@@ -86,7 +86,7 @@ namespace Game.Models
             {
                 vProject.Add(new Vector2(v[i].X, v[i].Y));
             }
-            return MathExt.GetConvexHull(vProject).ToArray();
+            return MathEx.GetConvexHull(vProject).ToArray();
         }
 
         /// <summary>

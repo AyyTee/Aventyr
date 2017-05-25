@@ -224,22 +224,22 @@
     <Compile Include="ITreeNode.cs" />
     <Compile Include="IWall.cs" />
     <Compile Include="Models\Mesh.cs" />
-    <Compile Include="Common\PolygonExt.cs" />
+    <Compile Include="Common\PolygonEx.cs" />
     <Compile Include="Models\ReadOnlyMesh.cs" />
     <Compile Include="Rendering\ModelLoader.cs" />
     <Compile Include="EdgeData.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="Rendering\Camera.cs" />
     <Compile Include="Physics\Factory.cs" />
-    <Compile Include="Physics\FixtureExt.cs" />
+    <Compile Include="Physics\FixtureEx.cs" />
     <Compile Include="Physics\FixtureData.cs" />
     <Compile Include="Portals\FloatPortal.cs" />
     <Compile Include="Rendering\Font.cs" />
     <Compile Include="Physics\FixtureCoord.cs" />
     <Compile Include="Common\LineF.cs" />
-    <Compile Include="Common\MathExt.cs" />
-    <Compile Include="Common\Matrix4Ext.cs" />
-    <Compile Include="Physics\BodyExt.cs" />
+    <Compile Include="Common\MathEx.cs" />
+    <Compile Include="Common\Matrix4Ex.cs" />
+    <Compile Include="Physics\BodyEx.cs" />
     <Compile Include="Rendering\ModelFactory.cs" />
     <Compile Include="Physics\PhysicsListener.cs" />
     <Compile Include="Physics\Actor.cs" />
@@ -263,11 +263,11 @@
     <Compile Include="Common\Transform3d.cs" />
     <Compile Include="Tree.cs" />
     <Compile Include="Models\Triangle.cs" />
-    <Compile Include="Common\Vector2Ext.cs" />
-    <Compile Include="Common\Vector3Ext.cs" />
+    <Compile Include="Common\Vector2Ex.cs" />
+    <Compile Include="Common\Vector3Ex.cs" />
     <Compile Include="Models\Vertex.cs" />
     <Compile Include="WallCoord.cs" />
-    <Compile Include="Physics\WorldExt.cs" />
+    <Compile Include="Physics\WorldEx.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Fonts\Arial\Arial_0.png">

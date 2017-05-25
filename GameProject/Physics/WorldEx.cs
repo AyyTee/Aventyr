@@ -3,7 +3,7 @@ using FarseerPhysics.Dynamics;
 
 namespace Game.Physics
 {
-    public static class WorldExt
+    public static class WorldEx
     {
         /// <summary>
         /// Returns a list of all fixtures in the physics world.

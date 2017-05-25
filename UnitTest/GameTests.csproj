@@ -85,9 +85,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="CameraExtTests.cs" />
+    <Compile Include="CameraExTests.cs" />
     <Compile Include="CodeGenTests.cs" />
-    <Compile Include="MathExtTests.cs" />
+    <Compile Include="MathExTests.cs" />
     <Compile Include="NodePortalable.cs" />
     <Compile Include="NodeWall.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -101,16 +101,16 @@
     <Compile Include="DeepCloneTests.cs" />
     <Compile Include="TriangleTests.cs" />
     <Compile Include="ClipModelTests.cs" />
-    <Compile Include="FixtureExtTests.cs" />
+    <Compile Include="FixtureExTests.cs" />
     <Compile Include="ActorTests.cs" />
-    <Compile Include="PolygonExtTests.cs" />
+    <Compile Include="PolygonExTests.cs" />
     <Compile Include="FCurveTests.cs" />
     <Compile Include="SimulationStepTests.cs" />
     <Compile Include="PortalCommonTests.cs" />
     <Compile Include="SceneTests.cs" />
     <Compile Include="PortalJointTests.cs" />
-    <Compile Include="BodyExtTests.cs" />
-    <Compile Include="Vector2ExtTests.cs" />
+    <Compile Include="BodyExTests.cs" />
+    <Compile Include="Vector2ExTests.cs" />
     <Compile Include="VertexTests.cs" />
   </ItemGroup>
   <ItemGroup>

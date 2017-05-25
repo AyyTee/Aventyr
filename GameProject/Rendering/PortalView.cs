@@ -88,8 +88,8 @@ namespace Game.Rendering
                 return false;
             }
 
-            Vector2[] fov = Vector2Ext.Transform(Portal.GetFov(portal, viewPos, 500, 3), portalMatrix);
-            if (MathExt.GetArea(fov) < areaEpsilon)
+            Vector2[] fov = Vector2Ex.Transform(Portal.GetFov(portal, viewPos, 500, 3), portalMatrix);
+            if (MathEx.GetArea(fov) < areaEpsilon)
             {
                 return false;
             }
@@ -124,12 +124,12 @@ namespace Game.Rendering
                 {
                     continue;
                 }
-                Vector2[] otherFov = Vector2Ext.Transform(Portal.GetFov(other, viewPos, 500, 3), portalMatrix);
-                if (MathExt.GetArea(otherFov) < areaEpsilon)
+                Vector2[] otherFov = Vector2Ex.Transform(Portal.GetFov(other, viewPos, 500, 3), portalMatrix);
+                if (MathEx.GetArea(otherFov) < areaEpsilon)
                 {
                     continue;
                 }
-                otherFov = MathExt.SetWinding(otherFov, true);
+                otherFov = MathEx.SetWinding(otherFov, true);
                 List<IntPoint> otherPathFov = ClipperConvert.ToIntPoint(otherFov);
                 c.AddPath(otherPathFov, PolyType.ptClip, true);
             }
@@ -141,8 +141,8 @@ namespace Game.Rendering
                 return false;
             }
 
-            Vector2 viewPosNew = Vector2Ext.Transform(viewPos, Portal.GetLinkedMatrix(portal, portal.Linked));
-            Vector2 viewPosPreviousNew = Vector2Ext.Transform(viewPosPrevious, Portal.GetLinkedMatrix(portal, portal.Linked));
+            Vector2 viewPosNew = Vector2Ex.Transform(viewPos, Portal.GetLinkedMatrix(portal, portal.Linked));
+            Vector2 viewPosPreviousNew = Vector2Ex.Transform(viewPosPrevious, Portal.GetLinkedMatrix(portal, portal.Linked));
 
             Matrix4 portalMatrixNew = Portal.GetLinkedMatrix(portal.Linked, portal) * portalMatrix;
             Matrix4 viewMatrixNew = portalMatrixNew * viewMatrix;

@@ -10,7 +10,7 @@ using Game.Portals;
 namespace GameTests
 {
     [TestClass]
-    public class FixtureExtTests
+    public class FixtureExTests
     {
         [TestMethod]
         public void GetFixtureEdgeCoordTest0()
@@ -24,10 +24,10 @@ namespace GameTests
             };
             Actor actor = new Actor(scene, vertices);
             PolygonCoord polyCoord = new PolygonCoord(3, 0.4f);
-            FixtureCoord fixtureCoord = FixtureExt.GetFixtureEdgeCoord(actor, polyCoord);
+            FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
             Assert.IsTrue(fixtureCoord.EdgeT == polyCoord.EdgeT);
-            Assert.IsTrue(PolygonExt.GetTransform(vertices, polyCoord).EqualsValue(PolygonExt.GetTransform(fixtureCoord)));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
         }
 
         public Vector2[] GetVertices()
@@ -48,10 +48,10 @@ namespace GameTests
             Vector2[] vertices = GetVertices();
             Actor actor = new Actor(scene, vertices);
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
-            FixtureCoord fixtureCoord = FixtureExt.GetFixtureEdgeCoord(actor, polyCoord);
+            FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
             Assert.IsTrue(fixtureCoord.EdgeT == polyCoord.EdgeT);
-            Assert.IsTrue(PolygonExt.GetTransform(vertices, polyCoord).EqualsValue(PolygonExt.GetTransform(fixtureCoord)));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
         }
 
         [TestMethod]
@@ -67,10 +67,10 @@ namespace GameTests
             Actor actor = new Actor(scene, vertices);
             actor.SetTransform(new Transform2(new Vector2(), 1, 0, true));
             PolygonCoord polyCoord = new PolygonCoord(0, 0f);
-            FixtureCoord fixtureCoord = FixtureExt.GetFixtureEdgeCoord(actor, polyCoord);
+            FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
-            Transform2 expected = PolygonExt.GetTransform(actor.GetWorldVertices(), polyCoord);
-            Transform2 result = PolygonExt.GetTransform(fixtureCoord);
+            Transform2 expected = PolygonEx.GetTransform(actor.GetWorldVertices(), polyCoord);
+            Transform2 result = PolygonEx.GetTransform(fixtureCoord);
             Assert.IsTrue(expected.AlmostEqual(result));
         }
 
@@ -82,9 +82,9 @@ namespace GameTests
             Actor actor = new Actor(scene, vertices);
             actor.SetTransform(new Transform2(new Vector2(), 1, 0, true));
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
-            FixtureCoord fixtureCoord = FixtureExt.GetFixtureEdgeCoord(actor, polyCoord);
+            FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
-            Assert.IsTrue(PolygonExt.GetTransform(vertices, polyCoord).EqualsValue(PolygonExt.GetTransform(fixtureCoord)));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
         }
 
         [TestMethod]
@@ -95,9 +95,9 @@ namespace GameTests
             Actor actor = new Actor(scene, vertices);
             actor.SetTransform(new Transform2(new Vector2(), -1, 0, true));
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
-            FixtureCoord fixtureCoord = FixtureExt.GetFixtureEdgeCoord(actor, polyCoord);
+            FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
-            Assert.IsTrue(PolygonExt.GetTransform(vertices, polyCoord).EqualsValue(PolygonExt.GetTransform(fixtureCoord)));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
         }
 
         [TestMethod]
@@ -113,8 +113,8 @@ namespace GameTests
             Actor actor = new Actor(scene, vertices);
             PortalCommon.UpdateWorldTransform(scene);
 
-            Vector2[] fixtureVertices = Vector2Ext.ToOtk(((PolygonShape)actor.Body.FixtureList[0].Shape).Vertices);
-            Assert.IsTrue(MathExt.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
+            Vector2[] fixtureVertices = Vector2Ex.ToOtk(((PolygonShape)actor.Body.FixtureList[0].Shape).Vertices);
+            Assert.IsTrue(MathEx.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
         }
 
         [TestMethod]
@@ -132,8 +132,8 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             scene.World.ProcessChanges();
 
-            Vector2[] fixtureVertices = FixtureExt.GetWorldPoints(actor.Body.FixtureList[0]);
-            Assert.IsTrue(MathExt.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
+            Vector2[] fixtureVertices = FixtureEx.GetWorldPoints(actor.Body.FixtureList[0]);
+            Assert.IsTrue(MathEx.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
         }
 
         [TestMethod]
@@ -151,8 +151,8 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             scene.World.ProcessChanges();
 
-            Vector2[] fixtureVertices = FixtureExt.GetWorldPoints(actor.Body.FixtureList[0]);
-            Assert.IsTrue(MathExt.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
+            Vector2[] fixtureVertices = FixtureEx.GetWorldPoints(actor.Body.FixtureList[0]);
+            Assert.IsTrue(MathEx.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices));
         }
 
         [TestMethod]
@@ -170,8 +170,8 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             scene.World.ProcessChanges();
 
-            Vector2[] fixtureVertices = FixtureExt.GetWorldPoints(actor.Body.FixtureList[0]);
-            Assert.IsTrue(MathExt.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices, (item0, item1) => (item0 - item1).Length < 0.001f));
+            Vector2[] fixtureVertices = FixtureEx.GetWorldPoints(actor.Body.FixtureList[0]);
+            Assert.IsTrue(MathEx.IsIsomorphic(actor.GetWorldVertices(), fixtureVertices, (item0, item1) => (item0 - item1).Length < 0.001f));
         }
     }
 }

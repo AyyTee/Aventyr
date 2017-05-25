@@ -25,7 +25,7 @@ namespace GameTests
             Transform2 t = Portal.GetLinkedTransform(p0, p1);
             Matrix4 result = t.GetMatrix();
             Matrix4 expected = Portal.GetLinkedMatrix(p0, p1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result, expected));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result, expected));
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace GameTests
             Transform2 t = Portal.GetLinkedTransform(p0, p1);
             Matrix4 result = t.GetMatrix();
             Matrix4 expected = Portal.GetLinkedMatrix(p0, p1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result, expected));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result, expected));
         }
 
         [TestMethod]
@@ -55,7 +55,7 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
 
             Transform2 result = Portal.GetLinkedTransform(p0, p1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), Portal.GetLinkedMatrix(p0, p1)));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), Portal.GetLinkedMatrix(p0, p1)));
         }
 
         #region PathIntersections tests

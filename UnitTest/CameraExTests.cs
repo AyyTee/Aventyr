@@ -12,7 +12,7 @@ using OpenTK;
 namespace GameTests
 {
     [TestClass]
-    public class CameraExtTests
+    public class CameraExTests
     {
         /// <summary>
         /// Simple ICamera2 implementation for unit testing.
@@ -45,10 +45,10 @@ namespace GameTests
             Assert.IsTrue(result == new Vector2(-0.5f, 0.5f));
 
             result = camera.ScreenToWorld(new Vector2(400, 300), canvasSize);
-            Assert.IsTrue(Vector2Ext.AlmostEqual(result, new Vector2(), 0.00001f));
+            Assert.IsTrue(Vector2Ex.AlmostEqual(result, new Vector2(), 0.00001f));
 
             result = camera.ScreenToWorld(new Vector2(800, 600), canvasSize);
-            Assert.IsTrue(Vector2Ext.AlmostEqual(result, new Vector2(0.5f, -0.5f), 0.00001f));
+            Assert.IsTrue(Vector2Ex.AlmostEqual(result, new Vector2(0.5f, -0.5f), 0.00001f));
         }
 
         [TestMethod]

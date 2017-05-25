@@ -41,7 +41,7 @@ namespace Game.Animation
             }
             if (IsLoop)
             {
-                time = (float)MathExt.ValueWrap(time, Length);
+                time = (float)MathEx.ValueWrap(time, Length);
             }
             else if (time < Keyframes.First().Key)
             {
@@ -75,7 +75,7 @@ namespace Game.Animation
                     return current.Value;
                 }
                 float t = (time - current.Time) / (nextTime - current.Time);
-                return (float)MathExt.Lerp(current.Value, next.Value, t);
+                return (float)MathEx.Lerp(current.Value, next.Value, t);
             }
             return current.Value;
         }
@@ -101,7 +101,7 @@ namespace Game.Animation
             }
             if (IsLoop)
             {
-                time = (float)MathExt.ValueWrap(time, Length);
+                time = (float)MathEx.ValueWrap(time, Length);
             }
             else if (time < Keyframes.First().Key)
             {

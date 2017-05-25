@@ -13,7 +13,7 @@ using Game.Rendering;
 namespace GameTests
 {
     [TestClass]
-    public class MathExtTests
+    public class MathExTests
     {
         const double ErrorMargin = 0.0000001;
 
@@ -21,56 +21,56 @@ namespace GameTests
         [TestMethod]
         public void LineInRectangle0()
         {
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2(0, 0), new Vector2(10, 10), new Vector2(1, 1), new Vector2(2, 2)));
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2d(0, 0), new Vector2d(10, 10), new Vector2d(1, 1), new Vector2d(2, 2)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2(0, 0), new Vector2(10, 10), new Vector2(1, 1), new Vector2(2, 2)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2d(0, 0), new Vector2d(10, 10), new Vector2d(1, 1), new Vector2d(2, 2)));
         }
         [TestMethod]
         public void LineInRectangle1()
         {
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2(0, 0), new Vector2(-10, -10), new Vector2(-1, -1), new Vector2(-2, -2)));
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2d(0, 0), new Vector2d(-10, -10), new Vector2d(-1, -1), new Vector2d(-2, -2)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2(0, 0), new Vector2(-10, -10), new Vector2(-1, -1), new Vector2(-2, -2)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2d(0, 0), new Vector2d(-10, -10), new Vector2d(-1, -1), new Vector2d(-2, -2)));
         }
         [TestMethod]
         public void LineInRectangle2()
         {
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(4, 6), new Vector2(20, 4)));
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(4, 6), new Vector2d(20, 4)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(4, 6), new Vector2(20, 4)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(4, 6), new Vector2d(20, 4)));
         }
         [TestMethod]
         public void LineInRectangle3()
         {
-            Assert.IsFalse(MathExt.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(0, 0), new Vector2(20, 1)));
-            Assert.IsFalse(MathExt.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(0, 0), new Vector2d(20, 1)));
+            Assert.IsFalse(MathEx.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(0, 0), new Vector2(20, 1)));
+            Assert.IsFalse(MathEx.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(0, 0), new Vector2d(20, 1)));
         }
         [TestMethod]
         public void LineInRectangle4()
         {
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(5, 5), new Vector2(0, 0)));
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(5, 5), new Vector2d(0, 0)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(5, 5), new Vector2(0, 0)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(5, 5), new Vector2d(0, 0)));
         }
         [TestMethod]
         public void LineInRectangle5()
         {
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(0, 0), new Vector2(5, 5)));
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(0, 0), new Vector2d(5, 5)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(0, 0), new Vector2(5, 5)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(0, 0), new Vector2d(5, 5)));
         }
         [TestMethod]
         public void LineInRectangle6()
         {
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(6, 5), new Vector2(0, 0)));
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(6, 5), new Vector2d(0, 0)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(6, 5), new Vector2(0, 0)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(6, 5), new Vector2d(0, 0)));
         }
         [TestMethod]
         public void LineInRectangle7()
         {
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(0, 0), new Vector2(6, 5)));
-            Assert.IsTrue(MathExt.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(0, 0), new Vector2d(6, 5)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(0, 0), new Vector2(6, 5)));
+            Assert.IsTrue(MathEx.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(0, 0), new Vector2d(6, 5)));
         }
         [TestMethod]
         public void LineInRectangle8()
         {
-            Assert.IsFalse(MathExt.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(0, 0), new Vector2(0, 0)));
-            Assert.IsFalse(MathExt.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(0, 0), new Vector2d(0, 0)));
+            Assert.IsFalse(MathEx.LineInRectangle(new Vector2(10, 10), new Vector2(5, 5), new Vector2(0, 0), new Vector2(0, 0)));
+            Assert.IsFalse(MathEx.LineInRectangle(new Vector2d(10, 10), new Vector2d(5, 5), new Vector2d(0, 0), new Vector2d(0, 0)));
         }
         #endregion
         #region ComputeConvexHull tests
@@ -84,7 +84,7 @@ namespace GameTests
                 new Vector2(1, 0)
             });
 
-            List<Vector2> listOut = MathExt.GetConvexHull(listIn);
+            List<Vector2> listOut = MathEx.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(0, 0) &&
@@ -103,7 +103,7 @@ namespace GameTests
                 new Vector2(-5, 5),
             });
 
-            List<Vector2> listOut = MathExt.GetConvexHull(listIn);
+            List<Vector2> listOut = MathEx.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(-5, -5) &&
@@ -124,7 +124,7 @@ namespace GameTests
                 new Vector2(-5, 5),
             });
 
-            List<Vector2> listOut = MathExt.GetConvexHull(listIn);
+            List<Vector2> listOut = MathEx.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(-5, -5) &&
@@ -147,7 +147,7 @@ namespace GameTests
                 new Vector2(198, 200),
             });
 
-            List<Vector2> listOut = MathExt.GetConvexHull(listIn);
+            List<Vector2> listOut = MathEx.GetConvexHull(listIn);
 
             Assert.IsTrue(
                 listOut[0] == new Vector2(15, 51) &&
@@ -167,7 +167,7 @@ namespace GameTests
                 new Vector2(0, 1),
                 new Vector2(1, 0)
             };
-            Assert.IsTrue(MathExt.IsClockwise(v));
+            Assert.IsTrue(MathEx.IsClockwise(v));
         }
         [TestMethod]
         public void IsClockwiseTest1()
@@ -177,7 +177,7 @@ namespace GameTests
                 new Vector2(1, 0),
                 new Vector2(0, 1)
             };
-            Assert.IsFalse(MathExt.IsClockwise(v));
+            Assert.IsFalse(MathEx.IsClockwise(v));
         }
         [TestMethod]
         public void IsClockwiseTest2()
@@ -188,7 +188,7 @@ namespace GameTests
                 new Vector2(11f, -5f),
                 new Vector2(-6f, -6.3f)
             };
-            Assert.IsTrue(MathExt.IsClockwise(v));
+            Assert.IsTrue(MathEx.IsClockwise(v));
         }
         [TestMethod]
         public void IsClockwiseTest3()
@@ -199,7 +199,7 @@ namespace GameTests
                 new Vector2(0f, 0f),
                 new Vector2(0f, 1f),
             };
-            Assert.IsTrue(MathExt.IsClockwise(v));
+            Assert.IsTrue(MathEx.IsClockwise(v));
         }
         [TestMethod]
         public void IsClockwiseTest4()
@@ -212,7 +212,7 @@ namespace GameTests
             };
             List<Vector2> vList = new List<Vector2>(v);
             vList.Reverse();
-            Assert.IsFalse(MathExt.IsClockwise(vList));
+            Assert.IsFalse(MathEx.IsClockwise(vList));
         }
         #endregion
         #region SetWinding tests
@@ -224,8 +224,8 @@ namespace GameTests
                 new Vector2(0, 1),
                 new Vector2(1, 0)
             };
-            Debug.Assert(MathExt.IsClockwise(v));
-            Vector2[] result = MathExt.SetWinding(v, false);
+            Debug.Assert(MathEx.IsClockwise(v));
+            Vector2[] result = MathEx.SetWinding(v, false);
             Vector2[] expected = {
                 new Vector2(1, 0),
                 new Vector2(0, 1),
@@ -244,8 +244,8 @@ namespace GameTests
                 new Vector2(1, 0)
             };
 
-            Debug.Assert(MathExt.IsClockwise(v));
-            List<Vector2> result = MathExt.SetWinding(v, false);
+            Debug.Assert(MathEx.IsClockwise(v));
+            List<Vector2> result = MathEx.SetWinding(v, false);
             Vector2[] expected = {
                 new Vector2(1, 0),
                 new Vector2(0, 1),
@@ -261,34 +261,34 @@ namespace GameTests
         {
             //test degernate line outside of circle
             LineF line = new LineF(new Vector2(1, 0), new Vector2(1, 0));
-            Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, true).Length == 0);
+            Assert.IsTrue(MathEx.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, true).Length == 0);
         }
         [TestMethod]
         public void LineCircleIntersectTest1()
         {
             //test degenerate line inside of circle
             LineF line = new LineF(new Vector2(1, 0), new Vector2(1f, 0));
-            Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, true).Length == 0);
+            Assert.IsTrue(MathEx.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, true).Length == 0);
         }
         [TestMethod]
         public void LineCircleIntersectTest2()
         {
             //test degernate line outside of circle
             LineF line = new LineF(new Vector2(1, 0), new Vector2(1, 0));
-            Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, false).Length == 0);
+            Assert.IsTrue(MathEx.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, false).Length == 0);
         }
         [TestMethod]
         public void LineCircleIntersectTest3()
         {
             //test degenerate line inside of circle
             LineF line = new LineF(new Vector2(1, 0), new Vector2(1f, 0));
-            Assert.IsTrue(MathExt.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, false).Length == 0);
+            Assert.IsTrue(MathEx.LineCircleIntersect(new Vector2(1, 0), 0.1f, line, false).Length == 0);
         }
         [TestMethod]
         public void LineCircleIntersectTest4()
         {
             LineF line = new LineF(new Vector2(-1f, 1f), new Vector2(2f, 1f));
-            IntersectCoord[] intersects = MathExt.LineCircleIntersect(new Vector2(1, 1), 0.1f, line, true);
+            IntersectCoord[] intersects = MathEx.LineCircleIntersect(new Vector2(1, 1), 0.1f, line, true);
             Assert.IsTrue(intersects[0] != null && intersects[1] != null);
             Assert.IsTrue(
                 ((intersects[0].Position - new Vector2d(1.1, 1)).Length < ErrorMargin && intersects[0].First - 0.7 < ErrorMargin &&
@@ -302,7 +302,7 @@ namespace GameTests
         public void LineCircleIntersectTest5()
         {
             LineF line = new LineF(new Vector2(-100f, 1f), new Vector2(20f, 100f));
-            IntersectCoord[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1f, line, true);
+            IntersectCoord[] intersections = MathEx.LineCircleIntersect(new Vector2(1, 1), 1f, line, true);
             Assert.IsTrue(intersections.Length == 0);
         }
 
@@ -310,7 +310,7 @@ namespace GameTests
         public void LineCircleIntersectTest6()
         {
             LineF line = new LineF(new Vector2(-100f, 1f), new Vector2(20f, 100f));
-            IntersectCoord[] intersections = MathExt.LineCircleIntersect(new Vector2(1, 1), 1000f, line, true);
+            IntersectCoord[] intersections = MathEx.LineCircleIntersect(new Vector2(1, 1), 1000f, line, true);
             Assert.IsTrue(intersections.Length == 0);
         }
         #endregion
@@ -338,14 +338,14 @@ namespace GameTests
         {
             Vector2[] source = GetSquare();
             Vector2[] destination = GetSquare();
-            Matrix4d homography = MathExt.GetHomography(source, destination);
+            Matrix4d homography = MathEx.GetHomography(source, destination);
             Vector3[] vectors = {
                 new Vector3(source[0]),
                 new Vector3(source[1]),
                 new Vector3(source[2]),
                 new Vector3(source[3])
             };
-            vectors = Vector3Ext.Transform(vectors, homography);
+            vectors = Vector3Ex.Transform(vectors, homography);
 
             ICamera2 camera = GetCamera();
             for (int i = 0; i < vectors.Length; i++)
@@ -370,14 +370,14 @@ namespace GameTests
                 new Vector2(1, 2),
                 new Vector2(0, 1)
             };
-            Matrix4d homography = MathExt.GetHomography(source, destination);
+            Matrix4d homography = MathEx.GetHomography(source, destination);
             Vector3[] vectors = {
                 new Vector3(source[0]),
                 new Vector3(source[1]),
                 new Vector3(source[2]),
                 new Vector3(source[3])
             };
-            vectors = Vector3Ext.Transform(vectors, homography);
+            vectors = Vector3Ex.Transform(vectors, homography);
 
             Camera2 camera = GetCamera();
             for (int i = 0; i < vectors.Length; i++)
@@ -412,7 +412,7 @@ namespace GameTests
             };
             try
             {
-                MathExt.GetHomography(source, destination);
+                MathEx.GetHomography(source, destination);
             }
             catch (ExceptionInvalidPolygon)
             {
@@ -436,14 +436,14 @@ namespace GameTests
                 new Vector2(1, 2),
                 new Vector2(0, 1)
             };
-            Matrix4d homography = MathExt.GetHomography(source, destination);
+            Matrix4d homography = MathEx.GetHomography(source, destination);
             Vector3[] vectors = {
                 new Vector3(source[0]),
                 new Vector3(source[1]),
                 new Vector3(source[2]),
                 new Vector3(source[3])
             };
-            vectors = Vector3Ext.Transform(vectors, homography);
+            vectors = Vector3Ex.Transform(vectors, homography);
 
             Camera2 camera = GetCamera();
             for (int i = 0; i < vectors.Length; i++)
@@ -574,7 +574,7 @@ namespace GameTests
         {
             LineF line = new LineF(new Vector2(), new Vector2(4, 0));
             Vector2[] polygon = PolygonFactory.CreateRectangle(2, 2);
-            double distance = MathExt.LinePolygonDistance(line, polygon);
+            double distance = MathEx.LinePolygonDistance(line, polygon);
             Assert.IsTrue(distance == 0);
         }
 
@@ -583,7 +583,7 @@ namespace GameTests
         {
             LineF line = new LineF(new Vector2(), new Vector2(0.5f, 0.5f));
             Vector2[] polygon = PolygonFactory.CreateRectangle(2, 2);
-            double distance = MathExt.LinePolygonDistance(line, polygon);
+            double distance = MathEx.LinePolygonDistance(line, polygon);
             Assert.IsTrue(Math.Abs(distance + 0.5) <= ErrorMargin);
         }
 
@@ -592,7 +592,7 @@ namespace GameTests
         {
             LineF line = new LineF(new Vector2(0f, 3f), new Vector2(3f, 0f));
             Vector2[] polygon = PolygonFactory.CreateRectangle(2, 2);
-            double distance = MathExt.LinePolygonDistance(line, polygon);
+            double distance = MathEx.LinePolygonDistance(line, polygon);
             Assert.IsTrue(Math.Abs(distance - Math.Sqrt(0.5)) <= ErrorMargin);
         }
         #endregion
@@ -603,7 +603,7 @@ namespace GameTests
             LineF point = new LineF(Vector2.Zero, Vector2.Zero);
             LineF lineStart = new LineF(new Vector2(-1, -1), new Vector2(1, -1));
             LineF lineEnd = new LineF(new Vector2(-1, 1), new Vector2(1, 1));
-            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            var result = MathEx.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.IsTrue(result.Count == 1);
             Assert.AreEqual(result[0].AcrossProportion, 0.5, 0.000001);
             Assert.AreEqual(result[0].TimeProportion, 0.5, 0.000001);
@@ -615,7 +615,7 @@ namespace GameTests
             LineF point = new LineF(Vector2.Zero, new Vector2(3, 0));
             LineF lineStart = new LineF(new Vector2(-1, -1), new Vector2(1, -1));
             LineF lineEnd = new LineF(new Vector2(-1, 1), new Vector2(1, 1));
-            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            var result = MathEx.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.IsTrue(result.Count == 0);
         }
 
@@ -625,7 +625,7 @@ namespace GameTests
             LineF point = new LineF(Vector2.Zero, new Vector2(-3, 0));
             LineF lineStart = new LineF(new Vector2(-1, -1), new Vector2(1, -1));
             LineF lineEnd = new LineF(new Vector2(-1, 1), new Vector2(1, 1));
-            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            var result = MathEx.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.IsTrue(result.Count == 0);
         }
 
@@ -635,7 +635,7 @@ namespace GameTests
             LineF point = new LineF(Vector2.Zero, new Vector2(0, 1.5f));
             LineF lineStart = new LineF(new Vector2(-1, -1), new Vector2(1, -1));
             LineF lineEnd = new LineF(new Vector2(-1, 1), new Vector2(1, 1));
-            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            var result = MathEx.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.IsTrue(result.Count == 0);
         }
 
@@ -645,7 +645,7 @@ namespace GameTests
             LineF point = new LineF(Vector2.Zero, new Vector2(10f, 0));
             LineF lineStart = new LineF(new Vector2(5, -1), new Vector2(5, 9));
             LineF lineEnd = new LineF(new Vector2(5, -1), new Vector2(5, 9));
-            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            var result = MathEx.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(0.5f, result[0].TimeProportion, 0.00001);
             Assert.AreEqual(0.1f, result[0].AcrossProportion, 0.00001);
@@ -658,7 +658,7 @@ namespace GameTests
             //point = point.Reverse();
             LineF lineStart = new LineF(new Vector2(-2.529442f, 0.5394384f), new Vector2(-1.530722f, 0.4888392f));
             LineF lineEnd = new LineF(new Vector2(-2.529442f, 0.5394384f), new Vector2(-1.530722f, 0.4888392f));
-            var result = MathExt.MovingPointLineIntersect(point, lineStart, lineEnd);
+            var result = MathEx.MovingPointLineIntersect(point, lineStart, lineEnd);
             Assert.AreEqual(1, result.Count);
             /*Assert.AreEqual(0.5f, result[0].TimeProportion, 0.00001);
             Assert.AreEqual(0.1f, result[0].AcrossProportion, 0.00001);*/
@@ -668,28 +668,28 @@ namespace GameTests
         [TestMethod]
         public void AngleVectorTest0()
         {
-            var result = MathExt.VectorToAngle(new Vector2d(1, 0));
+            var result = MathEx.VectorToAngle(new Vector2d(1, 0));
             Assert.AreEqual(0, result);
         }
 
         [TestMethod]
         public void AngleVectorTest1()
         {
-            var result = MathExt.VectorToAngle(new Vector2d(0, -1));
+            var result = MathEx.VectorToAngle(new Vector2d(0, -1));
             Assert.AreEqual(Math.PI / 2, result, 0.0000001);
         }
 
         [TestMethod]
         public void VectorToAngleTest0()
         {
-            var result = MathExt.AngleToVector(0);
+            var result = MathEx.AngleToVector(0);
             Assert.AreEqual(new Vector2d(1, 0), result);
         }
 
         [TestMethod]
         public void VectorToAngleTest1()
         {
-            var result = MathExt.AngleToVector(Math.PI / 2);
+            var result = MathEx.AngleToVector(Math.PI / 2);
             Assert.IsTrue((new Vector2d(0, -1) - result).Length < 0.00001);
         }
     }

@@ -191,7 +191,7 @@ namespace EditorLogic
             return _transform.ShallowClone();*/
             if (PolygonTransform != null)
             {
-                return Transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
+                return Transform.Transform(PolygonEx.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
             }
             return Transform.ShallowClone();
         }
@@ -200,7 +200,7 @@ namespace EditorLogic
         {
             if (PolygonTransform != null)
             {
-                return Transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
+                return Transform.Transform(PolygonEx.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
             }
             return Transform.ShallowClone();
         }
@@ -210,7 +210,7 @@ namespace EditorLogic
             Transform2 local;
             if (PolygonTransform != null)
             {
-                local = Transform.Transform(PolygonExt.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
+                local = Transform.Transform(PolygonEx.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
             }
             else
             {

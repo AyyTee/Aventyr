@@ -60,8 +60,8 @@ namespace EditorLogic.Tools
                         {
                             _vertices[i] -= average;
                         }
-                        _vertices = PolygonExt.SetNormals(_vertices);
-                        _vertices = (List<Vector2>)MathExt.SetWinding(_vertices, false);
+                        _vertices = PolygonEx.SetNormals(_vertices);
+                        _vertices = (List<Vector2>)MathEx.SetWinding(_vertices, false);
                         EditorWall editorEntity = new EditorWall(Controller.Level, _vertices);
                         editorEntity.SetPosition(average);
                         Controller.SetTool(null);
@@ -80,7 +80,7 @@ namespace EditorLogic.Tools
             _polygon.Models.Clear();
             if (_vertices.Count() >= 2)
             {
-                PolygonCoord[] intersects = MathExt.LineStripIntersect(_vertices.ToArray(), true);
+                PolygonCoord[] intersects = MathEx.LineStripIntersect(_vertices.ToArray(), true);
                 var colors = new Color4[_vertices.Count()];
                 for (int i = 0; i < colors.Length; i++)
                 {

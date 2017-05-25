@@ -24,7 +24,7 @@ namespace TimeLoopInc
         public Transform2 WorldTransform => new Transform2(
             (Vector2)Position + (Vector2.One + (Vector2)DirectionEx.ToVector(Direction)) * 0.5f, 
             1.75f, 
-            (float)((int)Direction * MathExt.Tau / 4));
+            (float)((int)Direction * MathEx.Tau / 4));
         public Transform2 WorldVelocity => Transform2.CreateVelocity();
 
         public TimePortal(Vector2i position, Direction direction)

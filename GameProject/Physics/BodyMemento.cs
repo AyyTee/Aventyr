@@ -21,8 +21,8 @@ namespace Game.Physics
 
         public BodyMemento(Body body)
         {
-            Transform = BodyExt.GetTransform(body);
-            Velocity = BodyExt.GetVelocity(body);
+            Transform = BodyEx.GetTransform(body);
+            Velocity = BodyEx.GetVelocity(body);
         }
     }
 }

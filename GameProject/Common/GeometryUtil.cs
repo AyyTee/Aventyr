@@ -20,7 +20,7 @@ namespace Game.Common
             var d = pathOfLineEndPoint.Delta - pathOfLineStartPoint.Delta;
 
             //return from t in QuadraticRoots(b.Cross(d), a.Cross(d) + b.Cross(c), a.Cross(c))
-            return from across in QuadraticRoots(Vector2Ext.Cross(b, d), Vector2Ext.Cross(a, d) + Vector2Ext.Cross(b, c), Vector2Ext.Cross(a, c))
+            return from across in QuadraticRoots(Vector2Ex.Cross(b, d), Vector2Ex.Cross(a, d) + Vector2Ex.Cross(b, c), Vector2Ex.Cross(a, c))
                     where across >= 0 && across <= 1
                     let start = pathOfLineStartPoint.Lerp(across)
                     let end = pathOfLineEndPoint.Lerp(across)

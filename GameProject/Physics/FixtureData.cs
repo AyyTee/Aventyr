@@ -47,7 +47,7 @@ namespace Game.Physics
             get
             {
                 Debug.Assert(Fixture.Body.UserData != null, "Body UserData does not exist.");
-                BodyData userData = BodyExt.GetData(Fixture.Body);
+                BodyData userData = BodyEx.GetData(Fixture.Body);
                 return userData.Actor;
             }
         }
@@ -60,7 +60,7 @@ namespace Game.Physics
         public FixtureData(Fixture fixture)
         {
             Fixture = fixture;
-            DefaultShape = Vector2Ext.ToOtk(((PolygonShape)fixture.Shape).Vertices);
+            DefaultShape = Vector2Ex.ToOtk(((PolygonShape)fixture.Shape).Vertices);
         }
         #endregion
 
@@ -77,7 +77,7 @@ namespace Game.Physics
         public List<FixturePortal> GetPortalChildren()
         {
             return Actor.Children.OfType<FixturePortal>().Where(
-                item => FixtureExt.GetFixtureAttached(item) == Fixture).ToList();
+                item => FixtureEx.GetFixtureAttached(item) == Fixture).ToList();
         }
 
         /// <summary>
@@ -91,33 +91,33 @@ namespace Game.Physics
             }
             //FixtureExt.GetUserData(Fixture).Entity.Scene.World.ProcessChanges();
             _fixtureChildren.Clear();
-            var sortedPortals = GetChildPortals().ToArray().OrderBy(item => PolygonExt.EdgeIndexT(item.Position)).ToList();
+            var sortedPortals = GetChildPortals().ToArray().OrderBy(item => PolygonEx.EdgeIndexT(item.Position)).ToList();
             sortedPortals.RemoveAll(item => !item.IsValid());
             for (int i = 0; i < sortedPortals.Count(); i++)
             {
                 if (i == 0 || (i > 0 && sortedPortals[i].Position.EdgeIndex != sortedPortals[i - 1].Position.EdgeIndex))
                 {
-                    Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], true));
+                    Fixture fixture = FixtureEx.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], true));
                     _fixtureChildren.Add(fixture);
-                    FixtureExt.GetData(fixture).PortalParents = new[] {
+                    FixtureEx.GetData(fixture).PortalParents = new[] {
                         sortedPortals[i],
                         null
                     };
                 }
                 if (i < sortedPortals.Count() - 1 && sortedPortals[i].Position.EdgeIndex == sortedPortals[i + 1].Position.EdgeIndex)
                 {
-                    Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], sortedPortals[i + 1]));
+                    Fixture fixture = FixtureEx.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], sortedPortals[i + 1]));
                     _fixtureChildren.Add(fixture);
-                    FixtureExt.GetData(fixture).PortalParents = new[] {
+                    FixtureEx.GetData(fixture).PortalParents = new[] {
                         sortedPortals[i],
                         sortedPortals[i+1]
                     };
                 }
                 else
                 {
-                    Fixture fixture = FixtureExt.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], false));
+                    Fixture fixture = FixtureEx.CreateFixture(Fixture.Body, CreatePortalShape(sortedPortals[i], false));
                     _fixtureChildren.Add(fixture);
-                    FixtureExt.GetData(fixture).PortalParents = new[] {
+                    FixtureEx.GetData(fixture).PortalParents = new[] {
                         sortedPortals[i],
                         null
                     };
@@ -140,13 +140,13 @@ namespace Game.Physics
 
             Vector2[] verts = 
             {
-                Vector2Ext.Transform(Portal.Vertices[0], t0.GetMatrix()),
-                Vector2Ext.Transform(Portal.Vertices[0] + new Vector2(-FixturePortal.EdgeMargin, 0), t0.GetMatrix()),
-                Vector2Ext.Transform(Portal.Vertices[1] + new Vector2(-FixturePortal.EdgeMargin, 0), t1.GetMatrix()),
-                Vector2Ext.Transform(Portal.Vertices[1], t1.GetMatrix())
+                Vector2Ex.Transform(Portal.Vertices[0], t0.GetMatrix()),
+                Vector2Ex.Transform(Portal.Vertices[0] + new Vector2(-FixturePortal.EdgeMargin, 0), t0.GetMatrix()),
+                Vector2Ex.Transform(Portal.Vertices[1] + new Vector2(-FixturePortal.EdgeMargin, 0), t1.GetMatrix()),
+                Vector2Ex.Transform(Portal.Vertices[1], t1.GetMatrix())
             };
             
-            verts = MathExt.SetWinding(verts, false);
+            verts = MathEx.SetWinding(verts, false);
             return new PolygonShape(new FarseerPhysics.Common.Vertices(verts.Select(v => (Xna.Framework.Vector2)v)), 0);
         }
 
@@ -167,12 +167,12 @@ namespace Game.Physics
 
             Vector2[] verts = 
             {
-                Vector2Ext.Transform(Portal.Vertices[iNext], t.GetMatrix()),
+                Vector2Ex.Transform(Portal.Vertices[iNext], t.GetMatrix()),
                 Actor.GetFixtureContour(Actor)[index],
-                Vector2Ext.Transform(Portal.Vertices[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix())
+                Vector2Ex.Transform(Portal.Vertices[iNext] + new Vector2(-FixturePortal.EdgeMargin, 0), t.GetMatrix())
             };
             
-            verts = MathExt.SetWinding(verts, false);
+            verts = MathEx.SetWinding(verts, false);
 
             return new PolygonShape(new FarseerPhysics.Common.Vertices(verts.Select(v => (Xna.Framework.Vector2)v)), 0);
         }
@@ -183,7 +183,7 @@ namespace Game.Physics
         List<FixturePortal> GetChildPortals()
         {
             List<FixturePortal> portals = Actor.Children.OfType<FixturePortal>().ToList();
-            return portals.FindAll(item => FixtureExt.GetFixtureAttached(item) == Fixture);
+            return portals.FindAll(item => FixtureEx.GetFixtureAttached(item) == Fixture);
         }
     }
 }

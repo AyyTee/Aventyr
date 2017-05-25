@@ -49,7 +49,7 @@ namespace Game.Common
             get { return _position; }
             set 
             {
-                Debug.Assert(!Vector2Ext.IsNaN(value));
+                Debug.Assert(!Vector2Ex.IsNaN(value));
                 _position = value; 
             }
         }
@@ -90,10 +90,10 @@ namespace Game.Common
                 new Vector2(0, 0),
                 vector
             };
-            v = Vector2Ext.Transform(v, GetMatrix());
+            v = Vector2Ex.Transform(v, GetMatrix());
             if (normalize)
             {
-                Debug.Assert(!Vector2Ext.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
+                Debug.Assert(!Vector2Ex.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
                 return (v[1] - v[0]).Normalized();
             }
             return v[1] - v[0];
@@ -116,7 +116,7 @@ namespace Game.Common
             output.Rotation += transform.Rotation;
             output.Size *= transform.Size;
             output.MirrorX = output.MirrorX != transform.MirrorX;
-            output.Position = Vector2Ext.Transform(output.Position, transform.GetMatrix());
+            output.Position = Vector2Ex.Transform(output.Position, transform.GetMatrix());
             //Debug.Assert(Matrix4Ext.AlmostEqual(output.GetMatrix(), GetMatrix() * transform.GetMatrix(), 1));
             return output;
         }
@@ -141,8 +141,8 @@ namespace Game.Common
             }
             invert.SetScale(new Vector2(1 / Scale.X, 1 / Scale.Y));
             Matrix4 mat = Matrix4.CreateRotationZ(-Rotation) * Matrix4.Scale(new Vector3(invert.Scale));
-            invert.Position = Vector2Ext.Transform(-Position, mat);
-            Debug.Assert(Matrix4Ext.AlmostEqual(GetMatrix().Inverted(), invert.GetMatrix()));
+            invert.Position = Vector2Ex.Transform(-Position, mat);
+            Debug.Assert(Matrix4Ex.AlmostEqual(GetMatrix().Inverted(), invert.GetMatrix()));
             return invert;
         }
 
@@ -183,7 +183,7 @@ namespace Game.Common
 
         public void SetScale(Vector2 scale)
         {
-            Debug.Assert(Vector2Ext.IsReal(scale));
+            Debug.Assert(Vector2Ex.IsReal(scale));
             Debug.Assert(scale.X != 0 && scale.Y != 0, "Scale vector must have non-zero components");
             Debug.Assert(
                 Math.Abs(scale.X) - Math.Abs(scale.Y) <= UniformScaleEpsilon,
@@ -222,11 +222,11 @@ namespace Game.Common
             {
                 return false;
             }
-            if (MathExt.AlmostEqual(Rotation, transform.Rotation, delta) &&
-                MathExt.AlmostEqual(Scale.X, transform.Scale.X, delta) &&
-                MathExt.AlmostEqual(Scale.Y, transform.Scale.Y, delta) &&
-                MathExt.AlmostEqual(Position.X, transform.Position.X, delta) &&
-                MathExt.AlmostEqual(Position.Y, transform.Position.Y, delta))
+            if (MathEx.AlmostEqual(Rotation, transform.Rotation, delta) &&
+                MathEx.AlmostEqual(Scale.X, transform.Scale.X, delta) &&
+                MathEx.AlmostEqual(Scale.Y, transform.Scale.Y, delta) &&
+                MathEx.AlmostEqual(Position.X, transform.Position.X, delta) &&
+                MathEx.AlmostEqual(Position.Y, transform.Position.Y, delta))
             {
                 return true;
             }
@@ -239,11 +239,11 @@ namespace Game.Common
             {
                 return false;
             }
-            if (MathExt.AlmostEqual(Rotation, transform.Rotation, delta, ratioDelta) &&
-                MathExt.AlmostEqual(Scale.X, transform.Scale.X, delta, ratioDelta) &&
-                MathExt.AlmostEqual(Scale.Y, transform.Scale.Y, delta, ratioDelta) &&
-                MathExt.AlmostEqual(Position.X, transform.Position.X, delta, ratioDelta) &&
-                MathExt.AlmostEqual(Position.Y, transform.Position.Y, delta, ratioDelta))
+            if (MathEx.AlmostEqual(Rotation, transform.Rotation, delta, ratioDelta) &&
+                MathEx.AlmostEqual(Scale.X, transform.Scale.X, delta, ratioDelta) &&
+                MathEx.AlmostEqual(Scale.Y, transform.Scale.Y, delta, ratioDelta) &&
+                MathEx.AlmostEqual(Position.X, transform.Position.X, delta, ratioDelta) &&
+                MathEx.AlmostEqual(Position.Y, transform.Position.Y, delta, ratioDelta))
             {
                 return true;
             }

@@ -20,7 +20,7 @@ namespace GameTests
 
         public IList<Vector2> GetWorldVertices()
         {
-            Vector2[] worldVertices = Vector2Ext.Transform(Vertices, WorldTransform.GetMatrix()).ToArray();
+            Vector2[] worldVertices = Vector2Ex.Transform(Vertices, WorldTransform.GetMatrix()).ToArray();
             return worldVertices;
         }
     }

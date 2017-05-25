@@ -3,7 +3,7 @@ using OpenTK;
 
 namespace Game.Common
 {
-    public static class Matrix4Ext
+    public static class Matrix4Ex
     {
         const float EqualityEpsilon = 0.0001f;
         const int Matrix4Size = 4;
@@ -21,8 +21,8 @@ namespace Game.Common
                 new Vector2(0, 1),
                 new Vector2(0, 0)
             };
-            mirrorTest = Vector2Ext.Transform(mirrorTest, matrix);
-            return MathExt.AngleDiff(MathExt.VectorToAngle(mirrorTest[0] - mirrorTest[2]), MathExt.VectorToAngle(mirrorTest[1] - mirrorTest[2])) > 0;
+            mirrorTest = Vector2Ex.Transform(mirrorTest, matrix);
+            return MathEx.AngleDiff(MathEx.VectorToAngle(mirrorTest[0] - mirrorTest[2]), MathEx.VectorToAngle(mirrorTest[1] - mirrorTest[2])) > 0;
         }
 
         public static bool AlmostEqual(Matrix4 matrix0, Matrix4 matrix1)

@@ -97,7 +97,7 @@ namespace Game.Models
                     keep.Add(this[i]);
                 }
                 var edge = new LineF(vertices[i], vertices[(i + 1) % VertexCount]);
-                IntersectCoord intersect = MathExt.LineLineIntersect(edge, bisector, false);
+                IntersectCoord intersect = MathEx.LineLineIntersect(edge, bisector, false);
                 if (intersect != null && intersect.First > 0 && intersect.First < 1)
                 {
                     intersectCount++;

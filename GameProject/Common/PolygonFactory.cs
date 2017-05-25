@@ -34,7 +34,7 @@ namespace Game.Common
                     continue;
                 }
                 Debug.Assert(p.Count != 1 && p.Count != 2, "Polygon is degenerate.");
-                if (!MathExt.IsClockwise(p))
+                if (!MathEx.IsClockwise(p))
                 {
                     Polygon polygon = GetPolygon(p);
                     polygons.Add(polygon);
@@ -176,7 +176,7 @@ namespace Game.Common
                 line[1] + offsetEnd,
                 line[1] - offsetEnd
             };
-            Debug.Assert(PolygonExt.IsInterior(lineWidth));
+            Debug.Assert(PolygonEx.IsInterior(lineWidth));
             return lineWidth;
         }
 
@@ -204,7 +204,7 @@ namespace Game.Common
                 new Vector2(-width/2, -height/2) + origin,
                 new Vector2(width/2, -height/2) + origin
             };
-            Debug.Assert(PolygonExt.IsInterior(rectangle));
+            Debug.Assert(PolygonEx.IsInterior(rectangle));
             return rectangle;
         }
 
@@ -214,10 +214,10 @@ namespace Game.Common
             Vector2[] vertices = new Vector2[sides];
             for (int i = 0; i < sides; i++)
             {
-                double angle = (MathExt.Tau * i) / sides;
-                vertices[i] = (Vector2)MathExt.AngleToVector(-angle) * scale + origin;
+                double angle = (MathEx.Tau * i) / sides;
+                vertices[i] = (Vector2)MathEx.AngleToVector(-angle) * scale + origin;
             }
-            Debug.Assert(PolygonExt.IsInterior(vertices));
+            Debug.Assert(PolygonEx.IsInterior(vertices));
             return vertices;
         }
     }

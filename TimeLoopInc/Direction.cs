@@ -39,7 +39,7 @@ namespace TimeLoopInc
         /// <returns></returns>
         public static Direction Rotate(this Direction direction, int turnAmount)
         {
-            return (Direction)MathExt.ValueWrap((int)direction + turnAmount, 4);
+            return (Direction)MathEx.ValueWrap((int)direction + turnAmount, 4);
         }
     }
 }

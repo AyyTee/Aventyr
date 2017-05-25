@@ -11,7 +11,7 @@ using OpenTK;
 namespace GameTests
 {
     [TestClass]
-    public class Vector2ExtTests
+    public class Vector2ExTests
     {
         #region Project tests
         [TestMethod]

@@ -47,7 +47,7 @@ namespace Game.Physics
         public static Body CreateBox(World world, Vector2 scale)
         {
             Debug.Assert(world != null);
-            Body body = BodyExt.CreateBody(world);
+            Body body = BodyEx.CreateBody(world);
             CreateBox(body, scale);
             return body;
         }
@@ -92,7 +92,7 @@ namespace Game.Physics
         public static Body CreatePolygon(World world, Transform2 transform, IList<Vector2> vertices)
         {
             Debug.Assert(world != null);
-            Body body = BodyExt.CreateBody(world);
+            Body body = BodyEx.CreateBody(world);
             CreatePolygon(body, transform, vertices);
             return body;
         }
@@ -103,13 +103,13 @@ namespace Game.Physics
             Debug.Assert(transform != null);
             Debug.Assert(vertices != null && vertices.Count >= 3);
             List<Vector2> fixtureContour = Actor.GetFixtureContour(vertices, transform.Scale);
-            fixtureContour = MathExt.SetWinding(fixtureContour, false);
+            fixtureContour = MathEx.SetWinding(fixtureContour, false);
 
-            var convexList = PolygonExt.DecomposeConcave(fixtureContour);
+            var convexList = PolygonEx.DecomposeConcave(fixtureContour);
 
             List<FarseerPhysics.Common.Vertices> vList = new List<FarseerPhysics.Common.Vertices>();
 
-            BodyExt.SetTransform(body, transform);
+            BodyEx.SetTransform(body, transform);
 
             for (int i = convexList.Count - 1; i >= 0; i--)
             {
@@ -140,7 +140,7 @@ namespace Game.Physics
                 vList.Add(v1);
                 PolygonShape shape = new PolygonShape(v1, 1);
                 Fixture fixture = body.CreateFixture(shape);
-                FixtureData userData = FixtureExt.SetData(fixture);
+                FixtureData userData = FixtureEx.SetData(fixture);
             }
         }
 

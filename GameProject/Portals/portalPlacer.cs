@@ -28,14 +28,14 @@ namespace Game.Portals
                 for (int i = 0; i < vertices.Count; i++)
                 {
                     int iNext = (i + 1) % vertices.Count;
-                    IntersectCoord coord = MathExt.LineLineIntersect(ray, new LineF(vertices[i], vertices[iNext]), true);
+                    IntersectCoord coord = MathEx.LineLineIntersect(ray, new LineF(vertices[i], vertices[iNext]), true);
                     if (coord != null)
                     {
                         wallCoord.Add(new WallCoord(wall, i, (float)coord.Last));
                     }
                 }
             }
-            return wallCoord.OrderBy(item => (PolygonExt.GetTransform(item.Wall.GetWorldVertices(), item).Position - ray[0]).Length);
+            return wallCoord.OrderBy(item => (PolygonEx.GetTransform(item.Wall.GetWorldVertices(), item).Position - ray[0]).Length);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Game.Portals
         /// <param name="portalSize">Size of portal.</param>
         public static WallCoord AdjustCoord(WallCoord coord, float portalSize)
         {
-            LineF edge = PolygonExt.GetEdge(coord.Wall.GetWorldVertices(), coord);
+            LineF edge = PolygonEx.GetEdge(coord.Wall.GetWorldVertices(), coord);
             return EdgeValid(coord, portalSize)
                 ? new WallCoord(coord.Wall, coord.EdgeIndex, GetValidT(coord.EdgeT, edge, portalSize))
                 : null;
@@ -60,7 +60,7 @@ namespace Game.Portals
 
         public static bool EdgeValid(WallCoord coord, float portalSize)
         {
-            LineF edge = PolygonExt.GetEdge(coord.Wall.GetWorldVertices(), coord);
+            LineF edge = PolygonEx.GetEdge(coord.Wall.GetWorldVertices(), coord);
             return EdgeValidLength(edge.Length, portalSize);
         }
 

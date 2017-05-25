@@ -6,7 +6,7 @@ using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Common
 {
-    public static class Vector3Ext
+    public static class Vector3Ex
     {
         public static Vector3d Lerp(this Vector3d start, Vector3d end, double t) => start * (1 - t) + end * t;
 

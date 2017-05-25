@@ -167,7 +167,7 @@ namespace GameTests
             Transform2 t = new Transform2();
             t.Rotation = 123;
             Transform2 tInverted = t.Inverted();
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
         }
         [TestMethod]
         public void InvertedTest3()
@@ -176,7 +176,7 @@ namespace GameTests
             t.SetScale(new Vector2(-5, -5));
             t.Rotation = (float)Math.PI/5;
             Transform2 tInverted = t.Inverted();
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
         }
         [TestMethod]
         public void InvertedTest4()
@@ -185,7 +185,7 @@ namespace GameTests
             t.SetScale(new Vector2(5, -5));
             t.Rotation = (float)Math.PI / 3;
             Transform2 tInverted = t.Inverted();
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
         }
         [TestMethod]
         public void InvertedTest5()
@@ -194,7 +194,7 @@ namespace GameTests
             t.SetScale(new Vector2(-5, 5));
             t.Rotation = (float)(Math.PI / 3.4);
             Transform2 tInverted = t.Inverted();
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
         }
         [TestMethod]
         public void InvertedTest6()
@@ -204,7 +204,7 @@ namespace GameTests
             t.SetScale(new Vector2(5, -5));
             //t.Rotation = (float)(Math.PI / 3.4);
             Transform2 tInverted = t.Inverted();
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
         }
         [TestMethod]
         public void InvertedTest7()
@@ -214,7 +214,7 @@ namespace GameTests
             t.SetScale(new Vector2(-5, -5));
             t.Rotation = (float)(Math.PI / 3.4);
             Transform2 tInverted = t.Inverted();
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
         }
         [TestMethod]
         public void InvertedTest8()
@@ -224,7 +224,7 @@ namespace GameTests
             t.SetScale(new Vector2(-5, 5));
             t.Rotation = (float)(Math.PI / 3.4);
             Transform2 tInverted = t.Inverted();
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(t.GetMatrix(), tInverted.GetMatrix().Inverted()));
         }
         #endregion
         #region Transform tests
@@ -234,7 +234,7 @@ namespace GameTests
             Transform2 t0 = new Transform2();
             Transform2 t1 = new Transform2(new Vector2(1,2), 3, 123);
             Transform2 result = t0.Transform(t1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
         }
         [TestMethod]
         public void TransformTest1()
@@ -242,7 +242,7 @@ namespace GameTests
             Transform2 t0 = new Transform2(new Vector2(1,1), -2, 3.21f);
             Transform2 t1 = new Transform2(new Vector2(-100, 2), 3, 123);
             Transform2 result = t0.Transform(t1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
         }
         [TestMethod]
         public void TransformTest2()
@@ -250,7 +250,7 @@ namespace GameTests
             Transform2 t0 = new Transform2(new Vector2(), 1, 0);
             Transform2 t1 = new Transform2(new Vector2(), 1, 2, true);
             Transform2 result = t0.Transform(t1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
         }
         [TestMethod]
         public void TransformTest3()
@@ -258,7 +258,7 @@ namespace GameTests
             Transform2 t0 = new Transform2(new Vector2(), 1, 2);
             Transform2 t1 = new Transform2(new Vector2(), 1, 0, true);
             Transform2 result = t0.Transform(t1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
         }
         [TestMethod]
         public void TransformTest4()
@@ -266,7 +266,7 @@ namespace GameTests
             Transform2 t0 = new Transform2(new Vector2(), 1, 2);
             Transform2 t1 = new Transform2(new Vector2(), 1, 3.4f, true);
             Transform2 result = t0.Transform(t1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
         }
         [TestMethod]
         public void TransformTest5()
@@ -274,7 +274,7 @@ namespace GameTests
             Transform2 t0 = new Transform2(new Vector2(), 1, 0, true);
             Transform2 t1 = new Transform2(new Vector2(), 1, 2);
             Transform2 result = t0.Transform(t1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
         }
         [TestMethod]
         public void TransformTest6()
@@ -282,7 +282,7 @@ namespace GameTests
             Transform2 t0 = new Transform2(new Vector2(), 1, 2, true);
             Transform2 t1 = new Transform2(new Vector2(), 1, 0);
             Transform2 result = t0.Transform(t1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
         }
         [TestMethod]
         public void TransformTest7()
@@ -290,7 +290,7 @@ namespace GameTests
             Transform2 t0 = new Transform2(new Vector2(), 1, 2, true);
             Transform2 t1 = new Transform2(new Vector2(), 1, 3.4f);
             Transform2 result = t0.Transform(t1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
         }
         [TestMethod]
         public void TransformTest8()
@@ -298,7 +298,7 @@ namespace GameTests
             Transform2 t0 = new Transform2(new Vector2(), 1, 2, true);
             Transform2 t1 = new Transform2(new Vector2(), 1, 3.4f, true);
             Transform2 result = t0.Transform(t1);
-            Assert.IsTrue(Matrix4Ext.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
         }
         #endregion
     }
