@@ -27,8 +27,8 @@ namespace TimeLoopInc
             State.CurrentPlayer = new Player(new Vector2i(), 0);
             State.PlayerTimeline.Path.Add(State.CurrentPlayer);
 
-            var portal0 = new TimePortal(new Vector2i(4, 0), Direction.Right);
-            var portal1 = new TimePortal(new Vector2i(-2, -2), Direction.Left);
+            var portal0 = new TimePortal(new Vector2i(4, 0), GridAngle.Right);
+            var portal1 = new TimePortal(new Vector2i(-2, -2), GridAngle.Left);
             portal0.SetLinked(portal1);
             portal0.SetTimeOffset(0);
 
@@ -71,7 +71,7 @@ namespace TimeLoopInc
             {
                 if (entity is Player player)
                 {
-                    var result = Move(State.Entities[entity].Transform, player.GetInput(State.Time).Heading);
+                    var result = Move(State.Entities[entity].Transform, player.GetInput(State.Time).Direction);
                     State.Entities[entity].PreviousVelocity = result.Velocity;
                     State.Entities[entity].Transform = result.Transform;
                 }
@@ -83,12 +83,12 @@ namespace TimeLoopInc
                 block.PreviousVelocity = new Vector2i();
             }
 
-            var directions = new[] { Direction.Left, Direction.Right, Direction.Up, Direction.Down };
+            var directions = new[] { GridAngle.Left, GridAngle.Right, GridAngle.Up, GridAngle.Down };
             for (int i = 0; i < directions.Length; i++)
             {
                 foreach (var block in State.Entities.Keys.OfType<Block>())
                 {
-                    var adjacent = State.Entities[block].Transform.Position - DirectionEx.ToVector(directions[i]);
+                    var adjacent = State.Entities[block].Transform.Position - directions[i].Vector;
                     var pushes = State.Entities.Values
                         .OfType<PlayerInstant>()
                         .Where(item => item.Transform.Position - item.PreviousVelocity == adjacent && item.Transform.Position == State.Entities[block].Transform.Position);
@@ -129,14 +129,14 @@ namespace TimeLoopInc
             State.Time++;
         }
 
-        (Transform2i Transform, Vector2i Velocity) Move(Transform2i transform, Direction? heading)
+        (Transform2i Transform, Vector2i Velocity) Move(Transform2i transform, GridAngle? heading)
         {
             var offset = Vector2.One / 2;
             var transform2 = transform.ToTransform2();
             transform2.Position += offset;
             var result = Ray.RayCast(
                 transform2,
-                Transform2.CreateVelocity((Vector2)DirectionEx.ToVector(heading)),
+                Transform2.CreateVelocity((Vector2)(heading?.Vector ?? new Vector2i())),
                 Portals,
                 new Ray.Settings());
 

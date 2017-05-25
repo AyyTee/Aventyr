@@ -10,30 +10,30 @@ namespace TimeLoopInc
 {
     public class Input
     {
-        public readonly Direction? Heading;
+        public readonly GridAngle? Direction;
 
-        public Input(Direction? heading)
+        public Input(GridAngle? direction)
         {
-            Heading = heading;
+            Direction = direction;
         }
 
         public static Input CreateFromKeyboard(IVirtualWindow window)
         {
             if (window.ButtonPress(Key.W))
             {
-                return new Input(Direction.Up);
+                return new Input(new GridAngle(3));
             }
             if (window.ButtonPress(Key.S))
             {
-                return new Input(Direction.Down);
+                return new Input(new GridAngle(1));
             }
             if (window.ButtonPress(Key.A))
             {
-                return new Input(Direction.Left);
+                return new Input(new GridAngle(2));
             }
             if (window.ButtonPress(Key.D))
             {
-                return new Input(Direction.Right);
+                return new Input(new GridAngle(0));
             }
             if (window.ButtonPress(Key.Space))
             {

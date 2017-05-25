@@ -10,11 +10,7 @@ namespace TimeLoopInc
     public class PlayerInstant : IGridEntityInstant
     {
         Transform2i _transform;
-        public Transform2i Transform
-        {
-            get { return _transform.ShallowClone(); }
-            set { _transform = value.ShallowClone(); }
-        }
+        public Transform2i Transform { get; set; }
         public Vector2i PreviousVelocity { get; set; }
 
         public PlayerInstant(Vector2i position)

@@ -9,37 +9,41 @@ using System.Threading.Tasks;
 namespace TimeLoopInc
 {
     [DataContract]
-    public enum Direction
+    public struct GridAngle
     {
-        Right = 0, Up = 1, Left = 2, Down = 3
-    }
-
-    public static class DirectionEx
-    {
-        public static Vector2i ToVector(Direction? heading)
+        /// <summary>
+        /// Angle in terms of number of 1/4 rotations.
+        /// </summary>
+        [DataMember]
+        public readonly int Value;
+        /// <summary>
+        /// Angle in radians.
+        /// </summary>
+        public double Radians => Value * Math.PI / 2;
+        public Vector2i Vector
         {
-            switch (heading)
+            get
             {
-                case Direction.Right: return new Vector2i(1, 0);
-                case Direction.Up: return new Vector2i(0, 1);
-                case Direction.Left: return new Vector2i(-1, 0);
-                case Direction.Down: return new Vector2i(0, -1);
-                case null: return new Vector2i();
-                default: throw new Exception();
+                switch (MathEx.ValueWrap(Value, CardinalDirections))
+                {
+                    case 0: return new Vector2i(1, 0);
+                    case 1: return new Vector2i(0, -1);
+                    case 2: return new Vector2i(-1, 0);
+                    case 3: return new Vector2i(0, 1);
+                    default: throw new Exception("Execution should not have reached this point.");
+                }
             }
         }
+        public const int CardinalDirections = 4;
 
-        public static double ToAngle(Direction heading) => (int)heading * Math.PI / 2;
-
-        /// <summary>
-        /// Returns a rotated copy of direction.
-        /// </summary>
-        /// <param name="direction"></param>
-        /// <param name="turnAmount">Number of 90 degree turns. Positive values turn left.</param>
-        /// <returns></returns>
-        public static Direction Rotate(this Direction direction, int turnAmount)
+        public GridAngle(int gridAngle)
         {
-            return (Direction)MathEx.ValueWrap((int)direction + turnAmount, 4);
+            Value = gridAngle;
         }
+
+        public static GridAngle Right => new GridAngle(0);
+        public static GridAngle Down => new GridAngle(1);
+        public static GridAngle Left => new GridAngle(2);
+        public static GridAngle Up => new GridAngle(3);
     }
 }

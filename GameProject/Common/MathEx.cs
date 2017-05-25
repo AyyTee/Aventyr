@@ -700,6 +700,16 @@ namespace Game.Common
             return value;
         }
 
+        public static double ValueWrap(int value, int mod)
+        {
+            value = value % mod;
+            if (value < 0)
+            {
+                return mod + value;
+            }
+            return value;
+        }
+
         public static double Round(double value, double size) => Math.Round(value / size) * size;
 
         public static double AngleWrap(double value) => ((value % Tau) + Tau) % Tau;

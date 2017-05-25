@@ -692,5 +692,12 @@ namespace GameTests
             var result = MathEx.AngleToVector(Math.PI / 2);
             Assert.IsTrue((new Vector2d(0, -1) - result).Length < 0.00001);
         }
+
+        [TestMethod]
+        public void RoundTest0()
+        {
+            var result = (int)MathEx.Round(100001, 10);
+            Assert.AreEqual(100000, result);
+        }
     }
 }
