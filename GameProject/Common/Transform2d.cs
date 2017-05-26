@@ -17,7 +17,7 @@ namespace Game.Common
         /// X-axis mirroring.
         /// </summary>
         [DataMember]
-        public bool MirrorX { get; set; }
+        public bool MirrorX { get; private set; }
         const double UniformScaleEpsilon = 0.0001f;
         const double EqualityEpsilon = 0.0001f;
 
@@ -32,9 +32,9 @@ namespace Game.Common
         }
 
         [DataMember]
-        public double _size = 1;
+        double _size = 1;
         public double Size { get { return _size; }
-            set 
+            private set 
             {
                 Debug.Assert(!double.IsNaN(value) && !double.IsPositiveInfinity(value) && !double.IsNegativeInfinity(value));
                 _size = value; 

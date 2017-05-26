@@ -18,7 +18,7 @@ namespace Game.Common
         /// X-axis mirroring.
         /// </summary>
         [DataMember]
-        public bool MirrorX { get; set; }
+        public bool MirrorX { get; private set; }
         const float UniformScaleEpsilon = 0.0001f;
         const float EqualityEpsilon = 0.0001f;
 
@@ -33,7 +33,7 @@ namespace Game.Common
         }
 
         [DataMember]
-        public float _size = 1;
+        float _size = 1;
         public float Size { get { return _size; }
             private set 
             {

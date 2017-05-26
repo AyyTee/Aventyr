@@ -45,32 +45,21 @@ namespace EditorLogic.Tools
                         Transform2 t = portal.GetTransform();
                         if (Input.ButtonDown(KeyBoth.Control))
                         {
-                            /*portal.IsMirrored = true;
-                            _portalPrevious.IsMirrored = false;*/
-                            /*t.Size *= -1;
-                            t.IsMirrored = true;
-                            portal.SetTransform(t);*/
-                            portal.Transform.MirrorX = true;
-                            portal.Transform = portal.Transform.SetSize(-Math.Abs(portal.Transform.Size));
-                            _portalPrevious.Transform.MirrorX = false;
-                            _portalPrevious.Transform = _portalPrevious.Transform.SetSize(Math.Abs(_portalPrevious.Transform.Size));
-                            //t = _portalPrevious.GetTransform();
-                            //t.IsMirrored = false;
-                            //_portalPrevious.SetTransform(t);
+                            portal.Transform = portal.Transform
+                                .SetSize(-Math.Abs(portal.Transform.Size))
+                                .SetMirrorX(true);
+                            _portalPrevious.Transform = _portalPrevious.Transform
+                                .SetSize(Math.Abs(_portalPrevious.Transform.Size))
+                                .SetMirrorX(false);
                         }
                         else
                         {
-                            /*portal.IsMirrored = false;
-                            _portalPrevious.IsMirrored = false;*/
-                            /*t.IsMirrored = false;
-                            portal.SetTransform(t);
-                            t = _portalPrevious.GetTransform();
-                            t.IsMirrored = false;
-                            _portalPrevious.SetTransform(t);*/
-                            portal.Transform.MirrorX = true;
-                            portal.Transform = portal.Transform.SetSize(Math.Abs(portal.Transform.Size));
-                            _portalPrevious.Transform.MirrorX = true;
-                            _portalPrevious.Transform = _portalPrevious.Transform.SetSize(Math.Abs(_portalPrevious.Transform.Size));
+                            portal.Transform = portal.Transform
+                                .SetSize(Math.Abs(portal.Transform.Size))
+                                .SetMirrorX(true);
+                            _portalPrevious.Transform = _portalPrevious.Transform
+                                .SetSize(Math.Abs(_portalPrevious.Transform.Size))
+                                .SetMirrorX(true);
                         }
                         
                         

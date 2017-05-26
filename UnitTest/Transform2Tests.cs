@@ -44,9 +44,7 @@ namespace GameTests
         [Test]
         public void GetNormalTest3()
         {
-            Transform2 t = new Transform2();
-            t.MirrorX = true;
-            t.Position = new Vector2(100, -200);
+            Transform2 t = new Transform2(new Vector2(100, -200), 1, 0, true);
 
             Vector2 normal = t.GetRight();
             Vector2 reference = new Vector2(-1, 0);
@@ -82,10 +80,7 @@ namespace GameTests
         [Test]
         public void GetNormalTest7()
         {
-            Transform2 t = new Transform2();
-            t.MirrorX = true;
-            t.Position = new Vector2(100, -200);
-            t.Rotation = (float)Math.PI / 4;
+            Transform2 t = new Transform2(new Vector2(100, -200), 1, (float)Math.PI / 4, true);
 
             Vector2 normal = t.GetRight();
             Vector2 reference = -new Vector2((float)Math.Cos(Math.PI / 4), (float)Math.Sin(Math.PI / 4));

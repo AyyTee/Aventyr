@@ -199,7 +199,7 @@ namespace Game.Portals
         public static Matrix4 GetLinkedMatrix(IPortalRenderable portalEnter, IPortalRenderable portalExit)
         {
             Transform2 transform = portalExit.WorldTransform;
-            transform.MirrorX = !transform.MirrorX;
+            transform = transform.SetMirrorX(!transform.MirrorX);
             Matrix4 m = portalEnter.WorldTransform.GetMatrix();
             return m.Inverted() * transform.GetMatrix();
         }
@@ -213,7 +213,7 @@ namespace Game.Portals
         public static Transform2 GetLinkedTransform(IPortalRenderable portalEnter, IPortalRenderable portalExit)
         {
             Transform2 tExit = portalExit.WorldTransform;
-            tExit.MirrorX = !tExit.MirrorX;
+            tExit = tExit.SetMirrorX(!tExit.MirrorX);
             Transform2 tEnter = portalEnter.WorldTransform;
             return tEnter.Inverted().Transform(tExit);
         }
