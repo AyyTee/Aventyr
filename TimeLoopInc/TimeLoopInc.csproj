@@ -55,12 +55,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GridCamera.cs" />
     <Compile Include="Timeline.cs" />
     <Compile Include="IDeepClone.cs" />
     <Compile Include="BlockInstant.cs" />
     <Compile Include="Blocks.cs" />
     <Compile Include="Controller.cs" />
-    <Compile Include="Direction.cs" />
+    <Compile Include="GridAngle.cs" />
     <Compile Include="IGridEntity.cs" />
     <Compile Include="GridPortal.cs" />
     <Compile Include="IGridEntityInstant.cs" />

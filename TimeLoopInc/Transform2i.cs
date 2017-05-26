@@ -46,7 +46,7 @@ namespace TimeLoopInc
         {
             return new Transform2i(
                 (Vector2i)transform.Position.Round(Vector2d.One), 
-                new GridAngle((int)MathEx.Round(transform.Rotation, Math.PI / 2)), 
+                new GridAngle((int)(transform.Rotation / (Math.PI / 2))), 
                 (int)Math.Round(transform.Size), 
                 transform.MirrorX);
         }
@@ -55,5 +55,31 @@ namespace TimeLoopInc
         public Transform2i SetRotation(GridAngle rotation) => new Transform2i(Position, rotation, Size, MirrorX);
         public Transform2i SetSize(int size) => new Transform2i(Position, Direction, size, MirrorX);
         public Transform2i SetMirrorX(bool mirrorX) => new Transform2i(Position, Direction, Size, mirrorX);
+
+        public Matrix4d GetMatrix()
+        {
+            return Matrix4d.Scale(new Vector3d(Scale.X, Scale.Y, 1)) *
+                Matrix4d.CreateRotationZ(Direction.Radians) *
+                Matrix4d.CreateTranslation(new Vector3d((Vector2d)Position));
+        }
+
+        public Vector2d GetUp(bool normalize = true) => GetVector(new Vector2d(0, 1), normalize);
+
+        public Vector2d GetRight(bool normalize = true) => GetVector(new Vector2d(1, 0), normalize);
+
+        Vector2d GetVector(Vector2d vector, bool normalize)
+        {
+            Vector2d[] v = {
+                new Vector2d(0, 0),
+                vector
+            };
+            v = Vector2Ex.Transform(v, GetMatrix());
+            if (normalize)
+            {
+                Debug.Assert(!Vector2Ex.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
+                return (v[1] - v[0]).Normalized();
+            }
+            return v[1] - v[0];
+        }
     }
 }

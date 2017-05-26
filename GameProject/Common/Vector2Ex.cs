@@ -193,10 +193,19 @@ namespace Game.Common
             return vList;
         }
 
-        public static Vector2 ToOtk(this Point2D v)
+        public static Vector2 TransformVelocity(Vector2 vector, Matrix4 matrix)
         {
-            return new Vector2(v.Xf, v.Yf);
+            Vector2[] v = {
+                new Vector2(0, 0),
+                vector
+            };
+            v = Transform(v, matrix);
+            return v[1] - v[0];
         }
+
+        public static Vector2 ToOtk(this Point2D v) => new Vector2(v.Xf, v.Yf);
+        public static Vector2 ToOtk(this TriangulationPoint v) => new Vector2((float)v.X, (float)v.Y);
+        public static Vector2 ToOtk(this PolygonPoint v) => new Vector2((float)v.X, (float)v.Y);
 
         public static Vector2[] ToOtk(FarseerPhysics.Common.Vertices v)
         {
@@ -219,30 +228,10 @@ namespace Game.Common
             return vNew;
         }
 
-        public static Vector2 ToOtk(this TriangulationPoint v)
-        {
-            return new Vector2((float)v.X, (float)v.Y);
-        }
+        public static Xna.Vector2 ToXna(this TriangulationPoint v) => new Xna.Vector2((float)v.X, (float)v.Y);
 
-        public static Vector2 ToOtk(this PolygonPoint v)
-        {
-            return new Vector2((float)v.X, (float)v.Y);
-        }
-
-        public static Xna.Vector2 ToXna(this TriangulationPoint v)
-        {
-            return new Xna.Vector2((float)v.X, (float)v.Y);
-        }
-
-        public static bool IsNaN(this Vector2 v)
-        {
-            return double.IsNaN(v.X) || double.IsNaN(v.Y);
-        }
-
-        public static bool IsNaN(this Vector2d v)
-        {
-            return double.IsNaN(v.X) || double.IsNaN(v.Y);
-        }
+        public static bool IsNaN(this Vector2 v) => double.IsNaN(v.X) || double.IsNaN(v.Y);
+        public static bool IsNaN(this Vector2d v) => double.IsNaN(v.X) || double.IsNaN(v.Y);
 
         public static bool IsReal(this Vector2 v)
         {

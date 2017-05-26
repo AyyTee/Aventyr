@@ -82,7 +82,9 @@ namespace TimeLoopInc
 
             worldLayer.Renderables.Add(new Renderable() { Models = new List<Model> { _grid }, IsPortalable = false });
 
-            var worldCamera = new HudCamera2(GridEntityWorldPosition(state.CurrentPlayer, t).Position, _window.CanvasSize / 50);
+            var cameraTransform = GridEntityWorldPosition(state.CurrentPlayer, t);
+            cameraTransform.Size = 25;
+            var worldCamera = new GridCamera(cameraTransform, (float)_window.CanvasSize.XRatio);
             worldLayer.Camera = worldCamera;
 
             var gui = new Layer();
@@ -128,10 +130,11 @@ namespace TimeLoopInc
 
         Transform2 GridEntityWorldPosition(IGridEntity gridEntity, float t)
         {
-            var offset = Vector2.One / 2;
+            var offset = Vector2d.One / 2;
             var velocity = (Vector2)scene.State.Entities[gridEntity].PreviousVelocity;
-            var pos = (Vector2)scene.State.Entities[gridEntity].Transform.Position + offset;
-            var result = Ray.RayCast(new Transform2(pos), new Transform2(-velocity * (1 - t)), scene.Portals, new Ray.Settings());
+            var transform = scene.State.Entities[gridEntity].Transform.ToTransform2d();
+            transform.Position += offset;
+            var result = Ray.RayCast((Transform2)transform, new Transform2(-velocity * (1 - t)), scene.Portals, new Ray.Settings());
 
             return result.WorldTransform;
         }

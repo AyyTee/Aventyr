@@ -71,7 +71,9 @@ namespace TimeLoopInc
             {
                 if (entity is Player player)
                 {
-                    var result = Move(State.Entities[entity].Transform, player.GetInput(State.Time).Direction);
+                    var velocity = player.GetInput(State.Time).Direction?.Vector ?? new Vector2i();
+                    Vector2Ex.Transform((Vector2)velocity, State.Entities[entity].Transform.GetMatrix());
+                    var result = Move(State.Entities[entity].Transform, velocity);
                     State.Entities[entity].PreviousVelocity = result.Velocity;
                     State.Entities[entity].Transform = result.Transform;
                 }
@@ -97,7 +99,7 @@ namespace TimeLoopInc
                     if (pushes.Count() >= block.Size && !blockInstant.IsPushed)
                     {
                         blockInstant.IsPushed = true;
-                        var result = Move(blockInstant.Transform, directions[i]);
+                        var result = Move(blockInstant.Transform, directions[i].Vector);
                         blockInstant.Transform = result.Transform;
                         blockInstant.PreviousVelocity = result.Velocity;
                     }
@@ -129,14 +131,14 @@ namespace TimeLoopInc
             State.Time++;
         }
 
-        (Transform2i Transform, Vector2i Velocity) Move(Transform2i transform, GridAngle? heading)
+        (Transform2i Transform, Vector2i Velocity) Move(Transform2i transform, Vector2i velocity)
         {
             var offset = Vector2d.One / 2;
             var transform2d = transform.ToTransform2d();
             transform2d.Position += offset;
             var result = Ray.RayCast(
                 (Transform2)transform2d,
-                Transform2.CreateVelocity((Vector2)(heading?.Vector ?? new Vector2i())),
+                Transform2.CreateVelocity((Vector2)velocity),
                 Portals,
                 new Ray.Settings());
 
