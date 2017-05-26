@@ -285,12 +285,13 @@ namespace EditorLogic.Tools
                 if (Input.ButtonDown(KeyBoth.Control))
                 {
                     angle = MathEx.Round(angle, _rotateIncrementSize);
-                    dragAmount.Rotation = (float)MathEx.Round(dragAmount.Rotation + MathEx.AngleDiff(angle, anglePrev), _rotateIncrementSize);
+                    var rotation = MathEx.Round(dragAmount.Rotation + MathEx.AngleDiff(angle, anglePrev), _rotateIncrementSize);
+                    dragAmount = dragAmount.SetRotation((float)rotation);
                     _mousePosPrev = new Vector2((float)Math.Cos(-angle), (float)Math.Sin(-angle)) + _translator.GetTransform().Position;
                 }
                 else
                 {
-                    dragAmount.Rotation += (float)MathEx.AngleDiff(angle, anglePrev);
+                    dragAmount = dragAmount.SetRotation(dragAmount.Rotation + (float)MathEx.AngleDiff(angle, anglePrev));
                     _mousePosPrev = mousePos;
                 }
             }

@@ -150,14 +150,9 @@ namespace TankGame
                 {
                     rotAccel *= -1;
                 }
-                if (Input.TurnRight)
-                {
-                    velocity.Rotation += rotAccel;
-                }
-                else
-                {
-                    velocity.Rotation -= rotAccel;
-                }
+                velocity = Input.TurnRight ?
+                    velocity.SetRotation(velocity.Rotation + rotAccel) :
+                    velocity.SetRotation(velocity.Rotation - rotAccel);
             }
 
             //Apply direction dependent friction.
@@ -167,7 +162,7 @@ namespace TankGame
                 Matrix2.CreateRotation(transform.Rotation);
             velocity.Position = Vector2Ex.Transform(velocity.Position, friction);
 
-            velocity.Rotation *= (float)Math.Pow(0.000001f, stepSize);
+            velocity = velocity.SetRotation(velocity.Rotation * (float)Math.Pow(0.000001f, stepSize));
 
             SetVelocity(velocity);
         }
@@ -179,8 +174,8 @@ namespace TankGame
             Transform2 t = Turret.WorldTransform;
             double angle = MathEx.AngleDiff(t.Rotation, -MathEx.VectorToAngle(Input.ReticlePos - t.Position));
 
-            Transform2 tLocal = Turret.GetVelocity();
-            tLocal.Rotation = Math.Sign(angle) * (float)Math.Min(turretSpeed, Math.Abs(angle / stepSize));
+            Transform2 tLocal = Turret.GetVelocity()
+                .SetRotation(Math.Sign(angle) * (float)Math.Min(turretSpeed, Math.Abs(angle / stepSize)));
             Turret.SetVelocity(tLocal);
         }
 

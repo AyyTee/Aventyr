@@ -25,7 +25,7 @@ namespace Game.Common
         public float Rotation 
         { 
             get { return _rotation; }
-            set 
+            private set 
             {
                 Debug.Assert(!float.IsNaN(value));
                 _rotation = value; 

@@ -12,15 +12,13 @@ namespace Game.Common
     {
         public static void SetPosition(this ITransformable2 transformable, Vector2 position)
         {
-            var transform = transformable.GetTransform();
-            transform.Position = position;
+            var transform = transformable.GetTransform().SetPosition(position);
             transformable.SetTransform(transform);
         }
 
         public static void SetRotation(this ITransformable2 transformable, float rotation)
         {
-            var transform = transformable.GetTransform();
-            transform.Rotation = rotation;
+            var transform = transformable.GetTransform().SetRotation(rotation);
             transformable.SetTransform(transform);
         }
 

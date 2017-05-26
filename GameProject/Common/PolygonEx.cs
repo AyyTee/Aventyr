@@ -12,11 +12,10 @@ namespace Game.Common
     {
         public static Transform2 GetTransform(IList<Vector2> vertices, IPolygonCoord coord)
         {
-            Transform2 transform = new Transform2();
-            LineF line = GetEdge(vertices, coord);
-            transform.Position = line.Lerp(coord.EdgeT);
-            transform.Rotation = -(float)MathEx.VectorToAngle(GetEdge(vertices, coord).GetNormal());
-            return transform;
+            return new Transform2(
+                GetEdge(vertices, coord).Lerp(coord.EdgeT), 
+                1, 
+                -(float)MathEx.VectorToAngle(GetEdge(vertices, coord).GetNormal()));
         }
 
         public static Transform2 GetTransform(FixtureCoord fixtureCoord)

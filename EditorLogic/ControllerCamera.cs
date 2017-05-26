@@ -153,8 +153,7 @@ namespace EditorLogic
             //Handle user input to reset the camera's orientation and center it on the current selected object if it exists.
             if (InputExt.ButtonPress(Key.Space))
             {
-                Transform2 transform = GetTransform().SetMirrorX(false);
-                transform.Rotation = 0;
+                Transform2 transform = GetTransform().SetMirrorX(false).SetRotation(0);
                 transform = transform.SetSize(Math.Abs(transform.Size));
                 EditorObject selected = Controller.Selection.First;
                 if (selected != null)

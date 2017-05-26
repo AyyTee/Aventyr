@@ -24,7 +24,7 @@ namespace Game.Common
         public double Rotation 
         { 
             get { return _rotation; }
-            set 
+            private set 
             {
                 Debug.Assert(!double.IsNaN(value));
                 _rotation = value; 

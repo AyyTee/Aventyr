@@ -79,22 +79,26 @@ namespace Game.Portals
 
             if (!ignorePortalVelocity)
             {
-                velocityClone.Position -= portal.WorldVelocity.Position;
-                velocityClone.Rotation -= portal.WorldVelocity.Rotation;
-                velocityClone.Position -= portal.GetAngularVelocity(intersectT);
+                velocityClone = new Transform2(
+                    velocityClone.Position - portal.WorldVelocity.Position - portal.GetAngularVelocity(intersectT), 
+                    velocityClone.Size, 
+                    velocityClone.Rotation - portal.WorldVelocity.Rotation, 
+                    velocityClone.MirrorX);
             }
             velocityClone.Position = Vector2Ex.Transform(velocityClone.Position, matrix);
             velocityClone.Position -= origin;
 
             if (portal.WorldTransform.MirrorX == portal.Linked.WorldTransform.MirrorX)
             {
-                velocityClone.Rotation = -velocityClone.Rotation;
+                velocityClone = velocityClone.SetRotation(-velocityClone.Rotation);
             }
             if (!ignorePortalVelocity)
             {
-                velocityClone.Position += portal.Linked.WorldVelocity.Position;
-                velocityClone.Rotation += portal.Linked.WorldVelocity.Rotation;
-                velocityClone.Position += portal.Linked.GetAngularVelocity(intersectT);
+                velocityClone = new Transform2(
+                    velocityClone.Position + portal.Linked.WorldVelocity.Position + portal.Linked.GetAngularVelocity(intersectT),
+                    velocityClone.Size,
+                    velocityClone.Rotation + portal.Linked.WorldVelocity.Rotation,
+                    velocityClone.MirrorX);
             }
             return velocityClone;
         }
