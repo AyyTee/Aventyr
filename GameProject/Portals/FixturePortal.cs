@@ -91,8 +91,7 @@ namespace Game.Portals
             {
                 return null;
             }
-            Transform2 t = PolygonEx.GetTransform(((IWall)Parent).Vertices, Position); 
-            t.Size = Size;
+            Transform2 t = PolygonEx.GetTransform(((IWall)Parent).Vertices, Position).SetSize(Size); 
             t.MirrorX = MirrorX;
             return t;
         }

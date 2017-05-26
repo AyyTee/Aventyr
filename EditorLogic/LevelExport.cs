@@ -51,7 +51,7 @@ namespace EditorLogic
             background.Texture = window.Textures.Grid;
             background.SetColor(new Color4(1f, 1f, 0.5f, 1f));
             background.Transform.Position = new Vector3(0, 0, -5f);
-            background.TransformUv.Size = size;
+            background.TransformUv = background.TransformUv.SetSize(size);
             Entity back = new Entity(scene, new Transform2(new Vector2(0f, 0f)));
             back.Name = "Background";
             back.AddModel(background);

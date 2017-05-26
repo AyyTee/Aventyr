@@ -97,7 +97,7 @@ namespace EditorLogic
             IsPortalable = true;
             Scene = scene;
             Controller = controller;
-            Transform.Size = 1;
+            Transform = Transform.SetSize(1);
             ZoomScrollFactor = 1.2f;
             ZoomFactor = 1.5f;
             InputExt = inputExt;
@@ -157,7 +157,7 @@ namespace EditorLogic
                 transform.Rotation = 0;
                 //transform.Scale = new Vector2(Math.Abs(transform.Scale.X), Math.Abs(transform.Scale.Y));
                 transform.MirrorX = false;
-                transform.Size = Math.Abs(transform.Size);
+                transform = transform.SetSize(Math.Abs(transform.Size));
                 EditorObject selected = Controller.Selection.First;
                 if (selected != null)
                 {

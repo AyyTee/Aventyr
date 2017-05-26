@@ -26,8 +26,7 @@ namespace Game.Common
 
         public static void SetSize(this ITransformable2 transformable, float size)
         {
-            var transform = transformable.GetTransform();
-            transform.Size = size;
+            var transform = transformable.GetTransform().SetSize(size);
             transformable.SetTransform(transform);
         }
     }

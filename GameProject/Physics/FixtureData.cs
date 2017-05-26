@@ -129,14 +129,14 @@ namespace Game.Physics
         {
             Debug.Assert(portal.Position.EdgeIndex == portalNext.Position.EdgeIndex);
             Debug.Assert(portal.Position.EdgeT < portalNext.Position.EdgeT);
-            
+
             Transform2 t0 = portal.GetTransform();
             t0.MirrorX = false;
-            t0.Size = Math.Abs(t0.Size);
+            t0 = t0.SetSize(Math.Abs(t0.Size));
 
             Transform2 t1 = portalNext.GetTransform();
             t1.MirrorX = false;
-            t1.Size = Math.Abs(t1.Size);
+            t1 = t1.SetSize(Math.Abs(t1.Size));
 
             Vector2[] verts = 
             {
@@ -161,7 +161,7 @@ namespace Game.Physics
 
             Transform2 t = portal.GetTransform();
             t.MirrorX = false;
-            t.Size = Math.Abs(t.Size);
+            t = t.SetSize(Math.Abs(t.Size));
 
             int index = (portal.Position.EdgeIndex + i) % Actor.Vertices.Count;
 

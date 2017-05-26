@@ -82,8 +82,7 @@ namespace TimeLoopInc
 
             worldLayer.Renderables.Add(new Renderable() { Models = new List<Model> { _grid }, IsPortalable = false });
 
-            var cameraTransform = GridEntityWorldPosition(state.CurrentPlayer, t);
-            cameraTransform.Size = 25;
+            var cameraTransform = GridEntityWorldPosition(state.CurrentPlayer, t).SetSize(25);
             var worldCamera = new GridCamera(cameraTransform, (float)_window.CanvasSize.XRatio);
             worldLayer.Camera = worldCamera;
 

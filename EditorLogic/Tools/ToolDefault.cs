@@ -296,7 +296,7 @@ namespace EditorLogic.Tools
             }
             else if (_mode == Mode.Scale)
             {
-                dragAmount.Size = mousePos.X - _mousePosPrev.X;
+                dragAmount = dragAmount.SetSize(mousePos.X - _mousePosPrev.X);
                 _mousePosPrev = mousePos;
             }
             _totalDrag = _totalDrag.Add(dragAmount);
@@ -345,9 +345,8 @@ namespace EditorLogic.Tools
 
         void UpdateTranslation(ControllerCamera camera)
         {
-            Transform2 transform = _translator.GetTransform();
             Transform2 camT = camera.WorldTransform;
-            transform.Size = camT.Size * TranslationScaleOffset;
+            Transform2 transform = _translator.GetTransform().SetSize(camT.Size * TranslationScaleOffset);
             _translator.SetTransform(transform);
         }
     }

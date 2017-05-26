@@ -92,17 +92,13 @@ namespace Game.Common
         /// GetMatrix() * transform.GetMatrix();</remarks>
         public Transform2d Transform(Transform2d transform)
         {
-            Transform2d output = ShallowClone();
-            if (transform.MirrorX)
-            {
-                output.Rotation *= -1;
-            }
-            output.Rotation += transform.Rotation;
-            output.Size *= transform.Size;
-            output.MirrorX = output.MirrorX != transform.MirrorX;
-            output.Position = Vector2Ex.Transform(output.Position, transform.GetMatrix());
-            //Debug.Assert(Matrix4Ext.AlmostEqual(output.GetMatrix(), GetMatrix() * transform.GetMatrix(), 1));
-            return output;
+            return new Transform2d(
+                Vector2Ex.Transform(Position, transform.GetMatrix()),
+                Size * transform.Size,
+                transform.MirrorX ?
+                    -Rotation + transform.Rotation :
+                    Rotation + transform.Rotation,
+                MirrorX != transform.MirrorX);
         }
 
         /// <summary>
@@ -164,6 +160,11 @@ namespace Game.Common
             output.Position = Position * scalar;
             return output;
         }
+
+        public Transform2d SetPosition(Vector2d position) => new Transform2d(position, Size, Rotation, MirrorX);
+        public Transform2d SetRotation(double rotation) => new Transform2d(Position, Size, rotation, MirrorX);
+        public Transform2d SetSize(double size) => new Transform2d(Position, size, Rotation, MirrorX);
+        public Transform2d SetMirrorX(bool mirrorX) => new Transform2d(Position, Size, Rotation, mirrorX);
 
         public void SetScale(Vector2d scale)
         {

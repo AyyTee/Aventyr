@@ -83,20 +83,15 @@ namespace EditorLogic.Tools
             WallCoord coord = GetEdgeCoord();
             if (coord != null)
             {
-                Transform2 transform = PolygonEx.GetTransform(coord.Wall.GetWorldVertices(), coord);
-                transform.Size = 1;
-                return transform;
+                return PolygonEx.GetTransform(coord.Wall.GetWorldVertices(), coord).SetSize(1);
             }
             else
             {
-                Transform2 transform = new Transform2();
-                transform.Position = Controller.GetMouseWorld();
-                //transform.Rotation = _mouseFollow.GetTransform().Rotation;
-                transform.Rotation = _unsnapAngle;
-                //Transform2.SetRotation(_mouseFollow, unsnapAngle);
-                transform.Size = _mouseFollow.GetTransform().Size;
-                transform.MirrorX = _mouseFollow.GetTransform().MirrorX;
-                return transform;
+                return new Transform2(
+                    Controller.GetMouseWorld(), 
+                    _mouseFollow.GetTransform().Size, 
+                    _unsnapAngle, 
+                    _mouseFollow.GetTransform().MirrorX);
             }
         }
 

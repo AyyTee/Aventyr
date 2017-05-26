@@ -153,8 +153,8 @@ namespace Game.Portals
 
             Transform2 worldTransform = local.Transform(parentTransform);
 
-            Transform2 worldVelocity = Transform2.CreateVelocity();
-            worldVelocity.Size = local.Size * parentVelocity.Size + velocity.Size * parentTransform.Size;
+            Transform2 worldVelocity = Transform2.CreateVelocity()
+                .SetSize(local.Size * parentVelocity.Size + velocity.Size * parentTransform.Size);
             worldVelocity.Rotation = (parentTransform.MirrorX ? -velocity.Rotation : velocity.Rotation) + parentVelocity.Rotation;
 
             Matrix2 mat = Matrix2.CreateScale(parentTransform.Scale) * Matrix2.CreateRotation(parentTransform.Rotation);

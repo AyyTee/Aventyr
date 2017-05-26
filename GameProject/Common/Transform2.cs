@@ -35,7 +35,7 @@ namespace Game.Common
         [DataMember]
         public float _size = 1;
         public float Size { get { return _size; }
-            set 
+            private set 
             {
                 Debug.Assert(!float.IsNaN(value) && !float.IsPositiveInfinity(value) && !float.IsNegativeInfinity(value));
                 _size = value; 
@@ -93,17 +93,13 @@ namespace Game.Common
         /// GetMatrix() * transform.GetMatrix();</remarks>
         public Transform2 Transform(Transform2 transform)
         {
-            Transform2 output = ShallowClone();
-            if (transform.MirrorX)
-            {
-                output.Rotation *= -1;
-            }
-            output.Rotation += transform.Rotation;
-            output.Size *= transform.Size;
-            output.MirrorX = output.MirrorX != transform.MirrorX;
-            output.Position = Vector2Ex.Transform(output.Position, transform.GetMatrix());
-            //Debug.Assert(Matrix4Ext.AlmostEqual(output.GetMatrix(), GetMatrix() * transform.GetMatrix(), 1));
-            return output;
+            return new Transform2(
+                Vector2Ex.Transform(Position, transform.GetMatrix()),
+                Size * transform.Size,
+                transform.MirrorX ?
+                    -Rotation + transform.Rotation :
+                    Rotation + transform.Rotation,
+                MirrorX != transform.MirrorX);
         }
 
         /// <summary>
@@ -165,6 +161,11 @@ namespace Game.Common
             output.Position = Position * scalar;
             return output;
         }
+
+        public Transform2 SetPosition(Vector2 position) => new Transform2(position, Size, Rotation, MirrorX);
+        public Transform2 SetRotation(float rotation) => new Transform2(Position, Size, rotation, MirrorX);
+        public Transform2 SetSize(float size) => new Transform2(Position, size, Rotation, MirrorX);
+        public Transform2 SetMirrorX(bool mirrorX) => new Transform2(Position, Size, Rotation, mirrorX);
 
         public void SetScale(Vector2 scale)
         {
