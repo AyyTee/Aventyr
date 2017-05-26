@@ -79,24 +79,9 @@ namespace Game.Common
                 Matrix4d.CreateTranslation(new Vector3d(Position));
         }
 
-        public Vector2d GetUp(bool normalize = true) => GetVector(new Vector2d(0, 1), normalize);
+        public Vector2d GetUp() => Vector2Ex.TransformVelocity(new Vector2d(0, 1), GetMatrix());
 
-        public Vector2d GetRight(bool normalize = true) => GetVector(new Vector2d(1, 0), normalize);
-
-        Vector2d GetVector(Vector2d vector, bool normalize)
-        {
-            Vector2d[] v = {
-                new Vector2d(0, 0),
-                vector
-            };
-            v = Vector2Ex.Transform(v, GetMatrix());
-            if (normalize)
-            {
-                Debug.Assert(!Vector2Ex.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
-                return (v[1] - v[0]).Normalized();
-            }
-            return v[1] - v[0];
-        }
+        public Vector2d GetRight() => Vector2Ex.TransformVelocity(new Vector2d(1, 0), GetMatrix());
 
         /// <summary>
         /// Returns transform that is this transformed with another Transform2d.  Do not use this for velocity as it will give inappropriate results.

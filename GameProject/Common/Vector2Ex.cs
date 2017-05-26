@@ -195,8 +195,18 @@ namespace Game.Common
 
         public static Vector2 TransformVelocity(Vector2 vector, Matrix4 matrix)
         {
-            Vector2[] v = {
+            var v = new[] {
                 new Vector2(0, 0),
+                vector
+            };
+            v = Transform(v, matrix);
+            return v[1] - v[0];
+        }
+
+        public static Vector2d TransformVelocity(Vector2d vector, Matrix4d matrix)
+        {
+            var v = new[] {
+                new Vector2d(0, 0),
                 vector
             };
             v = Transform(v, matrix);

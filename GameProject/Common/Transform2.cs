@@ -80,24 +80,9 @@ namespace Game.Common
                 Matrix4.CreateTranslation(new Vector3(Position));
         }
 
-        public Vector2 GetUp(bool normalize = true) => GetVector(new Vector2(0, 1), normalize);
+        public Vector2 GetUp() => Vector2Ex.TransformVelocity(new Vector2(0, 1), GetMatrix());
 
-        public Vector2 GetRight(bool normalize = true) => GetVector(new Vector2(1, 0), normalize);
-
-        Vector2 GetVector(Vector2 vector, bool normalize)
-        {
-            Vector2[] v = {
-                new Vector2(0, 0),
-                vector
-            };
-            v = Vector2Ex.Transform(v, GetMatrix());
-            if (normalize)
-            {
-                Debug.Assert(!Vector2Ex.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
-                return (v[1] - v[0]).Normalized();
-            }
-            return v[1] - v[0];
-        }
+        public Vector2 GetRight() => Vector2Ex.TransformVelocity(new Vector2(1, 0), GetMatrix());
 
         /// <summary>
         /// Returns transform that is this transformed with another Transform2.  Do not use this for velocity as it will give inappropriate results.
