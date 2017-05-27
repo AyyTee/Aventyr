@@ -144,6 +144,10 @@ namespace Game.Common
         public Transform2d SetSize(double size) => new Transform2d(Position, size, Rotation, MirrorX);
         public Transform2d SetMirrorX(bool mirrorX) => new Transform2d(Position, Size, Rotation, mirrorX);
 
+        public Transform2d AddPosition(Vector2d position) => new Transform2d(position + Position, Size, Rotation, MirrorX);
+        public Transform2d AddRotation(double rotation) => new Transform2d(Position, Size, rotation + Rotation, MirrorX);
+        public Transform2d AddSize(double size) => new Transform2d(Position, size + Size, Rotation, MirrorX);
+
         public Transform2d SetScale(Vector2d scale)
         {
             Debug.Assert(Vector2Ex.IsReal(scale));
@@ -154,7 +158,7 @@ namespace Game.Common
 
             if (scale.Y > 0)
             {
-                scale.Y = Math.Abs(scale.X);
+                scale.Y = Math.Abs(scale.X); 
             }
             else
             {

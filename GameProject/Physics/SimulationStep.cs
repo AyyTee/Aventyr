@@ -232,7 +232,7 @@ namespace Game.Physics
                     Vector2d exitNormal = (Vector2d)p.WorldTransform.GetRight();
 
                     Vector2d pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
-                    transform = transform.SetPosition(transform.Position + pos);
+                    transform = transform.AddPosition(pos);
                     instance.WorldTransform = (Transform2)transform;
                     /*We return now rather than look for more portals that are too close because it is assumed that 
                      * portals will never be closer than 2 * Portal.EnterMinDistance to eachother*/

@@ -263,15 +263,15 @@ namespace EditorLogic.Tools
                 switch (_dragState)
                 {
                     case DragState.Both:
-                        dragAmount = dragAmount.SetPosition(dragAmount.Position + mousePos - _mousePosPrev);
+                        dragAmount = dragAmount.AddPosition(mousePos - _mousePosPrev);
                         break;
 
                     case DragState.Horizontal:
-                        dragAmount = dragAmount.SetPosition(dragAmount.Position + new Vector2(mousePos.X - _mousePosPrev.X, 0));
+                        dragAmount = dragAmount.AddPosition(new Vector2(mousePos.X - _mousePosPrev.X, 0));
                         break;
 
                     case DragState.Vertical:
-                        dragAmount = dragAmount.SetPosition(dragAmount.Position + new Vector2(0, mousePos.Y - _mousePosPrev.Y));
+                        dragAmount = dragAmount.AddPosition(new Vector2(0, mousePos.Y - _mousePosPrev.Y));
                         break;
                 }
                 _mousePosPrev = mousePos;
