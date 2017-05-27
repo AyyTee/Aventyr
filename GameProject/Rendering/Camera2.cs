@@ -73,17 +73,17 @@ namespace Game.Rendering
 
         public sealed override void SetTransform(Transform2 transform)
         {
-            Transform = transform.ShallowClone();
+            Transform = transform;
             base.SetTransform(transform);
         }
 
-        public override Transform2 GetTransform() => Transform.ShallowClone();
+        public override Transform2 GetTransform() => Transform;
 
-        public override Transform2 GetVelocity() => Velocity.ShallowClone();
+        public override Transform2 GetVelocity() => Velocity;
 
         public override void SetVelocity(Transform2 velocity)
         {
-            Velocity = velocity.ShallowClone();
+            Velocity = velocity;
             base.SetVelocity(velocity);
         }
 

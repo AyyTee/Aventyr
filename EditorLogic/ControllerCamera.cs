@@ -25,18 +25,10 @@ namespace EditorLogic
         public PortalPath Path { get; set; } = new PortalPath();
         [DataMember]
         Transform2 _worldTransformPrevious = new Transform2();
-        public Transform2 WorldTransform
-        {
-            get { return _worldTransformPrevious?.ShallowClone(); }
-            set { _worldTransformPrevious = value?.ShallowClone(); }
-        }
+        public Transform2 WorldTransform { get; set; }
         [DataMember]
         Transform2 _worldVelocityPrevious = Transform2.CreateVelocity();
-        public Transform2 WorldVelocity
-        {
-            get { return _worldVelocityPrevious?.ShallowClone(); }
-            set { _worldVelocityPrevious = value?.ShallowClone(); }
-        }
+        public Transform2 WorldVelocity { get; set; }
         public IPortalCommon Parent => null;
         public List<IPortalCommon> Children => new List<IPortalCommon>();
 
@@ -111,9 +103,9 @@ namespace EditorLogic
         {
         }
 
-        public Transform2 GetTransform() => Transform.ShallowClone();
+        public Transform2 GetTransform() => Transform;
 
-        public void SetTransform(Transform2 transform) => Transform = transform.ShallowClone();
+        public void SetTransform(Transform2 transform) => Transform = transform;
 
         public bool IsLocked() => Controller.ActiveTool.LockCamera();
 

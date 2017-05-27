@@ -242,9 +242,7 @@ namespace Game.Physics
 
         public override Transform2 GetTransform()
         {
-            Transform2 bodyTransform = BodyEx.GetTransform(Body);
-            bodyTransform.SetScale(_scale);
-            return bodyTransform;
+            return BodyEx.GetTransform(Body).SetScale(_scale);
         }
 
         public override void SetTransform(Transform2 transform)
@@ -318,8 +316,7 @@ namespace Game.Physics
         {
             /*Bodies don't have a scale component so we use the default scale when comparing the Actor's
              * scale to that of the child bodies.*/
-            Transform2 actorTransform = actor.WorldTransform;
-            actorTransform.SetScale(Vector2.One);
+            Transform2 actorTransform = actor.WorldTransform.SetScale(Vector2.One);
 
             /*foreach (BodyData data in Tree<BodyData>.GetAll(BodyExt.GetData(actor.Body)))
             {
@@ -331,14 +328,13 @@ namespace Game.Physics
 
         static Transform2 UndoPortalTransform(BodyData data, Transform2 transform)
         {
-            Transform2 copy = transform.ShallowClone();
             if (data.Parent == null)
             {
-                return copy;
+                return transform;
             }
             return UndoPortalTransform(
                 data.Parent,
-                copy.Transform(Portal.GetLinkedTransform(data.BodyParent.Portal).Inverted()));
+                transform.Transform(Portal.GetLinkedTransform(data.BodyParent.Portal).Inverted()));
         }
 
         /// <summary>

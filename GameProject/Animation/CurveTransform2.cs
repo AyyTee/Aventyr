@@ -69,8 +69,8 @@ namespace Game.Animation
             clone.RotCurve = RotCurve.ShallowClone();
             clone.SizeCurve = SizeCurve.ShallowClone();
             clone.MirrorX = MirrorX;
-            clone.TransformOffset = TransformOffset.ShallowClone();
-            clone.VelocityOffset = VelocityOffset.ShallowClone();
+            clone.TransformOffset = TransformOffset;
+            clone.VelocityOffset = VelocityOffset;
             return clone;
         }
     }

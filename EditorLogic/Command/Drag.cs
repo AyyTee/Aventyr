@@ -24,19 +24,19 @@ namespace EditorLogic.Command
             {
                 _modified.Add(new MementoDrag(e));
             }
-            _transform = transform.ShallowClone();
+            _transform = transform;
         }
 
         public Drag(List<MementoDrag> modified, Transform2 transform)
         {
             _modified.UnionWith(modified);
-            _transform = transform.ShallowClone();
+            _transform = transform;
         }
 
         public Drag(HashSet<MementoDrag> modified, Transform2 transform)
         {
             _modified.UnionWith(modified);
-            _transform = transform.ShallowClone();
+            _transform = transform;
         }
 
         public void Do()
@@ -47,7 +47,7 @@ namespace EditorLogic.Command
                 if (editorObject != null && editorObject.Parent != null)
                 {
                     Transform2 t = editorObject.GetTransform();
-                    Transform2 t2 = _transform.ShallowClone();
+                    Transform2 t2 = _transform;
 
                     Transform2 parent = editorObject.GetWorldTransform();
                     parent = parent.Inverted();

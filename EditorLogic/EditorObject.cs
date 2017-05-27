@@ -33,18 +33,10 @@ namespace EditorLogic
         public PortalPath Path { get; set; } = new PortalPath();
         [DataMember]
         Transform2 _worldTransformPrevious = null;
-        public Transform2 WorldTransform
-        {
-            get { return _worldTransformPrevious?.ShallowClone(); }
-            set { _worldTransformPrevious = value?.ShallowClone(); }
-        }
+        public Transform2 WorldTransform { get; set; }
         [DataMember]
         Transform2 _worldVelocityPrevious = null;
-        public Transform2 WorldVelocity
-        {
-            get { return _worldVelocityPrevious?.ShallowClone(); }
-            set { _worldVelocityPrevious = value?.ShallowClone(); }
-        }
+        public Transform2 WorldVelocity { get; set; }
         [DataMember]
         public bool Visible { get; set; }
         [DataMember]
@@ -179,7 +171,7 @@ namespace EditorLogic
                 PolygonTransform = null;
                 SetParent(Scene);
             }*/
-            Transform = transform.ShallowClone();
+            Transform = transform;
         }
 
         public virtual Transform2 GetTransform()
@@ -193,7 +185,7 @@ namespace EditorLogic
             {
                 return Transform.Transform(PolygonEx.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
             }
-            return Transform.ShallowClone();
+            return Transform;
         }
 
         public Transform2 GetTransformWithPolygon()
@@ -202,7 +194,7 @@ namespace EditorLogic
             {
                 return Transform.Transform(PolygonEx.GetTransform(((IWall)Parent).Vertices, PolygonTransform));
             }
-            return Transform.ShallowClone();
+            return Transform;
         }
 
         public Transform2 GetWorldTransform(bool ignorePortals = false)

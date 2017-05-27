@@ -112,7 +112,7 @@ namespace Game.Portals
 
         public static Transform2 TransformVelocity(Transform2 portalableTransform, Transform2 portalableVelocity, IPortalRenderable portal, Transform2 velocity, double movementT)
         {
-            var newVelocity = Portal.EnterVelocity(portal, 0.5f, velocity.ShallowClone());
+            var newVelocity = Portal.EnterVelocity(portal, 0.5f, velocity);
             Vector2 endPosition = portalableTransform.Position + portalableVelocity.Position * (float)(1 - movementT);
             float angularVelocity = portal.Linked.WorldVelocity.Rotation;
             if (portal.WorldTransform.MirrorX != portal.Linked.WorldTransform.MirrorX)

@@ -257,8 +257,8 @@ namespace GameTests
 
             PortalCommon.UpdateWorldTransform(scene);
 
-            Transform2 transformPrevious = fixture.WorldTransform.ShallowClone();
-            Transform2 actorPrevious = actor.WorldTransform.ShallowClone();
+            Transform2 transformPrevious = fixture.WorldTransform;
+            Transform2 actorPrevious = actor.WorldTransform;
 
             SimulationStep.Step(scene.GetAll().OfType<IPortalCommon>(), scene.GetAll().OfType<IPortal>(), 1, null);
 

@@ -48,7 +48,7 @@ namespace EditorLogic
             {
                 return PolygonEx.GetTransform(_parent.Vertices, _polygonCoord);
             }
-            return _transform.ShallowClone();
+            return _transform;
         }
     }
 }

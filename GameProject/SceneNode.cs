@@ -17,19 +17,9 @@ namespace Game
         [DataMember]
         public PortalPath Path { get; set; } = new PortalPath();
         [DataMember]
-        Transform2 _worldTransformPrevious;
-        public Transform2 WorldTransform
-        {
-            get { return _worldTransformPrevious?.ShallowClone(); }
-            set { _worldTransformPrevious = value?.ShallowClone(); }
-        }
+        public Transform2 WorldTransform { get; set; }
         [DataMember]
-        Transform2 _worldVelocity;
-        public Transform2 WorldVelocity
-        {
-            get { return _worldVelocity?.ShallowClone(); }
-            set { _worldVelocity = value?.ShallowClone(); }
-        }
+        public Transform2 WorldVelocity { get; set; }
         IPortalCommon ITreeNode<IPortalCommon>.Parent => Parent;
         List<IPortalCommon> ITreeNode<IPortalCommon>.Children => Children.ToList<IPortalCommon>();
 

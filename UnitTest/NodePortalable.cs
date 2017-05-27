@@ -29,25 +29,19 @@ namespace GameTests
             return Children.OfType<IPortal>().ToList();
         }
 
-        public override Transform2 GetTransform()
-        {
-            return Transform.ShallowClone();
-        }
+        public override Transform2 GetTransform() => Transform;
 
-        public override Transform2 GetVelocity()
-        {
-            return Velocity.ShallowClone();
-        }
+        public override Transform2 GetVelocity() => Velocity;
 
         public override void SetTransform(Transform2 transform)
         {
-            Transform = transform.ShallowClone();
+            Transform = transform;
             base.SetTransform(transform);
         }
 
         public override void SetVelocity(Transform2 velocity)
         {
-            Velocity = velocity.ShallowClone();
+            Velocity = velocity;
             base.SetVelocity(velocity);
         }
     }

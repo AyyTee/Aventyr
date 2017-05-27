@@ -75,7 +75,7 @@ namespace Game.Portals
             Debug.Assert(portal.IsValid());
             Matrix4 matrix = GetLinkedMatrix(portal);
             Vector2 origin = Vector2Ex.Transform(new Vector2(), matrix);
-            Transform2 velocityClone = velocity.ShallowClone();
+            Transform2 velocityClone = velocity;
 
             if (!ignorePortalVelocity)
             {
@@ -114,8 +114,8 @@ namespace Game.Portals
             Transform2 velocity = portalable.GetVelocity();
 
             //Copies are made just for debug purposes.  The originals should not change before the EnterPortal callback.
-            Transform2 transformCopy = transform.ShallowClone();
-            Transform2 velocityCopy = velocity.ShallowClone();
+            Transform2 transformCopy = transform;
+            Transform2 velocityCopy = velocity;
 
             var cast = portalable as IPortalable;
             if (cast != null)

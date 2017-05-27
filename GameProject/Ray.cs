@@ -26,8 +26,8 @@ namespace Game
             Transform2 _worldTransform;
             Transform2 _worldVelocity;
 
-            public Transform2 WorldTransform => _worldTransform.ShallowClone();
-            public Transform2 WorldVelocity => _worldVelocity.ShallowClone();
+            public Transform2 WorldTransform => _worldTransform;
+            public Transform2 WorldVelocity => _worldVelocity;
 
             public IReadOnlyCollection<(EnterCallbackData EnterData, double MovementT)> PortalsEntered;
 
@@ -39,8 +39,8 @@ namespace Game
             public Result(Transform2 worldTransform, Transform2 worldVelocity, List<(EnterCallbackData EnterData, double MovementT)> portalsEntered)
             {
                 Debug.Assert(portalsEntered != null);
-                _worldTransform = worldTransform.ShallowClone();
-                _worldVelocity = worldVelocity.ShallowClone();
+                _worldTransform = worldTransform;
+                _worldVelocity = worldVelocity;
                 PortalsEntered = portalsEntered.AsReadOnly();
             }
         }
@@ -63,8 +63,8 @@ namespace Game
             }
 
             return _rayCast(
-                worldTransform.ShallowClone(),
-                worldVelocity.ShallowClone(),
+                worldTransform,
+                worldVelocity,
                 portals,
                 worldVelocity.Position.Length * settings.TimeScale,
                 null,
@@ -124,7 +124,7 @@ namespace Game
                 //portalEnter?.Invoke(new EnterCallbackData(portalNearest, placeable, intersectNearest.First), t);
 
                 movementLeft *= Math.Abs(worldTransform.Size / begin.Size);
-                var result = _rayCast(worldTransform.ShallowClone(), velocity.ShallowClone(), portals, movementLeft, portalNearest.Linked, portalEnter, settings, count + 1);
+                var result = _rayCast(worldTransform, velocity, portals, movementLeft, portalNearest.Linked, portalEnter, settings, count + 1);
                 var list = new List<(EnterCallbackData EnterData, double MovementT)>(result.PortalsEntered);
                 list.Insert(0, ValueTuple.Create(new EnterCallbackData(portalNearest, null, worldTransform, velocity, intersectNearest.First), t));
                 return new Result(result.WorldTransform, result.WorldVelocity, list);
@@ -158,7 +158,6 @@ namespace Game
         /// <param name="velocity"></param>
         static Transform2 AddMargin(IEnumerable<IPortalRenderable> portals, IPortalRenderable portalPrevious, Transform2 transform, Transform2 velocity)
         {
-            transform = transform.ShallowClone();
             foreach (var p in portals)
             {
                 if (!p.IsValid())

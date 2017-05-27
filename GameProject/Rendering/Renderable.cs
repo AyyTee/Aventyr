@@ -23,7 +23,7 @@ namespace Game.Rendering
 
         [DataMember]
         Transform2 _transform = new Transform2();
-        public Transform2 WorldTransform => _transform.ShallowClone();
+        public Transform2 WorldTransform => _transform;
         public Transform2 WorldVelocity => Transform2.CreateVelocity();
 
         [DataMember]
@@ -31,8 +31,8 @@ namespace Game.Rendering
 
         public List<Model> GetModels() => new List<Model>(Models);
 
-        public void SetTransform(Transform2 transform) => _transform = transform.ShallowClone();
-        public Transform2 GetTransform() => _transform.ShallowClone();
+        public void SetTransform(Transform2 transform) => _transform = transform;
+        public Transform2 GetTransform() => _transform;
 
         public Renderable()
         {

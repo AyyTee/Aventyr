@@ -52,8 +52,8 @@ namespace Game.Models
         public Model DeepClone()
         {
             Model clone = ShallowClone();
-            clone.Transform = Transform.ShallowClone();
-            clone.TransformUv = TransformUv.ShallowClone();
+            clone.Transform = Transform;
+            clone.TransformUv = TransformUv;
             clone.Mesh = Mesh.ShallowClone();
             return clone;
         }

@@ -14,18 +14,8 @@ namespace Game.Portals
         public Transform2 Transform { get; set; } = new Transform2();
         public Transform2 Velocity { get; set; } = Transform2.CreateVelocity();
         public PortalPath Path { get; set; } = new PortalPath();
-        Transform2 _worldTransformPrevious;
-        public Transform2 WorldTransform
-        {
-            get { return _worldTransformPrevious?.ShallowClone(); }
-            set { _worldTransformPrevious = value?.ShallowClone(); }
-        }
-        Transform2 _worldVelocityPrevious;
-        public Transform2 WorldVelocity
-        {
-            get { return _worldVelocityPrevious?.ShallowClone(); }
-            set { _worldVelocityPrevious = value?.ShallowClone(); }
-        }
+        public Transform2 WorldTransform { get; set; }
+        public Transform2 WorldVelocity { get; set; }
         public IPortalCommon Parent { get; set; }
         public List<IPortalCommon> Children { get; } = new List<IPortalCommon>();
         public Scene Scene { get; private set; }
@@ -43,13 +33,13 @@ namespace Game.Portals
             SetVelocity(velocity);
         }
 
-        public Transform2 GetTransform() => Transform.ShallowClone();
+        public Transform2 GetTransform() => Transform;
 
-        public Transform2 GetVelocity() => Velocity.ShallowClone();
+        public Transform2 GetVelocity() => Velocity;
 
-        public void SetTransform(Transform2 transform) => Transform = transform.ShallowClone();
+        public void SetTransform(Transform2 transform) => Transform = transform;
 
-        public void SetVelocity(Transform2 velocity) => Velocity = velocity.ShallowClone();
+        public void SetVelocity(Transform2 velocity) => Velocity = velocity;
 
         public List<IPortal> GetPortalChildren() => new List<IPortal>();
     }

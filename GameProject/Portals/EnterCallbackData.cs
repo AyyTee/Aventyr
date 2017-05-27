@@ -29,12 +29,12 @@ namespace Game.Portals
         {
             EntrancePortal = entrancePortal;
             Instance = instance;
-            _transform = transform.ShallowClone();
-            _velocity = velocity.ShallowClone();
+            _transform = transform;
+            _velocity = velocity;
             PortalT = portalT;
         }
 
-        public Transform2 GetTransform() => _transform.ShallowClone();
-        public Transform2 GetVelocity() => _velocity.ShallowClone();
+        public Transform2 GetTransform() => _transform;
+        public Transform2 GetVelocity() => _velocity;
     }
 }
