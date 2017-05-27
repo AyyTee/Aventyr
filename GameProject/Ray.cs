@@ -23,11 +23,8 @@ namespace Game
 
         public class Result : IGetWorldTransformVelocity
         {
-            Transform2 _worldTransform;
-            Transform2 _worldVelocity;
-
-            public Transform2 WorldTransform => _worldTransform;
-            public Transform2 WorldVelocity => _worldVelocity;
+            public Transform2 WorldTransform { get; private set; }
+            public Transform2 WorldVelocity { get; private set; }
 
             public IReadOnlyCollection<(EnterCallbackData EnterData, double MovementT)> PortalsEntered;
 
@@ -39,8 +36,8 @@ namespace Game
             public Result(Transform2 worldTransform, Transform2 worldVelocity, List<(EnterCallbackData EnterData, double MovementT)> portalsEntered)
             {
                 Debug.Assert(portalsEntered != null);
-                _worldTransform = worldTransform;
-                _worldVelocity = worldVelocity;
+                WorldTransform = worldTransform;
+                WorldVelocity = worldVelocity;
                 PortalsEntered = portalsEntered.AsReadOnly();
             }
         }
@@ -52,7 +49,7 @@ namespace Game
         /// <param name="portals">Collection of portals used for portal teleportation.</param>
         /// <param name="settings"></param>
         /// <param name="portalEnter">Callback that is executed after entering a portal.</param>
-        public static Result RayCast(Transform2 worldTransform, Transform2 worldVelocity, IEnumerable<IPortalRenderable> portals, Settings settings, Action<EnterCallbackData, double> portalEnter = null)
+        public static Result RayCast(Transform2 worldTransform, Transform2 worldVelocity, IEnumerable<IPortalRenderable> portals, Settings settings)
         {
             Debug.Assert(settings.MaxIterations >= 0);
             Debug.Assert(portals != null);
@@ -68,12 +65,11 @@ namespace Game
                 portals,
                 worldVelocity.Position.Length * settings.TimeScale,
                 null,
-                portalEnter,
                 settings,
                 0);
         }
 
-        static Result _rayCast(Transform2 worldTransform, Transform2 velocityCurrent, IEnumerable<IPortalRenderable> portals, double movementLeft, IPortalRenderable portalPrevious, Action<EnterCallbackData, double> portalEnter, Settings settings, int count)
+        static Result _rayCast(Transform2 worldTransform, Transform2 velocityCurrent, IEnumerable<IPortalRenderable> portals, double movementLeft, IPortalRenderable portalPrevious, Settings settings, int count)
         {
             Transform2 begin = worldTransform;
             Transform2 velocity = velocityCurrent.Multiply(settings.TimeScale);
@@ -120,11 +116,8 @@ namespace Game
                 worldTransform = Portal.Enter(portalNearest, begin);
                 velocity = Portal.EnterVelocity(portalNearest, (float)intersectNearest.First, velocity, true);
 
-
-                //portalEnter?.Invoke(new EnterCallbackData(portalNearest, placeable, intersectNearest.First), t);
-
                 movementLeft *= Math.Abs(worldTransform.Size / begin.Size);
-                var result = _rayCast(worldTransform, velocity, portals, movementLeft, portalNearest.Linked, portalEnter, settings, count + 1);
+                var result = _rayCast(worldTransform, velocity, portals, movementLeft, portalNearest.Linked, settings, count + 1);
                 var list = new List<(EnterCallbackData EnterData, double MovementT)>(result.PortalsEntered);
                 list.Insert(0, ValueTuple.Create(new EnterCallbackData(portalNearest, null, worldTransform, velocity, intersectNearest.First), t));
                 return new Result(result.WorldTransform, result.WorldVelocity, list);
