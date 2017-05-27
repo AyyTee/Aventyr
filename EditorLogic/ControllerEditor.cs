@@ -75,7 +75,7 @@ namespace EditorLogic
             Clipboard = new EditorScene(Window);
 
             LevelCreate();
-            new Camera2(Hud, new Transform2((Vector2)Window.CanvasSize, Window.CanvasSize.X), (float)Window.CanvasSize.XRatio);
+            new Camera2(Hud, new Transform2((Vector2)Window.CanvasSize, size: Window.CanvasSize.X), (float)Window.CanvasSize.XRatio);
 
             PortalCommon.UpdateWorldTransform(Hud);
             PortalCommon.UpdateWorldTransform(Level);

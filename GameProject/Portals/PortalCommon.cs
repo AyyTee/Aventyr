@@ -84,7 +84,7 @@ namespace Game.Portals
             Transform2 t = local.Transform(parent);
 
             var result = Ray.RayCast(
-                new Transform2(parent.Position, t.Size, t.Rotation, t.MirrorX), 
+                new Transform2(parent.Position, t.Rotation, t.Size, t.MirrorX), 
                 Transform2.CreateVelocity(t.Position - parent.Position), 
                 GetPortalsForPortal(instance, portals), 
                 new Ray.Settings());
@@ -172,7 +172,7 @@ namespace Game.Portals
 
             HashSet<IPortal> portals = GetPortalsForPortal(instance, instance.Scene.GetPortalList());
             var result = Ray.RayCast(
-                new Transform2(parentTransform.Position, worldTransform.Size, worldTransform.Rotation, worldTransform.MirrorX), 
+                new Transform2(parentTransform.Position, worldTransform.Rotation, worldTransform.Size, worldTransform.MirrorX), 
                 Transform2.CreateVelocity(positionDelta), 
                 portals, 
                 new Ray.Settings());

@@ -129,8 +129,8 @@ namespace Game.Physics
             Position positionB = data.positions[indexB];
             Velocity velocityB = data.velocities[indexB];
 
-            var t = Portal.Enter(PortalEnter.Linked, new Transform2((OpenTK.Vector2)positionB.c, 1, positionB.a));
-            var v = Portal.EnterVelocity(PortalEnter.Linked, 0.5f, new Transform2((OpenTK.Vector2)velocityB.v, 1, velocityB.w));
+            var t = Portal.Enter(PortalEnter.Linked, new Transform2((OpenTK.Vector2)positionB.c, positionB.a, 1));
+            var v = Portal.EnterVelocity(PortalEnter.Linked, 0.5f, new Transform2((OpenTK.Vector2)velocityB.v, velocityB.w, 1));
 
             data.positions[indexB].c = (Vector2)t.Position;
             data.positions[indexB].a = t.Rotation;
@@ -146,8 +146,8 @@ namespace Game.Physics
             Position positionB = data.positions[indexB];
             Velocity velocityB = data.velocities[indexB];
 
-            var t = Portal.Enter(PortalEnter, new Transform2((OpenTK.Vector2)positionB.c, 1, positionB.a));
-            var v = Portal.EnterVelocity(PortalEnter, 0.5f, new Transform2((OpenTK.Vector2)velocityB.v, 1, velocityB.w));
+            var t = Portal.Enter(PortalEnter, new Transform2((OpenTK.Vector2)positionB.c, positionB.a, 1));
+            var v = Portal.EnterVelocity(PortalEnter, 0.5f, new Transform2((OpenTK.Vector2)velocityB.v, velocityB.w, 1));
 
             data.positions[indexB].c = (Vector2)t.Position;
             data.positions[indexB].a = t.Rotation;

@@ -56,7 +56,7 @@ namespace TankGame.Network
         {
             _scene = new Scene();
             _scene.Gravity = new Vector2();
-            new Camera2(_scene, new Transform2(new Vector2(), 10), (float)_window.CanvasSize.XRatio);
+            new Camera2(_scene, new Transform2(new Vector2(), size: 10), (float)_window.CanvasSize.XRatio);
 
             Entity entity2 = new Entity(_scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10), new Vector3(-5, -5, 0)));

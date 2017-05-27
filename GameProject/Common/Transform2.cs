@@ -28,13 +28,15 @@ namespace Game.Common
         [DataMember]
         public bool MirrorX { get; private set; }
 
-        public Vector2 Scale => MirrorX ? new Vector2(-Size, Size) : new Vector2(Size, Size);
+        public Vector2 Scale => MirrorX ? 
+            new Vector2(-Size, Size) : 
+            new Vector2(Size, Size);
 
         public Transform2()
         {
         }
 
-        public Transform2(Vector2 position, float size = 1, float rotation = 0, bool mirrorX = false)
+        public Transform2(Vector2 position, float rotation = 0, float size = 1, bool mirrorX = false)
         {
             Debug.Assert(!Vector2Ex.IsNaN(position));
             Debug.Assert(!float.IsNaN(rotation));
@@ -75,10 +77,10 @@ namespace Game.Common
         {
             return new Transform2(
                 Vector2Ex.Transform(Position, transform.GetMatrix()),
-                Size * transform.Size,
                 transform.MirrorX ?
                     -Rotation + transform.Rotation :
                     Rotation + transform.Rotation,
+                Size * transform.Size,
                 MirrorX != transform.MirrorX);
         }
 
@@ -110,9 +112,9 @@ namespace Game.Common
         public Transform2 Add(Transform2 transform)
         {
             return new Transform2(
-                Position + transform.Position, 
-                Size + transform.Size, 
-                Rotation + transform.Rotation, 
+                Position + transform.Position,
+                Rotation + transform.Rotation,
+                Size + transform.Size,
                 MirrorX != transform.MirrorX);
         }
 
@@ -123,8 +125,8 @@ namespace Game.Common
         {
             return new Transform2(
                 Position - transform.Position,
-                Size - transform.Size,
                 Rotation - transform.Rotation,
+                Size - transform.Size,
                 MirrorX != transform.MirrorX);
         }
 
@@ -134,20 +136,20 @@ namespace Game.Common
         public Transform2 Multiply(float scalar)
         {
             return new Transform2(
-                Position * scalar, 
-                Size * scalar, 
-                Rotation * scalar, 
+                Position * scalar,
+                Rotation * scalar,
+                Size * scalar,
                 MirrorX);
         }
 
-        public Transform2 SetPosition(Vector2 position) => new Transform2(position, Size, Rotation, MirrorX);
-        public Transform2 SetRotation(float rotation) => new Transform2(Position, Size, rotation, MirrorX);
-        public Transform2 SetSize(float size) => new Transform2(Position, size, Rotation, MirrorX);
-        public Transform2 SetMirrorX(bool mirrorX) => new Transform2(Position, Size, Rotation, mirrorX);
+        public Transform2 SetPosition(Vector2 position) => new Transform2(position, Rotation, Size, MirrorX);
+        public Transform2 SetRotation(float rotation) => new Transform2(Position, rotation, Size, MirrorX);
+        public Transform2 SetSize(float size) => new Transform2(Position, Rotation, size, MirrorX);
+        public Transform2 SetMirrorX(bool mirrorX) => new Transform2(Position, Rotation, Size, mirrorX);
 
-        public Transform2 AddPosition(Vector2 position) => new Transform2(position + Position, Size, Rotation, MirrorX);
-        public Transform2 AddRotation(float rotation) => new Transform2(Position, Size, rotation + Rotation, MirrorX);
-        public Transform2 AddSize(float size) => new Transform2(Position, size + Size, Rotation, MirrorX);
+        public Transform2 AddPosition(Vector2 position) => new Transform2(position + Position, Rotation, Size, MirrorX);
+        public Transform2 AddRotation(float rotation) => new Transform2(Position, rotation + Rotation, Size, MirrorX);
+        public Transform2 AddSize(float size) => new Transform2(Position, Rotation, size + Size, MirrorX);
 
         public Transform2 SetScale(Vector2 scale)
         {
@@ -217,7 +219,7 @@ namespace Game.Common
 
         public static Transform2 CreateVelocity(Vector2 linearVelocity, float angularVelocity = 0, float scalarVelocity = 0)
         {
-            return new Transform2(linearVelocity, scalarVelocity, angularVelocity);
+            return new Transform2(linearVelocity, angularVelocity, scalarVelocity);
         }
 
         public bool EqualsValue(Transform2 other)

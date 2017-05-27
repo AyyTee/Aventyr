@@ -33,7 +33,7 @@ namespace TankGame
             if (Tank != null)
             {
                 //Camera.ViewOffset = Camera.ScreenToClip(Controller.InputExt.MousePos, Vector2Ext.ToOtk(Controller.CanvasSize)) * 0.4f;
-                Transform2 t = new Transform2(Tank.WorldTransform.Position, Camera.WorldTransform.Size, Camera.WorldTransform.Rotation,  Camera.WorldTransform.MirrorX);
+                Transform2 t = new Transform2(Tank.WorldTransform.Position, Camera.WorldTransform.Rotation, Camera.WorldTransform.Size, Camera.WorldTransform.MirrorX);
                 Camera.WorldTransform = t;
             }
             else

@@ -13,9 +13,9 @@ namespace Game.Common
         public static Transform2 GetTransform(IList<Vector2> vertices, IPolygonCoord coord)
         {
             return new Transform2(
-                GetEdge(vertices, coord).Lerp(coord.EdgeT), 
-                1, 
-                -(float)MathEx.VectorToAngle(GetEdge(vertices, coord).GetNormal()));
+                GetEdge(vertices, coord).Lerp(coord.EdgeT),
+                -(float)MathEx.VectorToAngle(GetEdge(vertices, coord).GetNormal()),
+                1);
         }
 
         public static Transform2 GetTransform(FixtureCoord fixtureCoord)

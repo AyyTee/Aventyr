@@ -64,7 +64,7 @@ namespace TankGame.Network
         {
             Camera2 camera = new Camera2(
                 Scene,
-                new Transform2(new Vector2(), 10),
+                new Transform2(new Vector2(), size: 10),
                 _window.CanvasSize.X / (float)_window.CanvasSize.Y);
 
             _tankCamera = new TankCamera(camera, null);

@@ -90,7 +90,7 @@ namespace GameTests
             Portal.SetLinked(p0, p1);
 
             p0.SetTransform(new Transform2(new Vector2(1, 0)));
-            p1.SetTransform(new Transform2(new Vector2(50, 0), 1, 0, true));
+            p1.SetTransform(new Transform2(new Vector2(50, 0), 0, 1, true));
 
             scene.Step();
 
@@ -112,7 +112,7 @@ namespace GameTests
             Portal.SetLinked(p0, p1);
 
             p0.SetTransform(new Transform2(new Vector2(1, 0)));
-            p1.SetTransform(new Transform2(new Vector2(50, 0), 1, 0, true));
+            p1.SetTransform(new Transform2(new Vector2(50, 0), 0, 1, true));
 
             scene.Step();
 

@@ -18,7 +18,7 @@ namespace GameTests
         {
             Scene scene = new Scene();
             Portalable p = new Portalable(scene);
-            Transform2 start = new Transform2(new Vector2(1, 5), 2.3f, 3.9f);
+            Transform2 start = new Transform2(new Vector2(1, 5), 3.9f, 2.3f);
             Transform2 velocity = Transform2.CreateVelocity(new Vector2(-3, 4), 23, 0.54f);
             p.SetTransform(start);
             p.SetVelocity(velocity);
@@ -36,7 +36,7 @@ namespace GameTests
         {
             Scene scene = new Scene();
             Portalable p = new Portalable(scene);
-            Transform2 start = new Transform2(new Vector2(1, 5), 2.3f, 3.9f);
+            Transform2 start = new Transform2(new Vector2(1, 5), 3.9f, 2.3f);
             Transform2 velocity = Transform2.CreateVelocity(new Vector2(-3, 4), 23, 0.54f);
             p.SetTransform(start);
             p.SetVelocity(velocity);
@@ -179,7 +179,7 @@ namespace GameTests
             entity.SetParent(actor);
 
             FloatPortal enter = new FloatPortal(scene) {Name = "Entrance Portal"};
-            enter.SetTransform(new Transform2(new Vector2(1, 2), 1, (float)Math.PI/2));
+            enter.SetTransform(new Transform2(new Vector2(1, 2), (float)Math.PI / 2, 1));
             //enter.SetVelocity(Transform2.CreateVelocity(new Vector2(1, 0)));
 
             FloatPortal exit = new FloatPortal(scene) {Name = "Exit Portal"};
@@ -193,7 +193,7 @@ namespace GameTests
             SimulationStep.Step(scene.GetAll().OfType<IPortalCommon>(), scene.GetAll().OfType<IPortal>(), 1, null);
 
             Assert.IsTrue(entity.Path.Portals.Count == 0);
-            Transform2 expected = new Transform2(new Vector2(8, 10), 1, (float)Math.PI / 2, true);
+            Transform2 expected = new Transform2(new Vector2(8, 10), (float)Math.PI / 2, 1, true);
             Assert.IsTrue(actor.WorldTransform.AlmostEqual(expected));
             Assert.IsTrue(entity.WorldTransform.AlmostEqual(expected));
             Assert.IsTrue(entity.GetTransform().EqualsValue(new Transform2()));
@@ -213,7 +213,7 @@ namespace GameTests
             entity.SetParent(actor);
 
             FloatPortal enter = new FloatPortal(scene);
-            enter.SetTransform(new Transform2(new Vector2(1, 2), 1, (float)Math.PI / 2));
+            enter.SetTransform(new Transform2(new Vector2(1, 2), (float)Math.PI / 2, 1));
             //enter.SetVelocity(Transform2.CreateVelocity(new Vector2(1, 0)));
 
             FloatPortal exit = new FloatPortal(scene);
@@ -344,7 +344,7 @@ namespace GameTests
             portalChild.SetParent(node);
             portalChild.SetTransform(new Transform2(new Vector2(1, 5)));
 
-            portal.SetTransform(new Transform2(new Vector2(0, -0.5f), 1, (float)Math.PI/2));
+            portal.SetTransform(new Transform2(new Vector2(0, -0.5f), (float)Math.PI / 2, 1));
             Portal.SetLinked(portal, portalChild);
 
             node.SetVelocity(Transform2.CreateVelocity(new Vector2(0, -1)));

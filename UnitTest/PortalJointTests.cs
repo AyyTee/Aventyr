@@ -32,8 +32,8 @@ namespace GameTests
             Scene scene = new Scene();
             FloatPortal portal0 = new FloatPortal(scene);
             FloatPortal portal1 = new FloatPortal(scene);
-            portal0.SetTransform(new Transform2(new Vector2(), 1, 0, true));
-            portal1.SetTransform(new Transform2(new Vector2(), 1, 0));
+            portal0.SetTransform(new Transform2(new Vector2(), 0, 1, true));
+            portal1.SetTransform(new Transform2(new Vector2(), 0, 1));
             portal0.Linked = portal1;
             portal1.Linked = portal0;
             PortalCommon.UpdateWorldTransform(scene);
@@ -56,8 +56,8 @@ namespace GameTests
             Scene scene = new Scene();
             FloatPortal portal0 = new FloatPortal(scene);
             FloatPortal portal1 = new FloatPortal(scene);
-            portal0.SetTransform(new Transform2(new Vector2(), 1, 0, true));
-            portal1.SetTransform(new Transform2(new Vector2(10, 0), 1, 0));
+            portal0.SetTransform(new Transform2(new Vector2(), 0, 1, true));
+            portal1.SetTransform(new Transform2(new Vector2(10, 0), 0, 1));
             portal0.Linked = portal1;
             portal1.Linked = portal0;
             PortalCommon.UpdateWorldTransform(scene);
@@ -80,8 +80,8 @@ namespace GameTests
             Scene scene = new Scene();
             FloatPortal portal0 = new FloatPortal(scene);
             FloatPortal portal1 = new FloatPortal(scene);
-            portal0.SetTransform(new Transform2(new Vector2(), 1, 0, true));
-            portal1.SetTransform(new Transform2(new Vector2(10, 0), 1, 3.5f));
+            portal0.SetTransform(new Transform2(new Vector2(), 0, 1, true));
+            portal1.SetTransform(new Transform2(new Vector2(10, 0), 3.5f, 1));
             portal0.Linked = portal1;
             portal1.Linked = portal0;
             PortalCommon.UpdateWorldTransform(scene);
@@ -104,8 +104,8 @@ namespace GameTests
             Scene scene = new Scene();
             FloatPortal portal0 = new FloatPortal(scene);
             FloatPortal portal1 = new FloatPortal(scene);
-            portal0.SetTransform(new Transform2(new Vector2(-5, 43), 1, -3f, true));
-            portal1.SetTransform(new Transform2(new Vector2(10, 9.3f), 1, 2.5f));
+            portal0.SetTransform(new Transform2(new Vector2(-5, 43), -3f, 1, true));
+            portal1.SetTransform(new Transform2(new Vector2(10, 9.3f), 2.5f, 1));
             portal0.Linked = portal1;
             portal1.Linked = portal0;
             PortalCommon.UpdateWorldTransform(scene);
@@ -128,8 +128,8 @@ namespace GameTests
             Scene scene = new Scene();
             FloatPortal portal0 = new FloatPortal(scene);
             FloatPortal portal1 = new FloatPortal(scene);
-            portal0.SetTransform(new Transform2(new Vector2(-5, 43), 1.4f, -3f));
-            portal1.SetTransform(new Transform2(new Vector2(10, 9.3f), -1.9f, 2.5f));
+            portal0.SetTransform(new Transform2(new Vector2(-5, 43), -3f, 1.4f));
+            portal1.SetTransform(new Transform2(new Vector2(10, 9.3f), 2.5f, -1.9f));
             portal0.Linked = portal1;
             portal1.Linked = portal0;
             PortalCommon.UpdateWorldTransform(scene);
@@ -152,8 +152,8 @@ namespace GameTests
             Scene scene = new Scene();
             FloatPortal portal0 = new FloatPortal(scene);
             FloatPortal portal1 = new FloatPortal(scene);
-            portal0.SetTransform(new Transform2(new Vector2(0, 0), 1, (float)Math.PI / 2));
-            portal1.SetTransform(new Transform2(new Vector2(10, 0), 2, (float)Math.PI / 2));
+            portal0.SetTransform(new Transform2(new Vector2(0, 0), (float)Math.PI / 2, 1));
+            portal1.SetTransform(new Transform2(new Vector2(10, 0), (float)Math.PI / 2, 2));
             Portal.SetLinked(portal0, portal1);
             PortalCommon.UpdateWorldTransform(scene);
 

@@ -49,7 +49,7 @@ namespace Game.Physics
 
         public static Transform2 GetTransform(Body body)
         {
-            return new Transform2((Vector2)body.Position, 1, body.Rotation);
+            return new Transform2((Vector2)body.Position, body.Rotation, 1);
         }
 
         public static void SetTransform(Body body, Transform2 transform)

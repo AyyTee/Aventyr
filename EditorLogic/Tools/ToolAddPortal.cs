@@ -88,9 +88,9 @@ namespace EditorLogic.Tools
             else
             {
                 return new Transform2(
-                    Controller.GetMouseWorld(), 
-                    _mouseFollow.GetTransform().Size, 
-                    _unsnapAngle, 
+                    Controller.GetMouseWorld(),
+                    _unsnapAngle,
+                    _mouseFollow.GetTransform().Size,
                     _mouseFollow.GetTransform().MirrorX);
             }
         }

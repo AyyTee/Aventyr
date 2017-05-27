@@ -39,7 +39,7 @@ namespace TimeLoopInc
 
         public Transform2d ToTransform2d()
         {
-            return new Transform2d((Vector2d)Position, Size, (float)Direction.Radians, MirrorX);
+            return new Transform2d((Vector2d)Position, (float)Direction.Radians, Size, MirrorX);
         }
 
         public static Transform2i RoundTransform2d(Transform2d transform)

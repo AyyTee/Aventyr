@@ -37,7 +37,7 @@ namespace Game.Physics
             actor.Body.BodyType = BodyType.Dynamic;
             entity.SetParent(actor);
 
-            Transform2 t = new Transform2(transform.Position, 1, transform.Rotation);
+            Transform2 t = new Transform2(transform.Position, size: transform.Rotation);
             actor.SetTransform(t);
             return actor;
         }

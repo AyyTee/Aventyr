@@ -80,9 +80,9 @@ namespace Game.Portals
             if (!ignorePortalVelocity)
             {
                 velocityClone = new Transform2(
-                    velocityClone.Position - portal.WorldVelocity.Position - portal.GetAngularVelocity(intersectT), 
-                    velocityClone.Size, 
-                    velocityClone.Rotation - portal.WorldVelocity.Rotation, 
+                    velocityClone.Position - portal.WorldVelocity.Position - portal.GetAngularVelocity(intersectT),
+                    velocityClone.Rotation - portal.WorldVelocity.Rotation,
+                    velocityClone.Size,
                     velocityClone.MirrorX);
             }
             velocityClone = velocityClone.SetPosition(Vector2Ex.Transform(velocityClone.Position, matrix) - origin);
@@ -95,8 +95,8 @@ namespace Game.Portals
             {
                 velocityClone = new Transform2(
                     velocityClone.Position + portal.Linked.WorldVelocity.Position + portal.Linked.GetAngularVelocity(intersectT),
-                    velocityClone.Size,
                     velocityClone.Rotation + portal.Linked.WorldVelocity.Rotation,
+                    velocityClone.Size,
                     velocityClone.MirrorX);
             }
             return velocityClone;
@@ -156,7 +156,7 @@ namespace Game.Portals
 
         public static void Enter(IPortal portal, Body body, bool ignorePortalVelocity = false)
         {
-            var transform = new Transform2((Vector2)body.Position, 1, body.Rotation);
+            var transform = new Transform2((Vector2)body.Position, body.Rotation, 1);
             Transform2 velocity = Transform2.CreateVelocity((Vector2)body.LinearVelocity, body.AngularVelocity);
             velocity = EnterVelocity(portal, 0.5f, velocity, ignorePortalVelocity);
             transform = Enter(portal, transform);

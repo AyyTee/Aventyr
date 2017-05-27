@@ -65,7 +65,7 @@ namespace GameTests
                 new Vector2(0, 1)
             };
             Actor actor = new Actor(scene, vertices);
-            actor.SetTransform(new Transform2(new Vector2(), 1, 0, true));
+            actor.SetTransform(new Transform2(new Vector2(), 0, 1, true));
             PolygonCoord polyCoord = new PolygonCoord(0, 0f);
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
@@ -80,7 +80,7 @@ namespace GameTests
             Scene scene = new Scene();
             Vector2[] vertices = GetVertices();
             Actor actor = new Actor(scene, vertices);
-            actor.SetTransform(new Transform2(new Vector2(), 1, 0, true));
+            actor.SetTransform(new Transform2(new Vector2(), 0, 1, true));
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
@@ -93,7 +93,7 @@ namespace GameTests
             Scene scene = new Scene();
             Vector2[] vertices = GetVertices();
             Actor actor = new Actor(scene, vertices);
-            actor.SetTransform(new Transform2(new Vector2(), -1, 0, true));
+            actor.SetTransform(new Transform2(new Vector2(), 0, -1, true));
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
@@ -147,7 +147,7 @@ namespace GameTests
                 new Vector2(0, 1)
             };
             Actor actor = new Actor(scene, vertices);
-            actor.SetTransform(new Transform2(new Vector2(4.2f, -5.5f), 2.2f, -2f));
+            actor.SetTransform(new Transform2(new Vector2(4.2f, -5.5f), -2f, 2.2f));
             PortalCommon.UpdateWorldTransform(scene);
             scene.World.ProcessChanges();
 

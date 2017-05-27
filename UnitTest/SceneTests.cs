@@ -27,8 +27,8 @@ namespace GameTests
             scene.Gravity = new Vector2();
             FloatPortal portal0 = new FloatPortal(scene);
             FloatPortal portal1 = new FloatPortal(scene);
-            portal0.SetTransform(new Transform2(new Vector2(0, 0), 1, (float)Math.PI / 2));
-            portal1.SetTransform(new Transform2(new Vector2(10, 0), 2, (float)Math.PI / 2, true));
+            portal0.SetTransform(new Transform2(new Vector2(0, 0), (float)Math.PI / 2, 1));
+            portal1.SetTransform(new Transform2(new Vector2(10, 0), (float)Math.PI / 2, 2, true));
             Portal.SetLinked(portal0, portal1);
             PortalCommon.UpdateWorldTransform(scene);
 

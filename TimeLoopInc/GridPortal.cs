@@ -22,9 +22,9 @@ namespace TimeLoopInc
         public bool OneSided => false;
 
         public Transform2 WorldTransform => new Transform2(
-            (Vector2)Position + (Vector2.One + (Vector2)Direction.Vector) * 0.5f, 
-            1.75f, 
-            (float)Direction.Radians);
+            (Vector2)Position + (Vector2.One + (Vector2)Direction.Vector) * 0.5f,
+            (float)Direction.Radians,
+            1.75f);
         public Transform2 WorldVelocity => Transform2.CreateVelocity();
 
         public TimePortal(Vector2i position, GridAngle direction)

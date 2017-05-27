@@ -33,7 +33,7 @@ namespace Game.Common
         {
         }
 
-        public Transform2d(Vector2d position, double size = 1, double rotation = 0, bool mirrorX = false)
+        public Transform2d(Vector2d position, double rotation = 0, double size = 1, bool mirrorX = false)
         {
             Debug.Assert(!Vector2Ex.IsNaN(position));
             Debug.Assert(!double.IsNaN(rotation));
@@ -74,10 +74,10 @@ namespace Game.Common
         {
             return new Transform2d(
                 Vector2Ex.Transform(Position, transform.GetMatrix()),
-                Size * transform.Size,
                 transform.MirrorX ?
                     -Rotation + transform.Rotation :
                     Rotation + transform.Rotation,
+                Size * transform.Size,
                 MirrorX != transform.MirrorX);
         }
 
@@ -109,9 +109,9 @@ namespace Game.Common
         public Transform2d Add(Transform2d transform)
         {
             return new Transform2d(
-                Position + transform.Position, 
-                Size + transform.Size, 
-                Rotation + transform.Rotation, 
+                Position + transform.Position,
+                Rotation + transform.Rotation,
+                Size + transform.Size,
                 MirrorX != transform.MirrorX);
         }
 
@@ -122,8 +122,8 @@ namespace Game.Common
         {
             return new Transform2d(
                 Position - transform.Position,
-                Size - transform.Size,
                 Rotation - transform.Rotation,
+                Size - transform.Size,
                 MirrorX != transform.MirrorX);
         }
 
@@ -133,20 +133,20 @@ namespace Game.Common
         public Transform2d Multiply(double scalar)
         {
             return new Transform2d(
-                Position * scalar, 
-                Size * scalar, 
-                Rotation * scalar, 
+                Position * scalar,
+                Rotation * scalar,
+                Size * scalar,
                 MirrorX);
         }
 
-        public Transform2d SetPosition(Vector2d position) => new Transform2d(position, Size, Rotation, MirrorX);
-        public Transform2d SetRotation(double rotation) => new Transform2d(Position, Size, rotation, MirrorX);
-        public Transform2d SetSize(double size) => new Transform2d(Position, size, Rotation, MirrorX);
-        public Transform2d SetMirrorX(bool mirrorX) => new Transform2d(Position, Size, Rotation, mirrorX);
+        public Transform2d SetPosition(Vector2d position) => new Transform2d(position, Rotation, Size, MirrorX);
+        public Transform2d SetRotation(double rotation) => new Transform2d(Position, rotation, Size, MirrorX);
+        public Transform2d SetSize(double size) => new Transform2d(Position, Rotation, size, MirrorX);
+        public Transform2d SetMirrorX(bool mirrorX) => new Transform2d(Position, Rotation, Size, mirrorX);
 
-        public Transform2d AddPosition(Vector2d position) => new Transform2d(position + Position, Size, Rotation, MirrorX);
-        public Transform2d AddRotation(double rotation) => new Transform2d(Position, Size, rotation + Rotation, MirrorX);
-        public Transform2d AddSize(double size) => new Transform2d(Position, size + Size, Rotation, MirrorX);
+        public Transform2d AddPosition(Vector2d position) => new Transform2d(position + Position, Rotation, Size, MirrorX);
+        public Transform2d AddRotation(double rotation) => new Transform2d(Position, rotation + Rotation, Size, MirrorX);
+        public Transform2d AddSize(double size) => new Transform2d(Position, Rotation, size + Size, MirrorX);
 
         public Transform2d SetScale(Vector2d scale)
         {
@@ -216,7 +216,7 @@ namespace Game.Common
 
         public static Transform2d CreateVelocity(Vector2d linearVelocity, double angularVelocity = 0, double scalarVelocity = 0)
         {
-            return new Transform2d(linearVelocity, scalarVelocity, angularVelocity);
+            return new Transform2d(linearVelocity, angularVelocity, scalarVelocity);
         }
 
         public bool EqualsValue(Transform2d other)

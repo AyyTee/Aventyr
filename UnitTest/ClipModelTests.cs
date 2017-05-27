@@ -48,7 +48,7 @@ namespace GameTests
 
             for (float i = 0; i < MathEx.Tau; i += 0.01f)
             {
-                polygon.SetTransform(new Transform2(new Vector2(100000, -123), 1, i));
+                polygon.SetTransform(new Transform2(new Vector2(100000, -123), i, 1));
                 List<Clip.ClipModel> clipmodels = Clip.GetClipModels(polygon, scene.GetPortalList().OfType<IPortalRenderable>(), 2);
                 Assert.IsTrue(clipmodels.Count == polygon.GetModels().Count);
             }

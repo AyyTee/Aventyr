@@ -30,9 +30,9 @@ namespace Game.Animation
         public Transform2 GetTransform(float time)
         {
             return new Transform2(
-                PosCurve.GetValue(time), 
-                SizeCurve.GetValue(time), 
-                RotCurve.GetValue(time), 
+                PosCurve.GetValue(time),
+                RotCurve.GetValue(time),
+                SizeCurve.GetValue(time),
                 MirrorX).Transform(TransformOffset);
         }
 
@@ -40,9 +40,9 @@ namespace Game.Animation
         {
             Transform2 offset = TransformOffset.SetPosition(Vector2.Zero);
             Transform2 velocity = new Transform2(
-                PosCurve.GetDerivative(time), 
-                SizeCurve.GetDerivative(time), 
-                RotCurve.GetDerivative(time), 
+                PosCurve.GetDerivative(time),
+                RotCurve.GetDerivative(time),
+                SizeCurve.GetDerivative(time),
                 false);
             Transform2 velocityTransformed = velocity.Transform(offset);
             //velocityTransformed.Rotation = velocity.Rotation;

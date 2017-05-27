@@ -27,7 +27,7 @@ namespace GameTests
                 new Vector2(1, 1),
             };
             Actor actor = new Actor(scene, vertices);
-            Transform2 t = new Transform2(new Vector2(1, 2), 2, 4.23f, true);
+            Transform2 t = new Transform2(new Vector2(1, 2), 4.23f, 2, true);
             actor.SetTransform(t);
 
             Assert.IsTrue(actor.GetTransform().EqualsValue(t));
@@ -43,7 +43,7 @@ namespace GameTests
                 new Vector2(1, 1),
             };
             Actor actor = new Actor(scene, vertices);
-            Transform2 t = new Transform2(new Vector2(1, 2), 2, 4.23f, true);
+            Transform2 t = new Transform2(new Vector2(1, 2), 4.23f, 2, true);
             actor.SetTransform(t);
 
             List<Vector2> fixture = new List<Vector2>(Vector2Ex.Transform(vertices, Matrix4.CreateScale(new Vector3(t.Scale))));
@@ -79,16 +79,16 @@ namespace GameTests
             Actor actor = new Actor(scene, vertices);
             PortalCommon.UpdateWorldTransform(scene);
 
-            actor.SetTransform(new Transform2(new Vector2(), 1, 0, false));
+            actor.SetTransform(new Transform2(new Vector2(), 0, 1, false));
             Assert.IsTrue(PolygonEx.IsInterior(actor.GetWorldVertices()));
 
-            actor.SetTransform(new Transform2(new Vector2(), 1, 0, true));
+            actor.SetTransform(new Transform2(new Vector2(), 0, 1, true));
             Assert.IsTrue(PolygonEx.IsInterior(actor.GetWorldVertices()));
 
-            actor.SetTransform(new Transform2(new Vector2(), -1, 0, false));
+            actor.SetTransform(new Transform2(new Vector2(), 0, -1, false));
             Assert.IsTrue(PolygonEx.IsInterior(actor.GetWorldVertices()));
 
-            actor.SetTransform(new Transform2(new Vector2(), -1, 0, true));
+            actor.SetTransform(new Transform2(new Vector2(), 0, -1, true));
             Assert.IsTrue(PolygonEx.IsInterior(actor.GetWorldVertices()));
         }
 
@@ -119,7 +119,7 @@ namespace GameTests
             FloatPortal enter = new FloatPortal(scene);
             FloatPortal exit = new FloatPortal(scene);
             Portal.SetLinked(enter, exit);
-            enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)(Math.PI / 2)));
+            enter.SetTransform(new Transform2(new Vector2(0, 1), (float)(Math.PI / 2), 1));
             exit.SetTransform(new Transform2(new Vector2(5, 0)));
 
             scene.Step(1 / 60f);
@@ -144,8 +144,8 @@ namespace GameTests
             FloatPortal enter = new FloatPortal(scene);
             FloatPortal exit = new FloatPortal(scene);
             Portal.SetLinked(enter, exit);
-            enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)(Math.PI / 2)));
-            exit.SetTransform(new Transform2(new Vector2(5, 0), 2));
+            enter.SetTransform(new Transform2(new Vector2(0, 1), (float)(Math.PI / 2), 1));
+            exit.SetTransform(new Transform2(new Vector2(5, 0), size: 2));
              
             scene.Step();
 
@@ -169,8 +169,8 @@ namespace GameTests
             FloatPortal enter = new FloatPortal(scene);
             FloatPortal exit = new FloatPortal(scene);
             Portal.SetLinked(enter, exit);
-            enter.SetTransform(new Transform2(new Vector2(0, 1), 1, (float)(Math.PI / 2), true));
-            exit.SetTransform(new Transform2(new Vector2(5, 0), 2));
+            enter.SetTransform(new Transform2(new Vector2(0, 1), (float)(Math.PI / 2), 1, true));
+            exit.SetTransform(new Transform2(new Vector2(5, 0), size: 2));
 
             scene.Step();
 
@@ -196,8 +196,8 @@ namespace GameTests
             FloatPortal enter = new FloatPortal(scene);
             FloatPortal exit = new FloatPortal(scene);
             Portal.SetLinked(enter, exit);
-            enter.SetTransform(new Transform2(new Vector2(0, 1) + offset, 1, (float)(Math.PI / 2), true));
-            exit.SetTransform(new Transform2(new Vector2(5, 0) + offset, 2));
+            enter.SetTransform(new Transform2(new Vector2(0, 1) + offset, (float)(Math.PI / 2), 1, true));
+            exit.SetTransform(new Transform2(new Vector2(5, 0) + offset, size: 2));
 
             scene.Step();
 
@@ -239,7 +239,7 @@ namespace GameTests
         {
             Scene scene = new Scene();
             Actor actor = new Actor(scene, GetVertices());
-            actor.SetTransform(new Transform2(new Vector2(), 2.2f));
+            actor.SetTransform(new Transform2(new Vector2(), size: 2.2f));
             PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
@@ -248,7 +248,7 @@ namespace GameTests
         {
             Scene scene = new Scene();
             Actor actor = new Actor(scene, GetVertices());
-            actor.SetTransform(new Transform2(new Vector2(), -3.2f));
+            actor.SetTransform(new Transform2(new Vector2(), size: -3.2f));
             PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
@@ -257,7 +257,7 @@ namespace GameTests
         {
             Scene scene = new Scene();
             Actor actor = new Actor(scene, GetVertices());
-            actor.SetTransform(new Transform2(new Vector2(), 2.2f, 0, true));
+            actor.SetTransform(new Transform2(new Vector2(), 0, 2.2f, true));
             PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
@@ -266,7 +266,7 @@ namespace GameTests
         {
             Scene scene = new Scene();
             Actor actor = new Actor(scene, GetVertices());
-            actor.SetTransform(new Transform2(new Vector2(), -2.2f, 0, true));
+            actor.SetTransform(new Transform2(new Vector2(), 0, -2.2f, true));
             PortalCommon.UpdateWorldTransform(scene);
             GetFixtureContourAssert(actor);
         }
