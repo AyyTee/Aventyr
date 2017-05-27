@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 namespace Game.Rendering
 {
     [DataContract]
-    public class Renderable : IRenderable, IGetSetTransform
+    public class Renderable : IRenderable
     {
         [DataMember]
         public bool Visible { get; set; } = true;
@@ -22,8 +22,7 @@ namespace Game.Rendering
         public bool IsPortalable { get; set; } = true;
 
         [DataMember]
-        Transform2 _transform = new Transform2();
-        public Transform2 WorldTransform => _transform;
+        public Transform2 WorldTransform { get; set; } = new Transform2();
         public Transform2 WorldVelocity => Transform2.CreateVelocity();
 
         [DataMember]
@@ -31,16 +30,13 @@ namespace Game.Rendering
 
         public List<Model> GetModels() => new List<Model>(Models);
 
-        public void SetTransform(Transform2 transform) => _transform = transform;
-        public Transform2 GetTransform() => _transform;
-
         public Renderable()
         {
         }
 
-        public Renderable(Transform2 transform)
+        public Renderable(Transform2 worldTransform)
         {
-            SetTransform(transform);
+            WorldTransform = worldTransform;
         }
     }
 }

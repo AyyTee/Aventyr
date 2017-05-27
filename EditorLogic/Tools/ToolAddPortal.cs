@@ -25,7 +25,7 @@ namespace EditorLogic.Tools
         public override void Update()
         {
             base.Update();
-            _mouseFollow.SetTransform(GetPortalTransform());
+            _mouseFollow.WorldTransform = GetPortalTransform();
 
             if (Input.ButtonDown(MouseButton.Right) || Input.ButtonPress(Key.Delete) || Input.ButtonPress(Key.Escape))
             {
@@ -43,7 +43,7 @@ namespace EditorLogic.Tools
                     }
                     else
                     {
-                        portal.SetTransform(_mouseFollow.GetTransform());
+                        portal.SetTransform(_mouseFollow.WorldTransform);
                     }
 
                     AddPortal command;
@@ -75,7 +75,7 @@ namespace EditorLogic.Tools
                 walls, 
                 Controller.GetMouseWorld(), 
                 _snapDistance, 
-                _mouseFollow.GetTransform().Size);
+                _mouseFollow.WorldTransform.Size);
         }
 
         Transform2 GetPortalTransform()
@@ -90,8 +90,8 @@ namespace EditorLogic.Tools
                 return new Transform2(
                     Controller.GetMouseWorld(),
                     _unsnapAngle,
-                    _mouseFollow.GetTransform().Size,
-                    _mouseFollow.GetTransform().MirrorX);
+                    _mouseFollow.WorldTransform.Size,
+                    _mouseFollow.WorldTransform.MirrorX);
             }
         }
 

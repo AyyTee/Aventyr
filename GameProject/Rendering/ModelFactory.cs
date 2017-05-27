@@ -38,7 +38,7 @@ namespace Game.Rendering
 
         public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight, Color4 color = new Color4())
         {
-            return CreatePlaneMesh(topLeft - bottomRight, new Vector3((topLeft + bottomRight) / 2), color);
+            return CreatePlaneMesh(bottomRight - topLeft, new Vector3(topLeft), color);
         }
 
         public static Model CreateGrid(Vector2i gridSize, Vector2 gridTileSize, Color4 evenTileColor, Color4 oddTileColor, Vector3 offset = new Vector3())

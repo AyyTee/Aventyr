@@ -169,7 +169,7 @@ namespace EditorLogic.Tools
                 avgX = selection.Average(item => item.GetWorldTransform().Position.X);
                 avgY = selection.Average(item => item.GetWorldTransform().Position.Y);
                 Vector2 average = new Vector2(avgX, avgY);
-                _translator.SetTransform(_translator.GetTransform().SetPosition(average));
+                _translator.WorldTransform = _translator.WorldTransform.SetPosition(average);
                 _translator.Visible = true;
             }
             else
@@ -204,7 +204,6 @@ namespace EditorLogic.Tools
             {
                 return;
             }
-            Transform2 transform = _translator.GetTransform();
             Vector2 mousePos = Controller.GetMouseWorld();
             _dragToggled = toggleMode;
             _mousePosPrev = mousePos;
@@ -213,7 +212,7 @@ namespace EditorLogic.Tools
                 DragSet(selected, mode, DragState.Both);
                 return;
             }
-            Vector2 mouseDiff = (mousePos - transform.Position) / Controller.Level.ActiveCamera.WorldTransform.Size;
+            Vector2 mouseDiff = (mousePos - _translator.WorldTransform.Position) / Controller.Level.ActiveCamera.WorldTransform.Size;
             if (mouseDiff.Length < 1.3f * TranslationScaleOffset)
             {
                 float margin = 0.2f * TranslationScaleOffset;
@@ -279,15 +278,15 @@ namespace EditorLogic.Tools
             else if (_mode == Mode.Rotate)
             {
                 double angle, anglePrev;
-                angle = MathEx.VectorToAngle(mousePos - _translator.GetTransform().Position);
-                anglePrev = MathEx.VectorToAngle(_mousePosPrev - _translator.GetTransform().Position);
+                angle = MathEx.VectorToAngle(mousePos - _translator.WorldTransform.Position);
+                anglePrev = MathEx.VectorToAngle(_mousePosPrev - _translator.WorldTransform.Position);
                 
                 if (Input.ButtonDown(KeyBoth.Control))
                 {
                     angle = MathEx.Round(angle, _rotateIncrementSize);
                     var rotation = MathEx.Round(dragAmount.Rotation + MathEx.AngleDiff(angle, anglePrev), _rotateIncrementSize);
                     dragAmount = dragAmount.SetRotation((float)rotation);
-                    _mousePosPrev = new Vector2((float)Math.Cos(-angle), (float)Math.Sin(-angle)) + _translator.GetTransform().Position;
+                    _mousePosPrev = new Vector2((float)Math.Cos(-angle), (float)Math.Sin(-angle)) + _translator.WorldTransform.Position;
                 }
                 else
                 {
@@ -347,8 +346,8 @@ namespace EditorLogic.Tools
         void UpdateTranslation(ControllerCamera camera)
         {
             Transform2 camT = camera.WorldTransform;
-            Transform2 transform = _translator.GetTransform().SetSize(camT.Size * TranslationScaleOffset);
-            _translator.SetTransform(transform);
+            _translator.WorldTransform = _translator.WorldTransform
+                .SetSize(camT.Size * TranslationScaleOffset);
         }
     }
 }

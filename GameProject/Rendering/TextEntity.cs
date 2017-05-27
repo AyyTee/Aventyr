@@ -35,11 +35,7 @@ namespace Game.Rendering
         bool Dirty = true;
         readonly Font _fontRenderer;
 
-        public TextEntity(Font fontRenderer, Vector2 position, string text = "") : this(fontRenderer, position, new Vector2(), text)
-        {
-        }
-
-        public TextEntity(Font fontRenderer, Vector2 position, Vector2 alignment, string text = "")
+        public TextEntity(Font fontRenderer, Vector2 position, string text, Vector2 alignment = new Vector2())
         {
             Debug.Assert(text != null);
             Text = text;

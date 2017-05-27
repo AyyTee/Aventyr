@@ -10,12 +10,15 @@ using System.Diagnostics;
 
 namespace Game.Rendering
 {
+    /// <summary>
+    /// A camera intended for rendering things that need to align to pixels such as text and sprites.
+    /// </summary>
     [DataContract]
     public class HudCamera2 : ICamera2
     {
         public float Aspect => (float)CanvasSize.XRatio;
 
-        public Vector2 ViewOffset => new Vector2(1f, 1f);
+        public Vector2 ViewOffset => Vector2.One;
 
         public float ZNear => -10000f;
         public float ZFar => 10000f;
