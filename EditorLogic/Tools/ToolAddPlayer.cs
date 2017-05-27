@@ -35,7 +35,7 @@ namespace EditorLogic.Tools
             else if (Input.ButtonPress(MouseButton.Left))
             {
                 EditorPlayer editorActor = new EditorPlayer(Controller.Level);
-                editorActor.SetPosition(Controller.GetMouseWorld());
+                editorActor.SetTransform(editorActor.GetTransform().SetPosition(Controller.GetMouseWorld()));
                 Controller.SetTool(null);
             }
         }

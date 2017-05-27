@@ -30,7 +30,7 @@ namespace EditorLogic.Tools
             else if (Input.ButtonPress(MouseButton.Left))
             {
                 EditorActor editorActor = new EditorActor(Controller.Level, PolygonFactory.CreateRectangle(4, 0.5f));
-                editorActor.SetPosition(Controller.GetMouseWorld());
+                editorActor.SetTransform(editorActor.GetTransform().SetPosition(Controller.GetMouseWorld()));
                 if (!Input.ButtonDown(KeyBoth.Shift))
                 {
                     Controller.SetTool(null);

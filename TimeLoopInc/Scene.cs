@@ -71,9 +71,9 @@ namespace TimeLoopInc
             {
                 if (entity is Player player)
                 {
-                    var velocity = player.GetInput(State.Time).Direction?.Vector ?? new Vector2i();
-                    Vector2Ex.Transform((Vector2)velocity, State.Entities[entity].Transform.GetMatrix());
-                    var result = Move(State.Entities[entity].Transform, velocity);
+                    var velocity = (Vector2d)(player.GetInput(State.Time).Direction?.Vector ?? new Vector2i());
+                    velocity = Vector2Ex.TransformVelocity(velocity, State.Entities[entity].Transform.GetMatrix());
+                    var result = Move(State.Entities[entity].Transform, (Vector2i)velocity);
                     State.Entities[entity].PreviousVelocity = result.Velocity;
                     State.Entities[entity].Transform = result.Transform;
                 }

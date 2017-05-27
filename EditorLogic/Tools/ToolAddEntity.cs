@@ -38,7 +38,7 @@ namespace EditorLogic.Tools
                 editorEntity.AddModel(m);
                 editorEntity.Name = "Editor Entity";
 
-                editorEntity.SetPosition(Controller.GetMouseWorld());
+                editorEntity.SetTransform(editorEntity.GetTransform().SetPosition(Controller.GetMouseWorld()));
                 Controller.Selection.Set(editorEntity);
 
                 AddEntity command = new AddEntity(Controller, editorEntity);

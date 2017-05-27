@@ -24,7 +24,8 @@ namespace Game.Rendering
 
         public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight, Color4 color = new Color4())
         {
-            var renderable = new Renderable(new Transform2((topLeft + bottomRight) / 2));
+            var renderable = new Renderable(new Transform2());
+            renderable.IsPortalable = false;
             var plane = ModelFactory.CreatePlaneMesh(topLeft, bottomRight, color);
             renderable.Models.Add(new Model(plane));
 

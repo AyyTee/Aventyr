@@ -119,27 +119,27 @@ namespace EditorLogic
 
             //Handle user input for zooming the camera.
             {
-                float scale = GetTransform().Size;
+                float size = GetTransform().Size;
                 if (InputExt.MouseInside())
                 {
                     if (InputExt.MouseWheelDelta != 0)
                     {
-                        scale /= (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta);
+                        size /= (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta);
                         isMoved = true;
                     }
                 }
                 if (InputExt.ButtonPress(Key.KeypadPlus) || InputExt.ButtonPress(Key.Plus))
                 {
-                    scale /= ZoomFactor;
+                    size /= ZoomFactor;
                     isMoved = true;
                 }
                 if (InputExt.ButtonPress(Key.KeypadMinus) || InputExt.ButtonPress(Key.Minus))
                 {
-                    scale *= ZoomFactor;
+                    size *= ZoomFactor;
                     isMoved = true;
                 }
-                scale = MathHelper.Clamp(Math.Abs(scale), ZoomMin, ZoomMax) * Math.Sign(GetTransform().Size);
-                this.SetSize(scale);
+                size = MathHelper.Clamp(Math.Abs(size), ZoomMin, ZoomMax) * Math.Sign(GetTransform().Size);
+                Transform = Transform.SetSize(size);
             }
 
             //Handle user input to reset the camera's orientation and center it on the current selected object if it exists.

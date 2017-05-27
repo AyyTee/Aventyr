@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 namespace Game.Rendering
 {
     [DataContract]
-    public class Renderable : IRenderable, ITransformable2
+    public class Renderable : IRenderable, IGetSetTransform
     {
         [DataMember]
         public bool Visible { get; set; } = true;

@@ -82,7 +82,7 @@ namespace TankGame.Network
             _window.Layers.Add(new Layer(Scene));
 
             var gui = new Layer();
-            gui.Camera = new HudCamera2(new Vector2(), _window.CanvasSize);
+            gui.Camera = new HudCamera2(_window.CanvasSize);
             _fpsCounter.Enqueue((float)timeDelta);
             gui.DrawText(
                 _window.Fonts?.Inconsolata, 

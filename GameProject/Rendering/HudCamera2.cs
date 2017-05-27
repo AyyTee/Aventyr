@@ -13,9 +13,9 @@ namespace Game.Rendering
     [DataContract]
     public class HudCamera2 : ICamera2
     {
-        public float Aspect => CanvasSize.X / (float)CanvasSize.Y;
+        public float Aspect => (float)CanvasSize.XRatio;
 
-        public Vector2 ViewOffset => new Vector2();
+        public Vector2 ViewOffset => new Vector2(1f, 1f);
 
         public float ZNear => -10000f;
         public float ZFar => 10000f;
@@ -23,14 +23,11 @@ namespace Game.Rendering
 
         public Vector2i CanvasSize { get; set; }
 
-        public Vector2 Position { get; set; }
-
-        public Transform2 WorldTransform => new Transform2(Position, size: CanvasSize.Y);
+        public Transform2 WorldTransform => new Transform2(new Vector2(), 0, CanvasSize.Y);
         public Transform2 WorldVelocity => Transform2.CreateVelocity();
 
-        public HudCamera2(Vector2 position, Vector2i canvasSize)
+        public HudCamera2(Vector2i canvasSize)
         {
-            Position = position;
             CanvasSize = canvasSize;
         }
     }

@@ -169,7 +169,7 @@ namespace EditorLogic.Tools
                 avgX = selection.Average(item => item.GetWorldTransform().Position.X);
                 avgY = selection.Average(item => item.GetWorldTransform().Position.Y);
                 Vector2 average = new Vector2(avgX, avgY);
-                _translator.SetPosition(average);
+                _translator.SetTransform(_translator.GetTransform().SetPosition(average));
                 _translator.Visible = true;
             }
             else

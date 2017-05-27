@@ -6,7 +6,7 @@ namespace Game.Portals
     /// <summary>
     /// An object that can travel through portals.
     /// </summary>
-    public interface IPortalable : ITransformable2, IPortalCommon
+    public interface IPortalable : IGetSetTransform, IPortalCommon
     {
         /// <summary>
         /// Is called when entering a portal.  
