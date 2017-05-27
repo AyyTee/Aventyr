@@ -115,7 +115,7 @@ namespace Game
 
                 double t = (velocity.Position.Length - movementLeft) / velocity.Position.Length;
 
-                begin.Position = (Vector2)intersectNearest.Position;
+                begin = begin.SetPosition((Vector2)intersectNearest.Position);
 
                 worldTransform = Portal.Enter(portalNearest, begin);
                 velocity = Portal.EnterVelocity(portalNearest, (float)intersectNearest.First, velocity, true);
@@ -138,7 +138,7 @@ namespace Game
 
         static Transform2 _rayEnd(IEnumerable<IPortalRenderable> portals, double movementLeft, IPortalRenderable portalPrevious, Settings settings, Transform2 begin, Transform2 velocity)
         {
-            begin.Position += velocity.Position.Normalized() * (float)movementLeft;
+            begin = begin.SetPosition(begin.Position + velocity.Position.Normalized() * (float)movementLeft);
             if (settings.AdjustEndpoint)
             {
                 /*After the end position of the ray has been determined, adjust it's position so that it isn't too close to 
@@ -180,7 +180,7 @@ namespace Game
                     }
 
                     Vector2 pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
-                    transform.Position += pos;
+                    transform = transform.SetPosition(transform.Position + pos);
                     break;
                 }
             }

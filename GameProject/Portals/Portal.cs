@@ -85,8 +85,7 @@ namespace Game.Portals
                     velocityClone.Rotation - portal.WorldVelocity.Rotation, 
                     velocityClone.MirrorX);
             }
-            velocityClone.Position = Vector2Ex.Transform(velocityClone.Position, matrix);
-            velocityClone.Position -= origin;
+            velocityClone = velocityClone.SetPosition(Vector2Ex.Transform(velocityClone.Position, matrix) - origin);
 
             if (portal.WorldTransform.MirrorX == portal.Linked.WorldTransform.MirrorX)
             {

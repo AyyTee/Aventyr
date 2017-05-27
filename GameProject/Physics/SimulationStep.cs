@@ -157,8 +157,8 @@ namespace Game.Physics
         static void PlaceOnPortal(IPortalCommon instance, IPortal portal, float t)
         {
             Line portalLine = new Line(Vector2Ex.ToDouble(portal.GetWorldVerts()));
-            var transform = (Transform2d)instance.WorldTransform;
-            transform.Position = portalLine.Lerp(t);
+            var transform = ((Transform2d)instance.WorldTransform)
+                .SetPosition(portalLine.Lerp(t));
             instance.WorldTransform = (Transform2)transform;
         }
 
@@ -232,7 +232,7 @@ namespace Game.Physics
                     Vector2d exitNormal = (Vector2d)p.WorldTransform.GetRight();
 
                     Vector2d pos = exitNormal * (Portal.EnterMinDistance - (float)distanceToPortal);
-                    transform.Position += pos;
+                    transform = transform.SetPosition(transform.Position + pos);
                     instance.WorldTransform = (Transform2)transform;
                     /*We return now rather than look for more portals that are too close because it is assumed that 
                      * portals will never be closer than 2 * Portal.EnterMinDistance to eachother*/

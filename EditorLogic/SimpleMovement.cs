@@ -32,21 +32,21 @@ namespace EditorLogic
             Transform2 t = moveable.GetTransform();
             if (Input.ButtonDown(Key.Left))
             {
-                v.Position += t.GetRight() * -Acceleration * Math.Abs(moveable.GetTransform().Size);
+                v = v.SetPosition(v.Position + t.GetRight() * -Acceleration * Math.Abs(moveable.GetTransform().Size));
             }
             if (Input.ButtonDown(Key.Right))
             {
-                v.Position += t.GetRight() * Acceleration * Math.Abs(moveable.GetTransform().Size);
+                v = v.SetPosition(v.Position + t.GetRight() * Acceleration * Math.Abs(moveable.GetTransform().Size));
             }
             if (Input.ButtonDown(Key.Up))
             {
-                v.Position += t.GetUp() * Acceleration * Math.Abs(moveable.GetTransform().Size);
+                v = v.SetPosition(v.Position + t.GetUp() * Acceleration * Math.Abs(moveable.GetTransform().Size));
             }
             if (Input.ButtonDown(Key.Down))
             {
-                v.Position += t.GetUp() * -Acceleration * Math.Abs(moveable.GetTransform().Size);
+                v = v.SetPosition(v.Position + t.GetUp() * -Acceleration * Math.Abs(moveable.GetTransform().Size));
             }
-            v.Position *= 1 - Friction;
+            v = v.SetPosition(v.Position * (1 - Friction));
             moveable.SetVelocity(v);
         }
     }

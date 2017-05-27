@@ -46,7 +46,7 @@ namespace Game.Common
         public Vector2d Position 
         { 
             get { return _position; }
-            set 
+            private set 
             {
                 Debug.Assert(!Vector2Ex.IsNaN(value));
                 _position = value; 

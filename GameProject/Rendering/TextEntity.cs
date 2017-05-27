@@ -43,7 +43,7 @@ namespace Game.Rendering
         {
             Debug.Assert(text != null);
             Text = text;
-            Transform.Position = position;
+            Transform = new Transform2(position);
             _fontRenderer = fontRenderer;
             Alignment = alignment;
         }

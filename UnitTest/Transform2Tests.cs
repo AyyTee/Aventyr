@@ -13,8 +13,7 @@ namespace GameTests
         [Test]
         public void GetNormalTest0()
         {
-            Transform2 t = new Transform2();
-            t.Position = new Vector2(100, -200);
+            Transform2 t = new Transform2(new Vector2(100, -200));
 
             Vector2 normal = t.GetRight();
             Assert.IsTrue(normal == new Vector2(1, 0));
@@ -177,8 +176,7 @@ namespace GameTests
         [Test]
         public void InvertedTest6()
         {
-            Transform2 t = new Transform2();
-            t.Position = new Vector2(2, 1);
+            Transform2 t = new Transform2(new Vector2(2, 1));
             t.SetScale(new Vector2(5, -5));
             //t.Rotation = (float)(Math.PI / 3.4);
             Transform2 tInverted = t.Inverted();

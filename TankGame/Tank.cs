@@ -133,14 +133,9 @@ namespace TankGame
             if (Input.MoveFoward || Input.MoveBackward)
             {
                 float accel = 15f * stepSize;
-                if (Input.MoveFoward)
-                {
-                    velocity.Position += up * accel;
-                }
-                else
-                {
-                    velocity.Position -= up * accel;
-                }
+                velocity = Input.MoveFoward ?
+                    velocity.SetPosition(velocity.Position + up * accel) :
+                    velocity.SetPosition(velocity.Position - up * accel);
             }
 
             if (Input.TurnLeft || Input.TurnRight)
@@ -160,9 +155,10 @@ namespace TankGame
                 Matrix2.CreateRotation(-transform.Rotation) *
                 Matrix2.CreateScale((float)Math.Pow(0.000001f, stepSize), (float)Math.Pow(0.001f, stepSize)) *
                 Matrix2.CreateRotation(transform.Rotation);
-            velocity.Position = Vector2Ex.Transform(velocity.Position, friction);
 
-            velocity = velocity.SetRotation(velocity.Rotation * (float)Math.Pow(0.000001f, stepSize));
+            velocity = velocity
+                .SetPosition(Vector2Ex.Transform(velocity.Position, friction))
+                .SetRotation(velocity.Rotation * (float)Math.Pow(0.000001f, stepSize));
 
             SetVelocity(velocity);
         }
@@ -172,7 +168,7 @@ namespace TankGame
             float turretSpeed = 1.5f;
 
             Transform2 t = Turret.WorldTransform;
-            double angle = MathEx.AngleDiff(t.Rotation, -MathEx.VectorToAngle(Input.ReticlePos - t.Position));
+            double angle = MathEx.AngleDiff(t.Rotation, -MathEx.VectorToAngle(Input.ReticlePos - t.Position)); 
 
             Transform2 tLocal = Turret.GetVelocity()
                 .SetRotation(Math.Sign(angle) * (float)Math.Min(turretSpeed, Math.Abs(angle / stepSize)));

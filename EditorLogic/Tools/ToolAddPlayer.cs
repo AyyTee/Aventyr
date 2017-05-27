@@ -24,8 +24,8 @@ namespace EditorLogic.Tools
             base.Update();
             if (_mouseFollow != null)
             {
-                Transform2 transform = _mouseFollow.GetTransform();
-                transform.Position = Controller.GetMouseWorld();
+                Transform2 transform = _mouseFollow.GetTransform()
+                    .SetPosition(Controller.GetMouseWorld());
                 _mouseFollow.SetTransform(transform);
             }
             if (Input.ButtonPress(Key.Delete) || Input.ButtonPress(Key.Escape) || Input.ButtonPress(MouseButton.Right))

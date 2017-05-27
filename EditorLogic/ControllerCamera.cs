@@ -158,10 +158,11 @@ namespace EditorLogic
                 EditorObject selected = Controller.Selection.First;
                 if (selected != null)
                 {
-                    transform.Position = selected.GetTransform().Position;
+                    transform = transform.SetPosition(selected.GetTransform().Position);
                     if (selected is EditorPortal)
                     {
-                        transform.Position += selected.GetWorldTransform().GetRight() * Portal.EnterMinDistance;
+                        transform = transform
+                            .SetPosition(transform.Position + selected.GetWorldTransform().GetRight() * Portal.EnterMinDistance);
                     }
                 }
                 SetTransform(transform);

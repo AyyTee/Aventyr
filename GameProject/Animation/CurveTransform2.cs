@@ -38,8 +38,7 @@ namespace Game.Animation
 
         public Transform2 GetVelocity(float time)
         {
-            Transform2 offset = TransformOffset.ShallowClone();
-            offset.Position = Vector2.Zero;
+            Transform2 offset = TransformOffset.SetPosition(Vector2.Zero);
             Transform2 velocity = new Transform2(
                 PosCurve.GetDerivative(time), 
                 SizeCurve.GetDerivative(time), 

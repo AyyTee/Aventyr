@@ -22,9 +22,7 @@ namespace EditorLogic.Tools
             base.Update();
             if (_mouseFollow != null)
             {
-                Transform2 transform = _mouseFollow.GetTransform();
-
-                transform.Position = Controller.GetMouseWorld();
+                Transform2 transform = _mouseFollow.GetTransform().SetPosition(Controller.GetMouseWorld());
                 
                 _mouseFollow.SetTransform(transform);
             }

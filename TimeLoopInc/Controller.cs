@@ -132,7 +132,7 @@ namespace TimeLoopInc
             var offset = Vector2d.One / 2;
             var velocity = (Vector2)scene.State.Entities[gridEntity].PreviousVelocity;
             var transform = scene.State.Entities[gridEntity].Transform.ToTransform2d();
-            transform.Position += offset;
+            transform = transform.SetPosition(transform.Position + offset);
             var result = Ray.RayCast((Transform2)transform, new Transform2(-velocity * (1 - t)), scene.Portals, new Ray.Settings());
 
             return result.WorldTransform;
