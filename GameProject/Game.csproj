@@ -193,6 +193,7 @@
     <Compile Include="Models\Clip.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="Rendering\Color4Ex.cs" />
+    <Compile Include="Rendering\GlStateManager.cs" />
     <Compile Include="Rendering\IClientSizeProvider.cs" />
     <Compile Include="Rendering\IPortalRenderable.cs" />
     <Compile Include="Rendering\IRenderer.cs" />
