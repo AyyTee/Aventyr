@@ -53,11 +53,11 @@ namespace Game.Rendering
 
             GL.ClearColor(Color4.HotPink);
             GL.CullFace(CullFaceMode.Back);
-            
+
             GL.ClearStencil(0);
             GL.PointSize(15f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            
+
             StencilBits = GL.GetInteger(GetPName.StencilBits);
             Debug.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
 
@@ -93,20 +93,19 @@ namespace Game.Rendering
                 shaderList[i].Value.EnableVertexAttribArrays();
             }
             SetShader(_shaders["uber"]);
-            using (_state.Push(EnableCap.DepthTest, true))
-            {
-                foreach (var window in Windows)
-                {
-                    SetScissor(window);
-                    GL.Viewport(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.X, window.CanvasSize.Y);
-                    
 
-                    foreach (var layer in window.Layers)
+            foreach (var window in Windows)
+            {
+                SetScissor(window);
+                GL.Viewport(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.X, window.CanvasSize.Y);
+                foreach (var layer in window.Layers)
+                {
+                    using (_state.Push(EnableCap.DepthTest, layer.DepthTest))
                     {
-                        DrawPortalAll(window, layer, 1 / window.RendersPerSecond);                      
-                        GL.Clear(ClearBufferMask.DepthBufferBit);
-                        GL.Clear(ClearBufferMask.StencilBufferBit);
+                        DrawPortalAll(window, layer, 1 / window.RendersPerSecond);
                     }
+                    GL.Clear(ClearBufferMask.DepthBufferBit);
+                    GL.Clear(ClearBufferMask.StencilBufferBit);
                 }
             }
 
@@ -220,7 +219,6 @@ namespace Game.Rendering
                 GL.ColorMask(true, true, true, true);
                 GL.DepthMask(true);
                 using (_state.Push(EnableCap.StencilTest, true))
-                using (_state.Push(EnableCap.DepthTest, true))
                 {
                     GL.StencilOp(StencilOp.Keep, StencilOp.Keep, StencilOp.Keep);
                     for (int i = 0; i < Math.Min(portalViewList.Count, StencilMaxValue); i++)

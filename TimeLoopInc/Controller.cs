@@ -86,10 +86,14 @@ namespace TimeLoopInc
             var worldCamera = new GridCamera(cameraTransform, (float)_window.CanvasSize.XRatio);
             worldLayer.Camera = worldCamera;
 
-            var gui = new Layer();
+            var gui = new Layer()
+            {
+                DepthTest = false,
+                Camera = new HudCamera2(_window.CanvasSize)
+            };
             DrawTimeline(gui);
             gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 0), scene.State.Time.ToString());
-            gui.Camera = new HudCamera2(_window.CanvasSize);
+            
             _window.Layers.Add(worldLayer);
             _window.Layers.Add(gui);
         }
@@ -126,7 +130,7 @@ namespace TimeLoopInc
         {
             Vector2 topLeft = new Vector2(50, _window.CanvasSize.Y - 100);
             Vector2 bottomRight = new Vector2(_window.CanvasSize.X - 50, _window.CanvasSize.Y - 50);
-            layer.DrawRectangle(topLeft, bottomRight, Color4.Blue);
+            layer.DrawRectangle(topLeft, bottomRight, new Color4(0.8f, 0.8f, 0.8f, 0.8f));
         }
 
         Transform2 GridEntityWorldPosition(IGridEntity gridEntity, float t)
@@ -141,3 +145,4 @@ namespace TimeLoopInc
         }
     }
 }
+ 

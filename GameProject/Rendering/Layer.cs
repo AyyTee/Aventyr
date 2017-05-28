@@ -13,6 +13,10 @@ namespace Game.Rendering
         public ICamera2 Camera { get; set; }
         public List<IPortalRenderable> Portals { get; set; } = new List<IPortalRenderable>();
         public List<IRenderable> Renderables { get; set; } = new List<IRenderable>();
+        /// <summary>
+        /// If true, drawing order depends on depth. Otherwise drawing order is done first to last.
+        /// </summary>
+        public bool DepthTest { get; set; } = true;
 
         public Layer()
         {

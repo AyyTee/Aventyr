@@ -13,6 +13,7 @@ namespace Game.Rendering
         List<IPortalRenderable> Portals { get; }
         ICamera2 Camera { get; }
         bool RenderPortalViews { get; }
+        bool DepthTest { get; }
     }
 
     public static class IRenderLayerEx
@@ -26,8 +27,12 @@ namespace Game.Rendering
         {
             var renderable = new Renderable();
             renderable.IsPortalable = false;
-            var plane = ModelFactory.CreatePlaneMesh(topLeft, bottomRight, color);
-            renderable.Models.Add(new Model(plane));
+            var plane = new Model(ModelFactory.CreatePlaneMesh(topLeft, bottomRight, color));
+            if (color.A < 1)
+            {
+                plane.IsTransparent = true;
+            }
+            renderable.Models.Add(plane);
 
             layer.Renderables.Add(renderable);
         }
