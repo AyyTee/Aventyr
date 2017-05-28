@@ -374,7 +374,7 @@ namespace Game.Rendering
                 {
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
                 }
-                using (_state.Push(EnableCap.CullFace, data.Model.Wireframe))
+                using (_state.Push(EnableCap.CullFace, !data.Model.Wireframe))
                 using (_state.Push(EnableCap.Blend, data.Model.IsTransparent))
                 {
                     RenderSetTransformMatrix(data.Offset, data.Model, viewMatrix);
@@ -467,7 +467,7 @@ namespace Game.Rendering
             {
                 GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             }
-            using (_state.Push(EnableCap.CullFace, model.Wireframe))
+            using (_state.Push(EnableCap.CullFace, !model.Wireframe))
             using (_state.Push(EnableCap.Blend, model.IsTransparent))
             {
                 RenderSetTransformMatrix(Matrix4.Identity, model, viewMatrix);
