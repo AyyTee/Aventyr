@@ -26,7 +26,7 @@ namespace MazeAtGaze
         Vector2d NextPlayerPos;
         object _gazeStreamLock = new object();
         readonly IVirtualWindow _window;
-        ICamera2 _camera;
+        SimpleCamera _camera;
         Model _level;
         Model _finish;
         private Model _background;
@@ -76,7 +76,8 @@ namespace MazeAtGaze
             _window.Layers.Clear();
             var layer = new Layer();
             _window.Layers.Add(layer);
-            layer.Renderables.Add(new Renderable() { Models = new List<Model> { _level, _finish, _background } });
+            layer.Renderables.Add(new Renderable() { Models = new List<Model> { _level, _finish } });
+            layer.Renderables.Add(new Renderable(_camera.WorldTransform) { Models = new List<Model> { _background } });
             layer.DrawCircle((Vector2)PlayerPos, 0.1f, Color4.Red, 2);
             layer.DrawCircle((Vector2)BallPos, 1f, Color4.Black, 1);
             //layer.DrawRectangle((Vector2)PlayerPos, (Vector2)PlayerPos + new Vector2(1, 1), Color4.Beige);
@@ -100,9 +101,9 @@ namespace MazeAtGaze
                 PlayerPos = (Vector2d)_camera.ClipToWorld((Vector2)NextPlayerPos);
             }
 
-            BallVelocity.Y -= 0.0005f;
+            //BallVelocity.Y -= 0.0003f;
             var delta = BallPos - PlayerPos;
-            BallVelocity += delta.Normalized() * Math.Max(0, 3 - delta.Length) / 1000;
+            BallVelocity += -delta.Normalized() * Math.Min(5, delta.Length) / 10000;
             BallPos += BallVelocity;
 
             if (_window.ButtonDown(OpenTK.Input.Key.R))
@@ -110,6 +111,8 @@ namespace MazeAtGaze
                 BallPos = new Vector2d(-10, 7);
                 BallVelocity = new Vector2d();
             }
+
+            _camera.WorldTransform = new Transform2((Vector2)BallPos, 0, 20);
         }
 
         void GazeStream_Next(object sender, GazePointEventArgs e)
