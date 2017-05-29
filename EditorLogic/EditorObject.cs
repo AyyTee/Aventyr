@@ -86,7 +86,7 @@ namespace EditorLogic
         public virtual List<Model> GetModels()
         {
             List<Model> models = new List<Model>();
-            Model marker = Game.Rendering.ModelFactory.CreateCircle(new Vector3(), 0.05f, 10);
+            Model marker = Game.Rendering.ModelFactory.CreateCircle(new Vector3(), 0.05f, Color4.Black, 10);
             marker.Transform.Position = new Vector3(0, 0, DrawDepth.EntityMarker);
 
             if (IsSelected)

@@ -18,7 +18,7 @@ namespace Game.Rendering
     {
         public static Model CreatePlane() => CreatePlane(new Vector2(1, 1));
 
-        public static Model CreatePlane(Vector2 scale, Vector3 offset = new Vector3(), Color4 color = new Color4()) => new Model(CreatePlaneMesh(scale, offset));
+        public static Model CreatePlane(Vector2 scale, Vector3 offset = new Vector3(), Color4 color = new Color4()) => new Model(CreatePlaneMesh(scale, offset, color));
 
         public static Mesh CreatePlaneMesh(Vector2 scale, Vector3 offset = new Vector3(), Color4 color = new Color4())
         {
@@ -36,9 +36,9 @@ namespace Game.Rendering
             return mesh;
         }
 
-        public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight, Color4 color = new Color4())
+        public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight, Color4 color = new Color4(), int depth = 0)
         {
-            return CreatePlaneMesh(bottomRight - topLeft, new Vector3(topLeft), color);
+            return CreatePlaneMesh(bottomRight - topLeft, new Vector3(topLeft.X, topLeft.Y, depth), color);
         }
 
         public static Model CreateGrid(Vector2i gridSize, Vector2 gridTileSize, Color4 evenTileColor, Color4 oddTileColor, Vector3 offset = new Vector3())
@@ -301,7 +301,7 @@ namespace Game.Rendering
 
         public static Model CreateLineStrip(Vector2[] vertices) => CreateLineStrip(vertices, null);
 
-        public static Model CreateCircle(Vector3 origin, float radius, int detail)
+        public static Model CreateCircle(Vector3 origin, float radius, Color4 color, int detail = 16)
         {
             Debug.Assert(detail >= 3, "Detail must be greater or equal to 3.");
             var mesh = new Mesh();
@@ -310,7 +310,7 @@ namespace Game.Rendering
                 double rad = Math.PI * 2 * i / detail;
                 Vector3 pos = new Vector3((float)Math.Cos(rad), (float)Math.Sin(rad), 0) * radius + origin;
                 var textureCoord = new Vector2((float)(1 + Math.Cos(rad) / 2), (float)(1 + Math.Sin(rad) / 2));
-                mesh.Vertices.Add(new Vertex(pos, textureCoord));
+                mesh.Vertices.Add(new Vertex(pos, textureCoord, color));
             }
 
             for (int i = 0; i < detail - 1; i++)

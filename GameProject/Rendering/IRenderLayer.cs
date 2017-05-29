@@ -23,7 +23,7 @@ namespace Game.Rendering
             layer.Renderables.Add(new TextEntity(font, position, text, alignment));
         }
 
-        public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight, Color4 color = new Color4())
+        public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight, Color4 color, int depth = 0)
         {
             var renderable = new Renderable();
             renderable.IsPortalable = false;
@@ -33,6 +33,20 @@ namespace Game.Rendering
                 plane.IsTransparent = true;
             }
             renderable.Models.Add(plane);
+
+            layer.Renderables.Add(renderable);
+        }
+
+        public static void DrawCircle(this IRenderLayer layer, Vector2 center, float radius, Color4 color, int depth = 0)
+        {
+            var renderable = new Renderable();
+            renderable.IsPortalable = false;
+            var circle = ModelFactory.CreateCircle(new Vector3(center.X, center.Y, depth), radius, color);
+            if (color.A < 1)
+            {
+                circle.IsTransparent = true;
+            }
+            renderable.Models.Add(circle);
 
             layer.Renderables.Add(renderable);
         }

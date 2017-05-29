@@ -26,7 +26,7 @@ namespace EditorLogic
 
         public static Model CreatePlayer()
         {
-            return Game.Rendering.ModelFactory.CreateCircle(new Vector3(), 0.5f, 16);
+            return Game.Rendering.ModelFactory.CreateCircle(new Vector3(), 0.5f, Color4.Black, 16);
         }
     }
 }

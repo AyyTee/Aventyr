@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Portals;
+using OpenTK;
+using OpenTK.Graphics;
 
 namespace Game.Rendering
 {
