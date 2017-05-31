@@ -2,13 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Game.Common
 {
+    [DataContract]
     public struct Vector2i
     {
+        [DataMember]
         public int X, Y;
 
         /// <summary>

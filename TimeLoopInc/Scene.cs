@@ -30,7 +30,7 @@ namespace TimeLoopInc
             var portal0 = new TimePortal(new Vector2i(4, 0), GridAngle.Right);
             var portal1 = new TimePortal(new Vector2i(-2, -2), GridAngle.Left);
             portal0.SetLinked(portal1);
-            portal0.SetTimeOffset(0);
+            portal0.SetTimeOffset(10);
 
             Portals.Add(portal0);
             Portals.Add(portal1);

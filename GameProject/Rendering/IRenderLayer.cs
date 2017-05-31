@@ -27,7 +27,11 @@ namespace Game.Rendering
         {
             var renderable = new Renderable();
             renderable.IsPortalable = false;
-            var plane = new Model(ModelFactory.CreatePlaneMesh(topLeft, bottomRight, color));
+            var plane = new Model(
+                ModelFactory.CreatePlaneMesh(
+                    Vector2.ComponentMin(topLeft, bottomRight), 
+                    Vector2.ComponentMax(topLeft, bottomRight), 
+                    color));
             if (color.A < 1)
             {
                 plane.IsTransparent = true;

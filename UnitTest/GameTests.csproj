@@ -110,6 +110,7 @@
     <Compile Include="SceneTests.cs" />
     <Compile Include="PortalJointTests.cs" />
     <Compile Include="BodyExTests.cs" />
+    <Compile Include="SceneStateTests.cs" />
     <Compile Include="Vector2ExTests.cs" />
     <Compile Include="VertexTests.cs" />
   </ItemGroup>

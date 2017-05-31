@@ -128,8 +128,8 @@ namespace TimeLoopInc
 
         void DrawTimeline(IRenderLayer layer)
         {
-            Vector2 topLeft = new Vector2(50, _window.CanvasSize.Y - 100);
-            Vector2 bottomRight = new Vector2(_window.CanvasSize.X - 50, _window.CanvasSize.Y - 50);
+            Vector2 topLeft = new Vector2(50, 100);
+            Vector2 bottomRight = new Vector2(_window.CanvasSize.X - 50, 50);
             layer.DrawRectangle(topLeft, bottomRight, new Color4(0.8f, 0.8f, 0.8f, 0.8f));
         }
 

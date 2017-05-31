@@ -4,18 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Game.Models;
-using Game.Rendering;
-using OpenTK;
-using OpenTK.Graphics;
+using System.Runtime.Serialization;
 
 namespace TimeLoopInc
 {
+    [DataContract]
     public class Player : IGridEntity
     {
+        [DataMember]
         public Vector2i StartPosition { get; }
+        [DataMember]
         public int StartTime { get; }
+        [DataMember]
         public int EndTime { get; set; } = int.MaxValue;
+        [DataMember]
         public List<Input> Input { get; } = new List<Input>();
 
         public Player(Vector2i startPosition, int startTime)

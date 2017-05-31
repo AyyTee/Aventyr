@@ -18,20 +18,14 @@ namespace Game.Serialization
         {
         }
 
-        public void Serialize(Scene scene, Stream stream)
-        {
-            _serialize(scene, stream);
-        }
-
         public void Serialize(Scene scene, string filename)
         {
             _serialize(scene, filename);
         }
 
-        public void Serialize(SceneNode rootNode, string filename)
+        public void Serialize<T>(Stream stream, T data)
         {
-            SceneNode clone = null;// CopyData(rootNode);
-            _serialize(clone.Scene, filename);
+            GetSerializer().WriteObject(stream, data);
         }
 
         void _serialize(Scene scene, string filename)
@@ -48,24 +42,19 @@ namespace Game.Serialization
             }
         }
 
-        void _serialize(Scene scene, Stream stream)
-        {
-            GetSerializer().WriteObject(stream, scene);
-        }
-
-        public Scene Deserialize(string filename)
+        public T Deserialize<T>(string filename)
         {
             var settings = new XmlReaderSettings();
             using (XmlReader reader = XmlReader.Create(filename, settings))
             {
-                return (Scene)GetSerializer().ReadObject(reader);
+                return (T)GetSerializer().ReadObject(reader);
             }
         }
 
         DataContractSerializer GetSerializer()
         {
             return new DataContractSerializer(typeof(SceneNode), "Game", "Game", GetKnownTypes(),
-            0x7FFFF,
+            int.MaxValue,
             false,
             true,
             null);
@@ -73,9 +62,9 @@ namespace Game.Serialization
 
         protected virtual IEnumerable<Type> GetKnownTypes()
         {
-            return from t in Assembly.GetExecutingAssembly().GetTypes()
-                   where Attribute.IsDefined(t, typeof(DataContractAttribute))
-                   select t;
+            return typeof(Scene).Assembly
+                .GetTypes()
+                .Where(item => Attribute.IsDefined(item, typeof(DataContractAttribute)));
         }
     }
 }

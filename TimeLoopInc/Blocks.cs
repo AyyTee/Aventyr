@@ -8,14 +8,20 @@ using Game.Models;
 using OpenTK.Graphics;
 using Game.Rendering;
 using OpenTK;
+using System.Runtime.Serialization;
 
 namespace TimeLoopInc
 {
+    [DataContract]
     public class Block : IGridEntity
     {
+        [DataMember]
         public int Size { get; }
+        [DataMember]
         public Vector2i StartPosition { get; }
+        [DataMember]
         public int StartTime { get; }
+        [DataMember]
         public int EndTime { get; set; }
 
         public Block(Vector2i startPosition, int startTime, int size = 1)
