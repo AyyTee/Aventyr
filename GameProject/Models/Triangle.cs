@@ -4,13 +4,14 @@ using Game.Serialization;
 using OpenTK;
 using System.Collections.Generic;
 using Game.Common;
+using Equ;
 
 namespace Game.Models
 {
     /// <summary>
     /// Immutable class that represents a triangle in 3 dimensions.
     /// </summary>
-    public class Triangle : IShallowClone<Triangle>
+    public class Triangle : MemberwiseEquatable<Triangle>, IShallowClone<Triangle>
     {
         public Vertex V0 => Vertices[0];
         public Vertex V1 => Vertices[1];
@@ -125,41 +126,5 @@ namespace Game.Models
             }
             return new Triangle[0];
         }
-
-        public static bool Equals(Triangle t0, Triangle t1)
-        {
-            if (((object)t0) == null && ((object)t1) == null)
-            {
-                return true;
-            }
-            else if (((object)t0) == null || ((object)t1) == null)
-            {
-                return false;
-            }
-
-            if (t0[0].Equals(t1[0]) && t0[1].Equals(t1[1]) && t0[2].Equals(t1[2]))
-            {
-                Debug.Assert(t0.GetHashCode() == t1.GetHashCode());
-                return true;
-            }
-            return false;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is Triangle)
-            {
-                return Equals(this, (Triangle)obj);
-            }
-            return false;
-        }
-
-        public bool Equals(Triangle triangle) => Equals(this, triangle);
-
-        public override int GetHashCode() => this[0].GetHashCode() ^ this[1].GetHashCode() ^ this[2].GetHashCode();
-
-        public static bool operator ==(Triangle t0, Triangle t1) => t0.Equals(t1);
-
-        public static bool operator !=(Triangle t0, Triangle t1) => !t0.Equals(t1);
     }
 }

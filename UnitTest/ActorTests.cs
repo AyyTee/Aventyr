@@ -30,7 +30,7 @@ namespace GameTests
             Transform2 t = new Transform2(new Vector2(1, 2), 4.23f, 2, true);
             actor.SetTransform(t);
 
-            Assert.IsTrue(actor.GetTransform().EqualsValue(t));
+            Assert.IsTrue(actor.GetTransform() == t);
         }
 
         [Test]

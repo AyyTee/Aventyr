@@ -53,11 +53,15 @@ namespace Game.Serialization
 
         DataContractSerializer GetSerializer()
         {
-            return new DataContractSerializer(typeof(SceneNode), "Game", "Game", GetKnownTypes(),
-            int.MaxValue,
-            false,
-            true,
-            null);
+            return new DataContractSerializer(
+                typeof(object), 
+                "Game", 
+                "Game", 
+                GetKnownTypes(),
+                int.MaxValue,
+                false,
+                true,
+                null);
         }
 
         protected virtual IEnumerable<Type> GetKnownTypes()

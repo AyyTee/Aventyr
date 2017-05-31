@@ -3,11 +3,12 @@ using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using Game.Serialization;
+using Equ;
 
 namespace Game.Common
 {
     [DataContract]
-    public partial class Transform2d : IAlmostEqual<Transform2d, double>, IValueEquality<Transform2d>
+    public partial class Transform2d : MemberwiseEquatable<Transform2d>, IAlmostEqual<Transform2d, double>
     {
         const double UniformScaleEpsilon = 0.0001f;
         const double EqualityEpsilon = 0.0001f;
@@ -217,14 +218,6 @@ namespace Game.Common
         public static Transform2d CreateVelocity(Vector2d linearVelocity, double angularVelocity = 0, double scalarVelocity = 0)
         {
             return new Transform2d(linearVelocity, angularVelocity, scalarVelocity);
-        }
-
-        public bool EqualsValue(Transform2d other)
-        {
-            return other != null &&
-                Position == other.Position &&
-                Rotation == other.Rotation &&
-                Scale == other.Scale;
         }
     }
 }

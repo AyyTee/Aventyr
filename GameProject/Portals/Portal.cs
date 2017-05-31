@@ -113,10 +113,6 @@ namespace Game.Portals
             Transform2 transform = portalable.GetTransform();
             Transform2 velocity = portalable.GetVelocity();
 
-            //Copies are made just for debug purposes.  The originals should not change before the EnterPortal callback.
-            Transform2 transformCopy = transform;
-            Transform2 velocityCopy = velocity;
-
             var cast = portalable as IPortalable;
             if (cast != null)
             {
@@ -148,8 +144,6 @@ namespace Game.Portals
             {
                 portalable.Path.Enter(portal);
             }
-
-            Debug.Assert(transform.EqualsValue(transformCopy) && velocity.EqualsValue(velocityCopy));
 
             cast?.EnterPortal?.Invoke(new EnterCallbackData(portal, cast, cast.Transform, cast.Velocity, intersectT), transform, velocity);
         }

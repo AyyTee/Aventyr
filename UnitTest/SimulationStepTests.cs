@@ -196,9 +196,9 @@ namespace GameTests
             Transform2 expected = new Transform2(new Vector2(8, 10), (float)Math.PI / 2, 1, true);
             Assert.IsTrue(actor.WorldTransform.AlmostEqual(expected));
             Assert.IsTrue(entity.WorldTransform.AlmostEqual(expected));
-            Assert.IsTrue(entity.GetTransform().EqualsValue(new Transform2()));
-            Assert.IsTrue(entity.GetVelocity().EqualsValue(Transform2.CreateVelocity()));
-            Assert.IsTrue(actor.GetTransform().EqualsValue(actor.WorldTransform));
+            Assert.IsTrue(entity.GetTransform() == new Transform2());
+            Assert.IsTrue(entity.GetVelocity() == Transform2.CreateVelocity());
+            Assert.IsTrue(actor.GetTransform() == actor.WorldTransform);
         }
 
         [Test]
@@ -226,11 +226,11 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             SimulationStep.Step(scene.GetAll().OfType<IPortalCommon>(), scene.GetAll().OfType<IPortal>(), 1, null);
 
-            Assert.IsTrue(entity.GetTransform().EqualsValue(new Transform2()));
-            Assert.IsTrue(entity.GetVelocity().EqualsValue(Transform2.CreateVelocity()));
+            Assert.IsTrue(entity.GetTransform() == new Transform2());
+            Assert.IsTrue(entity.GetVelocity() == Transform2.CreateVelocity());
 
-            Assert.IsTrue(actor.GetTransform().EqualsValue(actor.WorldTransform));
-            Assert.IsTrue(actor.GetVelocity().EqualsValue(actor.WorldVelocity));
+            Assert.IsTrue(actor.GetTransform() == actor.WorldTransform);
+            Assert.IsTrue(actor.GetVelocity() == actor.WorldVelocity);
         }
 
         [Test]
@@ -284,7 +284,7 @@ namespace GameTests
             PortalCommon.UpdateWorldTransform(scene);
             SimulationStep.Step(scene.GetAll().OfType<IPortalCommon>(), scene.GetAll().OfType<IPortal>(), 1, null);
 
-            Assert.IsTrue(PortalCommon.GetWorldTransform(exit).EqualsValue(exit.WorldTransform));
+            Assert.IsTrue(PortalCommon.GetWorldTransform(exit) == exit.WorldTransform);
         }
 
         /*[Test]

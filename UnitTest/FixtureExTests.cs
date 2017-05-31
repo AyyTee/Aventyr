@@ -27,7 +27,7 @@ namespace GameTests
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
             Assert.IsTrue(fixtureCoord.EdgeT == polyCoord.EdgeT);
-            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == PolygonEx.GetTransform(fixtureCoord));
         }
 
         public Vector2[] GetVertices()
@@ -51,7 +51,7 @@ namespace GameTests
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
             Assert.IsTrue(fixtureCoord.EdgeT == polyCoord.EdgeT);
-            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == PolygonEx.GetTransform(fixtureCoord));
         }
 
         [Test]
@@ -84,7 +84,7 @@ namespace GameTests
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
-            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == PolygonEx.GetTransform(fixtureCoord));
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace GameTests
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
-            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord).EqualsValue(PolygonEx.GetTransform(fixtureCoord)));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == PolygonEx.GetTransform(fixtureCoord));
         }
 
         [Test]

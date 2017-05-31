@@ -4,11 +4,12 @@ using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using Game.Serialization;
+using Equ;
 
 namespace Game.Common
 {
     [DataContract]
-    public partial class Transform2 : IAlmostEqual<Transform2, float>, IValueEquality<Transform2>
+    public partial class Transform2 : MemberwiseEquatable<Transform2>, IAlmostEqual<Transform2, float>
     {
         const float UniformScaleEpsilon = 0.0001f;
         const float EqualityEpsilon = 0.0001f;
@@ -28,9 +29,7 @@ namespace Game.Common
         [DataMember]
         public bool MirrorX { get; private set; }
 
-        public Vector2 Scale => MirrorX ? 
-            new Vector2(-Size, Size) : 
-            new Vector2(Size, Size);
+        public Vector2 Scale => MirrorX ? new Vector2(-Size, Size) : new Vector2(Size, Size);
 
         public Transform2()
         {
@@ -220,14 +219,6 @@ namespace Game.Common
         public static Transform2 CreateVelocity(Vector2 linearVelocity, float angularVelocity = 0, float scalarVelocity = 0)
         {
             return new Transform2(linearVelocity, angularVelocity, scalarVelocity);
-        }
-
-        public bool EqualsValue(Transform2 other)
-        {
-            return other != null &&
-                Position == other.Position &&
-                Rotation == other.Rotation &&
-                Scale == other.Scale;
         }
     }
 }

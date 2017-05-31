@@ -5,11 +5,12 @@ using Game.Rendering;
 using Game.Serialization;
 using OpenTK;
 using OpenTK.Graphics;
+using Equ;
 
 namespace Game.Models
 {
     [DataContract, DebuggerDisplay("Vertex {Position}")]
-    public class Vertex : IShallowClone<Vertex>
+    public class Vertex : MemberwiseEquatable<Vertex>, IShallowClone<Vertex>
     {
         [DataMember]
         public readonly Vector3 Position;
@@ -84,63 +85,6 @@ namespace Game.Models
             Vector3 position = Vector3.Transform(Position, transform);
             Vector3 normal = Vector3.Transform(Normal, transform);
             return new Vertex(position, TextureCoord, Color, normal);
-        }
-
-        public static bool Equals(Vertex v0, Vertex v1)
-        {
-            if (((object)v0) == null && ((object)v1) == null)
-            {
-                return true;
-            }
-            else if (((object)v0) == null || ((object)v1) == null)
-            {
-                return false;
-            }
-            
-            if (v0.Position == v1.Position &&
-                v0.Normal == v1.Normal &&
-                v0.TextureCoord == v1.TextureCoord &&
-                v0.Color == v1.Color)
-            {
-                Debug.Assert(v0.GetHashCode() == v1.GetHashCode());
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Returns true if a pair of vertices have the same position, normal, color, and texture coordinate.
-        /// </summary>
-        public bool Equals(Vertex vertex)
-        {
-            return Equals(this, vertex);
-        }
-
-        public override bool Equals(object vertex)
-        {
-            if (vertex is Vertex)
-            {
-                return Equals(this, (Vertex)vertex);
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return Position.GetHashCode() ^ 
-                TextureCoord.GetHashCode() ^
-                Color.GetHashCode() ^
-                Normal.GetHashCode();
-        }
-
-        public static bool operator ==(Vertex v0, Vertex v1)
-        {
-            return Equals(v0, v1);
-        }
-
-        public static bool operator !=(Vertex v0, Vertex v1)
-        {
-            return !Equals(v0, v1);
         }
     }
 }
