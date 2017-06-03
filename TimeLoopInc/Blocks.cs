@@ -9,6 +9,7 @@ using OpenTK.Graphics;
 using Game.Rendering;
 using OpenTK;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 
 namespace TimeLoopInc
 {
@@ -26,6 +27,7 @@ namespace TimeLoopInc
 
         public Block(Vector2i startPosition, int startTime, int size = 1)
         {
+            Debug.Assert(size > 0);
             StartPosition = startPosition;
             StartTime = startTime;
             Size = size;

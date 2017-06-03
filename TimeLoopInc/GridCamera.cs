@@ -20,8 +20,8 @@ namespace TimeLoopInc
         public float ZFar => 10000f;
         public double Fov => Math.PI / 4;
 
-        public Transform2 WorldTransform { get; set; }
-        public Transform2 WorldVelocity => Transform2.CreateVelocity();
+        public Transform2 WorldTransform { get; set; } = new Transform2();
+        public Transform2 WorldVelocity { get; set; } = Transform2.CreateVelocity();
 
         public GridCamera(Transform2 worldTransform, float aspect)
         {

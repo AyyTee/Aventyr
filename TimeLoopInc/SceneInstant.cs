@@ -20,7 +20,6 @@ namespace TimeLoopInc
 
         public SceneInstant()
         {
-
         }
 
         public SceneInstant DeepClone()
