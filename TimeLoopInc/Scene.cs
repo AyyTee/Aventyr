@@ -24,8 +24,7 @@ namespace TimeLoopInc
                 new Vector2i(1, 2),
                 new Vector2i(1, 4),
             };
-            State.CurrentPlayer = new Player(new Vector2i(), 0);
-            State.PlayerTimeline.Path.Add(State.CurrentPlayer);
+            State.PlayerTimeline.Path.Add(new Player(new Vector2i(), 0));
 
             var portal0 = new TimePortal(new Vector2i(4, 0), GridAngle.Right);
             var portal1 = new TimePortal(new Vector2i(-2, -2), GridAngle.Left);
@@ -45,7 +44,7 @@ namespace TimeLoopInc
         public void Step(Input input)
         {
             State.CurrentPlayer.Input.Add(input);
-            SetTime(State.Time);
+            SetTime(State.CurrentInstant.Time);
         }
 
         void SetTime(int time)
@@ -53,33 +52,39 @@ namespace TimeLoopInc
             State.SetTimeToStart();
             for (int i = State.StartTime; i <= time; i++)
             {
-                _step();
+                _step(State.CurrentInstant);
             }
         }
 
-        void _step()
+        SceneInstant GetState(int time)
         {
-            foreach (var entity in State.Entities.Keys.ToList())
+            var instant = new SceneInstant();
+            return instant;
+        }
+
+        void _step(SceneInstant sceneInstant)
+        {
+            foreach (var entity in sceneInstant.Entities.Keys.ToList())
             {
-                if (entity.EndTime == State.Time)
+                if (entity.EndTime == State.CurrentInstant.Time)
                 {
-                    State.Entities.Remove(entity);
+                    sceneInstant.Entities.Remove(entity);
                 }
             }
 
-            foreach (var entity in State.Entities.Keys)
+            foreach (var entity in sceneInstant.Entities.Keys)
             {
                 if (entity is Player player)
                 {
-                    var velocity = (Vector2d)(player.GetInput(State.Time).Direction?.Vector ?? new Vector2i());
-                    velocity = Vector2Ex.TransformVelocity(velocity, State.Entities[entity].Transform.GetMatrix());
-                    var result = Move(State.Entities[entity].Transform, (Vector2i)velocity);
-                    State.Entities[entity].PreviousVelocity = result.Velocity;
-                    State.Entities[entity].Transform = result.Transform;
+                    var velocity = (Vector2d)(player.GetInput(sceneInstant.Time).Direction?.Vector ?? new Vector2i());
+                    velocity = Vector2Ex.TransformVelocity(velocity, sceneInstant[entity].Transform.GetMatrix());
+                    var result = Move(sceneInstant[entity].Transform, (Vector2i)velocity, sceneInstant.Time);
+                    sceneInstant[entity].PreviousVelocity = result.Velocity;
+                    sceneInstant[entity].Transform = result.Transform;
                 }
             }
 
-            foreach (var block in State.Entities.Values.OfType<BlockInstant>())
+            foreach (var block in sceneInstant.Entities.Values.OfType<BlockInstant>())
             {
                 block.IsPushed = false;
                 block.PreviousVelocity = new Vector2i();
@@ -88,50 +93,53 @@ namespace TimeLoopInc
             var directions = new[] { GridAngle.Left, GridAngle.Right, GridAngle.Up, GridAngle.Down };
             for (int i = 0; i < directions.Length; i++)
             {
-                foreach (var block in State.Entities.Keys.OfType<Block>())
+                foreach (var block in sceneInstant.Entities.Keys.OfType<Block>())
                 {
-                    var adjacent = State.Entities[block].Transform.Position - directions[i].Vector;
-                    var pushes = State.Entities.Values
+                    var adjacent = sceneInstant[block].Transform.Position - directions[i].Vector;
+                    var pushes = sceneInstant.Entities.Values
                         .OfType<PlayerInstant>()
-                        .Where(item => item.Transform.Position - item.PreviousVelocity == adjacent && item.Transform.Position == State.Entities[block].Transform.Position);
+                        .Where(item => item.Transform.Position - item.PreviousVelocity == adjacent && item.Transform.Position == sceneInstant[block].Transform.Position);
 
-                    var blockInstant = (BlockInstant)State.Entities[block];
+                    var blockInstant = (BlockInstant)sceneInstant[block];
                     if (pushes.Count() >= block.Size && !blockInstant.IsPushed)
                     {
                         blockInstant.IsPushed = true;
-                        var result = Move(blockInstant.Transform, directions[i].Vector);
+                        var result = Move(blockInstant.Transform, directions[i].Vector, sceneInstant.Time);
                         blockInstant.Transform = result.Transform;
                         blockInstant.PreviousVelocity = result.Velocity;
                     }
                 }
             }
 
-            if (State.Entities.ContainsKey(State.CurrentPlayer))
-            {
-                var portal = Portals.FirstOrDefault(item => item.Position == State.Entities[State.CurrentPlayer].Transform.Position);
-                if (portal != null && portal.TimeOffset != 0)
-                {
-                    var newTime = State.Time + portal.TimeOffset;
-                    State.CurrentPlayer.EndTime = State.Time;
-                    State.CurrentPlayer = new Player(portal.Position, newTime);
-                    State.PlayerTimeline.Path.Add(State.CurrentPlayer);
-                    SetTime(newTime);
-                    return;
-                }
-            }
+            //if (State.Entities.ContainsKey(State.CurrentPlayer))
+            //{
+            //    var player = State.Entities[State.CurrentPlayer];
+            //    var portalExit = Portals.FirstOrDefault(item => item.Position == player.Transform.Position);
+            //    var (prevPlayerPosition, _) = Move(player.Transform, -player.PreviousVelocity);
+            //    var portalEnter = Portals.FirstOrDefault(item => item.Position == prevPlayerPosition.Position);
+            //    if (portalExit != null && portalEnter != null && portalEnter.TimeOffset != 0)
+            //    {
+            //        var newTime = State.Time + portalEnter.TimeOffset;
+            //        State.CurrentPlayer.EndTime = State.Time;
+            //        State.CurrentPlayer = new Player(portalExit.Position, newTime);
+            //        State.PlayerTimeline.Path.Add(State.CurrentPlayer);
+            //        SetTime(newTime);
+            //        return;
+            //    }
+            //}
 
             foreach (var entity in State.Timelines.SelectMany(item => item.Path))
             {
-                if (entity.StartTime == State.Time)
+                if (entity.StartTime == sceneInstant.Time)
                 {
-                    State.Entities.Add(entity, entity.CreateInstant());
+                    sceneInstant.Entities.Add(entity, entity.CreateInstant());
                 }
             }
 
-            State.Time++;
+            sceneInstant.Time++;
         }
 
-        (Transform2i Transform, Vector2i Velocity) Move(Transform2i transform, Vector2i velocity)
+        (Transform2i Transform, Vector2i Velocity, int Time) Move(Transform2i transform, Vector2i velocity, int time)
         {
             var offset = Vector2d.One / 2;
             var transform2d = transform.ToTransform2d();
@@ -142,6 +150,8 @@ namespace TimeLoopInc
                 Portals,
                 new Ray.Settings());
 
+            var newTime = time + 1 + result.PortalsEntered.Sum(item => ((TimePortal)item.EnterData.EntrancePortal).TimeOffset);
+
             var resultTransform = (Transform2d)result.WorldTransform;
             resultTransform = resultTransform.SetPosition(resultTransform.Position - offset);
             var posNextGrid = Transform2i.RoundTransform2d(resultTransform);
@@ -150,9 +160,10 @@ namespace TimeLoopInc
             {
                 return ValueTuple.Create(
                     posNextGrid, 
-                    (Vector2i)result.WorldVelocity.Position.Round(Vector2.One));
+                    (Vector2i)result.WorldVelocity.Position.Round(Vector2.One),
+                    newTime);
             }
-            return ValueTuple.Create(transform, new Vector2i());
+            return ValueTuple.Create(transform, new Vector2i(), newTime);
         }
     }
 }

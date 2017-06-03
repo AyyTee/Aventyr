@@ -11,40 +11,28 @@ namespace TimeLoopInc
     public class SceneState : IDeepClone<SceneState>
     {
         [DataMember]
-        public Dictionary<IGridEntity, IGridEntityInstant> Entities { get; private set; } = new Dictionary<IGridEntity, IGridEntityInstant>();
-        [DataMember]
-        public int Time;
+        public SceneInstant CurrentInstant = new SceneInstant();
         [DataMember]
         public Timeline<Player> PlayerTimeline = new Timeline<Player>();
+        public Player CurrentPlayer => (Player)PlayerTimeline.Path.Last();
         [DataMember]
         public List<Timeline<Block>> BlockTimelines = new List<Timeline<Block>>();
         public IEnumerable<ITimeline> Timelines => BlockTimelines
             .OfType<ITimeline>()
             .Concat(new[] { PlayerTimeline });
-        [DataMember]
-        public Player CurrentPlayer;
         public int StartTime => Timelines.Min(item => item.Path.Min(entity => entity.StartTime));
 
         public void SetTimeToStart()
         {
-            Time = StartTime;
-            Entities.Clear();
+            CurrentInstant = new SceneInstant();
+            CurrentInstant.Time = StartTime;
         }
 
         public SceneState DeepClone()
         {
             var clone = (SceneState)MemberwiseClone();
 
-            clone.Entities = new Dictionary<IGridEntity, IGridEntityInstant>();
-            foreach (var entity in Entities.Keys)
-            {
-                var cloneEntity = entity.DeepClone();
-                clone.Entities.Add(cloneEntity, Entities[entity].DeepClone());
-                if (entity == CurrentPlayer)
-                {
-                    clone.CurrentPlayer = (Player)cloneEntity;
-                }
-            }
+            clone.CurrentInstant = CurrentInstant.DeepClone();
             clone.PlayerTimeline = PlayerTimeline.DeepClone();
             clone.BlockTimelines = BlockTimelines.Select(item => item.DeepClone()).ToList();
             return clone;

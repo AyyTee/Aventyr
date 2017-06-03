@@ -39,7 +39,7 @@ namespace TimeLoopInc
 
             var state = scene.State;
 
-            foreach (var gridEntity in state.Entities.Keys.OfType<IGridEntity>())
+            foreach (var gridEntity in state.CurrentInstant.Entities.Keys.OfType<IGridEntity>())
             {
                 var transform = GridEntityWorldPosition(gridEntity, t);
 
@@ -92,7 +92,7 @@ namespace TimeLoopInc
                 Camera = new HudCamera2(_window.CanvasSize)
             };
             DrawTimeline(gui);
-            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 0), scene.State.Time.ToString());
+            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 0), scene.State.CurrentInstant.Time.ToString());
             
             _window.Layers.Add(worldLayer);
             _window.Layers.Add(gui);
@@ -136,8 +136,8 @@ namespace TimeLoopInc
         Transform2 GridEntityWorldPosition(IGridEntity gridEntity, float t)
         {
             var offset = Vector2d.One / 2;
-            var velocity = (Vector2)scene.State.Entities[gridEntity].PreviousVelocity;
-            var transform = scene.State.Entities[gridEntity].Transform.ToTransform2d();
+            var velocity = (Vector2)scene.State.CurrentInstant[gridEntity].PreviousVelocity;
+            var transform = scene.State.CurrentInstant[gridEntity].Transform.ToTransform2d();
             transform = transform.SetPosition(transform.Position + offset);
             var result = Ray.RayCast((Transform2)transform, new Transform2(-velocity * (1 - t)), scene.Portals, new Ray.Settings());
 
