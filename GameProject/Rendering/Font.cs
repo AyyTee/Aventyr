@@ -149,12 +149,12 @@ namespace Game.Rendering
             {
                 int vertexIndex = i * _verticesPerGlyph;
                 int indiceIndex = i * _indicesPerGlyph;
-                indices[indiceIndex + 0] = vertexIndex;
+                indices[indiceIndex + 0] = vertexIndex + 2;
                 indices[indiceIndex + 1] = vertexIndex + 1;
-                indices[indiceIndex + 2] = vertexIndex + 2;
-                indices[indiceIndex + 3] = vertexIndex;
+                indices[indiceIndex + 2] = vertexIndex;
+                indices[indiceIndex + 3] = vertexIndex + 3;
                 indices[indiceIndex + 4] = vertexIndex + 2;
-                indices[indiceIndex + 5] = vertexIndex + 3;
+                indices[indiceIndex + 5] = vertexIndex;
             }
             return indices;
         }
