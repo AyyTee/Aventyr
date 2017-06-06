@@ -52,7 +52,7 @@ namespace TimeLoopInc
             var worldCamera = new GridCamera(cameraTransform, (float)window.CanvasSize.XRatio);
 
             var portalView = PortalView.CalculatePortalViews(0, _scene.Portals, worldCamera, 30);
-            RenderPortalView(portalView, worldLayer, new Transform2(), state.CurrentInstant.Time, t, 0);
+            RenderPortalView(portalView, worldLayer, state.CurrentInstant.Time, t, 0);
 
 
             
@@ -62,7 +62,7 @@ namespace TimeLoopInc
             window.Layers.Add(worldLayer);
         }
 
-        int RenderPortalView(PortalView portalView, Layer worldLayer, Transform2 worldOffset, int time, float t, int offsetCount)
+        int RenderPortalView(PortalView portalView, Layer worldLayer, int time, float t, int offsetCount)
         {
             Debug.Assert((offsetCount == 0) == (portalView.PortalEntrance == null));
             var renderables = RenderInstant(_scene.GetStateInstant(time), t);
@@ -70,44 +70,35 @@ namespace TimeLoopInc
             var offset = GetOffset(offsetCount);
             foreach (var renderable in renderables)
             {
-                var portal = portalView.PortalEntrance;
-                if (portal != null)
+                if (portalView.PortalEntrance != null)
                 {
-                    renderable.WorldTransform = Portal.Enter(portal, renderable.WorldTransform).AddPosition(offset);
-                    renderable.WorldVelocity = Portal.EnterVelocity(portal, 0.5f, renderable.WorldVelocity);
+                    renderable.WorldTransform = renderable.WorldTransform.AddPosition(offset);
                 }
-                worldLayer.Renderables.Add(renderable);
             }
+            worldLayer.Renderables.AddRange(renderables);
+
             var offsetCountNext = offsetCount;
             foreach (var view in portalView.Children)
             {
-                var worldOffsetNext = worldOffset.Transform(view.PortalEntrance.GetLinkedTransform());
                 offsetCountNext++;
 
-                var entranceTransform = view.PortalEntrance.WorldTransform
-                    .Transform(worldOffset)
-                    .AddPosition(offset);
-                var entrance = new SimplePortal(entranceTransform);
-
-                var exitTransform = view.PortalEntrance.Linked.WorldTransform
-                    .Transform(worldOffsetNext)
-                    .AddPosition(GetOffset(offsetCountNext));
-                var exit = new SimplePortal(exitTransform);
+                var entrance = new SimplePortal(
+                    view.PortalEntrance.WorldTransform.AddPosition(offset));
+                var exit = new SimplePortal(
+                    view.PortalEntrance.Linked.WorldTransform.AddPosition(GetOffset(offsetCountNext)));
 
                 exit.Linked = entrance;
                 entrance.Linked = exit;
 
-                worldLayer.Portals.Add(entrance);
-                worldLayer.Portals.Add(exit);
-
+                worldLayer.Portals.AddRange(new[] { entrance, exit });
                 
                 var timeNext = time + ((TimePortal)view.PortalEntrance).TimeOffset;
-                offsetCountNext = RenderPortalView(view, worldLayer, worldOffsetNext, timeNext, t, offsetCountNext);
+                offsetCountNext = RenderPortalView(view, worldLayer, timeNext, t, offsetCountNext);
             }
             return offsetCountNext;
         }
 
-        Vector2 GetOffset(int offsetCount) => new Vector2((offsetCount % 2) * 30, (offsetCount / 2) * 30);
+        Vector2 GetOffset(int offsetCount) => new Vector2((offsetCount % 2) * 100, (offsetCount / 2) * 100);
 
         List<Renderable> RenderInstant(SceneInstant sceneInstant, float t)
         {
