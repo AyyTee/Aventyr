@@ -144,7 +144,7 @@ namespace Game
                     _virtualMouseState.ButtonsDown(),
                     new Vector2(_virtualMousePos.X - window.CanvasPosition.X, _virtualMousePos.Y/* + window.CanvasPosition.Y*/),
                     hasFocus,
-                    _virtualMouseState.WheelPrecise);   
+                    _virtualMouseState.WheelPrecise);
             }
 
             foreach (var controller in _controllers)

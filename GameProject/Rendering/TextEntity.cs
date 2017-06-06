@@ -27,9 +27,7 @@ namespace Game.Rendering
 
         Model TextModel;
         [DataMember]
-        public Transform2 Transform { get; set; } = new Transform2();
-
-        public Transform2 WorldTransform => Transform;
+        public Transform2 WorldTransform { get; set; } = new Transform2();
         public Transform2 WorldVelocity => Transform2.CreateVelocity();
 
         bool Dirty = true;
@@ -39,7 +37,7 @@ namespace Game.Rendering
         {
             Debug.Assert(text != null);
             Text = text;
-            Transform = new Transform2(position);
+            WorldTransform = new Transform2(position);
             _fontRenderer = fontRenderer;
             Alignment = alignment;
         }

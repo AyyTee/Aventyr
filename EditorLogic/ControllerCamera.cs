@@ -122,9 +122,9 @@ namespace EditorLogic
                 float size = GetTransform().Size;
                 if (InputExt.MouseInside())
                 {
-                    if (InputExt.MouseWheelDelta != 0)
+                    if (InputExt.MouseWheelDelta() != 0)
                     {
-                        size /= (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta);
+                        size /= (float)Math.Pow(ZoomScrollFactor, InputExt.MouseWheelDelta());
                         isMoved = true;
                     }
                 }

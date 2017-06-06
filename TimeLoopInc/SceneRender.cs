@@ -1,11 +1,13 @@
 ﻿using Game;
 using Game.Common;
 using Game.Models;
+using Game.Portals;
 using Game.Rendering;
 using OpenTK;
 using OpenTK.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,13 +18,17 @@ namespace TimeLoopInc
     {
         readonly Scene _scene;
         readonly Model _grid;
+        float _zoomFactor = 1;
 
         public SceneRender(Scene scene)
         {
             _grid = ModelFactory.CreateGrid(new Vector2i(20, 20), Vector2.One, Color4.HotPink, Color4.LightPink, new Vector3(-10, -10, -2));
             _scene = scene;
+        }
 
-            
+        public void Update(IVirtualWindow window)
+        {
+            _zoomFactor *= (float)Math.Pow(1.2, -window.MouseWheelDelta());
         }
 
         public void Render(IVirtualWindow window, int _updatesSinceLastStep, int _updatesPerAnimation)
@@ -32,27 +38,85 @@ namespace TimeLoopInc
             window.Layers.Clear();
             var state = _scene.State;
             var worldLayer = new Layer();
-            RenderInstant(state.CurrentInstant, worldLayer, t);
 
-            var cameraTransform = GridEntityWorldPosition(state.CurrentPlayer, t).SetSize(25);
+            var cameraTransform = new Transform2().SetSize(25 * _zoomFactor);
+            var cameraVelocity = new Vector2();
+            if (state.CurrentInstant.Entities.GetOrDefault(state.CurrentPlayer) != null)
+            {
+                cameraTransform = GridEntityWorldPosition(state.CurrentInstant, state.CurrentPlayer, t).SetSize(25 * _zoomFactor);
+                cameraVelocity = t == 0 || t == 1 ?
+                    new Vector2() :
+                    (Vector2)state.CurrentInstant.Entities[state.CurrentPlayer].PreviousVelocity;
+            }
+           
             var worldCamera = new GridCamera(cameraTransform, (float)window.CanvasSize.XRatio);
 
-            var cameraVelocity = t == 1 || t == 0 ?
-                new Vector2() :
-                (Vector2)state.CurrentInstant.Entities[state.CurrentPlayer].PreviousVelocity;
+            var portalView = PortalView.CalculatePortalViews(0, _scene.Portals, worldCamera, 30);
+            RenderPortalView(portalView, worldLayer, new Transform2(), state.CurrentInstant.Time, t, 0);
+
+
+            
             worldCamera.WorldVelocity = worldCamera.WorldVelocity.SetPosition(cameraVelocity / 6f);
             worldLayer.Camera = worldCamera;
 
             window.Layers.Add(worldLayer);
         }
 
-        void RenderInstant(SceneInstant sceneInstant, Layer layer, float t)
+        int RenderPortalView(PortalView portalView, Layer worldLayer, Transform2 worldOffset, int time, float t, int offsetCount)
         {
+            Debug.Assert((offsetCount == 0) == (portalView.PortalEntrance == null));
+            var renderables = RenderInstant(_scene.GetStateInstant(time), t);
+
+            var offset = GetOffset(offsetCount);
+            foreach (var renderable in renderables)
+            {
+                var portal = portalView.PortalEntrance;
+                if (portal != null)
+                {
+                    renderable.WorldTransform = Portal.Enter(portal, renderable.WorldTransform).AddPosition(offset);
+                    renderable.WorldVelocity = Portal.EnterVelocity(portal, 0.5f, renderable.WorldVelocity);
+                }
+                worldLayer.Renderables.Add(renderable);
+            }
+            var offsetCountNext = offsetCount;
+            foreach (var view in portalView.Children)
+            {
+                var worldOffsetNext = worldOffset.Transform(view.PortalEntrance.GetLinkedTransform());
+                offsetCountNext++;
+
+                var entranceTransform = view.PortalEntrance.WorldTransform
+                    .Transform(worldOffset)
+                    .AddPosition(offset);
+                var entrance = new SimplePortal(entranceTransform);
+
+                var exitTransform = view.PortalEntrance.Linked.WorldTransform
+                    .Transform(worldOffsetNext)
+                    .AddPosition(GetOffset(offsetCountNext));
+                var exit = new SimplePortal(exitTransform);
+
+                exit.Linked = entrance;
+                entrance.Linked = exit;
+
+                worldLayer.Portals.Add(entrance);
+                worldLayer.Portals.Add(exit);
+
+                
+                var timeNext = time + ((TimePortal)view.PortalEntrance).TimeOffset;
+                offsetCountNext = RenderPortalView(view, worldLayer, worldOffsetNext, timeNext, t, offsetCountNext);
+            }
+            return offsetCountNext;
+        }
+
+        Vector2 GetOffset(int offsetCount) => new Vector2((offsetCount % 2) * 30, (offsetCount / 2) * 30);
+
+        List<Renderable> RenderInstant(SceneInstant sceneInstant, float t)
+        {
+            var output = new List<Renderable>();
             var state = _scene.State;
 
-            foreach (var gridEntity in state.CurrentInstant.Entities.Keys.OfType<IGridEntity>())
+            foreach (var gridEntity in sceneInstant.Entities.Keys.OfType<IGridEntity>())
             {
-                var transform = GridEntityWorldPosition(gridEntity, t);
+                var transform = GridEntityWorldPosition(sceneInstant, gridEntity, t);
 
                 Renderable renderable = null;
                 switch (gridEntity)
@@ -78,30 +142,38 @@ namespace TimeLoopInc
                         }
                 }
 
-                layer.Renderables.Add(renderable);
+                output.Add(renderable);
             }
-            foreach (var portal in _scene.Portals)
-            {
-                layer.Renderables.Add(new Square(portal.Position) { Color = new Color4(0.6f, 0.8f, 0.8f, 1f) });
-                layer.Portals.Add(portal);
-            }
+
             foreach (var wall in _scene.Walls)
             {
-                layer.Renderables.Add(new Square(wall) { Color = new Color4(0.8f, 1f, 0.5f, 1f) });
+                output.Add(CreateSquare(wall, 1, new Color4(0.8f, 1f, 0.5f, 1f)));
             }
 
-            layer.Renderables.Add(new Renderable() { Models = new List<Model> { _grid }, IsPortalable = false });
+            output.Add(new Renderable() { Models = new List<Model> { _grid }, IsPortalable = false });
+            return output;
         }
 
-        Transform2 GridEntityWorldPosition(IGridEntity gridEntity, float t)
+        Transform2 GridEntityWorldPosition(SceneInstant sceneInstant, IGridEntity gridEntity, float t)
         {
             var offset = Vector2d.One / 2;
-            var velocity = (Vector2)_scene.State.CurrentInstant[gridEntity].PreviousVelocity;
-            var transform = _scene.State.CurrentInstant[gridEntity].Transform.ToTransform2d();
+            var velocity = (Vector2)sceneInstant[gridEntity].PreviousVelocity;
+            var transform = sceneInstant[gridEntity].Transform.ToTransform2d();
             transform = transform.SetPosition(transform.Position + offset);
             var result = Ray.RayCast((Transform2)transform, new Transform2(-velocity * (1 - t)), _scene.Portals, new Ray.Settings());
 
             return result.WorldTransform;
+        }
+
+        Renderable CreateSquare(Vector2i position, int size, Color4 color)
+        {
+            var model = ModelFactory.CreatePlane(Vector2.One * size,  new Vector3(-size / 2f));
+            model.SetColor(color);
+
+            return new Renderable(new Transform2((Vector2)position + Vector2.One * 0.5f * size))
+            {
+                Models = new List<Model> { model }
+            };
         }
     }
 }

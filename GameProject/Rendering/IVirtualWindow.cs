@@ -23,7 +23,7 @@ namespace Game.Rendering
         IImmutableSet<MouseButton> MouseCurrent { get; }
         IImmutableSet<MouseButton> MousePrevious { get; }
         float MouseWheel { get; }
-        float MouseWheelDelta { get; }
+        float MouseWheelPrevious { get; }
         Vector2 MousePosition { get; }
         Vector2 MousePositionPrevious { get; }
     }
@@ -38,6 +38,11 @@ namespace Game.Rendering
                 window.MousePosition.X < window.CanvasSize.X &&
                 window.MousePosition.Y >= 0 &&
                 window.MousePosition.Y < window.CanvasSize.Y;
+        }
+
+        public static float MouseWheelDelta(this IVirtualWindow window)
+        {
+            return window.MouseWheel - window.MouseWheelPrevious;
         }
 
         public static bool ButtonDown(this IVirtualWindow window, Key input)

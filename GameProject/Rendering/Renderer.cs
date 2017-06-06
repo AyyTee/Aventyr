@@ -81,7 +81,8 @@ namespace Game.Rendering
 
         public void Render()
         {
-            Debug.Assert(GL.GetError() == ErrorCode.NoError);
+            var glError = GL.GetError();
+            Debug.Assert(glError == ErrorCode.NoError);
 
             SetScissor(null);
             GL.Viewport(0, 0, ClientSize.X, ClientSize.Y);

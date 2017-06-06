@@ -40,7 +40,7 @@ namespace EditorLogic
         public IImmutableSet<MouseButton> MousePrevious { get; private set; } = new HashSet<MouseButton>().ToImmutableHashSet();
 
         public float MouseWheel { get; private set; }
-        public float MouseWheelDelta { get; private set; }
+        public float MouseWheelPrevious { get; private set; }
         public Vector2 MousePosition { get; private set; }
         public Vector2 MousePositionPrevious { get; private set; }
 
@@ -72,8 +72,8 @@ namespace EditorLogic
             MousePositionPrevious = MousePosition;
             MousePosition = _mousePos;
 
+            MouseWheelPrevious = MouseWheel;
             MouseWheel += _wheelDelta;
-            MouseWheelDelta = _wheelDelta;
             _wheelDelta = 0;
         }
 

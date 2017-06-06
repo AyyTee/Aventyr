@@ -23,7 +23,8 @@ namespace Game.Rendering
 
         [DataMember]
         public Transform2 WorldTransform { get; set; } = new Transform2();
-        public Transform2 WorldVelocity => Transform2.CreateVelocity();
+        [DataMember]
+        public Transform2 WorldVelocity { get; set; } = Transform2.CreateVelocity();
 
         [DataMember]
         public List<Model> Models { get; set; } = new List<Model>();

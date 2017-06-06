@@ -17,56 +17,49 @@ namespace TimeLoopInc
         public readonly ImmutableList<TimePortal> Portals;
         public SceneState State = new SceneState();
 
-        public Scene()
+        public Scene(ISet<Vector2i> walls, IList<TimePortal> portals, Player player, IList<Block> blocks)
         {
-            Walls = new HashSet<Vector2i>()
+            Walls = walls.ToImmutableHashSet();
+            Portals = portals.ToImmutableList();
+
+            State.PlayerTimeline = new Timeline<Player>();
+            if (player != null)
             {
-                new Vector2i(1, 1),
-                new Vector2i(1, 2),
-                new Vector2i(1, 4),
-            }.ToImmutableHashSet();
-            State.PlayerTimeline.Path.Add(new Player(new Vector2i(), 0));
+                State.PlayerTimeline.Add(player);
+            }
 
-            var portal0 = new TimePortal(new Vector2i(4, 0), GridAngle.Right);
-            var portal1 = new TimePortal(new Vector2i(-2, -2), GridAngle.Left);
-            portal0.SetLinked(portal1);
-            portal0.SetTimeOffset(10);
+            State.BlockTimelines.AddRange(blocks.Select(item => {
+                var timeline = new Timeline<Block>();
+                timeline.Add(item);
+                return timeline;
+            }));
 
-            Portals = new[] 
-            {
-                portal0,
-                portal1,
-            }.ToImmutableList();
-
-            var blockTimeline = new Timeline<Block>();
-            blockTimeline.Path.Add(new Block(new Vector2i(2, 0), 0, 1));
-            blockTimeline.Path.Add(new Block(new Vector2i(2, 1), 1, 1));
-            blockTimeline.Path.Add(new Block(new Vector2i(2, 2), 2, 1));
-            State.BlockTimelines.Add(blockTimeline);
-
-            SetTime(State.StartTime);
+            SetTime(State.StartTime + 1);
         }
 
         public void Step(Input input)
         {
-            State.CurrentPlayer.Input.Add(input);
-            SetTime(State.CurrentInstant.Time);
+            if (State.CurrentInstant.Entities.ContainsKey(State.CurrentPlayer))
+            {
+                State.CurrentPlayer.Input.Add(input);
+            }
+            SetTime(State.CurrentInstant.Time + 1);
         }
 
         void SetTime(int time)
         {
             State.SetTimeToStart();
-            for (int i = State.StartTime; i <= time; i++)
+            for (int i = State.StartTime; i < time; i++)
             {
                 _step(State.CurrentInstant);
             }
         }
 
-        SceneInstant GetState(int time)
+        public SceneInstant GetStateInstant(int time)
         {
             var instant = new SceneInstant();
             instant.Time = State.StartTime;
-            for (int i = State.StartTime; i <= time; i++)
+            for (int i = State.StartTime; i < time; i++)
             {
                 _step(instant);
             }

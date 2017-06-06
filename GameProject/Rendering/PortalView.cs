@@ -9,7 +9,7 @@ using OpenTK;
 
 namespace Game.Rendering
 {
-    public class PortalView
+    public class PortalView : ITreeNode<PortalView>
     {
         public Matrix4 ViewMatrix { get; private set; }
         public List<List<IntPoint>> Paths { get; private set; }
@@ -18,14 +18,15 @@ namespace Game.Rendering
         public LineF[] FovLines { get; private set; }
         public LineF[] FovLinesPrevious { get; private set; }
         public LineF PortalLine { get; private set; }
+        public IPortalRenderable PortalEntrance { get; private set; }
 
         public PortalView(PortalView parent, Matrix4 viewMatrix, List<IntPoint> path, LineF[] fovLines, LineF[] fovLinesPrevious)
-            : this(parent, viewMatrix, new List<List<IntPoint>>(), fovLines, fovLinesPrevious, null)
+            : this(parent, viewMatrix, new List<List<IntPoint>>(), fovLines, fovLinesPrevious, null, null)
         {
             Paths.Add(path);
         }
 
-        public PortalView(PortalView parent, Matrix4 viewMatrix, List<List<IntPoint>> path, LineF[] fovLines, LineF[] fovLinesPrevious, LineF portalLine)
+        public PortalView(PortalView parent, Matrix4 viewMatrix, List<List<IntPoint>> path, LineF[] fovLines, LineF[] fovLinesPrevious, LineF portalLine, IPortalRenderable portalEntrance)
         {
             PortalLine = portalLine;
             FovLines = fovLines;
@@ -35,6 +36,7 @@ namespace Game.Rendering
             Parent?.Children.Add(this);
             ViewMatrix = viewMatrix;
             Paths = path;
+            PortalEntrance = portalEntrance;
         }
 
         public List<PortalView> GetPortalViewList()
@@ -47,7 +49,7 @@ namespace Game.Rendering
             return list;
         }
 
-        public static PortalView CalculatePortalViews(float shutterTime, IList<IPortalRenderable> portals, ICamera2 camera, int depth)
+        public static PortalView CalculatePortalViews(float shutterTime, IEnumerable<IPortalRenderable> portals, ICamera2 camera, int depth)
         {
             Debug.Assert(camera != null);
             Debug.Assert(depth >= 0);
@@ -76,7 +78,7 @@ namespace Game.Rendering
             return portalView;
         }
 
-        static bool CalculatePortalViews(IPortalRenderable portal, IPortalRenderable portalEnter, IList<IPortalRenderable> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, PortalView portalView, Matrix4 portalMatrix, List<Func<bool>> actionList)
+        static bool CalculatePortalViews(IPortalRenderable portal, IPortalRenderable portalEnter, IEnumerable<IPortalRenderable> portals, Matrix4 viewMatrix, Vector2 viewPos, Vector2 viewPosPrevious, PortalView portalView, Matrix4 portalMatrix, List<Func<bool>> actionList)
         {
             const float areaEpsilon = 0.0001f;
 
@@ -156,7 +158,7 @@ namespace Game.Rendering
 
             LineF portalWorldLine = new LineF(portal.GetWorldVerts());
             portalWorldLine = portalWorldLine.Transform(portalMatrix);
-            PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNewer, lines, linesPrevious, portalWorldLine);
+            PortalView portalViewNew = new PortalView(portalView, viewMatrixNew, viewNewer, lines, linesPrevious, portalWorldLine, portal);
 
             foreach (IPortalRenderable p in portals)
             {

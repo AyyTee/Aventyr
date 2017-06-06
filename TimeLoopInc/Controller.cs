@@ -21,7 +21,6 @@ namespace TimeLoopInc
         List<Input> _input = new List<Input>();
         int _updatesSinceLastStep = 0;
         int _updatesPerAnimation = 5;
-        
 
         public Controller(IVirtualWindow window)
         {
@@ -39,19 +38,46 @@ namespace TimeLoopInc
                 Camera = new HudCamera2(_window.CanvasSize)
             };
             DrawTimeline(gui);
-            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 0), _scene.State.CurrentInstant.Time.ToString());
+            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, _window.CanvasSize.Y), "Time: " + _scene.State.CurrentInstant.Time.ToString());
             _window.Layers.Add(gui);
         }
 
         public void Initialize()
         {
-            _scene = new Scene();
+            var Walls = new HashSet<Vector2i>()
+            {
+                new Vector2i(1, 1),
+                new Vector2i(1, 2),
+                new Vector2i(1, 4),
+            };
+            var player = new Player(new Vector2i(), 0);
+
+            var portal0 = new TimePortal(new Vector2i(2, 0), GridAngle.Right);
+            var portal1 = new TimePortal(new Vector2i(-2, 0), GridAngle.Up);
+            portal0.SetLinked(portal1);
+            portal0.SetTimeOffset(10);
+
+            var Portals = new[]
+            {
+                portal0,
+                portal1,
+            };
+
+            var blocks = new[] {
+                new Block(new Vector2i(2, 0), 0, 1),
+                new Block(new Vector2i(2, 1), 1, 1),
+                new Block(new Vector2i(2, 2), 2, 1),
+            };
+
+            _scene = new Scene(Walls, Portals, player, blocks);
             _sceneRender = new SceneRender(_scene);
         }
 
         public void Update(double timeDelta)
         {
             _updatesSinceLastStep++;
+
+            _sceneRender.Update(_window);
 
             if (_window.ButtonPress(Key.BackSpace))
             {

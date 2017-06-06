@@ -1,6 +1,7 @@
 ﻿using Game.Common;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TimeLoopInc;
@@ -55,6 +56,64 @@ namespace GameTests
             var msArray2 = ms2.ToArray();
 
             return msArray1.SequenceEqual(msArray2);
+        }
+
+        [Test]
+        public void EmptySceneStateStartTime()
+        {
+            Assert.AreEqual(0, new SceneState().StartTime);
+        }
+
+        [Test]
+        public void GetStateInstantTest0()
+        {
+            var block = new Block(new Vector2i(), 0);
+            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
+
+            var result = scene.GetStateInstant(0).Entities.Count;
+            Assert.AreEqual(0, result);
+        }
+
+        [Test]
+        public void GetStateInstantTest1()
+        {
+            var block = new Block(new Vector2i(), 0);
+            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
+
+            var result = scene.GetStateInstant(1).Entities.Count;
+            Assert.AreEqual(1, result);
+        }
+
+        [Test]
+        public void GetStateInstantTest2()
+        {
+            var block = new Block(new Vector2i(), 0);
+            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
+
+            var result = scene.GetStateInstant(-1).Entities.Count;
+            Assert.AreEqual(0, result);
+        }
+
+        [Test]
+        public void GetStateInstantTest3()
+        {
+            var block = new Block(new Vector2i(), 2);
+            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
+
+            Assert.AreEqual(0, scene.GetStateInstant(1).Entities.Count);
+        }
+
+        [Test]
+        public void GetStateInstantTest4()
+        {
+            var blocks = new[] {
+                new Block(new Vector2i(2, 0), 0, 1),
+                new Block(new Vector2i(2, 1), 1, 1),
+                new Block(new Vector2i(2, 2), 2, 1),
+            };
+            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, blocks);
+
+            Assert.AreEqual(3, scene.GetStateInstant(10).Entities.Count);
         }
     }
 }

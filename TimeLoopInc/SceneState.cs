@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -20,7 +21,7 @@ namespace TimeLoopInc
         public IEnumerable<ITimeline> Timelines => BlockTimelines
             .OfType<ITimeline>()
             .Concat(new[] { PlayerTimeline });
-        public int StartTime => Timelines.Min(item => item.Path.Min(entity => entity.StartTime));
+        public int StartTime => Timelines.Min(item => item.Path.MinOrNull(entity => entity.StartTime)) ?? 0;
 
         public void SetTimeToStart()
         {

@@ -164,6 +164,7 @@
     <Compile Include="Common\Vector2i.cs" />
     <Compile Include="Common\Transform2d.cs" />
     <Compile Include="Common\Vector4Ex.cs" />
+    <Compile Include="Portals\SimplePortal.cs" />
     <Compile Include="PrecisionPairs.cs" />
     <Compile Include="FakeVirtualWindow.cs" />
     <Compile Include="Assets.cs">

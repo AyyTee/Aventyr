@@ -28,7 +28,7 @@ namespace Game.Rendering
         public IImmutableSet<MouseButton> MouseCurrent { get; private set; } = new HashSet<MouseButton>().ToImmutableHashSet();
         public IImmutableSet<MouseButton> MousePrevious { get; private set; } = new HashSet<MouseButton>().ToImmutableHashSet();
         public float MouseWheel { get; private set; }
-        public float MouseWheelDelta { get; private set; }
+        public float MouseWheelPrevious { get; private set; }
         public Vector2 MousePosition { get; private set; }
         public Vector2 MousePositionPrevious { get; private set; }
 
@@ -40,7 +40,7 @@ namespace Game.Rendering
             _resourceController.Renderer.Windows.Add(this);
         }
 
-        public void Update(ISet<Key> keyboardState, ISet<MouseButton> mouseState, Vector2 mousePosition, bool hasFocus, float mouseWheelDelta)
+        public void Update(ISet<Key> keyboardState, ISet<MouseButton> mouseState, Vector2 mousePosition, bool hasFocus, float mouseWheel)
         {
             KeyPrevious = KeyCurrent;
             MousePrevious = MouseCurrent;
@@ -53,8 +53,8 @@ namespace Game.Rendering
             MousePositionPrevious = MousePosition;
             MousePosition = mousePosition;
 
-            MouseWheelDelta = mouseWheelDelta;
-            MouseWheel += mouseWheelDelta;
+            MouseWheelPrevious = MouseWheel;
+            MouseWheel = mouseWheel;
         }
     }
 }

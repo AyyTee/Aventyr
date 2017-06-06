@@ -86,5 +86,12 @@ namespace Game
             }
             return null;
         }
+
+        public static TResult? MinOrNull<T, TResult>(this IEnumerable<T> enumerable, Func<T, TResult> selector) where TResult : struct
+        {
+            return enumerable.Any() ?
+                (TResult?)enumerable.Min(selector) :
+                null;
+        }
     }
 }

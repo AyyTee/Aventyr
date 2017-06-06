@@ -28,7 +28,7 @@ namespace Game
         public bool HasFocus { get; private set; } = true;
 
         public float MouseWheel { get; set; }
-        public float MouseWheelDelta { get; private set; }
+        public float MouseWheelPrevious { get; private set; }
 
         public Vector2 MousePosition { get; set; }
         public Vector2 MousePositionPrevious { get; private set; }
@@ -39,7 +39,7 @@ namespace Game
         public IImmutableSet<MouseButton> MouseCurrent { get; set; } = new HashSet<MouseButton>().ToImmutableHashSet();
         public IImmutableSet<MouseButton> MousePrevious { get; private set; } = new HashSet<MouseButton>().ToImmutableHashSet();
 
-        public void Update(ISet<Key> keyboardState, ISet<MouseButton> mouseState, Vector2 mousePosition, bool hasFocus = true, float mouseWheelDelta = 0)
+        public void Update(ISet<Key> keyboardState, ISet<MouseButton> mouseState, Vector2 mousePosition, bool hasFocus = true, float mouseWheel = 0)
         {
             KeyPrevious = KeyCurrent;
             MousePrevious = MouseCurrent;
@@ -52,8 +52,8 @@ namespace Game
             MousePositionPrevious = MousePosition;
             MousePosition = mousePosition;
 
-            MouseWheelDelta = mouseWheelDelta;
-            MouseWheel += mouseWheelDelta;
+            MouseWheelPrevious = MouseWheel;
+            MouseWheel = mouseWheel;
         }
     }
 }
