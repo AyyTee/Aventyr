@@ -32,21 +32,21 @@ namespace EditorLogic
             Transform2 t = moveable.GetTransform();
             if (Input.ButtonDown(Key.Left))
             {
-                v = v.SetPosition(v.Position + t.GetRight() * -Acceleration * Math.Abs(moveable.GetTransform().Size));
+                v = v.WithPosition(v.Position + t.GetRight() * -Acceleration * Math.Abs(moveable.GetTransform().Size));
             }
             if (Input.ButtonDown(Key.Right))
             {
-                v = v.SetPosition(v.Position + t.GetRight() * Acceleration * Math.Abs(moveable.GetTransform().Size));
+                v = v.WithPosition(v.Position + t.GetRight() * Acceleration * Math.Abs(moveable.GetTransform().Size));
             }
             if (Input.ButtonDown(Key.Up))
             {
-                v = v.SetPosition(v.Position + t.GetUp() * Acceleration * Math.Abs(moveable.GetTransform().Size));
+                v = v.WithPosition(v.Position + t.GetUp() * Acceleration * Math.Abs(moveable.GetTransform().Size));
             }
             if (Input.ButtonDown(Key.Down))
             {
-                v = v.SetPosition(v.Position + t.GetUp() * -Acceleration * Math.Abs(moveable.GetTransform().Size));
+                v = v.WithPosition(v.Position + t.GetUp() * -Acceleration * Math.Abs(moveable.GetTransform().Size));
             }
-            v = v.SetPosition(v.Position * (1 - Friction));
+            v = v.WithPosition(v.Position * (1 - Friction));
             moveable.SetVelocity(v);
         }
     }

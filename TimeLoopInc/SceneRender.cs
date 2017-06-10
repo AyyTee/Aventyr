@@ -39,11 +39,11 @@ namespace TimeLoopInc
             var state = _scene.State;
             var worldLayer = new Layer();
 
-            var cameraTransform = new Transform2().SetSize(25 * _zoomFactor);
+            var cameraTransform = new Transform2().WithSize(25 * _zoomFactor);
             var cameraVelocity = new Vector2();
             if (state.CurrentInstant.Entities.GetOrDefault(state.CurrentPlayer) != null)
             {
-                cameraTransform = GridEntityWorldPosition(state.CurrentInstant, state.CurrentPlayer, t).SetSize(25 * _zoomFactor);
+                cameraTransform = GridEntityWorldPosition(state.CurrentInstant, state.CurrentPlayer, t).WithSize(25 * _zoomFactor);
                 cameraVelocity = t == 0 || t == 1 ?
                     new Vector2() :
                     (Vector2)state.CurrentInstant.Entities[state.CurrentPlayer].PreviousVelocity;
@@ -56,7 +56,7 @@ namespace TimeLoopInc
 
 
             
-            worldCamera.WorldVelocity = worldCamera.WorldVelocity.SetPosition(cameraVelocity / 6f);
+            worldCamera.WorldVelocity = worldCamera.WorldVelocity.WithPosition(cameraVelocity / 6f);
             worldLayer.Camera = worldCamera;
 
             window.Layers.Add(worldLayer);
@@ -150,7 +150,7 @@ namespace TimeLoopInc
             var offset = Vector2d.One / 2;
             var velocity = (Vector2)sceneInstant[gridEntity].PreviousVelocity;
             var transform = sceneInstant[gridEntity].Transform.ToTransform2d();
-            transform = transform.SetPosition(transform.Position + offset);
+            transform = transform.WithPosition(transform.Position + offset);
             var result = Ray.RayCast((Transform2)transform, new Transform2(-velocity * (1 - t)), _scene.Portals, new Ray.Settings());
 
             return result.WorldTransform;

@@ -130,11 +130,11 @@ namespace Game.Physics
             Debug.Assert(portal.Position.EdgeIndex == portalNext.Position.EdgeIndex);
             Debug.Assert(portal.Position.EdgeT < portalNext.Position.EdgeT);
 
-            Transform2 t0 = portal.GetTransform().SetMirrorX(false);
-            t0 = t0.SetSize(Math.Abs(t0.Size));
+            Transform2 t0 = portal.GetTransform().WithMirrorX(false);
+            t0 = t0.WithSize(Math.Abs(t0.Size));
 
-            Transform2 t1 = portalNext.GetTransform().SetMirrorX(false);
-            t1 = t1.SetSize(Math.Abs(t1.Size));
+            Transform2 t1 = portalNext.GetTransform().WithMirrorX(false);
+            t1 = t1.WithSize(Math.Abs(t1.Size));
 
             Vector2[] verts = 
             {
@@ -157,8 +157,8 @@ namespace Game.Physics
             }
             int iNext = (i + 1) % 2;
 
-            Transform2 t = portal.GetTransform().SetMirrorX(false);
-            t = t.SetSize(Math.Abs(t.Size));
+            Transform2 t = portal.GetTransform().WithMirrorX(false);
+            t = t.WithSize(Math.Abs(t.Size));
 
             int index = (portal.Position.EdgeIndex + i) % Actor.Vertices.Count;
 

@@ -134,8 +134,8 @@ namespace TankGame
             {
                 float accel = 15f * stepSize;
                 velocity = Input.MoveFoward ?
-                    velocity.SetPosition(velocity.Position + up * accel) :
-                    velocity.SetPosition(velocity.Position - up * accel);
+                    velocity.WithPosition(velocity.Position + up * accel) :
+                    velocity.WithPosition(velocity.Position - up * accel);
             }
 
             if (Input.TurnLeft || Input.TurnRight)
@@ -146,8 +146,8 @@ namespace TankGame
                     rotAccel *= -1;
                 }
                 velocity = Input.TurnRight ?
-                    velocity.SetRotation(velocity.Rotation + rotAccel) :
-                    velocity.SetRotation(velocity.Rotation - rotAccel);
+                    velocity.WithRotation(velocity.Rotation + rotAccel) :
+                    velocity.WithRotation(velocity.Rotation - rotAccel);
             }
 
             //Apply direction dependent friction.
@@ -157,8 +157,8 @@ namespace TankGame
                 Matrix2.CreateRotation(transform.Rotation);
 
             velocity = velocity
-                .SetPosition(Vector2Ex.Transform(velocity.Position, friction))
-                .SetRotation(velocity.Rotation * (float)Math.Pow(0.000001f, stepSize));
+                .WithPosition(Vector2Ex.Transform(velocity.Position, friction))
+                .WithRotation(velocity.Rotation * (float)Math.Pow(0.000001f, stepSize));
 
             SetVelocity(velocity);
         }
@@ -171,7 +171,7 @@ namespace TankGame
             double angle = MathEx.AngleDiff(t.Rotation, -MathEx.VectorToAngle(Input.ReticlePos - t.Position)); 
 
             Transform2 tLocal = Turret.GetVelocity()
-                .SetRotation(Math.Sign(angle) * (float)Math.Min(turretSpeed, Math.Abs(angle / stepSize)));
+                .WithRotation(Math.Sign(angle) * (float)Math.Min(turretSpeed, Math.Abs(angle / stepSize)));
             Turret.SetVelocity(tLocal);
         }
 

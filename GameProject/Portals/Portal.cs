@@ -85,11 +85,11 @@ namespace Game.Portals
                     velocityClone.Size,
                     velocityClone.MirrorX);
             }
-            velocityClone = velocityClone.SetPosition(Vector2Ex.Transform(velocityClone.Position, matrix) - origin);
+            velocityClone = velocityClone.WithPosition(Vector2Ex.Transform(velocityClone.Position, matrix) - origin);
 
             if (portal.WorldTransform.MirrorX == portal.Linked.WorldTransform.MirrorX)
             {
-                velocityClone = velocityClone.SetRotation(-velocityClone.Rotation);
+                velocityClone = velocityClone.WithRotation(-velocityClone.Rotation);
             }
             if (!ignorePortalVelocity)
             {
@@ -196,7 +196,7 @@ namespace Game.Portals
         public static Matrix4 GetLinkedMatrix(IPortalRenderable portalEnter, IPortalRenderable portalExit)
         {
             Transform2 transform = portalExit.WorldTransform;
-            transform = transform.SetMirrorX(!transform.MirrorX);
+            transform = transform.WithMirrorX(!transform.MirrorX);
             Matrix4 m = portalEnter.WorldTransform.GetMatrix();
             return m.Inverted() * transform.GetMatrix();
         }
@@ -210,7 +210,7 @@ namespace Game.Portals
         public static Transform2 GetLinkedTransform(IPortalRenderable portalEnter, IPortalRenderable portalExit)
         {
             Transform2 tExit = portalExit.WorldTransform;
-            tExit = tExit.SetMirrorX(!tExit.MirrorX);
+            tExit = tExit.WithMirrorX(!tExit.MirrorX);
             Transform2 tEnter = portalEnter.WorldTransform;
             return tEnter.Inverted().Transform(tExit);
         }

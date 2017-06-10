@@ -140,10 +140,10 @@ namespace Game.Common
                 MirrorX);
         }
 
-        public Transform2d SetPosition(Vector2d position) => new Transform2d(position, Rotation, Size, MirrorX);
-        public Transform2d SetRotation(double rotation) => new Transform2d(Position, rotation, Size, MirrorX);
-        public Transform2d SetSize(double size) => new Transform2d(Position, Rotation, size, MirrorX);
-        public Transform2d SetMirrorX(bool mirrorX) => new Transform2d(Position, Rotation, Size, mirrorX);
+        public Transform2d WithPosition(Vector2d position) => new Transform2d(position, Rotation, Size, MirrorX);
+        public Transform2d WithRotation(double rotation) => new Transform2d(Position, rotation, Size, MirrorX);
+        public Transform2d WithSize(double size) => new Transform2d(Position, Rotation, size, MirrorX);
+        public Transform2d WithMirrorX(bool mirrorX) => new Transform2d(Position, Rotation, Size, mirrorX);
 
         public Transform2d AddPosition(Vector2d position) => new Transform2d(position + Position, Rotation, Size, MirrorX);
         public Transform2d AddRotation(double rotation) => new Transform2d(Position, rotation + Rotation, Size, MirrorX);
@@ -166,7 +166,7 @@ namespace Game.Common
                 scale.Y = -Math.Abs(scale.X);
             }
 
-            var transform = SetSize(scale.Y).SetMirrorX(Math.Sign(scale.X) != Math.Sign(scale.Y));
+            var transform = WithSize(scale.Y).WithMirrorX(Math.Sign(scale.X) != Math.Sign(scale.Y));
             Debug.Assert(transform.Scale == scale);
             return transform;
         }
@@ -176,7 +176,7 @@ namespace Game.Common
             var newSize = mirrorY ?
                 -size :
                 size;
-            return SetSize(newSize).SetMirrorX(mirrorX != mirrorY);
+            return WithSize(newSize).WithMirrorX(mirrorX != mirrorY);
         }
 
         public bool AlmostEqual(Transform2d transform, double delta = EqualityEpsilon)

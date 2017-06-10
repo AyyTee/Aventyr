@@ -89,7 +89,7 @@ namespace EditorLogic
             IsPortalable = true;
             Scene = scene;
             Controller = controller;
-            Transform = Transform.SetSize(1);
+            Transform = Transform.WithSize(1);
             ZoomScrollFactor = 1.2f;
             ZoomFactor = 1.5f;
             InputExt = inputExt;
@@ -139,22 +139,22 @@ namespace EditorLogic
                     isMoved = true;
                 }
                 size = MathHelper.Clamp(Math.Abs(size), ZoomMin, ZoomMax) * Math.Sign(GetTransform().Size);
-                Transform = Transform.SetSize(size);
+                Transform = Transform.WithSize(size);
             }
 
             //Handle user input to reset the camera's orientation and center it on the current selected object if it exists.
             if (InputExt.ButtonPress(Key.Space))
             {
-                Transform2 transform = GetTransform().SetMirrorX(false).SetRotation(0);
-                transform = transform.SetSize(Math.Abs(transform.Size));
+                Transform2 transform = GetTransform().WithMirrorX(false).WithRotation(0);
+                transform = transform.WithSize(Math.Abs(transform.Size));
                 EditorObject selected = Controller.Selection.First;
                 if (selected != null)
                 {
-                    transform = transform.SetPosition(selected.GetTransform().Position);
+                    transform = transform.WithPosition(selected.GetTransform().Position);
                     if (selected is EditorPortal)
                     {
                         transform = transform
-                            .SetPosition(transform.Position + selected.GetWorldTransform().GetRight() * Portal.EnterMinDistance);
+                            .WithPosition(transform.Position + selected.GetWorldTransform().GetRight() * Portal.EnterMinDistance);
                     }
                 }
                 SetTransform(transform);

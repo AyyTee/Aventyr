@@ -42,7 +42,7 @@ namespace EditorLogic
             background.Texture = Window.Textures?.Grid;
             background.SetColor(new Color4(1f, 1f, 0.5f, 1f));
             background.Transform.Position = new Vector3(0, 0, -5f);
-            background.TransformUv = background.TransformUv.SetSize(size);
+            background.TransformUv = background.TransformUv.WithSize(size);
             Doodad back = new Doodad("Background");
             back.Models.Add(background);
             Doodads.Add(back);

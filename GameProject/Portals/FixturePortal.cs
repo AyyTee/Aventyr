@@ -92,8 +92,8 @@ namespace Game.Portals
                 return null;
             }
             return PolygonEx.GetTransform(((IWall)Parent).Vertices, Position)
-                .SetSize(Size)
-                .SetMirrorX(MirrorX); 
+                .WithSize(Size)
+                .WithMirrorX(MirrorX); 
         }
 
         public override void Remove()

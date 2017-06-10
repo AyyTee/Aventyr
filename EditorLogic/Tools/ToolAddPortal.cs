@@ -83,7 +83,7 @@ namespace EditorLogic.Tools
             WallCoord coord = GetEdgeCoord();
             if (coord != null)
             {
-                return PolygonEx.GetTransform(coord.Wall.GetWorldVertices(), coord).SetSize(1);
+                return PolygonEx.GetTransform(coord.Wall.GetWorldVertices(), coord).WithSize(1);
             }
             else
             {

@@ -46,20 +46,20 @@ namespace EditorLogic.Tools
                         if (Input.ButtonDown(KeyBoth.Control))
                         {
                             portal.Transform = portal.Transform
-                                .SetSize(-Math.Abs(portal.Transform.Size))
-                                .SetMirrorX(true);
+                                .WithSize(-Math.Abs(portal.Transform.Size))
+                                .WithMirrorX(true);
                             _portalPrevious.Transform = _portalPrevious.Transform
-                                .SetSize(Math.Abs(_portalPrevious.Transform.Size))
-                                .SetMirrorX(false);
+                                .WithSize(Math.Abs(_portalPrevious.Transform.Size))
+                                .WithMirrorX(false);
                         }
                         else
                         {
                             portal.Transform = portal.Transform
-                                .SetSize(Math.Abs(portal.Transform.Size))
-                                .SetMirrorX(true);
+                                .WithSize(Math.Abs(portal.Transform.Size))
+                                .WithMirrorX(true);
                             _portalPrevious.Transform = _portalPrevious.Transform
-                                .SetSize(Math.Abs(_portalPrevious.Transform.Size))
-                                .SetMirrorX(true);
+                                .WithSize(Math.Abs(_portalPrevious.Transform.Size))
+                                .WithMirrorX(true);
                         }
                         
                         

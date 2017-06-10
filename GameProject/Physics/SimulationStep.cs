@@ -158,7 +158,7 @@ namespace Game.Physics
         {
             Line portalLine = new Line(Vector2Ex.ToDouble(portal.GetWorldVerts()));
             var transform = ((Transform2d)instance.WorldTransform)
-                .SetPosition(portalLine.Lerp(t));
+                .WithPosition(portalLine.Lerp(t));
             instance.WorldTransform = (Transform2)transform;
         }
 

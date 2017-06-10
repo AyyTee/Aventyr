@@ -25,7 +25,7 @@ namespace EditorLogic.Tools
             if (_mouseFollow != null)
             {
                 _mouseFollow.WorldTransform = _mouseFollow.WorldTransform
-                    .SetPosition(Controller.GetMouseWorld());
+                    .WithPosition(Controller.GetMouseWorld());
             }
             if (Input.ButtonPress(Key.Delete) || Input.ButtonPress(Key.Escape) || Input.ButtonPress(MouseButton.Right))
             {
@@ -34,7 +34,7 @@ namespace EditorLogic.Tools
             else if (Input.ButtonPress(MouseButton.Left))
             {
                 EditorPlayer editorActor = new EditorPlayer(Controller.Level);
-                editorActor.SetTransform(editorActor.GetTransform().SetPosition(Controller.GetMouseWorld()));
+                editorActor.SetTransform(editorActor.GetTransform().WithPosition(Controller.GetMouseWorld()));
                 Controller.SetTool(null);
             }
         }

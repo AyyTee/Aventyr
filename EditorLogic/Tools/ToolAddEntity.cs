@@ -22,7 +22,7 @@ namespace EditorLogic.Tools
             base.Update();
             if (_mouseFollow != null)
             {
-                _mouseFollow.WorldTransform = _mouseFollow.WorldTransform.SetPosition(Controller.GetMouseWorld());
+                _mouseFollow.WorldTransform = _mouseFollow.WorldTransform.WithPosition(Controller.GetMouseWorld());
             }
             if (Input.ButtonPress(Key.Delete) || Input.ButtonPress(Key.Escape) || Input.ButtonPress(MouseButton.Right))
             {
@@ -36,7 +36,7 @@ namespace EditorLogic.Tools
                 editorEntity.AddModel(m);
                 editorEntity.Name = "Editor Entity";
 
-                editorEntity.SetTransform(editorEntity.GetTransform().SetPosition(Controller.GetMouseWorld()));
+                editorEntity.SetTransform(editorEntity.GetTransform().WithPosition(Controller.GetMouseWorld()));
                 Controller.Selection.Set(editorEntity);
 
                 AddEntity command = new AddEntity(Controller, editorEntity);

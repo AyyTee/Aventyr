@@ -169,7 +169,7 @@ namespace EditorLogic.Tools
                 avgX = selection.Average(item => item.GetWorldTransform().Position.X);
                 avgY = selection.Average(item => item.GetWorldTransform().Position.Y);
                 Vector2 average = new Vector2(avgX, avgY);
-                _translator.WorldTransform = _translator.WorldTransform.SetPosition(average);
+                _translator.WorldTransform = _translator.WorldTransform.WithPosition(average);
                 _translator.Visible = true;
             }
             else
@@ -285,18 +285,18 @@ namespace EditorLogic.Tools
                 {
                     angle = MathEx.Round(angle, _rotateIncrementSize);
                     var rotation = MathEx.Round(dragAmount.Rotation + MathEx.AngleDiff(angle, anglePrev), _rotateIncrementSize);
-                    dragAmount = dragAmount.SetRotation((float)rotation);
+                    dragAmount = dragAmount.WithRotation((float)rotation);
                     _mousePosPrev = new Vector2((float)Math.Cos(-angle), (float)Math.Sin(-angle)) + _translator.WorldTransform.Position;
                 }
                 else
                 {
-                    dragAmount = dragAmount.SetRotation(dragAmount.Rotation + (float)MathEx.AngleDiff(angle, anglePrev));
+                    dragAmount = dragAmount.WithRotation(dragAmount.Rotation + (float)MathEx.AngleDiff(angle, anglePrev));
                     _mousePosPrev = mousePos;
                 }
             }
             else if (_mode == Mode.Scale)
             {
-                dragAmount = dragAmount.SetSize(mousePos.X - _mousePosPrev.X);
+                dragAmount = dragAmount.WithSize(mousePos.X - _mousePosPrev.X);
                 _mousePosPrev = mousePos;
             }
             _totalDrag = _totalDrag.Add(dragAmount);
@@ -347,7 +347,7 @@ namespace EditorLogic.Tools
         {
             Transform2 camT = camera.WorldTransform;
             _translator.WorldTransform = _translator.WorldTransform
-                .SetSize(camT.Size * TranslationScaleOffset);
+                .WithSize(camT.Size * TranslationScaleOffset);
         }
     }
 }

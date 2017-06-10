@@ -87,7 +87,7 @@ namespace Game
             if (Camera != null)
             {
                 Camera.WorldTransform = Camera.WorldTransform
-                    .SetPosition(Actor.GetTransform().Position);
+                    .WithPosition(Actor.GetTransform().Position);
             }
         }
     }

@@ -147,7 +147,7 @@ namespace TimeLoopInc
         {
             var offset = Vector2d.One / 2;
             var transform2d = transform.ToTransform2d();
-            transform2d = transform2d.SetPosition(transform2d.Position + offset);
+            transform2d = transform2d.WithPosition(transform2d.Position + offset);
             var result = Ray.RayCast(
                 (Transform2)transform2d,
                 Transform2.CreateVelocity((Vector2)velocity),
@@ -157,7 +157,7 @@ namespace TimeLoopInc
             var newTime = time + 1 + result.PortalsEntered.Sum(item => ((TimePortal)item.EnterData.EntrancePortal).TimeOffset);
 
             var resultTransform = (Transform2d)result.WorldTransform;
-            resultTransform = resultTransform.SetPosition(resultTransform.Position - offset);
+            resultTransform = resultTransform.WithPosition(resultTransform.Position - offset);
             var posNextGrid = Transform2i.RoundTransform2d(resultTransform);
 
             if (!Walls.Contains(posNextGrid.Position))

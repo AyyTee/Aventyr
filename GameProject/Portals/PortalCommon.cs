@@ -123,7 +123,7 @@ namespace Game.Portals
             {
                 angularVelocity += portal.WorldVelocity.Rotation;
             }
-            return newVelocity.SetPosition(newVelocity.Position + MathEx.AngularVelocity(endPosition, portal.Linked.WorldTransform.Position, angularVelocity));
+            return newVelocity.WithPosition(newVelocity.Position + MathEx.AngularVelocity(endPosition, portal.Linked.WorldTransform.Position, angularVelocity));
         }
 
         /// <summary>
@@ -158,13 +158,13 @@ namespace Game.Portals
             rotation += parentVelocity.Rotation;
 
             Transform2 worldVelocity = Transform2.CreateVelocity()
-                .SetSize(local.Size * parentVelocity.Size + velocity.Size * parentTransform.Size)
-                .SetRotation(rotation);
+                .WithSize(local.Size * parentVelocity.Size + velocity.Size * parentTransform.Size)
+                .WithRotation(rotation);
 
             Matrix2 mat = Matrix2.CreateScale(parentTransform.Scale) * Matrix2.CreateRotation(parentTransform.Rotation);
             Vector2 positionDelta = (worldTransform.Position - parentTransform.Position);
 
-            worldVelocity = worldVelocity.SetPosition(
+            worldVelocity = worldVelocity.WithPosition(
                 Vector2Ex.Transform(velocity.Position, mat) + 
                 parentVelocity.Position + 
                 MathEx.AngularVelocity(positionDelta, parentVelocity.Rotation) + 
