@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace TimeLoopInc
 {
     [DataContract]
-    public class Scene : MemberwiseEquatable<Scene>, IDeepClone<Scene>
+    public class Scene : IDeepClone<Scene>
     {
         [DataMember]
         public readonly ImmutableHashSet<Vector2i> Walls = new HashSet<Vector2i>().ToImmutableHashSet();

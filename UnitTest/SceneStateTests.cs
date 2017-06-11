@@ -12,27 +12,6 @@ namespace GameTests
     public class SceneStateTests
     {
         [Test]
-        public void DeepCloneTest0()
-        {
-            var sceneState = new Scene();
-            var clone = sceneState.DeepClone();
-
-            Assert.AreEqual(sceneState, clone);
-        }
-
-        [Test]
-        public void DeepCloneTest1()
-        {
-            var sceneState = new Scene();
-            var blockTimeline = new Timeline<Block>();
-            blockTimeline.Add(new Block(new Transform2i(new Vector2i(1, 1)), 2, 2));
-            sceneState.BlockTimelines.Add(blockTimeline);
-            var clone = sceneState.DeepClone();
-
-            Assert.AreEqual(sceneState, clone);
-        }
-
-        [Test]
         public void EmptySceneStateStartTime()
         {
             Assert.AreEqual(0, new Scene().StartTime);

@@ -25,6 +25,52 @@ namespace Game
         }
 
         /// <summary>
+        /// Finds the index of the first match.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="enumerable"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static int IndexOfFirst<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate)
+        {
+            var enumerator = enumerable.GetEnumerator();
+            var index = 0;
+
+            while (enumerator.MoveNext())
+            {
+                if (predicate(enumerator.Current))
+                {
+                    return index;
+                }
+                index++;
+            }
+            throw new InvalidOperationException();
+        }
+
+        /// <summary>
+        /// Finds the index of the first match. If no match exists, null is returned.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="enumerable"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static int? IndexOfFirstOrNull<T>(this IEnumerable<T> enumerable, Func<T, bool> predicate)
+        {
+            var enumerator = enumerable.GetEnumerator();
+            var index = 0;
+
+            while (enumerator.MoveNext())
+            {
+                if (predicate(enumerator.Current))
+                {
+                    return index;
+                }
+                index++;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Tests if each item and the next item meet a condition. Always returns true if there is 1 or fewer items.
         /// </summary>
         /// <typeparam name="T"></typeparam>

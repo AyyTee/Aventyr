@@ -77,24 +77,41 @@ namespace TimeLoopInc
             worldLayer.Renderables.AddRange(renderables);
 
             var offsetCountNext = offsetCount;
+
             foreach (var view in portalView.Children)
             {
-                offsetCountNext++;
-
-                var entrance = new SimplePortal(
-                    view.PortalEntrance.WorldTransform.AddPosition(offset));
-                var exit = new SimplePortal(
-                    view.PortalEntrance.Linked.WorldTransform.AddPosition(GetOffset(offsetCountNext)));
-
-                exit.Linked = entrance;
-                entrance.Linked = exit;
-
-                worldLayer.Portals.AddRange(new[] { entrance, exit });
-                
                 var timeNext = time + ((TimePortal)view.PortalEntrance).TimeOffset;
-                offsetCountNext = RenderPortalView(view, worldLayer, timeNext, t, offsetCountNext);
+                // If there isn't any time offset then we can skip rendering a duplicate of the scene.
+                if (time == timeNext)
+                {
+                    var entranceIndex = portalView.Children.IndexOf(view);
+                    var exitIndex = portalView.Children.IndexOfFirstOrNull(item => item.PortalEntrance == view.PortalEntrance.Linked);
+                    Debug.Assert(entranceIndex != exitIndex);
+                    if (exitIndex != null && entranceIndex < exitIndex)
+                    {
+                        AddViewPortals(view, worldLayer, offset, offset);
+                    }
+                }
+                else
+                {
+                    offsetCountNext++;
+                    AddViewPortals(view, worldLayer, offset, GetOffset(offsetCountNext));
+                    offsetCountNext = RenderPortalView(view, worldLayer, timeNext, t, offsetCountNext);
+                }
             }
             return offsetCountNext;
+        }
+
+        void AddViewPortals(PortalView view, Layer worldLayer, Vector2 entranceOffset, Vector2 exitOffset)
+        {
+            var entrance = new SimplePortal(
+                view.PortalEntrance.WorldTransform.AddPosition(entranceOffset));
+            var exit = new SimplePortal(
+                view.PortalEntrance.Linked.WorldTransform.AddPosition(exitOffset));
+
+            exit.Linked = entrance;
+            entrance.Linked = exit;
+            worldLayer.Portals.AddRange(new[] { entrance, exit });
         }
 
         Vector2 GetOffset(int offsetCount) => new Vector2((offsetCount % 2) * 100, (offsetCount / 2) * 100);
