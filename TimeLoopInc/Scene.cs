@@ -17,6 +17,8 @@ namespace TimeLoopInc
         public readonly ImmutableList<TimePortal> Portals;
         public SceneState State = new SceneState();
 
+        readonly Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
+
         public Scene(ISet<Vector2i> walls, IList<TimePortal> portals, Player player, IList<Block> blocks)
         {
             Walls = walls.ToImmutableHashSet();
@@ -34,7 +36,8 @@ namespace TimeLoopInc
                 return timeline;
             }));
 
-            SetTime(State.StartTime + 1);
+            _cachedInstants[State.StartTime] = new SceneInstant();
+            State.CurrentInstant = GetStateInstant(State.StartTime + 1);
         }
 
         public void Step(Input input)
@@ -42,28 +45,29 @@ namespace TimeLoopInc
             if (State.CurrentInstant.Entities.ContainsKey(State.CurrentPlayer))
             {
                 State.CurrentPlayer.Input.Add(input);
+                for (int i = State.CurrentInstant.Time + 1; i < _cachedInstants.Keys.Max(); i++)
+                {
+                    _cachedInstants.Remove(i);
+                }
             }
-            SetTime(State.CurrentInstant.Time + 1);
-        }
-
-        void SetTime(int time)
-        {
-            State.SetTimeToStart();
-            for (int i = State.StartTime; i < time; i++)
-            {
-                State.CurrentInstant = _step(State.CurrentInstant);
-            }
+            State.CurrentInstant = GetStateInstant(State.CurrentInstant.Time + 1);
         }
 
         public SceneInstant GetStateInstant(int time)
         {
-            var instant = new SceneInstant();
-            instant.Time = State.StartTime;
-            for (int i = State.StartTime; i < time; i++)
+            if (time >= State.StartTime)
             {
-                instant = _step(instant);
+                var key = _cachedInstants.Keys.Where(item => item <= time).Max();
+                var instant = _cachedInstants[key];
+
+                for (int i = key; i < time; i++)
+                {
+                    instant = _step(instant);
+                    _cachedInstants[i + 1] = instant;
+                }
+                return instant;
             }
-            return instant;
+            return new SceneInstant() { Time = time };
         }
 
         SceneInstant _step(SceneInstant sceneInstant)
