@@ -38,7 +38,7 @@ namespace TimeLoopInc
                 Camera = new HudCamera2(_window.CanvasSize)
             };
             DrawTimeline(gui);
-            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, _window.CanvasSize.Y), "Time: " + _scene.State.CurrentInstant.Time.ToString());
+            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, _window.CanvasSize.Y), "Time: " + _scene.CurrentInstant.Time.ToString());
             _window.Layers.Add(gui);
         }
 

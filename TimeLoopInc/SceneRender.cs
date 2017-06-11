@@ -36,23 +36,22 @@ namespace TimeLoopInc
             float t = MathHelper.Clamp(_updatesSinceLastStep / (float)_updatesPerAnimation, 0, 1);
 
             window.Layers.Clear();
-            var state = _scene.State;
             var worldLayer = new Layer();
 
             var cameraTransform = new Transform2().WithSize(25 * _zoomFactor);
             var cameraVelocity = new Vector2();
-            if (state.CurrentInstant.Entities.GetOrDefault(state.CurrentPlayer) != null)
+            if (_scene.CurrentInstant.Entities.GetOrDefault(_scene.CurrentPlayer) != null)
             {
-                cameraTransform = GridEntityWorldPosition(state.CurrentInstant, state.CurrentPlayer, t).WithSize(25 * _zoomFactor);
+                cameraTransform = GridEntityWorldPosition(_scene.CurrentInstant, _scene.CurrentPlayer, t).WithSize(25 * _zoomFactor);
                 cameraVelocity = t == 0 || t == 1 ?
                     new Vector2() :
-                    (Vector2)state.CurrentInstant.Entities[state.CurrentPlayer].PreviousVelocity;
+                    (Vector2)_scene.CurrentInstant.Entities[_scene.CurrentPlayer].PreviousVelocity;
             }
            
             var worldCamera = new GridCamera(cameraTransform, (float)window.CanvasSize.XRatio);
 
             var portalView = PortalView.CalculatePortalViews(0, _scene.Portals, worldCamera, 30);
-            RenderPortalView(portalView, worldLayer, state.CurrentInstant.Time, t, 0);
+            RenderPortalView(portalView, worldLayer, _scene.CurrentInstant.Time, t, 0);
 
 
             
@@ -103,7 +102,6 @@ namespace TimeLoopInc
         List<Renderable> RenderInstant(SceneInstant sceneInstant, float t)
         {
             var output = new List<Renderable>();
-            var state = _scene.State;
 
             foreach (var gridEntity in sceneInstant.Entities.Keys.OfType<IGridEntity>())
             {

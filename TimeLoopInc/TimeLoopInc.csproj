@@ -78,7 +78,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Square.cs" />
     <Compile Include="Scene.cs" />
-    <Compile Include="SceneState.cs" />
     <Compile Include="Transform2i.cs" />
   </ItemGroup>
   <ItemGroup>

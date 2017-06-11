@@ -1,4 +1,5 @@
-﻿using Game;
+﻿using Equ;
+using Game;
 using Game.Common;
 using Game.Portals;
 using OpenTK;
@@ -6,56 +7,74 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TimeLoopInc
 {
-    public class Scene
+    [DataContract]
+    public class Scene : MemberwiseEquatable<Scene>, IDeepClone<Scene>
     {
-        public readonly ImmutableHashSet<Vector2i> Walls;
-        public readonly ImmutableList<TimePortal> Portals;
-        public SceneState State = new SceneState();
+        [DataMember]
+        public readonly ImmutableHashSet<Vector2i> Walls = new HashSet<Vector2i>().ToImmutableHashSet();
+        [DataMember]
+        public readonly ImmutableList<TimePortal> Portals = new List<TimePortal>().ToImmutableList();
+        [DataMember]
+        public SceneInstant CurrentInstant = new SceneInstant();
+        [DataMember]
+        public Timeline<Player> PlayerTimeline = new Timeline<Player>();
+        public Player CurrentPlayer => (Player)PlayerTimeline.Path.Last();
+        [DataMember]
+        public List<Timeline<Block>> BlockTimelines = new List<Timeline<Block>>();
+        public IEnumerable<ITimeline> Timelines => BlockTimelines
+            .OfType<ITimeline>()
+            .Concat(new[] { PlayerTimeline });
+        public int StartTime => Timelines.Min(item => item.Path.MinOrNull(entity => entity.StartTime)) ?? 0;
 
         readonly Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
+
+        public Scene()
+        {
+        }
 
         public Scene(ISet<Vector2i> walls, IList<TimePortal> portals, Player player, IList<Block> blocks)
         {
             Walls = walls.ToImmutableHashSet();
             Portals = portals.ToImmutableList();
 
-            State.PlayerTimeline = new Timeline<Player>();
+            PlayerTimeline = new Timeline<Player>();
             if (player != null)
             {
-                State.PlayerTimeline.Add(player);
+                PlayerTimeline.Add(player);
             }
 
-            State.BlockTimelines.AddRange(blocks.Select(item => {
+            BlockTimelines.AddRange(blocks.Select(item => {
                 var timeline = new Timeline<Block>();
                 timeline.Add(item);
                 return timeline;
             }));
 
-            _cachedInstants[State.StartTime] = new SceneInstant();
-            State.CurrentInstant = GetStateInstant(State.StartTime + 1);
+            _cachedInstants[StartTime] = new SceneInstant();
+            CurrentInstant = GetStateInstant(StartTime + 1);
         }
 
         public void Step(Input input)
         {
-            if (State.CurrentInstant.Entities.ContainsKey(State.CurrentPlayer))
+            if (CurrentInstant.Entities.ContainsKey(CurrentPlayer))
             {
-                State.CurrentPlayer.Input.Add(input);
-                for (int i = State.CurrentInstant.Time + 1; i < _cachedInstants.Keys.Max(); i++)
+                CurrentPlayer.Input.Add(input);
+                for (int i = CurrentInstant.Time + 1; i < _cachedInstants.Keys.Max(); i++)
                 {
                     _cachedInstants.Remove(i);
                 }
             }
-            State.CurrentInstant = GetStateInstant(State.CurrentInstant.Time + 1);
+            CurrentInstant = GetStateInstant(CurrentInstant.Time + 1);
         }
 
         public SceneInstant GetStateInstant(int time)
         {
-            if (time >= State.StartTime)
+            if (time >= StartTime)
             {
                 var key = _cachedInstants.Keys.Where(item => item <= time).Max();
                 var instant = _cachedInstants[key];
@@ -138,7 +157,7 @@ namespace TimeLoopInc
             //    }
             //}
 
-            foreach (var entity in State.Timelines.SelectMany(item => item.Path))
+            foreach (var entity in Timelines.SelectMany(item => item.Path))
             {
                 if (entity.StartTime == nextInstant.Time)
                 {
@@ -176,6 +195,16 @@ namespace TimeLoopInc
                     newTime);
             }
             return ValueTuple.Create(transform, new Vector2i(), newTime);
+        }
+
+        public Scene DeepClone()
+        {
+            var clone = (Scene)MemberwiseClone();
+
+            clone.CurrentInstant = CurrentInstant.DeepClone();
+            clone.PlayerTimeline = PlayerTimeline.DeepClone();
+            clone.BlockTimelines = BlockTimelines.Select(item => item.DeepClone()).ToList();
+            return clone;
         }
     }
 }

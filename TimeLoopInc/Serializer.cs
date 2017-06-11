@@ -12,7 +12,7 @@ namespace TimeLoopInc
         protected override IEnumerable<Type> GetKnownTypes()
         {
             return base.GetKnownTypes()
-                .Concat(typeof(SceneState).Assembly
+                .Concat(typeof(SceneInstant).Assembly
                     .GetTypes()
                     .Where(item => Attribute.IsDefined(item, typeof(DataContractAttribute))));
         }
