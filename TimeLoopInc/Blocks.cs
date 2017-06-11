@@ -19,13 +19,13 @@ namespace TimeLoopInc
         [DataMember]
         public int Size { get; }
         [DataMember]
-        public Vector2i StartPosition { get; }
+        public Transform2i StartPosition { get; }
         [DataMember]
         public int StartTime { get; }
         [DataMember]
         public int EndTime { get; set; }
 
-        public Block(Vector2i startPosition, int startTime, int size = 1)
+        public Block(Transform2i startPosition, int startTime, int size = 1)
         {
             Debug.Assert(size > 0);
             StartPosition = startPosition;

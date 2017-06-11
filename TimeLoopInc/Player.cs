@@ -12,7 +12,7 @@ namespace TimeLoopInc
     public class Player : IGridEntity
     {
         [DataMember]
-        public Vector2i StartPosition { get; }
+        public Transform2i StartPosition { get; }
         [DataMember]
         public int StartTime { get; }
         [DataMember]
@@ -20,7 +20,7 @@ namespace TimeLoopInc
         [DataMember]
         public List<Input> Input { get; } = new List<Input>();
 
-        public Player(Vector2i startPosition, int startTime)
+        public Player(Transform2i startPosition, int startTime)
         {
             StartPosition = startPosition;
             StartTime = startTime;

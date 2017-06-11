@@ -36,10 +36,7 @@ namespace TimeLoopInc
         }
         public const int CardinalDirections = 4;
 
-        public GridAngle(int gridAngle)
-        {
-            Value = gridAngle;
-        }
+        public GridAngle(int gridAngle) => Value = gridAngle;
 
         public static GridAngle Right => new GridAngle(0);
         public static GridAngle Down => new GridAngle(1);

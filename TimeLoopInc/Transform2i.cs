@@ -46,15 +46,15 @@ namespace TimeLoopInc
         {
             return new Transform2i(
                 (Vector2i)transform.Position.Round(Vector2d.One), 
-                new GridAngle((int)(transform.Rotation / (Math.PI / 2))), 
+                new GridAngle((int)Math.Round(transform.Rotation / (Math.PI / 2))), 
                 (int)Math.Round(transform.Size), 
                 transform.MirrorX);
         }
 
-        public Transform2i SetPosition(Vector2i position) => new Transform2i(position, Direction, Size, MirrorX);
-        public Transform2i SetRotation(GridAngle rotation) => new Transform2i(Position, rotation, Size, MirrorX);
-        public Transform2i SetSize(int size) => new Transform2i(Position, Direction, size, MirrorX);
-        public Transform2i SetMirrorX(bool mirrorX) => new Transform2i(Position, Direction, Size, mirrorX);
+        public Transform2i WithPosition(Vector2i position) => new Transform2i(position, Direction, Size, MirrorX);
+        public Transform2i WithRotation(GridAngle rotation) => new Transform2i(Position, rotation, Size, MirrorX);
+        public Transform2i WithSize(int size) => new Transform2i(Position, Direction, size, MirrorX);
+        public Transform2i WithMirrorX(bool mirrorX) => new Transform2i(Position, Direction, Size, mirrorX);
 
         public Matrix4d GetMatrix()
         {

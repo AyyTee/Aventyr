@@ -25,7 +25,7 @@ namespace GameTests
         {
             var sceneState = new SceneState();
             var blockTimeline = new Timeline<Block>();
-            blockTimeline.Add(new Block(new Vector2i(1, 1), 2, 2));
+            blockTimeline.Add(new Block(new Transform2i(new Vector2i(1, 1)), 2, 2));
             sceneState.BlockTimelines.Add(blockTimeline);
             var clone = sceneState.DeepClone();
 
@@ -67,7 +67,7 @@ namespace GameTests
         [Test]
         public void GetStateInstantTest0()
         {
-            var block = new Block(new Vector2i(), 0);
+            var block = new Block(new Transform2i(), 0);
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
 
             var result = scene.GetStateInstant(0).Entities.Count;
@@ -77,7 +77,7 @@ namespace GameTests
         [Test]
         public void GetStateInstantTest1()
         {
-            var block = new Block(new Vector2i(), 0);
+            var block = new Block(new Transform2i(), 0);
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
 
             var result = scene.GetStateInstant(1).Entities.Count;
@@ -87,7 +87,7 @@ namespace GameTests
         [Test]
         public void GetStateInstantTest2()
         {
-            var block = new Block(new Vector2i(), 0);
+            var block = new Block(new Transform2i(), 0);
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
 
             var result = scene.GetStateInstant(-1).Entities.Count;
@@ -97,7 +97,7 @@ namespace GameTests
         [Test]
         public void GetStateInstantTest3()
         {
-            var block = new Block(new Vector2i(), 2);
+            var block = new Block(new Transform2i(), 2);
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
 
             Assert.AreEqual(0, scene.GetStateInstant(1).Entities.Count);
@@ -107,13 +107,25 @@ namespace GameTests
         public void GetStateInstantTest4()
         {
             var blocks = new[] {
-                new Block(new Vector2i(2, 0), 0, 1),
-                new Block(new Vector2i(2, 1), 1, 1),
-                new Block(new Vector2i(2, 2), 2, 1),
+                new Block(new Transform2i(new Vector2i(2, 0)), 0, 1),
+                new Block(new Transform2i(new Vector2i(2, 1)), 1, 1),
+                new Block(new Transform2i(new Vector2i(2, 2)), 2, 1),
             };
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, blocks);
 
             Assert.AreEqual(3, scene.GetStateInstant(10).Entities.Count);
+        }
+
+        [Test]
+        public void RotationRoundingBug()
+        {
+            var player = new Player(new Transform2i(gridRotation: new GridAngle(5)), 0);
+            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), player, new List<Block>());
+
+            scene.Step(new Input(new GridAngle()));
+
+            Assert.AreEqual(5, scene.State.CurrentInstant.Entities[player].Transform.Direction.Value);
+            Assert.AreEqual(5 * Math.PI / 2, scene.State.CurrentInstant.Entities[player].Transform.Angle, 0.0000001);
         }
     }
 }

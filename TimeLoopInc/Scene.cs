@@ -51,7 +51,7 @@ namespace TimeLoopInc
             State.SetTimeToStart();
             for (int i = State.StartTime; i < time; i++)
             {
-                _step(State.CurrentInstant);
+                State.CurrentInstant = _step(State.CurrentInstant);
             }
         }
 
@@ -61,34 +61,36 @@ namespace TimeLoopInc
             instant.Time = State.StartTime;
             for (int i = State.StartTime; i < time; i++)
             {
-                _step(instant);
+                instant = _step(instant);
             }
             return instant;
         }
 
-        void _step(SceneInstant sceneInstant)
+        SceneInstant _step(SceneInstant sceneInstant)
         {
-            foreach (var entity in sceneInstant.Entities.Keys.ToList())
+            var nextInstant = sceneInstant.DeepClone();
+
+            foreach (var entity in nextInstant.Entities.Keys.ToList())
             {
-                if (entity.EndTime == sceneInstant.Time)
+                if (entity.EndTime == nextInstant.Time)
                 {
-                    sceneInstant.Entities.Remove(entity);
+                    nextInstant.Entities.Remove(entity);
                 }
             }
 
-            foreach (var entity in sceneInstant.Entities.Keys)
+            foreach (var entity in nextInstant.Entities.Keys)
             {
                 if (entity is Player player)
                 {
-                    var velocity = (Vector2d)(player.GetInput(sceneInstant.Time).Direction?.Vector ?? new Vector2i());
-                    velocity = Vector2Ex.TransformVelocity(velocity, sceneInstant[entity].Transform.GetMatrix());
-                    var result = Move(sceneInstant[entity].Transform, (Vector2i)velocity, sceneInstant.Time);
-                    sceneInstant[entity].PreviousVelocity = result.Velocity;
-                    sceneInstant[entity].Transform = result.Transform;
+                    var velocity = (Vector2d)(player.GetInput(nextInstant.Time).Direction?.Vector ?? new Vector2i());
+                    velocity = Vector2Ex.TransformVelocity(velocity, nextInstant[entity].Transform.GetMatrix());
+                    var result = Move(nextInstant[entity].Transform, (Vector2i)velocity, nextInstant.Time);
+                    nextInstant[entity].PreviousVelocity = result.Velocity;
+                    nextInstant[entity].Transform = result.Transform;
                 }
             }
 
-            foreach (var block in sceneInstant.Entities.Values.OfType<BlockInstant>())
+            foreach (var block in nextInstant.Entities.Values.OfType<BlockInstant>())
             {
                 block.IsPushed = false;
                 block.PreviousVelocity = new Vector2i();
@@ -97,18 +99,18 @@ namespace TimeLoopInc
             var directions = new[] { GridAngle.Left, GridAngle.Right, GridAngle.Up, GridAngle.Down };
             for (int i = 0; i < directions.Length; i++)
             {
-                foreach (var block in sceneInstant.Entities.Keys.OfType<Block>())
+                foreach (var block in nextInstant.Entities.Keys.OfType<Block>())
                 {
-                    var adjacent = sceneInstant[block].Transform.Position - directions[i].Vector;
-                    var pushes = sceneInstant.Entities.Values
+                    var adjacent = nextInstant[block].Transform.Position - directions[i].Vector;
+                    var pushes = nextInstant.Entities.Values
                         .OfType<PlayerInstant>()
-                        .Where(item => item.Transform.Position - item.PreviousVelocity == adjacent && item.Transform.Position == sceneInstant[block].Transform.Position);
+                        .Where(item => item.Transform.Position - item.PreviousVelocity == adjacent && item.Transform.Position == nextInstant[block].Transform.Position);
 
-                    var blockInstant = (BlockInstant)sceneInstant[block];
+                    var blockInstant = (BlockInstant)nextInstant[block];
                     if (pushes.Count() >= block.Size && !blockInstant.IsPushed)
                     {
                         blockInstant.IsPushed = true;
-                        var result = Move(blockInstant.Transform, directions[i].Vector, sceneInstant.Time);
+                        var result = Move(blockInstant.Transform, directions[i].Vector, nextInstant.Time);
                         blockInstant.Transform = result.Transform;
                         blockInstant.PreviousVelocity = result.Velocity;
                     }
@@ -134,13 +136,15 @@ namespace TimeLoopInc
 
             foreach (var entity in State.Timelines.SelectMany(item => item.Path))
             {
-                if (entity.StartTime == sceneInstant.Time)
+                if (entity.StartTime == nextInstant.Time)
                 {
-                    sceneInstant.Entities.Add(entity, entity.CreateInstant());
+                    nextInstant.Entities.Add(entity, entity.CreateInstant());
                 }
             }
 
-            sceneInstant.Time++;
+            nextInstant.Time++;
+
+            return nextInstant;
         }
 
         (Transform2i Transform, Vector2i Velocity, int Time) Move(Transform2i transform, Vector2i velocity, int time)

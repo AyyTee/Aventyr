@@ -28,6 +28,18 @@ namespace GameTests
         }
 
         [Test]
+        public void RoundTransform2CorrectRotation()
+        {
+            int count = 10000;
+            for (int i = 0; i < count; i++)
+            {
+                var transform2i = new Transform2i(gridRotation: new GridAngle(i - count / 2));
+                var result = Transform2i.RoundTransform2d(transform2i.ToTransform2d());
+                Assert.AreEqual(transform2i.Direction.Value, result.Direction.Value);
+            }
+        }
+
+        [Test]
         public void Equals()
         {
             var transform0 = new Transform2i(new Vector2i(5, 1), new GridAngle(1), 2, true);

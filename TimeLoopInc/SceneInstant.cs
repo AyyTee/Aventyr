@@ -28,8 +28,8 @@ namespace TimeLoopInc
             clone.Time = Time;
             foreach (var entity in Entities.Keys)
             {
-                var cloneEntity = entity.DeepClone();
-                clone.Entities.Add(cloneEntity, Entities[entity].DeepClone());
+                // We don't clone the entity itself. Just the entity instant.
+                clone.Entities.Add(entity, Entities[entity].DeepClone());
             }
             return clone;
         }
