@@ -53,8 +53,6 @@ namespace TimeLoopInc
             var portalView = PortalView.CalculatePortalViews(0, _scene.Portals, worldCamera, 30);
             RenderPortalView(portalView, worldLayer, _scene.CurrentInstant.Time, t, 0);
 
-
-            
             worldCamera.WorldVelocity = worldCamera.WorldVelocity.WithPosition(cameraVelocity / 6f);
             worldLayer.Camera = worldCamera;
 
@@ -129,7 +127,7 @@ namespace TimeLoopInc
                 {
                     case Player p:
                         {
-                            var model = ModelFactory.CreatePlane(Vector2.One, new Vector3(-0.5f));
+                            var model = ModelFactory.CreatePlane(Vector2.One * 0.98f, new Vector3(-0.49f));
                             model.SetColor(Color4.Black);
 
                             renderable = new Renderable(transform);
@@ -139,7 +137,8 @@ namespace TimeLoopInc
 
                     case Block b:
                         {
-                            var model = ModelFactory.CreatePlane(Vector2.One * b.Size, new Vector3(-0.5f));
+                            var blockInstant = (BlockInstant)sceneInstant.Entities[b];
+                            var model = ModelFactory.CreatePlane(Vector2.One * blockInstant.Transform.Size * 0.98f, new Vector3(-0.49f));
                             model.SetColor(new Color4(0.5f, 1f, 0.8f, 1f));
 
                             renderable = new Renderable(transform);
@@ -173,7 +172,7 @@ namespace TimeLoopInc
 
         Renderable CreateSquare(Vector2i position, int size, Color4 color)
         {
-            var model = ModelFactory.CreatePlane(Vector2.One * size,  new Vector3(-size / 2f));
+            var model = ModelFactory.CreatePlane(Vector2.One * size * 0.98f,  new Vector3(-size / 2f + 0.01f));
             model.SetColor(color);
 
             return new Renderable(new Transform2((Vector2)position + Vector2.One * 0.5f * size))

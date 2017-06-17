@@ -12,9 +12,9 @@ namespace TimeLoopInc
 {
     public interface IGridEntity : IDeepClone<IGridEntity>
     {
-        Transform2i StartPosition { get; }
+        Transform2i StartTransform { get; }
         int StartTime { get; }
-        int EndTime { get; }
+        int EndTime { get; set; }
 
         IGridEntityInstant CreateInstant();
     }

@@ -12,7 +12,7 @@ namespace TimeLoopInc
     public class Player : IGridEntity
     {
         [DataMember]
-        public Transform2i StartPosition { get; }
+        public Transform2i StartTransform { get; }
         [DataMember]
         public int StartTime { get; }
         [DataMember]
@@ -22,16 +22,16 @@ namespace TimeLoopInc
 
         public Player(Transform2i startPosition, int startTime)
         {
-            StartPosition = startPosition;
+            StartTransform = startPosition;
             StartTime = startTime;
         }
 
         public Input GetInput(int time)
         {
-            return Input.ElementAtOrDefault(time - StartTime - 1) ?? new Input(null);
+            return Input.ElementAtOrDefault(time - StartTime) ?? new Input(null);
         }
 
-        public IGridEntityInstant CreateInstant() => new PlayerInstant(StartPosition);
+        public IGridEntityInstant CreateInstant() => new PlayerInstant(StartTransform);
 
         public IGridEntity DeepClone() => (Player)MemberwiseClone();
     }

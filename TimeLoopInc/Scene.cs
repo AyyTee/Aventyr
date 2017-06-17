@@ -55,8 +55,7 @@ namespace TimeLoopInc
                 return timeline;
             }));
 
-            _cachedInstants[StartTime] = new SceneInstant();
-            CurrentInstant = GetStateInstant(StartTime + 1);
+            CurrentInstant = GetStateInstant(StartTime);
         }
 
         public void Step(Input input)
@@ -64,20 +63,35 @@ namespace TimeLoopInc
             if (CurrentInstant.Entities.ContainsKey(CurrentPlayer))
             {
                 CurrentPlayer.Input.Add(input);
-                for (int i = CurrentInstant.Time + 1; i < _cachedInstants.Keys.Max(); i++)
-                {
-                    _cachedInstants.Remove(i);
-                }
+                InvalidateCache(CurrentInstant.Time + 1);
             }
             CurrentInstant = GetStateInstant(CurrentInstant.Time + 1);
+        }
+
+        void InvalidateCache(int time)
+        {
+            foreach (var key in _cachedInstants.Keys.Where(item => item >= time).ToList())
+            {
+                _cachedInstants.Remove(key);
+            }
         }
 
         public SceneInstant GetStateInstant(int time)
         {
             if (time >= StartTime)
             {
-                var key = _cachedInstants.Keys.Where(item => item <= time).Max();
-                var instant = _cachedInstants[key];
+                int key;
+                SceneInstant instant;
+                if (_cachedInstants.Keys.Where(item => item <= time).Any())
+                {
+                    key = _cachedInstants.Keys.Where(item => item <= time).Max();
+                    instant = _cachedInstants[key];
+                }
+                else
+                {
+                    key = StartTime - 1;
+                    instant = new SceneInstant() { Time = StartTime - 1 };
+                }
 
                 for (int i = key; i < time; i++)
                 {
@@ -101,15 +115,32 @@ namespace TimeLoopInc
                 }
             }
 
+            var earliestTimeTravel = int.MaxValue;
+
             foreach (var entity in nextInstant.Entities.Keys)
             {
                 if (entity is Player player)
                 {
+                    var playerInstant = nextInstant[entity];
                     var velocity = (Vector2d)(player.GetInput(nextInstant.Time).Direction?.Vector ?? new Vector2i());
-                    velocity = Vector2Ex.TransformVelocity(velocity, nextInstant[entity].Transform.GetMatrix());
-                    var result = Move(nextInstant[entity].Transform, (Vector2i)velocity, nextInstant.Time);
-                    nextInstant[entity].PreviousVelocity = result.Velocity;
-                    nextInstant[entity].Transform = result.Transform;
+                    velocity = Vector2Ex.TransformVelocity(velocity, playerInstant.Transform.GetMatrix());
+                    var result = Move(playerInstant.Transform, (Vector2i)velocity, nextInstant.Time);
+                    playerInstant.PreviousVelocity = result.Velocity;
+                    playerInstant.Transform = result.Transform;
+                    if (result.Time != nextInstant.Time)
+                    {
+                        var timeline = PlayerTimeline;
+                        if (timeline != null && PlayerTimeline.Path.Last() == player)
+                        {
+                            nextInstant.Entities.Remove(player);
+                            player.EndTime = nextInstant.Time;
+                            timeline.Add(new Player(playerInstant.Transform, result.Time + 1));
+                            earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
+                            InvalidateCache(result.Time);
+
+                            return GetStateInstant(result.Time + 1);
+                        }
+                    }
                 }
             }
 
@@ -122,7 +153,7 @@ namespace TimeLoopInc
             var directions = new[] { GridAngle.Left, GridAngle.Right, GridAngle.Up, GridAngle.Down };
             for (int i = 0; i < directions.Length; i++)
             {
-                foreach (var block in nextInstant.Entities.Keys.OfType<Block>())
+                foreach (var block in nextInstant.Entities.Keys.OfType<Block>().ToList())
                 {
                     var adjacent = nextInstant[block].Transform.Position - directions[i].Vector;
                     var pushes = nextInstant.Entities.Values
@@ -130,36 +161,36 @@ namespace TimeLoopInc
                         .Where(item => item.Transform.Position - item.PreviousVelocity == adjacent && item.Transform.Position == nextInstant[block].Transform.Position);
 
                     var blockInstant = (BlockInstant)nextInstant[block];
-                    if (pushes.Count() >= block.Size && !blockInstant.IsPushed)
+                    if (pushes.Count() >= blockInstant.Transform.Size && !blockInstant.IsPushed)
                     {
                         blockInstant.IsPushed = true;
                         var result = Move(blockInstant.Transform, directions[i].Vector, nextInstant.Time);
                         blockInstant.Transform = result.Transform;
                         blockInstant.PreviousVelocity = result.Velocity;
+                        if (result.Time != nextInstant.Time)
+                        {
+                            var timeline = BlockTimelines.FirstOrDefault(item => item.Path.Last() == block);
+                            if (timeline != null)
+                            {
+                                nextInstant.Entities.Remove(block);
+                                block.EndTime = nextInstant.Time;
+                                timeline.Add(new Block(blockInstant.Transform, result.Time + 1));
+                                earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
+                                InvalidateCache(result.Time);
+                            }
+                        }
                     }
                 }
             }
 
-            //if (State.Entities.ContainsKey(State.CurrentPlayer))
-            //{
-            //    var player = State.Entities[State.CurrentPlayer];
-            //    var portalExit = Portals.FirstOrDefault(item => item.Position == player.Transform.Position);
-            //    var (prevPlayerPosition, _) = Move(player.Transform, -player.PreviousVelocity);
-            //    var portalEnter = Portals.FirstOrDefault(item => item.Position == prevPlayerPosition.Position);
-            //    if (portalExit != null && portalEnter != null && portalEnter.TimeOffset != 0)
-            //    {
-            //        var newTime = State.Time + portalEnter.TimeOffset;
-            //        State.CurrentPlayer.EndTime = State.Time;
-            //        State.CurrentPlayer = new Player(portalExit.Position, newTime);
-            //        State.PlayerTimeline.Path.Add(State.CurrentPlayer);
-            //        SetTime(newTime);
-            //        return;
-            //    }
-            //}
+            if (earliestTimeTravel < nextInstant.Time)
+            {
+                return GetStateInstant(nextInstant.Time + 1);   
+            }
 
             foreach (var entity in Timelines.SelectMany(item => item.Path))
             {
-                if (entity.StartTime == nextInstant.Time)
+                if (entity.StartTime == nextInstant.Time + 1)
                 {
                     nextInstant.Entities.Add(entity, entity.CreateInstant());
                 }
@@ -170,7 +201,7 @@ namespace TimeLoopInc
             return nextInstant;
         }
 
-        (Transform2i Transform, Vector2i Velocity, int Time) Move(Transform2i transform, Vector2i velocity, int time)
+        public (Transform2i Transform, Vector2i Velocity, int Time) Move(Transform2i transform, Vector2i velocity, int time)
         {
             var offset = Vector2d.One / 2;
             var transform2d = transform.ToTransform2d();
@@ -181,7 +212,7 @@ namespace TimeLoopInc
                 Portals,
                 new Ray.Settings());
 
-            var newTime = time + 1 + result.PortalsEntered.Sum(item => ((TimePortal)item.EnterData.EntrancePortal).TimeOffset);
+            var newTime = time + result.PortalsEntered.Sum(item => ((TimePortal)item.EnterData.EntrancePortal).TimeOffset);
 
             var resultTransform = (Transform2d)result.WorldTransform;
             resultTransform = resultTransform.WithPosition(resultTransform.Position - offset);
@@ -190,7 +221,7 @@ namespace TimeLoopInc
             if (!Walls.Contains(posNextGrid.Position))
             {
                 return ValueTuple.Create(
-                    posNextGrid, 
+                    posNextGrid,
                     (Vector2i)result.WorldVelocity.Position.Round(Vector2.One),
                     newTime);
             }

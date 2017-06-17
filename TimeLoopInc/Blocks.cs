@@ -17,29 +17,25 @@ namespace TimeLoopInc
     public class Block : IGridEntity
     {
         [DataMember]
-        public int Size { get; }
-        [DataMember]
-        public Transform2i StartPosition { get; }
+        public Transform2i StartTransform { get; }
         [DataMember]
         public int StartTime { get; }
         [DataMember]
-        public int EndTime { get; set; }
+        public int EndTime { get; set; } = int.MaxValue;
 
-        public Block(Transform2i startPosition, int startTime, int size = 1)
+        public Block(Transform2i startTransform, int startTime)
         {
-            Debug.Assert(size > 0);
-            StartPosition = startPosition;
+            StartTransform = startTransform;
             StartTime = startTime;
-            Size = size;
         }
 
-        public IGridEntityInstant CreateInstant() => new BlockInstant(StartPosition);
+        public IGridEntityInstant CreateInstant() => new BlockInstant(StartTransform);
 
         public IGridEntity DeepClone() => (Block)MemberwiseClone();
 
         public List<Model> GetModels()
         {
-            var model = ModelFactory.CreatePlane(Vector2.One * Size, new Vector3(-Size / 2));
+            var model = ModelFactory.CreatePlane(Vector2.One * StartTransform.Size, new Vector3(-StartTransform.Size / 2));
             model.SetColor(new Color4(0.5f, 1f, 0.8f, 1f));
             return new List<Model>() { model };
         }

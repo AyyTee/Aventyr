@@ -46,34 +46,34 @@ namespace TimeLoopInc
         {
             var Walls = new HashSet<Vector2i>()
             {
-                new Vector2i(1, 1),
-                new Vector2i(1, 2),
+                //new Vector2i(1, 1),
+                //new Vector2i(1, 2),
                 new Vector2i(1, 4),
             };
             var player = new Player(new Transform2i(), 0);
 
             var portal0 = new TimePortal(new Vector2i(2, 0), GridAngle.Right);
             var portal1 = new TimePortal(new Vector2i(-3, 2), GridAngle.Down);
-            var portal2 = new TimePortal(new Vector2i(2, 2), GridAngle.Right);
-            var portal3 = new TimePortal(new Vector2i(-3, 0), GridAngle.Left);
+            //var portal2 = new TimePortal(new Vector2i(2, 2), GridAngle.Right);
+            //var portal3 = new TimePortal(new Vector2i(-3, 0), GridAngle.Left);
             portal0.SetLinked(portal1);
             portal0.SetTimeOffset(10);
 
-            portal2.SetLinked(portal3);
-            portal2.SetTimeOffset(0);
+            //portal2.SetLinked(portal3);
+            //portal2.SetTimeOffset(0);
 
             var Portals = new[]
             {
                 portal0,
                 portal1,
-                portal2,
-                portal3
+                //portal2,
+                //portal3
             };
 
             var blocks = new[] {
-                new Block(new Transform2i(new Vector2i(2, 0)), 0, 1),
-                new Block(new Transform2i(new Vector2i(2, 1)), 1, 1),
-                new Block(new Transform2i(new Vector2i(2, 2)), 2, 1),
+                //new Block(new Transform2i(new Vector2i(2, 0)), 0),
+                //new Block(new Transform2i(new Vector2i(2, 1)), 1),
+                new Block(new Transform2i(new Vector2i(2, 2)), 2),
             };
 
             _scene = new Scene(Walls, Portals, player, blocks);

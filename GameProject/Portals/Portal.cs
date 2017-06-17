@@ -212,7 +212,8 @@ namespace Game.Portals
             Transform2 tExit = portalExit.WorldTransform;
             tExit = tExit.WithMirrorX(!tExit.MirrorX);
             Transform2 tEnter = portalEnter.WorldTransform;
-            return tEnter.Inverted().Transform(tExit);
+            var transform = tEnter.Inverted().Transform(tExit);
+            return transform.WithRotation((float)MathEx.ValueWrap(transform.Rotation, MathEx.Tau));
         }
 
         public static LineF[] GetFovLines(this IPortalRenderable portal, Vector2 origin, float distance)
