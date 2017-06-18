@@ -72,7 +72,7 @@ namespace GameTests
         [Test]
         public void RotationRoundingBug()
         {
-            var player = new Player(new Transform2i(gridRotation: new GridAngle(5)), 0);
+            var player = new Player(new Transform2i(gridRotation: new GridAngle(5)), 0, new Vector2i());
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), player, new List<Block>());
 
             scene.Step(new Input(new GridAngle()));
@@ -81,18 +81,51 @@ namespace GameTests
             Assert.AreEqual(5 * Math.PI / 2, scene.CurrentInstant.Entities[player].Transform.Angle, 0.0000001);
         }
 
-        [Test]
-        public void BoxIsPushedForwardInTime()
+        public TimePortal[] CreateTwoPortals(int timeOffset = 5)
         {
             var portal0 = new TimePortal(new Vector2i(1, 0), GridAngle.Right);
             var portal1 = new TimePortal(new Vector2i(-10, 0), GridAngle.Left);
 
             portal0.SetLinked(portal1);
-            portal0.SetTimeOffset(5);
+            portal0.SetTimeOffset(timeOffset);
 
+            return new[] { portal0, portal1 };
+        }
+
+        [Test]
+        public void PlayerMovesForwardInTime()
+        {
             var scene = new Scene(
                 new HashSet<Vector2i>(),
-                new[] { portal0, portal1 },
+                CreateTwoPortals(),
+                new Player(new Transform2i(new Vector2i(1, 0)), 0),
+                new List<Block>());
+
+            scene.Step(new Input(GridAngle.Right));
+
+            Assert.AreEqual(6, scene.CurrentInstant.Time);
+        }
+
+        [Test]
+        public void PlayerMovesBackwardInTime()
+        {
+            var scene = new Scene(
+                new HashSet<Vector2i>(),
+                CreateTwoPortals(-5),
+                new Player(new Transform2i(new Vector2i(1, 0)), 0),
+                new List<Block>());
+
+            scene.Step(new Input(GridAngle.Right));
+
+            Assert.AreEqual(-4, scene.CurrentInstant.Time);
+        }
+
+        [Test]
+        public void BoxIsPushedForwardInTime()
+        {
+            var scene = new Scene(
+                new HashSet<Vector2i>(),
+                CreateTwoPortals(),
                 new Player(new Transform2i(), 0),
                 new[] { new Block(new Transform2i(new Vector2i(1, 0)), 0) });
 
@@ -106,7 +139,7 @@ namespace GameTests
             Assert.AreEqual(2, scene.BlockTimelines[0].Path.Count);
             Assert.AreEqual(0, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
 
-            for (int i = 0; i < portal0.TimeOffset - 1; i++)
+            for (int i = 0; i < scene.Portals[0].TimeOffset - 1; i++)
             {
                 scene.Step(new Input(null));
 
@@ -125,15 +158,11 @@ namespace GameTests
         [Test]
         public void BoxIsPushedBackwardInTime()
         {
-            var portal0 = new TimePortal(new Vector2i(1, 0), GridAngle.Right);
-            var portal1 = new TimePortal(new Vector2i(-10, 0), GridAngle.Left);
-
-            portal0.SetLinked(portal1);
-            portal0.SetTimeOffset(-5);
+            var portals = CreateTwoPortals(-5);
 
             var scene = new Scene(
                 new HashSet<Vector2i>(),
-                new[] { portal0, portal1 },
+                portals,
                 new Player(new Transform2i(), 0),
                 new[] { new Block(new Transform2i(new Vector2i(1, 0)), 0) });
 
@@ -147,7 +176,7 @@ namespace GameTests
             Assert.AreEqual(2, scene.BlockTimelines[0].Path.Count);
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
 
-            for (int i = 0; i < portal0.TimeOffset; i++)
+            for (int i = 0; i < portals[0].TimeOffset; i++)
             {
                 scene.Step(new Input(null));
 

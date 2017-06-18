@@ -14,15 +14,18 @@ namespace TimeLoopInc
         [DataMember]
         public Transform2i StartTransform { get; }
         [DataMember]
+        public Vector2i PreviousVelocity { get; }
+        [DataMember]
         public int StartTime { get; }
         [DataMember]
         public int EndTime { get; set; } = int.MaxValue;
         [DataMember]
         public List<Input> Input { get; } = new List<Input>();
 
-        public Player(Transform2i startPosition, int startTime)
+        public Player(Transform2i startPosition, int startTime, Vector2i previousVelocity = new Vector2i())
         {
             StartTransform = startPosition;
+            PreviousVelocity = previousVelocity;
             StartTime = startTime;
         }
 
@@ -31,7 +34,7 @@ namespace TimeLoopInc
             return Input.ElementAtOrDefault(time - StartTime) ?? new Input(null);
         }
 
-        public IGridEntityInstant CreateInstant() => new PlayerInstant(StartTransform);
+        public IGridEntityInstant CreateInstant() => new PlayerInstant(StartTransform, PreviousVelocity);
 
         public IGridEntity DeepClone() => (Player)MemberwiseClone();
     }

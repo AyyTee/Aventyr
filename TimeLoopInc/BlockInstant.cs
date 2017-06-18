@@ -13,9 +13,10 @@ namespace TimeLoopInc
         public Vector2i PreviousVelocity { get; set; }
         public bool IsPushed { get; set; }
 
-        public BlockInstant(Transform2i transform)
+        public BlockInstant(Transform2i transform, Vector2i previousVelocity = new Vector2i())
         {
             Transform = transform;
+            PreviousVelocity = previousVelocity;
         }
 
         public IGridEntityInstant DeepClone() => (BlockInstant)MemberwiseClone();

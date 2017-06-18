@@ -134,7 +134,7 @@ namespace TimeLoopInc
                         {
                             nextInstant.Entities.Remove(player);
                             player.EndTime = nextInstant.Time;
-                            timeline.Add(new Player(playerInstant.Transform, result.Time + 1));
+                            timeline.Add(new Player(playerInstant.Transform, result.Time + 1, result.Velocity));
                             earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
                             InvalidateCache(result.Time);
 
@@ -174,7 +174,7 @@ namespace TimeLoopInc
                             {
                                 nextInstant.Entities.Remove(block);
                                 block.EndTime = nextInstant.Time;
-                                timeline.Add(new Block(blockInstant.Transform, result.Time + 1));
+                                timeline.Add(new Block(blockInstant.Transform, result.Time + 1, result.Velocity));
                                 earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
                                 InvalidateCache(result.Time);
                             }

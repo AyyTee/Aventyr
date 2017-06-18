@@ -20,7 +20,7 @@ namespace TimeLoopInc
         SceneRender _sceneRender;
         List<Input> _input = new List<Input>();
         int _updatesSinceLastStep = 0;
-        int _updatesPerAnimation = 5;
+        int _updatesPerAnimation => _window.ButtonDown(KeyBoth.Control) ? 50 : 5;
 
         public Controller(IVirtualWindow window)
         {
@@ -50,7 +50,7 @@ namespace TimeLoopInc
                 //new Vector2i(1, 2),
                 new Vector2i(1, 4),
             };
-            var player = new Player(new Transform2i(), 0);
+            var player = new Player(new Transform2i(), 0, new Vector2i());
 
             var portal0 = new TimePortal(new Vector2i(2, 0), GridAngle.Right);
             var portal1 = new TimePortal(new Vector2i(-3, 2), GridAngle.Down);

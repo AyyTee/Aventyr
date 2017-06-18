@@ -19,17 +19,20 @@ namespace TimeLoopInc
         [DataMember]
         public Transform2i StartTransform { get; }
         [DataMember]
+        public Vector2i PreviousVelocity { get; }
+        [DataMember]
         public int StartTime { get; }
         [DataMember]
         public int EndTime { get; set; } = int.MaxValue;
 
-        public Block(Transform2i startTransform, int startTime)
+        public Block(Transform2i startTransform, int startTime, Vector2i previousVelocity = new Vector2i())
         {
             StartTransform = startTransform;
+            PreviousVelocity = previousVelocity;
             StartTime = startTime;
         }
 
-        public IGridEntityInstant CreateInstant() => new BlockInstant(StartTransform);
+        public IGridEntityInstant CreateInstant() => new BlockInstant(StartTransform, PreviousVelocity);
 
         public IGridEntity DeepClone() => (Block)MemberwiseClone();
 

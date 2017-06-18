@@ -12,9 +12,10 @@ namespace TimeLoopInc
         public Transform2i Transform { get; set; }
         public Vector2i PreviousVelocity { get; set; }
 
-        public PlayerInstant(Transform2i transform)
+        public PlayerInstant(Transform2i transform, Vector2i previousVelocity = new Vector2i())
         {
             Transform = transform;
+            PreviousVelocity = previousVelocity;
         }
 
         public IGridEntityInstant DeepClone() => (PlayerInstant)MemberwiseClone();
