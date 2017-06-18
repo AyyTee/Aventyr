@@ -96,7 +96,7 @@ namespace TimeLoopInc
                 for (int i = key; i < time; i++)
                 {
                     instant = _step(instant);
-                    _cachedInstants[i + 1] = instant;
+                    _cachedInstants[instant.Time] = instant;
                 }
                 return instant;
             }

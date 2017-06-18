@@ -53,7 +53,7 @@ namespace TimeLoopInc
             var player = new Player(new Transform2i(), 0, new Vector2i());
 
             var portal0 = new TimePortal(new Vector2i(2, 0), GridAngle.Right);
-            var portal1 = new TimePortal(new Vector2i(-3, 2), GridAngle.Down);
+            var portal1 = new TimePortal(new Vector2i(0, 0), GridAngle.Down);
             //var portal2 = new TimePortal(new Vector2i(2, 2), GridAngle.Right);
             //var portal3 = new TimePortal(new Vector2i(-3, 0), GridAngle.Left);
             portal0.SetLinked(portal1);
@@ -73,7 +73,7 @@ namespace TimeLoopInc
             var blocks = new[] {
                 //new Block(new Transform2i(new Vector2i(2, 0)), 0),
                 //new Block(new Transform2i(new Vector2i(2, 1)), 1),
-                new Block(new Transform2i(new Vector2i(2, 2)), 2),
+                new Block(new Transform2i(new Vector2i(2, 2)), 0),
             };
 
             _scene = new Scene(Walls, Portals, player, blocks);

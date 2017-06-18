@@ -40,9 +40,13 @@ namespace TimeLoopInc
 
             var cameraTransform = new Transform2().WithSize(25 * _zoomFactor);
             var cameraVelocity = new Vector2();
-            if (_scene.CurrentInstant.Entities.GetOrDefault(_scene.CurrentPlayer) != null)
+
+            var playerInstant = _scene.CurrentInstant.Entities.GetOrDefault(_scene.CurrentPlayer);
+            if (playerInstant != null)
             {
-                cameraTransform = GridEntityWorldPosition(_scene.CurrentInstant, _scene.CurrentPlayer, t).WithSize(25 * _zoomFactor);
+                cameraTransform = GridEntityWorldPosition(_scene.CurrentInstant, _scene.CurrentPlayer, t, _scene.Portals.Cast<IPortalRenderable>())
+                    .WithSize(25 * _zoomFactor);
+
                 cameraVelocity = t == 0 || t == 1 ?
                     new Vector2() :
                     (Vector2)_scene.CurrentInstant.Entities[_scene.CurrentPlayer].PreviousVelocity;
@@ -52,6 +56,13 @@ namespace TimeLoopInc
 
             var portalView = PortalView.CalculatePortalViews(0, _scene.Portals, worldCamera, 30);
             RenderPortalView(portalView, worldLayer, _scene.CurrentInstant.Time, t, 0);
+
+            if (playerInstant != null)
+            {
+                worldCamera.WorldTransform = GridEntityWorldPosition(_scene.CurrentInstant, _scene.CurrentPlayer, t, worldLayer.Portals)
+                    .WithSize(25 * _zoomFactor);
+            }
+            
 
             worldCamera.WorldVelocity = worldCamera.WorldVelocity.WithPosition(cameraVelocity / 6f);
             worldLayer.Camera = worldCamera;
@@ -107,6 +118,9 @@ namespace TimeLoopInc
             var exit = new SimplePortal(
                 view.PortalEntrance.Linked.WorldTransform.AddPosition(exitOffset));
 
+            entrance.OneSided = view.PortalEntrance.OneSided;
+            exit.OneSided = view.PortalEntrance.Linked.OneSided;
+
             exit.Linked = entrance;
             entrance.Linked = exit;
             worldLayer.Portals.AddRange(new[] { entrance, exit });
@@ -120,7 +134,8 @@ namespace TimeLoopInc
 
             foreach (var gridEntity in sceneInstant.Entities.Keys.OfType<IGridEntity>())
             {
-                var transform = GridEntityWorldPosition(sceneInstant, gridEntity, t);
+                //var transform = GridEntityWorldPosition(sceneInstant, gridEntity, t);
+                var transform = (Transform2)sceneInstant[gridEntity].Transform.ToTransform2d().AddPosition(new Vector2d(0.5));
 
                 Renderable renderable = null;
                 switch (gridEntity)
@@ -159,13 +174,13 @@ namespace TimeLoopInc
             return output;
         }
 
-        Transform2 GridEntityWorldPosition(SceneInstant sceneInstant, IGridEntity gridEntity, float t)
+        Transform2 GridEntityWorldPosition(SceneInstant sceneInstant, IGridEntity gridEntity, float t, IEnumerable<IPortalRenderable> portals)
         {
             var offset = Vector2d.One / 2;
             var velocity = (Vector2)sceneInstant[gridEntity].PreviousVelocity;
             var transform = sceneInstant[gridEntity].Transform.ToTransform2d();
             transform = transform.WithPosition(transform.Position + offset);
-            var result = Ray.RayCast((Transform2)transform, new Transform2(-velocity * (1 - t)), _scene.Portals, new Ray.Settings());
+            var result = Ray.RayCast((Transform2)transform, new Transform2(-velocity * (1 - t)), portals, new Ray.Settings());
 
             return result.WorldTransform;
         }

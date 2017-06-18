@@ -232,5 +232,36 @@ namespace GameTests
             var expected = new Transform2i(new Vector2i(-10, 0), GridAngle.Left, 1, true);
             Assert.AreEqual(expected, result.Transform);
         }
+
+        [Test]
+        public void GetInstantTest()
+        {
+            var player = new Player(new Transform2i(), 0, new Vector2i());
+
+            var portal0 = new TimePortal(new Vector2i(2, 0), GridAngle.Right);
+            var portal1 = new TimePortal(new Vector2i(0, 0), GridAngle.Left);
+            portal0.SetLinked(portal1);
+            portal0.SetTimeOffset(10);
+
+            var Portals = new[]
+            {
+                portal0,
+                portal1,
+            };
+
+            var blocks = new[] {
+                new Block(new Transform2i(new Vector2i(2, 2)), 0),
+            };
+
+            var scene = new Scene(new HashSet<Vector2i>(), Portals, player, blocks);
+
+            scene.Step(new Input(GridAngle.Left));
+
+            Assert.AreEqual(-9, scene.CurrentInstant.Time);
+
+            var instant = scene.GetStateInstant(1);
+
+            Assert.AreEqual(1, instant.Entities.Keys.OfType<Block>().Count());
+        }
     }
 }
