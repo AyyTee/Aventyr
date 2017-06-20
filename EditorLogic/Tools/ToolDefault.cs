@@ -278,8 +278,8 @@ namespace EditorLogic.Tools
             else if (_mode == Mode.Rotate)
             {
                 double angle, anglePrev;
-                angle = MathEx.VectorToAngle(mousePos - _translator.WorldTransform.Position);
-                anglePrev = MathEx.VectorToAngle(_mousePosPrev - _translator.WorldTransform.Position);
+                angle = MathEx.VectorToAngleReversed(mousePos - _translator.WorldTransform.Position);
+                anglePrev = MathEx.VectorToAngleReversed(_mousePosPrev - _translator.WorldTransform.Position);
                 
                 if (Input.ButtonDown(KeyBoth.Control))
                 {

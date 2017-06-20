@@ -195,10 +195,12 @@ namespace Game.Portals
         /// <summary>Returns matrix to transform between one portals coordinate space to another.</summary>
         public static Matrix4 GetLinkedMatrix(IPortalRenderable portalEnter, IPortalRenderable portalExit)
         {
-            Transform2 transform = portalExit.WorldTransform;
-            transform = transform.WithMirrorX(!transform.MirrorX);
-            Matrix4 m = portalEnter.WorldTransform.GetMatrix();
-            return m.Inverted() * transform.GetMatrix();
+            Transform2 transform = portalExit.WorldTransform
+                .FlipMirrorX();
+            Matrix4 m = portalEnter.WorldTransform
+                .GetMatrix()
+                .Inverted();
+            return m * transform.GetMatrix();
         }
 
         public static Transform2 GetLinkedTransform(this IPortalRenderable portalEnter)
@@ -209,11 +211,12 @@ namespace Game.Portals
 
         public static Transform2 GetLinkedTransform(IPortalRenderable portalEnter, IPortalRenderable portalExit)
         {
-            Transform2 tExit = portalExit.WorldTransform;
-            tExit = tExit.WithMirrorX(!tExit.MirrorX);
-            Transform2 tEnter = portalEnter.WorldTransform;
-            var transform = tEnter.Inverted().Transform(tExit);
-            return transform.WithRotation((float)MathEx.ValueWrap(transform.Rotation, MathEx.Tau));
+            Transform2 tExit = portalExit.WorldTransform
+                .FlipMirrorX();
+            Transform2 tEnter = portalEnter.WorldTransform
+                .Inverted()
+                .Transform(tExit);
+            return tEnter.WithRotation((float)MathEx.ValueWrap(tEnter.Rotation, MathEx.Tau));
         }
 
         public static LineF[] GetFovLines(this IPortalRenderable portal, Vector2 origin, float distance)

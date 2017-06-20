@@ -647,36 +647,34 @@ namespace Game.Common
         }
         #endregion
 
-        public static double LineToAngle(Vector2d v0, Vector2d v1) => VectorToAngle(v1 - v0);
-        
+        public static double LineToAngle(Vector2d v0, Vector2d v1) => VectorToAngleReversed(v1 - v0);
         public static double LineToAngle(Vector2 v0, Vector2 v1) => LineToAngle(new Vector2d(v0.X, v0.Y), new Vector2d(v1.X, v1.Y));
 
-        public static double VectorToAngle(Vector2d v0)
-        {
-            double val = Math.Atan2(v0.X, v0.Y);
-            return double.IsNaN(val) ?
-                0 :
-                (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
-        }
+        public static double VectorToAngleReversed(Vector2d v0) => VectorToAngle(new Vector2d(v0.X, -v0.Y));
+        public static double VectorToAngleReversed(Vector2 v0) => VectorToAngleReversed(new Vector2d(v0.X, v0.Y));
 
-        public static double VectorToAngle(Vector2 v0) => VectorToAngle(new Vector2d(v0.X, v0.Y));
-
-        public static double AngleDiff(Vector2 v0, Vector2 v1) => AngleDiff(VectorToAngle(v0), VectorToAngle(v1));
+        public static double AngleDiff(Vector2 v0, Vector2 v1) => AngleDiff(VectorToAngleReversed(v0), VectorToAngleReversed(v1));
 
         public static double AngleDiff(double angle0, double angle1)
         {
             return ((angle1 - angle0) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI;
         }
 
-        public static Vector2 AngleToVector(float angle)
+        public static Vector2 AngleToVectorReversed(float angle) => AngleToVector(-angle);
+        public static Vector2d AngleToVectorReversed(double angle) => AngleToVector(-angle);
+
+        public static Vector2 AngleToVector(float angle) => (Vector2)AngleToVector((double)angle);
+        public static Vector2d AngleToVector(double angle) => new Vector2d(Math.Cos(angle), Math.Sin(angle));
+
+        public static double VectorToAngle(Vector2d v0)
         {
-            return new Vector2((float)Math.Cos(angle), (float)-Math.Sin(angle));
+            double val = Math.Atan2(v0.X, -v0.Y);
+            return double.IsNaN(val) ?
+                0 :
+                (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
         }
 
-        public static Vector2d AngleToVector(double angle)
-        {
-            return new Vector2d(Math.Cos(angle), -Math.Sin(angle));
-        }
+        public static double VectorToAngle(Vector2 v0) => VectorToAngle(new Vector2d(v0.X, v0.Y));
 
         /// <summary>
         /// Returns the difference between two numbers on a looping numberline.

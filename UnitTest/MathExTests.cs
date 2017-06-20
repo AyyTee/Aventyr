@@ -666,31 +666,91 @@ namespace GameTests
         #endregion
 
         [Test]
+        public void AngleToVectorReversedTest0()
+        {
+            var result = MathEx.VectorToAngleReversed(new Vector2d(1, 0));
+            Assert.IsTrue(MathEx.AngleDiff(0, result) < ErrorMargin);
+        }
+
+        [Test]
+        public void AngleToVectorReversedTest1()
+        {
+            var result = MathEx.VectorToAngleReversed(new Vector2d(0, 1));
+            Assert.AreEqual(-Math.PI / 2, result, ErrorMargin);
+        }
+
+        [Test]
+        public void VectorToAngleReversedTest0()
+        {
+            var result = MathEx.AngleToVectorReversed(0.0);
+            Assert.IsTrue((new Vector2d(1, 0) - result).Length < ErrorMargin);
+        }
+
+        [Test]
+        public void VectorToAngleReversedTest1()
+        {
+            var result = MathEx.AngleToVectorReversed(Math.PI / 2);
+            Assert.IsTrue((new Vector2d(0, -1) - result).Length < ErrorMargin);
+        }
+
+        [Test]
         public void AngleToVectorTest0()
         {
             var result = MathEx.VectorToAngle(new Vector2d(1, 0));
-            Assert.AreEqual(0, result);
+            Assert.IsTrue(MathEx.AngleDiff(0, result) < ErrorMargin);
         }
 
         [Test]
         public void AngleToVectorTest1()
         {
-            var result = MathEx.VectorToAngle(new Vector2d(0, -1));
-            Assert.AreEqual(Math.PI / 2, result, 0.0000001);
+            var result = MathEx.VectorToAngle(new Vector2d(0, 1));
+            Assert.AreEqual(Math.PI / 2, result, ErrorMargin);
         }
 
         [Test]
         public void VectorToAngleTest0()
         {
             var result = MathEx.AngleToVector(0.0);
-            Assert.IsTrue((new Vector2d(1, 0) - result).Length < 0.00001);
+            Assert.IsTrue((new Vector2d(1, 0) - result).Length < ErrorMargin);
         }
 
         [Test]
         public void VectorToAngleTest1()
         {
             var result = MathEx.AngleToVector(Math.PI / 2);
-            Assert.IsTrue((new Vector2d(0, -1) - result).Length < 0.00001);
+            Assert.IsTrue((new Vector2d(0, 1) - result).Length < ErrorMargin);
+        }
+
+        [Test]
+        public void AngleMatchesRotationMatrixTest0()
+        {
+            var angle = (float)Math.PI / 2;
+            var matrix = Matrix4.CreateRotationZ(angle);
+
+            var v = new Vector2(1, 0);
+
+            var vRotated = Vector2Ex.Transform(v, matrix);
+
+            var result = MathEx.VectorToAngle(vRotated);
+            Assert.AreEqual(0, MathEx.AngleDiff(angle, result), ErrorMargin);
+        }
+
+        [Test]
+        public void AngleMatchesRotationMatrixTest1()
+        {
+            int count = 1000;
+            for (int i = 0; i < count; i++)
+            {
+                var angle = i / (MathEx.Tau * count);
+                var matrix = Matrix4.CreateRotationZ((float)angle);
+
+                var v = new Vector2(1, 0);
+
+                var vRotated = Vector2Ex.Transform(v, matrix);
+
+                var result = MathEx.VectorToAngle(vRotated);
+                Assert.AreEqual(0, MathEx.AngleDiff(angle, result), ErrorMargin);
+            }
         }
 
         [Test]
@@ -710,6 +770,47 @@ namespace GameTests
         {
             var result = MathEx.ValueWrap(value, 10);
             Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void AngleDiffTest0()
+        {
+            var angle0 = 0;
+            var angle1 = MathEx.Tau;
+
+            var result = MathEx.AngleDiff(angle0, angle1);
+            Assert.AreEqual(0, result, ErrorMargin);
+        }
+
+        [Test]
+        public void AngleDiffTest1()
+        {
+            var angle0 = 0;
+            var angle1 = MathEx.Tau;
+
+            var result = MathEx.AngleDiff(angle1, angle0);
+            Assert.AreEqual(0, result, ErrorMargin);
+        }
+
+        [Test]
+        public void AngleDiffTest2()
+        {
+            var angle0 = MathEx.Tau / 4;
+            var angle1 = MathEx.Tau;
+
+            var result = MathEx.AngleDiff(angle1, angle0);
+            Assert.AreEqual(angle0, result, ErrorMargin);
+        }
+
+        [Test]
+        public void AngleDiffTest3()
+        {
+            var angle0 = MathEx.Tau / 4;
+            var angle1 = 3 * MathEx.Tau / 4;
+
+            var result = MathEx.AngleDiff(angle1, angle0);
+
+            Assert.AreEqual(MathEx.Tau / 2, Math.Abs(result), ErrorMargin);
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Game.Common
         }
 
         public LineF(Vector2 start, float direction, float length)
-            : this(start, start + (Vector2)MathEx.AngleToVector(direction) * length)
+            : this(start, start + (Vector2)MathEx.AngleToVectorReversed(direction) * length)
         {
         }
         #endregion
@@ -122,10 +122,10 @@ namespace Game.Common
                 return false;
             }
             //Check if the lookPoint is within the Fov angles.
-            double angle0 = MathEx.VectorToAngle(_vertices[0] - viewPoint);
-            double angle1 = MathEx.VectorToAngle(_vertices[1] - viewPoint);
+            double angle0 = MathEx.VectorToAngleReversed(_vertices[0] - viewPoint);
+            double angle1 = MathEx.VectorToAngleReversed(_vertices[1] - viewPoint);
             double angleDiff = MathEx.AngleDiff(angle0, angle1);
-            double angleLook = MathEx.VectorToAngle(v - viewPoint);
+            double angleLook = MathEx.VectorToAngleReversed(v - viewPoint);
             double angleLookDiff = MathEx.AngleDiff(angle0, angleLook);
             if (Math.Abs(angleDiff) >= Math.Abs(angleLookDiff) && Math.Sign(angleDiff) == Math.Sign(angleLookDiff))
             {
@@ -158,12 +158,12 @@ namespace Game.Common
             }
 
             // Check if the lookPoint is within the Fov angles.
-            double angle0 = MathEx.VectorToAngle(_vertices[0] - viewPoint);
-            double angle1 = MathEx.VectorToAngle(_vertices[1] - viewPoint);
+            double angle0 = MathEx.VectorToAngleReversed(_vertices[0] - viewPoint);
+            double angle1 = MathEx.VectorToAngleReversed(_vertices[1] - viewPoint);
             double angleDiff = MathEx.AngleDiff(angle0, angle1);
-            double angleLook = MathEx.VectorToAngle(line[0] - viewPoint);
+            double angleLook = MathEx.VectorToAngleReversed(line[0] - viewPoint);
             double angleLookDiff = MathEx.AngleDiff(angle0, angleLook);
-            double angleLook2 = MathEx.VectorToAngle(line[1] - viewPoint);
+            double angleLook2 = MathEx.VectorToAngleReversed(line[1] - viewPoint);
             double angleLookDiff2 = MathEx.AngleDiff(angle0, angleLook2);
             // Check if the first point is in the Fov
             if (Math.Abs(angleDiff) >= Math.Abs(angleLookDiff) && Math.Sign(angleDiff) == Math.Sign(angleLookDiff))

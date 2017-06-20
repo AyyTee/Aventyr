@@ -215,7 +215,7 @@ namespace Game.Common
             for (int i = 0; i < sides; i++)
             {
                 double angle = (MathEx.Tau * i) / sides;
-                vertices[i] = (Vector2)MathEx.AngleToVector(-angle) * scale + origin;
+                vertices[i] = (Vector2)MathEx.AngleToVectorReversed(-angle) * scale + origin;
             }
             Debug.Assert(PolygonEx.IsInterior(vertices));
             return vertices;

@@ -47,10 +47,7 @@ namespace Game.Portals
             }
         }
 
-        public static bool IsRoot(IPortalCommon instance)
-        {
-            return instance.Parent == null;
-        }
+        public static bool IsRoot(IPortalCommon instance) => instance.Parent == null;
 
         /// <summary>
         /// Is true if the IPortalCommon is located somewhere (as oppsed to having a null position).

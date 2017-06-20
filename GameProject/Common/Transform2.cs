@@ -149,6 +149,7 @@ namespace Game.Common
         public Transform2 AddPosition(Vector2 position) => new Transform2(position + Position, Rotation, Size, MirrorX);
         public Transform2 AddRotation(float rotation) => new Transform2(Position, rotation + Rotation, Size, MirrorX);
         public Transform2 AddSize(float size) => new Transform2(Position, Rotation, size + Size, MirrorX);
+        public Transform2 FlipMirrorX() => new Transform2(Position, Rotation, Size, !MirrorX);
 
         public Transform2 SetScale(Vector2 scale)
         {

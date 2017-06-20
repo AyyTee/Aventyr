@@ -168,7 +168,7 @@ namespace TankGame
             float turretSpeed = 1.5f;
 
             Transform2 t = Turret.WorldTransform;
-            double angle = MathEx.AngleDiff(t.Rotation, -MathEx.VectorToAngle(Input.ReticlePos - t.Position)); 
+            double angle = MathEx.AngleDiff(t.Rotation, -MathEx.VectorToAngleReversed(Input.ReticlePos - t.Position)); 
 
             Transform2 tLocal = Turret.GetVelocity()
                 .WithRotation(Math.Sign(angle) * (float)Math.Min(turretSpeed, Math.Abs(angle / stepSize)));
