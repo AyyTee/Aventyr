@@ -22,7 +22,7 @@ namespace GameTests
         public void VectorMatchesAngle(int angle)
         {
             var gridAngle = new GridAngle(angle);
-            var v = MathEx.AngleToVectorReversed(gridAngle.Radians);
+            var v = MathEx.AngleToVector(gridAngle.Radians);
             Assert.IsTrue((v - (Vector2d)gridAngle.Vector).Length < 0.0001);
         }
     }

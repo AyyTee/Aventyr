@@ -21,19 +21,19 @@ namespace TimeLoopInc
         {
             if (window.ButtonPress(Key.W))
             {
-                return new Input(new GridAngle(3));
+                return new Input(GridAngle.Up);
             }
             if (window.ButtonPress(Key.S))
             {
-                return new Input(new GridAngle(1));
+                return new Input(GridAngle.Down);
             }
             if (window.ButtonPress(Key.A))
             {
-                return new Input(new GridAngle(2));
+                return new Input(GridAngle.Left);
             }
             if (window.ButtonPress(Key.D))
             {
-                return new Input(new GridAngle(0));
+                return new Input(GridAngle.Right);
             }
             if (window.ButtonPress(Key.Space))
             {

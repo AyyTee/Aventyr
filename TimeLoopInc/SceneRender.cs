@@ -51,11 +51,14 @@ namespace TimeLoopInc
                     new Vector2() :
                     (Vector2)_scene.CurrentInstant.Entities[_scene.CurrentPlayer].PreviousVelocity;
             }
-           
+            
             var worldCamera = new GridCamera(cameraTransform, (float)window.CanvasSize.XRatio);
 
             var portalView = PortalView.CalculatePortalViews(0, _scene.Portals, worldCamera, 30);
-            RenderPortalView(portalView, worldLayer, _scene.CurrentInstant.Time, t, 0);
+
+            // We need to render portals first so that we can place entities clipping the portals correctly.
+            RenderPortalView(portalView, worldLayer, _scene.CurrentInstant.Time, t, 0, true);
+            RenderPortalView(portalView, worldLayer, _scene.CurrentInstant.Time, t, 0, false);
 
             if (playerInstant != null)
             {
@@ -70,21 +73,34 @@ namespace TimeLoopInc
             window.Layers.Add(worldLayer);
         }
 
-        int RenderPortalView(PortalView portalView, Layer worldLayer, int time, float t, int offsetCount)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="portalView"></param>
+        /// <param name="worldLayer"></param>
+        /// <param name="time"></param>
+        /// <param name="t"></param>
+        /// <param name="offsetCount"></param>
+        /// <param name="renderPortals">If true, portals are rendered. If false, everything else is rendered.</param>
+        /// <returns></returns>
+        int RenderPortalView(PortalView portalView, Layer worldLayer, int time, float t, int offsetCount, bool renderPortals)
         {
             Debug.Assert((offsetCount == 0) == (portalView.PortalEntrance == null));
-            var renderables = RenderInstant(_scene.GetStateInstant(time), t);
 
             var offset = GetOffset(offsetCount);
-            foreach (var renderable in renderables)
+            if (!renderPortals)
             {
-                if (portalView.PortalEntrance != null)
+                var renderables = RenderInstant(_scene.GetStateInstant(time), t, worldLayer.Portals);
+                foreach (var renderable in renderables)
                 {
-                    renderable.WorldTransform = renderable.WorldTransform.AddPosition(offset);
+                    if (portalView.PortalEntrance != null)
+                    {
+                        renderable.WorldTransform = renderable.WorldTransform.AddPosition(offset);
+                    }
                 }
+                worldLayer.Renderables.AddRange(renderables);
             }
-            worldLayer.Renderables.AddRange(renderables);
-
+            
             var offsetCountNext = offsetCount;
 
             foreach (var view in portalView.Children)
@@ -93,19 +109,25 @@ namespace TimeLoopInc
                 // If there isn't any time offset then we can skip rendering a duplicate of the scene.
                 if (time == timeNext)
                 {
-                    var entranceIndex = portalView.Children.IndexOf(view);
-                    var exitIndex = portalView.Children.IndexOfFirstOrNull(item => item.PortalEntrance == view.PortalEntrance.Linked);
-                    Debug.Assert(entranceIndex != exitIndex);
-                    if (exitIndex != null && entranceIndex < exitIndex)
+                    if (renderPortals)
                     {
-                        AddViewPortals(view, worldLayer, offset, offset);
+                        var entranceIndex = portalView.Children.IndexOf(view);
+                        var exitIndex = portalView.Children.IndexOfFirstOrNull(item => item.PortalEntrance == view.PortalEntrance.Linked);
+                        Debug.Assert(entranceIndex != exitIndex);
+                        if (exitIndex != null && entranceIndex < exitIndex)
+                        {
+                            AddViewPortals(view, worldLayer, offset, offset);
+                        }
                     }
                 }
                 else
                 {
                     offsetCountNext++;
-                    AddViewPortals(view, worldLayer, offset, GetOffset(offsetCountNext));
-                    offsetCountNext = RenderPortalView(view, worldLayer, timeNext, t, offsetCountNext);
+                    if (renderPortals)
+                    {
+                        AddViewPortals(view, worldLayer, offset, GetOffset(offsetCountNext));
+                    }
+                    offsetCountNext = RenderPortalView(view, worldLayer, timeNext, t, offsetCountNext, renderPortals);
                 }
             }
             return offsetCountNext;
@@ -128,14 +150,14 @@ namespace TimeLoopInc
 
         Vector2 GetOffset(int offsetCount) => new Vector2((offsetCount % 2) * 100, (offsetCount / 2) * 100);
 
-        List<Renderable> RenderInstant(SceneInstant sceneInstant, float t)
+        List<Renderable> RenderInstant(SceneInstant sceneInstant, float t, IEnumerable<IPortalRenderable> portals)
         {
             var output = new List<Renderable>();
 
             foreach (var gridEntity in sceneInstant.Entities.Keys.OfType<IGridEntity>())
             {
-                //var transform = GridEntityWorldPosition(sceneInstant, gridEntity, t);
-                var transform = (Transform2)sceneInstant[gridEntity].Transform.ToTransform2d().AddPosition(new Vector2d(0.5));
+                var transform = GridEntityWorldPosition(sceneInstant, gridEntity, t, portals);
+                //var transform = (Transform2)sceneInstant.Entities[gridEntity].Transform.ToTransform2d().AddPosition(new Vector2d(0.5));
 
                 Renderable renderable = null;
                 switch (gridEntity)

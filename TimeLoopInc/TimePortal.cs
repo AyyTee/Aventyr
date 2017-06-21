@@ -19,7 +19,7 @@ namespace TimeLoopInc
         public TimePortal Linked { get; private set; }
         public GridAngle Direction { get; }
         IPortalRenderable IPortalRenderable.Linked => Linked;
-        public bool OneSided => false;
+        public bool OneSided => true;
 
         public Transform2 WorldTransform => new Transform2(
             (Vector2)Position + (Vector2.One + (Vector2)Direction.Vector) * 0.5f,
