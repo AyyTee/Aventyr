@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 
 namespace TimeLoopInc
 {
@@ -18,7 +19,16 @@ namespace TimeLoopInc
         [DataMember]
         public int StartTime { get; }
         [DataMember]
-        public int EndTime { get; set; } = int.MaxValue;
+        int _endTime = int.MaxValue;
+        public int EndTime
+        {
+            get { return _endTime; }
+            set
+            {
+                Debug.Assert(value >= StartTime);
+                _endTime = value;
+            }
+        }
         [DataMember]
         public List<Input> Input { get; } = new List<Input>();
 

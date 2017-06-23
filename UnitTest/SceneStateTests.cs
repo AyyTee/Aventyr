@@ -263,5 +263,24 @@ namespace GameTests
 
             Assert.AreEqual(1, instant.Entities.Keys.OfType<Block>().Count());
         }
+
+        [Test]
+        public void PushBlockThroughPortal()
+        {
+            var player = new Player(new Transform2i(new Vector2i(-10, 0)), 0);
+            var block = new Block(new Transform2i(new Vector2i(1, 0)), 0);
+
+            var scene = new Scene(
+                new HashSet<Vector2i>(), 
+                CreateTwoPortals(-5),
+                player, 
+                new[] { block });
+
+            scene.Step(new Input(GridAngle.Left));
+
+            Assert.AreEqual(6, scene.CurrentInstant.Time);
+            Assert.AreEqual(new Vector2i(1, 0), scene.CurrentInstant.Entities[scene.CurrentPlayer].Transform.Position);
+            Assert.AreEqual(new Vector2i(0, 0), scene.CurrentInstant.Entities[block].Transform.Position);
+        }
     }
 }

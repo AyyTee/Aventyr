@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -9,16 +10,17 @@ using System.Threading.Tasks;
 namespace Game.Common
 {
     [DataContract]
+    [DebuggerDisplay("{ToString()}")]
     public struct Vector2i
     {
         [DataMember]
-        public int X, Y;
+        public int X { get; }
+        [DataMember]
+        public int Y { get; }
 
         /// <summary>
         /// Returns the ratio of X to Y.
         /// </summary>
-        /// <param name="Vector2i"></param>
-        /// <returns></returns>
         public double XRatio => X / (double)Y;
 
         public Vector2i(int x, int y)
@@ -50,6 +52,8 @@ namespace Game.Common
         public static explicit operator Vector2i(Vector2 v) => new Vector2i((int)v.X, (int)v.Y);
         public static explicit operator Vector2d(Vector2i v) => new Vector2d(v.X, v.Y);
         public static explicit operator Vector2i(Vector2d v) => new Vector2i((int)v.X, (int)v.Y);
+
+        public override string ToString() => $"({X},{Y})";
 
         public override bool Equals(object obj)
         {

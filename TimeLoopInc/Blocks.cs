@@ -23,7 +23,16 @@ namespace TimeLoopInc
         [DataMember]
         public int StartTime { get; }
         [DataMember]
-        public int EndTime { get; set; } = int.MaxValue;
+        int _endTime = int.MaxValue;
+        public int EndTime
+        {
+            get { return _endTime; }
+            set
+            {
+                Debug.Assert(value >= StartTime);
+                _endTime = value;
+            }
+        }
 
         public Block(Transform2i startTransform, int startTime, Vector2i previousVelocity = new Vector2i())
         {

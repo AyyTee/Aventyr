@@ -53,7 +53,7 @@ namespace TimeLoopInc
             var player = new Player(new Transform2i(), 0, new Vector2i());
 
             var portal0 = new TimePortal(new Vector2i(2, 0), GridAngle.Right);
-            var portal1 = new TimePortal(new Vector2i(0, 0), GridAngle.Down);
+            var portal1 = new TimePortal(new Vector2i(0, 1), GridAngle.Up);
             //var portal2 = new TimePortal(new Vector2i(2, 2), GridAngle.Right);
             //var portal3 = new TimePortal(new Vector2i(-3, 0), GridAngle.Left);
             portal0.SetLinked(portal1);
@@ -112,9 +112,38 @@ namespace TimeLoopInc
 
         void DrawTimeline(IRenderLayer layer)
         {
-            Vector2 topLeft = new Vector2(50, 100);
+            Vector2 topLeft = new Vector2(50, 50 + 50 * _window.DpiScale);
             Vector2 bottomRight = new Vector2(_window.CanvasSize.X - 50, 50);
+
+            Vector2 gridSize = new Vector2(50, 20) * _window.DpiScale;
+
             layer.DrawRectangle(topLeft, bottomRight, new Color4(0.8f, 0.8f, 0.8f, 0.8f));
+
+            Vector2 start = new Vector2();
+            var count = _scene.PlayerTimeline.Path.Count;
+            for (int i = 0; i < count; i++)
+            {
+                var entity = _scene.PlayerTimeline.Path[i];
+                
+                Vector2 end = new Vector2();
+
+                start.X = entity.StartTime * gridSize.X;
+                if (i > 0 && entity.StartTime < _scene.PlayerTimeline.Path[i - 1].EndTime)
+                {
+                    start.Y -= 1;
+                }
+
+                end.X = entity.EndTime;
+                if (i + 1 == count)
+                {
+                    end.X = _scene.CurrentInstant.Time;
+                }
+
+                end.Y = start.Y - 1;
+                
+                layer.DrawRectangle(topLeft + start * gridSize, topLeft + end * gridSize, new Color4(0.8f, 0.8f, 0f, 1f));
+            }
+            
         }
     }
 }

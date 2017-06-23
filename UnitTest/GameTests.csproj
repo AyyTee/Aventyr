@@ -112,6 +112,7 @@
     <Compile Include="BodyExTests.cs" />
     <Compile Include="SceneStateTests.cs" />
     <Compile Include="Vector2ExTests.cs" />
+    <Compile Include="Vector2iTests.cs" />
     <Compile Include="VertexTests.cs" />
   </ItemGroup>
   <ItemGroup>

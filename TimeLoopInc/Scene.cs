@@ -157,6 +157,7 @@ namespace TimeLoopInc
                 {
                     var adjacent = nextInstant[block].Transform.Position - directions[i].Vector;
                     var pushes = nextInstant.Entities.Values
+                        .Concat(GetEntitiesCreated(nextInstant.Time + 1).Select(item => item.CreateInstant()))
                         .OfType<PlayerInstant>()
                         .Where(item => item.Transform.Position - item.PreviousVelocity == adjacent && item.Transform.Position == nextInstant[block].Transform.Position);
 
@@ -188,17 +189,27 @@ namespace TimeLoopInc
                 return GetStateInstant(nextInstant.Time + 1);   
             }
 
-            foreach (var entity in Timelines.SelectMany(item => item.Path))
+            foreach (var entity in GetEntitiesCreated(nextInstant.Time + 1))
             {
-                if (entity.StartTime == nextInstant.Time + 1)
-                {
-                    nextInstant.Entities.Add(entity, entity.CreateInstant());
-                }
+                nextInstant.Entities.Add(entity, entity.CreateInstant());
             }
 
             nextInstant.Time++;
 
             return nextInstant;
+        }
+
+        public List<IGridEntity> GetEntitiesCreated(int time)
+        {
+            var list = new List<IGridEntity>();
+            foreach (var entity in Timelines.SelectMany(item => item.Path))
+            {
+                if (entity.StartTime == time)
+                {
+                    list.Add(entity);
+                }
+            }
+            return list;
         }
 
         public (Transform2i Transform, Vector2i Velocity, int Time) Move(Transform2i transform, Vector2i velocity, int time)
