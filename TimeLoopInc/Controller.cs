@@ -18,6 +18,7 @@ namespace TimeLoopInc
         readonly IVirtualWindow _window;
         Scene _scene;
         SceneRender _sceneRender;
+        TimelineRender _timelineRender;
         List<Input> _input = new List<Input>();
         int _updatesSinceLastStep = 0;
         int _updatesPerAnimation => _window.ButtonDown(KeyBoth.Control) ? 50 : 5;
@@ -26,20 +27,6 @@ namespace TimeLoopInc
         {
             _window = window;
             Initialize();
-        }
-
-        public void Render(double timeDelta)
-        {
-            _sceneRender.Render(_window, _updatesSinceLastStep, _updatesPerAnimation);
-
-            var gui = new Layer
-            {
-                DepthTest = false,
-                Camera = new HudCamera2(_window.CanvasSize)
-            };
-            DrawTimeline(gui);
-            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, _window.CanvasSize.Y), "Time: " + _scene.CurrentInstant.Time.ToString());
-            _window.Layers.Add(gui);
         }
 
         public void Initialize()
@@ -77,7 +64,27 @@ namespace TimeLoopInc
             };
 
             _scene = new Scene(Walls, Portals, player, blocks);
-            _sceneRender = new SceneRender(_scene);
+            _sceneRender = new SceneRender(_window, _scene);
+            _timelineRender = new TimelineRender(_scene);
+        }
+
+        public void Render(double timeDelta)
+        {
+            _window.Layers.Clear();
+            var worldLayer = _sceneRender.Render(_updatesSinceLastStep, _updatesPerAnimation);
+            _window.Layers.Add(worldLayer);
+
+            var gui = new Layer
+            {
+                DepthTest = false,
+                Camera = new HudCamera2(_window.CanvasSize)
+            };
+            _timelineRender.Render(gui, new Vector2(50, 100), new Vector2(_window.CanvasSize.X - 50, 50), _window.DpiScale);
+            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, _window.CanvasSize.Y), "Time: " + _scene.CurrentInstant.Time.ToString());
+
+            
+            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, _window.CanvasSize.Y - 30), _sceneRender.GetMouseGrid().ToString());
+            _window.Layers.Add(gui);
         }
 
         public void Update(double timeDelta)
@@ -108,42 +115,18 @@ namespace TimeLoopInc
                     _updatesSinceLastStep = 0;
                 }
             }
-        }
 
-        void DrawTimeline(IRenderLayer layer)
-        {
-            Vector2 topLeft = new Vector2(50, 50 + 50 * _window.DpiScale);
-            Vector2 bottomRight = new Vector2(_window.CanvasSize.X - 50, 50);
-
-            Vector2 gridSize = new Vector2(50, 20) * _window.DpiScale;
-
-            layer.DrawRectangle(topLeft, bottomRight, new Color4(0.8f, 0.8f, 0.8f, 0.8f));
-
-            Vector2 start = new Vector2();
-            var count = _scene.PlayerTimeline.Path.Count;
-            for (int i = 0; i < count; i++)
+            if (_window.ButtonPress(MouseButton.Left))
             {
-                var entity = _scene.PlayerTimeline.Path[i];
-                
-                Vector2 end = new Vector2();
-
-                start.X = entity.StartTime * gridSize.X;
-                if (i > 0 && entity.StartTime < _scene.PlayerTimeline.Path[i - 1].EndTime)
+                var pos = _sceneRender.GetMouseGrid();
+                var selected = _scene.CurrentInstant.Entities.Keys
+                    .FirstOrDefault(item => _scene.CurrentInstant.Entities[item].Transform.Position == (Vector2i)pos);
+                if (selected != null)
                 {
-                    start.Y -= 1;
+                    _timelineRender.Timeline = _scene.Timelines
+                        .First(item => item.Path.Contains(selected));
                 }
-
-                end.X = entity.EndTime;
-                if (i + 1 == count)
-                {
-                    end.X = _scene.CurrentInstant.Time;
-                }
-
-                end.Y = start.Y - 1;
-                
-                layer.DrawRectangle(topLeft + start * gridSize, topLeft + end * gridSize, new Color4(0.8f, 0.8f, 0f, 1f));
             }
-            
         }
     }
 }

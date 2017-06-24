@@ -16,14 +16,22 @@ namespace TimeLoopInc
 {
     public class SceneRender
     {
+        readonly IVirtualWindow _window;
         readonly Scene _scene;
         readonly Model _grid;
         float _zoomFactor = 1;
+        GridCamera _camera;
 
-        public SceneRender(Scene scene)
+        public SceneRender(IVirtualWindow window, Scene scene)
         {
             _grid = ModelFactory.CreateGrid(new Vector2i(20, 20), Vector2.One, Color4.HotPink, Color4.LightPink, new Vector3(-10, -10, -2));
+            _window = window;
             _scene = scene;
+        }
+
+        float GetT(int updatesSinceLastStep, int updatesPerAnimation)
+        {
+            return MathHelper.Clamp(updatesSinceLastStep / (float)updatesPerAnimation, 0, 1);
         }
 
         public void Update(IVirtualWindow window)
@@ -31,11 +39,10 @@ namespace TimeLoopInc
             _zoomFactor *= (float)Math.Pow(1.2, -window.MouseWheelDelta());
         }
 
-        public void Render(IVirtualWindow window, int _updatesSinceLastStep, int _updatesPerAnimation)
+        public Layer Render(int _updatesSinceLastStep, int _updatesPerAnimation)
         {
-            float t = MathHelper.Clamp(_updatesSinceLastStep / (float)_updatesPerAnimation, 0, 1);
+            float t = GetT(_updatesSinceLastStep, _updatesPerAnimation);
 
-            window.Layers.Clear();
             var worldLayer = new Layer();
 
             var cameraTransform = new Transform2().WithSize(25 * _zoomFactor);
@@ -51,8 +58,9 @@ namespace TimeLoopInc
                     new Vector2() :
                     (Vector2)_scene.CurrentInstant.Entities[_scene.CurrentPlayer].PreviousVelocity;
             }
-            
-            var worldCamera = new GridCamera(cameraTransform, (float)window.CanvasSize.XRatio);
+
+            var worldCamera = new GridCamera(cameraTransform, (float)_window.CanvasSize.XRatio);
+            _camera = worldCamera;
 
             var portalView = PortalView.CalculatePortalViews(0, _scene.Portals, worldCamera, 30);
 
@@ -65,12 +73,11 @@ namespace TimeLoopInc
                 worldCamera.WorldTransform = GridEntityWorldPosition(_scene.CurrentInstant, _scene.CurrentPlayer, t, worldLayer.Portals)
                     .WithSize(25 * _zoomFactor);
             }
-            
 
             worldCamera.WorldVelocity = worldCamera.WorldVelocity.WithPosition(cameraVelocity / 6f);
             worldLayer.Camera = worldCamera;
 
-            window.Layers.Add(worldLayer);
+            return worldLayer;
         }
 
         /// <summary>
@@ -216,6 +223,13 @@ namespace TimeLoopInc
             {
                 Models = new List<Model> { model }
             };
+        }
+
+        public Vector2 GetMouseGrid()
+        {
+            return _camera
+                .ScreenToWorld(_window.MousePosition, _window.CanvasSize)
+                .Floor(Vector2.One);
         }
     }
 }

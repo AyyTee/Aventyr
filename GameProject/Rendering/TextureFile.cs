@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.Serialization;
 using OpenTK.Graphics.OpenGL;
+using Game.Common;
 
 namespace Game.Rendering
 {
@@ -13,6 +14,8 @@ namespace Game.Rendering
         Texture _texture;
         [DataMember]
         public readonly string Filename;
+
+        public Vector2i Size => _texture.Size;
 
         public TextureFile(string filename)
         {
@@ -54,7 +57,7 @@ namespace Game.Rendering
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-            _texture = new Texture(texId);
+            _texture = new Texture(texId, (Vector2i)image.Size);
         }
 
         void LoadImage()

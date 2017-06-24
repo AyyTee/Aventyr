@@ -69,6 +69,7 @@
     <Compile Include="Controller.cs" />
     <Compile Include="GridAngle.cs" />
     <Compile Include="IGridEntity.cs" />
+    <Compile Include="TimelineRender.cs" />
     <Compile Include="TimePortal.cs" />
     <Compile Include="IGridEntityInstant.cs" />
     <Compile Include="Input.cs" />

@@ -15,7 +15,7 @@ namespace Game
     public class FakeVirtualWindow : IVirtualWindow
     {
         public Vector2i CanvasPosition => new Vector2i();
-        public Vector2i CanvasSize => new Vector2i(300, 200);
+        public Vector2i CanvasSize => new Vector2i(1000, 800);
         public float DpiScale { get; set; } = 1;
 
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();

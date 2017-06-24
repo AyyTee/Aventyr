@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Common;
+using System;
 using System.Runtime.Serialization;
 
 namespace Game.Rendering
@@ -11,9 +12,12 @@ namespace Game.Rendering
         /// <summary>GL texture id.</summary>
         readonly int _id;
 
-        public Texture(int id)
+        public Vector2i Size { get; }
+
+        public Texture(int id, Vector2i size)
         {
             _id = id;
+            Size = size;
         }
 
         ~Texture()

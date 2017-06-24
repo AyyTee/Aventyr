@@ -98,6 +98,18 @@ namespace Game.Common
             return new Vector2d(Math.Round(v.X), Math.Round(v.Y)) * roundBy;
         }
 
+        public static Vector2 Floor(this Vector2 vector, Vector2 floorBy)
+        {
+            var v = Vector2.Divide(vector, floorBy);
+            return new Vector2((float)Math.Floor(v.X), (float)Math.Floor(v.Y)) * floorBy;
+        }
+
+        public static Vector2d Floor(this Vector2d vector, Vector2d floorBy)
+        {
+            var v = Vector2d.Divide(vector, floorBy);
+            return new Vector2d(Math.Floor(v.X), Math.Floor(v.Y)) * floorBy;
+        }
+
         public static Vector2d Lerp(this Vector2d start, Vector2d end, double T) => start * (1 - T) + end * T;
 
         public static Vector2 Lerp(this Vector2 start, Vector2 end, float T) => start * (1 - T) + end * T;
