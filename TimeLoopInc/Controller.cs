@@ -80,10 +80,8 @@ namespace TimeLoopInc
                 Camera = new HudCamera2(_window.CanvasSize)
             };
             _timelineRender.Render(gui, new Vector2(50, 100), new Vector2(_window.CanvasSize.X - 50, 50), _window.DpiScale);
-            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, _window.CanvasSize.Y), "Time: " + _scene.CurrentInstant.Time.ToString());
-
-            
-            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, _window.CanvasSize.Y - 30), _sceneRender.GetMouseGrid().ToString());
+            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 0), "Time: " + _scene.CurrentInstant.Time.ToString());
+            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString());
             _window.Layers.Add(gui);
         }
 
