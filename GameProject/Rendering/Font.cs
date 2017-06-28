@@ -71,7 +71,7 @@ namespace Game.Rendering
 
                     posCurrent += new Vector2i(fontChar.XAdvance + charSpacing, 0);
                 }
-                posCurrent = new Vector2i(0, posCurrent.Y - _fontFile.Info.Size + lineSpacing);
+                posCurrent = new Vector2i(0, posCurrent.Y + _fontFile.Info.Size + lineSpacing);
             }
 
             if (alignment != new Vector2())

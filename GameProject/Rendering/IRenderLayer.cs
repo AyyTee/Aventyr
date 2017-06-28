@@ -18,9 +18,9 @@ namespace Game.Rendering
 
     public static class IRenderLayerEx
     {
-        public static void DrawText(this IRenderLayer layer, Font font, Vector2 position, string text, Vector2 alignment = new Vector2())
+        public static void DrawText(this IRenderLayer layer, Font font, Vector2 position, string text, Vector2 alignment = new Vector2(), int lineSpacing = 0)
         {
-            layer.Renderables.Add(new TextEntity(font, position, text, alignment));
+            layer.Renderables.Add(new TextEntity(font, position, text, alignment, lineSpacing));
         }
 
         public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight, Color4 color = new Color4())

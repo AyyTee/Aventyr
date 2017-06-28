@@ -708,6 +708,10 @@ namespace Game.Common
 
         public static double Round(double value, double size) => Math.Round(value / size) * size;
 
+        public static double Ceiling(double value, double size) => Math.Ceiling(value / size) * size;
+
+        public static double Floor(double value, double size) => Math.Floor(value / size) * size;
+
         public static double AngleWrap(double value) => ((value % Tau) + Tau) % Tau;
 
         public static Vector2 AngularVelocity(Vector2 point, Vector2 pivotPoint, float rotationSpeed) => AngularVelocity(point - pivotPoint, rotationSpeed);

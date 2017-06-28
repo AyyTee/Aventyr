@@ -49,10 +49,14 @@ namespace TimeLoopInc
             var cameraVelocity = new Vector2();
 
             var playerInstant = _scene.CurrentInstant.Entities.GetOrDefault(_scene.CurrentPlayer);
+            var time = _scene.CurrentInstant.Time;
             if (playerInstant != null)
             {
-                cameraTransform = GridEntityWorldPosition(_scene.CurrentInstant, _scene.CurrentPlayer, t, _scene.Portals.Cast<IPortalRenderable>())
+                var (transform, timeOffset) = GetCameraTransformAndTime(_scene.CurrentInstant, _scene.CurrentPlayer, t, _scene.Portals.ToList());
+
+                cameraTransform = transform
                     .WithSize(25 * _zoomFactor);
+                time += timeOffset;
 
                 cameraVelocity = t == 0 || t == 1 ?
                     new Vector2() :
@@ -60,28 +64,20 @@ namespace TimeLoopInc
             }
 
             var worldCamera = new GridCamera(cameraTransform, (float)_window.CanvasSize.XRatio);
+            worldCamera.WorldVelocity = worldCamera.WorldVelocity.WithPosition(cameraVelocity / 6f);
+            worldLayer.Camera = worldCamera;
             _camera = worldCamera;
 
             var portalView = PortalView.CalculatePortalViews(0, _scene.Portals, worldCamera, 30);
 
             // We need to render portals first so that we can place entities clipping the portals correctly.
-            RenderPortalView(portalView, worldLayer, _scene.CurrentInstant.Time, t, 0, true);
-            RenderPortalView(portalView, worldLayer, _scene.CurrentInstant.Time, t, 0, false);
-
-            if (playerInstant != null)
-            {
-                worldCamera.WorldTransform = GridEntityWorldPosition(_scene.CurrentInstant, _scene.CurrentPlayer, t, worldLayer.Portals)
-                    .WithSize(25 * _zoomFactor);
-            }
-
-            worldCamera.WorldVelocity = worldCamera.WorldVelocity.WithPosition(cameraVelocity / 6f);
-            worldLayer.Camera = worldCamera;
+            RenderPortalView(portalView, worldLayer, time, t, 0, true);
+            RenderPortalView(portalView, worldLayer, time, t, 0, false);
 
             return worldLayer;
         }
 
         /// <summary>
-        /// 
         /// </summary>
         /// <param name="portalView"></param>
         /// <param name="worldLayer"></param>
@@ -119,7 +115,8 @@ namespace TimeLoopInc
                     if (renderPortals)
                     {
                         var entranceIndex = portalView.Children.IndexOf(view);
-                        var exitIndex = portalView.Children.IndexOfFirstOrNull(item => item.PortalEntrance == view.PortalEntrance.Linked);
+                        var exitIndex = portalView.Children
+                            .IndexOfFirstOrNull(item => item.PortalEntrance == view.PortalEntrance.Linked);
                         Debug.Assert(entranceIndex != exitIndex);
                         if (exitIndex != null && entranceIndex < exitIndex)
                         {
@@ -213,6 +210,20 @@ namespace TimeLoopInc
 
             return result.WorldTransform;
         }
+
+        (Transform2 Transform, int TimeOffset) GetCameraTransformAndTime(SceneInstant sceneInstant, IGridEntity gridEntity, float t, IEnumerable<IPortalRenderable> portals)
+        {
+            var offset = Vector2d.One / 2;
+            var velocity = (Vector2)sceneInstant[gridEntity].PreviousVelocity;
+            var transform = sceneInstant[gridEntity].Transform.ToTransform2d();
+            transform = transform.WithPosition(transform.Position + offset);
+            var result = Ray.RayCast((Transform2)transform, new Transform2(-velocity * (1 - t)), portals, new Ray.Settings());
+
+            return ValueTuple.Create(
+                result.WorldTransform,
+                result.PortalsEntered.Sum(item => ((TimePortal)item.EnterData.EntrancePortal).TimeOffset));
+        }
+
 
         Renderable CreateSquare(Vector2i position, int size, Color4 color)
         {

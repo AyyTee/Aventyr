@@ -24,6 +24,8 @@ namespace Game.Rendering
         public string Text { get; private set; }
         [DataMember]
         public Vector2 Alignment { get; private set; }
+        [DataMember]
+        public int LineSpacing { get; private set; }
 
         Model TextModel;
         [DataMember]
@@ -33,13 +35,14 @@ namespace Game.Rendering
         bool Dirty = true;
         readonly Font _fontRenderer;
 
-        public TextEntity(Font fontRenderer, Vector2 position, string text, Vector2 alignment = new Vector2())
+        public TextEntity(Font fontRenderer, Vector2 position, string text, Vector2 alignment = new Vector2(), int lineSpacing = 0)
         {
             Debug.Assert(text != null);
             Text = text;
             WorldTransform = new Transform2(position);
             _fontRenderer = fontRenderer;
             Alignment = alignment;
+            LineSpacing = lineSpacing;
         }
 
         public void SetText(string text)
@@ -64,10 +67,12 @@ namespace Game.Rendering
         {
             if (Dirty)
             {
-                TextModel = _fontRenderer?.GetModel(Text, Alignment);
+                TextModel = _fontRenderer?.GetModel(Text, Alignment, LineSpacing);
                 Dirty = false;
             }
-            return new List<Model>() { TextModel };
+            return TextModel == null ?
+                new List<Model>() :
+                new List<Model>() { TextModel };
         }
     }
 }

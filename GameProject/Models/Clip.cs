@@ -4,6 +4,7 @@ using Game.Common;
 using Game.Portals;
 using Game.Rendering;
 using OpenTK;
+using System.Diagnostics;
 
 namespace Game.Models
 {
@@ -48,16 +49,18 @@ namespace Game.Models
             {
                 return clipModels;
             }
+            var models = entity.GetModels();
+            Debug.Assert(models.All(item => item != null));
             if (entity.IsPortalable && !entity.DrawOverPortals)
             {
-                foreach (Model m in entity.GetModels())
+                foreach (Model m in models)
                 {
                     clipModels.AddRange(_getClipModels(entity, m, portalList, entity.WorldTransform.Position, null, Matrix4.Identity, depth, 0));
                 }
             }
             else
             {
-                foreach (Model m in entity.GetModels())
+                foreach (Model m in models)
                 {
                     clipModels.Add(new ClipModel(entity, m, new LineF[0], Matrix4.Identity));
                 }

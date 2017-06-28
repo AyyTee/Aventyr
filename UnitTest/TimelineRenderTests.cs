@@ -22,7 +22,7 @@ namespace GameTests
         {
             _scene = new TimeLoopInc.Scene();
             _layer = new Layer();
-            _timelineRender = new TimelineRender(_scene);
+            _timelineRender = new TimelineRender(_scene, null);
         }
 
         [Test]

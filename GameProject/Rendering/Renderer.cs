@@ -183,6 +183,7 @@ namespace Game.Rendering
                         continue;
                     }
                     List<Clip.ClipModel> clipModels = Clip.GetClipModels(e, layer.Portals, PortalClipDepth);
+                    Debug.Assert(clipModels.All(item => item.Model != null));
                     foreach (Clip.ClipModel clip in clipModels)
                     {
                         if (clip.ClipLines.Length > 0)

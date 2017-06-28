@@ -31,6 +31,7 @@ namespace TimeLoopInc
             .OfType<ITimeline>()
             .Concat(new[] { PlayerTimeline });
         public int StartTime => Timelines.Min(item => item.Path.MinOrNull(entity => entity.StartTime)) ?? 0;
+        public int EndTime => Timelines.Max(item => item.Path.MaxOrNull(entity => entity.EndTime)) ?? 0;
 
         readonly Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
 

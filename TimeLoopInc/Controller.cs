@@ -22,6 +22,7 @@ namespace TimeLoopInc
         List<Input> _input = new List<Input>();
         int _updatesSinceLastStep = 0;
         int _updatesPerAnimation => _window.ButtonDown(KeyBoth.Control) ? 50 : 5;
+        RollingAverage _fpsCounter = new RollingAverage(60, 0);
 
         public Controller(IVirtualWindow window)
         {
@@ -65,11 +66,13 @@ namespace TimeLoopInc
 
             _scene = new Scene(Walls, Portals, player, blocks);
             _sceneRender = new SceneRender(_window, _scene);
-            _timelineRender = new TimelineRender(_scene);
+            _timelineRender = new TimelineRender(_scene, _window.Fonts.Inconsolata);
+            _timelineRender.Timeline = _scene.PlayerTimeline;
         }
 
         public void Render(double timeDelta)
         {
+            Console.WriteLine(_updatesSinceLastStep);
             _window.Layers.Clear();
             var worldLayer = _sceneRender.Render(_updatesSinceLastStep, _updatesPerAnimation);
             _window.Layers.Add(worldLayer);
@@ -79,9 +82,14 @@ namespace TimeLoopInc
                 DepthTest = false,
                 Camera = new HudCamera2(_window.CanvasSize)
             };
-            _timelineRender.Render(gui, new Vector2(50, 100), new Vector2(_window.CanvasSize.X - 50, 50), _window.DpiScale);
+            _timelineRender.Render(gui, new Vector2(50, _window.CanvasSize.Y - 100), new Vector2(_window.CanvasSize.X - 100, 50), _window.DpiScale);
             gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 0), "Time: " + _scene.CurrentInstant.Time.ToString());
             gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString());
+            _fpsCounter.Enqueue((float)timeDelta);
+            gui.DrawText(
+                _window.Fonts?.Inconsolata,
+                new Vector2(0, 80),
+                $"FPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }\n{_window.MousePosition}");
             _window.Layers.Add(gui);
         }
 
@@ -90,7 +98,7 @@ namespace TimeLoopInc
             _updatesSinceLastStep++;
 
             _sceneRender.Update(_window);
-
+            _timelineRender.Update(timeDelta);
             if (_window.ButtonPress(Key.BackSpace))
             {
                 if (_input.Count > 0)

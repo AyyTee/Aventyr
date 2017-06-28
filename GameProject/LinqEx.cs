@@ -139,5 +139,12 @@ namespace Game
                 (TResult?)enumerable.Min(selector) :
                 null;
         }
+
+        public static TResult? MaxOrNull<T, TResult>(this IEnumerable<T> enumerable, Func<T, TResult> selector) where TResult : struct
+        {
+            return enumerable.Any() ?
+                (TResult?)enumerable.Max(selector) :
+                null;
+        }
     }
 }
