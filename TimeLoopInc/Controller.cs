@@ -72,9 +72,11 @@ namespace TimeLoopInc
 
         public void Render(double timeDelta)
         {
+            var animationT = MathHelper.Clamp(_updatesSinceLastStep / (float)_updatesPerAnimation, 0, 1);
+
             Console.WriteLine(_updatesSinceLastStep);
             _window.Layers.Clear();
-            var worldLayer = _sceneRender.Render(_updatesSinceLastStep, _updatesPerAnimation);
+            var worldLayer = _sceneRender.Render(animationT);
             _window.Layers.Add(worldLayer);
 
             var gui = new Layer
@@ -82,7 +84,7 @@ namespace TimeLoopInc
                 DepthTest = false,
                 Camera = new HudCamera2(_window.CanvasSize)
             };
-            _timelineRender.Render(gui, new Vector2(50, _window.CanvasSize.Y - 100), new Vector2(_window.CanvasSize.X - 100, 50), _window.DpiScale);
+            _timelineRender.Render(gui, new Vector2(50, _window.CanvasSize.Y - 150), new Vector2(_window.CanvasSize.X - 100, 140), _window.DpiScale, animationT);
             gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 0), "Time: " + _scene.CurrentInstant.Time.ToString());
             gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString());
             _fpsCounter.Enqueue((float)timeDelta);

@@ -114,6 +114,11 @@ namespace Game.Common
 
         public static Vector2 Lerp(this Vector2 start, Vector2 end, float T) => start * (1 - T) + end * T;
 
+        public static Vector2d XOnly(this Vector2d v) => new Vector2d(v.X, 0);
+        public static Vector2 XOnly(this Vector2 v) => new Vector2(v.X, 0);
+        public static Vector2d YOnly(this Vector2d v) => new Vector2d(0, v.Y);
+        public static Vector2 YOnly(this Vector2 v) => new Vector2(0, v.Y);
+
         public static Vector2 Transform(Vector2 vector, Matrix4 matrix)
         {
             Vector3 v = Vector3.Transform(new Vector3(vector.X, vector.Y, 1), matrix);

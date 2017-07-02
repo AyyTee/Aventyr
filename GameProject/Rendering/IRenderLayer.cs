@@ -23,7 +23,12 @@ namespace Game.Rendering
             layer.Renderables.Add(new TextEntity(font, position, text, alignment, lineSpacing));
         }
 
-        public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight, Color4 color = new Color4())
+        public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight)
+        {
+            DrawRectangle(layer, topLeft, bottomRight, Color4.Black);
+        }
+
+        public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight, Color4 color)
         {
             var renderable = new Renderable();
             renderable.IsPortalable = false;
@@ -39,6 +44,35 @@ namespace Game.Rendering
             renderable.Models.Add(plane);
 
             layer.Renderables.Add(renderable);
+        }
+
+        public static void DrawLine(this IRenderLayer layer, LineF line)
+        {
+            DrawLine(layer, line, Color4.Black);
+        }
+
+        public static void DrawLine(this IRenderLayer layer, LineF line, Color4 color)
+        {
+            var renderable = new Renderable();
+            renderable.IsPortalable = false;
+            var plane = ModelFactory.CreateLines(new[] { line });
+            if (color.A < 1)
+            {
+                plane.IsTransparent = true;
+            }
+            renderable.Models.Add(plane);
+
+            layer.Renderables.Add(renderable);
+        }
+
+        public static void DrawTriangle(this IRenderLayer layer, Vector2 v0, Vector2 v1, Vector2 v2)
+        {
+            DrawTriangle(layer, v0, v1, v2, Color4.Black);
+        }
+
+        public static void DrawTriangle(this IRenderLayer layer, Vector2 v0, Vector2 v1, Vector2 v2, Color4 color)
+        {
+            ModelFactory.CreateTriangle
         }
     }
 }

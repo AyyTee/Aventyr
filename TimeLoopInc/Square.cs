@@ -36,7 +36,7 @@ namespace TimeLoopInc
 
         public List<Model> GetModels()
         {
-            var model = ModelFactory.CreatePlane(Vector2.One * Size, new Vector3(-Size / 2));
+            var model = ModelFactory.CreatePlane(Vector2.One * Size, new Color4(), new Vector3(-Size / 2));
             model.SetColor(Color);
 
             return new List<Model> { model };

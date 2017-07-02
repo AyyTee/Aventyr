@@ -14,6 +14,8 @@ namespace TimeLoopInc
 
         public List<IGridEntity> Path { get; private set; } = new List<IGridEntity>();
 
+        public string Name => nameof(T) + " Timeline";
+
         public void Add(T entity) => Path.Add(entity);
 
         public Timeline<T> DeepClone()
@@ -28,6 +30,7 @@ namespace TimeLoopInc
     public interface ITimeline
     {
         List<IGridEntity> Path { get; }
+        string Name { get; }
     }
 
     public static class ITimelineEx

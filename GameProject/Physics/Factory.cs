@@ -10,6 +10,7 @@ using System.Linq;
 using Game.Common;
 using Game.Rendering;
 using Xna = Microsoft.Xna.Framework;
+using OpenTK.Graphics;
 
 namespace Game.Physics
 {
@@ -25,7 +26,7 @@ namespace Game.Physics
         static Actor CreateEntityBox(Entity entity, Transform2 transform)
         {
             entity.IsPortalable = true;
-            entity.AddModel(ModelFactory.CreatePlane(transform.Scale, new Vector3(-transform.Scale / 2)));
+            entity.AddModel(ModelFactory.CreatePlane(transform.Scale, new Color4(), new Vector3(-transform.Scale / 2)));
 
             Vector2[] vertices = new Vector2[] {
                 new Vector2(-0.5f, -0.5f),

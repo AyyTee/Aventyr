@@ -16,11 +16,14 @@ namespace Game.Rendering
 {
     public static class ModelFactory
     {
-        public static Model CreatePlane() => CreatePlane(new Vector2(1, 1));
+        public static Model CreatePlane() => CreatePlane(new Vector2(1, 1), Color4.Black);
 
-        public static Model CreatePlane(Vector2 scale, Vector3 offset = new Vector3(), Color4 color = new Color4()) => new Model(CreatePlaneMesh(scale, offset));
+        public static Model CreatePlane(Vector2 scale, Color4 color, Vector3 offset = new Vector3())
+        {
+            return new Model(CreatePlaneMesh(scale, color, offset));
+        }
 
-        public static Mesh CreatePlaneMesh(Vector2 scale, Vector3 offset = new Vector3(), Color4 color = new Color4())
+        public static Mesh CreatePlaneMesh(Vector2 scale, Color4 color, Vector3 offset = new Vector3())
         {
             Vertex[] vertices = {
                 new Vertex(new Vector3(0f, scale.Y,  0f) + offset, new Vector2(0, 0), color),
@@ -36,12 +39,22 @@ namespace Game.Rendering
             return mesh;
         }
 
-        public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight, Color4 color = new Color4())
+        public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight)
         {
-            return CreatePlaneMesh(bottomRight - topLeft, new Vector3(topLeft), color);
+            return CreatePlaneMesh(topLeft, bottomRight, Color4.Black);
         }
 
-        public static Model CreateGrid(Vector2i gridSize, Vector2 gridTileSize, Color4 evenTileColor, Color4 oddTileColor, Vector3 offset = new Vector3())
+        public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight, Color4 color)
+        {
+            return CreatePlaneMesh(bottomRight - topLeft, color, new Vector3(topLeft));
+        }
+
+        public static Model CreateGrid(
+            Vector2i gridSize, 
+            Vector2 gridTileSize, 
+            Color4 evenTileColor, 
+            Color4 oddTileColor, 
+            Vector3 offset = new Vector3())
         {
             Mesh mesh = new Mesh();
             for (int i = 0; i < gridSize.X; i++)
@@ -50,11 +63,26 @@ namespace Game.Rendering
                 {
                     var plane = CreatePlaneMesh(
                         gridTileSize, 
-                        new Vector3(i * gridTileSize.X, j * gridTileSize.Y, 0) + offset, 
-                        (i + j) % 2 == 0 ? evenTileColor : oddTileColor);
+                        (i + j) % 2 == 0 ? evenTileColor : oddTileColor,
+                        new Vector3(i * gridTileSize.X, j * gridTileSize.Y, 0) + offset);
                     mesh.AddMesh(plane);
                 }
             }
+            return new Model(mesh);
+        }
+
+        public static Model CreateTriangle(Vector3 v0, Vector3 v1, Vector3 v2)
+        {
+            return CreateTriangle(v0, v1, v2, Color4.Black);
+        }
+
+        public static Model CreateTriangle(Vector3 v0, Vector3 v1, Vector3 v2, Color4 color)
+        {
+            var mesh = new Mesh();
+            mesh.AddTriangle(new Triangle(
+                new Vertex(v0, new Vector2(), color),
+                new Vertex(v1, new Vector2(), color),
+                new Vertex(v2, new Vector2(), color)));
             return new Model(mesh);
         }
 
@@ -117,7 +145,8 @@ namespace Game.Rendering
         }
 
         /// <summary>
-        /// Create a polygon model from an array of vertices. If the polygon is degenerate or non-simple then the model will be empty.
+        /// Create a polygon model from an array of vertices. 
+        /// If the polygon is degenerate or non-simple then the model will be empty.
         /// </summary>
         public static Model CreatePolygon(IList<Vector2> vertices, Vector3 offset = new Vector3())
         {

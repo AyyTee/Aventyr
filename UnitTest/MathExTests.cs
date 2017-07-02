@@ -812,5 +812,61 @@ namespace GameTests
 
             Assert.AreEqual(MathEx.Tau / 2, Math.Abs(result), ErrorMargin);
         }
+
+        [Test]
+        public void LerpInverseTest0()
+        {
+            var result = MathEx.LerpInverse(1, 5, 2);
+            Assert.AreEqual(0.25, result);
+        }
+
+        [Test]
+        public void LerpInverseTest1()
+        {
+            var result = MathEx.LerpInverse(5, 1, 2);
+            Assert.AreEqual(0.75, result);
+        }
+
+        [Test]
+        public void LerpInverseTest2()
+        {
+            var result = MathEx.LerpInverse(5, 1, 0);
+            Assert.AreEqual(1.25, result);
+        }
+
+        [Test]
+        public void LerpInverseTest3()
+        {
+            var expected = 0.6;
+            var start = -1;
+            var end = 4;
+            var result = MathEx.LerpInverse(
+                start, 
+                end, 
+                MathEx.Lerp(start, end, expected));
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void LerpInverseTest4()
+        {
+            var random = new Random();
+            for (int i = 0; i < 100; i++)
+            {
+                var expected = random.NextDouble() * 100 - 50;
+                var start = random.NextDouble() * 100 - 50;
+                var end = random.NextDouble() * 100 - 50;
+                if (Math.Abs(start - end) < 0.00001)
+                {
+                    continue;
+                }
+                var result = MathEx.LerpInverse(
+                    start,
+                    end,
+                    MathEx.Lerp(start, end, expected));
+                Assert.AreEqual(expected, result, ErrorMargin);
+            }
+            
+        }
     }
 }

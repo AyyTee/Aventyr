@@ -29,19 +29,17 @@ namespace TimeLoopInc
             _scene = scene;
         }
 
-        float GetT(int updatesSinceLastStep, int updatesPerAnimation)
-        {
-            return MathHelper.Clamp(updatesSinceLastStep / (float)updatesPerAnimation, 0, 1);
-        }
-
         public void Update(IVirtualWindow window)
         {
-            _zoomFactor *= (float)Math.Pow(1.2, -window.MouseWheelDelta());
+            if (window.HasFocus)
+            {
+                _zoomFactor *= (float)Math.Pow(1.2, -window.MouseWheelDelta());
+            }            
         }
 
-        public Layer Render(int _updatesSinceLastStep, int _updatesPerAnimation)
+        public Layer Render(double animationT)
         {
-            float t = GetT(_updatesSinceLastStep, _updatesPerAnimation);
+            float t = (float)animationT;
 
             var worldLayer = new Layer();
 
@@ -168,7 +166,7 @@ namespace TimeLoopInc
                 {
                     case Player p:
                         {
-                            var model = ModelFactory.CreatePlane(Vector2.One * 0.98f, new Vector3(-0.49f));
+                            var model = ModelFactory.CreatePlane(Vector2.One * 0.98f, new Color4(), new Vector3(-0.49f));
                             model.SetColor(Color4.Black);
 
                             renderable = new Renderable(transform);
@@ -179,7 +177,7 @@ namespace TimeLoopInc
                     case Block b:
                         {
                             var blockInstant = (BlockInstant)sceneInstant.Entities[b];
-                            var model = ModelFactory.CreatePlane(Vector2.One * blockInstant.Transform.Size * 0.98f, new Vector3(-0.49f));
+                            var model = ModelFactory.CreatePlane(Vector2.One * blockInstant.Transform.Size * 0.98f, new Color4(), new Vector3(-0.49f));
                             model.SetColor(new Color4(0.5f, 1f, 0.8f, 1f));
 
                             renderable = new Renderable(transform);
@@ -227,7 +225,7 @@ namespace TimeLoopInc
 
         Renderable CreateSquare(Vector2i position, int size, Color4 color)
         {
-            var model = ModelFactory.CreatePlane(Vector2.One * size * 0.98f,  new Vector3(-size / 2f + 0.01f));
+            var model = ModelFactory.CreatePlane(Vector2.One * size * 0.98f, new Color4(), new Vector3(-size / 2f + 0.01f));
             model.SetColor(color);
 
             return new Renderable(new Transform2((Vector2)position + Vector2.One * 0.5f * size))

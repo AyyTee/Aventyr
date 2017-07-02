@@ -78,6 +78,11 @@ namespace Game.Common
 
             return Lerp(angle0, angle1, T) % (2 * Math.PI);
         }
+
+        /// <summary>
+        /// Returns t value for a given value and a given start and end value.
+        /// </summary>
+        public static double LerpInverse(double start, double end, double value) => (value - start) / (end - start);
         #endregion
         #region Nearest
         /// <summary>

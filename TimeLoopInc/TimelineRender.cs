@@ -25,7 +25,7 @@ namespace TimeLoopInc
             _font = font;
         }
 
-        public void Render(IRenderLayer layer, Vector2 topLeft, Vector2 size, float dpiScale)
+        public void Render(IRenderLayer layer, Vector2 topLeft, Vector2 size, float dpiScale, double t)
         {
             Debug.Assert(size.X > 0 && size.Y > 0);
             Vector2 gridSize = new Vector2(50, 20) * dpiScale;
@@ -37,23 +37,47 @@ namespace TimeLoopInc
                 return;
             }
 
+            layer.DrawText(_font, topLeft, Timeline.Name);
+            DrawTimelines(layer, topLeft + new Vector2(10, 60), size - new Vector2(20, 60), t);
+        }
+
+        void DrawTimelines(IRenderLayer layer, Vector2 topLeft, Vector2 size, double t)
+        {
             float rowCount = 3;
 
-            foreach (var box in GetTimelineBoxes())
+            foreach (var box in GetTimelineBoxes(t))
             {
-                Vector2 start = new Vector2((box.StartTime - MinTime) / (MaxTime - MinTime), box.Row / rowCount) * size;
-                Vector2 end = new Vector2((box.EndTime - MinTime) / (MaxTime - MinTime), (box.Row + 1) / rowCount) * size;
+                Vector2 start = Vector2.Clamp(
+                    new Vector2(
+                        (float)MathEx.LerpInverse(MinTime, MaxTime, box.StartTime),
+                        box.Row / rowCount),
+                    new Vector2(),
+                    Vector2.One);
+                start *= size;
+
+                Vector2 end = Vector2.Clamp(
+                    new Vector2(
+                        (float)MathEx.LerpInverse(MinTime, MaxTime, box.EndTime),
+                        (box.Row + 1) / rowCount),
+                    new Vector2(),
+                    Vector2.One);
+                end *= size;
+
                 layer.DrawRectangle(topLeft + start, topLeft + end, new Color4(0.8f, 0.8f, 0f, 1f));
             }
 
-            for (int i = (int)((MinTime - 0.001) + 1); i <= (int)(MaxTime + 0.001); i++)
+            //_scene.CurrentInstant.Time - (1 - t);
+
+            for (int i = (int)Math.Ceiling(MinTime - 0.01); i <= Math.Floor(MaxTime + 0.01); i++)
             {
                 Vector2 pos = new Vector2((i - MinTime) / (MaxTime - MinTime), 0) * size;
-                layer.DrawText(_font, topLeft + pos, i.ToString(), new Vector2(0.5f, 1));
+                var top = (topLeft + pos).Round(Vector2.One);
+                layer.DrawText(_font, top, i.ToString(), new Vector2(0.5f, 1));
+                layer.DrawLine(new LineF(top, top + size.YOnly()));
             }
         }
 
-        public List<TimelineBox> GetTimelineBoxes()
+        public List<TimelineBox> GetTimelineBoxes(double t)
         {
             var output = new List<TimelineBox>();
 
@@ -69,10 +93,10 @@ namespace TimeLoopInc
                     row++;
                 }
 
-                var endTime = entity.EndTime;
+                double endTime = entity.EndTime;
                 if (i + 1 == count)
                 {
-                    endTime = _scene.CurrentInstant.Time;
+                    endTime = _scene.CurrentInstant.Time - (1 - t);
                 }
 
                 output.Add(new TimelineBox(row, entity.StartTime, endTime));
@@ -112,9 +136,9 @@ namespace TimeLoopInc
         {
             public int Row { get; }
             public int StartTime { get; }
-            public int EndTime { get; }
+            public double EndTime { get; }
 
-            public TimelineBox(int row, int startTime, int endTime)
+            public TimelineBox(int row, int startTime, double endTime)
             {
                 Row = row;
                 StartTime = startTime;
