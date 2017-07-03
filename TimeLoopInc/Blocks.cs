@@ -29,7 +29,7 @@ namespace TimeLoopInc
             get { return _endTime; }
             set
             {
-                Debug.Assert(value >= StartTime);
+                DebugEx.Assert(value >= StartTime);
                 _endTime = value;
             }
         }

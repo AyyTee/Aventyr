@@ -37,7 +37,7 @@ namespace Game.Rendering
 
         public TextEntity(Font fontRenderer, Vector2 position, string text, Vector2 alignment = new Vector2(), int lineSpacing = 0)
         {
-            Debug.Assert(text != null);
+            DebugEx.Assert(text != null);
             Text = text;
             WorldTransform = new Transform2(position);
             _fontRenderer = fontRenderer;

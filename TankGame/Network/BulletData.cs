@@ -24,7 +24,7 @@ namespace TankGame.Network
 
         public void UpdateBullet(Bullet bullet)
         {
-            Debug.Assert(bullet.ServerId == ServerId || bullet.ServerId == null);
+            DebugEx.Assert(bullet.ServerId == ServerId || bullet.ServerId == null);
 
             NetworkHelper.SetServerId(bullet, ServerId);
             bullet.SetTransform(Transform);

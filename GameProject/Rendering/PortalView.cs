@@ -51,9 +51,9 @@ namespace Game.Rendering
 
         public static PortalView CalculatePortalViews(float shutterTime, IEnumerable<IPortalRenderable> portals, ICamera2 camera, int depth)
         {
-            Debug.Assert(camera != null);
-            Debug.Assert(depth >= 0);
-            Debug.Assert(portals != null);
+            DebugEx.Assert(camera != null);
+            DebugEx.Assert(depth >= 0);
+            DebugEx.Assert(portals != null);
             List<IntPoint> view = ClipperConvert.ToIntPoint(camera.GetWorldVerts());
             var portalView = new PortalView(null, camera.GetViewMatrix(), view, new LineF[0], new LineF[0]);
             Vector2 camPos = camera.WorldTransform.Position;

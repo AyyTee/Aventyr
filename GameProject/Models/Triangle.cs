@@ -80,8 +80,8 @@ namespace Game.Models
         /// <returns>Triangles not removed by the bisection.  Will either be 0,1,2 triangles.</returns>
         public Triangle[] Bisect(LineF bisector, Side keepSide = Side.Left)
         {
-            Debug.Assert(bisector != null);
-            Debug.Assert(keepSide != Side.Neither);
+            DebugEx.Assert(bisector != null);
+            DebugEx.Assert(keepSide != Side.Neither);
             Vector2[] vertices = {
                 new Vector2(this[0].Position.X, this[0].Position.Y),
                 new Vector2(this[1].Position.X, this[1].Position.Y),
@@ -102,13 +102,13 @@ namespace Game.Models
                 if (intersect != null && intersect.First > 0 && intersect.First < 1)
                 {
                     intersectCount++;
-                    Debug.Assert(intersectCount <= 2);
+                    DebugEx.Assert(intersectCount <= 2);
                     int index = (i + 1) % VertexCount;
                     keep.Add(Vertex.Lerp(this[i], this[index], (float)intersect.First));
                 }
             }
 
-            Debug.Assert(keep.Count <= 4);
+            DebugEx.Assert(keep.Count <= 4);
             if (keep.Count == 3)
             {
                 return new[]

@@ -20,7 +20,7 @@ namespace EditorLogic
 
         public static List<EditorObject> Clone(List<IDeepClone> source, EditorScene destination)
         {
-            Debug.Assert(source != null);
+            DebugEx.Assert(source != null);
             List<IDeepClone> cloned = DeepClone.Clone(source).Values.ToList();
             SetScene(cloned, destination);
             return cloned.OfType<EditorObject>().ToList();
@@ -28,7 +28,7 @@ namespace EditorLogic
 
         public static List<EditorObject> Clone(IDeepClone source, EditorScene destination)
         {
-            Debug.Assert(source != null);
+            DebugEx.Assert(source != null);
             List<IDeepClone> sourceList = new List<IDeepClone>();
             sourceList.Add(source);
             return Clone(sourceList, destination);
@@ -38,8 +38,8 @@ namespace EditorLogic
         {
             /*Contract.Requires(cloned != null);
             Contract.*/
-            /*Debug.Assert(cloned != null);
-            Debug.Assert(destination != null);*/
+            /*DebugEx.Assert(cloned != null);
+            DebugEx.Assert(destination != null);*/
             foreach (IDeepClone clone in cloned)
             {
                 if (clone is EditorObject)

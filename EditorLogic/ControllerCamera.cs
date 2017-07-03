@@ -62,7 +62,7 @@ namespace EditorLogic
             get { return _zoomScrollFactor; }
             set 
             {
-                Debug.Assert(value > 1);
+                DebugEx.Assert(value > 1);
                 _zoomScrollFactor = value;
             }
         }
@@ -73,7 +73,7 @@ namespace EditorLogic
             get { return _zoomFactor; }
             set 
             {  
-                Debug.Assert(value > 1);
+                DebugEx.Assert(value > 1);
                 _zoomFactor = value;
             }
         }

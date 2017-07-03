@@ -106,7 +106,7 @@ namespace TankGame.Network
                 });
                 if (_inputQueue.Count > 100)
                 {
-                    Debug.Fail("Input queue is full.");
+                    DebugEx.Fail("Input queue is full.");
                     _inputQueue.Dequeue();
                 }
 
@@ -153,7 +153,7 @@ namespace TankGame.Network
 
             while ((msg = _client.ReadMessage()) != null)
             {
-                Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _client.UniqueIdentifier,
+                DebugEx.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _client.UniqueIdentifier,
                     "Unique identifier should not be the same as this client.");
                 switch (msg.MessageType)
                 {

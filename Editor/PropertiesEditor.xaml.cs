@@ -91,7 +91,7 @@ namespace EditorWindow
 
         void ObjectName_LostFocus(object sender, RoutedEventArgs e)
         {
-            Debug.Assert(_selected != null);
+            DebugEx.Assert(_selected != null);
             //Make a copy of the textbox text so we don't try accessing it from the OGL thread.
             string text = ObjectName.Text;
             _controller.AddAction(() => { _controller.StateList.Add(new Rename(_selected, text), true); });

@@ -29,8 +29,8 @@ namespace TankGameTestFramework
 
         public void EnqueueArrivedMessage(FakeNetIncomingMessage message)
         {
-            Debug.Assert(Connections.Contains(message.SenderConnection));
-            Debug.Assert(message.SenderConnection.RemoteUniqueIdentifier != UniqueIdentifier);
+            DebugEx.Assert(Connections.Contains(message.SenderConnection));
+            DebugEx.Assert(message.SenderConnection.RemoteUniqueIdentifier != UniqueIdentifier);
             ArrivedMessages.Enqueue(message);
         }
 

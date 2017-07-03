@@ -38,7 +38,7 @@ namespace Game.Portals
 
         public static void SetLinked(IPortal p0, IPortal p1)
         {
-            Debug.Assert(p0 != p1);
+            DebugEx.Assert(p0 != p1);
             if (p0?.Linked != null)
             {
                 p0.Linked.Linked = null;
@@ -59,7 +59,7 @@ namespace Game.Portals
 
         public static Transform2 Enter(IPortalRenderable portal, Transform2 transform)
         {
-            Debug.Assert(portal.IsValid());
+            DebugEx.Assert(portal.IsValid());
             return transform.Transform(GetLinkedTransform(portal, portal.Linked));
         }
 
@@ -72,7 +72,7 @@ namespace Game.Portals
         /// <param name="ignorePortalVelocity"></param>
         public static Transform2 EnterVelocity(IPortalRenderable portal, float intersectT, Transform2 velocity, bool ignorePortalVelocity = false)
         {
-            Debug.Assert(portal.IsValid());
+            DebugEx.Assert(portal.IsValid());
             Matrix4 matrix = GetLinkedMatrix(portal);
             Vector2 origin = Vector2Ex.Transform(new Vector2(), matrix);
             Transform2 velocityClone = velocity;
@@ -188,7 +188,7 @@ namespace Game.Portals
 
         public static Matrix4 GetLinkedMatrix(this IPortalRenderable portalEnter)
         {
-            Debug.Assert(portalEnter.Linked != null, "Portal must be linked to another portal.");
+            DebugEx.Assert(portalEnter.Linked != null, "Portal must be linked to another portal.");
             return GetLinkedMatrix(portalEnter, portalEnter.Linked);
         }
 
@@ -205,7 +205,7 @@ namespace Game.Portals
 
         public static Transform2 GetLinkedTransform(this IPortalRenderable portalEnter)
         {
-            Debug.Assert(portalEnter.Linked != null, "Portal must be linked to another portal.");
+            DebugEx.Assert(portalEnter.Linked != null, "Portal must be linked to another portal.");
             return GetLinkedTransform(portalEnter, portalEnter.Linked);
         }
 
@@ -272,7 +272,7 @@ namespace Game.Portals
             double angle0 = MathEx.LineToAngle(verts[verts.Length - 1], viewPoint);
             double angle1 = MathEx.LineToAngle(verts[2], viewPoint);
             double diff = MathEx.AngleDiff(angle0, angle1);
-            Debug.Assert(diff <= Math.PI + double.Epsilon && diff >= -Math.PI);
+            DebugEx.Assert(diff <= Math.PI + double.Epsilon && diff >= -Math.PI);
             //handle case where lines overlap eachother
             /*const double angleDiffMin = 0.0001f;
             if (Math.Abs(diff) < angleDiffMin)

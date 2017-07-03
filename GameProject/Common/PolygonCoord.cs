@@ -22,7 +22,7 @@ namespace Game.Common
 
         public PolygonCoord(int edgeIndex, float edgeT)
         {
-            Debug.Assert(edgeT >= 0 && edgeT <= 1);
+            DebugEx.Assert(edgeT >= 0 && edgeT <= 1);
             EdgeIndex = edgeIndex;
             EdgeT = edgeT;
         }

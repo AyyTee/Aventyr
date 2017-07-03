@@ -72,7 +72,7 @@ namespace Game.Rendering
 
         public static void DrawTriangle(this IRenderLayer layer, Vector2 v0, Vector2 v1, Vector2 v2, Color4 color)
         {
-            ModelFactory.CreateTriangle
+            //ModelFactory.CreateTriangle
         }
     }
 }

@@ -40,7 +40,7 @@ namespace EditorWindow
             {
                 InsertNewButton(filepath);
 
-                Debug.Assert(MaxSize > 0);
+                DebugEx.Assert(MaxSize > 0);
                 while (RecentFilesDropdown.Items.Count > MaxSize)
                 {
                     ButtonList.RemoveAt(ButtonList.Count - 1);

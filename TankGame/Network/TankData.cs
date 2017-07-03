@@ -54,7 +54,7 @@ namespace TankGame.Network
 
             GunFiredTime = tank.GunFiredTime;
 
-            Debug.Assert(tank.PortalPair.Length == 2);
+            DebugEx.Assert(tank.PortalPair.Length == 2);
             for (int i = 0; i < tank.PortalPair.Length; i++)
             {
                 PortalData[i] = new PortalData(tank.PortalPair[i]);
@@ -63,7 +63,7 @@ namespace TankGame.Network
 
         public void UpdateTank(Tank tank, Scene scene)
         {
-            Debug.Assert(tank.ServerId == ServerId || tank.ServerId == null);
+            DebugEx.Assert(tank.ServerId == ServerId || tank.ServerId == null);
 
             NetworkHelper.SetServerId(tank, ServerId);
             tank.SetTransform(Transform);
@@ -82,7 +82,7 @@ namespace TankGame.Network
 
             tank.GunFiredTime = GunFiredTime;
 
-            Debug.Assert(tank.PortalPair.Length == 2);
+            DebugEx.Assert(tank.PortalPair.Length == 2);
             for (int i = 0; i < tank.PortalPair.Length; i++)
             {
                 PortalData[i]?.Update(tank.PortalPair[i], scene);

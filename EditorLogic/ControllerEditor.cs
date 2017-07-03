@@ -275,7 +275,7 @@ namespace EditorLogic
 
         void _setTool(Tool tool)
         {
-            Debug.Assert(tool != null, "Tool cannot be null.");
+            DebugEx.Assert(tool != null, "Tool cannot be null.");
             if (ActiveTool == _nextTool)
             {
                 return;

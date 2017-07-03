@@ -16,7 +16,7 @@ namespace Game
 
         public WallCoord(IWall wall, int edgeIndex, float edgeT)
         {
-            Debug.Assert(wall != null);
+            DebugEx.Assert(wall != null);
             EdgeIndex = edgeIndex;
             EdgeT = edgeT;
             Wall = wall;

@@ -19,7 +19,7 @@ namespace Game.Portals
 
         public static void UpdateWorldTransform(IEnumerable<IPortalCommon> set, bool onlyNullTransforms = false, bool onlyVelocity = false)
         {
-            Debug.Assert(set.FirstOrDefault(item => item.WorldTransform == null && item.WorldVelocity != null) == null, 
+            DebugEx.Assert(set.FirstOrDefault(item => item.WorldTransform == null && item.WorldVelocity != null) == null, 
                 "IPortalCommon instance cannot have a world transform but no world velocity.");
 
             var newSet = onlyNullTransforms ? set.Where(item => item.WorldTransform == null) : set;

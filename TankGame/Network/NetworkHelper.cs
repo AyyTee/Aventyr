@@ -56,7 +56,7 @@ namespace TankGame.Network
 
         public static void SetServerId(INetObject netObject, int serverId)
         {
-            Debug.Assert(netObject.ServerId == null || netObject.ServerId == serverId);
+            DebugEx.Assert(netObject.ServerId == null || netObject.ServerId == serverId);
             netObject.ServerId = serverId;
         }
     }

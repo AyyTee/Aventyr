@@ -21,7 +21,7 @@ namespace EditorLogic.Command
 
         public Rename(EditorObject editorObject, string newName)
         {
-            Debug.Assert(editorObject != null);
+            DebugEx.Assert(editorObject != null);
             IsMarker = true;
             _namePrevious = editorObject.Name;
             _name = newName;

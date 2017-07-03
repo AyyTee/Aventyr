@@ -33,7 +33,7 @@ namespace Game.Common
 
         public static Vector2[] Scale(Vector2[] vectors, float scalar)
         {
-            Debug.Assert(vectors != null);
+            DebugEx.Assert(vectors != null);
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
@@ -134,7 +134,7 @@ namespace Game.Common
 
         public static Vector2[] Transform(Vector2[] vectors, Matrix2 matrix)
         {
-            Debug.Assert(vectors != null);
+            DebugEx.Assert(vectors != null);
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
@@ -145,7 +145,7 @@ namespace Game.Common
 
         public static List<Vector2> Transform(IEnumerable<Vector2> vectors, Matrix2 matrix)
         {
-            Debug.Assert(vectors != null);
+            DebugEx.Assert(vectors != null);
             List<Vector2> vList = new List<Vector2>();
             foreach (Vector2 v in vectors)
             {
@@ -156,7 +156,7 @@ namespace Game.Common
 
         public static Vector2[] Transform(Vector2[] vectors, Matrix4 matrix)
         {
-            Debug.Assert(vectors != null);
+            DebugEx.Assert(vectors != null);
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
@@ -167,7 +167,7 @@ namespace Game.Common
 
         public static List<Vector2> Transform(IEnumerable<Vector2> vectors, Matrix4 matrix)
         {
-            Debug.Assert(vectors != null);
+            DebugEx.Assert(vectors != null);
             List<Vector2> vList = new List<Vector2>();
             foreach (Vector2 v in vectors)
             {
@@ -184,7 +184,7 @@ namespace Game.Common
 
         public static Vector2[] Transform(Vector2[] vectors, Matrix4d matrix)
         {
-            Debug.Assert(vectors != null);
+            DebugEx.Assert(vectors != null);
             Vector2[] vList = new Vector2[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
@@ -201,7 +201,7 @@ namespace Game.Common
 
         public static Vector2d[] Transform(Vector2d[] vectors, Matrix4d matrix)
         {
-            Debug.Assert(vectors != null);
+            DebugEx.Assert(vectors != null);
             Vector2d[] vList = new Vector2d[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
@@ -246,7 +246,7 @@ namespace Game.Common
 
         public static Vector2[] ToOtk(Vector3[] v)
         {
-            Debug.Assert(v != null);
+            DebugEx.Assert(v != null);
             Vector2[] vNew = new Vector2[v.Length];
             for (int i = 0; i < v.Length; i++)
             {

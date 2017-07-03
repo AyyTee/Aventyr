@@ -27,7 +27,7 @@ namespace Game.Rendering
             get { return _aspect; }
             set
             {
-                Debug.Assert(value > 0);
+                DebugEx.Assert(value > 0);
                 _aspect = value;
             }
         }

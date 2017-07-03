@@ -33,7 +33,7 @@ namespace Game.Common
                     holes.Remove(p);
                     continue;
                 }
-                Debug.Assert(p.Count != 1 && p.Count != 2, "Polygon is degenerate.");
+                DebugEx.Assert(p.Count != 1 && p.Count != 2, "Polygon is degenerate.");
                 if (!MathEx.IsClockwise(p))
                 {
                     Polygon polygon = GetPolygon(p);
@@ -90,8 +90,8 @@ namespace Game.Common
         static List<Polygon> CreatePolygon(PolyNode polyNode)
         {
             List<Polygon> polyList = new List<Polygon>();
-            Debug.Assert(polyNode.IsOpen == false);
-            Debug.Assert(polyNode.IsHole == false);
+            DebugEx.Assert(polyNode.IsOpen == false);
+            DebugEx.Assert(polyNode.IsHole == false);
             Polygon polygon = GetPolygon(polyNode.Contour);
             for (int i = 0; i < polyNode.Childs.Count; i++)
             {
@@ -119,7 +119,7 @@ namespace Game.Common
             {
                 Vector2 v = ClipperConvert.ToVector2(vertices[i]);
                 polygonPoints.Add(new PolygonPoint(v.X, v.Y));
-                Debug.Assert(points.Add(v));
+                DebugEx.Assert(points.Add(v));
             }
             return new Polygon(polygonPoints);
         }
@@ -132,7 +132,7 @@ namespace Game.Common
             {
                 Vector2 v = vertices[i];
                 polygonPoints.Add(new PolygonPoint(v.X, v.Y));
-                Debug.Assert(points.Add(v));
+                DebugEx.Assert(points.Add(v));
             }
             return new Polygon(polygonPoints);
         }
@@ -166,7 +166,7 @@ namespace Game.Common
 
         public static Vector2[] CreateLineWidth(LineF line, float widthStart, float widthEnd)
         {
-            Debug.Assert(widthStart > 0 && widthEnd > 0, "Line must have positive width.");
+            DebugEx.Assert(widthStart > 0 && widthEnd > 0, "Line must have positive width.");
             Vector2 offsetStart = (line[0] - line[1]).PerpendicularLeft.Normalized() * widthStart / 2;
             Vector2 offsetEnd = (line[0] - line[1]).PerpendicularLeft.Normalized() * widthEnd / 2;
 
@@ -176,7 +176,7 @@ namespace Game.Common
                 line[1] + offsetEnd,
                 line[1] - offsetEnd
             };
-            Debug.Assert(PolygonEx.IsInterior(lineWidth));
+            DebugEx.Assert(PolygonEx.IsInterior(lineWidth));
             return lineWidth;
         }
 
@@ -204,20 +204,20 @@ namespace Game.Common
                 new Vector2(-width/2, -height/2) + origin,
                 new Vector2(width/2, -height/2) + origin
             };
-            Debug.Assert(PolygonEx.IsInterior(rectangle));
+            DebugEx.Assert(PolygonEx.IsInterior(rectangle));
             return rectangle;
         }
 
         public static Vector2[] CreateNGon(int sides, float scale, Vector2 origin)
         {
-            Debug.Assert(sides >= 3);
+            DebugEx.Assert(sides >= 3);
             Vector2[] vertices = new Vector2[sides];
             for (int i = 0; i < sides; i++)
             {
                 double angle = (MathEx.Tau * i) / sides;
                 vertices[i] = (Vector2)MathEx.AngleToVectorReversed(-angle) * scale + origin;
             }
-            Debug.Assert(PolygonEx.IsInterior(vertices));
+            DebugEx.Assert(PolygonEx.IsInterior(vertices));
             return vertices;
         }
     }

@@ -98,7 +98,7 @@ namespace Game.Rendering
 
         Matrix4 GetWorldToScreenMatrix(Vector2 canvasSize)
         {
-            Debug.Assert(Orthographic, "Only ortho projection is allowed for now.");
+            DebugEx.Assert(Orthographic, "Only ortho projection is allowed for now.");
             var scale = Matrix4.CreateScale(canvasSize.X / 2, -canvasSize.Y / 2, 1);
             var translation = Matrix4.CreateTranslation(new Vector3(1f, -1f, 0f));
             return GetViewMatrix() * translation * scale;

@@ -49,7 +49,7 @@ namespace EditorLogic.Tools
                     AddPortal command;
                     if (_isSecondPortal)
                     {
-                        Debug.Assert(_portalPrevious != null);
+                        DebugEx.Assert(_portalPrevious != null);
                         command = new AddPortal(Controller, portal, _portalPrevious);
                     }
                     else

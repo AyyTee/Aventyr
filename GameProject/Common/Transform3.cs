@@ -30,7 +30,7 @@ namespace Game.Common
             {
                 if (FixedScale)
                 {
-                    Debug.Assert(Math.Abs(value.X) == Math.Abs(value.Y) && Math.Abs(value.Y) == Math.Abs(value.Z), "Transforms with fixed scale cannot have non-uniform scale.");
+                    DebugEx.Assert(Math.Abs(value.X) == Math.Abs(value.Y) && Math.Abs(value.Y) == Math.Abs(value.Z), "Transforms with fixed scale cannot have non-uniform scale.");
                 }
                 _matrixUpdate = true;
                 _scale = value;

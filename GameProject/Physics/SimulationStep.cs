@@ -177,7 +177,7 @@ namespace Game.Physics
             {
                 if (move.Instance.IsPortalable)
                 {
-                    Debug.Assert(!(move is IPortal), "Portals cannot do portal teleporation with other portals.");
+                    DebugEx.Assert(!(move is IPortal), "Portals cannot do portal teleporation with other portals.");
                     foreach (PortalMovement portal in lineMovement)
                     {
                         if (move.Instance == portal.Portal)

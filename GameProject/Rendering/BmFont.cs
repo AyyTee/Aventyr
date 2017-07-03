@@ -1,4 +1,4 @@
-// ---- AngelCode BmFont XML serializer ----------------------
+﻿// ---- AngelCode BmFont XML serializer ----------------------
 // ---- By DeadlyDan @ deadlydan@gmail.com -------------------
 // ---- There's no license restrictions, use as you will. ----
 // ---- Credits to http://www.angelcode.com/ -----------------
@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
+using Game.Common;
 
 namespace Game.Rendering
 {
@@ -42,7 +43,7 @@ namespace Game.Rendering
 
         public void Initialize()
         {
-            Debug.Assert(CharLookup == null || KerningLookup == null, "Already initialized.");
+            DebugEx.Assert(CharLookup == null || KerningLookup == null, "Already initialized.");
             CharLookup = Chars.ToDictionary(item => Convert.ToChar(item.ID));
             KerningLookup = Kernings.ToLookup(item => Convert.ToChar(item.First));
         }

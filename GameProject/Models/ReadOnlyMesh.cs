@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using Game.Common;
 
 namespace Game.Models
 {
@@ -19,8 +20,8 @@ namespace Game.Models
         {
             Vertices = new ReadOnlyCollection<Vertex>(vertices);
             Indices = new ReadOnlyCollection<int>(indices);
-            Debug.Assert(Indices.Count == 0 || Indices.Max() < Vertices.Count);
-            Debug.Assert(Indices.Count % 3 == 0);
+            DebugEx.Assert(Indices.Count == 0 || Indices.Max() < Vertices.Count);
+            DebugEx.Assert(Indices.Count % 3 == 0);
         }
 
         public ReadOnlyMesh(IEnumerable<Triangle> triangles)

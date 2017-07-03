@@ -34,7 +34,7 @@ namespace Game.Physics
             }
             private set
             {
-                Debug.Assert(GetChildPortals().Count == 0, "This fixture cannot be assigned to a portal.");
+                DebugEx.Assert(GetChildPortals().Count == 0, "This fixture cannot be assigned to a portal.");
                 _portalParents = value;
             }
         }
@@ -46,7 +46,7 @@ namespace Game.Physics
         {
             get
             {
-                Debug.Assert(Fixture.Body.UserData != null, "Body UserData does not exist.");
+                DebugEx.Assert(Fixture.Body.UserData != null, "Body UserData does not exist.");
                 BodyData userData = BodyEx.GetData(Fixture.Body);
                 return userData.Actor;
             }
@@ -127,8 +127,8 @@ namespace Game.Physics
 
         PolygonShape CreatePortalShape(FixturePortal portal, FixturePortal portalNext)
         {
-            Debug.Assert(portal.Position.EdgeIndex == portalNext.Position.EdgeIndex);
-            Debug.Assert(portal.Position.EdgeT < portalNext.Position.EdgeT);
+            DebugEx.Assert(portal.Position.EdgeIndex == portalNext.Position.EdgeIndex);
+            DebugEx.Assert(portal.Position.EdgeT < portalNext.Position.EdgeT);
 
             Transform2 t0 = portal.GetTransform().WithMirrorX(false);
             t0 = t0.WithSize(Math.Abs(t0.Size));

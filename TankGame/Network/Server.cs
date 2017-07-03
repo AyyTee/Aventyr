@@ -156,7 +156,7 @@ namespace TankGame.Network
 
             while ((msg = _server.ReadMessage()) != null)
             {
-                Debug.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _server.UniqueIdentifier,
+                DebugEx.Assert(msg.SenderConnection?.RemoteUniqueIdentifier != _server.UniqueIdentifier,
                     "Unique identifier should not be the same as the servers.");
                 switch (msg.MessageType)
                 {

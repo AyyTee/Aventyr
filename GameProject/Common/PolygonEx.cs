@@ -26,7 +26,7 @@ namespace Game.Common
 
         public static LineF GetEdge(IList<Vector2> vertices, IPolygonCoord coord)
         {
-            Debug.Assert(vertices.Count >= 1, "Polygon must have at least 1 vertex.");
+            DebugEx.Assert(vertices.Count >= 1, "Polygon must have at least 1 vertex.");
             return new LineF(vertices[coord.EdgeIndex], vertices[(coord.EdgeIndex + 1) % vertices.Count]);
         }
 
@@ -181,7 +181,7 @@ namespace Game.Common
                     continue;
                 }
 
-                Debug.Assert(diagonalIndex != i);
+                DebugEx.Assert(diagonalIndex != i);
 
                 if (IsReflex(pointPrev.V, point.V, pointNext.V, isClockwise))
                 {
@@ -195,15 +195,15 @@ namespace Game.Common
                     subpolygon1.AddRange(polygon.GetRange(0, indexLow + 1));
                     subpolygon1.AddRange(polygon.GetRange(indexHigh, polygon.Count - indexHigh));
 
-                    Debug.Assert(subpolygon0.Count >= 3);
-                    Debug.Assert(subpolygon1.Count >= 3);
+                    DebugEx.Assert(subpolygon0.Count >= 3);
+                    DebugEx.Assert(subpolygon1.Count >= 3);
                     concaveList.AddRange(DecomposeConcave(subpolygon0, isClockwise));
                     concaveList.AddRange(DecomposeConcave(subpolygon1, isClockwise));
                     return concaveList;
                 }
             }
 
-            Debug.Assert(false, "Execution should not have reached this point.");
+            DebugEx.Assert(false, "Execution should not have reached this point.");
             return concaveList;
         }
 
@@ -222,7 +222,7 @@ namespace Game.Common
         /// <returns></returns>
         public static List<List<Vector2>> DecomposeConcave(IList<Vector2> polygon)
         {
-            Debug.Assert(polygon.Count >= 3);
+            DebugEx.Assert(polygon.Count >= 3);
             if (MathEx.IsConvex(polygon))
             {
                 List<List<Vector2>> concave = new List<List<Vector2>>();
@@ -254,7 +254,7 @@ namespace Game.Common
 
                         int vertIndex0 = verts.FindIndex(item => item == vert0);
                         int vertIndex1 = verts.FindIndex(item => item == vert1);
-                        Debug.Assert(Math.Abs(MathEx.ValueDiff(vertIndex0, vertIndex1, verts.Count)) > 1);
+                        DebugEx.Assert(Math.Abs(MathEx.ValueDiff(vertIndex0, vertIndex1, verts.Count)) > 1);
 
                         vert0.Diagonals.Add(vert1);
                         vert1.Diagonals.Add(vert0);

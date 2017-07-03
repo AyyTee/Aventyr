@@ -25,8 +25,8 @@ namespace Game.Physics
 
         public static FixtureData GetData(Fixture fixture)
         {
-            Debug.Assert(fixture != null);
-            Debug.Assert(fixture.UserData != null);
+            DebugEx.Assert(fixture != null);
+            DebugEx.Assert(fixture.UserData != null);
             return (FixtureData)fixture.UserData;
         }
 
@@ -39,20 +39,20 @@ namespace Game.Physics
 
         public static FixtureCoord GetFixtureEdgeCoord(Actor actor, IPolygonCoord coord)
         {
-            Debug.Assert(actor.Body != null);
-            Debug.Assert(coord != null);
+            DebugEx.Assert(actor.Body != null);
+            DebugEx.Assert(coord != null);
 
             FixtureCoord fixtureCoord = coord as FixtureCoord;
             if (fixtureCoord != null)
             {
-                Debug.Assert(actor == fixtureCoord.Actor);
+                DebugEx.Assert(actor == fixtureCoord.Actor);
                 return fixtureCoord;
             }
 
             List<Vector2> fixtureContour = Actor.GetFixtureContour(actor);
 
             LineF edge = PolygonEx.GetEdge(fixtureContour, coord);
-            Debug.Assert(
+            DebugEx.Assert(
                 edge[0] == fixtureContour[coord.EdgeIndex] &&
                 edge[1] == fixtureContour[(coord.EdgeIndex + 1) % fixtureContour.Count]
                 );
@@ -81,11 +81,11 @@ namespace Game.Physics
                         }
                         break;
                     default:
-                        Debug.Fail("Cannot currently handle shapes other than polygons.");
+                        DebugEx.Fail("Cannot currently handle shapes other than polygons.");
                         break;
                 }
             }
-            Debug.Fail("Could not find FixtureEdgeCoord.");
+            DebugEx.Fail("Could not find FixtureEdgeCoord.");
             return null;
         }
 

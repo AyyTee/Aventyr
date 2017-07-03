@@ -32,11 +32,11 @@ namespace Game.Physics
                 {
                     case ShapeType.Polygon:
                         PolygonShape shape = (PolygonShape)Fixture.Shape;
-                        Debug.Assert(value >= 0 && value < shape.Vertices.Count, "EdgeIndex must have a value between [0, vertex count).");
+                        DebugEx.Assert(value >= 0 && value < shape.Vertices.Count, "EdgeIndex must have a value between [0, vertex count).");
                         break;
 
                     case ShapeType.Circle:
-                        Debug.Assert(value == 0, "EdgeIndex cannot be assigned a value other than 0 for a circle fixture.");
+                        DebugEx.Assert(value == 0, "EdgeIndex cannot be assigned a value other than 0 for a circle fixture.");
                         break;
                 }
                 _edgeIndex = value;
@@ -52,7 +52,7 @@ namespace Game.Physics
             get { return _edgeT; }
             set 
             {
-                Debug.Assert(value >= 0 && value <= 1, "EdgeT must have a value between [0, 1].");
+                DebugEx.Assert(value >= 0 && value <= 1, "EdgeT must have a value between [0, 1].");
                 _edgeT = value;
             }
         }

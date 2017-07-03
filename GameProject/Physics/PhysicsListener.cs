@@ -107,7 +107,7 @@ namespace Game.Physics
         {
             if (contact.IsTouching)
             {
-                Debug.Assert(contact.Manifold.PointCount > 0);
+                DebugEx.Assert(contact.Manifold.PointCount > 0);
 
                 /* Sometimes a body will tunnel through a portal fixture.  
                  * The circumstances aren't well understood but checking if the contact normal 
@@ -261,7 +261,7 @@ namespace Game.Physics
                     var intersection = fixtureData[iNext].GetPortalChildren().Intersect(fixtureData[i].PortalCollisions);
                     if (intersection.Any())
                     {
-                        //Debug.Fail("Fixtures with portal collisions should be filtered.");
+                        //DebugEx.Fail("Fixtures with portal collisions should be filtered.");
                         return false;
                     }
                 }
@@ -327,7 +327,7 @@ namespace Game.Physics
                     //Xna.Vector2 pos = BodyExt.GetData(fixtureData[i].Fixture.Body).PreviousPosition;
                     Vector2 pos = BodyEx.GetLocalOrigin(fixtureData[i].Fixture.Body);
                     bool oppositeSides0 = line.GetSideOf(vList[0]) != line.GetSideOf(pos);
-                    Debug.Assert(contact.Manifold.PointCount > 0);
+                    DebugEx.Assert(contact.Manifold.PointCount > 0);
                     if (contact.Manifold.PointCount == 1)
                     {
                         if (oppositeSides0)

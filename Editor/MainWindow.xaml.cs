@@ -122,7 +122,7 @@ namespace EditorWindow
 
         public static void Invoke(Action action)
         {
-            Debug.Assert(Thread.CurrentThread == _window._loop.Thread, "This method is intended to be exclusively used by the OGL Thread.");
+            DebugEx.Assert(Thread.CurrentThread == _window._loop.Thread, "This method is intended to be exclusively used by the OGL Thread.");
             _window.Dispatcher.Invoke(action);
         }
 

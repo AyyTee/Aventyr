@@ -50,7 +50,7 @@ namespace Game.Models
                 return clipModels;
             }
             var models = entity.GetModels();
-            Debug.Assert(models.All(item => item != null));
+            DebugEx.Assert(models.All(item => item != null));
             if (entity.IsPortalable && !entity.DrawOverPortals)
             {
                 foreach (Model m in models)

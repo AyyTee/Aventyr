@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Game.Common;
 
 namespace Game
 {
@@ -16,7 +17,7 @@ namespace Game
 
             public Segment(T data, float begin, float end)
             {
-                Debug.Assert(begin <= end);
+                DebugEx.Assert(begin <= end);
                 Begin = begin;
                 End = end;
             }

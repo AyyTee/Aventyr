@@ -38,8 +38,8 @@ namespace Game.Models
 
         public static Mesh Bisect(this IMesh mesh, LineF bisector, Matrix4 transform, Side keepSide = Side.Left)
         {
-            Debug.Assert(bisector != null);
-            Debug.Assert(keepSide != Side.Neither);
+            DebugEx.Assert(bisector != null);
+            DebugEx.Assert(keepSide != Side.Neither);
             Triangle[] triangles = GetTriangles(mesh);
 
             var meshBisected = new Mesh();

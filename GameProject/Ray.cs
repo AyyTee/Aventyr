@@ -35,7 +35,7 @@ namespace Game
 
             public Result(Transform2 worldTransform, Transform2 worldVelocity, List<(EnterCallbackData EnterData, double MovementT)> portalsEntered)
             {
-                Debug.Assert(portalsEntered != null);
+                DebugEx.Assert(portalsEntered != null);
                 WorldTransform = worldTransform;
                 WorldVelocity = worldVelocity;
                 PortalsEntered = portalsEntered.AsReadOnly();
@@ -51,9 +51,9 @@ namespace Game
         /// <param name="portalEnter">Callback that is executed after entering a portal.</param>
         public static Result RayCast(Transform2 worldTransform, Transform2 worldVelocity, IEnumerable<IPortalRenderable> portals, Settings settings)
         {
-            Debug.Assert(settings.MaxIterations >= 0);
-            Debug.Assert(portals != null);
-            Debug.Assert(settings.TimeScale >= 0);
+            DebugEx.Assert(settings.MaxIterations >= 0);
+            DebugEx.Assert(portals != null);
+            DebugEx.Assert(settings.TimeScale >= 0);
             if (worldVelocity.Position.Length == 0 || settings.TimeScale == 0)
             {
                 return new Result(worldTransform, worldVelocity);

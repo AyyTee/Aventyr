@@ -59,7 +59,7 @@ namespace Game.Animation
                     return _getValue((i + Keyframes.Count) % Keyframes.Count, time);
                 }
             }
-            Debug.Fail("Execution should not have reached this point.");
+            DebugEx.Fail("Execution should not have reached this point.");
             return 0;
         }
 
@@ -85,7 +85,7 @@ namespace Game.Animation
         /// </summary>
         public void AddKeyframe(Keyframe keyframe)
         {
-            Debug.Assert(keyframe != null);
+            DebugEx.Assert(keyframe != null);
             if (Keyframes.ContainsKey(keyframe.Time))
             {
                 Keyframes.Remove(keyframe.Time);
@@ -119,7 +119,7 @@ namespace Game.Animation
                     return _getDerivative(i, time);
                 }
             }
-            Debug.Fail("Execution should not have reached this point.");
+            DebugEx.Fail("Execution should not have reached this point.");
             return 0;
         }
 

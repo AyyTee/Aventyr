@@ -25,9 +25,9 @@ namespace Game.Physics
         /// </summary>
         public static Body CreateBody(World world, Actor actor)
         {
-            Debug.Assert(actor != null);
-            Debug.Assert(actor.Body == null);
-            Debug.Assert(world != null);
+            DebugEx.Assert(actor != null);
+            DebugEx.Assert(actor.Body == null);
+            DebugEx.Assert(world != null);
             Body body = CreateBody(world);
             SetData(body, actor);
             return body;
@@ -42,8 +42,8 @@ namespace Game.Physics
 
         public static BodyData GetData(Body body)
         {
-            Debug.Assert(body != null);
-            Debug.Assert(body.UserData != null);
+            DebugEx.Assert(body != null);
+            DebugEx.Assert(body.UserData != null);
             return (BodyData)body.UserData;
         }
 
@@ -74,7 +74,7 @@ namespace Game.Physics
             {
                 FixtureData data = FixtureEx.GetData(f);
                 PolygonShape shape = (PolygonShape)f.Shape;
-                Debug.Assert(data.DefaultShape.Length == shape.Vertices.Count);
+                DebugEx.Assert(data.DefaultShape.Length == shape.Vertices.Count);
 
                 FarseerPhysics.Common.Vertices vertices = new FarseerPhysics.Common.Vertices();
                 for (int i = 0; i < shape.Vertices.Count; i++)
@@ -210,7 +210,7 @@ namespace Game.Physics
 
                 List<List<IntPoint>> result = new List<List<IntPoint>>();
                 clipper.Execute(ClipType.ctDifference, result, PolyFillType.pftEvenOdd, PolyFillType.pftNonZero);
-                Debug.Assert(
+                DebugEx.Assert(
                     result.Count <= 1,
                     "This fixture is too large for the portal masking or something has gone wrong with the clipper.");
 
@@ -220,7 +220,7 @@ namespace Game.Physics
                 }
             }
 
-            Debug.Assert(clippedFixtures.Count > 0);
+            DebugEx.Assert(clippedFixtures.Count > 0);
             return clippedFixtures;
         }
 
@@ -229,7 +229,7 @@ namespace Game.Physics
             BodyData data = GetData(body);
             _remove(data);
             int removed = data.Parent.BodyChildren.RemoveAll(item => GetData(item.Body) == data);
-            Debug.Assert(removed == 1);
+            DebugEx.Assert(removed == 1);
         }
 
         static void _remove(BodyData bodyData)

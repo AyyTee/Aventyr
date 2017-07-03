@@ -199,7 +199,7 @@ namespace EditorLogic.Tools
 
         void DragBegin(List<EditorObject> selected, bool toggleMode, Mode mode)
         {
-            Debug.Assert(selected != null);
+            DebugEx.Assert(selected != null);
             if (selected.Count <= 0)
             {
                 return;

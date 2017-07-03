@@ -118,12 +118,12 @@ namespace Game.Common
             else
             {
                 double t = ((point.X - line[0].X) * vDelta.X + (point.Y - line[0].Y) * vDelta.Y) / (Math.Pow(vDelta.X, 2) + Math.Pow(vDelta.Y, 2));
-                Debug.Assert(double.IsNaN(t) == false);
+                DebugEx.Assert(double.IsNaN(t) == false);
                 if (isSegment) { t = MathHelper.Clamp(t, 0, 1); }
                 v = line[0] + Vector2d.Multiply(vDelta, t);
             }
             double distance = (point - v).Length;
-            Debug.Assert(distance >= 0);
+            DebugEx.Assert(distance >= 0);
             return distance;
         }
 
@@ -220,8 +220,8 @@ namespace Game.Common
         /// </remarks>
         public static bool PointInPolygon(Vector2 point, IList<Vector2> polygon)
         {
-            Debug.Assert(polygon != null);
-            Debug.Assert(polygon.Count >= 2);
+            DebugEx.Assert(polygon != null);
+            DebugEx.Assert(polygon.Count >= 2);
             bool isInside = false;
             for (int i = 0, j = polygon.Count - 1; i < polygon.Count; j = i++)
             {
@@ -317,7 +317,7 @@ namespace Game.Common
                 if (u != 0) // when U=0, share the point added above
                     hull.Insert(0, p);
                 u++;
-                Debug.Assert(u + l == hull.Count + 1);
+                DebugEx.Assert(u + l == hull.Count + 1);
             }
             hull.RemoveAt(hull.Count - 1);
             return hull;
@@ -331,41 +331,41 @@ namespace Game.Common
         /// <param name="polygon"></param>
         public static bool IsClockwise(IList<Vector2> polygon)
         {
-            Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
-            Debug.Assert(PolygonEx.IsSimple(polygon));
+            DebugEx.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
+            DebugEx.Assert(PolygonEx.IsSimple(polygon));
             double signedArea = 0;
             for (int i = 0; i < polygon.Count; i++)
             {
                 int iNext = (i + 1) % polygon.Count;
                 signedArea += (polygon[i].X * polygon[iNext].Y - polygon[iNext].X * polygon[i].Y);
             }
-            Debug.Assert(signedArea != 0, "Polygon has 0 area.");
+            DebugEx.Assert(signedArea != 0, "Polygon has 0 area.");
             return Math.Sign(signedArea) == -1;
         }
 
         public static bool IsClockwise(IList<Xna.Vector2> polygon)
         {
-            Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
+            DebugEx.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
             double signedArea = 0;
             for (int i = 0; i < polygon.Count; i++)
             {
                 int iNext = (i + 1) % polygon.Count;
                 signedArea += (polygon[i].X * polygon[iNext].Y - polygon[iNext].X * polygon[i].Y);
             }
-            Debug.Assert(signedArea != 0, "Polygon has 0 area.");
+            DebugEx.Assert(signedArea != 0, "Polygon has 0 area.");
             return Math.Sign(signedArea) == -1;
         }
 
         public static bool IsClockwise(List<IntPoint> polygon)
         {
-            Debug.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
+            DebugEx.Assert(polygon.Count >= 3, "Polygon must have 3 or more vertices.");
             double signedArea = 0;
             for (int i = 0; i < polygon.Count; i++)
             {
                 int iNext = (i + 1) % polygon.Count;
                 signedArea += (polygon[i].X * polygon[iNext].Y - polygon[iNext].X * polygon[i].Y);
             }
-            Debug.Assert(signedArea != 0, "Polygon has 0 area.");
+            DebugEx.Assert(signedArea != 0, "Polygon has 0 area.");
             return Math.Sign(signedArea) == -1;
         }
 
@@ -458,7 +458,7 @@ namespace Game.Common
                         if (includeTwice)
                         {
                             IntersectCoord second = LineLineIntersect(new LineF(vertices[i], vertices[i + 1]), new LineF(vertices[j], vertices[j + 1]), true);
-                            Debug.Assert(second != null);
+                            DebugEx.Assert(second != null);
                             intersections.Add(new PolygonCoord(j, (float)second.First));
                         }
                     }
@@ -568,7 +568,7 @@ namespace Game.Common
         #region Homography
         public static Matrix4d GetHomography(Vector2[] src, Vector2[] dest)
         {
-            Debug.Assert(src.Length == 4 && dest.Length == 4, "Source and destination quads must have 4 vertices each.");
+            DebugEx.Assert(src.Length == 4 && dest.Length == 4, "Source and destination quads must have 4 vertices each.");
             if (IsConvex(src) != IsConvex(dest))
             {
                 throw new ExceptionInvalidPolygon();
@@ -695,7 +695,7 @@ namespace Game.Common
 
         public static double ValueWrap(double value, double mod)
         {
-            Debug.Assert(mod > 0);
+            DebugEx.Assert(mod > 0);
             var newValue = value % mod;
             return newValue < 0 ?
                 mod + newValue :
@@ -704,7 +704,7 @@ namespace Game.Common
 
         public static int ValueWrap(int value, int mod)
         {
-            Debug.Assert(mod > 0);
+            DebugEx.Assert(mod > 0);
             var newValue = value % mod;
             return newValue < 0 ?
                 mod + newValue :
@@ -728,7 +728,7 @@ namespace Game.Common
         /// </summary>
         public static void GetBBox(LineF[] lines, out Vector2 vMin, out Vector2 vMax)
         {
-            Debug.Assert(lines.Length > 0, "A minimum of one line is needed for there to be a bounding box.");
+            DebugEx.Assert(lines.Length > 0, "A minimum of one line is needed for there to be a bounding box.");
             vMin = lines[0][0];
             vMax = lines[0][0];
             for (int i = 0; i < lines.Length; i++)
@@ -812,8 +812,8 @@ namespace Game.Common
         /// <param name="first"></param>
         public static bool IsIsomorphic<T>(IList<T> first, IList<T> second, Func<T, T, bool> equality, bool noReversing = false)
         {
-            Debug.Assert(first != null);
-            Debug.Assert(second != null);
+            DebugEx.Assert(first != null);
+            DebugEx.Assert(second != null);
             if (first.Count != second.Count)
             {
                 return false;
@@ -885,7 +885,7 @@ namespace Game.Common
         /// <returns></returns>
         public static Vector2d GetTriangleIncenter(Vector2d[] triangle)
         {
-            Debug.Assert(triangle.Length == 3);
+            DebugEx.Assert(triangle.Length == 3);
             var edgeLength = new[]
             {
                 (triangle[2] - triangle[1]).Length,

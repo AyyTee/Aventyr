@@ -59,7 +59,7 @@ namespace Game.Rendering
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
             StencilBits = GL.GetInteger(GetPName.StencilBits);
-            Debug.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
+            DebugEx.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
 
             GL.GenBuffers(1, out _iboElements);
 
@@ -82,7 +82,7 @@ namespace Game.Rendering
         public void Render()
         {
             var glError = GL.GetError();
-            Debug.Assert(glError == ErrorCode.NoError);
+            DebugEx.Assert(glError == ErrorCode.NoError);
 
             SetScissor(null);
             GL.Viewport(0, 0, ClientSize.X, ClientSize.Y);
@@ -134,7 +134,7 @@ namespace Game.Rendering
 
         void DrawPortalAll(IVirtualWindow window, IRenderLayer layer, float shutterTime)
         {
-            Debug.Assert(window.Layers.Contains(layer));
+            DebugEx.Assert(window.Layers.Contains(layer));
 
             ICamera2 cam = layer.Camera;
             if (cam == null)
@@ -183,7 +183,7 @@ namespace Game.Rendering
                         continue;
                     }
                     List<Clip.ClipModel> clipModels = Clip.GetClipModels(e, layer.Portals, PortalClipDepth);
-                    Debug.Assert(clipModels.All(item => item.Model != null));
+                    DebugEx.Assert(clipModels.All(item => item.Model != null));
                     foreach (Clip.ClipModel clip in clipModels)
                     {
                         if (clip.ClipLines.Length > 0)
@@ -349,7 +349,7 @@ namespace Game.Rendering
             for (int i = 0; i < drawData.Length; i++)
             {
                 DrawData data = drawData[i];
-                Debug.Assert(data.Model != null);
+                DebugEx.Assert(data.Model != null);
                 if (!RenderEnabled)
                 {
                     return;
@@ -394,7 +394,7 @@ namespace Game.Rendering
         /// <param name="viewMatrix">Camera view matrix, do not use view matrix for the portalview.</param>
         void SetScissor(IVirtualWindow window, PortalView view, Matrix4 viewMatrix)
         {
-            Debug.Assert(view != null);
+            DebugEx.Assert(view != null);
             if (view.Paths == null)
             {
                 SetScissor(window);
@@ -440,7 +440,7 @@ namespace Game.Rendering
 
         public void RenderModel(Model model, Matrix4 viewMatrix)
         {
-            Debug.Assert(model != null);
+            DebugEx.Assert(model != null);
             if (!RenderEnabled)
             {
                 return;
@@ -498,7 +498,7 @@ namespace Game.Rendering
                 int[] modelIndices = models[i].GetIndices();
                 for (int j = 0; j < modelIndices.Length; j++)
                 {
-                    Debug.Assert(modelIndices[j] >= 0 && modelIndices[j] < modelVerts.Length);
+                    DebugEx.Assert(modelIndices[j] >= 0 && modelIndices[j] < modelVerts.Length);
                     modelIndices[j] += vertices.Count;
                 }
                 indices.AddRange(modelIndices);
@@ -514,8 +514,8 @@ namespace Game.Rendering
 
         void BufferData(Vector3[] vertdata, Vector4[] coldata, Vector2[] texcoorddata, int[] indices, int indexBuffer)
         {
-            Debug.Assert(coldata.Length == vertdata.Length);
-            Debug.Assert(texcoorddata.Length == vertdata.Length);
+            DebugEx.Assert(coldata.Length == vertdata.Length);
+            DebugEx.Assert(texcoorddata.Length == vertdata.Length);
             GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.GetBuffer("vPosition"));
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
             GL.VertexAttribPointer(_activeShader.GetAttribute("vPosition"), 3, VertexAttribPointerType.Float, false, 0, 0);

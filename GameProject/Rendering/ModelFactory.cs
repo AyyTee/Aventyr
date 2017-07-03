@@ -306,8 +306,8 @@ namespace Game.Rendering
 
         public static Model CreateLineStrip(Vector2[] vertices, Color4[] colors)
         {
-            Debug.Assert(vertices.Length >= 2);
-            Debug.Assert(colors == null || vertices.Length == colors.Length);
+            DebugEx.Assert(vertices.Length >= 2);
+            DebugEx.Assert(colors == null || vertices.Length == colors.Length);
 
             var mesh = new Mesh();
             for (int i = 0; i < vertices.Length - 1; i++)
@@ -332,7 +332,7 @@ namespace Game.Rendering
 
         public static Model CreateCircle(Vector3 origin, float radius, int detail)
         {
-            Debug.Assert(detail >= 3, "Detail must be greater or equal to 3.");
+            DebugEx.Assert(detail >= 3, "Detail must be greater or equal to 3.");
             var mesh = new Mesh();
             for (int i = 0; i < detail; i++)
             {

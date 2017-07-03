@@ -25,7 +25,7 @@ namespace EditorLogic.Tools
 
         public virtual void Update()
         {
-            Debug.Assert(Enabled == true, "Tool has not been enabled.  Call Enable before calling Update.");
+            DebugEx.Assert(Enabled == true, "Tool has not been enabled.  Call Enable before calling Update.");
         }
         public virtual void Enable()
         {

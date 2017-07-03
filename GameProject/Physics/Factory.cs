@@ -18,7 +18,7 @@ namespace Game.Physics
     {
         public static Actor CreateEntityBox(Scene scene, Transform2 transform)
         {
-            Debug.Assert(scene != null);
+            DebugEx.Assert(scene != null);
             Entity entity = new Entity(scene);
             return CreateEntityBox(entity, transform);
         }
@@ -45,7 +45,7 @@ namespace Game.Physics
 
         public static Body CreateBox(World world, Vector2 scale)
         {
-            Debug.Assert(world != null);
+            DebugEx.Assert(world != null);
             Body body = BodyEx.CreateBody(world);
             CreateBox(body, scale);
             return body;
@@ -69,16 +69,16 @@ namespace Game.Physics
 
         public static Actor CreateEntityPolygon(Scene scene, Transform2 transform, IList<Vector2> vertices)
         {
-            Debug.Assert(scene != null);
+            DebugEx.Assert(scene != null);
             Entity entity = new Entity(scene);
             return CreateEntityPolygon(entity, transform, vertices);
         }
 
         static Actor CreateEntityPolygon(Entity entity, Transform2 transform, IList<Vector2> vertices)
         {
-            Debug.Assert(entity != null);
-            Debug.Assert(transform != null);
-            Debug.Assert(vertices != null && vertices.Count >= 3);
+            DebugEx.Assert(entity != null);
+            DebugEx.Assert(transform != null);
+            DebugEx.Assert(vertices != null && vertices.Count >= 3);
             Body body = CreatePolygon(entity.Scene.World, transform, vertices);
 
             Actor actor = new Actor(entity.Scene, vertices, transform);
@@ -90,7 +90,7 @@ namespace Game.Physics
 
         public static Body CreatePolygon(World world, Transform2 transform, IList<Vector2> vertices)
         {
-            Debug.Assert(world != null);
+            DebugEx.Assert(world != null);
             Body body = BodyEx.CreateBody(world);
             CreatePolygon(body, transform, vertices);
             return body;
@@ -98,9 +98,9 @@ namespace Game.Physics
 
         public static void CreatePolygon(Body body, Transform2 transform, IList<Vector2> vertices)
         {
-            Debug.Assert(body != null);
-            Debug.Assert(transform != null);
-            Debug.Assert(vertices != null && vertices.Count >= 3);
+            DebugEx.Assert(body != null);
+            DebugEx.Assert(transform != null);
+            DebugEx.Assert(vertices != null && vertices.Count >= 3);
             List<Vector2> fixtureContour = Actor.GetFixtureContour(vertices, transform.Scale);
             fixtureContour = MathEx.SetWinding(fixtureContour, false);
 

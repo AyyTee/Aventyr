@@ -25,7 +25,7 @@ namespace TimeLoopInc
 
         public GridCamera(Transform2 worldTransform, float aspect)
         {
-            Debug.Assert(aspect != 0);
+            DebugEx.Assert(aspect != 0);
             WorldTransform = worldTransform;
             Aspect = aspect;
         }

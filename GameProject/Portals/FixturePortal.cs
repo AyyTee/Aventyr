@@ -29,7 +29,7 @@ namespace Game.Portals
             get { return _size; }
             set
             {
-                Debug.Assert(_size != 0);
+                DebugEx.Assert(_size != 0);
                 _size = value;
             }
         }
@@ -109,7 +109,7 @@ namespace Game.Portals
 
         public override void SetParent(SceneNode parent)
         {
-            Debug.Fail("Use " + nameof(SetPosition) + " method instead.");
+            DebugEx.Fail("Use " + nameof(SetPosition) + " method instead.");
         }
 
         public WallCoord GetPosition()

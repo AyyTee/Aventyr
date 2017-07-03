@@ -49,7 +49,7 @@ namespace EditorLogic
         {
             foreach (EditorObject e in selected)
             {
-                Debug.Assert(e != null);
+                DebugEx.Assert(e != null);
             }
             Reset();
             if (selected.Count > 0)
@@ -119,7 +119,7 @@ namespace EditorLogic
         {
             foreach (EditorObject e in selected)
             {
-                Debug.Assert(e != null);
+                DebugEx.Assert(e != null);
             }
             SetFirst(selected[0]);
             foreach (EditorObject e in selected)

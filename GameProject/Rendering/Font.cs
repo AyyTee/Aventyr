@@ -23,7 +23,7 @@ namespace Game.Rendering
             _fontFile = FontLoader.Load(fontDataFile);
             
             _fontTextures = new TextureFile[_fontFile.Pages.Count];
-            Debug.Assert(_fontTextures.Length == 1, "Multiple texture pages not supported yet.");
+            DebugEx.Assert(_fontTextures.Length == 1, "Multiple texture pages not supported yet.");
             var path = Path.GetDirectoryName(fontDataFile);
             for (int i = 0; i < _fontTextures.Length; i++)
             {
@@ -95,7 +95,7 @@ namespace Game.Rendering
                 vertices, 
                 GetIndices(vertices.Count / _verticesPerGlyph).ToList());
 
-            Debug.Assert(textMesh.IsValid());
+            DebugEx.Assert(textMesh.IsValid());
             var textModel = new Model(textMesh)
             {
                 Texture = _fontTextures[0],

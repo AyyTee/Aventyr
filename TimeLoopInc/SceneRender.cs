@@ -86,7 +86,7 @@ namespace TimeLoopInc
         /// <returns></returns>
         int RenderPortalView(PortalView portalView, Layer worldLayer, int time, float t, int offsetCount, bool renderPortals)
         {
-            Debug.Assert((offsetCount == 0) == (portalView.PortalEntrance == null));
+            DebugEx.Assert((offsetCount == 0) == (portalView.PortalEntrance == null));
 
             var offset = GetOffset(offsetCount);
             if (!renderPortals)
@@ -115,7 +115,7 @@ namespace TimeLoopInc
                         var entranceIndex = portalView.Children.IndexOf(view);
                         var exitIndex = portalView.Children
                             .IndexOfFirstOrNull(item => item.PortalEntrance == view.PortalEntrance.Linked);
-                        Debug.Assert(entranceIndex != exitIndex);
+                        DebugEx.Assert(entranceIndex != exitIndex);
                         if (exitIndex != null && entranceIndex < exitIndex)
                         {
                             AddViewPortals(view, worldLayer, offset, offset);

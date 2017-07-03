@@ -52,8 +52,8 @@ namespace EditorLogic
         /// <param name="updatesPerSecond"></param>
         public void Run(int updatesPerSecond)
         {
-            Debug.Assert(updatesPerSecond > 0 && updatesPerSecond <= 200, "Updates per second must be between 0 and 200.");
-            Debug.Assert(IsRunning == false);
+            DebugEx.Assert(updatesPerSecond > 0 && updatesPerSecond <= 200, "Updates per second must be between 0 and 200.");
+            DebugEx.Assert(IsRunning == false);
             UpdatesPerSecond = updatesPerSecond;
             _average = new RollingAverage(60, MillisecondsPerStep);
             //_control.Context.MakeCurrent(null);

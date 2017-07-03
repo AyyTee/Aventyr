@@ -153,7 +153,7 @@ namespace EditorLogic
                     }
                     else
                     {
-                        Debug.Assert(false);
+                        DebugEx.Assert(false);
                     }
 
                     if (cast.AnimatedTransform != null)
@@ -186,7 +186,7 @@ namespace EditorLogic
                 }
                 else
                 {
-                    Debug.Assert(false);
+                    DebugEx.Assert(false);
                 }
             }
 
@@ -205,7 +205,7 @@ namespace EditorLogic
                         FixturePortal cast = (FixturePortal)clone;
 
                         cast.SetPosition(new WallCoord((IWall)parent, ((EditorPortal)e).PolygonTransform), e.GetTransform().Size, e.GetTransform().MirrorX);
-                        Debug.Assert(((IWall)parent).Vertices.Count > 0);
+                        DebugEx.Assert(((IWall)parent).Vertices.Count > 0);
 
                         IPortal portalEditor = (IPortal)e;
                         if (portalEditor.Linked != null)

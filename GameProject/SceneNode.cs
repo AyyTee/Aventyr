@@ -92,7 +92,7 @@ namespace Game
 
         public virtual void SetParent(SceneNode parent)
         {
-            //Debug.Assert(Scene == parent.Scene);
+            //DebugEx.Assert(Scene == parent.Scene);
             /*if (parent != null && parent.Scene != Scene)
             {
                 Scene.SceneNodes.Remove(this);
@@ -105,8 +105,8 @@ namespace Game
 
             parent?._children.Add(this);
 
-            Debug.Assert(Scene.SceneObjects.FindAll(item => item == this).Count <= 1);
-            Debug.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
+            DebugEx.Assert(Scene.SceneObjects.FindAll(item => item == this).Count <= 1);
+            DebugEx.Assert(!Tree<SceneNode>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
         }
 
         public void RemoveChildren()
@@ -120,7 +120,7 @@ namespace Game
         /// <summary>Remove from scene.</summary>
         public virtual void Remove()
         {
-            Debug.Assert(!Scene.InStep, "Cannot be removed during Scene step.");
+            DebugEx.Assert(!Scene.InStep, "Cannot be removed during Scene step.");
             RemoveFromParent();
             foreach (SceneNode child in Children.ToList())
             {

@@ -37,7 +37,7 @@ namespace EditorWindow
         /// <param name="controller"></param>
         public void Initialize(ControllerEditor controller)
         {
-            Debug.Assert(controller != null);
+            DebugEx.Assert(controller != null);
             controller.ToolChanged += ControllerEditor_ToolChanged;
 
             string assetsDirectory = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "editor assets");

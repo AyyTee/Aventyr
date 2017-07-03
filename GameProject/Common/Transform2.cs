@@ -37,9 +37,9 @@ namespace Game.Common
 
         public Transform2(Vector2 position, float rotation = 0, float size = 1, bool mirrorX = false)
         {
-            Debug.Assert(!Vector2Ex.IsNaN(position));
-            Debug.Assert(!float.IsNaN(rotation));
-            Debug.Assert(!float.IsNaN(size) && !float.IsPositiveInfinity(size) && !float.IsNegativeInfinity(size));
+            DebugEx.Assert(!Vector2Ex.IsNaN(position));
+            DebugEx.Assert(!float.IsNaN(rotation));
+            DebugEx.Assert(!float.IsNaN(size) && !float.IsPositiveInfinity(size) && !float.IsNegativeInfinity(size));
             Position = position;
             Size = size;
             Rotation = rotation;
@@ -104,7 +104,7 @@ namespace Game.Common
             invert = invert.SetScale(new Vector2(1 / Scale.X, 1 / Scale.Y));
             Matrix4 mat = Matrix4.CreateRotationZ(-Rotation) * Matrix4.Scale(new Vector3(invert.Scale));
             invert.Position = Vector2Ex.Transform(-Position, mat);
-            Debug.Assert(Matrix4Ex.AlmostEqual(GetMatrix().Inverted(), invert.GetMatrix()));
+            DebugEx.Assert(Matrix4Ex.AlmostEqual(GetMatrix().Inverted(), invert.GetMatrix()));
             return invert;
         }
 
@@ -153,9 +153,9 @@ namespace Game.Common
 
         public Transform2 SetScale(Vector2 scale)
         {
-            Debug.Assert(Vector2Ex.IsReal(scale));
-            Debug.Assert(scale.X != 0 && scale.Y != 0, "Scale vector must have non-zero components");
-            Debug.Assert(
+            DebugEx.Assert(Vector2Ex.IsReal(scale));
+            DebugEx.Assert(scale.X != 0 && scale.Y != 0, "Scale vector must have non-zero components");
+            DebugEx.Assert(
                 Math.Abs(scale.X) - Math.Abs(scale.Y) <= UniformScaleEpsilon,
                 "Transforms with fixed scale cannot have non-uniform scale.");
 
@@ -169,7 +169,7 @@ namespace Game.Common
             }
 
             var transform = WithSize(scale.Y).WithMirrorX(Math.Sign(scale.X) != Math.Sign(scale.Y));
-            Debug.Assert(transform.Scale == scale);
+            DebugEx.Assert(transform.Scale == scale);
             return transform;
         }
 

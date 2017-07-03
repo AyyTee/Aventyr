@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using FarseerPhysics.Dynamics;
+using Game.Common;
 using Game.Portals;
 using Xna = Microsoft.Xna.Framework;
 
@@ -48,8 +49,8 @@ namespace Game.Physics
 
         public BodyData(Actor actor, Body body)
         {
-            Debug.Assert(body != null);
-            Debug.Assert(actor != null);
+            DebugEx.Assert(body != null);
+            DebugEx.Assert(actor != null);
             Actor = actor;
             BodyId = body.BodyId;
             Body = body;
@@ -109,7 +110,7 @@ namespace Game.Physics
             {
                 collisions.UnionWith(FixtureEx.GetData(f).PortalCollisions);
             }
-            Debug.Assert(!collisions.Contains(null));
+            DebugEx.Assert(!collisions.Contains(null));
             return collisions;
         }
 
@@ -120,7 +121,7 @@ namespace Game.Physics
             {
                 collisionsPrevious.UnionWith(FixtureEx.GetData(f).PortalCollisionsPrevious);
             }
-            Debug.Assert(!collisionsPrevious.Contains(null));
+            DebugEx.Assert(!collisionsPrevious.Contains(null));
             return collisionsPrevious;
         }
 

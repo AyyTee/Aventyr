@@ -273,6 +273,7 @@
     <Compile Include="Models\Vertex.cs" />
     <Compile Include="WallCoord.cs" />
     <Compile Include="Physics\WorldEx.cs" />
+    <Compile Include="Common\DebugEx.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Fonts\Arial\Arial_0.png">

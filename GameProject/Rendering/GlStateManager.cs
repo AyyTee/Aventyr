@@ -7,6 +7,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System.Diagnostics;
+using Game.Common;
 
 namespace Game.Rendering
 {
@@ -80,12 +81,12 @@ namespace Game.Rendering
 
             public void Dispose()
             {
-                Debug.Assert(!_disposed);
+                DebugEx.Assert(!_disposed);
                 if (!_disposed)
                 {
                     _disposed = true;
                     _stateManager._enableCapStacks[EnableCap].Pop();
-                    Debug.Assert(_stateManager._enableCapStacks[EnableCap].Count == _stackSize, $"{nameof(StateChange)} disposed out of order.");
+                    DebugEx.Assert(_stateManager._enableCapStacks[EnableCap].Count == _stackSize, $"{nameof(StateChange)} disposed out of order.");
                     if (Current != _previous)
                     {
                         Set(EnableCap, _previous);

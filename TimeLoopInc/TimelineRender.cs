@@ -27,7 +27,7 @@ namespace TimeLoopInc
 
         public void Render(IRenderLayer layer, Vector2 topLeft, Vector2 size, float dpiScale, double t)
         {
-            Debug.Assert(size.X > 0 && size.Y > 0);
+            DebugEx.Assert(size.X > 0 && size.Y > 0);
             Vector2 gridSize = new Vector2(50, 20) * dpiScale;
 
             layer.DrawRectangle(topLeft, topLeft + size, new Color4(0.8f, 0.8f, 0.8f, 0.8f));

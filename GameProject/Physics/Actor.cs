@@ -103,7 +103,7 @@ namespace Game.Physics
 
         public override void SetParent(SceneNode parent)
         {
-            Debug.Assert(parent == null, "Actor must be the root SceneNode.");
+            DebugEx.Assert(parent == null, "Actor must be the root SceneNode.");
             base.SetParent(parent);
         }
 
@@ -152,7 +152,7 @@ namespace Game.Physics
                 centroid += UndoPortalTransform(data, new Transform2(massData.Centroid)).Position * massData.Mass;
                 massTotal += massData.Mass;
             }
-            Debug.Assert(massTotal == GetMass());
+            DebugEx.Assert(massTotal == GetMass());
             centroid /= massTotal;
             return centroid;
         }
@@ -165,7 +165,7 @@ namespace Game.Physics
 
         void _setBodyType(Body body, BodyType type)
         {
-            Debug.Assert(!Scene.InWorldStep);
+            DebugEx.Assert(!Scene.InWorldStep);
             body.BodyType = type;
             foreach (var b in BodyEx.GetData(body).BodyChildren)
             {
@@ -256,7 +256,7 @@ namespace Game.Physics
         {
             if (checkScale && _scale != transform.Scale)
             {
-                Debug.Assert(!Scene.InWorldStep, "Scale cannot change during a physics step.");
+                DebugEx.Assert(!Scene.InWorldStep, "Scale cannot change during a physics step.");
 
                 BodyEx.ScaleFixtures(body, transform.Scale);
             }
@@ -302,7 +302,7 @@ namespace Game.Physics
 
         public static List<Vector2> GetFixtureContour(IList<Vector2> vertices, Vector2 scale)
         {
-            Debug.Assert(scale.X != 0 && scale.Y != 0);
+            DebugEx.Assert(scale.X != 0 && scale.Y != 0);
             Matrix4 scaleMat = Matrix4.CreateScale(new Vector3(scale));
             List<Vector2> contour = Vector2Ex.Transform(vertices, scaleMat);
             if (Math.Sign(scale.X) != Math.Sign(scale.Y))
@@ -322,7 +322,7 @@ namespace Game.Physics
             {
                 Transform2 bodyTransform = UndoPortalTransform(data, BodyExt.GetTransform(data.Body));
                 bodyTransform.SetScale(Vector2.One);
-                Debug.Assert(bodyTransform.AlmostEqual(actorTransform, 0.01f, 0.01f));
+                DebugEx.Assert(bodyTransform.AlmostEqual(actorTransform, 0.01f, 0.01f));
             }*/
         }
 
@@ -345,7 +345,7 @@ namespace Game.Physics
         {
             if (actor.Body.BodyType != actor.BodyType)
             {
-                Debug.Fail("");
+                DebugEx.Fail("");
             }
             foreach (BodyData data in BodyEx.GetData(actor.Body).Children)
             {
@@ -355,7 +355,7 @@ namespace Game.Physics
 
         static void _assertBodyType(BodyData bodyData)
         {
-            Debug.Assert(
+            DebugEx.Assert(
                 (bodyData.Body.BodyType == BodyType.Dynamic && bodyData.Actor.BodyType == BodyType.Dynamic) ||
                 (bodyData.Body.BodyType == BodyType.Kinematic && bodyData.Actor.BodyType != BodyType.Dynamic));
             foreach (BodyData data in bodyData.Children)

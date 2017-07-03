@@ -30,7 +30,7 @@ namespace TimeLoopInc
 
         public Transform2i(Vector2i position = new Vector2i(), GridAngle gridRotation = new GridAngle(), int size = 1, bool mirrorX = false)
         {
-            Debug.Assert(size != 0);
+            DebugEx.Assert(size != 0);
             Position = position;
             Direction = gridRotation;
             Size = size;
@@ -76,7 +76,7 @@ namespace TimeLoopInc
             v = Vector2Ex.Transform(v, GetMatrix());
             if (normalize)
             {
-                Debug.Assert(!Vector2Ex.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
+                DebugEx.Assert(!Vector2Ex.IsNaN((v[1] - v[0]).Normalized()), "Unable to normalize 0 length vector.");
                 return (v[1] - v[0]).Normalized();
             }
             return v[1] - v[0];

@@ -53,7 +53,7 @@ namespace Game.Portals
 
         static float GetValidT(float t, LineF edge, float portalSize)
         {
-            Debug.Assert(EdgeValidLength(edge.Length, portalSize));
+            DebugEx.Assert(EdgeValidLength(edge.Length, portalSize));
             float portalSizeT = (portalSize + FixturePortal.EdgeMargin * 2) / edge.Length;
             return MathHelper.Clamp(t, portalSizeT / 2, 1 - portalSizeT / 2);
         }

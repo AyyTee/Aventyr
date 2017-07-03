@@ -37,7 +37,7 @@ namespace TankGame.Network
 
         public void Update(TankPortal portal, Scene scene)
         {
-            Debug.Assert(portal.ServerId == ServerId || portal.ServerId == null);
+            DebugEx.Assert(portal.ServerId == ServerId || portal.ServerId == null);
 
             if (WallServerId != null)
             {

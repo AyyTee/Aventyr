@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using Game.Common;
 
 namespace Game.Serialization
 {
@@ -32,10 +33,10 @@ namespace Game.Serialization
             foreach (IDeepClone original in cloneHash)
             {
                 IDeepClone clone = original.ShallowClone();
-                Debug.Assert(clone.GetType() == original.GetType(), "Type of cloned instance must match type of original instance.");
+                DebugEx.Assert(clone.GetType() == original.GetType(), "Type of cloned instance must match type of original instance.");
                 cloneMap.Add(original, clone);
             }
-            Debug.Assert(cloneMap.Count == cloneHash.Count);
+            DebugEx.Assert(cloneMap.Count == cloneHash.Count);
             ReadOnlyDictionary<IDeepClone, IDeepClone> readOnlyCloneMap = new ReadOnlyDictionary<IDeepClone, IDeepClone>(cloneMap);
             foreach (IDeepClone clone in readOnlyCloneMap.Values)
             {

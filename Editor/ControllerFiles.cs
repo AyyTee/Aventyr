@@ -57,8 +57,8 @@ namespace EditorWindow
         {
             MainWindow.Invoke(() =>
             {
-                Debug.Assert(filepath != null);
-                Debug.Assert(filepath != "");
+                DebugEx.Assert(filepath != null);
+                DebugEx.Assert(filepath != "");
                 RecentFiles.AddFilepath(filepath);
                 _controllerWpf.Status.Content = "Saved";
                 FilepathCurrent = filepath;
@@ -69,9 +69,9 @@ namespace EditorWindow
         {
             MainWindow.Invoke(() =>
             {
-                Debug.Assert(filepath != null);
-                Debug.Assert(filepath != "");
-                Debug.Assert(Loading);
+                DebugEx.Assert(filepath != null);
+                DebugEx.Assert(filepath != "");
+                DebugEx.Assert(Loading);
                 RecentFiles.AddFilepath(filepath);
                 Loading = false;
                 _controllerWpf.Status.Content = "Loaded";

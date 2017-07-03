@@ -73,7 +73,7 @@ namespace EditorLogic
         public EditorObject(EditorScene editorScene)
         {
             Name = "";
-            Debug.Assert(editorScene != null);
+            DebugEx.Assert(editorScene != null);
             SetParent(editorScene);
             Visible = true;
             IsPortalable = true;
@@ -147,7 +147,7 @@ namespace EditorLogic
 
         public virtual void SetParent(EditorScene scene)
         {
-            Debug.Assert(scene != null);
+            DebugEx.Assert(scene != null);
             RemoveSelf();
             Scene = scene;
             Scene.Children.Add(this);
@@ -156,12 +156,12 @@ namespace EditorLogic
 
         public virtual void SetParent(EditorObject parent)
         {
-            Debug.Assert(parent != null);
+            DebugEx.Assert(parent != null);
             RemoveSelf();
             Parent = parent;
             parent._children.Add(this);
             Scene = null;
-            Debug.Assert(!Tree<EditorObject>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
+            DebugEx.Assert(!Tree<EditorObject>.ParentLoopExists(this), "Cannot have cycles in Parent tree.");
         }
 
         public virtual void SetTransform(Transform2 transform)

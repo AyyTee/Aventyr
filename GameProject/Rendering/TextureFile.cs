@@ -71,7 +71,7 @@ namespace Game.Rendering
             }
             catch (FileNotFoundException)
             {
-                Debug.Assert(false, "Texture missing.");
+                DebugEx.Assert(false, "Texture missing.");
             }
         }
     }

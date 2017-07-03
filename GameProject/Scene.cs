@@ -48,7 +48,7 @@ namespace Game
 
         public void Add(ISceneObject sceneObject)
         {
-            Debug.Assert(!SceneObjects.Contains(sceneObject), "The same instance cannot be added twice.");
+            DebugEx.Assert(!SceneObjects.Contains(sceneObject), "The same instance cannot be added twice.");
             SceneObjects.Add(sceneObject);
         }
 
@@ -56,7 +56,7 @@ namespace Game
 
         public void Step(float stepSize = 1 / 60f)
         {
-            Debug.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
+            DebugEx.Assert(stepSize >= 0, "Simulation step size cannot be negative.");
             InStep = true;
             World.ProcessChanges();
 
@@ -147,7 +147,7 @@ namespace Game
         /// </summary>
         public void SetWorld(World world)
         {
-            //Debug.Assert(World == null, "A physics world has already been assigned to this scene.");
+            //DebugEx.Assert(World == null, "A physics world has already been assigned to this scene.");
             World = world;
             World.ProcessChanges();
             _contactListener = new PhyicsListener(this);

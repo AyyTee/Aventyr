@@ -23,7 +23,7 @@ namespace Game.Common
             get { return _vertices[index]; }
             set
             {
-                Debug.Assert(Vector2Ex.IsReal(value));
+                DebugEx.Assert(Vector2Ex.IsReal(value));
                 _vertices[index] = value;
             }
         }
@@ -53,7 +53,7 @@ namespace Game.Common
 
         public LineF(IList<Vector2> line)
         {
-            Debug.Assert(line.Count == 2);
+            DebugEx.Assert(line.Count == 2);
             _vertices = line.ToArray();
         }
 
@@ -279,7 +279,7 @@ namespace Game.Common
         public void Normalize()
         {
             Vector2 normal = (_vertices[1] - _vertices[0]).Normalized();
-            Debug.Assert(Vector2Ex.IsReal(normal), "Unable to normalize 0 length vector.");
+            DebugEx.Assert(Vector2Ex.IsReal(normal), "Unable to normalize 0 length vector.");
             this[1] = normal + _vertices[0];
         }
     }

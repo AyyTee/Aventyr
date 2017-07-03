@@ -224,7 +224,7 @@ namespace GameTests
                 new Vector2(0, 1),
                 new Vector2(1, 0)
             };
-            Debug.Assert(MathEx.IsClockwise(v));
+            DebugEx.Assert(MathEx.IsClockwise(v));
             Vector2[] result = MathEx.SetWinding(v, false);
             Vector2[] expected = {
                 new Vector2(1, 0),
@@ -244,7 +244,7 @@ namespace GameTests
                 new Vector2(1, 0)
             };
 
-            Debug.Assert(MathEx.IsClockwise(v));
+            DebugEx.Assert(MathEx.IsClockwise(v));
             List<Vector2> result = MathEx.SetWinding(v, false);
             Vector2[] expected = {
                 new Vector2(1, 0),
