@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Lidgren.Network;
 using System.Reflection;
 using System.Diagnostics;
+using Game.Common;
 
 namespace TankGame.Network
 {

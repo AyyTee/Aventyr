@@ -7,6 +7,7 @@ using Lidgren.Network;
 using System.Linq;
 using Game;
 using System.Diagnostics;
+using Game.Common;
 
 namespace TankGameTestFramework
 {

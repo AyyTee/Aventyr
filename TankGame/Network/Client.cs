@@ -13,6 +13,7 @@ using Game.Portals;
 using System.Diagnostics;
 using Game.Common;
 using Game.Rendering;
+using OpenTK.Graphics;
 
 namespace TankGame.Network
 {
@@ -70,7 +71,7 @@ namespace TankGame.Network
             _tankCamera = new TankCamera(camera, null);
 
             Entity entity2 = new Entity(Scene);
-            entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10), new Vector3(-5, -5, 0)));
+            entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10), Color4.Black, new Vector3(-5, -5, 0)));
             entity2.ModelList[0].SetTexture(_window.Textures?.@Default);
 
             PortalCommon.UpdateWorldTransform(Scene);

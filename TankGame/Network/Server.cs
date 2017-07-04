@@ -59,7 +59,7 @@ namespace TankGame.Network
             new Camera2(_scene, new Transform2(new Vector2(), size: 10), (float)_window.CanvasSize.XRatio);
 
             Entity entity2 = new Entity(_scene);
-            entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10), new Vector3(-5, -5, 0)));
+            entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10), Color.Black, new Vector3(-5, -5, 0)));
             entity2.ModelList[0].SetTexture(_window.Textures?.Default);
 
             _walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
