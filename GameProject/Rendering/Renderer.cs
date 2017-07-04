@@ -57,17 +57,36 @@ namespace Game.Rendering
             GL.ClearStencil(0);
             GL.PointSize(15f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+			
+            // Load shaders from file
+			_shaders.Add("uber", new Shader(
+				Path.Combine(AssetPaths.ShaderFolder, "vs_uber.glsl"),
+				Path.Combine(AssetPaths.ShaderFolder, "fs_uber.glsl"),
+				true));
 
-            StencilBits = GL.GetInteger(GetPName.StencilBits);
-            DebugEx.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
+            // Skip display mode diagnostics on Mac as it doesn't seem to support GetInteger.
+            if (Configuration.RunningOnMacOS)
+            {
+                StencilBits = 8;
+            }
+            else
+            {
+				StencilBits = 8;//= GL.GetInteger(GetPName.StencilBits);
+				var depthBits = GL.GetInteger(GetPName.DepthBits);
+				var samples = GL.GetInteger(GetPName.Samples);
+				var rgbBits =
+					GL.GetInteger(GetPName.RedBits) +
+					GL.GetInteger(GetPName.GreenBits) +
+					GL.GetInteger(GetPName.BlueBits) +
+					GL.GetInteger(GetPName.AlphaBits);
+				var version = GL.GetString(StringName.Version);
+				DebugEx.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
+				DebugEx.Assert(depthBits == 24);
+				DebugEx.Assert(samples == 1);
+				DebugEx.Assert(rgbBits == 32);
+			}
 
             GL.GenBuffers(1, out _iboElements);
-
-            // Load shaders from file
-            _shaders.Add("uber", new Shader(
-                Path.Combine(AssetPaths.ShaderFolder, "vs_uber.glsl"),
-                Path.Combine(AssetPaths.ShaderFolder, "fs_uber.glsl"),
-                true));
         }
 
         void SetShader(Shader shader)
@@ -369,7 +388,7 @@ namespace Game.Rendering
                 else
                 {
                     GL.Uniform1(_activeShader.GetUniform("isTextured"), 0);
-                    GL.BindTexture(TextureTarget.Texture2D, -1);
+                    //GL.BindTexture(TextureTarget.Texture2D, -1);
                 }
 
                 if (data.Model.Wireframe)

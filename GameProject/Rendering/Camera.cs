@@ -67,7 +67,7 @@ namespace Game.Rendering
         public Matrix4 GetViewMatrix()
         {
             var m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
-            var lookat = Vector3.Transform(new Vector3(0, 0, -1), m);
+            var lookat = Vector3.Transform(new Vector3(0, 0, -1), new Matrix3(m));
             var perspective = Orthographic ? 
                 Matrix4.CreateOrthographic(Transform.Scale.X * Scale * Aspect, Transform.Scale.Y * Scale, ZNear, ZFar) : 
                 Matrix4.CreatePerspectiveFieldOfView(Fov, Transform.Scale.X / Transform.Scale.Y, ZNear, ZFar);
@@ -77,13 +77,13 @@ namespace Game.Rendering
         public Vector3 GetUp()
         {
             var m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
-            return Vector3.Transform(new Vector3(0, 1, 0), m);
+            return Vector3.Transform(new Vector3(0, 1, 0), new Matrix3(m));
         }
 
         public Vector3 GetRight()
         {
             var m = Matrix4.CreateFromAxisAngle(new Vector3(Transform.Rotation.X, Transform.Rotation.Y, Transform.Rotation.Z), Transform.Rotation.W);
-            return Vector3.Transform(new Vector3(1, 0, 0), m);
+            return Vector3.Transform(new Vector3(1, 0, 0), new Matrix3(m));
         }
 
         public Vector2 WorldToScreen(Vector2 worldCoord, Vector2 canvasSize)

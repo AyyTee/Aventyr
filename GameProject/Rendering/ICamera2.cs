@@ -29,7 +29,7 @@ namespace Game.Rendering
         {
             Transform2 transform = camera.WorldTransform;
             var m = Matrix4.CreateRotationZ(transform.Rotation);
-            Vector3 lookat = new Vector3(transform.Position) + Vector3.Transform(new Vector3(0, 0, -1), m);
+            Vector3 lookat = new Vector3(transform.Position) + Vector3.Transform(new Vector3(0, 0, -1), new Matrix3(m));
             Vector3 eye;
             Matrix4 perspective;
 

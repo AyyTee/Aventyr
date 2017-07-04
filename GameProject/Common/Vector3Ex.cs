@@ -17,7 +17,7 @@ namespace Game.Common
             Vector3[] vList = new Vector3[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
-                vList[i] = Vector3.Transform(vectors[i], matrix);
+                vList[i] = Vector3.Transform(vectors[i], new Matrix3(matrix));
             }
             return vList;
         }
@@ -42,7 +42,7 @@ namespace Game.Common
             List<Vector3> vList = new List<Vector3>();
             foreach (Vector3 v in vectors)
             {
-                vList.Add(Vector3.Transform(v, matrix));
+                vList.Add(Vector3.Transform(v, new Matrix3(matrix)));
             }
             return vList;
         }
@@ -57,7 +57,7 @@ namespace Game.Common
                     mat[i, j] = matrix[i, j];
                 }
             }
-            return Vector3.Transform(vector, mat);
+            return Vector3.Transform(vector, new Matrix3(mat));
         }
 
         public static Vector3 Transform(Vector3 vector, Matrix3d matrix)

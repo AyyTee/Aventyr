@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -54,7 +54,20 @@ namespace Game
 
         public ResourceController(Vector2i windowSize, string windowName = "Game")
         {
-            _window = new GameWindow(windowSize.X, windowSize.Y, DefaultGraphics, windowName, GameWindowFlags.FixedWindow);
+            
+            _window = new GameWindow(
+                windowSize.X,
+                windowSize.Y,
+                //DefaultGraphics,
+                GraphicsMode.Default,
+                windowName,
+                GameWindowFlags.FixedWindow,
+                DisplayDevice.Default, 
+                3, 
+                3, 
+                GraphicsContextFlags.ForwardCompatible);
+            var glError = GL.GetError();
+            DebugEx.GlAssert();
 
             DpiScale = ClientSize.X / (float)windowSize.X;
 

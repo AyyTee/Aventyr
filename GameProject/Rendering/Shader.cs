@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Game.Common;
 using OpenTK.Graphics.OpenGL;
 
 namespace Game.Rendering
@@ -20,10 +21,52 @@ namespace Game.Rendering
         public Dictionary<string, UniformInfo> Uniforms = new Dictionary<string, UniformInfo>();
         public Dictionary<string, uint> Buffers = new Dictionary<string, uint>();
 
+        public int Vao { get; private set; }
+
         public Shader()
         {
             ProgramId = GL.CreateProgram();
         }
+
+		public Shader(string vshader, string fshader, bool fromFile = false)
+		{
+			ProgramId = GL.CreateProgram();
+
+			if (fromFile)
+			{
+				LoadShaderFromFile(vshader, ShaderType.VertexShader);
+				LoadShaderFromFile(fshader, ShaderType.FragmentShader);
+			}
+			else
+			{
+				LoadShaderFromString(vshader, ShaderType.VertexShader);
+				LoadShaderFromString(fshader, ShaderType.FragmentShader);
+			}
+
+			Link();
+			GenBuffers();
+		}
+
+		public Shader(string vshader, string gshader, string fshader, bool fromFile = false)
+		{
+			ProgramId = GL.CreateProgram();
+
+			if (fromFile)
+			{
+				LoadShaderFromFile(vshader, ShaderType.VertexShader);
+				LoadShaderFromFile(gshader, ShaderType.GeometryShader);
+				LoadShaderFromFile(fshader, ShaderType.FragmentShader);
+			}
+			else
+			{
+				LoadShaderFromString(vshader, ShaderType.VertexShader);
+				LoadShaderFromString(gshader, ShaderType.GeometryShader);
+				LoadShaderFromString(fshader, ShaderType.FragmentShader);
+			}
+
+			Link();
+			GenBuffers();
+		}
 
         void LoadShader(string code, ShaderType type, out int address)
         {
@@ -31,7 +74,9 @@ namespace Game.Rendering
             GL.ShaderSource(address, code);
             GL.CompileShader(address);
             GL.AttachShader(ProgramId, address);
-            //Console.WriteLine(GL.GetShaderInfoLog(address));
+            var glError = GL.GetError();
+            DebugEx.Assert(glError == ErrorCode.NoError);
+            Console.WriteLine(GL.GetShaderInfoLog(address));
         }
 
         public void LoadShaderFromString(string code, ShaderType type)
@@ -69,7 +114,7 @@ namespace Game.Rendering
             }
         }
 
-        public void Link()
+        private void Link()
         {
             GL.LinkProgram(ProgramId);
 
@@ -77,6 +122,8 @@ namespace Game.Rendering
 
             GL.GetProgram(ProgramId, GetProgramParameterName.ActiveAttributes, out AttributeCount);
             GL.GetProgram(ProgramId, GetProgramParameterName.ActiveUniforms, out UniformCount);
+
+            Vao = GL.GenVertexArray();
 
             for (int i = 0; i < AttributeCount; i++)
             {
@@ -128,8 +175,10 @@ namespace Game.Rendering
 
         public void EnableVertexAttribArrays()
         {
+            GL.BindVertexArray(Vao);
             for (int i = 0; i < Attributes.Count; i++)
             {
+                
                 GL.EnableVertexAttribArray(Attributes.Values.ElementAt(i).Address);
             }
         }
@@ -176,46 +225,6 @@ namespace Game.Rendering
             {
                 return 0;
             }
-        }
-
-        public Shader(string vshader, string fshader, bool fromFile = false)
-        {
-            ProgramId = GL.CreateProgram();
-
-            if (fromFile)
-            {
-                LoadShaderFromFile(vshader, ShaderType.VertexShader);
-                LoadShaderFromFile(fshader, ShaderType.FragmentShader);
-            }
-            else
-            {
-                LoadShaderFromString(vshader, ShaderType.VertexShader);
-                LoadShaderFromString(fshader, ShaderType.FragmentShader);
-            }
-
-            Link();
-            GenBuffers();
-        }
-
-        public Shader(string vshader, string gshader, string fshader, bool fromFile = false)
-        {
-            ProgramId = GL.CreateProgram();
-
-            if (fromFile)
-            {
-                LoadShaderFromFile(vshader, ShaderType.VertexShader);
-                LoadShaderFromFile(gshader, ShaderType.GeometryShader);
-                LoadShaderFromFile(fshader, ShaderType.FragmentShader);
-            }
-            else
-            {
-                LoadShaderFromString(vshader, ShaderType.VertexShader);
-                LoadShaderFromString(gshader, ShaderType.GeometryShader);
-                LoadShaderFromString(fshader, ShaderType.FragmentShader);
-            }
-
-            Link();
-            GenBuffers();
         }
 
         public class UniformInfo

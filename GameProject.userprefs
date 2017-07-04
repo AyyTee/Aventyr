@@ -1,0 +1,27 @@
+﻿<Properties StartupConfiguration="{9E41EC6B-89F1-429C-B18D-48A7035BA20D}|Default">
+  <MonoDevelop.Ide.ItemProperties.TimeLoopInc PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="GameProject/Rendering/Shader.cs">
+    <Files>
+      <File FileName="GameProject/Rendering/Camera.cs" Line="82" Column="9" />
+      <File FileName="GameProject/Common/DebugEx.cs" Line="13" Column="1" />
+      <File FileName="GameProject/ResourceController.cs" Line="19" Column="6" />
+      <File FileName="GameProject/Rendering/Renderer.cs" Line="113" Column="42" />
+      <File FileName="GameProject/Rendering/Shader.cs" Line="179" Column="9" />
+      <File FileName="GameProject/Assets/Shaders/vs_uber.glsl" Line="1" Column="11" />
+      <File FileName="GameProject/Assets/Shaders/fs_uber.glsl" Line="1" Column="11" />
+      <File FileName="GameProject/Common/Vector3Ex.cs" Line="60" Column="46" />
+      <File FileName="GameProject/Models/Vertex.cs" Line="86" Column="56" />
+      <File FileName="GameProject/Common/Vector2Ex.cs" Line="124" Column="98" />
+      <File FileName="GameProject/Rendering/ICamera2.cs" Line="32" Column="119" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/martinstewart/Aventyr/GameProject/Rendering/Shader.cs" relfile="GameProject/Rendering/Shader.cs" line="26" column="1" />
+      <Breakpoint file="/Users/martinstewart/Aventyr/GameProject/Rendering/Shader.cs" relfile="GameProject/Rendering/Shader.cs" line="176" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>

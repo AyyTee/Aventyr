@@ -82,8 +82,8 @@ namespace Game.Models
 
         public Vertex Transform(Matrix4 transform)
         {
-            Vector3 position = Vector3.Transform(Position, transform);
-            Vector3 normal = Vector3.Transform(Normal, transform);
+            Vector3 position = Vector3.Transform(Position, new Matrix3(transform));
+            Vector3 normal = Vector3.Transform(Normal, new Matrix3(transform));
             return new Vertex(position, TextureCoord, Color, normal);
         }
     }
