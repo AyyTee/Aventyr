@@ -52,8 +52,8 @@ namespace TimeLoopInc
 
             var Portals = new TimePortal[]
             {
-                //portal0,
-                //portal1,
+                portal0,
+                portal1,
                 //portal2,
                 //portal3
             };

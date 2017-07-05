@@ -482,7 +482,6 @@ namespace Game.Rendering
             else
             {
                 GL.Uniform1(_activeShader.GetUniform("isTextured"), 0);
-                GL.BindTexture(TextureTarget.Texture2D, -1);
             }
 
             if (model.Wireframe)
