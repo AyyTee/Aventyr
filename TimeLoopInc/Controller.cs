@@ -50,10 +50,10 @@ namespace TimeLoopInc
             //portal2.SetLinked(portal3);
             //portal2.SetTimeOffset(0);
 
-            var Portals = new[]
+            var Portals = new TimePortal[]
             {
-                portal0,
-                portal1,
+                //portal0,
+                //portal1,
                 //portal2,
                 //portal3
             };

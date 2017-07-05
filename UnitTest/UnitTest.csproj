@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0C8CA266-3FB6-4CE1-80D3-0602B453CFDC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>UnitTest</RootNamespace>
+    <AssemblyName>temp</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="OpenTK">
+      <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="Equ, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EquWithDataContract.1.0.4\lib\net45\Equ.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.3.7.1\lib\net45\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="clipper_library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\clipper_library.6.2.1\lib\net40\clipper_library.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Poly2Tri, Version=1.0.0.0, Culture=neutral, PublicKeyToken=db87057254d2bb1c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Poly2Tri.dll.1.0.4\lib\Net35\Poly2Tri.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\packages\System.ValueTuple.4.4.0-preview2-25405-01\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.3.1\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActorTests.cs" />
+    <Compile Include="BodyExTests.cs" />
+    <Compile Include="CameraExTests.cs" />
+    <Compile Include="ClipModelTests.cs" />
+    <Compile Include="CodeGenTests.cs" />
+    <Compile Include="DeepCloneTests.cs" />
+    <Compile Include="EditorCloneTests.cs" />
+    <Compile Include="FCurveTests.cs" />
+    <Compile Include="FixtureExTests.cs" />
+    <Compile Include="FixtureUserDataTests.cs" />
+    <Compile Include="GridAngleTests.cs" />
+    <Compile Include="LineTests.cs" />
+    <Compile Include="MathExTests.cs" />
+    <Compile Include="NodePortalable.cs" />
+    <Compile Include="NodeWall.cs" />
+    <Compile Include="PolygonExTests.cs" />
+    <Compile Include="PortalCommonTests.cs" />
+    <Compile Include="PortalJointTests.cs" />
+    <Compile Include="PortalTests.cs" />
+    <Compile Include="SceneNodeTests.cs" />
+    <Compile Include="SceneStateTests.cs" />
+    <Compile Include="SceneTests.cs" />
+    <Compile Include="SimulationStepTests.cs" />
+    <Compile Include="TankGameTests.cs" />
+    <Compile Include="TimelineRenderTests.cs" />
+    <Compile Include="Transform2iTests.cs" />
+    <Compile Include="Transform2Tests.cs" />
+    <Compile Include="TriangleTests.cs" />
+    <Compile Include="Vector2ExTests.cs" />
+    <Compile Include="Vector2iTests.cs" />
+    <Compile Include="VertexTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="OpenTK.dll.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EditorLogic\EditorLogic.csproj">
+      <Project>{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}</Project>
+      <Name>EditorLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FarseerPhysics\Farseer Physics.csproj">
+      <Project>{A4610E4C-DD34-428B-BABB-779CA0B5993A}</Project>
+      <Name>Farseer Physics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GameProject\Game.csproj">
+      <Project>{CE5CD75D-8626-4CD8-83FC-B7A4868DAEC0}</Project>
+      <Name>Game</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TankGame\TankGame.csproj">
+      <Project>{AA060735-819A-4094-AB53-ABDA3673E052}</Project>
+      <Name>TankGame</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lidgren.Network\Lidgren.Network.csproj">
+      <Project>{49BA1C69-6104-41AC-A5D8-B54FA9F696E8}</Project>
+      <Name>Lidgren.Network</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TankGameTestFramework\TankGameTestFramework.csproj">
+      <Project>{462AC7BF-9A9C-4CC3-9704-5A03D952C07D}</Project>
+      <Name>TankGameTestFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TimeLoopInc\TimeLoopInc.csproj">
+      <Project>{9E41EC6B-89F1-429C-B18D-48A7035BA20D}</Project>
+      <Name>TimeLoopInc</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

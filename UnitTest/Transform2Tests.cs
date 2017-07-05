@@ -197,8 +197,9 @@ namespace GameTests
         {
             Transform2 t0 = new Transform2();
             Transform2 t1 = new Transform2(new Vector2(1, 2), 123, 3);
-            Transform2 result = t0.Transform(t1);
-            Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
+            var result = t0.Transform(t1).GetMatrix();
+            var expected = t0.GetMatrix() * t1.GetMatrix();
+            Assert.IsTrue(Matrix4Ex.AlmostEqual(result, expected));
         }
         [Test]
         public void TransformTest1()

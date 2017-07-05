@@ -17,7 +17,7 @@ namespace Game.Common
             Vector3[] vList = new Vector3[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
-                vList[i] = Vector3.Transform(vectors[i], new Matrix3(matrix));
+                vList[i] = Transform(vectors[i], matrix);
             }
             return vList;
         }
@@ -37,12 +37,23 @@ namespace Game.Common
             return (Vector3)Vector3d.Transform(new Vector3d(vectors.X, vectors.Y, vectors.Z), matrix);
         }
 
+		/// <summary>Transform a Vector by the given Matrix</summary>
+		/// <param name="vec">The vector to transform</param>
+		/// <param name="mat">The desired transformation</param>
+		/// <remarks>Copied from OpenTK 1.1 source code.</remarks>
+		public static Vector3 Transform(Vector3 vec, Matrix4 mat)
+		{
+			Vector4 v4 = new Vector4(vec.X, vec.Y, vec.Z, 1.0f);
+			Vector4.Transform(ref v4, ref mat, out v4);
+			return v4.Xyz;
+		}
+
         public static List<Vector3> Transform(IEnumerable<Vector3> vectors, Matrix4 matrix)
         {
             List<Vector3> vList = new List<Vector3>();
             foreach (Vector3 v in vectors)
             {
-                vList.Add(Vector3.Transform(v, new Matrix3(matrix)));
+                vList.Add(Vector3Ex.Transform(v, matrix));
             }
             return vList;
         }
@@ -57,7 +68,7 @@ namespace Game.Common
                     mat[i, j] = matrix[i, j];
                 }
             }
-            return Vector3.Transform(vector, new Matrix3(mat));
+            return Vector3Ex.Transform(vector, mat);
         }
 
         public static Vector3 Transform(Vector3 vector, Matrix3d matrix)

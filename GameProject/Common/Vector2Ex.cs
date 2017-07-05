@@ -121,7 +121,7 @@ namespace Game.Common
 
         public static Vector2 Transform(Vector2 vector, Matrix4 matrix)
         {
-            Vector3 v = Vector3.Transform(new Vector3(vector.X, vector.Y, 1), new Matrix3(matrix));
+            Vector3 v = Vector3Ex.Transform(new Vector3(vector.X, vector.Y, 1), matrix);
             return new Vector2(v.X, v.Y);
         }
 

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Game;
+using Game.Common;
 using Game.Rendering;
 
 namespace EditorLogic.Tools

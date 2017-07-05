@@ -413,6 +413,7 @@ namespace Game.Rendering
         /// <param name="viewMatrix">Camera view matrix, do not use view matrix for the portalview.</param>
         void SetScissor(IVirtualWindow window, PortalView view, Matrix4 viewMatrix)
         {
+            //return;
             DebugEx.Assert(view != null);
             if (view.Paths == null)
             {

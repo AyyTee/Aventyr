@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Serialization;
+using Game.Common;
 
 namespace EditorLogic
 {

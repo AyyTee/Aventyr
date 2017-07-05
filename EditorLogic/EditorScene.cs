@@ -38,7 +38,7 @@ namespace EditorLogic
 
             #region create background
             float size = 50;
-            Model background = Game.Rendering.ModelFactory.CreatePlane(Vector2.One * size, new Vector3(-size/2, -size/2, 0));
+            Model background = Game.Rendering.ModelFactory.CreatePlane(Vector2.One * size, Color4.Black, new Vector3(-size/2, -size/2, 0));
             background.Texture = Window.Textures?.Grid;
             background.SetColor(new Color4(1f, 1f, 0.5f, 1f));
             background.Transform.Position = new Vector3(0, 0, -5f);
