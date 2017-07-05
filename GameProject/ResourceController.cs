@@ -42,7 +42,7 @@ namespace Game
         readonly List<ControllerData> _controllers = new List<ControllerData>();
         readonly Stopwatch _stopwatch = new Stopwatch();
 
-        public static readonly GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 1);
+        public static readonly GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 0);
 
         /// <summary>
         /// Keep pointless messages from the Poly2Tri library out of the console window.
@@ -54,12 +54,10 @@ namespace Game
 
         public ResourceController(Vector2i windowSize, string windowName = "Game")
         {
-            
             _window = new GameWindow(
                 windowSize.X,
                 windowSize.Y,
-                //DefaultGraphics,
-                GraphicsMode.Default,
+                DefaultGraphics,
                 windowName,
                 GameWindowFlags.FixedWindow,
                 DisplayDevice.Default, 

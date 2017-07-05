@@ -71,7 +71,7 @@ namespace Game.Rendering
             }
             else
             {
-				StencilBits = 8;//= GL.GetInteger(GetPName.StencilBits);
+				StencilBits = GL.GetInteger(GetPName.StencilBits);
 				var depthBits = GL.GetInteger(GetPName.DepthBits);
 				var samples = GL.GetInteger(GetPName.Samples);
 				var rgbBits =
