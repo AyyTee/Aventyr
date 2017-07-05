@@ -9,6 +9,7 @@ using System.Windows;
 using System.Diagnostics;
 using System.Windows.Threading;
 using EditorLogic;
+using Game.Common;
 
 namespace EditorWindow
 {

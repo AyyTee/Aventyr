@@ -82,7 +82,7 @@ namespace Game.Rendering
 				var version = GL.GetString(StringName.Version);
 				DebugEx.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
 				DebugEx.Assert(depthBits == 24);
-				DebugEx.Assert(samples == 1);
+				DebugEx.Assert(samples == 0);
 				DebugEx.Assert(rgbBits == 32);
 			}
 

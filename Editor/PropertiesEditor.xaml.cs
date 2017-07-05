@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using EditorLogic;
 using EditorLogic.Command;
 using System.Diagnostics;
+using Game.Common;
 
 namespace EditorWindow
 {

@@ -83,9 +83,9 @@
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
       <Name>Game</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UnitTest\GameTests.csproj">
-      <Project>{0f3e7119-4982-4ab9-a2a1-e025f68488eb}</Project>
-      <Name>GameTests</Name>
+    <ProjectReference Include="..\UnitTest\UnitTest.csproj">
+      <Project>{0c8ca266-3fb6-4ce1-80d3-0602b453cfdc}</Project>
+      <Name>UnitTest</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
