@@ -44,8 +44,9 @@ namespace TimeLoopInc
         void DrawTimelines(IRenderLayer layer, Vector2 topLeft, Vector2 size, double t)
         {
             float rowCount = 3;
+            var currentTime = _scene.CurrentInstant.Time - (1 - t);
 
-            foreach (var box in GetTimelineBoxes(t))
+            foreach (var box in GetTimelineBoxes(currentTime))
             {
                 Vector2 start = Vector2.Clamp(
                     new Vector2(
@@ -66,18 +67,35 @@ namespace TimeLoopInc
                 layer.DrawRectangle(topLeft + start, topLeft + end, new Color4(0.8f, 0.8f, 0f, 1f));
             }
 
-            //_scene.CurrentInstant.Time - (1 - t);
+            var markerPos = topLeft + new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, currentTime), 0) * size;
+
+            DrawTimeMarker(layer, markerPos, 1);
+
+            layer.DrawLine(new LineF(markerPos, markerPos + size.YOnly()), Color4.Black);
 
             for (int i = (int)Math.Ceiling(MinTime - 0.01); i <= Math.Floor(MaxTime + 0.01); i++)
             {
-                Vector2 pos = new Vector2((i - MinTime) / (MaxTime - MinTime), 0) * size;
+                Vector2 pos = new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, i), 0) * size;
                 var top = (topLeft + pos).Round(Vector2.One);
                 layer.DrawText(_font, top, i.ToString(), new Vector2(0.5f, 1));
                 layer.DrawLine(new LineF(top, top + size.YOnly()));
             }
         }
 
-        public List<TimelineBox> GetTimelineBoxes(double t)
+        public void DrawTimeMarker(IRenderLayer layer, Vector2 position, float uiScale)
+        {
+			layer.DrawTriangle(
+				position,
+				position + new Vector2(15, -18) * uiScale,
+				position + new Vector2(-15, -18) * uiScale);
+			layer.DrawTriangle(
+                position + new Vector2(0, -2) * uiScale,
+				position + new Vector2(11, -16) * uiScale,
+				position + new Vector2(-11, -16) * uiScale,
+                Color4.Green);
+        }
+
+        public List<TimelineBox> GetTimelineBoxes(double currentTime)
         {
             var output = new List<TimelineBox>();
 
@@ -96,7 +114,7 @@ namespace TimeLoopInc
                 double endTime = entity.EndTime;
                 if (i + 1 == count)
                 {
-                    endTime = _scene.CurrentInstant.Time - (1 - t);
+                    endTime = currentTime;
                 }
 
                 output.Add(new TimelineBox(row, entity.StartTime, endTime));

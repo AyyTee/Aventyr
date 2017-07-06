@@ -91,7 +91,7 @@ namespace TimeLoopInc
             var offset = GetOffset(offsetCount);
             if (!renderPortals)
             {
-                var renderables = RenderInstant(_scene.GetStateInstant(time), t, worldLayer.Portals);
+                var renderables = RenderInstant(_scene.GetSceneInstant(time), t, worldLayer.Portals);
                 foreach (var renderable in renderables)
                 {
                     if (portalView.PortalEntrance != null)

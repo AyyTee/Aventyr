@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -79,7 +79,6 @@ namespace Game.Rendering
 					GL.GetInteger(GetPName.GreenBits) +
 					GL.GetInteger(GetPName.BlueBits) +
 					GL.GetInteger(GetPName.AlphaBits);
-				var version = GL.GetString(StringName.Version);
 				DebugEx.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
 				DebugEx.Assert(depthBits == 24);
 				DebugEx.Assert(samples == 0);

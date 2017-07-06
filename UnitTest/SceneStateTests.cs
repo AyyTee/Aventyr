@@ -23,7 +23,7 @@ namespace GameTests
             var block = new Block(new Transform2i(), 0);
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
 
-            var result = scene.GetStateInstant(0).Entities.Count;
+            var result = scene.GetSceneInstant(0).Entities.Count;
             Assert.AreEqual(1, result);
         }
 
@@ -33,7 +33,7 @@ namespace GameTests
             var block = new Block(new Transform2i(), 0);
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
 
-            var result = scene.GetStateInstant(1).Entities.Count;
+            var result = scene.GetSceneInstant(1).Entities.Count;
             Assert.AreEqual(1, result);
         }
 
@@ -43,7 +43,7 @@ namespace GameTests
             var block = new Block(new Transform2i(), 0);
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
 
-            var result = scene.GetStateInstant(-1).Entities.Count;
+            var result = scene.GetSceneInstant(-1).Entities.Count;
             Assert.AreEqual(0, result);
         }
 
@@ -53,7 +53,7 @@ namespace GameTests
             var block = new Block(new Transform2i(), 2);
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, new[] { block });
 
-            Assert.AreEqual(0, scene.GetStateInstant(1).Entities.Count);
+            Assert.AreEqual(0, scene.GetSceneInstant(1).Entities.Count);
         }
 
         [Test]
@@ -66,7 +66,7 @@ namespace GameTests
             };
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), null, blocks);
 
-            Assert.AreEqual(3, scene.GetStateInstant(10).Entities.Count);
+            Assert.AreEqual(3, scene.GetSceneInstant(10).Entities.Count);
         }
 
         [Test]
@@ -259,7 +259,7 @@ namespace GameTests
 
             Assert.AreEqual(-9, scene.CurrentInstant.Time);
 
-            var instant = scene.GetStateInstant(1);
+            var instant = scene.GetSceneInstant(1);
 
             Assert.AreEqual(1, instant.Entities.Keys.OfType<Block>().Count());
         }
@@ -282,5 +282,79 @@ namespace GameTests
             Assert.AreEqual(new Vector2i(1, 0), scene.CurrentInstant.Entities[scene.CurrentPlayer].Transform.Position);
             Assert.AreEqual(new Vector2i(0, 0), scene.CurrentInstant.Entities[block].Transform.Position);
         }
+
+        [Test]
+        public void ParadoxTest0()
+        {
+            var scene = new Scene();
+
+            var player0 = new Player(new Transform2i(), 0);
+            var player1 = new Player(new Transform2i(), 0);
+
+            scene.PlayerTimeline.Add(player0);
+            scene.PlayerTimeline.Add(player1);
+
+            var result = scene.GetParadoxes(0);
+            var expected = new HashSet<IGridEntity> { player0, player1 };
+            Assert.IsTrue(expected.SetEquals(result));
+        }
+
+		[Test]
+		public void ParadoxTest1()
+		{
+			var scene = new Scene();
+
+			var player0 = new Player(new Transform2i(), 0);
+			var player1 = new Player(new Transform2i(), 0);
+            var block = new Block(new Transform2i(), 0);
+
+			scene.PlayerTimeline.Add(player0);
+			scene.PlayerTimeline.Add(player1);
+            scene.BlockTimelines.Add(new Timeline<Block> { block });
+
+			var result = scene.GetParadoxes(0);
+			var expected = new HashSet<IGridEntity> { player0, player1, block };
+			Assert.IsTrue(expected.SetEquals(result));
+		}
+
+		[Test]
+		public void ParadoxTest2()
+		{
+			var scene = new Scene();
+
+			var player0 = new Player(new Transform2i(), 1);
+			var player1 = new Player(new Transform2i(), 0);
+			var block = new Block(new Transform2i(), 1);
+
+			scene.PlayerTimeline.Add(player0);
+			scene.PlayerTimeline.Add(player1);
+			scene.BlockTimelines.Add(new Timeline<Block> { block });
+
+            scene.Step(new Input(GridAngle.Down));
+
+			var result = scene.GetParadoxes(1);
+			var expected = new HashSet<IGridEntity> { player0, block };
+			Assert.IsTrue(expected.SetEquals(result));
+		}
+
+		[Test]
+		public void ParadoxTest3()
+		{
+			var scene = new Scene();
+
+			var player0 = new Player(new Transform2i(), 1);
+			var player1 = new Player(new Transform2i(), 0);
+			var block = new Block(new Transform2i(), 1);
+
+			scene.PlayerTimeline.Add(player0);
+			scene.PlayerTimeline.Add(player1);
+			scene.BlockTimelines.Add(new Timeline<Block> { block });
+
+			scene.Step(new Input(GridAngle.Down));
+
+			var result = scene.GetParadoxes(0);
+			var expected = new HashSet<IGridEntity>();
+			Assert.IsTrue(expected.SetEquals(result));
+		}
     }
 }

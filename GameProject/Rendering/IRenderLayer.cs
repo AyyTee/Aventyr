@@ -30,8 +30,6 @@ namespace Game.Rendering
 
         public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight, Color4 color)
         {
-            var renderable = new Renderable();
-            renderable.IsPortalable = false;
             var plane = new Model(
                 ModelFactory.CreatePlaneMesh(
                     Vector2.ComponentMin(topLeft, bottomRight), 
@@ -41,8 +39,7 @@ namespace Game.Rendering
             {
                 plane.IsTransparent = true;
             }
-            renderable.Models.Add(plane);
-
+            var renderable = GetRenderable(plane);
             layer.Renderables.Add(renderable);
         }
 
@@ -53,15 +50,12 @@ namespace Game.Rendering
 
         public static void DrawLine(this IRenderLayer layer, LineF line, Color4 color)
         {
-            var renderable = new Renderable();
-            renderable.IsPortalable = false;
             var plane = ModelFactory.CreateLines(new[] { line });
             if (color.A < 1)
             {
                 plane.IsTransparent = true;
             }
-            renderable.Models.Add(plane);
-
+            var renderable = GetRenderable(plane);
             layer.Renderables.Add(renderable);
         }
 
@@ -72,7 +66,26 @@ namespace Game.Rendering
 
         public static void DrawTriangle(this IRenderLayer layer, Vector2 v0, Vector2 v1, Vector2 v2, Color4 color)
         {
-            //ModelFactory.CreateTriangle
+            var vArray = MathEx.SetWinding(new[] { v0, v1, v2 }, false);
+            var triangle = ModelFactory.CreateTriangle(
+                new Vector3(vArray[0]),  
+                new Vector3(vArray[1]), 
+                new Vector3(vArray[2]), 
+                color);
+			if (color.A < 1)
+			{
+				triangle.IsTransparent = true;
+			}
+            var renderable = GetRenderable(triangle);
+            layer.Renderables.Add(renderable);
+        }
+
+        static Renderable GetRenderable(Model model)
+        {
+			var renderable = new Renderable();
+			renderable.IsPortalable = false;
+			renderable.Models.Add(model);
+            return renderable;
         }
     }
 }

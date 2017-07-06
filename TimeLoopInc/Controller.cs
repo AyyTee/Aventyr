@@ -74,7 +74,6 @@ namespace TimeLoopInc
         {
             var animationT = MathHelper.Clamp(_updatesSinceLastStep / (float)_updatesPerAnimation, 0, 1);
 
-            Console.WriteLine(_updatesSinceLastStep);
             _window.Layers.Clear();
             var worldLayer = _sceneRender.Render(animationT);
             _window.Layers.Add(worldLayer);
