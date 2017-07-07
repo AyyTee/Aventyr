@@ -26,14 +26,14 @@ namespace TimeLoopInc
         public SceneInstant CurrentInstant;
         [DataMember]
         public Timeline<Player> PlayerTimeline = new Timeline<Player>();
-        public Player CurrentPlayer => (Player)PlayerTimeline.Last();
+        public Player CurrentPlayer => (Player)PlayerTimeline.Path.Last();
         [DataMember]
         public List<Timeline<Block>> BlockTimelines = new List<Timeline<Block>>();
         public IEnumerable<ITimeline> Timelines => BlockTimelines
             .OfType<ITimeline>()
             .Concat(new[] { PlayerTimeline });
-        public int StartTime => Timelines.Min(item => item.MinOrNull(entity => entity.StartTime)) ?? 0;
-        public int EndTime => Timelines.Max(item => item.MaxOrNull(entity => entity.EndTime)) ?? 0;
+        public int StartTime => Timelines.Min(item => item.Path.MinOrNull(entity => entity.StartTime)) ?? 0;
+        public int EndTime => Timelines.Max(item => item.Path.MaxOrNull(entity => entity.EndTime)) ?? 0;
 
         readonly Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
 
@@ -139,7 +139,7 @@ namespace TimeLoopInc
                     if (result.Time != nextInstant.Time)
                     {
                         var timeline = PlayerTimeline;
-                        if (timeline != null && PlayerTimeline.Last() == player)
+                        if (timeline != null && PlayerTimeline.Path.Last() == player)
                         {
                             nextInstant.Entities.Remove(player);
                             player.EndTime = nextInstant.Time;
@@ -179,7 +179,7 @@ namespace TimeLoopInc
                         blockInstant.PreviousVelocity = result.Velocity;
                         if (result.Time != nextInstant.Time)
                         {
-                            var timeline = BlockTimelines.FirstOrDefault(item => item.Last() == block);
+                            var timeline = BlockTimelines.FirstOrDefault(item => item.Path.Last() == block);
                             if (timeline != null)
                             {
                                 nextInstant.Entities.Remove(block);
@@ -216,7 +216,7 @@ namespace TimeLoopInc
         public List<IGridEntity> GetEntitiesCreated(int time)
         {
             var list = new List<IGridEntity>();
-            foreach (var entity in Timelines.SelectMany(item => item))
+            foreach (var entity in Timelines.SelectMany(item => item.Path))
             {
                 if (entity.StartTime == time)
                 {

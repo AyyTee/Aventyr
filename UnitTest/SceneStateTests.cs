@@ -310,7 +310,7 @@ namespace GameTests
 
 			scene.PlayerTimeline.Add(player0);
 			scene.PlayerTimeline.Add(player1);
-            scene.BlockTimelines.Add(new Timeline<Block> { block });
+            scene.BlockTimelines.Add(new Timeline<Block>(new[] { block }));
 
 			var result = scene.GetParadoxes(0);
 			var expected = new HashSet<IGridEntity> { player0, player1, block };
@@ -328,7 +328,7 @@ namespace GameTests
 
 			scene.PlayerTimeline.Add(player0);
 			scene.PlayerTimeline.Add(player1);
-			scene.BlockTimelines.Add(new Timeline<Block> { block });
+			scene.BlockTimelines.Add(new Timeline<Block>(new[] { block }));
 
             scene.Step(new Input(GridAngle.Down));
 
@@ -348,7 +348,7 @@ namespace GameTests
 
 			scene.PlayerTimeline.Add(player0);
 			scene.PlayerTimeline.Add(player1);
-			scene.BlockTimelines.Add(new Timeline<Block> { block });
+			scene.BlockTimelines.Add(new Timeline<Block>(new[] { block }));
 
 			scene.Step(new Input(GridAngle.Down));
 

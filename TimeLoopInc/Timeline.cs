@@ -19,6 +19,15 @@ namespace TimeLoopInc
 
         public void Add(T entity) => Path.Add(entity);
 
+        public Timeline()
+        {
+        }
+
+        public Timeline(IList<T> path)
+        {
+            Path = (IList<IGridEntity>)path;
+        }
+
         public Timeline<T> DeepClone()
         {
             return new Timeline<T>
@@ -26,19 +35,9 @@ namespace TimeLoopInc
                 Path = Path.Select(item => item.DeepClone()).ToList()
             };
         }
-
-        public IEnumerator<IGridEntity> GetEnumerator()
-        {
-            return Path.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Path.GetEnumerator();
-        }
     }
 
-    public interface ITimeline : IEnumerable<IGridEntity>
+    public interface ITimeline
     {
         string Name { get; }
         IList<IGridEntity> Path { get; }
@@ -48,13 +47,13 @@ namespace TimeLoopInc
     {
         public static int MinTime(this ITimeline timeline)
         {
-            return timeline.MinOrNull(item => item.StartTime) ?? 0;
+            return timeline.Path.MinOrNull(item => item.StartTime) ?? 0;
         }
 
         public static int MaxTime(this ITimeline timeline)
         {
             var start = timeline.MinTime();
-            return timeline
+            return timeline.Path
                 .MaxOrNull(item => item.EndTime == int.MaxValue ? start : item.EndTime) ?? start;
         }
     }

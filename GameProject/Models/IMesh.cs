@@ -31,6 +31,19 @@ namespace Game.Models
                 (indices.Max() < vertices.Count() && indices.Min() >= 0));
         }
 
+        public static Mesh Combine(params IMesh[] meshes)
+        {
+            var meshNew = new Mesh();
+	        foreach (var mesh in meshes)
+			{
+			    var offset = meshNew.Vertices.Count;
+			    var indices = mesh.GetIndices().Select(item => item + offset);
+			    meshNew.Indices.AddRange(indices);
+			    meshNew.Vertices.AddRange(mesh.GetVertices());
+            }
+            return meshNew;
+        }
+
         public static Mesh Bisect(this IMesh mesh, LineF bisector, Side keepSide = Side.Left)
         {
             return Bisect(mesh, bisector, Matrix4.Identity, keepSide);

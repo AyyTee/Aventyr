@@ -8,6 +8,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClipperLib;
+using Game;
+using Game.Models;
 
 namespace TimeLoopInc
 {
@@ -48,24 +51,53 @@ namespace TimeLoopInc
 
             foreach (var box in GetTimelineBoxes(currentTime))
             {
-                Vector2 start = Vector2.Clamp(
-                    new Vector2(
-                        (float)MathEx.LerpInverse(MinTime, MaxTime, box.StartTime),
-                        box.Row / rowCount),
-                    new Vector2(),
-                    Vector2.One);
-                start *= size;
+                var xValues = new[] { box.StartTime - 0.25, box.StartTime, box.EndTime, box.EndTime + 0.25 }
+                    .Select(item => (float)MathEx.LerpInverse(MinTime, MaxTime, item) * size.X + topLeft.X)
+                    .ToArray();
+                var yValues = new[] { box.Row, box.Row + 1 }
+                    .Select(item => (float)MathEx.LerpInverse(0, rowCount, item) * size.Y + topLeft.Y)
+                    .ToArray();
 
-                Vector2 end = Vector2.Clamp(
-                    new Vector2(
-                        (float)MathEx.LerpInverse(MinTime, MaxTime, box.EndTime),
-                        (box.Row + 1) / rowCount),
-                    new Vector2(),
-                    Vector2.One);
-                end *= size;
+                var color = new Color4(0.8f, 0.8f, 0f, 1f);
 
-                layer.DrawRectangle(topLeft + start, topLeft + end, new Color4(0.8f, 0.8f, 0f, 1f));
-            }
+                var meshes = new List<IMesh>();
+                if (box.FadeStart)
+                {
+					meshes.Add(ModelFactory.CreatePlaneMesh(
+						new Vector2(xValues[0], yValues[0]),
+						new Vector2(xValues[1], yValues[1]),
+						color));    
+                }
+				meshes.Add(ModelFactory.CreatePlaneMesh(
+					new Vector2(xValues[1], yValues[0]),
+					new Vector2(xValues[2], yValues[1]),
+                    color));
+                if (box.FadeEnd)
+                {
+					meshes.Add(ModelFactory.CreatePlaneMesh(
+						new Vector2(xValues[2], yValues[0]),
+						new Vector2(xValues[3], yValues[1]),
+						color));
+				}
+
+                var bounds = new[] { topLeft, topLeft + size.YOnly(), topLeft + size, topLeft + size.XOnly() }.ToArray(); 
+				
+                var clippedMeshes = meshes.Select(item => 
+                {
+                    var result = item;
+                    for (int i = 0; i < bounds.Length; i++)
+                    {
+                        var iNext = (i + 1) % bounds.Length;
+                        var bisector = new LineF(bounds[i], bounds[iNext]);
+                        result = result.Bisect(bisector, Side.Right);
+                    }
+                    return result;
+                });
+
+				var model = new Model(IMeshEx.Combine(meshes.ToArray()));
+
+                layer.Renderables.Add(new Renderable { Models = new[] { model }.ToList() });
+			}
 
             var markerPos = topLeft + new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, currentTime), 0) * size;
 
@@ -117,7 +149,7 @@ namespace TimeLoopInc
                     endTime = currentTime;
                 }
 
-                output.Add(new TimelineBox(row, entity.StartTime, endTime));
+                output.Add(new TimelineBox(row, entity.StartTime, endTime, i > 0, i < count));
             }
 
             return output;
@@ -155,12 +187,16 @@ namespace TimeLoopInc
             public int Row { get; }
             public int StartTime { get; }
             public double EndTime { get; }
+            public bool FadeStart { get; }
+            public bool FadeEnd { get; }
 
-            public TimelineBox(int row, int startTime, double endTime)
+            public TimelineBox(int row, int startTime, double endTime, bool fadeStart, bool fadeEnd)
             {
                 Row = row;
                 StartTime = startTime;
                 EndTime = endTime;
+                FadeStart = fadeStart;
+                FadeEnd = fadeEnd;
             }
         }
     }

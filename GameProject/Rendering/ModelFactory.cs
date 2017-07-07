@@ -39,6 +39,22 @@ namespace Game.Rendering
             return mesh;
         }
 
+		public static Mesh CreatePlaneMesh(Vector2 scale, Color4 c0, Color4 c1, Color4 c2, Color4 c3, Vector3 offset = new Vector3())
+		{
+			Vertex[] vertices = {
+				new Vertex(new Vector3(0f, scale.Y,  0f) + offset, new Vector2(0, 0), c0),
+				new Vertex(new Vector3(scale.X, scale.Y,  0f) + offset, new Vector2(1, 0), c1),
+				new Vertex(new Vector3(scale.X, 0f,  0f) + offset, new Vector2(1, 1), c2),
+				new Vertex(new Vector3(0f, 0f,  0f) + offset, new Vector2(0, 1), c3)
+			};
+
+			var mesh = new Mesh { Vertices = vertices.ToList() };
+			mesh.Indices.AddRange(new[] { 0, 2, 1 });
+			mesh.Indices.AddRange(new[] { 0, 3, 2 });
+
+			return mesh;
+		}
+
         public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight)
         {
             return CreatePlaneMesh(topLeft, bottomRight, Color4.Black);
@@ -46,8 +62,19 @@ namespace Game.Rendering
 
         public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight, Color4 color)
         {
-            return CreatePlaneMesh(bottomRight - topLeft, color, new Vector3(topLeft));
+            return CreatePlaneMesh(topLeft, bottomRight, color, color, color, color);
         }
+
+		public static Mesh CreatePlaneMesh(
+            Vector2 topLeft, 
+            Vector2 bottomRight, 
+            Color4 c0, 
+            Color4 c1, 
+            Color4 c2, 
+            Color4 c3)
+		{
+			return CreatePlaneMesh(bottomRight - topLeft, c0, c1, c2, c3, new Vector3(topLeft));
+		}
 
         public static Model CreateGrid(
             Vector2i gridSize, 
