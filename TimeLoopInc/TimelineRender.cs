@@ -21,6 +21,8 @@ namespace TimeLoopInc
         readonly Font _font;
         public float MinTime { get; private set; } = 0;
         public float MaxTime { get; private set; } = 10;
+        public float MinRow { get; private set; } = 0;
+        public float MaxRow { get; private set; } = 3;
 
         public TimelineRender(Scene scene, Font font)
         {
@@ -46,58 +48,10 @@ namespace TimeLoopInc
 
         void DrawTimelines(IRenderLayer layer, Vector2 topLeft, Vector2 size, double t)
         {
-            float rowCount = 3;
             var currentTime = _scene.CurrentInstant.Time - (1 - t);
 
-            foreach (var box in GetTimelineBoxes(currentTime))
-            {
-                var xValues = new[] { box.StartTime - 0.25, box.StartTime, box.EndTime, box.EndTime + 0.25 }
-                    .Select(item => (float)MathEx.LerpInverse(MinTime, MaxTime, item) * size.X + topLeft.X)
-                    .ToArray();
-                var yValues = new[] { box.Row, box.Row + 1 }
-                    .Select(item => (float)MathEx.LerpInverse(0, rowCount, item) * size.Y + topLeft.Y)
-                    .ToArray();
+            DrawTimelineBoxes(layer, currentTime, topLeft, size);
 
-                var color = new Color4(0.8f, 0.8f, 0f, 1f);
-
-                var meshes = new List<IMesh>();
-                if (box.FadeStart)
-                {
-					meshes.Add(ModelFactory.CreatePlaneMesh(
-						new Vector2(xValues[0], yValues[0]),
-						new Vector2(xValues[1], yValues[1]),
-						color));    
-                }
-				meshes.Add(ModelFactory.CreatePlaneMesh(
-					new Vector2(xValues[1], yValues[0]),
-					new Vector2(xValues[2], yValues[1]),
-                    color));
-                if (box.FadeEnd)
-                {
-					meshes.Add(ModelFactory.CreatePlaneMesh(
-						new Vector2(xValues[2], yValues[0]),
-						new Vector2(xValues[3], yValues[1]),
-						color));
-				}
-
-                var bounds = new[] { topLeft, topLeft + size.YOnly(), topLeft + size, topLeft + size.XOnly() }.ToArray(); 
-				
-                var clippedMeshes = meshes.Select(item => 
-                {
-                    var result = item;
-                    for (int i = 0; i < bounds.Length; i++)
-                    {
-                        var iNext = (i + 1) % bounds.Length;
-                        var bisector = new LineF(bounds[i], bounds[iNext]);
-                        result = result.Bisect(bisector, Side.Right);
-                    }
-                    return result;
-                });
-
-				var model = new Model(IMeshEx.Combine(meshes.ToArray()));
-
-                layer.Renderables.Add(new Renderable { Models = new[] { model }.ToList() });
-			}
 
             var markerPos = topLeft + new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, currentTime), 0) * size;
 
@@ -114,16 +68,68 @@ namespace TimeLoopInc
             }
         }
 
+        public void DrawTimelineBoxes(IRenderLayer layer, double currentTime, Vector2 topLeft, Vector2 size)
+        {
+            foreach (var box in GetTimelineBoxes(currentTime))
+            {
+                var xValues = new[] { box.StartTime - 0.5, box.StartTime, box.EndTime, box.EndTime + 0.5 }
+                    .Select(item => (float)MathEx.LerpInverse(MinTime, MaxTime, item) * size.X + topLeft.X)
+                    .ToArray();
+                var yValues = new[] { box.Row, box.Row + 1 }
+                    .Select(item => (float)MathEx.LerpInverse(MinRow, MaxRow, item) * size.Y + topLeft.Y)
+                    .ToArray();
+
+                var color = new Color4(0.8f, 0f, 0.8f, 1f);
+                var colorTransparent = new Color4(0.8f, 0f, 0.8f, 0f);
+
+                var meshes = new List<IMesh>();
+                if (box.FadeStart)
+                {
+                    meshes.Add(ModelFactory.CreatePlaneMesh(
+                        new Vector2(xValues[0], yValues[0]),
+                        new Vector2(xValues[1], yValues[1]),
+                        colorTransparent, color, color, colorTransparent));
+                }
+                meshes.Add(ModelFactory.CreatePlaneMesh(
+                    new Vector2(xValues[1], yValues[0]),
+                    new Vector2(xValues[2], yValues[1]),
+                    color));
+                if (box.FadeEnd)
+                {
+                    meshes.Add(ModelFactory.CreatePlaneMesh(
+                        new Vector2(xValues[2], yValues[0]),
+                        new Vector2(xValues[3], yValues[1]),
+                        color, colorTransparent, colorTransparent, color));
+                }
+
+                var bounds = new[] {
+                    topLeft + new Vector2(-10, -10),
+                    topLeft + size.YOnly() + new Vector2(-10, 10),
+                    topLeft + size + new Vector2(10, 10),
+                    topLeft + size.XOnly()  + new Vector2(10, -10)
+                }.ToArray();
+
+                var clippedMeshes = meshes
+                    .Select(item => item.Bisect(bounds))
+                    .ToArray();
+
+                var model = new Model(IMeshEx.Combine(clippedMeshes));
+                model.IsTransparent = true;
+
+                layer.Renderables.Add(new Renderable { Models = new[] { model }.ToList() });
+            }
+        }
+
         public void DrawTimeMarker(IRenderLayer layer, Vector2 position, float uiScale)
         {
-			layer.DrawTriangle(
-				position,
-				position + new Vector2(15, -18) * uiScale,
-				position + new Vector2(-15, -18) * uiScale);
-			layer.DrawTriangle(
+            layer.DrawTriangle(
+                position,
+                position + new Vector2(15, -18) * uiScale,
+                position + new Vector2(-15, -18) * uiScale);
+            layer.DrawTriangle(
                 position + new Vector2(0, -2) * uiScale,
-				position + new Vector2(11, -16) * uiScale,
-				position + new Vector2(-11, -16) * uiScale,
+                position + new Vector2(11, -16) * uiScale,
+                position + new Vector2(-11, -16) * uiScale,
                 Color4.Green);
         }
 
@@ -149,7 +155,7 @@ namespace TimeLoopInc
                     endTime = currentTime;
                 }
 
-                output.Add(new TimelineBox(row, entity.StartTime, endTime, i > 0, i < count));
+                output.Add(new TimelineBox(row, entity.StartTime, endTime, i > 0, i + 1 < count));
             }
 
             return output;

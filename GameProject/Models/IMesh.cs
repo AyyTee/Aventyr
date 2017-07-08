@@ -3,7 +3,6 @@ using Game.Serialization;
 using System.Linq;
 using Game.Common;
 using OpenTK;
-using System.Diagnostics;
 
 namespace Game.Models
 {
@@ -25,7 +24,7 @@ namespace Game.Models
         {
             var vertices = mesh.GetVertices();
             var indices = mesh.GetIndices();
-            return indices.Count % 3 == 0 && 
+            return indices.Count % 3 == 0 &&
                 vertices.All(item => item != null) &&
                 (indices.Count == 0 ||
                 (indices.Max() < vertices.Count() && indices.Min() >= 0));
@@ -34,22 +33,22 @@ namespace Game.Models
         public static Mesh Combine(params IMesh[] meshes)
         {
             var meshNew = new Mesh();
-	        foreach (var mesh in meshes)
-			{
-			    var offset = meshNew.Vertices.Count;
-			    var indices = mesh.GetIndices().Select(item => item + offset);
-			    meshNew.Indices.AddRange(indices);
-			    meshNew.Vertices.AddRange(mesh.GetVertices());
+            foreach (var mesh in meshes)
+            {
+                var offset = meshNew.Vertices.Count;
+                var indices = mesh.GetIndices().Select(item => item + offset);
+                meshNew.Indices.AddRange(indices);
+                meshNew.Vertices.AddRange(mesh.GetVertices());
             }
             return meshNew;
         }
 
-        public static Mesh Bisect(this IMesh mesh, LineF bisector, Side keepSide = Side.Left)
+        public static IMesh Bisect(this IMesh mesh, LineF bisector, Side keepSide = Side.Left)
         {
             return Bisect(mesh, bisector, Matrix4.Identity, keepSide);
         }
 
-        public static Mesh Bisect(this IMesh mesh, LineF bisector, Matrix4 transform, Side keepSide = Side.Left)
+        public static IMesh Bisect(this IMesh mesh, LineF bisector, Matrix4 transform, Side keepSide = Side.Left)
         {
             DebugEx.Assert(bisector != null);
             DebugEx.Assert(keepSide != Side.Neither);
@@ -64,6 +63,29 @@ namespace Game.Models
             meshBisected.RemoveDuplicates();
             meshBisected.Transform(transform.Inverted());
             return meshBisected;
+        }
+
+        public static IMesh Bisect(this IMesh mesh, IList<Vector2> bisector)
+        {
+            return Bisect(mesh, bisector, Matrix4.Identity);
+        }
+
+        public static IMesh Bisect(this IMesh mesh, IList<Vector2> bisector, Matrix4 transform)
+        {
+            DebugEx.Assert(MathEx.IsConvex(bisector), "Only convex bisector supported for now.");
+            var side = MathEx.IsClockwise(bisector) ? Side.Right : Side.Left;
+
+            IMesh meshNew = mesh;
+            for (int i = 0; i < bisector.Count; i++)
+            {
+                var iNext = (i + 1) % bisector.Count;
+                meshNew = Bisect(
+                    meshNew,
+                    new LineF(bisector[i], bisector[iNext]),
+                    transform,
+                    side);
+            }
+            return meshNew;
         }
 
         public static Triangle[] GetTriangles(this IMesh mesh)
