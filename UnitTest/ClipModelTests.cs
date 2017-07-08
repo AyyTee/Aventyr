@@ -50,7 +50,7 @@ namespace GameTests
             {
                 polygon.SetTransform(new Transform2(new Vector2(100000, -123), i, 1));
                 List<Clip.ClipModel> clipmodels = Clip.GetClipModels(polygon, scene.GetPortalList().OfType<IPortalRenderable>(), 2);
-                Assert.IsTrue(clipmodels.Count == polygon.GetModels().Count);
+                Assert.IsTrue(clipmodels.Count == polygon.GetClippedModels().Count);
             }
         }
     }

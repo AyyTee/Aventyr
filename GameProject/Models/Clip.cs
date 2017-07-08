@@ -49,7 +49,7 @@ namespace Game.Models
             {
                 return clipModels;
             }
-            var models = entity.GetModels();
+            var models = entity.GetClippedModels();
             DebugEx.Assert(models.All(item => item != null));
             if (entity.IsPortalable && !entity.DrawOverPortals)
             {

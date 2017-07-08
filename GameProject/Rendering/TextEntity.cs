@@ -26,6 +26,8 @@ namespace Game.Rendering
         public Vector2 Alignment { get; private set; }
         [DataMember]
         public int LineSpacing { get; private set; }
+        [DataMember]
+        public List<ClipPath> ClipPaths { get; private set; } = new List<ClipPath>();
 
         Model TextModel;
         [DataMember]
@@ -72,7 +74,7 @@ namespace Game.Rendering
             }
             return TextModel == null ?
                 new List<Model>() :
-                new List<Model>() { TextModel };
+                new List<Model> { TextModel };
         }
     }
 }

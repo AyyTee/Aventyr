@@ -34,6 +34,8 @@ namespace Game
         /// </summary>
         [DataMember]
         public bool Visible { get; set; }
+        [DataMember]
+        public List<ClipPath> ClipPaths { get; set; } = new List<ClipPath>();
         public List<Model> ModelList => new List<Model>(_models);
 
         [DataMember]

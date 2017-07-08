@@ -65,23 +65,23 @@ namespace Game.Models
             return meshBisected;
         }
 
-        public static IMesh Bisect(this IMesh mesh, IList<Vector2> bisector)
+        public static IMesh Bisect(this IMesh mesh, ClipPath bisector)
         {
             return Bisect(mesh, bisector, Matrix4.Identity);
         }
 
-        public static IMesh Bisect(this IMesh mesh, IList<Vector2> bisector, Matrix4 transform)
+        public static IMesh Bisect(this IMesh mesh, ClipPath bisector, Matrix4 transform)
         {
-            DebugEx.Assert(MathEx.IsConvex(bisector), "Only convex bisector supported for now.");
-            var side = MathEx.IsClockwise(bisector) ? Side.Right : Side.Left;
+            DebugEx.Assert(MathEx.IsConvex(bisector.Path), "Only convex bisector supported for now.");
+            var side = MathEx.IsClockwise(bisector.Path) ? Side.Right : Side.Left;
 
             IMesh meshNew = mesh;
-            for (int i = 0; i < bisector.Count; i++)
+            for (int i = 0; i < bisector.Path.Count; i++)
             {
-                var iNext = (i + 1) % bisector.Count;
+                var iNext = (i + 1) % bisector.Path.Count;
                 meshNew = Bisect(
                     meshNew,
-                    new LineF(bisector[i], bisector[iNext]),
+                    new LineF(bisector.Path[i], bisector.Path[iNext]),
                     transform,
                     side);
             }

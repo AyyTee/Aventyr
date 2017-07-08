@@ -84,13 +84,13 @@ namespace TimeLoopInc
                 Camera = new HudCamera2(_window.CanvasSize)
             };
             _timelineRender.Render(gui, new Vector2(50, _window.CanvasSize.Y - 150), new Vector2(_window.CanvasSize.X - 100, 140), _window.DpiScale, animationT);
-            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 0), "Time: " + _scene.CurrentInstant.Time.ToString());
-            gui.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString());
+            gui.Renderables.Add(IRenderLayerEx.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 0), "Time: " + _scene.CurrentInstant.Time.ToString()));
+            gui.Renderables.Add(IRenderLayerEx.DrawText(_window.Fonts.Inconsolata, new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString()));
             _fpsCounter.Enqueue((float)timeDelta);
-            gui.DrawText(
+            gui.Renderables.Add(IRenderLayerEx.DrawText(
                 _window.Fonts?.Inconsolata,
                 new Vector2(0, 80),
-                $"FPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }\n{_window.MousePosition}");
+                $"FPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }\n{_window.MousePosition}"));
             _window.Layers.Add(gui);
         }
 

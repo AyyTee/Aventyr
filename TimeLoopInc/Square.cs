@@ -8,6 +8,7 @@ using Game.Common;
 using Game.Models;
 using OpenTK;
 using OpenTK.Graphics;
+using Game;
 
 namespace TimeLoopInc
 {
@@ -18,6 +19,7 @@ namespace TimeLoopInc
         public bool IsPortalable { get; set; } = true;
         public Color4 Color { get; set; }
         public float Size { get; set; } = 1;
+        public List<ClipPath> ClipPaths => new List<ClipPath>();
 
         readonly Vector2 _position;
 

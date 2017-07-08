@@ -45,6 +45,8 @@ namespace EditorLogic
         public bool IsPortalable { get; set; }
         [DataMember]
         public bool IsSelected { get; private set; }
+        [DataMember]
+        public List<ClipPath> ClipPaths => new List<ClipPath>();
         public bool OnEdge => PolygonTransform != null;
 
         [DataMember]

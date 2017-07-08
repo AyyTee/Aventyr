@@ -42,34 +42,50 @@ namespace TimeLoopInc
                 return;
             }
 
-            layer.DrawText(_font, topLeft, Timeline.Name);
-            DrawTimelines(layer, topLeft + new Vector2(10, 60), size - new Vector2(20, 60), t);
+			var bounds = new ClipPath(new[] {
+					topLeft,
+					topLeft + size.YOnly(),
+					topLeft + size,
+					topLeft + size.XOnly()
+				});
+
+            layer.Renderables.Add(IRenderLayerEx.DrawText(_font, topLeft, Timeline.Name));
+            var output = DrawTimelines(topLeft + new Vector2(10, 60), size - new Vector2(20, 60), t);
+            foreach (var renderable in output)
+            {
+                renderable.ClipPaths.Add(bounds);
+            }
+            layer.Renderables.AddRange(output);
         }
 
-        void DrawTimelines(IRenderLayer layer, Vector2 topLeft, Vector2 size, double t)
+        List<IRenderable> DrawTimelines(Vector2 topLeft, Vector2 size, double t)
         {
+            var output = new List<IRenderable>();
             var currentTime = _scene.CurrentInstant.Time - (1 - t);
 
-            DrawTimelineBoxes(layer, currentTime, topLeft, size);
+            output.AddRange(DrawTimelineBoxes(currentTime, topLeft, size));
 
-
+			
             var markerPos = topLeft + new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, currentTime), 0) * size;
 
-            DrawTimeMarker(layer, markerPos, 1);
+            output.AddRange(DrawTimeMarker(markerPos, 1));
 
-            layer.DrawLine(new LineF(markerPos, markerPos + size.YOnly()), Color4.Black);
+            output.Add(IRenderLayerEx.DrawLine(new LineF(markerPos, markerPos + size.YOnly()), Color4.Black));
 
             for (int i = (int)Math.Ceiling(MinTime - 0.01); i <= Math.Floor(MaxTime + 0.01); i++)
             {
                 Vector2 pos = new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, i), 0) * size;
                 var top = (topLeft + pos).Round(Vector2.One);
-                layer.DrawText(_font, top, i.ToString(), new Vector2(0.5f, 1));
-                layer.DrawLine(new LineF(top, top + size.YOnly()));
+                output.Add(IRenderLayerEx.DrawText(_font, top, i.ToString(), new Vector2(0.5f, 1)));
+                output.Add(IRenderLayerEx.DrawLine(new LineF(top, top + size.YOnly())));
             }
+
+            return output;
         }
 
-        public void DrawTimelineBoxes(IRenderLayer layer, double currentTime, Vector2 topLeft, Vector2 size)
+        public List<IRenderable> DrawTimelineBoxes(double currentTime, Vector2 topLeft, Vector2 size)
         {
+            var output = new List<IRenderable>();
             foreach (var box in GetTimelineBoxes(currentTime))
             {
                 var xValues = new[] { box.StartTime - 0.5, box.StartTime, box.EndTime, box.EndTime + 0.5 }
@@ -102,35 +118,27 @@ namespace TimeLoopInc
                         color, colorTransparent, colorTransparent, color));
                 }
 
-                var bounds = new[] {
-                    topLeft + new Vector2(-10, -10),
-                    topLeft + size.YOnly() + new Vector2(-10, 10),
-                    topLeft + size + new Vector2(10, 10),
-                    topLeft + size.XOnly()  + new Vector2(10, -10)
-                }.ToArray();
-
-                var clippedMeshes = meshes
-                    .Select(item => item.Bisect(bounds))
-                    .ToArray();
-
-                var model = new Model(IMeshEx.Combine(clippedMeshes));
-                model.IsTransparent = true;
-
-                layer.Renderables.Add(new Renderable { Models = new[] { model }.ToList() });
+				output.AddRange(meshes
+					.Select(item => (IRenderable)new Renderable(new Model(item) { IsTransparent = true }))
+					.ToArray());
             }
+
+            return output;
         }
 
-        public void DrawTimeMarker(IRenderLayer layer, Vector2 position, float uiScale)
+        public IRenderable[] DrawTimeMarker(Vector2 position, float uiScale)
         {
-            layer.DrawTriangle(
-                position,
-                position + new Vector2(15, -18) * uiScale,
-                position + new Vector2(-15, -18) * uiScale);
-            layer.DrawTriangle(
-                position + new Vector2(0, -2) * uiScale,
-                position + new Vector2(11, -16) * uiScale,
-                position + new Vector2(-11, -16) * uiScale,
-                Color4.Green);
+            return new[] {
+                IRenderLayerEx.DrawTriangle(
+                    position,
+                    position + new Vector2(15, -18) * uiScale,
+                    position + new Vector2(-15, -18) * uiScale),
+                IRenderLayerEx.DrawTriangle(
+                    position + new Vector2(0, -2) * uiScale,
+                    position + new Vector2(11, -16) * uiScale,
+                    position + new Vector2(-11, -16) * uiScale,
+                    Color4.Green)
+            };
         }
 
         public List<TimelineBox> GetTimelineBoxes(double currentTime)

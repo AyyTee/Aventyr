@@ -28,6 +28,8 @@ namespace Game.Rendering
 
         [DataMember]
         public List<Model> Models { get; set; } = new List<Model>();
+        [DataMember]
+        public List<ClipPath> ClipPaths { get; set; } = new List<ClipPath>();
 
         public List<Model> GetModels() => new List<Model>(Models);
 
@@ -38,6 +40,11 @@ namespace Game.Rendering
         public Renderable(Transform2 worldTransform)
         {
             WorldTransform = worldTransform;
+        }
+
+        public Renderable(Model model)
+        {
+            Models.Add(model);
         }
     }
 }

@@ -18,9 +18,9 @@ namespace Game.Rendering
 
     public static class IRenderLayerEx
     {
-        public static void DrawText(this IRenderLayer layer, Font font, Vector2 position, string text, Vector2 alignment = new Vector2(), int lineSpacing = 0)
+        public static IRenderable DrawText(Font font, Vector2 position, string text, Vector2 alignment = new Vector2(), int lineSpacing = 0)
         {
-            layer.Renderables.Add(new TextEntity(font, position, text, alignment, lineSpacing));
+            return new TextEntity(font, position, text, alignment, lineSpacing);
         }
 
         public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight)
@@ -43,28 +43,27 @@ namespace Game.Rendering
             layer.Renderables.Add(renderable);
         }
 
-        public static void DrawLine(this IRenderLayer layer, LineF line)
+        public static IRenderable DrawLine(LineF line)
         {
-            DrawLine(layer, line, Color4.Black);
+            return DrawLine(line, Color4.Black);
         }
 
-        public static void DrawLine(this IRenderLayer layer, LineF line, Color4 color)
+        public static IRenderable DrawLine(LineF line, Color4 color)
         {
             var plane = ModelFactory.CreateLines(new[] { line });
             if (color.A < 1)
             {
                 plane.IsTransparent = true;
             }
-            var renderable = GetRenderable(plane);
-            layer.Renderables.Add(renderable);
+            return GetRenderable(plane);
         }
 
-        public static void DrawTriangle(this IRenderLayer layer, Vector2 v0, Vector2 v1, Vector2 v2)
+        public static IRenderable DrawTriangle(Vector2 v0, Vector2 v1, Vector2 v2)
         {
-            DrawTriangle(layer, v0, v1, v2, Color4.Black);
+            return DrawTriangle(v0, v1, v2, Color4.Black);
         }
 
-        public static void DrawTriangle(this IRenderLayer layer, Vector2 v0, Vector2 v1, Vector2 v2, Color4 color)
+        public static IRenderable DrawTriangle(Vector2 v0, Vector2 v1, Vector2 v2, Color4 color)
         {
             var vArray = MathEx.SetWinding(new[] { v0, v1, v2 }, false);
             var triangle = ModelFactory.CreateTriangle(
@@ -76,8 +75,7 @@ namespace Game.Rendering
 			{
 				triangle.IsTransparent = true;
 			}
-            var renderable = GetRenderable(triangle);
-            layer.Renderables.Add(renderable);
+            return GetRenderable(triangle);
         }
 
         static Renderable GetRenderable(Model model)
