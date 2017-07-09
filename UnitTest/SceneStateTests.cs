@@ -293,6 +293,7 @@ namespace GameTests
 
             scene.PlayerTimeline.Add(player0);
             scene.PlayerTimeline.Add(player1);
+            scene.InvalidateCache();
 
             var result = scene.GetParadoxes(0);
             var expected = new HashSet<IGridEntity> { player0, player1 };
@@ -311,6 +312,7 @@ namespace GameTests
 			scene.PlayerTimeline.Add(player0);
 			scene.PlayerTimeline.Add(player1);
             scene.BlockTimelines.Add(new Timeline<Block>(new[] { block }));
+            scene.InvalidateCache();
 
 			var result = scene.GetParadoxes(0);
 			var expected = new HashSet<IGridEntity> { player0, player1, block };

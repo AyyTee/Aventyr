@@ -77,7 +77,12 @@ namespace TimeLoopInc
             CurrentInstant = GetSceneInstant(CurrentInstant.Time + 1);
         }
 
-        void InvalidateCache(int time)
+        public void InvalidateCache()
+        {
+            InvalidateCache(StartTime);
+        }
+
+        public void InvalidateCache(int time)
         {
             foreach (var key in _cachedInstants.Keys.Where(item => item >= time).ToList())
             {
