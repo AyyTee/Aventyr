@@ -296,67 +296,27 @@ namespace GameTests
             scene.InvalidateCache();
 
             var result = scene.GetParadoxes(0);
-            var expected = new HashSet<IGridEntity> { player0, player1 };
-            Assert.IsTrue(expected.SetEquals(result));
+            var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { player0, player1 }) };
+            Assert.AreEqual(expected, result);
         }
 
-		[Test]
-		public void ParadoxTest1()
-		{
-			var scene = new Scene();
+        [Test]
+        public void ParadoxTest1()
+        {
+            var scene = new Scene();
 
-			var player0 = new Player(new Transform2i(), 0);
-			var player1 = new Player(new Transform2i(), 0);
+            var player0 = new Player(new Transform2i(), 0);
+            var player1 = new Player(new Transform2i(), 0);
             var block = new Block(new Transform2i(), 0);
 
-			scene.PlayerTimeline.Add(player0);
-			scene.PlayerTimeline.Add(player1);
+            scene.PlayerTimeline.Add(player0);
+            scene.PlayerTimeline.Add(player1);
             scene.BlockTimelines.Add(new Timeline<Block>(new[] { block }));
             scene.InvalidateCache();
 
-			var result = scene.GetParadoxes(0);
-			var expected = new HashSet<IGridEntity> { player0, player1, block };
-			Assert.IsTrue(expected.SetEquals(result));
-		}
-
-		[Test]
-		public void ParadoxTest2()
-		{
-			var scene = new Scene();
-
-			var player0 = new Player(new Transform2i(), 1);
-			var player1 = new Player(new Transform2i(), 0);
-			var block = new Block(new Transform2i(), 1);
-
-			scene.PlayerTimeline.Add(player0);
-			scene.PlayerTimeline.Add(player1);
-			scene.BlockTimelines.Add(new Timeline<Block>(new[] { block }));
-
-            scene.Step(new Input(GridAngle.Down));
-
-			var result = scene.GetParadoxes(1);
-			var expected = new HashSet<IGridEntity> { player0, block };
-			Assert.IsTrue(expected.SetEquals(result));
-		}
-
-		[Test]
-		public void ParadoxTest3()
-		{
-			var scene = new Scene();
-
-			var player0 = new Player(new Transform2i(), 1);
-			var player1 = new Player(new Transform2i(), 0);
-			var block = new Block(new Transform2i(), 1);
-
-			scene.PlayerTimeline.Add(player0);
-			scene.PlayerTimeline.Add(player1);
-			scene.BlockTimelines.Add(new Timeline<Block>(new[] { block }));
-
-			scene.Step(new Input(GridAngle.Down));
-
-			var result = scene.GetParadoxes(0);
-			var expected = new HashSet<IGridEntity>();
-			Assert.IsTrue(expected.SetEquals(result));
+            var result = scene.GetParadoxes(0);
+            var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { player0, player1, block }) };
+            Assert.AreEqual(expected, result);
 		}
     }
 }

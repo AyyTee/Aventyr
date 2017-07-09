@@ -63,8 +63,9 @@ namespace TimeLoopInc
             var output = new List<IRenderable>();
             var currentTime = _scene.CurrentInstant.Time - (1 - t);
 
-            output.AddRange(DrawTimelineBoxes(currentTime, topLeft, size));
-
+            var boxes = GetTimelineBoxes(currentTime);
+            output.AddRange(DrawTimelineBoxes(boxes, topLeft, size));
+            output.AddRange(DrawParadoxes(boxes, topLeft, size));
 			
             var markerPos = topLeft + new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, currentTime), 0) * size;
 
@@ -83,10 +84,10 @@ namespace TimeLoopInc
             return output;
         }
 
-        public List<IRenderable> DrawTimelineBoxes(double currentTime, Vector2 topLeft, Vector2 size)
+        public List<IRenderable> DrawTimelineBoxes(List<TimelineBox> boxes, Vector2 topLeft, Vector2 size)
         {
             var output = new List<IRenderable>();
-            foreach (var box in GetTimelineBoxes(currentTime))
+            foreach (var box in boxes)
             {
                 var xValues = new[] { box.StartTime - 0.5, box.StartTime, box.EndTime, box.EndTime + 0.5 }
                     .Select(item => (float)MathEx.LerpInverse(MinTime, MaxTime, item) * size.X + topLeft.X)
@@ -141,6 +142,18 @@ namespace TimeLoopInc
             };
         }
 
+        List<IRenderable> DrawParadoxes(List<TimelineBox> boxes, Vector2 topLeft, Vector2 size)
+        {
+            var paradoxes = _scene.GetParadoxes();
+            foreach (var box in boxes)
+            {
+                var result = paradoxes.Where(item => item.Affected.Contains(box.Entity));
+
+            }
+            return new List<IRenderable>();
+            //_scene.GetParadoxes().Where();
+        }
+
         public List<TimelineBox> GetTimelineBoxes(double currentTime)
         {
             var output = new List<TimelineBox>();
@@ -163,7 +176,14 @@ namespace TimeLoopInc
                     endTime = currentTime;
                 }
 
-                output.Add(new TimelineBox(row, entity.StartTime, endTime, i > 0, i + 1 < count));
+                var box = new TimelineBox(
+                    row, 
+                    entity.StartTime, 
+                    endTime, 
+                    i > 0, 
+                    i + 1 < count,
+                    entity);
+                output.Add(box);
             }
 
             return output;
@@ -203,14 +223,16 @@ namespace TimeLoopInc
             public double EndTime { get; }
             public bool FadeStart { get; }
             public bool FadeEnd { get; }
+            public IGridEntity Entity { get; }
 
-            public TimelineBox(int row, int startTime, double endTime, bool fadeStart, bool fadeEnd)
+            public TimelineBox(int row, int startTime, double endTime, bool fadeStart, bool fadeEnd, IGridEntity entity)
             {
                 Row = row;
                 StartTime = startTime;
                 EndTime = endTime;
                 FadeStart = fadeStart;
                 FadeEnd = fadeEnd;
+                Entity = entity;
             }
         }
     }

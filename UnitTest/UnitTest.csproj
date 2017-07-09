@@ -60,7 +60,6 @@
     <Compile Include="ClipModelTests.cs" />
     <Compile Include="CodeGenTests.cs" />
     <Compile Include="DeepCloneTests.cs" />
-    <Compile Include="EditorCloneTests.cs" />
     <Compile Include="FCurveTests.cs" />
     <Compile Include="FixtureExTests.cs" />
     <Compile Include="FixtureUserDataTests.cs" />

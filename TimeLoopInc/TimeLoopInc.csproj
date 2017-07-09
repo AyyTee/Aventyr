@@ -86,6 +86,7 @@
     <Compile Include="Square.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Transform2i.cs" />
+    <Compile Include="Paradox.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

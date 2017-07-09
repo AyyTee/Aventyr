@@ -36,7 +36,7 @@ namespace TimeLoopInc
             {
                 //new Vector2i(1, 1),
                 //new Vector2i(1, 2),
-                new Vector2i(1, 4),
+                new Vector2i(2, 3),
             };
             var player = new Player(new Transform2i(), 0, new Vector2i());
 

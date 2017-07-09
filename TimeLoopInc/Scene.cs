@@ -36,6 +36,7 @@ namespace TimeLoopInc
         public int EndTime => Timelines.Max(item => item.Path.MaxOrNull(entity => entity.EndTime)) ?? 0;
 
         readonly Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
+        readonly Dictionary<int, HashSet<Paradox>> _cachedParadoxes = new Dictionary<int, HashSet<Paradox>>();
 
         public Scene()
         {
@@ -67,6 +68,13 @@ namespace TimeLoopInc
             return CurrentInstant.Entities[entity];
         }
 
+        public ITimeline GetTimeline(IGridEntity entity)
+        {
+            var timelines = Timelines.Where(item => item.Path.Contains(entity));
+            DebugEx.Assert(timelines.Count() == 1);
+            return timelines.First();
+        }
+
         public void Step(Input input)
         {
             if (CurrentInstant.Entities.ContainsKey(CurrentPlayer))
@@ -77,10 +85,7 @@ namespace TimeLoopInc
             CurrentInstant = GetSceneInstant(CurrentInstant.Time + 1);
         }
 
-        public void InvalidateCache()
-        {
-            InvalidateCache(StartTime);
-        }
+        public void InvalidateCache() => _cachedInstants.Clear();
 
         public void InvalidateCache(int time)
         {
@@ -231,26 +236,30 @@ namespace TimeLoopInc
             return list;
         }
 
-        public HashSet<IGridEntity> GetParadoxes(int time)
+        public List<Paradox> GetParadoxes()
         {
-            var paradoxes = new HashSet<IGridEntity>();
-            //var previousInstant = GetSceneInstant(time - 1);
-            var entityList = GetSceneInstant(time).Entities.ToList();
-            for (int i = 1; i < entityList.Count; i++)
+            var output = new List<Paradox>();
+            var endTime = EndTime < int.MaxValue ? 
+                EndTime : 
+                StartTime;
+            for (int i = StartTime; i <= endTime; i++)
             {
-                var pos = entityList[i].Value.Transform.Position;
-                for (int j = 0; j < i; j++)
-                {
-                    var otherPos = entityList[j].Value.Transform.Position;
-                    if (pos == otherPos)
-                    {
-                        paradoxes.Add(entityList[i].Key);
-                        paradoxes.Add(entityList[j].Key);
-                    }
-                }
+                output.AddRange(GetParadoxes(i));
             }
+            return output;
+        }
 
-            return paradoxes;
+        public List<Paradox> GetParadoxes(int time)
+        {
+            var entityList = GetSceneInstant(time).Entities;
+
+            var matchingPositions = entityList
+                .GroupBy(item => item.Value.Transform.Position)
+                .Where(item => item.Count() > 1)
+                .Select(item => new Paradox(time, new HashSet<IGridEntity>(item.Select(item2 => item2.Key))))
+                .ToList();
+
+            return matchingPositions;
         }
 
         public (Transform2i Transform, Vector2i Velocity, int Time) Move(Transform2i transform, Vector2i velocity, int time)
