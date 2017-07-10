@@ -16,19 +16,19 @@ namespace Game.Rendering
         bool DepthTest { get; }
     }
 
-    public static class IRenderLayerEx
+    public static class Draw
     {
-        public static IRenderable DrawText(Font font, Vector2 position, string text, Vector2 alignment = new Vector2(), int lineSpacing = 0)
+        public static IRenderable Text(Font font, Vector2 position, string text, Vector2 alignment = new Vector2(), int lineSpacing = 0)
         {
             return new TextEntity(font, position, text, alignment, lineSpacing);
         }
 
-        public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight)
+        public static void Rectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight)
         {
-            DrawRectangle(layer, topLeft, bottomRight, Color4.Black);
+            Rectangle(layer, topLeft, bottomRight, Color4.Black);
         }
 
-        public static void DrawRectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight, Color4 color)
+        public static void Rectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight, Color4 color)
         {
             var plane = new Model(
                 ModelFactory.CreatePlaneMesh(
@@ -43,12 +43,12 @@ namespace Game.Rendering
             layer.Renderables.Add(renderable);
         }
 
-        public static IRenderable DrawLine(LineF line)
+        public static IRenderable Line(LineF line)
         {
-            return DrawLine(line, Color4.Black);
+            return Line(line, Color4.Black);
         }
 
-        public static IRenderable DrawLine(LineF line, Color4 color)
+        public static IRenderable Line(LineF line, Color4 color)
         {
             var plane = ModelFactory.CreateLines(new[] { line });
             if (color.A < 1)
@@ -58,12 +58,12 @@ namespace Game.Rendering
             return GetRenderable(plane);
         }
 
-        public static IRenderable DrawTriangle(Vector2 v0, Vector2 v1, Vector2 v2)
+        public static IRenderable Triangle(Vector2 v0, Vector2 v1, Vector2 v2)
         {
-            return DrawTriangle(v0, v1, v2, Color4.Black);
+            return Triangle(v0, v1, v2, Color4.Black);
         }
 
-        public static IRenderable DrawTriangle(Vector2 v0, Vector2 v1, Vector2 v2, Color4 color)
+        public static IRenderable Triangle(Vector2 v0, Vector2 v1, Vector2 v2, Color4 color)
         {
             var vArray = MathEx.SetWinding(new[] { v0, v1, v2 }, false);
             var triangle = ModelFactory.CreateTriangle(

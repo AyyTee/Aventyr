@@ -85,7 +85,7 @@ namespace TankGame.Network
             var gui = new Layer();
             gui.Camera = new HudCamera2(_window.CanvasSize);
             _fpsCounter.Enqueue((float)timeDelta);
-            gui.Renderables.Add(IRenderLayerEx.DrawText(
+            gui.Renderables.Add(Draw.Text(
                 _window.Fonts?.Inconsolata, 
                 new Vector2(0, _window.CanvasSize.Y),
                 $"Client\nId {_client.UniqueIdentifier}\n\nFPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }\n{_window.MousePosition}"));

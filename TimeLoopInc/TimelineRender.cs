@@ -35,7 +35,7 @@ namespace TimeLoopInc
             DebugEx.Assert(size.X > 0 && size.Y > 0);
             Vector2 gridSize = new Vector2(50, 20) * dpiScale;
 
-            layer.DrawRectangle(topLeft, topLeft + size, new Color4(0.8f, 0.8f, 0.8f, 0.8f));
+            layer.Rectangle(topLeft, topLeft + size, new Color4(0.8f, 0.8f, 0.8f, 0.8f));
 
             if (Timeline == null)
             {
@@ -49,7 +49,7 @@ namespace TimeLoopInc
 					topLeft + size.XOnly()
 				});
 
-            layer.Renderables.Add(IRenderLayerEx.DrawText(_font, topLeft, Timeline.Name));
+            layer.Renderables.Add(Draw.Text(_font, topLeft, Timeline.Name));
             var output = DrawTimelines(topLeft + new Vector2(10, 60), size - new Vector2(20, 60), t);
             foreach (var renderable in output)
             {
@@ -71,14 +71,14 @@ namespace TimeLoopInc
 
             output.AddRange(DrawTimeMarker(markerPos, 1));
 
-            output.Add(IRenderLayerEx.DrawLine(new LineF(markerPos, markerPos + size.YOnly()), Color4.Black));
+            output.Add(Draw.Line(new LineF(markerPos, markerPos + size.YOnly()), Color4.Black));
 
             for (int i = (int)Math.Ceiling(MinTime - 0.01); i <= Math.Floor(MaxTime + 0.01); i++)
             {
                 Vector2 pos = new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, i), 0) * size;
                 var top = (topLeft + pos).Round(Vector2.One);
-                output.Add(IRenderLayerEx.DrawText(_font, top, i.ToString(), new Vector2(0.5f, 1)));
-                output.Add(IRenderLayerEx.DrawLine(new LineF(top, top + size.YOnly())));
+                output.Add(Draw.Text(_font, top, i.ToString(), new Vector2(0.5f, 1)));
+                output.Add(Draw.Line(new LineF(top, top + size.YOnly())));
             }
 
             return output;
@@ -130,11 +130,11 @@ namespace TimeLoopInc
         public IRenderable[] DrawTimeMarker(Vector2 position, float uiScale)
         {
             return new[] {
-                IRenderLayerEx.DrawTriangle(
+                Draw.Triangle(
                     position,
                     position + new Vector2(15, -18) * uiScale,
                     position + new Vector2(-15, -18) * uiScale),
-                IRenderLayerEx.DrawTriangle(
+                Draw.Triangle(
                     position + new Vector2(0, -2) * uiScale,
                     position + new Vector2(11, -16) * uiScale,
                     position + new Vector2(-11, -16) * uiScale,
