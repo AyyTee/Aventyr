@@ -51,14 +51,14 @@ namespace TimeLoopInc
 
     public static class ITimelineEx
     {
-        public static int MinTime(this ITimeline timeline)
+        public static int StartTime(this ITimeline timeline)
         {
             return timeline.Path.MinOrNull(item => item.StartTime) ?? 0;
         }
 
-        public static int MaxTime(this ITimeline timeline)
+        public static int EndTime(this ITimeline timeline)
         {
-            var start = timeline.MinTime();
+            var start = timeline.StartTime();
             return timeline.Path
                 .MaxOrNull(item => item.EndTime == int.MaxValue ? start : item.EndTime) ?? start;
         }

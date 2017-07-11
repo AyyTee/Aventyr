@@ -9,10 +9,10 @@ using TimeLoopInc;
 namespace TimeLoopIncTests
 {
     [TestFixture]
-    public class SceneStateTests
+    public class SceneTests
     {
         [Test]
-        public void EmptySceneStateStartTime()
+        public void EmptySceneStartTime()
         {
             Assert.AreEqual(0, new Scene().StartTime);
         }
@@ -319,6 +319,24 @@ namespace TimeLoopIncTests
             Assert.AreEqual(expected, result);
 		}
 
+        [Test]
+        public void ParadoxTest2()
+        {
+            var scene = new Scene();
+
+            var player0 = new Player(new Transform2i(), 0) { EndTime = 5 };
+            var player1 = new Player(new Transform2i(), 0);
+
+            scene.PlayerTimeline.Add(player0);
+            scene.PlayerTimeline.Add(player1);
+
+            scene.InvalidateCache();
+
+            var result = scene.GetParadoxes().Count;
+
+            Assert.AreEqual(1, result);
+        }
+
         [TestCase(0)]
         [TestCase(-1)]
         [TestCase(4)]
@@ -330,7 +348,7 @@ namespace TimeLoopIncTests
 			};
             var timeline = new Timeline<Player>(path);
 
-            var result = timeline.MaxTime();
+            var result = timeline.EndTime();
             Assert.AreEqual(startTime, result);
         }
 
@@ -343,7 +361,7 @@ namespace TimeLoopIncTests
 			};
 			var timeline = new Timeline<Player>(path);
 
-			var result = timeline.MaxTime();
+			var result = timeline.EndTime();
 			Assert.AreEqual(5, result);
 		}
 
@@ -356,7 +374,7 @@ namespace TimeLoopIncTests
 			};
 			var timeline = new Timeline<Player>(path);
 
-			var result = timeline.MaxTime();
+			var result = timeline.EndTime();
 			Assert.AreEqual(10, result);
 		}
     }

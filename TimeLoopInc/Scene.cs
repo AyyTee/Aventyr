@@ -22,8 +22,9 @@ namespace TimeLoopInc
         public readonly ImmutableList<TimePortal> Portals = new List<TimePortal>().ToImmutableList();
         [DataMember]
         public readonly ImmutableList<Vector2i> Exits = new List<Vector2i>().ToImmutableList();
+        public SceneInstant CurrentInstant => GetSceneInstant(CurrentTime);
         [DataMember]
-        public SceneInstant CurrentInstant;
+        public int CurrentTime { get; private set; }
         [DataMember]
         public Timeline<Player> PlayerTimeline = new Timeline<Player>();
         public Player CurrentPlayer => (Player)PlayerTimeline.Path.Last();
@@ -32,15 +33,13 @@ namespace TimeLoopInc
         public IEnumerable<ITimeline> Timelines => BlockTimelines
             .OfType<ITimeline>()
             .Concat(new[] { PlayerTimeline });
-        public int StartTime => Timelines.Min(item => item.Path.MinOrNull(entity => entity.StartTime)) ?? 0;
-        public int EndTime => Timelines.Max(item => item.Path.MaxOrNull(entity => entity.EndTime)) ?? 0;
+        public int StartTime => Timelines.MinOrNull(item => item.StartTime()) ?? 0;
+        public int EndTime => Math.Max(Timelines.MaxOrNull(item => item.EndTime()) ?? StartTime, CurrentInstant.Time);
 
         readonly Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
-        readonly Dictionary<int, HashSet<Paradox>> _cachedParadoxes = new Dictionary<int, HashSet<Paradox>>();
 
         public Scene()
         {
-            CurrentInstant = GetSceneInstant(StartTime);
         }
 
         public Scene(ISet<Vector2i> walls, IList<TimePortal> portals, Player player, IList<Block> blocks)
@@ -59,8 +58,6 @@ namespace TimeLoopInc
                 timeline.Add(item);
                 return timeline;
             }));
-
-            CurrentInstant = GetSceneInstant(StartTime);
         }
 
         public IGridEntityInstant GetEntityInstant(IGridEntity entity)
@@ -82,7 +79,8 @@ namespace TimeLoopInc
                 CurrentPlayer.Input.Add(input);
                 InvalidateCache(CurrentInstant.Time + 1);
             }
-            CurrentInstant = GetSceneInstant(CurrentInstant.Time + 1);
+            var nextInstant = GetSceneInstant(CurrentTime + 1);
+            CurrentTime = nextInstant.Time;
         }
 
         public void InvalidateCache() => _cachedInstants.Clear();
@@ -109,7 +107,7 @@ namespace TimeLoopInc
                 else
                 {
                     key = StartTime - 1;
-                    instant = new SceneInstant() { Time = StartTime - 1 };
+                    instant = new SceneInstant { Time = StartTime - 1 };
                 }
 
                 for (int i = key; i < time; i++)
@@ -119,7 +117,7 @@ namespace TimeLoopInc
                 }
                 return instant;
             }
-            return new SceneInstant() { Time = time };
+            return new SceneInstant { Time = time };
         }
 
         SceneInstant _step(SceneInstant sceneInstant)
@@ -239,10 +237,7 @@ namespace TimeLoopInc
         public List<Paradox> GetParadoxes()
         {
             var output = new List<Paradox>();
-            var endTime = EndTime < int.MaxValue ? 
-                EndTime : 
-                CurrentInstant.Time;
-            for (int i = StartTime; i <= endTime; i++)
+            for (int i = StartTime; i <= EndTime; i++)
             {
                 output.AddRange(GetParadoxes(i));
             }
@@ -293,7 +288,6 @@ namespace TimeLoopInc
         {
             var clone = (Scene)MemberwiseClone();
 
-            clone.CurrentInstant = CurrentInstant.DeepClone();
             clone.PlayerTimeline = PlayerTimeline.DeepClone();
             clone.BlockTimelines = BlockTimelines.Select(item => item.DeepClone()).ToList();
             return clone;

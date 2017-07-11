@@ -214,8 +214,13 @@ namespace TimeLoopInc
 
         public void Update(double timeDelta)
         {
-            var targetMaxTime = (float)MathEx.Ceiling(Math.Max(Timeline.MaxTime(), _scene.CurrentInstant.Time), 5);
-            var targetMinTime = (float)MathEx.Floor(Timeline.MinTime(), 5);
+            var boxes = GetTimelineBoxes(_scene.CurrentInstant.Time);
+
+            var timelineMax = boxes.Max(item => item.EndTime + (item.FadeEnd ? 0.5 : 0));
+            var timelineMin = boxes.Min(item => item.StartTime + (item.FadeStart ? -0.5 : 0));
+
+            var targetMaxTime = (float)Math.Max(timelineMax, MathEx.Ceiling(_scene.CurrentInstant.Time, 5));
+            var targetMinTime = (float)timelineMin;
 
             if (Math.Abs(targetMinTime - MinTime) > 0.0001)
             {
@@ -248,7 +253,13 @@ namespace TimeLoopInc
             public bool FadeEnd { get; }
             public IGridEntity Entity { get; }
 
-            public TimelineBox(int row, int startTime, double endTime, bool fadeStart, bool fadeEnd, IGridEntity entity)
+            public TimelineBox(
+                int row, 
+                int startTime, 
+                double endTime, 
+                bool fadeStart, 
+                bool fadeEnd, 
+                IGridEntity entity)
             {
                 Row = row;
                 StartTime = startTime;
