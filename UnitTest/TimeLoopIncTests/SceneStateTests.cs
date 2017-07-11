@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using TimeLoopInc;
 
-namespace GameTests.TimeLoopIncTests
+namespace TimeLoopIncTests
 {
     [TestFixture]
     public class SceneStateTests

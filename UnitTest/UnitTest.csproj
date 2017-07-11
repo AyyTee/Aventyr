@@ -54,38 +54,38 @@
     <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActorTests.cs" />
-    <Compile Include="BodyExTests.cs" />
-    <Compile Include="CameraExTests.cs" />
-    <Compile Include="ClipModelTests.cs" />
-    <Compile Include="CodeGenTests.cs" />
-    <Compile Include="DeepCloneTests.cs" />
-    <Compile Include="FCurveTests.cs" />
-    <Compile Include="FixtureExTests.cs" />
-    <Compile Include="FixtureUserDataTests.cs" />
-    <Compile Include="GridAngleTests.cs" />
-    <Compile Include="LineTests.cs" />
-    <Compile Include="MathExTests.cs" />
-    <Compile Include="NodePortalable.cs" />
-    <Compile Include="NodeWall.cs" />
-    <Compile Include="PolygonExTests.cs" />
-    <Compile Include="PortalCommonTests.cs" />
-    <Compile Include="PortalJointTests.cs" />
-    <Compile Include="PortalTests.cs" />
-    <Compile Include="SceneNodeTests.cs" />
-    <Compile Include="SceneTests.cs" />
-    <Compile Include="SimulationStepTests.cs" />
-    <Compile Include="TankGameTests.cs" />
-    <Compile Include="TimelineRenderTests.cs" />
-    <Compile Include="Transform2iTests.cs" />
-    <Compile Include="Transform2Tests.cs" />
-    <Compile Include="TriangleTests.cs" />
-    <Compile Include="Vector2ExTests.cs" />
-    <Compile Include="Vector2iTests.cs" />
-    <Compile Include="VertexTests.cs" />
-    <Compile Include="MeshTests.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="TimeLoopIncTests\SceneStateTests.cs" />
+    <Compile Include="TankGameTests\TankGameTests.cs" />
+    <Compile Include="GameTests\ActorTests.cs" />
+    <Compile Include="GameTests\BodyExTests.cs" />
+    <Compile Include="GameTests\CameraExTests.cs" />
+    <Compile Include="GameTests\ClipModelTests.cs" />
+    <Compile Include="GameTests\CodeGenTests.cs" />
+    <Compile Include="GameTests\DeepCloneTests.cs" />
+    <Compile Include="GameTests\FCurveTests.cs" />
+    <Compile Include="GameTests\FixtureExTests.cs" />
+    <Compile Include="GameTests\FixtureUserDataTests.cs" />
+    <Compile Include="GameTests\GridAngleTests.cs" />
+    <Compile Include="GameTests\LineTests.cs" />
+    <Compile Include="GameTests\MathExTests.cs" />
+    <Compile Include="GameTests\MeshTests.cs" />
+    <Compile Include="GameTests\NodePortalable.cs" />
+    <Compile Include="GameTests\NodeWall.cs" />
+    <Compile Include="GameTests\PolygonExTests.cs" />
+    <Compile Include="GameTests\PortalCommonTests.cs" />
+    <Compile Include="GameTests\PortalJointTests.cs" />
+    <Compile Include="GameTests\PortalTests.cs" />
+    <Compile Include="GameTests\SceneNodeTests.cs" />
+    <Compile Include="GameTests\SceneTests.cs" />
+    <Compile Include="GameTests\SimulationStepTests.cs" />
+    <Compile Include="TimeLoopIncTests\TimelineRenderTests.cs" />
+    <Compile Include="GameTests\Transform2iTests.cs" />
+    <Compile Include="GameTests\Transform2Tests.cs" />
+    <Compile Include="GameTests\TriangleTests.cs" />
+    <Compile Include="GameTests\Vector2ExTests.cs" />
+    <Compile Include="GameTests\Vector2iTests.cs" />
+    <Compile Include="GameTests\VertexTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -126,6 +126,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TimeLoopIncTests\" />
+    <Folder Include="GameTests\" />
+    <Folder Include="TankGameTests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

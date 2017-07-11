@@ -1,4 +1,4 @@
-﻿using Game;
+﻿﻿using Game;
 using Game.Rendering;
 using NUnit.Framework;
 using System;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TimeLoopInc;
 
-namespace GameTests
+namespace TimeLoopIncTests
 {
     [TestFixture]
     class TimelineRenderTests

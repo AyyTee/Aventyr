@@ -12,7 +12,7 @@ using Game.Portals;
 using TankGameTestFramework;
 using OpenTK;
 
-namespace GameTests
+namespace TankGameTests
 {
     [TestFixture]
     public class TankGameTests
