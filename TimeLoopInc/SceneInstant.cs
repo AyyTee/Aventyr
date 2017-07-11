@@ -17,21 +17,28 @@ namespace TimeLoopInc
         public IGridEntityInstant this[IGridEntity entity] => Entities[entity];
 
         [DataMember]
-        public int Time { get; set; }
+        public int Time { get; private set; }
 
-        public SceneInstant()
+        public SceneInstant(int time)
         {
+            Time = time;
         }
 
         public SceneInstant DeepClone()
         {
-            var clone = new SceneInstant();
-            clone.Time = Time;
+            var clone = new SceneInstant(Time);
             foreach (var entity in Entities.Keys)
             {
                 // We don't clone the entity itself. Just the entity instant.
                 clone.Entities.Add(entity, Entities[entity].DeepClone());
             }
+            return clone;
+        }
+
+        public SceneInstant WithTime(int time)
+        {
+            var clone = DeepClone();
+            clone.Time = time;
             return clone;
         }
     }

@@ -1,4 +1,4 @@
-﻿using Equ;
+﻿﻿using Equ;
 using Game;
 using Game.Common;
 using Game.Portals;
@@ -34,7 +34,7 @@ namespace TimeLoopInc
             .OfType<ITimeline>()
             .Concat(new[] { PlayerTimeline });
         public int StartTime => Timelines.MinOrNull(item => item.StartTime()) ?? 0;
-        public int EndTime => Math.Max(Timelines.MaxOrNull(item => item.EndTime()) ?? StartTime, CurrentInstant.Time);
+        public int EndTime => Math.Max(Timelines.MaxOrNull(item => item.EndTime()) ?? StartTime, CurrentTime);
 
         readonly Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
 
@@ -77,15 +77,13 @@ namespace TimeLoopInc
             if (CurrentInstant.Entities.ContainsKey(CurrentPlayer))
             {
                 CurrentPlayer.Input.Add(input);
-                InvalidateCache(CurrentInstant.Time + 1);
+                InvalidateCache(CurrentTime + 1);
             }
             var nextInstant = GetSceneInstant(CurrentTime + 1);
             CurrentTime = nextInstant.Time;
         }
 
-        public void InvalidateCache() => _cachedInstants.Clear();
-
-        public void InvalidateCache(int time)
+        void InvalidateCache(int time)
         {
             foreach (var key in _cachedInstants.Keys.Where(item => item >= time).ToList())
             {
@@ -107,7 +105,7 @@ namespace TimeLoopInc
                 else
                 {
                     key = StartTime - 1;
-                    instant = new SceneInstant { Time = StartTime - 1 };
+                    instant = new SceneInstant(StartTime - 1);
                 }
 
                 for (int i = key; i < time; i++)
@@ -117,16 +115,16 @@ namespace TimeLoopInc
                 }
                 return instant;
             }
-            return new SceneInstant { Time = time };
+            return new SceneInstant(time);
         }
 
         SceneInstant _step(SceneInstant sceneInstant)
         {
-            var nextInstant = sceneInstant.DeepClone();
+            var nextInstant = sceneInstant.WithTime(sceneInstant.Time + 1);
 
             foreach (var entity in nextInstant.Entities.Keys.ToList())
             {
-                if (entity.EndTime == nextInstant.Time)
+                if (entity.EndTime == sceneInstant.Time)
                 {
                     nextInstant.Entities.Remove(entity);
                 }
@@ -139,18 +137,18 @@ namespace TimeLoopInc
                 if (entity is Player player)
                 {
                     var playerInstant = nextInstant[entity];
-                    var velocity = (Vector2d)(player.GetInput(nextInstant.Time).Direction?.Vector ?? new Vector2i());
+                    var velocity = (Vector2d)(player.GetInput(sceneInstant.Time).Direction?.Vector ?? new Vector2i());
                     velocity = Vector2Ex.TransformVelocity(velocity, playerInstant.Transform.GetMatrix());
-                    var result = Move(playerInstant.Transform, (Vector2i)velocity, nextInstant.Time);
+                    var result = Move(playerInstant.Transform, (Vector2i)velocity, sceneInstant.Time);
                     playerInstant.PreviousVelocity = result.Velocity;
                     playerInstant.Transform = result.Transform;
-                    if (result.Time != nextInstant.Time)
+                    if (result.Time != sceneInstant.Time)
                     {
                         var timeline = PlayerTimeline;
                         if (timeline != null && PlayerTimeline.Path.Last() == player)
                         {
                             nextInstant.Entities.Remove(player);
-                            player.EndTime = nextInstant.Time;
+                            player.EndTime = sceneInstant.Time;
                             timeline.Add(new Player(playerInstant.Transform, result.Time + 1, result.Velocity));
                             earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
                             InvalidateCache(result.Time);
@@ -174,7 +172,7 @@ namespace TimeLoopInc
                 {
                     var adjacent = nextInstant[block].Transform.Position - directions[i].Vector;
                     var pushes = nextInstant.Entities.Values
-                        .Concat(GetEntitiesCreated(nextInstant.Time + 1).Select(item => item.CreateInstant()))
+                        .Concat(GetEntitiesCreated(nextInstant.Time).Select(item => item.CreateInstant()))
                         .OfType<PlayerInstant>()
                         .Where(item => item.Transform.Position - item.PreviousVelocity == adjacent && item.Transform.Position == nextInstant[block].Transform.Position);
 
@@ -182,16 +180,16 @@ namespace TimeLoopInc
                     if (pushes.Count() >= blockInstant.Transform.Size && !blockInstant.IsPushed)
                     {
                         blockInstant.IsPushed = true;
-                        var result = Move(blockInstant.Transform, directions[i].Vector, nextInstant.Time);
+                        var result = Move(blockInstant.Transform, directions[i].Vector, sceneInstant.Time);
                         blockInstant.Transform = result.Transform;
                         blockInstant.PreviousVelocity = result.Velocity;
-                        if (result.Time != nextInstant.Time)
+                        if (result.Time != sceneInstant.Time)
                         {
                             var timeline = BlockTimelines.FirstOrDefault(item => item.Path.Last() == block);
                             if (timeline != null)
                             {
                                 nextInstant.Entities.Remove(block);
-                                block.EndTime = nextInstant.Time;
+                                block.EndTime = sceneInstant.Time;
                                 timeline.Add(new Block(blockInstant.Transform, result.Time + 1, result.Velocity));
                                 earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
                                 InvalidateCache(result.Time);
@@ -201,17 +199,15 @@ namespace TimeLoopInc
                 }
             }
 
-            if (earliestTimeTravel < nextInstant.Time)
+            if (earliestTimeTravel < sceneInstant.Time)
             {
-                return GetSceneInstant(nextInstant.Time + 1);   
+                return GetSceneInstant(nextInstant.Time);
             }
 
-            foreach (var entity in GetEntitiesCreated(nextInstant.Time + 1))
+            foreach (var entity in GetEntitiesCreated(nextInstant.Time))
             {
                 nextInstant.Entities.Add(entity, entity.CreateInstant());
             }
-
-            nextInstant.Time++;
 
             return nextInstant;
         }

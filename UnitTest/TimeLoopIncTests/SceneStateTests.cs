@@ -1,4 +1,4 @@
-﻿﻿using Game.Common;
+﻿﻿﻿﻿using Game.Common;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -103,7 +103,7 @@ namespace TimeLoopIncTests
 
             scene.Step(new Input(GridAngle.Right));
 
-            Assert.AreEqual(6, scene.CurrentInstant.Time);
+            Assert.AreEqual(6, scene.CurrentTime);
         }
 
         [Test]
@@ -117,7 +117,7 @@ namespace TimeLoopIncTests
 
             scene.Step(new Input(GridAngle.Right));
 
-            Assert.AreEqual(-4, scene.CurrentInstant.Time);
+            Assert.AreEqual(-4, scene.CurrentTime);
         }
 
         [Test]
@@ -257,7 +257,7 @@ namespace TimeLoopIncTests
 
             scene.Step(new Input(GridAngle.Left));
 
-            Assert.AreEqual(-9, scene.CurrentInstant.Time);
+            Assert.AreEqual(-9, scene.CurrentTime);
 
             var instant = scene.GetSceneInstant(1);
 
@@ -278,7 +278,7 @@ namespace TimeLoopIncTests
 
             scene.Step(new Input(GridAngle.Left));
 
-            Assert.AreEqual(6, scene.CurrentInstant.Time);
+            Assert.AreEqual(6, scene.CurrentTime);
             Assert.AreEqual(new Vector2i(1, 0), scene.CurrentInstant.Entities[scene.CurrentPlayer].Transform.Position);
             Assert.AreEqual(new Vector2i(0, 0), scene.CurrentInstant.Entities[block].Transform.Position);
         }
@@ -293,7 +293,6 @@ namespace TimeLoopIncTests
 
             scene.PlayerTimeline.Add(player0);
             scene.PlayerTimeline.Add(player1);
-            scene.InvalidateCache();
 
             var result = scene.GetParadoxes(0);
             var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { player0, player1 }) };
@@ -312,7 +311,6 @@ namespace TimeLoopIncTests
             scene.PlayerTimeline.Add(player0);
             scene.PlayerTimeline.Add(player1);
             scene.BlockTimelines.Add(new Timeline<Block>(new[] { block }));
-            scene.InvalidateCache();
 
             var result = scene.GetParadoxes(0);
             var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { player0, player1, block }) };
@@ -329,8 +327,6 @@ namespace TimeLoopIncTests
 
             scene.PlayerTimeline.Add(player0);
             scene.PlayerTimeline.Add(player1);
-
-            scene.InvalidateCache();
 
             var result = scene.GetParadoxes().Count;
 

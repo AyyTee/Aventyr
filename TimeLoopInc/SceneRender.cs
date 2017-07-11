@@ -47,7 +47,7 @@ namespace TimeLoopInc
             var cameraVelocity = new Vector2();
 
             var playerInstant = _scene.CurrentInstant.Entities.GetOrDefault(_scene.CurrentPlayer);
-            var time = _scene.CurrentInstant.Time;
+            var time = _scene.CurrentTime;
             if (playerInstant != null)
             {
                 var (transform, timeOffset) = GetCameraTransformAndTime(_scene.CurrentInstant, _scene.CurrentPlayer, t, _scene.Portals.ToList());

@@ -1,4 +1,4 @@
-﻿using Game.Common;
+﻿﻿using Game.Common;
 using Game.Rendering;
 using OpenTK;
 using OpenTK.Graphics;
@@ -61,7 +61,7 @@ namespace TimeLoopInc
         List<IRenderable> DrawTimelines(Vector2 topLeft, Vector2 size, double t)
         {
             var output = new List<IRenderable>();
-            var currentTime = _scene.CurrentInstant.Time - (1 - t);
+            var currentTime = _scene.CurrentTime - (1 - t);
 
             var boxes = GetTimelineBoxes(currentTime);
             output.AddRange(DrawTimelineBoxes(boxes, topLeft, size));
@@ -214,12 +214,12 @@ namespace TimeLoopInc
 
         public void Update(double timeDelta)
         {
-            var boxes = GetTimelineBoxes(_scene.CurrentInstant.Time);
+            var boxes = GetTimelineBoxes(_scene.CurrentTime);
 
             var timelineMax = boxes.Max(item => item.EndTime + (item.FadeEnd ? 0.5 : 0));
             var timelineMin = boxes.Min(item => item.StartTime + (item.FadeStart ? -0.5 : 0));
 
-            var targetMaxTime = (float)Math.Max(timelineMax, MathEx.Ceiling(_scene.CurrentInstant.Time, 5));
+            var targetMaxTime = (float)Math.Max(timelineMax, MathEx.Ceiling(_scene.CurrentTime, 5));
             var targetMinTime = (float)timelineMin;
 
             if (Math.Abs(targetMinTime - MinTime) > 0.0001)
