@@ -73,7 +73,6 @@
     <Compile Include="PortalJointTests.cs" />
     <Compile Include="PortalTests.cs" />
     <Compile Include="SceneNodeTests.cs" />
-    <Compile Include="SceneStateTests.cs" />
     <Compile Include="SceneTests.cs" />
     <Compile Include="SimulationStepTests.cs" />
     <Compile Include="TankGameTests.cs" />
@@ -85,6 +84,8 @@
     <Compile Include="Vector2iTests.cs" />
     <Compile Include="VertexTests.cs" />
     <Compile Include="MeshTests.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="TimeLoopIncTests\SceneStateTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -122,6 +123,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TimeLoopIncTests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

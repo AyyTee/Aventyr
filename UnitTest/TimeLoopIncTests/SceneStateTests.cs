@@ -1,4 +1,4 @@
-﻿using Game.Common;
+﻿﻿using Game.Common;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using TimeLoopInc;
 
-namespace GameTests
+namespace GameTests.TimeLoopIncTests
 {
     [TestFixture]
     public class SceneStateTests
@@ -288,7 +288,7 @@ namespace GameTests
         {
             var scene = new Scene();
 
-            var player0 = new Player(new Transform2i(), 0);
+            var player0 = new Player(new Transform2i(), 0) { EndTime = 5 };
             var player1 = new Player(new Transform2i(), 0);
 
             scene.PlayerTimeline.Add(player0);
@@ -305,7 +305,7 @@ namespace GameTests
         {
             var scene = new Scene();
 
-            var player0 = new Player(new Transform2i(), 0);
+            var player0 = new Player(new Transform2i(), 0) { EndTime = 5 };
             var player1 = new Player(new Transform2i(), 0);
             var block = new Block(new Transform2i(), 0);
 
@@ -317,6 +317,47 @@ namespace GameTests
             var result = scene.GetParadoxes(0);
             var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { player0, player1, block }) };
             Assert.AreEqual(expected, result);
+		}
+
+        [TestCase(0)]
+        [TestCase(-1)]
+        [TestCase(4)]
+        public void EndTimeTest0(int startTime)
+        {
+			var path = new[]
+			{
+				new Player(new Transform2i(), startTime)
+			};
+            var timeline = new Timeline<Player>(path);
+
+            var result = timeline.MaxTime();
+            Assert.AreEqual(startTime, result);
+        }
+
+        public void EndTimeTest1()
+        {
+			var path = new[]
+			{
+                new Player(new Transform2i(), 0) { EndTime = 5 },
+                new Player(new Transform2i(), -5) 
+			};
+			var timeline = new Timeline<Player>(path);
+
+			var result = timeline.MaxTime();
+			Assert.AreEqual(5, result);
+		}
+
+		public void EndTimeTest2()
+		{
+			var path = new[]
+			{
+				new Player(new Transform2i(), 0) { EndTime = 5 },
+				new Player(new Transform2i(), 10)
+			};
+			var timeline = new Timeline<Player>(path);
+
+			var result = timeline.MaxTime();
+			Assert.AreEqual(10, result);
 		}
     }
 }

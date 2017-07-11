@@ -1,11 +1,12 @@
 ﻿using Game;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using Game.Common;
+using System.Collections.Immutable;
 
 namespace TimeLoopInc
 {
@@ -13,11 +14,15 @@ namespace TimeLoopInc
     {
         public T this[int index] => (T)Path[index];
 
-        public IList<IGridEntity> Path { get; private set; } = new List<IGridEntity>();
+        public ImmutableList<IGridEntity> Path { get; private set; } = new List<IGridEntity>().ToImmutableList();
 
         public string Name => typeof(T).Name + " Timeline";
 
-        public void Add(T entity) => Path.Add(entity);
+        public void Add(T entity)
+        {
+            DebugEx.Assert(Path.LastOrDefault()?.EndTime != int.MaxValue);
+            Path = Path.Add(entity);    
+        }
 
         public Timeline()
         {
@@ -25,14 +30,15 @@ namespace TimeLoopInc
 
         public Timeline(IList<T> path)
         {
-            Path = (IList<IGridEntity>)path;
+            DebugEx.Assert(path.Take(path.Count - 1).All(item => item.EndTime != int.MaxValue));
+            Path = path.Cast<IGridEntity>().ToImmutableList();
         }
 
         public Timeline<T> DeepClone()
         {
             return new Timeline<T>
             {
-                Path = Path.Select(item => item.DeepClone()).ToList()
+                Path = Path.Select(item => item.DeepClone()).ToImmutableList()
             };
         }
     }
@@ -40,7 +46,7 @@ namespace TimeLoopInc
     public interface ITimeline
     {
         string Name { get; }
-        IList<IGridEntity> Path { get; }
+        ImmutableList<IGridEntity> Path { get; }
     }
 
     public static class ITimelineEx

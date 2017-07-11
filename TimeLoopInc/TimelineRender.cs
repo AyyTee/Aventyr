@@ -65,7 +65,6 @@ namespace TimeLoopInc
 
             var boxes = GetTimelineBoxes(currentTime);
             output.AddRange(DrawTimelineBoxes(boxes, topLeft, size));
-            output.AddRange(DrawParadoxes(boxes, topLeft, size));
 			
             var markerPos = topLeft + new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, currentTime), 0) * size;
 
@@ -81,7 +80,20 @@ namespace TimeLoopInc
                 output.Add(Draw.Line(new LineF(top, top + size.YOnly())));
             }
 
+
+            output.AddRange(DrawParadoxes(boxes, topLeft, size, 1));
+
             return output;
+        }
+
+        float TimeToX(double time, Vector2 topLeft, Vector2 size)
+        {
+            return (float)MathEx.LerpInverse(MinTime, MaxTime, time) * size.X + topLeft.X;
+        }
+
+        float RowToY(double row, Vector2 topLeft, Vector2 size)
+        {
+            return (float)MathEx.LerpInverse(MinRow, MaxRow, row) * size.Y + topLeft.Y;
         }
 
         public List<IRenderable> DrawTimelineBoxes(List<TimelineBox> boxes, Vector2 topLeft, Vector2 size)
@@ -90,10 +102,10 @@ namespace TimeLoopInc
             foreach (var box in boxes)
             {
                 var xValues = new[] { box.StartTime - 0.5, box.StartTime, box.EndTime, box.EndTime + 0.5 }
-                    .Select(item => (float)MathEx.LerpInverse(MinTime, MaxTime, item) * size.X + topLeft.X)
+                    .Select(item => TimeToX(item, topLeft, size))
                     .ToArray();
                 var yValues = new[] { box.Row, box.Row + 1 }
-                    .Select(item => (float)MathEx.LerpInverse(MinRow, MaxRow, item) * size.Y + topLeft.Y)
+                    .Select(item => RowToY(item, topLeft, size))
                     .ToArray();
 
                 var color = new Color4(0.8f, 0f, 0.8f, 1f);
@@ -142,16 +154,27 @@ namespace TimeLoopInc
             };
         }
 
-        List<IRenderable> DrawParadoxes(List<TimelineBox> boxes, Vector2 topLeft, Vector2 size)
+        List<IRenderable> DrawParadoxes(List<TimelineBox> boxes, Vector2 topLeft, Vector2 size, float uiScale)
         {
+            var output = new List<IRenderable>();
             var paradoxes = _scene.GetParadoxes();
             foreach (var box in boxes)
             {
                 var result = paradoxes.Where(item => item.Affected.Contains(box.Entity));
+                foreach (var paradox in result)
+                {
+                    var v0 = new Vector2(
+                        TimeToX(paradox.Time, topLeft, size), 
+                        RowToY(box.Row + 0.5, topLeft, size));
 
+                    output.Add(Draw.Triangle(
+                        v0 + new Vector2(0, -10) * uiScale, 
+                        v0 + new Vector2(-10, 8) * uiScale, 
+                        v0 + new Vector2(10, 8) * uiScale, 
+                        Color4.Yellow));
+                }
             }
-            return new List<IRenderable>();
-            //_scene.GetParadoxes().Where();
+            return output;
         }
 
         public List<TimelineBox> GetTimelineBoxes(double currentTime)

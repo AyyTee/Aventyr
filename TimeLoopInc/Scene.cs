@@ -241,7 +241,7 @@ namespace TimeLoopInc
             var output = new List<Paradox>();
             var endTime = EndTime < int.MaxValue ? 
                 EndTime : 
-                StartTime;
+                CurrentInstant.Time;
             for (int i = StartTime; i <= endTime; i++)
             {
                 output.AddRange(GetParadoxes(i));
