@@ -20,7 +20,6 @@ namespace TimeLoopInc
 
         public void Add(T entity)
         {
-            DebugEx.Assert(Path.LastOrDefault()?.EndTime != int.MaxValue);
             Path = Path.Add(entity);    
         }
 
@@ -30,7 +29,6 @@ namespace TimeLoopInc
 
         public Timeline(IList<T> path)
         {
-            DebugEx.Assert(path.Take(path.Count - 1).All(item => item.EndTime != int.MaxValue));
             Path = path.Cast<IGridEntity>().ToImmutableList();
         }
 
@@ -58,9 +56,7 @@ namespace TimeLoopInc
 
         public static int EndTime(this ITimeline timeline)
         {
-            var start = timeline.StartTime();
-            return timeline.Path
-                .MaxOrNull(item => item.EndTime == int.MaxValue ? start : item.EndTime) ?? start;
+            return timeline.StartTime() + 5;
         }
     }
 }

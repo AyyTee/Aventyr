@@ -1,4 +1,4 @@
-﻿﻿using Equ;
+﻿﻿﻿using Equ;
 using Game;
 using Game.Common;
 using Game.Portals;
@@ -33,6 +33,7 @@ namespace TimeLoopInc
         public IEnumerable<ITimeline> Timelines => BlockTimelines
             .OfType<ITimeline>()
             .Concat(new[] { PlayerTimeline });
+
         public int StartTime => Timelines.MinOrNull(item => item.StartTime()) ?? 0;
         public int EndTime => Math.Max(Timelines.MaxOrNull(item => item.EndTime()) ?? StartTime, CurrentTime);
 
@@ -122,48 +123,53 @@ namespace TimeLoopInc
         {
             var nextInstant = sceneInstant.WithTime(sceneInstant.Time + 1);
 
-            foreach (var entity in nextInstant.Entities.Keys.ToList())
-            {
-                if (entity.EndTime == sceneInstant.Time)
-                {
-                    nextInstant.Entities.Remove(entity);
-                }
-            }
-
             var earliestTimeTravel = int.MaxValue;
 
-            foreach (var entity in nextInstant.Entities.Keys)
+            foreach (var player in nextInstant.Entities.Keys.OfType<Player>().ToList())
             {
-                if (entity is Player player)
+                var playerInstant = nextInstant[player];
+                var velocity = (Vector2d)(player.GetInput(sceneInstant.Time)?.Direction?.Vector ?? new Vector2i());
+                velocity = Vector2Ex.TransformVelocity(velocity, playerInstant.Transform.GetMatrix());
+                var result = Move(playerInstant.Transform, (Vector2i)velocity, sceneInstant.Time);
+                playerInstant.PreviousVelocity = result.Velocity;
+                playerInstant.Transform = result.Transform;
+                if (result.Time != sceneInstant.Time)
                 {
-                    var playerInstant = nextInstant[entity];
-                    var velocity = (Vector2d)(player.GetInput(sceneInstant.Time).Direction?.Vector ?? new Vector2i());
-                    velocity = Vector2Ex.TransformVelocity(velocity, playerInstant.Transform.GetMatrix());
-                    var result = Move(playerInstant.Transform, (Vector2i)velocity, sceneInstant.Time);
-                    playerInstant.PreviousVelocity = result.Velocity;
-                    playerInstant.Transform = result.Transform;
-                    if (result.Time != sceneInstant.Time)
+                    var timeline = PlayerTimeline;
+                    nextInstant.Entities.Remove(player);
+                    if (timeline != null && PlayerTimeline.Path.Last() == player)
                     {
-                        var timeline = PlayerTimeline;
-                        if (timeline != null && PlayerTimeline.Path.Last() == player)
-                        {
-                            nextInstant.Entities.Remove(player);
-                            player.EndTime = sceneInstant.Time;
-                            timeline.Add(new Player(playerInstant.Transform, result.Time + 1, result.Velocity));
-                            earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
-                            InvalidateCache(result.Time);
+                        timeline.Add(new Player(playerInstant.Transform, result.Time + 1, result.Velocity));
+                        earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
+                        InvalidateCache(result.Time);
 
-                            return GetSceneInstant(result.Time + 1);
-                        }
+                        return GetSceneInstant(result.Time + 1);
                     }
                 }
             }
 
-            foreach (var block in nextInstant.Entities.Values.OfType<BlockInstant>())
+            MoveBlocks(nextInstant, ref earliestTimeTravel);
+
+            if (earliestTimeTravel < sceneInstant.Time)
             {
-                block.IsPushed = false;
-                block.PreviousVelocity = new Vector2i();
+                return GetSceneInstant(nextInstant.Time);
             }
+
+            foreach (var entity in GetEntitiesCreated(nextInstant.Time))
+            {
+                nextInstant.Entities.Add(entity, entity.CreateInstant());
+            }
+
+            return nextInstant;
+        }
+
+        void MoveBlocks(SceneInstant nextInstant, ref int earliestTimeTravel)
+        {
+			foreach (var block in nextInstant.Entities.Values.OfType<BlockInstant>())
+			{
+				block.IsPushed = false;
+				block.PreviousVelocity = new Vector2i();
+			}
 
             var directions = new[] { GridAngle.Left, GridAngle.Right, GridAngle.Up, GridAngle.Down };
             for (int i = 0; i < directions.Length; i++)
@@ -180,16 +186,15 @@ namespace TimeLoopInc
                     if (pushes.Count() >= blockInstant.Transform.Size && !blockInstant.IsPushed)
                     {
                         blockInstant.IsPushed = true;
-                        var result = Move(blockInstant.Transform, directions[i].Vector, sceneInstant.Time);
+                        var result = Move(blockInstant.Transform, directions[i].Vector, nextInstant.Time - 1);
                         blockInstant.Transform = result.Transform;
                         blockInstant.PreviousVelocity = result.Velocity;
-                        if (result.Time != sceneInstant.Time)
+                        if (result.Time != nextInstant.Time - 1)
                         {
                             var timeline = BlockTimelines.FirstOrDefault(item => item.Path.Last() == block);
+                            nextInstant.Entities.Remove(block);
                             if (timeline != null)
                             {
-                                nextInstant.Entities.Remove(block);
-                                block.EndTime = sceneInstant.Time;
                                 timeline.Add(new Block(blockInstant.Transform, result.Time + 1, result.Velocity));
                                 earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
                                 InvalidateCache(result.Time);
@@ -198,18 +203,6 @@ namespace TimeLoopInc
                     }
                 }
             }
-
-            if (earliestTimeTravel < sceneInstant.Time)
-            {
-                return GetSceneInstant(nextInstant.Time);
-            }
-
-            foreach (var entity in GetEntitiesCreated(nextInstant.Time))
-            {
-                nextInstant.Entities.Add(entity, entity.CreateInstant());
-            }
-
-            return nextInstant;
         }
 
         public bool IsCompleted()

@@ -19,17 +19,6 @@ namespace TimeLoopInc
         [DataMember]
         public int StartTime { get; }
         [DataMember]
-        int _endTime = int.MaxValue;
-        public int EndTime
-        {
-            get { return _endTime; }
-            set
-            {
-                DebugEx.Assert(value >= StartTime);
-                _endTime = value;
-            }
-        }
-        [DataMember]
         public List<Input> Input { get; } = new List<Input>();
 
         public Player(Transform2i startPosition, int startTime, Vector2i previousVelocity = new Vector2i())
@@ -41,7 +30,7 @@ namespace TimeLoopInc
 
         public Input GetInput(int time)
         {
-            return Input.ElementAtOrDefault(time - StartTime) ?? new Input(null);
+            return Input.ElementAtOrDefault(time - StartTime);
         }
 
         public IGridEntityInstant CreateInstant() => new PlayerInstant(StartTransform, PreviousVelocity);

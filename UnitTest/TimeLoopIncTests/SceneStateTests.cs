@@ -288,7 +288,7 @@ namespace TimeLoopIncTests
         {
             var scene = new Scene();
 
-            var player0 = new Player(new Transform2i(), 0) { EndTime = 5 };
+            var player0 = new Player(new Transform2i(), 0);
             var player1 = new Player(new Transform2i(), 0);
 
             scene.PlayerTimeline.Add(player0);
@@ -304,7 +304,7 @@ namespace TimeLoopIncTests
         {
             var scene = new Scene();
 
-            var player0 = new Player(new Transform2i(), 0) { EndTime = 5 };
+            var player0 = new Player(new Transform2i(), 0);
             var player1 = new Player(new Transform2i(), 0);
             var block = new Block(new Transform2i(), 0);
 
@@ -315,63 +315,6 @@ namespace TimeLoopIncTests
             var result = scene.GetParadoxes(0);
             var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { player0, player1, block }) };
             Assert.AreEqual(expected, result);
-		}
-
-        [Test]
-        public void ParadoxTest2()
-        {
-            var scene = new Scene();
-
-            var player0 = new Player(new Transform2i(), 0) { EndTime = 5 };
-            var player1 = new Player(new Transform2i(), 0);
-
-            scene.PlayerTimeline.Add(player0);
-            scene.PlayerTimeline.Add(player1);
-
-            var result = scene.GetParadoxes().Count;
-
-            Assert.AreEqual(1, result);
-        }
-
-        [TestCase(0)]
-        [TestCase(-1)]
-        [TestCase(4)]
-        public void EndTimeTest0(int startTime)
-        {
-			var path = new[]
-			{
-				new Player(new Transform2i(), startTime)
-			};
-            var timeline = new Timeline<Player>(path);
-
-            var result = timeline.EndTime();
-            Assert.AreEqual(startTime, result);
-        }
-
-        public void EndTimeTest1()
-        {
-			var path = new[]
-			{
-                new Player(new Transform2i(), 0) { EndTime = 5 },
-                new Player(new Transform2i(), -5) 
-			};
-			var timeline = new Timeline<Player>(path);
-
-			var result = timeline.EndTime();
-			Assert.AreEqual(5, result);
-		}
-
-		public void EndTimeTest2()
-		{
-			var path = new[]
-			{
-				new Player(new Transform2i(), 0) { EndTime = 5 },
-				new Player(new Transform2i(), 10)
-			};
-			var timeline = new Timeline<Player>(path);
-
-			var result = timeline.EndTime();
-			Assert.AreEqual(10, result);
 		}
     }
 }

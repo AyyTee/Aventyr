@@ -1,4 +1,4 @@
-﻿﻿using Game.Common;
+﻿﻿﻿using Game.Common;
 using Game.Rendering;
 using OpenTK;
 using OpenTK.Graphics;
@@ -188,12 +188,12 @@ namespace TimeLoopInc
                 var entity = Timeline.Path[i];
 
                 var startTime = entity.StartTime;
-                if (i > 0 && entity.StartTime < Timeline.Path[i - 1].EndTime)
+                //if (i > 0 && entity.StartTime < Timeline.Path[i - 1].EndTime)
                 {
                     row++;
                 }
 
-                double endTime = entity.EndTime;
+                double endTime = startTime + 5;//entity.EndTime;
                 if (i + 1 == count)
                 {
                     endTime = currentTime;
