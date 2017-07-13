@@ -34,8 +34,11 @@ namespace TimeLoopInc
             .OfType<ITimeline>()
             .Concat(new[] { PlayerTimeline });
 
+        [DataMember]
+        public List<IGridEntity> Entities { get; private set; } = new List<IGridEntity>();
+
         public int StartTime => Timelines.MinOrNull(item => item.StartTime()) ?? 0;
-        public int EndTime => Math.Max(Timelines.MaxOrNull(item => item.EndTime()) ?? StartTime, CurrentTime);
+        public int EndTime => ChangeEndTime();
 
         readonly Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
 
@@ -59,6 +62,9 @@ namespace TimeLoopInc
                 timeline.Add(item);
                 return timeline;
             }));
+
+            Entities.Add(player);
+            Entities.AddRange(blocks);
         }
 
         public IGridEntityInstant GetEntityInstant(IGridEntity entity)
@@ -66,11 +72,76 @@ namespace TimeLoopInc
             return CurrentInstant.Entities[entity];
         }
 
-        public ITimeline GetTimeline(IGridEntity entity)
+        public List<ITimeline> GetTimelines()
         {
-            var timelines = Timelines.Where(item => item.Path.Contains(entity));
-            DebugEx.Assert(timelines.Count() == 1);
-            return timelines.First();
+            var timelines = new List<ITimeline>();
+            var list = Entities.OrderBy(EntityEndTime).ToList();
+            while (list.Count > 0)
+            {
+                var entity = list.Last();
+                var path = new List<IGridEntity>();
+                var isClosed = false;
+                while (entity != null)
+                {
+                    path.Add(entity);
+                    list.Remove(entity);
+                    entity = GetEntityNext(entity);
+                    if (path.Contains(entity))
+                    {
+                        DebugEx.Assert(path.First() == entity);
+                        isClosed = true;
+                        break;
+                    }
+                }
+
+                timelines.Add(new Timeline<IGridEntity>(path, isClosed));
+            }
+
+            return timelines;
+        }
+
+        T GetEntityNext<T>(T entity) where T : IGridEntity
+        {
+            var endTime = EntityEndTime(entity);
+            var entityInstant = GetSceneInstant(endTime).Entities[entity];
+
+            return Entities
+                .OfType<T>()
+                .FirstOrDefault(item => item.PreviousTransform == entityInstant.Transform);
+        }
+
+        /// <summary>
+        /// Get the last point in time where this entity exists.
+        /// </summary>
+        /// <returns>The end time.</returns>
+        /// <param name="entity">Entity.</param>
+        public int EntityEndTime(IGridEntity entity)
+        {
+            var endTime = ChangeEndTime();
+            for (int i = entity.StartTime; i < endTime; i++)
+            {
+                if (!GetSceneInstant(i).Entities.Keys.Contains(entity))
+                {
+                    return i - 1;
+                }
+            }
+            return endTime - 1;
+        }
+
+        /// <summary>
+        /// Get the first point in time where the scene no longer can change.
+        /// </summary>
+        /// <returns>The end time.</returns>
+        public int ChangeEndTime()
+        {
+            int time = Entities.Max(item => item.StartTime) + 1;
+			while (GetSceneInstant(time).Entities.Keys
+				.OfType<Player>()
+				.Any(item => item.GetInput(time) != null))
+            {
+                time++;
+            }
+            return time;
         }
 
         public void Step(Input input)
@@ -119,6 +190,25 @@ namespace TimeLoopInc
             return new SceneInstant(time);
         }
 
+        /// <summary>
+        /// Adds entity if one does not already exists.
+        /// </summary>
+        /// <returns>Added entity or existing entity.</returns>
+        T AddEntity<T>(T entity) where T : IGridEntity
+        {
+            var match = Entities.FirstOrDefault(item =>
+	            item.GetType() == typeof(T) &&
+	            item.PreviousVelocity == entity.PreviousVelocity &&
+	            item.StartTime == entity.StartTime &&
+	            item.StartTransform == entity.StartTransform);
+            if (match == null)
+            {
+                Entities.Add(entity);
+                return entity;
+            }
+            return (T)match;
+        }
+
         SceneInstant _step(SceneInstant sceneInstant)
         {
             var nextInstant = sceneInstant.WithTime(sceneInstant.Time + 1);
@@ -139,7 +229,9 @@ namespace TimeLoopInc
                     nextInstant.Entities.Remove(player);
                     if (timeline != null && PlayerTimeline.Path.Last() == player)
                     {
-                        timeline.Add(new Player(playerInstant.Transform, result.Time + 1, result.Velocity));
+                        var playerNew = new Player(playerInstant.Transform, result.Time + 1, result.Velocity);
+                        timeline.Add(playerNew);
+                        AddEntity(playerNew);
                         earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
                         InvalidateCache(result.Time);
 

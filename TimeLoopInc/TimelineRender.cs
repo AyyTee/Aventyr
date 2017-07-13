@@ -188,12 +188,12 @@ namespace TimeLoopInc
                 var entity = Timeline.Path[i];
 
                 var startTime = entity.StartTime;
-                //if (i > 0 && entity.StartTime < Timeline.Path[i - 1].EndTime)
+                if (i > 0 && entity.StartTime < _scene.EntityEndTime(Timeline.Path[i - 1]))
                 {
                     row++;
                 }
 
-                double endTime = startTime + 5;//entity.EndTime;
+                double endTime = startTime + _scene.EntityEndTime(entity);
                 if (i + 1 == count)
                 {
                     endTime = currentTime;

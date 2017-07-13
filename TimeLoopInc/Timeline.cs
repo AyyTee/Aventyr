@@ -18,16 +18,20 @@ namespace TimeLoopInc
 
         public string Name => typeof(T).Name + " Timeline";
 
+        public bool IsClosed { get; }
+
         public void Add(T entity)
         {
             Path = Path.Add(entity);    
         }
 
-        public Timeline()
+        public Timeline(bool isClosed = false)
         {
+            IsClosed = IsClosed;
         }
 
-        public Timeline(IList<T> path)
+        public Timeline(IList<T> path, bool isClosed = false)
+            : this(isClosed)
         {
             Path = path.Cast<IGridEntity>().ToImmutableList();
         }

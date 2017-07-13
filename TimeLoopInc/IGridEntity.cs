@@ -14,6 +14,7 @@ namespace TimeLoopInc
     {
         Transform2i StartTransform { get; }
         Vector2i PreviousVelocity { get; }
+        Transform2i PreviousTransform { get; }
         int StartTime { get; }
 
         IGridEntityInstant CreateInstant();

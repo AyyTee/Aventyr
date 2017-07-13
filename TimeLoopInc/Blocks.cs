@@ -21,13 +21,20 @@ namespace TimeLoopInc
         [DataMember]
         public Vector2i PreviousVelocity { get; }
         [DataMember]
+        public Transform2i PreviousTransform { get; }
+        [DataMember]
         public int StartTime { get; }
 
-        public Block(Transform2i startTransform, int startTime, Vector2i previousVelocity = new Vector2i())
+        public Block(
+            Transform2i startTransform, 
+            int startTime, 
+            Vector2i previousVelocity = new Vector2i(), 
+            Transform2i previousTransform = null)
         {
             StartTransform = startTransform;
             PreviousVelocity = previousVelocity;
             StartTime = startTime;
+            PreviousTransform = previousTransform;
         }
 
         public IGridEntityInstant CreateInstant() => new BlockInstant(StartTransform, PreviousVelocity);
@@ -38,7 +45,7 @@ namespace TimeLoopInc
         {
             var model = ModelFactory.CreatePlane(Vector2.One * StartTransform.Size, new Color4(), new Vector3(-StartTransform.Size / 2));
             model.SetColor(new Color4(0.5f, 1f, 0.8f, 1f));
-            return new List<Model>() { model };
+            return new List<Model> { model };
         }
     }
 }
