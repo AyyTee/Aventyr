@@ -129,29 +129,25 @@ namespace TimeLoopIncTests
                 new Player(new Transform2i(), 0),
                 new[] { new Block(new Transform2i(new Vector2i(1, 0)), 0) });
 
-            Assert.AreEqual(1, scene.BlockTimelines.Count);
-            Assert.AreEqual(1, scene.BlockTimelines[0].Path.Count);
+            Assert.AreEqual(1, scene.Entities.OfType<Block>().Count());
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
 
             scene.Step(new Input(GridAngle.Right));
 
-            Assert.AreEqual(1, scene.BlockTimelines.Count);
-            Assert.AreEqual(2, scene.BlockTimelines[0].Path.Count);
+            Assert.AreEqual(2, scene.Entities.OfType<Block>().Count());
             Assert.AreEqual(0, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
 
             for (int i = 0; i < scene.Portals[0].TimeOffset - 1; i++)
             {
                 scene.Step(new Input(null));
 
-                Assert.AreEqual(1, scene.BlockTimelines.Count);
-                Assert.AreEqual(2, scene.BlockTimelines[0].Path.Count);
+                Assert.AreEqual(2, scene.Entities.OfType<Block>().Count());
                 Assert.AreEqual(0, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
             }
 
             scene.Step(new Input(null));
 
-            Assert.AreEqual(1, scene.BlockTimelines.Count);
-            Assert.AreEqual(2, scene.BlockTimelines[0].Path.Count);
+            Assert.AreEqual(2, scene.Entities.OfType<Block>().Count());
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
         }
 
@@ -166,29 +162,25 @@ namespace TimeLoopIncTests
                 new Player(new Transform2i(), 0),
                 new[] { new Block(new Transform2i(new Vector2i(1, 0)), 0) });
 
-            Assert.AreEqual(1, scene.BlockTimelines.Count);
-            Assert.AreEqual(1, scene.BlockTimelines[0].Path.Count);
+            Assert.AreEqual(1, scene.Entities.OfType<Block>().Count());
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
 
             scene.Step(new Input(GridAngle.Right));
 
-            Assert.AreEqual(1, scene.BlockTimelines.Count);
-            Assert.AreEqual(2, scene.BlockTimelines[0].Path.Count);
+            Assert.AreEqual(2, scene.Entities.OfType<Block>().Count());
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
 
             for (int i = 0; i < portals[0].TimeOffset; i++)
             {
                 scene.Step(new Input(null));
 
-                Assert.AreEqual(1, scene.BlockTimelines.Count);
-                Assert.AreEqual(2, scene.BlockTimelines[0].Path.Count);
+                Assert.AreEqual(2, scene.Entities.OfType<Block>().Count());
                 Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
             }
 
             scene.Step(new Input(null));
 
-            Assert.AreEqual(1, scene.BlockTimelines.Count);
-            Assert.AreEqual(2, scene.BlockTimelines[0].Path.Count);
+            Assert.AreEqual(2, scene.Entities.OfType<Block>().Count());
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
         }
 
@@ -291,8 +283,8 @@ namespace TimeLoopIncTests
             var player0 = new Player(new Transform2i(), 0);
             var player1 = new Player(new Transform2i(), 0);
 
-            scene.PlayerTimeline.Add(player0);
-            scene.PlayerTimeline.Add(player1);
+            scene.Entities.Add(player0);
+            scene.Entities.Add(player1);
 
             var result = scene.GetParadoxes(0);
             var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { player0, player1 }) };
@@ -308,9 +300,9 @@ namespace TimeLoopIncTests
             var player1 = new Player(new Transform2i(), 0);
             var block = new Block(new Transform2i(), 0);
 
-            scene.PlayerTimeline.Add(player0);
-            scene.PlayerTimeline.Add(player1);
-            scene.BlockTimelines.Add(new Timeline<Block>(new[] { block }));
+            scene.Entities.Add(player0);
+            scene.Entities.Add(player1);
+            scene.Entities.Add(block );
 
             var result = scene.GetParadoxes(0);
             var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { player0, player1, block }) };

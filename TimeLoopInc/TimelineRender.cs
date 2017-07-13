@@ -16,7 +16,7 @@ namespace TimeLoopInc
 {
     public class TimelineRender
     {
-        public ITimeline Timeline { get; set; }
+        public IGridEntity Selected { get; set; }
         readonly Scene _scene;
         readonly Font _font;
         public float MinTime { get; private set; } = 0;
@@ -30,17 +30,21 @@ namespace TimeLoopInc
             _font = font;
         }
 
+        public ITimeline GetTimeline()
+        {
+            if (Selected == null)
+            {
+                return new Timeline<IGridEntity>();
+            }
+            return _scene.GetTimelines().First(item => item.Path.Contains(Selected));
+        }
+
         public void Render(IRenderLayer layer, Vector2 topLeft, Vector2 size, float dpiScale, double t)
         {
             DebugEx.Assert(size.X > 0 && size.Y > 0);
             Vector2 gridSize = new Vector2(50, 20) * dpiScale;
 
             layer.Rectangle(topLeft, topLeft + size, new Color4(0.8f, 0.8f, 0.8f, 0.8f));
-
-            if (Timeline == null)
-            {
-                return;
-            }
 
 			var bounds = new ClipPath(new[] {
 					topLeft,
@@ -49,7 +53,7 @@ namespace TimeLoopInc
 					topLeft + size.XOnly()
 				});
 
-            layer.Renderables.Add(Draw.Text(_font, topLeft, Timeline.Name));
+            layer.Renderables.Add(Draw.Text(_font, topLeft, GetTimeline().Name));
             var output = DrawTimelines(topLeft + new Vector2(10, 60), size - new Vector2(20, 60), t);
             foreach (var renderable in output)
             {
@@ -181,14 +185,15 @@ namespace TimeLoopInc
         {
             var output = new List<TimelineBox>();
 
+            var timeline = GetTimeline();
             int row = 0;
-            var count = Timeline.Path.Count;
+            var count = timeline.Path.Count;
             for (int i = 0; i < count; i++)
             {
-                var entity = Timeline.Path[i];
+                var entity = timeline.Path[i];
 
                 var startTime = entity.StartTime;
-                if (i > 0 && entity.StartTime < _scene.EntityEndTime(Timeline.Path[i - 1]))
+                if (i > 0 && entity.StartTime < _scene.EntityEndTime(timeline.Path[i - 1]))
                 {
                     row++;
                 }
@@ -216,8 +221,8 @@ namespace TimeLoopInc
         {
             var boxes = GetTimelineBoxes(_scene.CurrentTime);
 
-            var timelineMax = boxes.Max(item => item.EndTime + (item.FadeEnd ? 0.5 : 0));
-            var timelineMin = boxes.Min(item => item.StartTime + (item.FadeStart ? -0.5 : 0));
+            var timelineMax = boxes.MaxOrNull(item => item.EndTime + (item.FadeEnd ? 0.5 : 0)) ?? 10;
+            var timelineMin = boxes.MinOrNull(item => item.StartTime + (item.FadeStart ? -0.5 : 0)) ?? 0;
 
             var targetMaxTime = (float)Math.Max(timelineMax, MathEx.Ceiling(_scene.CurrentTime, 5));
             var targetMinTime = (float)timelineMin;

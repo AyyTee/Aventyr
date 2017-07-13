@@ -67,7 +67,7 @@ namespace TimeLoopInc
             _scene = new Scene(Walls, Portals, player, blocks);
             _sceneRender = new SceneRender(_window, _scene);
             _timelineRender = new TimelineRender(_scene, _window.Fonts.Inconsolata);
-            _timelineRender.Timeline = _scene.PlayerTimeline;
+            _timelineRender.Selected = player;
         }
 
         public void Render(double timeDelta)
@@ -126,13 +126,8 @@ namespace TimeLoopInc
             if (_window.ButtonPress(MouseButton.Left))
             {
                 var pos = _sceneRender.GetMouseGrid();
-                var selected = _scene.CurrentInstant.Entities.Keys
+                _timelineRender.Selected = _scene.CurrentInstant.Entities.Keys
                     .FirstOrDefault(item => _scene.CurrentInstant.Entities[item].Transform.Position == (Vector2i)pos);
-                if (selected != null)
-                {
-                    _timelineRender.Timeline = _scene.Timelines
-                        .First(item => item.Path.Contains(selected));
-                }
             }
         }
     }

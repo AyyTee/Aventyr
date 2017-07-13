@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace TimeLoopInc
 {
     [DataContract]
-    public class Scene : IDeepClone<Scene>
+    public class Scene
     {
         [DataMember]
         public readonly ImmutableHashSet<Vector2i> Walls = new HashSet<Vector2i>().ToImmutableHashSet();
@@ -26,19 +26,12 @@ namespace TimeLoopInc
         [DataMember]
         public int CurrentTime { get; private set; }
         [DataMember]
-        public Timeline<Player> PlayerTimeline = new Timeline<Player>();
-        public Player CurrentPlayer => (Player)PlayerTimeline.Path.Last();
-        [DataMember]
-        public List<Timeline<Block>> BlockTimelines = new List<Timeline<Block>>();
-        public IEnumerable<ITimeline> Timelines => BlockTimelines
-            .OfType<ITimeline>()
-            .Concat(new[] { PlayerTimeline });
+        public Player CurrentPlayer { get; private set; }
 
         [DataMember]
         public List<IGridEntity> Entities { get; private set; } = new List<IGridEntity>();
 
-        public int StartTime => Timelines.MinOrNull(item => item.StartTime()) ?? 0;
-        public int EndTime => ChangeEndTime();
+        public int StartTime => Entities.MinOrNull(item => item.StartTime) ?? 0;
 
         readonly Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
 
@@ -51,19 +44,12 @@ namespace TimeLoopInc
             Walls = walls.ToImmutableHashSet();
             Portals = portals.ToImmutableList();
 
-            PlayerTimeline = new Timeline<Player>();
+            CurrentPlayer = player;
+
             if (player != null)
             {
-                PlayerTimeline.Add(player);
+                Entities.Add(player);    
             }
-
-            BlockTimelines.AddRange(blocks.Select(item => {
-                var timeline = new Timeline<Block>();
-                timeline.Add(item);
-                return timeline;
-            }));
-
-            Entities.Add(player);
             Entities.AddRange(blocks);
         }
 
@@ -194,8 +180,9 @@ namespace TimeLoopInc
         /// Adds entity if one does not already exists.
         /// </summary>
         /// <returns>Added entity or existing entity.</returns>
-        T AddEntity<T>(T entity) where T : IGridEntity
+        T AddEntity<T>(T entity) where T : class, IGridEntity
         {
+            DebugEx.Assert(entity != null);
             var match = Entities.FirstOrDefault(item =>
 	            item.GetType() == typeof(T) &&
 	            item.PreviousVelocity == entity.PreviousVelocity &&
@@ -225,17 +212,19 @@ namespace TimeLoopInc
                 playerInstant.Transform = result.Transform;
                 if (result.Time != sceneInstant.Time)
                 {
-                    var timeline = PlayerTimeline;
                     nextInstant.Entities.Remove(player);
-                    if (timeline != null && PlayerTimeline.Path.Last() == player)
-                    {
-                        var playerNew = new Player(playerInstant.Transform, result.Time + 1, result.Velocity);
-                        timeline.Add(playerNew);
-                        AddEntity(playerNew);
-                        earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
-                        InvalidateCache(result.Time);
 
-                        return GetSceneInstant(result.Time + 1);
+                    var playerNew = new Player(
+                        playerInstant.Transform, 
+                        result.Time + 1, 
+                        result.Velocity, 
+                        playerInstant.Transform);
+                    CurrentPlayer = AddEntity(playerNew);
+                    if (playerNew == CurrentPlayer)
+                    {
+	                    earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
+	                    InvalidateCache(result.Time);
+	                    return GetSceneInstant(result.Time + 1);
                     }
                 }
             }
@@ -283,13 +272,13 @@ namespace TimeLoopInc
                         blockInstant.PreviousVelocity = result.Velocity;
                         if (result.Time != nextInstant.Time - 1)
                         {
-                            var timeline = BlockTimelines.FirstOrDefault(item => item.Path.Last() == block);
                             nextInstant.Entities.Remove(block);
-                            if (timeline != null)
+
+                            var blockNew = new Block(blockInstant.Transform, result.Time + 1, result.Velocity);
+                            if (AddEntity(blockNew) == blockNew)
                             {
-                                timeline.Add(new Block(blockInstant.Transform, result.Time + 1, result.Velocity));
-                                earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
-                                InvalidateCache(result.Time);
+								earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
+								InvalidateCache(result.Time);    
                             }
                         }
                     }
@@ -304,21 +293,16 @@ namespace TimeLoopInc
 
         public List<IGridEntity> GetEntitiesCreated(int time)
         {
-            var list = new List<IGridEntity>();
-            foreach (var entity in Timelines.SelectMany(item => item.Path))
-            {
-                if (entity.StartTime == time)
-                {
-                    list.Add(entity);
-                }
-            }
-            return list;
+            return Entities
+                .Where(item => item.StartTime == time)
+                .ToList();
         }
 
         public List<Paradox> GetParadoxes()
         {
             var output = new List<Paradox>();
-            for (int i = StartTime; i <= EndTime; i++)
+            var endTime = ChangeEndTime();
+            for (int i = StartTime; i <= endTime; i++)
             {
                 output.AddRange(GetParadoxes(i));
             }
@@ -363,15 +347,6 @@ namespace TimeLoopInc
                     newTime);
             }
             return ValueTuple.Create(transform, new Vector2i(), newTime);
-        }
-
-        public Scene DeepClone()
-        {
-            var clone = (Scene)MemberwiseClone();
-
-            clone.PlayerTimeline = PlayerTimeline.DeepClone();
-            clone.BlockTimelines = BlockTimelines.Select(item => item.DeepClone()).ToList();
-            return clone;
         }
     }
 }
