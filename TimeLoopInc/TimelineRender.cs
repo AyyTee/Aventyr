@@ -1,4 +1,4 @@
-﻿﻿﻿using Game.Common;
+﻿using Game.Common;
 using Game.Rendering;
 using OpenTK;
 using OpenTK.Graphics;
@@ -46,12 +46,12 @@ namespace TimeLoopInc
 
             layer.Rectangle(topLeft, topLeft + size, new Color4(0.8f, 0.8f, 0.8f, 0.8f));
 
-			var bounds = new ClipPath(new[] {
-					topLeft,
-					topLeft + size.YOnly(),
-					topLeft + size,
-					topLeft + size.XOnly()
-				});
+            var bounds = new ClipPath(new[] {
+                    topLeft,
+                    topLeft + size.YOnly(),
+                    topLeft + size,
+                    topLeft + size.XOnly()
+                });
 
             layer.Renderables.Add(Draw.Text(_font, topLeft, GetTimeline().Name));
             var output = DrawTimelines(topLeft + new Vector2(10, 60), size - new Vector2(20, 60), t);
@@ -69,7 +69,7 @@ namespace TimeLoopInc
 
             var boxes = GetTimelineBoxes(currentTime);
             output.AddRange(DrawTimelineBoxes(boxes, topLeft, size));
-			
+
             var markerPos = topLeft + new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, currentTime), 0) * size;
 
             output.AddRange(DrawTimeMarker(markerPos, 1));
@@ -135,9 +135,9 @@ namespace TimeLoopInc
                         color, colorTransparent, colorTransparent, color));
                 }
 
-				output.AddRange(meshes
-					.Select(item => (IRenderable)new Renderable(new Model(item) { IsTransparent = true }))
-					.ToArray());
+                output.AddRange(meshes
+                    .Select(item => (IRenderable)new Renderable(new Model(item) { IsTransparent = true }))
+                    .ToArray());
             }
 
             return output;
@@ -168,13 +168,13 @@ namespace TimeLoopInc
                 foreach (var paradox in result)
                 {
                     var v0 = new Vector2(
-                        TimeToX(paradox.Time, topLeft, size), 
+                        TimeToX(paradox.Time, topLeft, size),
                         RowToY(box.Row + 0.5, topLeft, size));
 
                     output.Add(Draw.Triangle(
-                        v0 + new Vector2(0, -10) * uiScale, 
-                        v0 + new Vector2(-10, 8) * uiScale, 
-                        v0 + new Vector2(10, 8) * uiScale, 
+                        v0 + new Vector2(0, -10) * uiScale,
+                        v0 + new Vector2(-10, 8) * uiScale,
+                        v0 + new Vector2(10, 8) * uiScale,
                         Color4.Yellow));
                 }
             }
@@ -205,10 +205,10 @@ namespace TimeLoopInc
                 }
 
                 var box = new TimelineBox(
-                    row, 
-                    entity.StartTime, 
-                    endTime, 
-                    i > 0, 
+                    row,
+                    entity.StartTime,
+                    endTime,
+                    i > 0,
                     i + 1 < count,
                     entity);
                 output.Add(box);
@@ -259,11 +259,11 @@ namespace TimeLoopInc
             public IGridEntity Entity { get; }
 
             public TimelineBox(
-                int row, 
-                int startTime, 
-                double endTime, 
-                bool fadeStart, 
-                bool fadeEnd, 
+                int row,
+                int startTime,
+                double endTime,
+                bool fadeStart,
+                bool fadeEnd,
                 IGridEntity entity)
             {
                 Row = row;

@@ -23,22 +23,5 @@ namespace TimeLoopIncTests
             _layer = new Layer();
             _timelineRender = new TimelineRender(_scene, null);
         }
-
-        [Test]
-        public void RenderTimeline()
-        {
-            //_timelineRender.Render(_layer);
-        }
-
-        [Test]
-        public void TimelineBoxesTest0()
-        {
-            var path = new List<Player> 
-            { 
-                new Player(new Transform2i(), 0), 
-                new Player(new Transform2i(), -10)
-            };
-            _timelineRender.Timeline = new Timeline<Player>();
-        }
     }
 }

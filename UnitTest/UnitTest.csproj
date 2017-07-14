@@ -55,7 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
-    <Compile Include="TimeLoopIncTests\SceneStateTests.cs" />
+    <Compile Include="TimeLoopIncTests\SceneTests.cs" />
     <Compile Include="TankGameTests\TankGameTests.cs" />
     <Compile Include="GameTests\ActorTests.cs" />
     <Compile Include="GameTests\BodyExTests.cs" />

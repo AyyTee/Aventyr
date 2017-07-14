@@ -1,4 +1,4 @@
-﻿﻿﻿using Equ;
+﻿using Equ;
 using Game;
 using Game.Common;
 using Game.Portals;
@@ -26,10 +26,10 @@ namespace TimeLoopInc
         [DataMember]
         public int CurrentTime { get; private set; }
         [DataMember]
-        public Player CurrentPlayer { get; private set; }
+        public Player CurrentPlayer => Entities.OfType<Player>().Last();
 
         [DataMember]
-        public List<IGridEntity> Entities { get; private set; } = new List<IGridEntity>();
+        List<IGridEntity> Entities = new List<IGridEntity>();
 
         public int StartTime => Entities.MinOrNull(item => item.StartTime) ?? 0;
 
@@ -39,18 +39,14 @@ namespace TimeLoopInc
         {
         }
 
-        public Scene(ISet<Vector2i> walls, IList<TimePortal> portals, Player player, IList<Block> blocks)
+        public Scene(ISet<Vector2i> walls, IList<TimePortal> portals, IEnumerable<IGridEntity> entities)
         {
             Walls = walls.ToImmutableHashSet();
             Portals = portals.ToImmutableList();
 
-            CurrentPlayer = player;
-
-            if (player != null)
-            {
-                Entities.Add(player);    
-            }
-            Entities.AddRange(blocks);
+            DebugEx.Assert(entities.All(item => item != null));
+            DebugEx.Assert(entities.Distinct().Count() == entities.Count());
+            Entities.AddRange(entities);
         }
 
         public IGridEntityInstant GetEntityInstant(IGridEntity entity)
@@ -61,39 +57,79 @@ namespace TimeLoopInc
         public List<ITimeline> GetTimelines()
         {
             var timelines = new List<ITimeline>();
-            var list = Entities.OrderBy(EntityEndTime).ToList();
-            while (list.Count > 0)
+            var entities = GetEntities();
+            while (entities.Count > 0)
             {
-                var entity = list.Last();
-                var path = new List<IGridEntity>();
-                var isClosed = false;
-                while (entity != null)
-                {
-                    path.Add(entity);
-                    list.Remove(entity);
-                    entity = GetEntityNext(entity);
-                    if (path.Contains(entity))
-                    {
-                        DebugEx.Assert(path.First() == entity);
-                        isClosed = true;
-                        break;
-                    }
-                }
-
-                timelines.Add(new Timeline<IGridEntity>(path, isClosed));
+                /* We take items from the start of the list so that the results 
+                 * are more consistent even when new items are added. */
+                var timeline = GetTimeline(entities.First());
+                DebugEx.Assert(
+                    timeline.Path.All(entities.Contains),
+                    "No entity should end up in multiple timelines.");
+                DebugEx.Assert(
+                    timeline.Path[0].GetType() != typeof(Player) ||
+                    timeline.Path.Count == entities.OfType<Player>().Count(),
+                    "The player can never be affected by other entities so the player timeline should contain all player entities.");
+                entities = entities.Except(timeline.Path).ToList();
+                timelines.Add(timeline);
             }
 
             return timelines;
         }
 
+        public List<IGridEntity> GetEntities() => Entities.ToList();
+
+        ITimeline GetTimeline(IGridEntity entity)
+        {
+            var path = new List<IGridEntity>();
+            var currentEntity = entity;
+            while (currentEntity != null)
+            {
+                if (path.Contains(currentEntity))
+                {
+                    DebugEx.Assert(path.First() == currentEntity);
+                    return new Timeline<IGridEntity>(path, true);
+                }
+                path.Add(currentEntity);
+                currentEntity = GetEntityNext(currentEntity);
+            }
+
+            currentEntity = GetEntityPrevious(path.FirstOrDefault());
+            while (currentEntity != null)
+            {
+                DebugEx.Assert(
+                    !path.Contains(currentEntity),
+                    "If a closed path is detected then we shouldn't have reached this point.");
+                path.Insert(0, currentEntity);
+                currentEntity = GetEntityPrevious(currentEntity);
+            }
+
+            return new Timeline<IGridEntity>(path, false);
+        }
+
         T GetEntityNext<T>(T entity) where T : IGridEntity
         {
-            var endTime = EntityEndTime(entity);
-            var entityInstant = GetSceneInstant(endTime).Entities[entity];
+            return (T)Entities
+                .FirstOrDefault(item => IsPrevious(entity, item));
+        }
 
-            return Entities
-                .OfType<T>()
-                .FirstOrDefault(item => item.PreviousTransform == entityInstant.Transform);
+        T GetEntityPrevious<T>(T entity) where T : IGridEntity
+        {
+            return (T)Entities
+                .FirstOrDefault(item => IsPrevious(item, entity));
+        }
+
+        bool IsPrevious(IGridEntity previous, IGridEntity current)
+        {
+            if (previous.GetType() != current.GetType())
+            {
+                return false;
+            }
+            var endTime = EntityEndTime(previous);
+            var entityInstant = GetSceneInstant(endTime).Entities[previous];
+
+            return endTime == current.PreviousTime &&
+                entityInstant.Transform == current.PreviousTransform;
         }
 
         /// <summary>
@@ -121,9 +157,9 @@ namespace TimeLoopInc
         public int ChangeEndTime()
         {
             int time = Entities.Max(item => item.StartTime) + 1;
-			while (GetSceneInstant(time).Entities.Keys
-				.OfType<Player>()
-				.Any(item => item.GetInput(time) != null))
+            while (GetSceneInstant(time).Entities.Keys
+                .OfType<Player>()
+                .Any(item => item.GetInput(time) != null))
             {
                 time++;
             }
@@ -180,16 +216,17 @@ namespace TimeLoopInc
         /// Adds entity if one does not already exists.
         /// </summary>
         /// <returns>Added entity or existing entity.</returns>
-        T AddEntity<T>(T entity) where T : class, IGridEntity
+        public T AddEntity<T>(T entity) where T : class, IGridEntity
         {
             DebugEx.Assert(entity != null);
             var match = Entities.FirstOrDefault(item =>
-	            item.GetType() == typeof(T) &&
-	            item.PreviousVelocity == entity.PreviousVelocity &&
-	            item.StartTime == entity.StartTime &&
-	            item.StartTransform == entity.StartTransform);
+                item.GetType() == typeof(T) &&
+                item.PreviousVelocity == entity.PreviousVelocity &&
+                item.StartTime == entity.StartTime &&
+                item.StartTransform == entity.StartTransform);
             if (match == null)
             {
+                InvalidateCache(entity.StartTime - 1);
                 Entities.Add(entity);
                 return entity;
             }
@@ -207,6 +244,7 @@ namespace TimeLoopInc
                 var playerInstant = nextInstant[player];
                 var velocity = (Vector2d)(player.GetInput(sceneInstant.Time)?.Direction?.Vector ?? new Vector2i());
                 velocity = Vector2Ex.TransformVelocity(velocity, playerInstant.Transform.GetMatrix());
+                var previousTransform = playerInstant.Transform;
                 var result = Move(playerInstant.Transform, (Vector2i)velocity, sceneInstant.Time);
                 playerInstant.PreviousVelocity = result.Velocity;
                 playerInstant.Transform = result.Transform;
@@ -215,16 +253,15 @@ namespace TimeLoopInc
                     nextInstant.Entities.Remove(player);
 
                     var playerNew = new Player(
-                        playerInstant.Transform, 
-                        result.Time + 1, 
-                        result.Velocity, 
-                        playerInstant.Transform);
-                    CurrentPlayer = AddEntity(playerNew);
-                    if (playerNew == CurrentPlayer)
+                        playerInstant.Transform,
+                        result.Time + 1,
+                        result.Velocity,
+                        previousTransform,
+                        sceneInstant.Time);
+                    if (AddEntity(playerNew) == playerNew)
                     {
-	                    earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
-	                    InvalidateCache(result.Time);
-	                    return GetSceneInstant(result.Time + 1);
+                        earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
+                        return GetSceneInstant(result.Time + 1);
                     }
                 }
             }
@@ -246,11 +283,11 @@ namespace TimeLoopInc
 
         void MoveBlocks(SceneInstant nextInstant, ref int earliestTimeTravel)
         {
-			foreach (var block in nextInstant.Entities.Values.OfType<BlockInstant>())
-			{
-				block.IsPushed = false;
-				block.PreviousVelocity = new Vector2i();
-			}
+            foreach (var block in nextInstant.Entities.Values.OfType<BlockInstant>())
+            {
+                block.IsPushed = false;
+                block.PreviousVelocity = new Vector2i();
+            }
 
             var directions = new[] { GridAngle.Left, GridAngle.Right, GridAngle.Up, GridAngle.Down };
             for (int i = 0; i < directions.Length; i++)
@@ -267,6 +304,7 @@ namespace TimeLoopInc
                     if (pushes.Count() >= blockInstant.Transform.Size && !blockInstant.IsPushed)
                     {
                         blockInstant.IsPushed = true;
+                        var previousTransform = blockInstant.Transform;
                         var result = Move(blockInstant.Transform, directions[i].Vector, nextInstant.Time - 1);
                         blockInstant.Transform = result.Transform;
                         blockInstant.PreviousVelocity = result.Velocity;
@@ -274,11 +312,15 @@ namespace TimeLoopInc
                         {
                             nextInstant.Entities.Remove(block);
 
-                            var blockNew = new Block(blockInstant.Transform, result.Time + 1, result.Velocity);
+                            var blockNew = new Block(
+                                blockInstant.Transform,
+                                result.Time + 1,
+                                result.Velocity,
+                                previousTransform,
+                                nextInstant.Time - 1);
                             if (AddEntity(blockNew) == blockNew)
                             {
-								earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
-								InvalidateCache(result.Time);    
+                                earliestTimeTravel = Math.Min(earliestTimeTravel, result.Time);
                             }
                         }
                     }

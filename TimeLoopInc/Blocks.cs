@@ -23,18 +23,27 @@ namespace TimeLoopInc
         [DataMember]
         public Transform2i PreviousTransform { get; }
         [DataMember]
+        public int PreviousTime { get; }
+        [DataMember]
         public int StartTime { get; }
 
-        public Block(
-            Transform2i startTransform, 
-            int startTime, 
-            Vector2i previousVelocity = new Vector2i(), 
-            Transform2i previousTransform = null)
+        public Block(Transform2i startTransform, int startTime)
         {
             StartTransform = startTransform;
-            PreviousVelocity = previousVelocity;
             StartTime = startTime;
+        }
+
+        public Block(
+            Transform2i startTransform,
+            int startTime,
+            Vector2i previousVelocity,
+            Transform2i previousTransform,
+            int previousTime)
+            : this(startTransform, startTime)
+        {
+            PreviousVelocity = previousVelocity;
             PreviousTransform = previousTransform;
+            PreviousTime = previousTime;
         }
 
         public IGridEntityInstant CreateInstant() => new BlockInstant(StartTransform, PreviousVelocity);

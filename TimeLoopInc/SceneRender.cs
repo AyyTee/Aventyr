@@ -34,7 +34,7 @@ namespace TimeLoopInc
             if (window.HasFocus)
             {
                 _zoomFactor *= (float)Math.Pow(1.2, -window.MouseWheelDelta());
-            }            
+            }
         }
 
         public Layer Render(double animationT)
@@ -101,7 +101,7 @@ namespace TimeLoopInc
                 }
                 worldLayer.Renderables.AddRange(renderables);
             }
-            
+
             var offsetCountNext = offsetCount;
 
             foreach (var view in portalView.Children)

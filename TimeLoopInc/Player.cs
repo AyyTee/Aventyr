@@ -19,20 +19,29 @@ namespace TimeLoopInc
         [DataMember]
         public Transform2i PreviousTransform { get; }
         [DataMember]
+        public int PreviousTime { get; }
+        [DataMember]
         public int StartTime { get; }
         [DataMember]
         public List<Input> Input { get; } = new List<Input>();
 
-        public Player(
-            Transform2i startPosition, 
-            int startTime, 
-            Vector2i previousVelocity = new Vector2i(), 
-            Transform2i previousTransform = null)
+        public Player(Transform2i startTransform, int startTime)
         {
-            StartTransform = startPosition;
+            StartTransform = startTransform;
+            StartTime = startTime;
+        }
+
+        public Player(
+            Transform2i startTransform,
+            int startTime,
+            Vector2i previousVelocity,
+            Transform2i previousTransform,
+            int previousTime)
+            : this(startTransform, startTime)
+        {
             PreviousVelocity = previousVelocity;
             PreviousTransform = previousTransform;
-            StartTime = startTime;
+            PreviousTime = previousTime;
         }
 
         public Input GetInput(int time)

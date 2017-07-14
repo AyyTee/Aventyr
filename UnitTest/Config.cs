@@ -8,6 +8,6 @@ public class Config
     [OneTimeSetUp]
     public void SetUp()
     {
-        DebugEx.FailEvent += message => Assert.Fail(message);
+        DebugEx.FailEvent += Assert.Fail;
     }
 }
