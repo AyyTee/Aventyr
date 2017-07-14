@@ -5,39 +5,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.Common;
 
 namespace TimeLoopInc
 {
-    public class Input
+    public class MoveInput : IInput
     {
-        public readonly GridAngle? Direction;
+        public GridAngle? Direction { get; }
 
-        public Input(GridAngle? direction)
+        public MoveInput(GridAngle? direction)
         {
             Direction = direction;
         }
 
-        public static Input CreateFromKeyboard(IVirtualWindow window)
+        public static MoveInput CreateFromKeyboard(IVirtualWindow window)
         {
             if (window.ButtonPress(Key.W))
             {
-                return new Input(GridAngle.Up);
+                return new MoveInput(GridAngle.Up);
             }
             if (window.ButtonPress(Key.S))
             {
-                return new Input(GridAngle.Down);
+                return new MoveInput(GridAngle.Down);
             }
             if (window.ButtonPress(Key.A))
             {
-                return new Input(GridAngle.Left);
+                return new MoveInput(GridAngle.Left);
             }
             if (window.ButtonPress(Key.D))
             {
-                return new Input(GridAngle.Right);
+                return new MoveInput(GridAngle.Right);
             }
             if (window.ButtonPress(Key.Space))
             {
-                return new Input(null);
+                return new MoveInput(null);
             }
             return null;
         }

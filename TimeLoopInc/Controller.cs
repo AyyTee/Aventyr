@@ -19,7 +19,7 @@ namespace TimeLoopInc
         Scene _scene;
         SceneRender _sceneRender;
         TimelineRender _timelineRender;
-        List<Input> _input = new List<Input>();
+        List<IInput> _input = new List<IInput>();
         int _updatesSinceLastStep = 0;
         int _updatesPerAnimation => _window.ButtonDown(KeyBoth.Control) ? 50 : 5;
         RollingAverage _fpsCounter = new RollingAverage(60, 0);
@@ -56,8 +56,8 @@ namespace TimeLoopInc
 
             _scene = new Scene(walls, Portals, entities);
             _sceneRender = new SceneRender(_window, _scene);
-            _timelineRender = new TimelineRender(_scene, _window.Fonts.Inconsolata);
-            _timelineRender.Selected = player;
+			_timelineRender = new TimelineRender(_scene, _window.Fonts.Inconsolata);
+			_timelineRender.Selected = _scene.CurrentPlayer;
         }
 
         public void Render(double timeDelta)
@@ -92,19 +92,40 @@ namespace TimeLoopInc
             _timelineRender.Update(timeDelta);
             if (_window.ButtonPress(Key.BackSpace))
             {
-                if (_input.Count > 0)
+                if (_input.Count(item => !(item is SelectInput)) > 0)
                 {
+                    var minTime = _timelineRender.MinTime;
+                    var maxTime = _timelineRender.MaxTime;
+                    var minRow = _timelineRender.MinRow;
+                    var maxRow = _timelineRender.MaxRow;
                     Initialize();
+                    _timelineRender.MinTime = minTime;
+                    _timelineRender.MaxTime = maxTime;
+                    _timelineRender.MinRow = minRow;
+                    _timelineRender.MaxRow = maxRow;
+
+                    while (_input.LastOrDefault() is SelectInput)
+                    {
+                        _input.RemoveAt(_input.Count - 1);
+                    }
                     _input.RemoveAt(_input.Count - 1);
+
                     foreach (var input in _input)
                     {
-                        _scene.Step(input);
+                        if (input is MoveInput moveInput)
+                        {
+                            _scene.Step(moveInput);    
+                        }
+                        else if (input is SelectInput selectInput)
+                        {
+                            SelectGrid(selectInput);
+                        }
                     }
                 }
             }
             else if (_updatesSinceLastStep >= _updatesPerAnimation)
             {
-                var input = Input.CreateFromKeyboard(_window);
+                var input = MoveInput.CreateFromKeyboard(_window);
                 if (input != null)
                 {
                     _input.Add(input);
@@ -115,10 +136,18 @@ namespace TimeLoopInc
 
             if (_window.ButtonPress(MouseButton.Left))
             {
-                var pos = _sceneRender.GetMouseGrid();
-                _timelineRender.Selected = _scene.CurrentInstant.Entities.Keys
-                    .FirstOrDefault(item => _scene.CurrentInstant.Entities[item].Transform.Position == (Vector2i)pos);
+                var pos = (Vector2i)_sceneRender.GetMouseGrid();
+                var input = new SelectInput(pos);
+                _input.Add(input);
+                SelectGrid(input);
             }
+        }
+
+        void SelectGrid(SelectInput input)
+        {
+            var entities = _scene.CurrentInstant.Entities;
+			_timelineRender.Selected = entities.Keys
+                .FirstOrDefault(item => entities[item].Transform.Position == input.GridSelection);
         }
     }
 }

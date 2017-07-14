@@ -78,7 +78,7 @@
     <Compile Include="TimelineRender.cs" />
     <Compile Include="TimePortal.cs" />
     <Compile Include="IGridEntityInstant.cs" />
-    <Compile Include="Input.cs" />
+    <Compile Include="MoveInput.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerInstant.cs" />
     <Compile Include="Program.cs" />
@@ -87,6 +87,8 @@
     <Compile Include="Scene.cs" />
     <Compile Include="Transform2i.cs" />
     <Compile Include="Paradox.cs" />
+    <Compile Include="IInput.cs" />
+    <Compile Include="SelectInput.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -23,7 +23,7 @@ namespace TimeLoopInc
         [DataMember]
         public int StartTime { get; }
         [DataMember]
-        public List<Input> Input { get; } = new List<Input>();
+        public List<MoveInput> Input { get; } = new List<MoveInput>();
 
         public Player(Transform2i startTransform, int startTime)
         {
@@ -44,7 +44,7 @@ namespace TimeLoopInc
             PreviousTime = previousTime;
         }
 
-        public Input GetInput(int time)
+        public MoveInput GetInput(int time)
         {
             return Input.ElementAtOrDefault(time - StartTime);
         }

@@ -4,7 +4,6 @@ using OpenTK;
 using OpenTK.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +18,10 @@ namespace TimeLoopInc
         public IGridEntity Selected { get; set; }
         readonly Scene _scene;
         readonly Font _font;
-        public float MinTime { get; private set; } = 0;
-        public float MaxTime { get; private set; } = 10;
-        public float MinRow { get; private set; } = 0;
-        public float MaxRow { get; private set; } = 3;
+        public float MinTime { get; set; } = 0;
+        public float MaxTime { get; set; } = 10;
+        public float MinRow { get; set; } = 0;
+        public float MaxRow { get; set; } = 3;
 
         public TimelineRender(Scene scene, Font font)
         {

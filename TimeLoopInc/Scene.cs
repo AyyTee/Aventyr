@@ -99,7 +99,7 @@ namespace TimeLoopInc
             {
                 DebugEx.Assert(
                     !path.Contains(currentEntity),
-                    "If a closed path is detected then we shouldn't have reached this point.");
+                    "If the path is closed then we shouldn't reach this point.");
                 path.Insert(0, currentEntity);
                 currentEntity = GetEntityPrevious(currentEntity);
             }
@@ -128,7 +128,7 @@ namespace TimeLoopInc
             var endTime = EntityEndTime(previous);
             var entityInstant = GetSceneInstant(endTime).Entities[previous];
 
-            return endTime == current.PreviousTime &&
+            return endTime == current.PreviousTime && 
                 entityInstant.Transform == current.PreviousTransform;
         }
 
@@ -166,7 +166,7 @@ namespace TimeLoopInc
             return time;
         }
 
-        public void Step(Input input)
+        public void Step(MoveInput input)
         {
             if (CurrentInstant.Entities.ContainsKey(CurrentPlayer))
             {
@@ -238,6 +238,14 @@ namespace TimeLoopInc
             var nextInstant = sceneInstant.WithTime(sceneInstant.Time + 1);
 
             var earliestTimeTravel = int.MaxValue;
+
+            foreach (var player in nextInstant.Entities.Keys.OfType<Player>().ToList())
+            {
+                if (player.GetInput(sceneInstant.Time) == null)
+                {
+                    nextInstant.Entities.Remove(player);
+                }
+            }
 
             foreach (var player in nextInstant.Entities.Keys.OfType<Player>().ToList())
             {

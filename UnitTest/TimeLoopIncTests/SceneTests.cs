@@ -75,7 +75,7 @@ namespace TimeLoopIncTests
             var player = new Player(new Transform2i(gridRotation: new GridAngle(5)), 0);
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), new[] { player });
 
-            scene.Step(new Input(new GridAngle()));
+            scene.Step(new MoveInput(new GridAngle()));
 
             Assert.AreEqual(5, scene.CurrentInstant.Entities[player].Transform.Direction.Value);
             Assert.AreEqual(5 * Math.PI / 2, scene.CurrentInstant.Entities[player].Transform.Angle, 0.0000001);
@@ -100,7 +100,7 @@ namespace TimeLoopIncTests
                 CreateTwoPortals(),
                 new[] { new Player(new Transform2i(new Vector2i(1, 0)), 0) });
 
-            scene.Step(new Input(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Right));
 
             Assert.AreEqual(6, scene.CurrentTime);
         }
@@ -113,7 +113,7 @@ namespace TimeLoopIncTests
                 CreateTwoPortals(-5),
                 new[] { new Player(new Transform2i(new Vector2i(1, 0)), 0) });
 
-            scene.Step(new Input(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Right));
 
             Assert.AreEqual(-4, scene.CurrentTime);
         }
@@ -135,20 +135,20 @@ namespace TimeLoopIncTests
             Assert.AreEqual(1, scene.GetEntities().OfType<Block>().Count());
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
 
-            scene.Step(new Input(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Right));
 
             Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
             Assert.AreEqual(0, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
 
             for (int i = 0; i < scene.Portals[0].TimeOffset - 1; i++)
             {
-                scene.Step(new Input(null));
+                scene.Step(new MoveInput(null));
 
                 Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
                 Assert.AreEqual(0, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
             }
 
-            scene.Step(new Input(null));
+            scene.Step(new MoveInput(null));
 
             Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
@@ -173,20 +173,20 @@ namespace TimeLoopIncTests
             Assert.AreEqual(1, scene.GetEntities().OfType<Block>().Count());
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
 
-            scene.Step(new Input(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Right));
 
             Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
 
             for (int i = 0; i < portals[0].TimeOffset; i++)
             {
-                scene.Step(new Input(null));
+                scene.Step(new MoveInput(null));
 
                 Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
                 Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
             }
 
-            scene.Step(new Input(null));
+            scene.Step(new MoveInput(null));
 
             Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
             Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
@@ -253,7 +253,7 @@ namespace TimeLoopIncTests
 
             var scene = new Scene(new HashSet<Vector2i>(), Portals, entities);
 
-            scene.Step(new Input(GridAngle.Left));
+            scene.Step(new MoveInput(GridAngle.Left));
 
             Assert.AreEqual(-9, scene.CurrentTime);
 
@@ -277,7 +277,7 @@ namespace TimeLoopIncTests
                 CreateTwoPortals(-5),
                 entities);
 
-            scene.Step(new Input(GridAngle.Left));
+            scene.Step(new MoveInput(GridAngle.Left));
 
             Assert.AreEqual(6, scene.CurrentTime);
             Assert.AreEqual(new Vector2i(1, 0), scene.CurrentInstant.Entities[scene.CurrentPlayer].Transform.Position);
@@ -289,32 +289,14 @@ namespace TimeLoopIncTests
         {
             var scene = new Scene();
 
-            var player0 = new Player(new Transform2i(), 0);
-            var player1 = new Player(new Transform2i(), 0);
+            var block0 = new Block(new Transform2i(), 0);
+            var block1 = new Block(new Transform2i().WithRotation(new GridAngle(1)), 0);
 
-            scene.AddEntity(player0);
-            scene.AddEntity(player1);
-
-            var result = scene.GetParadoxes(0);
-            var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { player0, player1 }) };
-            Assert.AreEqual(expected, result);
-        }
-
-        [Test]
-        public void ParadoxTest1()
-        {
-            var scene = new Scene();
-
-            var player0 = new Player(new Transform2i(), 0);
-            var player1 = new Player(new Transform2i(), 0);
-            var block = new Block(new Transform2i(), 0);
-
-            scene.AddEntity(player0);
-            scene.AddEntity(player1);
-            scene.AddEntity(block);
+            scene.AddEntity(block0);
+            scene.AddEntity(block1);
 
             var result = scene.GetParadoxes(0);
-            var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { player0, player1, block }) };
+            var expected = new[] { new Paradox(0, new HashSet<IGridEntity> { block0, block1 }) };
             Assert.AreEqual(expected, result);
         }
 
@@ -351,21 +333,10 @@ namespace TimeLoopIncTests
             var scene = CreateDefaultScene();
 
             // Move right and push block through portal.
-            scene.Step(new Input(GridAngle.Right));
-
-            var result = scene.GetTimelines();
-            Assert.AreEqual(2, result.Count());
-        }
-
-        [Test]
-        public void GetTimelinesTest1()
-        {
-            var scene = CreateDefaultScene();
-
-            // Move right and push block through portal.
-            scene.Step(new Input(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Right));
 
             var result = scene.GetTimelines().ToList();
+            Assert.AreEqual(2, result.Count());
             var playerTimeline = result.First(item => item.Path[0].GetType() == typeof(Player));
             var blockTimeline = result.First(item => item.Path[0].GetType() == typeof(Block));
             Assert.AreEqual(2, blockTimeline.Path.Count);
@@ -373,26 +344,15 @@ namespace TimeLoopIncTests
         }
 
         [Test]
-        public void GetTimelinesTest2()
+        public void GetTimelinesTest1()
         {
             var scene = CreateDefaultScene();
 
-            scene.Step(new Input(GridAngle.Left));
-            scene.Step(new Input(GridAngle.Left));
-
-            var result = scene.GetTimelines();
-            Assert.AreEqual(2, result.Count());
-        }
-
-        [Test]
-        public void GetTimelinesTest3()
-        {
-            var scene = CreateDefaultScene();
-
-            scene.Step(new Input(GridAngle.Left));
-            scene.Step(new Input(GridAngle.Left));
+            scene.Step(new MoveInput(GridAngle.Left));
+            scene.Step(new MoveInput(GridAngle.Left));
 
             var result = scene.GetTimelines().ToList();
+            Assert.AreEqual(2, result.Count);
             var playerTimeline = result.First(item => item.Path[0].GetType() == typeof(Player));
             var blockTimeline = result.First(item => item.Path[0].GetType() == typeof(Block));
             Assert.AreEqual(1, blockTimeline.Path.Count);
@@ -400,16 +360,21 @@ namespace TimeLoopIncTests
         }
 
         [Test]
-        public void GetTimelinesTest4()
+        public void GetTimelinesTest2()
         {
             var scene = CreateDefaultScene();
 
             // Go back in time and then travel back to the present.
-            scene.Step(new Input(GridAngle.Left));
-            scene.Step(new Input(GridAngle.Left));
-            scene.Step(new Input(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Left));
+            scene.Step(new MoveInput(GridAngle.Left));
+            scene.Step(new MoveInput(GridAngle.Right));
 
             var result = scene.GetTimelines().ToList();
+            Assert.AreEqual(2, result.Count);
+			var playerTimeline = result.First(item => item.Path[0].GetType() == typeof(Player));
+			var blockTimeline = result.First(item => item.Path[0].GetType() == typeof(Block));
+			Assert.AreEqual(1, blockTimeline.Path.Count);
+			Assert.AreEqual(3, playerTimeline.Path.Count);
         }
     }
 }
