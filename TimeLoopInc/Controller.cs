@@ -20,7 +20,7 @@ namespace TimeLoopInc
         SceneRender _sceneRender;
         TimelineRender _timelineRender;
         List<IInput> _input = new List<IInput>();
-        int _updatesSinceLastStep = 0;
+        int _updatesSinceLastStep;
         int _updatesPerAnimation => _window.ButtonDown(KeyBoth.Control) ? 50 : 5;
         RollingAverage _fpsCounter = new RollingAverage(60, 0);
 
@@ -137,7 +137,7 @@ namespace TimeLoopInc
             if (_window.ButtonPress(MouseButton.Left))
             {
                 var pos = (Vector2i)_sceneRender.GetMouseGrid();
-                var input = new SelectInput(pos);
+                var input = new SelectInput(pos, _scene.CurrentTime);
                 _input.Add(input);
                 SelectGrid(input);
             }
@@ -147,7 +147,7 @@ namespace TimeLoopInc
         {
             var entities = _scene.CurrentInstant.Entities;
 			_timelineRender.Selected = entities.Keys
-                .FirstOrDefault(item => entities[item].Transform.Position == input.GridSelection);
+                .FirstOrDefault(item => entities[item].Transform.Position == input.Position);
         }
     }
 }

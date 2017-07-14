@@ -10,57 +10,29 @@ using System.Collections.Immutable;
 
 namespace TimeLoopInc
 {
-    public class Timeline<T> : ITimeline, IDeepClone<Timeline<T>> where T : IGridEntity, IDeepClone<IGridEntity>
+    public class Timeline
     {
-        public T this[int index] => (T)Path[index];
-
         public ImmutableList<IGridEntity> Path { get; private set; } = new List<IGridEntity>().ToImmutableList();
 
-        public string Name => typeof(T).Name + " Timeline";
+        public string Name => "Timeline";
 
         public bool IsClosed { get; }
 
-        public void Add(T entity)
+        public void Add(IGridEntity entity)
         {
+            DebugEx.Assert(Path.Count == 0 || entity.GetType() == Path.First().GetType());
             Path = Path.Add(entity);    
         }
 
         public Timeline(bool isClosed = false)
         {
-            IsClosed = IsClosed;
+            IsClosed = isClosed;
         }
 
-        public Timeline(IList<T> path, bool isClosed = false)
+        public Timeline(IList<IGridEntity> path, bool isClosed = false)
             : this(isClosed)
         {
             Path = path.Cast<IGridEntity>().ToImmutableList();
-        }
-
-        public Timeline<T> DeepClone()
-        {
-            return new Timeline<T>
-            {
-                Path = Path.Select(item => item.DeepClone()).ToImmutableList()
-            };
-        }
-    }
-
-    public interface ITimeline
-    {
-        string Name { get; }
-        ImmutableList<IGridEntity> Path { get; }
-    }
-
-    public static class ITimelineEx
-    {
-        public static int StartTime(this ITimeline timeline)
-        {
-            return timeline.Path.MinOrNull(item => item.StartTime) ?? 0;
-        }
-
-        public static int EndTime(this ITimeline timeline)
-        {
-            return timeline.StartTime() + 5;
         }
     }
 }

@@ -25,7 +25,6 @@ namespace TimeLoopInc
         public SceneInstant CurrentInstant => GetSceneInstant(CurrentTime);
         [DataMember]
         public int CurrentTime { get; private set; }
-        [DataMember]
         public Player CurrentPlayer => Entities.OfType<Player>().Last();
 
         [DataMember]
@@ -54,9 +53,9 @@ namespace TimeLoopInc
             return CurrentInstant.Entities[entity];
         }
 
-        public List<ITimeline> GetTimelines()
+        public List<Timeline> GetTimelines()
         {
-            var timelines = new List<ITimeline>();
+            var timelines = new List<Timeline>();
             var entities = GetEntities();
             while (entities.Count > 0)
             {
@@ -79,7 +78,7 @@ namespace TimeLoopInc
 
         public List<IGridEntity> GetEntities() => Entities.ToList();
 
-        ITimeline GetTimeline(IGridEntity entity)
+        Timeline GetTimeline(IGridEntity entity)
         {
             var path = new List<IGridEntity>();
             var currentEntity = entity;
@@ -88,7 +87,7 @@ namespace TimeLoopInc
                 if (path.Contains(currentEntity))
                 {
                     DebugEx.Assert(path.First() == currentEntity);
-                    return new Timeline<IGridEntity>(path, true);
+                    return new Timeline(path, true);
                 }
                 path.Add(currentEntity);
                 currentEntity = GetEntityNext(currentEntity);
@@ -104,7 +103,7 @@ namespace TimeLoopInc
                 currentEntity = GetEntityPrevious(currentEntity);
             }
 
-            return new Timeline<IGridEntity>(path, false);
+            return new Timeline(path, false);
         }
 
         T GetEntityNext<T>(T entity) where T : IGridEntity
@@ -135,8 +134,6 @@ namespace TimeLoopInc
         /// <summary>
         /// Get the last point in time where this entity exists.
         /// </summary>
-        /// <returns>The end time.</returns>
-        /// <param name="entity">Entity.</param>
         public int EntityEndTime(IGridEntity entity)
         {
             var endTime = ChangeEndTime();
@@ -153,7 +150,6 @@ namespace TimeLoopInc
         /// <summary>
         /// Get the first point in time where the scene no longer can change.
         /// </summary>
-        /// <returns>The end time.</returns>
         public int ChangeEndTime()
         {
             int time = Entities.Max(item => item.StartTime) + 1;

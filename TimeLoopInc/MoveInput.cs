@@ -6,11 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.Common;
+using System.Runtime.Serialization;
 
 namespace TimeLoopInc
 {
+    [DataContract]
     public class MoveInput : IInput
     {
+        [DataMember]
         public GridAngle? Direction { get; }
 
         public MoveInput(GridAngle? direction)

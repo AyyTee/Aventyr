@@ -18,6 +18,7 @@ namespace TimeLoopInc
         public IGridEntity Selected { get; set; }
         readonly Scene _scene;
         readonly Font _font;
+
         public float MinTime { get; set; } = 0;
         public float MaxTime { get; set; } = 10;
         public float MinRow { get; set; } = 0;
@@ -29,11 +30,11 @@ namespace TimeLoopInc
             _font = font;
         }
 
-        public ITimeline GetTimeline()
+        public Timeline GetTimeline()
         {
             if (Selected == null)
             {
-                return new Timeline<IGridEntity>();
+                return new Timeline();
             }
             return _scene.GetTimelines().First(item => item.Path.Contains(Selected));
         }

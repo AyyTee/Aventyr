@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using Game.Common;
 
 namespace TimeLoopInc
 {
+    [DataContract]
     public class SelectInput : IInput
     {
-        public Vector2i GridSelection { get; }
+        [DataMember]
+        public Vector2i Position { get; }
+        [DataMember]
+        public int Time { get; }
 
-        public SelectInput(Vector2i gridSelection)
+        public SelectInput(Vector2i position, int time)
         {
-            GridSelection = gridSelection;
+            Position = position;
+            Time = time;
         }
     }
 }
