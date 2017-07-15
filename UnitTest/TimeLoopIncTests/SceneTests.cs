@@ -300,9 +300,9 @@ namespace TimeLoopIncTests
             Assert.AreEqual(expected, result);
         }
 
-        Scene CreateDefaultScene()
+        Scene CreateDefaultScene(HashSet<Vector2i> walls = null)
         {
-            var walls = new HashSet<Vector2i>
+            walls = walls ?? new HashSet<Vector2i>
             {
             };
             var player = new Player(new Transform2i(), 0);
@@ -371,10 +371,44 @@ namespace TimeLoopIncTests
 
             var result = scene.GetTimelines().ToList();
             Assert.AreEqual(2, result.Count);
-			var playerTimeline = result.First(item => item.Path[0].GetType() == typeof(Player));
-			var blockTimeline = result.First(item => item.Path[0].GetType() == typeof(Block));
-			Assert.AreEqual(1, blockTimeline.Path.Count);
-			Assert.AreEqual(3, playerTimeline.Path.Count);
+            var playerTimeline = result.First(item => item.Path[0].GetType() == typeof(Player));
+            var blockTimeline = result.First(item => item.Path[0].GetType() == typeof(Block));
+            Assert.AreEqual(1, blockTimeline.Path.Count);
+            Assert.AreEqual(3, playerTimeline.Path.Count);
+        }
+
+
+
+        [Test]
+        public void PortalWithWallAtExit()
+        {
+            var scene = CreateDefaultScene(new HashSet<Vector2i> { new Vector2i(-1, 0) });
+            scene.SetEntities(new[] { new Player(new Transform2i(), 0) });
+
+            // Go back in time and then travel back to the present.
+            scene.Step(new MoveInput(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Right));
+
+            var result = scene.GetEntities();
+            var message = "Player should not have entered portal since there is a wall at the exit.";
+
+            Assert.AreEqual(1, result.Count, message);
+        }
+
+        [Test]
+        public void PortalWithNoWallAtExit()
+        {
+            var scene = CreateDefaultScene();
+            scene.SetEntities(new[] { new Player(new Transform2i(), 0) });
+
+            // Go back in time and then travel back to the present.
+            scene.Step(new MoveInput(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Right));
+
+            var result = scene.GetEntities();
+
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(new Vector2i(-1, 0), result[1].StartTransform.Position);
         }
     }
 }

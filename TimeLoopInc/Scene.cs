@@ -186,6 +186,11 @@ namespace TimeLoopInc
             CurrentTime = nextInstant.Time;
         }
 
+        void InvalidateCache()
+        {
+            _cachedInstants = new Dictionary<int, SceneInstant>();
+        }
+
         void InvalidateCache(int time)
         {
             foreach (var key in _cachedInstants.Keys.Where(item => item >= time).ToList())
@@ -240,6 +245,12 @@ namespace TimeLoopInc
                 return entity;
             }
             return (T)match;
+        }
+
+        public void SetEntities(IEnumerable<IGridEntity> entities)
+        {
+            Entities = entities.ToList();
+            InvalidateCache();
         }
 
         SceneInstant _step(SceneInstant sceneInstant)
@@ -406,14 +417,14 @@ namespace TimeLoopInc
                     (Vector2i)result.WorldVelocity.Position.Round(Vector2.One),
                     newTime);
             }
-            return ValueTuple.Create(transform, new Vector2i(), newTime);
+            return ValueTuple.Create(transform, new Vector2i(), time);
         }
 
         public Scene DeepClone()
         {
             var clone = (Scene)MemberwiseClone();
             clone.Entities = Entities.Select(item => item.DeepClone()).ToList();
-            clone._cachedInstants = new Dictionary<int, SceneInstant>();
+            clone.InvalidateCache();
             return clone;
         }
     }
