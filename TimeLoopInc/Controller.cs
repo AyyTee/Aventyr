@@ -20,6 +20,8 @@ namespace TimeLoopInc
         SceneRender _sceneRender;
         TimelineRender _timelineRender;
         List<IInput> _input = new List<IInput>();
+        List<Scene> _levels = new List<Scene>();
+        int _currentLevel;
         int _updatesSinceLastStep;
         int _updatesPerAnimation => _window.ButtonDown(KeyBoth.Control) ? 50 : 5;
         RollingAverage _fpsCounter = new RollingAverage(60, 0);
@@ -27,14 +29,19 @@ namespace TimeLoopInc
         public Controller(IVirtualWindow window)
         {
             _window = window;
+
+            _levels = new[]
+            {
+                CreateLevel0(),
+                CreateLevel1()
+            }.ToList();
+
             Initialize();
         }
 
-        public void Initialize()
+        public Scene CreateLevel0()
         {
-            var walls = new HashSet<Vector2i>
-            {
-            };
+            var walls = new HashSet<Vector2i> { };
             var player = new Player(new Transform2i(), 0);
 
             var portal0 = new TimePortal(new Vector2i(1, 0), GridAngle.Right);
@@ -54,10 +61,43 @@ namespace TimeLoopInc
                 new Block(new Transform2i(new Vector2i(1, 0)), 0),
             };
 
-            _scene = new Scene(walls, Portals, entities);
+            return new Scene(walls, Portals, entities, new HashSet<Vector2i> { new Vector2i(0, 2) });
+        }
+
+        public Scene CreateLevel1()
+        {
+            var walls = new HashSet<Vector2i>
+            {
+                new Vector2i(-1, 0)
+            };
+            var player = new Player(new Transform2i(), 0);
+
+            var portal0 = new TimePortal(new Vector2i(1, 2), GridAngle.Up);
+            var portal1 = new TimePortal(new Vector2i(-1, 0), GridAngle.Left);
+
+            portal0.SetLinked(portal1);
+            portal0.SetTimeOffset(5);
+
+            var Portals = new[]
+            {
+                portal0,
+                portal1,
+            };
+
+            var entities = new[] {
+                (IGridEntity)player,
+                new Block(new Transform2i(new Vector2i(1, 0)), 0),
+            };
+
+            return new Scene(walls, Portals, entities, new HashSet<Vector2i> { new Vector2i(0, 2) });
+        }
+
+        public void Initialize()
+        {
+            _scene = _levels[_currentLevel].DeepClone();
             _sceneRender = new SceneRender(_window, _scene);
-			_timelineRender = new TimelineRender(_scene, _window.Fonts.Inconsolata);
-			_timelineRender.Selected = _scene.CurrentPlayer;
+            _timelineRender = new TimelineRender(_scene, _window.Fonts.Inconsolata);
+            _timelineRender.Selected = _scene.CurrentPlayer;
         }
 
         public void Render(double timeDelta)
@@ -114,7 +154,7 @@ namespace TimeLoopInc
                     {
                         if (input is MoveInput moveInput)
                         {
-                            _scene.Step(moveInput);    
+                            _scene.Step(moveInput);
                         }
                         else if (input is SelectInput selectInput)
                         {
@@ -125,12 +165,23 @@ namespace TimeLoopInc
             }
             else if (_updatesSinceLastStep >= _updatesPerAnimation)
             {
-                var input = MoveInput.CreateFromKeyboard(_window);
-                if (input != null)
+                if (_scene.IsCompleted())
                 {
-                    _input.Add(input);
-                    _scene.Step(input);
-                    _updatesSinceLastStep = 0;
+                    _currentLevel++;
+                    if (_currentLevel < _levels.Count)
+                    {
+                        Initialize();
+                    }
+                }
+                else
+                {
+                    var input = MoveInput.CreateFromKeyboard(_window);
+                    if (input != null)
+                    {
+                        _input.Add(input);
+                        _scene.Step(input);
+                        _updatesSinceLastStep = 0;
+                    }
                 }
             }
 
@@ -146,7 +197,7 @@ namespace TimeLoopInc
         void SelectGrid(SelectInput input)
         {
             var entities = _scene.CurrentInstant.Entities;
-			_timelineRender.Selected = entities.Keys
+            _timelineRender.Selected = entities.Keys
                 .FirstOrDefault(item => entities[item].Transform.Position == input.Position);
         }
     }

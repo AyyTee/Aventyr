@@ -23,7 +23,7 @@ namespace TimeLoopInc
         [DataMember]
         public int StartTime { get; }
         [DataMember]
-        public List<MoveInput> Input { get; } = new List<MoveInput>();
+        public List<MoveInput> Input { get; private set; } = new List<MoveInput>();
 
         public Player(Transform2i startTransform, int startTime)
         {
@@ -51,6 +51,11 @@ namespace TimeLoopInc
 
         public IGridEntityInstant CreateInstant() => new PlayerInstant(StartTransform, PreviousVelocity);
 
-        public IGridEntity DeepClone() => (Player)MemberwiseClone();
+        public IGridEntity DeepClone()
+        {
+            var clone = (Player)MemberwiseClone();
+            clone.Input = Input.ToList();
+            return clone;
+        }
     }
 }

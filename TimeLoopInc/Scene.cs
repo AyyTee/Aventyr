@@ -14,14 +14,14 @@ using System.Threading.Tasks;
 namespace TimeLoopInc
 {
     [DataContract]
-    public class Scene
+    public class Scene : IDeepClone<Scene>
     {
         [DataMember]
         public readonly ImmutableHashSet<Vector2i> Walls = new HashSet<Vector2i>().ToImmutableHashSet();
         [DataMember]
         public readonly ImmutableList<TimePortal> Portals = new List<TimePortal>().ToImmutableList();
         [DataMember]
-        public readonly ImmutableList<Vector2i> Exits = new List<Vector2i>().ToImmutableList();
+        public readonly ImmutableHashSet<Vector2i> Exits = new List<Vector2i>().ToImmutableHashSet();
         public SceneInstant CurrentInstant => GetSceneInstant(CurrentTime);
         [DataMember]
         public int CurrentTime { get; private set; }
@@ -32,13 +32,16 @@ namespace TimeLoopInc
 
         public int StartTime => Entities.MinOrNull(item => item.StartTime) ?? 0;
 
-        readonly Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
+        Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
 
         public Scene()
         {
         }
 
-        public Scene(ISet<Vector2i> walls, IList<TimePortal> portals, IEnumerable<IGridEntity> entities)
+        public Scene(
+            ISet<Vector2i> walls, 
+            IEnumerable<TimePortal> portals, 
+            IEnumerable<IGridEntity> entities)
         {
             Walls = walls.ToImmutableHashSet();
             Portals = portals.ToImmutableList();
@@ -46,6 +49,16 @@ namespace TimeLoopInc
             DebugEx.Assert(entities.All(item => item != null));
             DebugEx.Assert(entities.Distinct().Count() == entities.Count());
             Entities.AddRange(entities);
+        }
+
+        public Scene(
+            ISet<Vector2i> walls, 
+            IEnumerable<TimePortal> portals, 
+            IEnumerable<IGridEntity> entities, 
+            ISet<Vector2i> exits)
+            : this(walls, portals, entities)
+        {
+            Exits = exits.ToImmutableHashSet();
         }
 
         public IGridEntityInstant GetEntityInstant(IGridEntity entity)
@@ -334,7 +347,8 @@ namespace TimeLoopInc
 
         public bool IsCompleted()
         {
-            return Exits.Contains(GetEntityInstant(CurrentPlayer).Transform.Position);
+            return GetParadoxes().Count == 0 && 
+                Exits.Contains(GetEntityInstant(CurrentPlayer).Transform.Position);
         }
 
         public List<IGridEntity> GetEntitiesCreated(int time)
@@ -393,6 +407,14 @@ namespace TimeLoopInc
                     newTime);
             }
             return ValueTuple.Create(transform, new Vector2i(), newTime);
+        }
+
+        public Scene DeepClone()
+        {
+            var clone = (Scene)MemberwiseClone();
+            clone.Entities = Entities.Select(item => item.DeepClone()).ToList();
+            clone._cachedInstants = new Dictionary<int, SceneInstant>();
+            return clone;
         }
     }
 }

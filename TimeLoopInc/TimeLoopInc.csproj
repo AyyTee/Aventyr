@@ -71,7 +71,7 @@
     <Compile Include="Timeline.cs" />
     <Compile Include="IDeepClone.cs" />
     <Compile Include="BlockInstant.cs" />
-    <Compile Include="Blocks.cs" />
+    <Compile Include="Block.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="GridAngle.cs" />
     <Compile Include="IGridEntity.cs" />

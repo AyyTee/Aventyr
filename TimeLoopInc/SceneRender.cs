@@ -7,7 +7,6 @@ using OpenTK;
 using OpenTK.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -194,7 +193,12 @@ namespace TimeLoopInc
                 output.Add(CreateSquare(wall, 1, new Color4(0.8f, 1f, 0.5f, 1f)));
             }
 
-            output.Add(new Renderable() { Models = new List<Model> { _grid }, IsPortalable = false });
+            foreach (var exit in _scene.Exits)
+            {
+                output.Add(CreateSquare(exit, 1, new Color4(0.8f, 1f, 1f, 0.3f)));
+            }
+
+            output.Add(new Renderable { Models = new List<Model> { _grid }, IsPortalable = false });
             return output;
         }
 

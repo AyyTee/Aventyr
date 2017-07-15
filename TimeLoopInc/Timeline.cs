@@ -24,15 +24,14 @@ namespace TimeLoopInc
             Path = Path.Add(entity);    
         }
 
-        public Timeline(bool isClosed = false)
+        public Timeline()
         {
-            IsClosed = isClosed;
         }
 
-        public Timeline(IList<IGridEntity> path, bool isClosed = false)
-            : this(isClosed)
+        public Timeline(IList<IGridEntity> path, bool isClosed)
         {
             Path = path.Cast<IGridEntity>().ToImmutableList();
+            IsClosed = isClosed;
         }
     }
 }
