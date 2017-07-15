@@ -300,7 +300,7 @@ namespace TimeLoopIncTests
             Assert.AreEqual(expected, result);
         }
 
-        Scene CreateDefaultScene(HashSet<Vector2i> walls = null)
+        public static Scene CreateDefaultScene(HashSet<Vector2i> walls = null)
         {
             walls = walls ?? new HashSet<Vector2i>
             {
@@ -377,8 +377,6 @@ namespace TimeLoopIncTests
             Assert.AreEqual(3, playerTimeline.Path.Count);
         }
 
-
-
         [Test]
         public void PortalWithWallAtExit()
         {
@@ -409,6 +407,89 @@ namespace TimeLoopIncTests
 
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual(new Vector2i(-1, 0), result[1].StartTransform.Position);
+        }
+
+        [Test]
+        public void ChangeEndTimeTest0()
+        {
+            var scene = CreateDefaultScene();
+            var result = scene.ChangeEndTime();
+            Assert.AreEqual(0, result);
+        }
+
+        [Test]
+        public void ChangeEndTimeTest1()
+        {
+            var scene = CreateDefaultScene();
+            scene.Step(new MoveInput(GridAngle.Down));
+            scene.Step(new MoveInput(GridAngle.Down));
+
+            var result = scene.ChangeEndTime();
+            Assert.AreEqual(2, result);
+        }
+
+        [Test]
+        public void ChangeEndTimeTest2()
+        {
+            var scene = CreateDefaultScene();
+            scene.SetEntities(new[] { new Block(new Transform2i(), 4) });
+
+            var result = scene.ChangeEndTime();
+            Assert.AreEqual(4, result);
+        }
+
+        [Test]
+        public void ChangeEndTimeTest3()
+        {
+            var scene = CreateDefaultScene();
+            scene.SetEntities(new IGridEntity[0]);
+
+            var result = scene.ChangeEndTime();
+            Assert.AreEqual(0, result);
+        }
+
+        [Test]
+        public void PlayerEndTimeTest0()
+        {
+            var scene = CreateDefaultScene();
+            scene.SetEntities(new[] { new Player(new Transform2i(), 0) });
+
+            scene.Step(new MoveInput(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Left));
+
+            var entities = scene.GetEntities();
+            DebugEx.Assert(entities.All(item => item is Player));
+            var result = scene.EntityEndTime(entities[1]);
+            Assert.AreEqual(12, result);
+        }
+
+        [Test]
+        public void PlayerEndTimeTest1()
+        {
+            var scene = CreateDefaultScene();
+
+            scene.Step(new MoveInput(GridAngle.Up));
+            scene.Step(new MoveInput(GridAngle.Down));
+            scene.Step(new MoveInput(GridAngle.Down));
+
+            var entities = scene.GetEntities().First(item => item is Player);
+            var result = scene.EntityEndTime(entities);
+            Assert.AreEqual(3, result, "Player entities should cease to exist after their input ends.");
+        }
+
+        [Test]
+        public void BlockEndTimeTest0()
+        {
+            var scene = CreateDefaultScene();
+
+            scene.Step(new MoveInput(GridAngle.Up));
+            scene.Step(new MoveInput(GridAngle.Down));
+            scene.Step(new MoveInput(GridAngle.Down));
+
+            var result = scene.EntityEndTime(scene.GetEntities()
+                .First(item => item is Block));
+            Assert.AreEqual(null, result, "Block entities should continue to exist indefinately.");
         }
     }
 }

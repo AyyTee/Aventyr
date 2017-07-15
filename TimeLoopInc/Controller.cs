@@ -132,44 +132,16 @@ namespace TimeLoopInc
             _timelineRender.Update(timeDelta);
             if (_window.ButtonPress(Key.BackSpace))
             {
-                if (_input.Count(item => !(item is SelectInput)) > 0)
-                {
-                    var minTime = _timelineRender.MinTime;
-                    var maxTime = _timelineRender.MaxTime;
-                    var minRow = _timelineRender.MinRow;
-                    var maxRow = _timelineRender.MaxRow;
-                    Initialize();
-                    _timelineRender.MinTime = minTime;
-                    _timelineRender.MaxTime = maxTime;
-                    _timelineRender.MinRow = minRow;
-                    _timelineRender.MaxRow = maxRow;
-
-                    while (_input.LastOrDefault() is SelectInput)
-                    {
-                        _input.RemoveAt(_input.Count - 1);
-                    }
-                    _input.RemoveAt(_input.Count - 1);
-
-                    foreach (var input in _input)
-                    {
-                        if (input is MoveInput moveInput)
-                        {
-                            _scene.Step(moveInput);
-                        }
-                        else if (input is SelectInput selectInput)
-                        {
-                            SelectGrid(selectInput);
-                        }
-                    }
-                }
+                Undo();
             }
             else if (_updatesSinceLastStep >= _updatesPerAnimation)
             {
                 if (_scene.IsCompleted())
                 {
-                    _currentLevel++;
-                    if (_currentLevel < _levels.Count)
+                    if (_currentLevel + 1 < _levels.Count)
                     {
+                        _currentLevel++;
+                        _input.Clear();
                         Initialize();
                     }
                 }
@@ -199,6 +171,42 @@ namespace TimeLoopInc
             var entities = _scene.CurrentInstant.Entities;
             _timelineRender.Selected = entities.Keys
                 .FirstOrDefault(item => entities[item].Transform.Position == input.Position);
+        }
+
+        void Undo()
+        {
+            if (_input.Count(item => !(item is SelectInput)) > 0)
+            {
+                var minTime = _timelineRender.MinTime;
+                var maxTime = _timelineRender.MaxTime;
+                var minRow = _timelineRender.MinRow;
+                var maxRow = _timelineRender.MaxRow;
+                Initialize();
+                _timelineRender.MinTime = minTime;
+                _timelineRender.MaxTime = maxTime;
+                _timelineRender.MinRow = minRow;
+                _timelineRender.MaxRow = maxRow;
+
+                while (_input.LastOrDefault() is SelectInput)
+                {
+                    _input.RemoveAt(_input.Count - 1);
+                }
+                _input.RemoveAt(_input.Count - 1);
+
+                foreach (var input in _input)
+                {
+                    if (input is MoveInput moveInput)
+                    {
+                        _scene.Step(moveInput);
+                    }
+                    else if (input is SelectInput selectInput)
+                    {
+                        SelectGrid(selectInput);
+                    }
+                }
+
+                _updatesSinceLastStep = _updatesPerAnimation;
+            }
         }
     }
 }

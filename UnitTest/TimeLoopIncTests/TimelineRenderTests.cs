@@ -23,5 +23,30 @@ namespace TimeLoopIncTests
             _layer = new Layer();
             _timelineRender = new TimelineRender(_scene, null);
         }
+
+        [Test]
+        public void GetTimelineBoxesTest0()
+        {
+            var scene = SceneTests.CreateDefaultScene();
+            scene.SetEntities(new[] { new Player(new Transform2i(), 0) });
+
+            _timelineRender = new TimelineRender(scene, null);
+            _timelineRender.Selected = scene.CurrentPlayer;
+
+            scene.Step(new MoveInput(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Right));
+            scene.Step(new MoveInput(GridAngle.Left));
+
+            var result = _timelineRender.GetTimelineBoxes(scene.CurrentTime);
+
+            var entities = scene.GetEntities();
+            var expected = new[]
+            {
+                new TimelineBox(0, 0, 1, false, true, entities[0]),
+                new TimelineBox(0, 12, 12, true, true, entities[1]),
+                new TimelineBox(1, 3, 3, true, false, entities[2]),
+            };
+            Assert.AreEqual(expected, result);
+        }
     }
 }

@@ -89,6 +89,9 @@
     <Compile Include="Paradox.cs" />
     <Compile Include="IInput.cs" />
     <Compile Include="SelectInput.cs" />
+    <Compile Include="TimelineBox.cs" />
+    <Compile Include="Button.cs" />
+    <Compile Include="UiController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

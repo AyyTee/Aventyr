@@ -25,14 +25,16 @@ namespace TimeLoopInc
         public SceneInstant CurrentInstant => GetSceneInstant(CurrentTime);
         [DataMember]
         public int CurrentTime { get; private set; }
-        public Player CurrentPlayer => Entities.OfType<Player>().Last();
+        public Player CurrentPlayer => Entities.OfType<Player>().LastOrDefault();
 
         [DataMember]
         List<IGridEntity> Entities = new List<IGridEntity>();
 
-        public int StartTime => Entities.MinOrNull(item => item.StartTime) ?? 0;
+        public int StartTime => Entities.MinOrNull(item => item.StartTime) ?? _defaultTime;
 
         Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
+
+        const int _defaultTime = 0;
 
         public Scene()
         {
@@ -138,52 +140,59 @@ namespace TimeLoopInc
                 return false;
             }
             var endTime = EntityEndTime(previous);
-            var entityInstant = GetSceneInstant(endTime).Entities[previous];
+            if (endTime == null)
+            {
+                return false;
+            }
+            var entityInstant = GetSceneInstant(endTime.Value).Entities[previous];
 
             return endTime == current.PreviousTime && 
                 entityInstant.Transform == current.PreviousTransform;
         }
 
         /// <summary>
-        /// Get the last point in time where this entity exists.
+        /// Get the last point in time where this entity exists or null if it never is removed.
         /// </summary>
-        public int EntityEndTime(IGridEntity entity)
+        public int? EntityEndTime(IGridEntity entity)
         {
             var endTime = ChangeEndTime();
-            for (int i = entity.StartTime; i < endTime; i++)
+            for (int i = entity.StartTime; i <= endTime + 1; i++)
             {
                 if (!GetSceneInstant(i).Entities.Keys.Contains(entity))
                 {
                     return i - 1;
                 }
             }
-            return endTime - 1;
+            return null;
         }
 
         /// <summary>
-        /// Get the first point in time where the scene no longer can change.
+        /// Get the the last point where a change can occur in the scene.
         /// </summary>
         public int ChangeEndTime()
         {
-            int time = Entities.Max(item => item.StartTime) + 1;
-            while (GetSceneInstant(time).Entities.Keys
-                .OfType<Player>()
-                .Any(item => item.GetInput(time) != null))
+            return Entities.MaxOrNull(item => 
             {
-                time++;
-            }
-            return time;
+                var time = item.StartTime;
+                if (item is Player player)
+                {
+                    time += player.Input.Count;
+                }
+                return time;    
+            }) ?? _defaultTime;
         }
 
         public void Step(MoveInput input)
         {
-            if (CurrentInstant.Entities.ContainsKey(CurrentPlayer))
+            DebugEx.Assert(input != null);
+            if (CurrentPlayer != null)
             {
                 CurrentPlayer.Input.Add(input);
                 InvalidateCache(CurrentTime + 1);
             }
             var nextInstant = GetSceneInstant(CurrentTime + 1);
             CurrentTime = nextInstant.Time;
+            //CurrentTime = EntityEndTime(CurrentPlayer) + 1;
         }
 
         void InvalidateCache()
@@ -201,6 +210,7 @@ namespace TimeLoopInc
 
         public SceneInstant GetSceneInstant(int time)
         {
+            time = Math.Min(time, ChangeEndTime() + 1);
             if (time >= StartTime)
             {
                 int key;
@@ -372,7 +382,7 @@ namespace TimeLoopInc
         public List<Paradox> GetParadoxes()
         {
             var output = new List<Paradox>();
-            var endTime = ChangeEndTime();
+            var endTime = ChangeEndTime() + 1;
             for (int i = StartTime; i <= endTime; i++)
             {
                 output.AddRange(GetParadoxes(i));

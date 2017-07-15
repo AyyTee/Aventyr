@@ -190,11 +190,14 @@ namespace Game.Common
         #region Inside
         public static bool PointInRectangle(Vector2d v0, Vector2d v1, Vector2d point)
         {
-            if (((point.X >= v0.X && point.X <= v1.X) || (point.X <= v0.X && point.X >= v1.X)) && ((point.Y >= v0.Y && point.Y <= v1.Y) || (point.Y <= v0.Y && point.Y >= v1.Y)))
-            {
-                return true;
-            }
-            return false;
+            return ((point.X >= v0.X && point.X <= v1.X) || (point.X <= v0.X && point.X >= v1.X)) &&
+                ((point.Y >= v0.Y && point.Y <= v1.Y) || (point.Y <= v0.Y && point.Y >= v1.Y));
+        }
+
+        public static bool PointInRectangle(Vector2 v0, Vector2 v1, Vector2 point)
+        {
+            return ((point.X >= v0.X && point.X <= v1.X) || (point.X <= v0.X && point.X >= v1.X)) &&
+                ((point.Y >= v0.Y && point.Y <= v1.Y) || (point.Y <= v0.Y && point.Y >= v1.Y));
         }
 
         /// <summary>
@@ -267,9 +270,9 @@ namespace Game.Common
         public static bool LineInRectangle(Vector2 topLeft, Vector2 bottomRight, Vector2 lineBegin, Vector2 lineEnd)
         {
             return LineInRectangle(
-                new Vector2d(topLeft.X, topLeft.Y), 
-                new Vector2d(bottomRight.X, bottomRight.Y), 
-                new Vector2d(lineBegin.X, lineBegin.Y), 
+                new Vector2d(topLeft.X, topLeft.Y),
+                new Vector2d(bottomRight.X, bottomRight.Y),
+                new Vector2d(lineBegin.X, lineBegin.Y),
                 new Vector2d(lineEnd.X, lineEnd.Y));
         }
         #endregion

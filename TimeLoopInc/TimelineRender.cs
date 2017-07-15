@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ClipperLib;
 using Game;
 using Game.Models;
 
@@ -188,20 +187,25 @@ namespace TimeLoopInc
             var timeline = GetTimeline();
             int row = 0;
             var count = timeline.Path.Count;
+            var maxEndTime = _scene.ChangeEndTime();
             for (int i = 0; i < count; i++)
             {
                 var entity = timeline.Path[i];
 
                 var startTime = entity.StartTime;
-                if (i > 0 && entity.StartTime < _scene.EntityEndTime(timeline.Path[i - 1]))
+                if (i > 0)
                 {
-                    row++;
+                    var previousEndTime = _scene.EntityEndTime(timeline.Path[i - 1]) ?? maxEndTime;
+                    if (entity.StartTime < previousEndTime)
+                    {
+                        row++;
+                    }
                 }
 
-                double endTime = startTime + _scene.EntityEndTime(entity);
+                double endTime = _scene.EntityEndTime(entity) ?? maxEndTime;
                 if (i + 1 == count)
                 {
-                    endTime = currentTime;
+                    endTime = Math.Max(startTime, currentTime);
                 }
 
                 var box = new TimelineBox(
@@ -246,32 +250,6 @@ namespace TimeLoopInc
             if (MaxTime - MinTime < 10)
             {
                 MaxTime = MinTime + 10;
-            }
-        }
-
-        public class TimelineBox
-        {
-            public int Row { get; }
-            public int StartTime { get; }
-            public double EndTime { get; }
-            public bool FadeStart { get; }
-            public bool FadeEnd { get; }
-            public IGridEntity Entity { get; }
-
-            public TimelineBox(
-                int row,
-                int startTime,
-                double endTime,
-                bool fadeStart,
-                bool fadeEnd,
-                IGridEntity entity)
-            {
-                Row = row;
-                StartTime = startTime;
-                EndTime = endTime;
-                FadeStart = fadeStart;
-                FadeEnd = fadeEnd;
-                Entity = entity;
             }
         }
     }
