@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -11,7 +12,7 @@ using OpenTK.Input;
 
 namespace TimeLoopInc
 {
-    public class UiController : IUiElement
+    public class UiController : IUiElement, IEnumerable<IUiElement>
     {
         public ImmutableList<IUiElement> Children { get; set; } = new List<IUiElement>().ToImmutableList();
         readonly IVirtualWindow _window;
@@ -36,7 +37,7 @@ namespace TimeLoopInc
                     item.Element is Button &&
                     item.Element.IsInside(
                         Vector2Ex.Transform(
-                            mousePos, 
+                            mousePos,
                             item.WorldTransform.GetMatrix().Inverted())));
             if (_window.ButtonPress(MouseButton.Left))
             {
@@ -61,25 +62,22 @@ namespace TimeLoopInc
             }
         }
 
-        public void Render()
+        public Layer Render()
         {
-            var layer = new Layer
+            return new Layer
             {
                 DepthTest = false,
                 Camera = Camera,
                 Renderables = _flattenedUi
                     .Select(item => (IRenderable)new Renderable(item.WorldTransform, item.Element.GetModels()))
+                    .Reverse()
                     .ToList()
             };
-            _window.Layers.Add(layer);
         }
 
         public bool IsInside(Vector2 localPoint) => true;
 
-        public List<Model> GetModels()
-        {
-            return new List<Model>();
-        }
+        public List<Model> GetModels() => new List<Model>();
 
         class UiWorldTransform
         {
@@ -93,6 +91,13 @@ namespace TimeLoopInc
                 Element = element;
                 WorldTransform = worldTransform;
             }
+        }
+
+        public IEnumerator<IUiElement> GetEnumerator() => Children.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public void Add(IUiElement element)
+        {
+            Children = Children.Concat(new[] { element }).ToImmutableList();
         }
     }
 }

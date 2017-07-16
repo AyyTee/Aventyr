@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -11,7 +12,7 @@ using OpenTK.Graphics;
 
 namespace TimeLoopInc
 {
-    public class Button : IUiElement
+    public class Button : IUiElement, IEnumerable<IUiElement>
     {
         public delegate void ClickHandler();
         public event ClickHandler OnClick;
@@ -52,6 +53,13 @@ namespace TimeLoopInc
         public bool IsInside(Vector2 localPoint)
         {
             return MathEx.PointInRectangle(new Vector2(), Size, localPoint);
+        }
+
+        public IEnumerator<IUiElement> GetEnumerator() => Children.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public void Add(IUiElement element)
+        {
+            Children = Children.Concat(new[] { element }).ToImmutableList();
         }
     }
 }

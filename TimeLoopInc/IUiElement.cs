@@ -10,7 +10,7 @@ namespace TimeLoopInc
 {
     public interface IUiElement
     {
-        ImmutableList<IUiElement> Children { get; set; }
+        ImmutableList<IUiElement> Children { get; }
         Transform2 Transform { get; }
 
         bool IsInside(Vector2 localPoint);

@@ -16,6 +16,10 @@ namespace TimeLoopInc
 {
     public class Controller : IUpdateable
     {
+        enum MenuState { Main, InGame, Editor }
+
+        MenuState _menuState = MenuState.Main;
+
         readonly IVirtualWindow _window;
         Scene _scene;
         SceneRender _sceneRender;
@@ -33,12 +37,18 @@ namespace TimeLoopInc
             _window = window;
             _menu = new UiController(_window)
             {
-                Children = new IUiElement[]
+                new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 80), StartGame)
                 {
-                    new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 80), StartGame),
-                    new Button(new Transform2(new Vector2(10, 100)), new Vector2(200, 80), StartLevelEditor),
-                    new Button(new Transform2(new Vector2(10, 190)), new Vector2(200, 80), _window.Exit)
-                }.ToImmutableList()
+                    new UiText(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Start Game"))
+                },
+                new Button(new Transform2(new Vector2(10, 100)), new Vector2(200, 80), StartLevelEditor)
+                {
+                    new UiText(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Level Editor"))
+                },
+                new Button(new Transform2(new Vector2(10, 190)), new Vector2(200, 80), _window.Exit)
+                {
+                    new UiText(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Exit"))
+                }
             };
 
             _levels = new[]
@@ -52,12 +62,12 @@ namespace TimeLoopInc
 
         public void StartGame()
         {
-            _menu = null;
+            _menuState = MenuState.InGame;
         }
 
         public void StartLevelEditor()
         {
-
+            _menuState = MenuState.Editor;
         }
 
         public Scene CreateLevel0()
@@ -123,32 +133,35 @@ namespace TimeLoopInc
 
         public void Render(double timeDelta)
         {
-            if (_menu != null)
+            _window.Layers.Clear();
+            switch (_menuState)
             {
-                _menu.Render();
-            }
-            else
-            {
-                var animationT = MathHelper.Clamp(_updatesSinceLastStep / (float)_updatesPerAnimation, 0, 1);
+                case MenuState.Main:
+                    _window.Layers.Add(_menu.Render());
+                    break;
+                case MenuState.Editor:
+                    break;
+                case MenuState.InGame:
+                    var animationT = MathHelper.Clamp(_updatesSinceLastStep / (float)_updatesPerAnimation, 0, 1);
 
-                _window.Layers.Clear();
-                var worldLayer = _sceneRender.Render(animationT);
-                _window.Layers.Add(worldLayer);
+                    var worldLayer = _sceneRender.Render(animationT);
+                    _window.Layers.Add(worldLayer);
 
-                var gui = new Layer
-                {
-                    DepthTest = false,
-                    Camera = new HudCamera2(_window.CanvasSize)
-                };
-                _timelineRender.Render(gui, new Vector2(50, _window.CanvasSize.Y - 150), new Vector2(_window.CanvasSize.X - 100, 140), _window.DpiScale, animationT);
-                gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 0), "Time: " + _scene.CurrentTime.ToString()));
-                gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString()));
-                _fpsCounter.Enqueue((float)timeDelta);
-                gui.Renderables.Add(Draw.Text(
-                    _window.Fonts?.Inconsolata,
-                    new Vector2(0, 80),
-                    $"FPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }\n{_window.MousePosition}"));
-                _window.Layers.Add(gui);
+                    var gui = new Layer
+                    {
+                        DepthTest = false,
+                        Camera = new HudCamera2(_window.CanvasSize)
+                    };
+                    _timelineRender.Render(gui, new Vector2(50, _window.CanvasSize.Y - 150), new Vector2(_window.CanvasSize.X - 100, 140), _window.DpiScale, animationT);
+                    gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 0), "Time: " + _scene.CurrentTime.ToString()));
+                    gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString()));
+                    _fpsCounter.Enqueue((float)timeDelta);
+                    gui.Renderables.Add(Draw.Text(
+                        _window.Fonts?.Inconsolata,
+                        new Vector2(0, 80),
+                        $"FPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }\n{_window.MousePosition}"));
+                    _window.Layers.Add(gui);
+                    break;
             }
         }
 
@@ -156,49 +169,52 @@ namespace TimeLoopInc
         {
             _updatesSinceLastStep++;
 
-            if (_menu != null)
+            switch (_menuState)
             {
-                _menu.Update(1);
-            }
-            else
-            {
-                _sceneRender.Update(_window);
-                _timelineRender.Update(timeDelta);
-                if (_window.ButtonPress(Key.BackSpace))
-                {
-                    Undo();
-                }
-                else if (_updatesSinceLastStep >= _updatesPerAnimation)
-                {
-                    if (_scene.IsCompleted())
+                case MenuState.Main:
+                    _menu.Update(1);
+                    break;
+                case MenuState.Editor:
+                    break;
+                case MenuState.InGame:
+                    _sceneRender.Update(_window);
+                    _timelineRender.Update(timeDelta);
+                    if (_window.ButtonPress(Key.BackSpace))
                     {
-                        if (_currentLevel + 1 < _levels.Count)
+                        Undo();
+                    }
+                    else if (_updatesSinceLastStep >= _updatesPerAnimation)
+                    {
+                        if (_scene.IsCompleted())
                         {
-                            _currentLevel++;
-                            _input.Clear();
-                            Initialize();
+                            if (_currentLevel + 1 < _levels.Count)
+                            {
+                                _currentLevel++;
+                                _input.Clear();
+                                Initialize();
+                            }
+                        }
+                        else
+                        {
+                            var input = MoveInput.CreateFromKeyboard(_window);
+                            if (input != null)
+                            {
+                                _input.Add(input);
+                                _scene.Step(input);
+                                _updatesSinceLastStep = 0;
+                            }
                         }
                     }
-                    else
+
+                    if (_window.ButtonPress(MouseButton.Left))
                     {
-                        var input = MoveInput.CreateFromKeyboard(_window);
-                        if (input != null)
-                        {
-                            _input.Add(input);
-                            _scene.Step(input);
-                            _updatesSinceLastStep = 0;
-                        }
+                        var pos = (Vector2i)_sceneRender.GetMouseGrid();
+                        var input = new SelectInput(pos, _scene.CurrentTime);
+                        _input.Add(input);
+                        SelectGrid(input);
+
                     }
-                }
-
-                if (_window.ButtonPress(MouseButton.Left))
-                {
-                    var pos = (Vector2i)_sceneRender.GetMouseGrid();
-                    var input = new SelectInput(pos, _scene.CurrentTime);
-                    _input.Add(input);
-                    SelectGrid(input);
-
-                }
+                    break;
             }
         }
 

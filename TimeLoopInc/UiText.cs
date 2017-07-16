@@ -10,7 +10,7 @@ namespace TimeLoopInc
 {
     public class UiText : IUiElement
     {
-        public ImmutableList<IUiElement> Children { get; set; }
+        public ImmutableList<IUiElement> Children { get; set; } = new List<IUiElement>().ToImmutableList();
 
         public Transform2 Transform { get; set; } = new Transform2();
 
@@ -18,6 +18,7 @@ namespace TimeLoopInc
 
         public UiText(TextEntity text)
         {
+            DebugEx.Assert(text != null);
             Text = text;
         }
 

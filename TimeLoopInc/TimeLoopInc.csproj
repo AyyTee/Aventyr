@@ -95,6 +95,7 @@
     <Compile Include="IUiElement.cs" />
     <Compile Include="LevelEditor.cs" />
     <Compile Include="UiText.cs" />
+    <Compile Include="UiElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
