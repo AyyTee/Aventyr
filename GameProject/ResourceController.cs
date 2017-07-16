@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -60,9 +60,9 @@ namespace Game
                 DefaultGraphics,
                 windowName,
                 GameWindowFlags.FixedWindow,
-                DisplayDevice.Default, 
-                3, 
-                3, 
+                DisplayDevice.Default,
+                3,
+                3,
                 GraphicsContextFlags.ForwardCompatible);
             var glError = GL.GetError();
             DebugEx.GlAssert();
@@ -185,6 +185,8 @@ namespace Game
                 _window.ClientSize = new System.Drawing.Size(800, 600);
             }
         }
+
+        public void Exit() => _window.Exit();
 
         class ControllerData
         {

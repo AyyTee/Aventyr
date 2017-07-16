@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -45,6 +45,12 @@ namespace Game.Rendering
         public Renderable(Model model)
         {
             Models.Add(model);
+        }
+
+        public Renderable(Transform2 worldTransform, List<Model> models)
+        {
+            WorldTransform = worldTransform;
+            Models = models;
         }
     }
 }

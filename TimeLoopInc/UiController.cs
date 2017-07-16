@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Game;
 using Game.Common;
+using Game.Models;
 using Game.Rendering;
+using OpenTK;
 using OpenTK.Input;
 
 namespace TimeLoopInc
 {
-    public class UiController : IUpdateable
+    public class UiController : IUiElement
     {
-        public List<Button> Elements { get; set; } = new List<Button>();
+        public ImmutableList<IUiElement> Children { get; set; } = new List<IUiElement>().ToImmutableList();
         readonly IVirtualWindow _window;
         public ICamera2 Camera { get; set; }
+        List<UiWorldTransform> _flattenedUi = new List<UiWorldTransform>();
+
+        public Transform2 Transform => new Transform2();
 
         public UiController(IVirtualWindow window)
         {
@@ -20,21 +26,73 @@ namespace TimeLoopInc
             Camera = new HudCamera2(_window.CanvasSize);
         }
 
-        public void Update(double timeDelta)
+        public void Update(float uiScale)
         {
             var mousePos = Camera.ScreenToWorld(_window.MousePosition, _window.CanvasSize);
+            _flattenedUi = AllChildren();
 
-            var buttonHover = Elements
-                .FirstOrDefault(item => MathEx.PointInRectangle(item.TopLeft, item.BottomRight, mousePos));
+            var buttonHover = _flattenedUi
+                .FirstOrDefault(item =>
+                    item.Element is Button &&
+                    item.Element.IsInside(
+                        Vector2Ex.Transform(
+                            mousePos, 
+                            item.WorldTransform.GetMatrix().Inverted())));
             if (_window.ButtonPress(MouseButton.Left))
             {
-                buttonHover.Click();
+                (buttonHover?.Element as Button)?.Click();
             }
         }
 
-        public void Render(double timeDelta)
+        List<UiWorldTransform> AllChildren()
         {
+            var list = new List<UiWorldTransform>();
+            _allChildren(this, new Transform2(), list);
+            return list;
+        }
 
+        void _allChildren(IUiElement element, Transform2 worldTransform, List<UiWorldTransform> list)
+        {
+            foreach (var child in element.Children)
+            {
+                var transform = worldTransform.Transform(child.Transform);
+                _allChildren(child, transform, list);
+                list.Add(new UiWorldTransform(child, transform));
+            }
+        }
+
+        public void Render()
+        {
+            var layer = new Layer
+            {
+                DepthTest = false,
+                Camera = Camera,
+                Renderables = _flattenedUi
+                    .Select(item => (IRenderable)new Renderable(item.WorldTransform, item.Element.GetModels()))
+                    .ToList()
+            };
+            _window.Layers.Add(layer);
+        }
+
+        public bool IsInside(Vector2 localPoint) => true;
+
+        public List<Model> GetModels()
+        {
+            return new List<Model>();
+        }
+
+        class UiWorldTransform
+        {
+            public IUiElement Element { get; }
+            public Transform2 WorldTransform { get; }
+
+            public UiWorldTransform(IUiElement element, Transform2 worldTransform)
+            {
+                DebugEx.Assert(element != null);
+                DebugEx.Assert(worldTransform != null);
+                Element = element;
+                WorldTransform = worldTransform;
+            }
         }
     }
 }

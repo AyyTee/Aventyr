@@ -43,7 +43,8 @@ namespace TimeLoopInc
             DebugEx.Assert(size.X > 0 && size.Y > 0);
             Vector2 gridSize = new Vector2(50, 20) * dpiScale;
 
-            layer.Rectangle(topLeft, topLeft + size, new Color4(0.8f, 0.8f, 0.8f, 0.8f));
+            var output = new List<IRenderable>();
+            layer.Renderables.Add(Draw.Rectangle(topLeft, topLeft + size, new Color4(0.8f, 0.8f, 0.8f, 0.8f)));
 
             var bounds = new ClipPath(new[] {
                     topLeft,
@@ -53,7 +54,7 @@ namespace TimeLoopInc
                 });
 
             layer.Renderables.Add(Draw.Text(_font, topLeft, GetTimeline().Name));
-            var output = DrawTimelines(topLeft + new Vector2(10, 60), size - new Vector2(20, 60), t);
+            output.AddRange(DrawTimelines(topLeft + new Vector2(10, 60), size - new Vector2(20, 60), t));
             foreach (var renderable in output)
             {
                 renderable.ClipPaths.Add(bounds);

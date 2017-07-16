@@ -26,7 +26,12 @@ namespace Game.Rendering
         float MouseWheelPrevious { get; }
         Vector2 MousePosition { get; }
         Vector2 MousePositionPrevious { get; }
+
+        void Exit();
+        event ExitHandler OnExit;
     }
+
+    public delegate void ExitHandler();
 
     public enum KeyBoth { Control, Shift, Alt }
 

@@ -34,6 +34,8 @@ namespace Game.Rendering
 
         public bool HasFocus { get; private set; }
 
+        public event ExitHandler OnExit;
+
         public VirtualWindow(ResourceController resourceController)
         {
             _resourceController = resourceController;
@@ -56,5 +58,7 @@ namespace Game.Rendering
             MouseWheelPrevious = MouseWheel;
             MouseWheel = mouseWheel;
         }
+
+        public void Exit() => OnExit?.Invoke();
     }
 }

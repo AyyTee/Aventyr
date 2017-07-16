@@ -47,6 +47,8 @@ namespace EditorLogic
         Vector2 _mousePos;
         float _wheelDelta;
 
+        public event ExitHandler OnExit;
+
         public EditorVirtualWindow(GLControl glControl, IRenderer renderer, TextureAssets textures)
         {
             _glControl = glControl;
@@ -84,5 +86,7 @@ namespace EditorLogic
                 _wheelDelta += (float)e.Delta / 120;
             }
         }
+
+        public void Exit() => OnExit?.Invoke();
     }
 }

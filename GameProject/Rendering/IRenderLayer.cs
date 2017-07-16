@@ -23,12 +23,12 @@ namespace Game.Rendering
             return new TextEntity(font, position, text, alignment, lineSpacing);
         }
 
-        public static void Rectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight)
+        public static IRenderable Rectangle(Vector2 topLeft, Vector2 bottomRight)
         {
-            Rectangle(layer, topLeft, bottomRight, Color4.Black);
+            return Rectangle(topLeft, bottomRight, Color4.Black);
         }
 
-        public static void Rectangle(this IRenderLayer layer, Vector2 topLeft, Vector2 bottomRight, Color4 color)
+        public static IRenderable Rectangle(Vector2 topLeft, Vector2 bottomRight, Color4 color)
         {
             var plane = new Model(
                 ModelFactory.CreatePlaneMesh(
@@ -39,8 +39,7 @@ namespace Game.Rendering
             {
                 plane.IsTransparent = true;
             }
-            var renderable = GetRenderable(plane);
-            layer.Renderables.Add(renderable);
+            return GetRenderable(plane);
         }
 
         public static IRenderable Line(LineF line)

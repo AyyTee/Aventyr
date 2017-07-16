@@ -39,6 +39,8 @@ namespace Game
         public IImmutableSet<MouseButton> MouseCurrent { get; set; } = new HashSet<MouseButton>().ToImmutableHashSet();
         public IImmutableSet<MouseButton> MousePrevious { get; private set; } = new HashSet<MouseButton>().ToImmutableHashSet();
 
+        public event ExitHandler OnExit;
+
         public void Update(ISet<Key> keyboardState, ISet<MouseButton> mouseState, Vector2 mousePosition, bool hasFocus = true, float mouseWheel = 0)
         {
             KeyPrevious = KeyCurrent;
@@ -55,5 +57,7 @@ namespace Game
             MouseWheelPrevious = MouseWheel;
             MouseWheel = mouseWheel;
         }
+
+        public void Exit() => OnExit?.Invoke();
     }
 }

@@ -92,6 +92,9 @@
     <Compile Include="TimelineBox.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="UiController.cs" />
+    <Compile Include="IUiElement.cs" />
+    <Compile Include="LevelEditor.cs" />
+    <Compile Include="UiText.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

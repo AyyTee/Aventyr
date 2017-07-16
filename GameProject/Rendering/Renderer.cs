@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -57,12 +57,12 @@ namespace Game.Rendering
             GL.ClearStencil(0);
             GL.PointSize(15f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-			
+
             // Load shaders from file
-			_shaders.Add("uber", new Shader(
-				Path.Combine(AssetPaths.ShaderFolder, "vs_uber.glsl"),
-				Path.Combine(AssetPaths.ShaderFolder, "fs_uber.glsl"),
-				true));
+            _shaders.Add("uber", new Shader(
+                Path.Combine(AssetPaths.ShaderFolder, "vs_uber.glsl"),
+                Path.Combine(AssetPaths.ShaderFolder, "fs_uber.glsl"),
+                true));
 
             // Skip display mode diagnostics on Mac as it doesn't seem to support GetInteger.
             if (Configuration.RunningOnMacOS)
@@ -71,19 +71,19 @@ namespace Game.Rendering
             }
             else
             {
-				StencilBits = GL.GetInteger(GetPName.StencilBits);
-				var depthBits = GL.GetInteger(GetPName.DepthBits);
-				var samples = GL.GetInteger(GetPName.Samples);
-				var rgbBits =
-					GL.GetInteger(GetPName.RedBits) +
-					GL.GetInteger(GetPName.GreenBits) +
-					GL.GetInteger(GetPName.BlueBits) +
-					GL.GetInteger(GetPName.AlphaBits);
-				DebugEx.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
-				DebugEx.Assert(depthBits == 24);
-				DebugEx.Assert(samples == 0);
-				DebugEx.Assert(rgbBits == 32);
-			}
+                StencilBits = GL.GetInteger(GetPName.StencilBits);
+                var depthBits = GL.GetInteger(GetPName.DepthBits);
+                var samples = GL.GetInteger(GetPName.Samples);
+                var rgbBits =
+                    GL.GetInteger(GetPName.RedBits) +
+                    GL.GetInteger(GetPName.GreenBits) +
+                    GL.GetInteger(GetPName.BlueBits) +
+                    GL.GetInteger(GetPName.AlphaBits);
+                DebugEx.Assert(StencilBits >= 8, "Stencil bit depth is too small.");
+                DebugEx.Assert(depthBits == 24);
+                DebugEx.Assert(samples == 0);
+                DebugEx.Assert(rgbBits == 32);
+            }
 
             GL.GenBuffers(1, out _iboElements);
         }

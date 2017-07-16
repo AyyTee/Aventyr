@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Immutable;
 
 namespace TimeLoopInc
 {
@@ -18,6 +19,7 @@ namespace TimeLoopInc
         readonly IVirtualWindow _window;
         Scene _scene;
         SceneRender _sceneRender;
+        UiController _menu;
         TimelineRender _timelineRender;
         List<IInput> _input = new List<IInput>();
         List<Scene> _levels = new List<Scene>();
@@ -29,6 +31,15 @@ namespace TimeLoopInc
         public Controller(IVirtualWindow window)
         {
             _window = window;
+            _menu = new UiController(_window)
+            {
+                Children = new IUiElement[]
+                {
+                    new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 80), StartGame),
+                    new Button(new Transform2(new Vector2(10, 100)), new Vector2(200, 80), StartLevelEditor),
+                    new Button(new Transform2(new Vector2(10, 190)), new Vector2(200, 80), _window.Exit)
+                }.ToImmutableList()
+            };
 
             _levels = new[]
             {
@@ -37,6 +48,16 @@ namespace TimeLoopInc
             }.ToList();
 
             Initialize();
+        }
+
+        public void StartGame()
+        {
+            _menu = null;
+        }
+
+        public void StartLevelEditor()
+        {
+
         }
 
         public Scene CreateLevel0()
@@ -102,67 +123,82 @@ namespace TimeLoopInc
 
         public void Render(double timeDelta)
         {
-            var animationT = MathHelper.Clamp(_updatesSinceLastStep / (float)_updatesPerAnimation, 0, 1);
-
-            _window.Layers.Clear();
-            var worldLayer = _sceneRender.Render(animationT);
-            _window.Layers.Add(worldLayer);
-
-            var gui = new Layer
+            if (_menu != null)
             {
-                DepthTest = false,
-                Camera = new HudCamera2(_window.CanvasSize)
-            };
-            _timelineRender.Render(gui, new Vector2(50, _window.CanvasSize.Y - 150), new Vector2(_window.CanvasSize.X - 100, 140), _window.DpiScale, animationT);
-            gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 0), "Time: " + _scene.CurrentTime.ToString()));
-            gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString()));
-            _fpsCounter.Enqueue((float)timeDelta);
-            gui.Renderables.Add(Draw.Text(
-                _window.Fonts?.Inconsolata,
-                new Vector2(0, 80),
-                $"FPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }\n{_window.MousePosition}"));
-            _window.Layers.Add(gui);
+                _menu.Render();
+            }
+            else
+            {
+                var animationT = MathHelper.Clamp(_updatesSinceLastStep / (float)_updatesPerAnimation, 0, 1);
+
+                _window.Layers.Clear();
+                var worldLayer = _sceneRender.Render(animationT);
+                _window.Layers.Add(worldLayer);
+
+                var gui = new Layer
+                {
+                    DepthTest = false,
+                    Camera = new HudCamera2(_window.CanvasSize)
+                };
+                _timelineRender.Render(gui, new Vector2(50, _window.CanvasSize.Y - 150), new Vector2(_window.CanvasSize.X - 100, 140), _window.DpiScale, animationT);
+                gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 0), "Time: " + _scene.CurrentTime.ToString()));
+                gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString()));
+                _fpsCounter.Enqueue((float)timeDelta);
+                gui.Renderables.Add(Draw.Text(
+                    _window.Fonts?.Inconsolata,
+                    new Vector2(0, 80),
+                    $"FPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }\n{_window.MousePosition}"));
+                _window.Layers.Add(gui);
+            }
         }
 
         public void Update(double timeDelta)
         {
             _updatesSinceLastStep++;
 
-            _sceneRender.Update(_window);
-            _timelineRender.Update(timeDelta);
-            if (_window.ButtonPress(Key.BackSpace))
+            if (_menu != null)
             {
-                Undo();
+                _menu.Update(1);
             }
-            else if (_updatesSinceLastStep >= _updatesPerAnimation)
+            else
             {
-                if (_scene.IsCompleted())
+                _sceneRender.Update(_window);
+                _timelineRender.Update(timeDelta);
+                if (_window.ButtonPress(Key.BackSpace))
                 {
-                    if (_currentLevel + 1 < _levels.Count)
+                    Undo();
+                }
+                else if (_updatesSinceLastStep >= _updatesPerAnimation)
+                {
+                    if (_scene.IsCompleted())
                     {
-                        _currentLevel++;
-                        _input.Clear();
-                        Initialize();
+                        if (_currentLevel + 1 < _levels.Count)
+                        {
+                            _currentLevel++;
+                            _input.Clear();
+                            Initialize();
+                        }
+                    }
+                    else
+                    {
+                        var input = MoveInput.CreateFromKeyboard(_window);
+                        if (input != null)
+                        {
+                            _input.Add(input);
+                            _scene.Step(input);
+                            _updatesSinceLastStep = 0;
+                        }
                     }
                 }
-                else
-                {
-                    var input = MoveInput.CreateFromKeyboard(_window);
-                    if (input != null)
-                    {
-                        _input.Add(input);
-                        _scene.Step(input);
-                        _updatesSinceLastStep = 0;
-                    }
-                }
-            }
 
-            if (_window.ButtonPress(MouseButton.Left))
-            {
-                var pos = (Vector2i)_sceneRender.GetMouseGrid();
-                var input = new SelectInput(pos, _scene.CurrentTime);
-                _input.Add(input);
-                SelectGrid(input);
+                if (_window.ButtonPress(MouseButton.Left))
+                {
+                    var pos = (Vector2i)_sceneRender.GetMouseGrid();
+                    var input = new SelectInput(pos, _scene.CurrentTime);
+                    _input.Add(input);
+                    SelectGrid(input);
+
+                }
             }
         }
 
