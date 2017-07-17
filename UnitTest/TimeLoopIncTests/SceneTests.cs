@@ -14,13 +14,13 @@ namespace TimeLoopIncTests
         [Test]
         public void EmptySceneStartTime()
         {
-            Assert.AreEqual(0, new Scene().StartTime);
+            Assert.AreEqual(0, new Scene().ChangeStartTime());
         }
 
         [Test]
         public void GetStateInstantTest0()
         {
-            var block = new Block(new Transform2i(), 0);
+            var block = new Block(new Transform2i());
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), new[] { block });
 
             var result = scene.GetSceneInstant(0).Entities.Count;
@@ -30,7 +30,7 @@ namespace TimeLoopIncTests
         [Test]
         public void GetStateInstantTest1()
         {
-            var block = new Block(new Transform2i(), 0);
+            var block = new Block(new Transform2i());
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), new[] { block });
 
             var result = scene.GetSceneInstant(1).Entities.Count;
@@ -40,11 +40,11 @@ namespace TimeLoopIncTests
         [Test]
         public void GetStateInstantTest2()
         {
-            var block = new Block(new Transform2i(), 0);
+            var block = new Block(new Transform2i());
             var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), new[] { block });
 
             var result = scene.GetSceneInstant(-1).Entities.Count;
-            Assert.AreEqual(0, result);
+            Assert.AreEqual(1, result);
         }
 
         [Test]
@@ -77,8 +77,8 @@ namespace TimeLoopIncTests
 
             scene.Step(new MoveInput(new GridAngle()));
 
-            Assert.AreEqual(5, scene.CurrentInstant.Entities[player].Transform.Direction.Value);
-            Assert.AreEqual(5 * Math.PI / 2, scene.CurrentInstant.Entities[player].Transform.Angle, 0.0000001);
+            Assert.AreEqual(5, scene.GetSceneInstant(scene.CurrentTime).Entities[player].Transform.Direction.Value);
+            Assert.AreEqual(5 * Math.PI / 2, scene.GetSceneInstant(scene.CurrentTime).Entities[player].Transform.Angle, 0.0000001);
         }
 
         public TimePortal[] CreateTwoPortals(int timeOffset = 5)
@@ -133,25 +133,25 @@ namespace TimeLoopIncTests
                 entities);
 
             Assert.AreEqual(1, scene.GetEntities().OfType<Block>().Count());
-            Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
+            Assert.AreEqual(1, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
 
             scene.Step(new MoveInput(GridAngle.Right));
 
             Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
-            Assert.AreEqual(0, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
+            Assert.AreEqual(0, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
 
             for (int i = 0; i < scene.Portals[0].TimeOffset - 1; i++)
             {
                 scene.Step(new MoveInput(null));
 
                 Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
-                Assert.AreEqual(0, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
+                Assert.AreEqual(0, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
             }
 
             scene.Step(new MoveInput(null));
 
             Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
-            Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
+            Assert.AreEqual(1, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
         }
 
         [Test]
@@ -171,25 +171,25 @@ namespace TimeLoopIncTests
                 entities);
 
             Assert.AreEqual(1, scene.GetEntities().OfType<Block>().Count());
-            Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
+            Assert.AreEqual(1, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
 
             scene.Step(new MoveInput(GridAngle.Right));
 
             Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
-            Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
+            Assert.AreEqual(1, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
 
             for (int i = 0; i < portals[0].TimeOffset; i++)
             {
                 scene.Step(new MoveInput(null));
 
                 Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
-                Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
+                Assert.AreEqual(1, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
             }
 
             scene.Step(new MoveInput(null));
 
             Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
-            Assert.AreEqual(1, scene.CurrentInstant.Entities.Keys.OfType<Block>().Count());
+            Assert.AreEqual(1, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
         }
 
         [Test]
@@ -280,8 +280,8 @@ namespace TimeLoopIncTests
             scene.Step(new MoveInput(GridAngle.Left));
 
             Assert.AreEqual(6, scene.CurrentTime);
-            Assert.AreEqual(new Vector2i(1, 0), scene.CurrentInstant.Entities[scene.CurrentPlayer].Transform.Position);
-            Assert.AreEqual(new Vector2i(0, 0), scene.CurrentInstant.Entities[block].Transform.Position);
+            Assert.AreEqual(new Vector2i(1, 0), scene.GetSceneInstant(scene.CurrentTime).Entities[scene.CurrentPlayer].Transform.Position);
+            Assert.AreEqual(new Vector2i(0, 0), scene.GetSceneInstant(scene.CurrentTime).Entities[block].Transform.Position);
         }
 
         [Test]

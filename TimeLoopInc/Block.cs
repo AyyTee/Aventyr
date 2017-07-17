@@ -27,7 +27,7 @@ namespace TimeLoopInc
         [DataMember]
         public int StartTime { get; }
 
-        public Block(Transform2i startTransform, int startTime)
+        public Block(Transform2i startTransform, int startTime = int.MinValue)
         {
             StartTransform = startTransform;
             StartTime = startTime;

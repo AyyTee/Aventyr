@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
-using System.Diagnostics;
 
 namespace TimeLoopInc
 {
@@ -27,6 +26,7 @@ namespace TimeLoopInc
 
         public Player(Transform2i startTransform, int startTime)
         {
+            DebugEx.Assert(startTime > int.MinValue);
             StartTransform = startTransform;
             StartTime = startTime;
         }

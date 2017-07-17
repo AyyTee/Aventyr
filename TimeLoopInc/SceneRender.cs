@@ -45,11 +45,13 @@ namespace TimeLoopInc
             var cameraTransform = new Transform2().WithSize(25 * _zoomFactor);
             var cameraVelocity = new Vector2();
 
-            var playerInstant = _scene.CurrentInstant.Entities.GetOrDefault(_scene.CurrentPlayer);
+            var playerInstant = _scene.GetSceneInstant(_scene.CurrentTime).Entities.GetOrDefault(_scene.CurrentPlayer);
             var time = _scene.CurrentTime;
             if (playerInstant != null)
             {
-                var (transform, timeOffset) = GetCameraTransformAndTime(_scene.CurrentInstant, _scene.CurrentPlayer, t, _scene.Portals.ToList());
+                var (transform, timeOffset) = GetCameraTransformAndTime(
+                    _scene.GetSceneInstant(_scene.CurrentTime), 
+                    _scene.CurrentPlayer, t, _scene.Portals.ToList());
 
                 cameraTransform = transform
                     .WithSize(25 * _zoomFactor);
@@ -57,7 +59,7 @@ namespace TimeLoopInc
 
                 cameraVelocity = t == 0 || t == 1 ?
                     new Vector2() :
-                    (Vector2)_scene.CurrentInstant.Entities[_scene.CurrentPlayer].PreviousVelocity;
+                    (Vector2)_scene.GetSceneInstant(_scene.CurrentTime).Entities[_scene.CurrentPlayer].PreviousVelocity;
             }
 
             var worldCamera = new GridCamera(cameraTransform, (float)_window.CanvasSize.XRatio);

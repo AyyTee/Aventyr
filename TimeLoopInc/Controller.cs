@@ -92,7 +92,7 @@ namespace TimeLoopInc
 
             var entities = new[] {
                 (IGridEntity)player,
-                new Block(new Transform2i(new Vector2i(1, 0)), 0),
+                new Block(new Transform2i(new Vector2i(1, 0))),
             };
 
             return new Scene(walls, Portals, entities, new HashSet<Vector2i> { new Vector2i(0, 2) });
@@ -120,7 +120,7 @@ namespace TimeLoopInc
 
             var entities = new[] {
                 (IGridEntity)player,
-                new Block(new Transform2i(new Vector2i(1, 0)), 0),
+                new Block(new Transform2i(new Vector2i(1, 0))),
             };
 
             return new Scene(walls, Portals, entities, new HashSet<Vector2i> { new Vector2i(0, 2) });
@@ -225,7 +225,7 @@ namespace TimeLoopInc
 
         void SelectGrid(SelectInput input)
         {
-            var entities = _scene.CurrentInstant.Entities;
+            var entities = _scene.GetSceneInstant(_scene.CurrentTime).Entities;
             _timelineRender.Selected = entities.Keys
                 .FirstOrDefault(item => entities[item].Transform.Position == input.Position);
         }

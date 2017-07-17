@@ -22,15 +22,12 @@ namespace TimeLoopInc
         public readonly ImmutableList<TimePortal> Portals = new List<TimePortal>().ToImmutableList();
         [DataMember]
         public readonly ImmutableHashSet<Vector2i> Exits = new List<Vector2i>().ToImmutableHashSet();
-        public SceneInstant CurrentInstant => GetSceneInstant(CurrentTime);
         [DataMember]
         public int CurrentTime { get; private set; }
         public Player CurrentPlayer => Entities.OfType<Player>().LastOrDefault();
 
         [DataMember]
         List<IGridEntity> Entities = new List<IGridEntity>();
-
-        public int StartTime => Entities.MinOrNull(item => item.StartTime) ?? _defaultTime;
 
         Dictionary<int, SceneInstant> _cachedInstants = new Dictionary<int, SceneInstant>();
 
@@ -65,7 +62,7 @@ namespace TimeLoopInc
 
         public IGridEntityInstant GetEntityInstant(IGridEntity entity)
         {
-            return CurrentInstant.Entities[entity];
+            return GetSceneInstant(CurrentTime).Entities[entity];
         }
 
         public List<Timeline> GetTimelines()
@@ -140,14 +137,14 @@ namespace TimeLoopInc
                 return false;
             }
             var endTime = EntityEndTime(previous);
-            if (endTime == null)
+            if (endTime != current.PreviousTime)
             {
                 return false;
             }
+
             var entityInstant = GetSceneInstant(endTime.Value).Entities[previous];
 
-            return endTime == current.PreviousTime && 
-                entityInstant.Transform == current.PreviousTransform;
+            return entityInstant.Transform == current.PreviousTransform;
         }
 
         /// <summary>
@@ -156,7 +153,8 @@ namespace TimeLoopInc
         public int? EntityEndTime(IGridEntity entity)
         {
             var endTime = ChangeEndTime();
-            for (int i = entity.StartTime; i <= endTime + 1; i++)
+            var startTime = Math.Max(ChangeStartTime(), entity.StartTime);
+            for (int i = startTime; i <= endTime + 1; i++)
             {
                 if (!GetSceneInstant(i).Entities.Keys.Contains(entity))
                 {
@@ -174,7 +172,8 @@ namespace TimeLoopInc
         {
             return Entities
                 .Where(item => item.StartTime != int.MinValue)
-                .MinOrNull(item => item.StartTime) ?? _defaultTime;
+                .MinOrNull(item => item.StartTime) 
+                ?? _defaultTime;
         }
 
         /// <summary>
@@ -182,15 +181,17 @@ namespace TimeLoopInc
         /// </summary>
         public int ChangeEndTime()
         {
-            return Entities.MaxOrNull(item => 
-            {
-                var time = item.StartTime;
-                if (item is Player player)
+            return Entities
+                .Where(item => item.StartTime != int.MinValue)
+                .MaxOrNull(item => 
                 {
-                    time += player.Input.Count;
-                }
-                return time;    
-            }) ?? _defaultTime;
+	                var time = item.StartTime;
+	                if (item is Player player)
+	                {
+	                    time += player.Input.Count;
+	                }
+	                return time;    
+	            }) ?? _defaultTime;
         }
 
         public void Step(MoveInput input)
@@ -221,8 +222,11 @@ namespace TimeLoopInc
 
         public SceneInstant GetSceneInstant(int time)
         {
+            DebugEx.Assert(
+                time > -10000 && time < 10000, 
+                "If time is outside of this range then something probably has gone wrong.");
             time = Math.Min(time, ChangeEndTime() + 1);
-            if (time >= StartTime)
+            if (time >= ChangeStartTime())
             {
                 int key;
                 SceneInstant instant;
@@ -233,8 +237,8 @@ namespace TimeLoopInc
                 }
                 else
                 {
-                    key = StartTime - 1;
-                    instant = new SceneInstant(StartTime - 1);
+                    key = ChangeStartTime() - 1;
+                    instant = CreateSceneInstant(ChangeStartTime() - 1);
                 }
 
                 for (int i = key; i < time; i++)
@@ -244,7 +248,18 @@ namespace TimeLoopInc
                 }
                 return instant;
             }
-            return new SceneInstant(time);
+            return CreateSceneInstant(time);
+        }
+
+        SceneInstant CreateSceneInstant(int time)
+        {
+            DebugEx.Assert(time < ChangeStartTime());
+            var instant = new SceneInstant(time);
+            foreach (var entity in Entities.Where(item => item.StartTime == int.MinValue))
+            {
+                instant.Entities.Add(entity, entity.CreateInstant());
+            }
+            return instant;
         }
 
         /// <summary>
@@ -394,7 +409,7 @@ namespace TimeLoopInc
         {
             var output = new List<Paradox>();
             var endTime = ChangeEndTime() + 1;
-            for (int i = StartTime; i <= endTime; i++)
+            for (int i = ChangeStartTime(); i <= endTime; i++)
             {
                 output.AddRange(GetParadoxes(i));
             }
