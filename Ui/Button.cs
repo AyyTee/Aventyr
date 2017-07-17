@@ -10,7 +10,7 @@ using Game.Rendering;
 using OpenTK;
 using OpenTK.Graphics;
 
-namespace TimeLoopInc
+namespace Ui
 {
     public class Button : IUiElement, IEnumerable<IUiElement>
     {

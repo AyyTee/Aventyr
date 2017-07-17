@@ -90,12 +90,7 @@
     <Compile Include="IInput.cs" />
     <Compile Include="SelectInput.cs" />
     <Compile Include="TimelineBox.cs" />
-    <Compile Include="Button.cs" />
-    <Compile Include="UiController.cs" />
-    <Compile Include="IUiElement.cs" />
     <Compile Include="LevelEditor.cs" />
-    <Compile Include="UiText.cs" />
-    <Compile Include="UiElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -110,6 +105,10 @@
     <ProjectReference Include="..\GameProject\Game.csproj">
       <Project>{CE5CD75D-8626-4CD8-83FC-B7A4868DAEC0}</Project>
       <Name>Game</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ui\Ui.csproj">
+      <Project>{121543C8-986E-4F1F-BC66-419F682700B0}</Project>
+      <Name>Ui</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

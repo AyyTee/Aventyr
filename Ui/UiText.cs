@@ -6,7 +6,7 @@ using Game.Models;
 using Game.Rendering;
 using OpenTK;
 
-namespace TimeLoopInc
+namespace Ui
 {
     public class UiText : IUiElement
     {

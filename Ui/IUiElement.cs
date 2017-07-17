@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Game;
@@ -6,7 +6,7 @@ using Game.Common;
 using Game.Models;
 using OpenTK;
 
-namespace TimeLoopInc
+namespace Ui
 {
     public interface IUiElement
     {
