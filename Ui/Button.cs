@@ -12,7 +12,7 @@ using OpenTK.Graphics;
 
 namespace Ui
 {
-    public class Button : IUiElement, IEnumerable<IUiElement>
+    public class Button : IElement, IEnumerable<IElement>
     {
         public delegate void ClickHandler();
         public event ClickHandler OnClick;
@@ -21,7 +21,7 @@ namespace Ui
 
         public Transform2 Transform { get; set; } = new Transform2();
 
-        public ImmutableList<IUiElement> Children { get; set; } = new List<IUiElement>().ToImmutableList();
+        public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 
         public Button()
         {
@@ -55,9 +55,9 @@ namespace Ui
             return MathEx.PointInRectangle(new Vector2(), Size, localPoint);
         }
 
-        public IEnumerator<IUiElement> GetEnumerator() => Children.GetEnumerator();
+        public IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public void Add(IUiElement element)
+        public void Add(IElement element)
         {
             Children = Children.Concat(new[] { element }).ToImmutableList();
         }

@@ -8,9 +8,9 @@ using OpenTK;
 
 namespace Ui
 {
-    public interface IUiElement
+    public interface IElement
     {
-        ImmutableList<IUiElement> Children { get; }
+        ImmutableList<IElement> Children { get; }
         Transform2 Transform { get; }
 
         bool IsInside(Vector2 localPoint);

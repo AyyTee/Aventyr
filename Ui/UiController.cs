@@ -12,24 +12,25 @@ using OpenTK.Input;
 
 namespace Ui
 {
-    public class UiController : IUiElement, IEnumerable<IUiElement>
+    public class UiController : IElement, IEnumerable<IElement>
     {
-        public ImmutableList<IUiElement> Children { get; set; } = new List<IUiElement>().ToImmutableList();
+        public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
         readonly IVirtualWindow _window;
-        public ICamera2 Camera { get; set; }
+        ICamera2 _camera;
         List<UiWorldTransform> _flattenedUi = new List<UiWorldTransform>();
+        public IElement Hover { get; private set; }
 
         public Transform2 Transform => new Transform2();
 
         public UiController(IVirtualWindow window)
         {
             _window = window;
-            Camera = new HudCamera2(_window.CanvasSize);
         }
 
         public void Update(float uiScale)
         {
-            var mousePos = Camera.ScreenToWorld(_window.MousePosition, _window.CanvasSize);
+            _camera = new HudCamera2(_window.CanvasSize);
+            var mousePos = _window.MouseWorldPos(_camera);
             _flattenedUi = AllChildren();
 
             var buttonHover = _flattenedUi
@@ -39,6 +40,7 @@ namespace Ui
                         Vector2Ex.Transform(
                             mousePos,
                             item.WorldTransform.GetMatrix().Inverted())));
+            Hover = buttonHover?.Element;
             if (_window.ButtonPress(MouseButton.Left))
             {
                 (buttonHover?.Element as Button)?.Click();
@@ -52,7 +54,7 @@ namespace Ui
             return list;
         }
 
-        void _allChildren(IUiElement element, Transform2 worldTransform, List<UiWorldTransform> list)
+        void _allChildren(IElement element, Transform2 worldTransform, List<UiWorldTransform> list)
         {
             foreach (var child in element.Children)
             {
@@ -67,7 +69,7 @@ namespace Ui
             return new Layer
             {
                 DepthTest = false,
-                Camera = Camera,
+                Camera = _camera,
                 Renderables = _flattenedUi
                     .Select(item => (IRenderable)new Renderable(item.WorldTransform, item.Element.GetModels()))
                     .Reverse()
@@ -81,10 +83,10 @@ namespace Ui
 
         class UiWorldTransform
         {
-            public IUiElement Element { get; }
+            public IElement Element { get; }
             public Transform2 WorldTransform { get; }
 
-            public UiWorldTransform(IUiElement element, Transform2 worldTransform)
+            public UiWorldTransform(IElement element, Transform2 worldTransform)
             {
                 DebugEx.Assert(element != null);
                 DebugEx.Assert(worldTransform != null);
@@ -93,9 +95,9 @@ namespace Ui
             }
         }
 
-        public IEnumerator<IUiElement> GetEnumerator() => Children.GetEnumerator();
+        public IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public void Add(IUiElement element)
+        public void Add(IElement element)
         {
             Children = Children.Concat(new[] { element }).ToImmutableList();
         }

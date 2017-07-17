@@ -90,7 +90,8 @@
     <Compile Include="IInput.cs" />
     <Compile Include="SelectInput.cs" />
     <Compile Include="TimelineBox.cs" />
-    <Compile Include="LevelEditor.cs" />
+    <Compile Include="Editor\EditorController.cs" />
+    <Compile Include="Editor\SceneBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -110,6 +111,9 @@
       <Project>{121543C8-986E-4F1F-BC66-419F682700B0}</Project>
       <Name>Ui</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Editor\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

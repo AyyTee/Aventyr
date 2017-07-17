@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Immutable;
 using Ui;
+using TimeLoopInc.Editor;
 
 namespace TimeLoopInc
 {
@@ -25,6 +26,7 @@ namespace TimeLoopInc
         Scene _scene;
         SceneRender _sceneRender;
         UiController _menu;
+        EditorController _editor;
         TimelineRender _timelineRender;
         List<IInput> _input = new List<IInput>();
         List<Scene> _levels = new List<Scene>();
@@ -40,15 +42,15 @@ namespace TimeLoopInc
             {
                 new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 80), StartGame)
                 {
-                    new UiText(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Start Game"))
+                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Start Game"))
                 },
                 new Button(new Transform2(new Vector2(10, 100)), new Vector2(200, 80), StartLevelEditor)
                 {
-                    new UiText(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Level Editor"))
+                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Level Editor"))
                 },
                 new Button(new Transform2(new Vector2(10, 190)), new Vector2(200, 80), _window.Exit)
                 {
-                    new UiText(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Exit"))
+                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Exit"))
                 }
             };
 
@@ -141,6 +143,7 @@ namespace TimeLoopInc
                     _window.Layers.Add(_menu.Render());
                     break;
                 case MenuState.Editor:
+                    _editor.Render();
                     break;
                 case MenuState.InGame:
                     var animationT = MathHelper.Clamp(_updatesSinceLastStep / (float)_updatesPerAnimation, 0, 1);
@@ -176,6 +179,7 @@ namespace TimeLoopInc
                     _menu.Update(1);
                     break;
                 case MenuState.Editor:
+                    _editor.Update();
                     break;
                 case MenuState.InGame:
                     _sceneRender.Update(_window);

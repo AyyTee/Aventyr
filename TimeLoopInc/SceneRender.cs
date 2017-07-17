@@ -19,7 +19,7 @@ namespace TimeLoopInc
         readonly Scene _scene;
         readonly Model _grid;
         float _zoomFactor = 1;
-        GridCamera _camera;
+        public GridCamera Camera;
 
         public SceneRender(IVirtualWindow window, Scene scene)
         {
@@ -63,7 +63,7 @@ namespace TimeLoopInc
             var worldCamera = new GridCamera(cameraTransform, (float)_window.CanvasSize.XRatio);
             worldCamera.WorldVelocity = worldCamera.WorldVelocity.WithPosition(cameraVelocity / 6f);
             worldLayer.Camera = worldCamera;
-            _camera = worldCamera;
+            Camera = worldCamera;
 
             var portalView = PortalView.CalculatePortalViews(0, _scene.Portals, worldCamera, 30);
 
@@ -240,7 +240,7 @@ namespace TimeLoopInc
 
         public Vector2 GetMouseGrid()
         {
-            return _camera
+            return Camera
                 .ScreenToWorld(_window.MousePosition, _window.CanvasSize)
                 .Floor(Vector2.One);
         }

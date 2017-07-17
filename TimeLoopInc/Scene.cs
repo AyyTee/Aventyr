@@ -167,7 +167,18 @@ namespace TimeLoopInc
         }
 
         /// <summary>
-        /// Get the the last point where a change can occur in the scene.
+        /// Gets the first point where a change can occur in the scene.
+        /// </summary>
+        /// <returns>The start time.</returns>
+        public int ChangeStartTime()
+        {
+            return Entities
+                .Where(item => item.StartTime != int.MinValue)
+                .MinOrNull(item => item.StartTime) ?? _defaultTime;
+        }
+
+        /// <summary>
+        /// Get the last point where a change can occur in the scene.
         /// </summary>
         public int ChangeEndTime()
         {

@@ -120,6 +120,10 @@
       <Project>{9E41EC6B-89F1-429C-B18D-48A7035BA20D}</Project>
       <Name>TimeLoopInc</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Ui\Ui.csproj">
+      <Project>{121543C8-986E-4F1F-BC66-419F682700B0}</Project>
+      <Name>Ui</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

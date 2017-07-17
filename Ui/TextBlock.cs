@@ -8,15 +8,15 @@ using OpenTK;
 
 namespace Ui
 {
-    public class UiText : IUiElement
+    public class TextBlock : IElement
     {
-        public ImmutableList<IUiElement> Children { get; set; } = new List<IUiElement>().ToImmutableList();
+        public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 
         public Transform2 Transform { get; set; } = new Transform2();
 
         public TextEntity Text { get; set; }
 
-        public UiText(TextEntity text)
+        public TextBlock(TextEntity text)
         {
             DebugEx.Assert(text != null);
             Text = text;
