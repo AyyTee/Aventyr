@@ -64,6 +64,7 @@
     <Compile Include="UiController.cs" />
     <Compile Include="TextBlock.cs" />
     <Compile Include="Button.cs" />
+    <Compile Include="Frame.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameProject\Game.csproj">

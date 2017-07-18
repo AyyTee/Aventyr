@@ -10,7 +10,7 @@ namespace Ui
 {
     public class TextBlock : IElement
     {
-        public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
+        public ImmutableList<IElement> Children { get; } = new List<IElement>().ToImmutableList();
 
         public Transform2 Transform { get; set; } = new Transform2();
 

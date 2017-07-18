@@ -92,6 +92,8 @@
     <Compile Include="TimelineBox.cs" />
     <Compile Include="Editor\EditorController.cs" />
     <Compile Include="Editor\SceneBuilder.cs" />
+    <Compile Include="Editor\PortalBuilder.cs" />
+    <Compile Include="Editor\PortalLink.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

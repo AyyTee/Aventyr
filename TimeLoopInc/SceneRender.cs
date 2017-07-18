@@ -92,7 +92,8 @@ namespace TimeLoopInc
             var offset = GetOffset(offsetCount);
             if (!renderPortals)
             {
-                var renderables = RenderInstant(_scene.GetSceneInstant(time), t, worldLayer.Portals);
+                var renderables = RenderInstant(_scene, _scene.GetSceneInstant(time), t, worldLayer.Portals);
+                renderables.Add(new Renderable { Models = new List<Model> { _grid }, IsPortalable = false });
                 foreach (var renderable in renderables)
                 {
                     if (portalView.PortalEntrance != null)
@@ -153,7 +154,7 @@ namespace TimeLoopInc
 
         Vector2 GetOffset(int offsetCount) => new Vector2((offsetCount % 2) * 100, (offsetCount / 2) * 100);
 
-        List<Renderable> RenderInstant(SceneInstant sceneInstant, float t, IEnumerable<IPortalRenderable> portals)
+        public static List<Renderable> RenderInstant(Scene _scene, SceneInstant sceneInstant, float t, IEnumerable<IPortalRenderable> portals)
         {
             var output = new List<Renderable>();
 
@@ -200,11 +201,10 @@ namespace TimeLoopInc
                 output.Add(CreateSquare(exit, 1, new Color4(0.8f, 1f, 1f, 0.3f)));
             }
 
-            output.Add(new Renderable { Models = new List<Model> { _grid }, IsPortalable = false });
             return output;
         }
 
-        Transform2 GridEntityWorldPosition(SceneInstant sceneInstant, IGridEntity gridEntity, float t, IEnumerable<IPortalRenderable> portals)
+        static Transform2 GridEntityWorldPosition(SceneInstant sceneInstant, IGridEntity gridEntity, float t, IEnumerable<IPortalRenderable> portals)
         {
             var offset = Vector2d.One / 2;
             var velocity = (Vector2)sceneInstant[gridEntity].PreviousVelocity;
@@ -229,7 +229,7 @@ namespace TimeLoopInc
         }
 
 
-        Renderable CreateSquare(Vector2i position, int size, Color4 color)
+        static Renderable CreateSquare(Vector2i position, int size, Color4 color)
         {
             var model = ModelFactory.CreatePlane(Vector2.One * size * 0.98f, new Color4(), new Vector3(-size / 2f + 0.01f));
             model.SetColor(color);

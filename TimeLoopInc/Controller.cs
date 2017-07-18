@@ -60,6 +60,8 @@ namespace TimeLoopInc
                 CreateLevel1()
             }.ToList();
 
+            _editor = new EditorController(_window, this);
+
             Initialize();
         }
 
