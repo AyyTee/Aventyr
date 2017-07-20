@@ -23,7 +23,12 @@ namespace TimeLoopInc
 
         public SceneRender(IVirtualWindow window, Scene scene)
         {
-            _grid = ModelFactory.CreateGrid(new Vector2i(20, 20), Vector2.One, Color4.HotPink, Color4.LightPink, new Vector3(-10, -10, -2));
+            _grid = ModelFactory.CreateGrid(
+                new Vector2i(20, 20), 
+                Vector2.One, 
+                Color4.HotPink, 
+                Color4.LightPink, 
+                new Vector3(-10, -10, -2));
             _window = window;
             _scene = scene;
         }

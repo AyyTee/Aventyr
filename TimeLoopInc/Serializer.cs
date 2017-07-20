@@ -4,17 +4,20 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace TimeLoopInc
 {
-    public class Serializer : Game.Serialization.Serializer
+    public static class Serializer
     {
-        protected override IEnumerable<Type> GetKnownTypes()
+        public static string Serialize<T>(T data)
         {
-            return base.GetKnownTypes()
-                .Concat(typeof(SceneInstant).Assembly
-                    .GetTypes()
-                    .Where(item => Attribute.IsDefined(item, typeof(DataContractAttribute))));
+            return JsonConvert.SerializeObject(data);
+        }
+
+        public static T Deserialize<T>(string data)
+        {
+            return JsonConvert.DeserializeObject<T>(data);
         }
     }
 }

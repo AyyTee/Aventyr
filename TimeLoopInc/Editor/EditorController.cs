@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Game.Common;
 using Game.Rendering;
@@ -11,16 +12,21 @@ namespace TimeLoopInc.Editor
 {
     public class EditorController
     {
-        enum ToolType { Player, Wall, Portal, Link, Exit }
+        enum ToolType { Player, Block, Wall, Portal, Link, Exit }
+
+        public static string LevelPath => "Levels";
 
         readonly IVirtualWindow _window;
         readonly UiController _menu;
         readonly GridCamera _camera;
         readonly Controller _controller;
         SceneBuilder Scene => _sceneChanges.Last();
+        bool _isPlaying => _playScene != null;
+        Scene _playScene;
         Vector2i _mousePosition;
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
         ToolType _tool = ToolType.Wall;
+        SceneRender _sceneRender;
 
         public EditorController(IVirtualWindow window, Controller controller)
         {
@@ -28,19 +34,79 @@ namespace TimeLoopInc.Editor
 
             _window = window;
             _controller = controller;
-            _menu = new UiController(_window)
+
+            var playButton = new Button(new Transform2(new Vector2(10, 210)), new Vector2(200, 90))
             {
-                new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
+                new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Play"))
+            };
+
+            var editor = new Frame
+            {
+                new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 90), Save)
                 {
                     new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Save As..."))
                 },
-				new Button(new Transform2(new Vector2(10, 110)), new Vector2(200, 90))
-				{
-					new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Play"))
-				}
+                new Button(new Transform2(new Vector2(10, 110)), new Vector2(200, 90), Load)
+                {
+                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Load"))
+                },
+                playButton
             };
+
+            var returnButton = new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
+            {
+                new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Return to editor"))
+            };
+
+            var endGame = new Frame
+            {
+                returnButton,
+                new Button(new Transform2(new Vector2(10, 110)), new Vector2(200, 90))
+                {
+                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Restart"))
+                }
+            };
+
+            _menu = new UiController(_window)
+            {
+                editor
+            };
+
+            playButton.OnClick += () =>
+            {
+                if (Scene.Entities.OfType<Player>().Any())
+                {
+                    _menu.Children = _menu.Children.Remove(editor).Add(endGame);
+                    _playScene = Scene.CreateScene();
+                    _sceneRender = new SceneRender(_window, _playScene);
+                }
+            };
+
+            returnButton.OnClick += () =>
+            {
+                _menu.Children = _menu.Children.Remove(endGame).Add(editor);
+                _playScene = null;
+            };
+
             _camera = new GridCamera(new Transform2(), (float)_window.CanvasSize.XRatio);
             _camera.WorldTransform = _camera.WorldTransform.WithSize(10);
+        }
+
+        void Save()
+        {
+            var filepath = Path.Combine(LevelPath, "Saved.xml");
+            Directory.CreateDirectory(LevelPath);
+
+            File.WriteAllText(filepath, Serializer.Serialize(Scene));
+        }
+
+        void Load()
+        {
+            var filepath = Path.Combine(LevelPath, "Saved.xml");
+            _sceneChanges = new[]
+            {
+                Serializer.Deserialize<SceneBuilder>(File.ReadAllText(filepath))
+            }.ToList();
         }
 
         public void Update()
@@ -48,19 +114,89 @@ namespace TimeLoopInc.Editor
             _mousePosition = (Vector2i)_window.MouseWorldPos(_camera).Floor(Vector2.One);
 
             _menu.Update(1);
-            if (_menu.Hover == null)
+            if (_isPlaying)
             {
-                if (_window.ButtonPress(MouseButton.Left))
+                var input = MoveInput.CreateFromKeyboard(_window);
+                if (input != null)
                 {
-                    ApplyChanges(Scene.With(Scene.Walls.Add(_mousePosition)));
+                    _playScene.Step(input);
                 }
             }
-
-            if (_window.ButtonDown(KeyBoth.Control) && _window.ButtonPress(Key.Z))
+            else
             {
-                if (_sceneChanges.Count > 1)
+                if (_menu.Hover == null)
                 {
-                    _sceneChanges.RemoveAt(_sceneChanges.Count - 1);    
+                    switch (_tool)
+                    {
+                        case ToolType.Wall:
+                            if (_window.ButtonPress(MouseButton.Left))
+                            {
+                                ApplyChanges(Scene.With(Scene.Walls.Add(_mousePosition)));
+                            }
+                            break;
+                        case ToolType.Player:
+                            if (_window.ButtonPress(MouseButton.Left))
+                            {
+                                var entities = Scene.Entities
+                                    .RemoveAll(item => item is Player || item.StartTransform.Position == _mousePosition)
+                                    .Add(new Player(new Transform2i(_mousePosition), 0));
+                                ApplyChanges(Scene.With(entities: entities));
+                            }
+                            break;
+                        case ToolType.Block:
+                            if (_window.ButtonPress(MouseButton.Left))
+                            {
+                                var entities = Scene.Entities
+                                    .RemoveAll(item => item.StartTransform.Position == _mousePosition)
+                                    .Add(new Block(new Transform2i(_mousePosition)));
+                                ApplyChanges(Scene.With(entities: entities));
+                            }
+                            break;
+                        case ToolType.Exit:
+                            if (_window.ButtonPress(MouseButton.Left))
+                            {
+                                var exits = Scene.Exits.Add(_mousePosition);
+                                ApplyChanges(Scene.With(exits: exits));
+                            }
+                            break;
+                        case ToolType.Portal:
+                            break;
+                        case ToolType.Link:
+                            break;
+                    }
+
+                    if (_window.ButtonDown(KeyBoth.Control) && _window.ButtonPress(Key.Z))
+                    {
+                        if (_sceneChanges.Count > 1)
+                        {
+                            _sceneChanges.RemoveAt(_sceneChanges.Count - 1);
+                        }
+                    }
+
+                    if (_window.ButtonDown(Key.Number1))
+                    {
+                        _tool = ToolType.Wall;
+                    }
+                    else if (_window.ButtonDown(Key.Number2))
+                    {
+                        _tool = ToolType.Player;
+                    }
+                    else if (_window.ButtonDown(Key.Number3))
+                    {
+                        _tool = ToolType.Block;
+                    }
+                    else if (_window.ButtonDown(Key.Number4))
+                    {
+                        _tool = ToolType.Exit;
+                    }
+                    else if (_window.ButtonDown(Key.Number5))
+                    {
+                        _tool = ToolType.Portal;
+                    }
+                    else if (_window.ButtonDown(Key.Number6))
+                    {
+                        _tool = ToolType.Link;
+                    }
                 }
             }
         }
@@ -72,20 +208,27 @@ namespace TimeLoopInc.Editor
 
         public void Render()
         {
-            var scene = Scene.CreateScene();
-
-            var layer = new Layer
+            if (_isPlaying)
             {
-                Camera = _camera,
-                Renderables = SceneRender.RenderInstant(scene, scene.GetSceneInstant(0), 1, scene.Portals)
-                    .Cast<IRenderable>()
-                    .ToList()
-            };
-            _window.Layers.Add(layer);
+                _window.Layers.Add(_sceneRender.Render(1));
+            }
+            else
+            {
+                var scene = Scene.CreateScene();
+
+                var layer = new Layer
+                {
+                    Camera = _camera,
+                    Renderables = SceneRender.RenderInstant(scene, scene.GetSceneInstant(0), 1, scene.Portals)
+                        .Cast<IRenderable>()
+                        .ToList()
+                };
+                _window.Layers.Add(layer);
+            }
 
             var gui = _menu.Render();
             gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 130), _mousePosition.ToString()));
             _window.Layers.Add(gui);
-		}
+        }
     }
 }

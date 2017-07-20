@@ -14,10 +14,6 @@ namespace Game.Serialization
         public const string FileExtension = "save";
         public const string FileExtensionName = "Save File";
 
-        public Serializer()
-        {
-        }
-
         public void Serialize(Scene scene, string filename)
         {
             _serialize(scene, filename);
@@ -26,6 +22,20 @@ namespace Game.Serialization
         public void Serialize<T>(Stream stream, T data)
         {
             GetSerializer().WriteObject(stream, data);
+        }
+
+        public void Serialize<T>(string filepath, T data)
+        {
+            var settings = new XmlWriterSettings
+            {
+                Indent = true,
+                NewLineOnAttributes = false,
+                OmitXmlDeclaration = true
+            };
+            using (XmlWriter writer = XmlWriter.Create(filepath, settings))
+            {
+                GetSerializer().WriteObject(writer, data);
+            }
         }
 
         void _serialize(Scene scene, string filename)
@@ -54,9 +64,9 @@ namespace Game.Serialization
         DataContractSerializer GetSerializer()
         {
             return new DataContractSerializer(
-                typeof(object), 
-                "Game", 
-                "Game", 
+                typeof(object),
+                "Game",
+                "Game",
                 GetKnownTypes(),
                 int.MaxValue,
                 false,
