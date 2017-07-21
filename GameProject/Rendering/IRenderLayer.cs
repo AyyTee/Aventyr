@@ -47,13 +47,14 @@ namespace Game.Rendering
             return Line(line, Color4.Black);
         }
 
-        public static IRenderable Line(LineF line, Color4 color)
+        public static IRenderable Line(LineF line, Color4 color, float thickness = 1)
         {
-            var plane = ModelFactory.CreateLines(new[] { line });
+            var plane = ModelFactory.CreateLinesWidth(new[] { line }, thickness);
             if (color.A < 1)
             {
                 plane.IsTransparent = true;
             }
+            plane.Color = color;
             return GetRenderable(plane);
         }
 

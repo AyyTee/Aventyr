@@ -196,6 +196,13 @@ namespace TimeLoopInc
                 output.Add(renderable);
             }
 
+            foreach (var portal in _scene.Portals)
+            {
+                var line = (Renderable)Draw.Line(new LineF(portal.GetWorldVerts()), Color4.Blue, 0.08f);
+                line.IsPortalable = false;
+                output.Add(line);
+            }
+
             foreach (var wall in _scene.Walls)
             {
                 output.Add(CreateSquare(wall, 1, new Color4(0.8f, 1f, 0.5f, 1f)));

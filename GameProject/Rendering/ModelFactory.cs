@@ -327,8 +327,8 @@ namespace Game.Rendering
                 vertices[i] = new Vertex(vectors[i]);
             }
             int index = mesh.AddVertexRange(vertices);
-            mesh.AddTriangle(index + 2, index + 1, index);
-            mesh.AddTriangle(index, index + 3, index + 2);
+            mesh.AddTriangle(index + 1, index + 2, index);
+            mesh.AddTriangle(index, index + 2, index + 3);
         }
 
         public static Model CreateLineStrip(Vector2[] vertices, Color4[] colors)

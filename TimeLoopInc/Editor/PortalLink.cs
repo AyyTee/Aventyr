@@ -9,10 +9,9 @@ namespace TimeLoopInc.Editor
         public PortalBuilder Portal1 { get; }
         public int TimeOffset { get; }
 
-        public PortalLink(PortalBuilder portal0, PortalBuilder portal1, int timeOffset = 0)
+        public PortalLink(PortalBuilder portal0, PortalBuilder portal1 = null, int timeOffset = 0)
         {
             DebugEx.Assert(portal0 != null);
-            DebugEx.Assert(portal1 != null);
             DebugEx.Assert(portal0 != portal1);
 
             Portal0 = portal0;

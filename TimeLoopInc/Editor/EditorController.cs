@@ -23,7 +23,7 @@ namespace TimeLoopInc.Editor
         SceneBuilder Scene => _sceneChanges.Last();
         bool _isPlaying => _playScene != null;
         Scene _playScene;
-        Vector2i _mousePosition;
+        Vector2i _mouseGridPos;
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
         ToolType _tool = ToolType.Wall;
         SceneRender _sceneRender;
@@ -112,7 +112,8 @@ namespace TimeLoopInc.Editor
 
         public void Update()
         {
-            _mousePosition = (Vector2i)_window.MouseWorldPos(_camera).Floor(Vector2.One);
+            var mousePos = _window.MouseWorldPos(_camera).Floor(Vector2.One);
+            _mouseGridPos = (Vector2i)mousePos;
 
             _menu.Update(1);
             if (_isPlaying)
@@ -132,15 +133,15 @@ namespace TimeLoopInc.Editor
                         case ToolType.Wall:
                             if (_window.ButtonPress(MouseButton.Left))
                             {
-                                ApplyChanges(Scene.With(Scene.Walls.Add(_mousePosition)));
+                                ApplyChanges(Scene.With(Scene.Walls.Add(_mouseGridPos)));
                             }
                             break;
                         case ToolType.Player:
                             if (_window.ButtonPress(MouseButton.Left))
                             {
                                 var entities = Scene.Entities
-                                    .RemoveAll(item => item is Player || item.StartTransform.Position == _mousePosition)
-                                    .Add(new Player(new Transform2i(_mousePosition), 0));
+                                    .RemoveAll(item => item is Player || item.StartTransform.Position == _mouseGridPos)
+                                    .Add(new Player(new Transform2i(_mouseGridPos), 0));
                                 ApplyChanges(Scene.With(entities: entities));
                             }
                             break;
@@ -148,19 +149,32 @@ namespace TimeLoopInc.Editor
                             if (_window.ButtonPress(MouseButton.Left))
                             {
                                 var entities = Scene.Entities
-                                    .RemoveAll(item => item.StartTransform.Position == _mousePosition)
-                                    .Add(new Block(new Transform2i(_mousePosition)));
+                                    .RemoveAll(item => item.StartTransform.Position == _mouseGridPos)
+                                    .Add(new Block(new Transform2i(_mouseGridPos)));
                                 ApplyChanges(Scene.With(entities: entities));
                             }
                             break;
                         case ToolType.Exit:
                             if (_window.ButtonPress(MouseButton.Left))
                             {
-                                var exits = Scene.Exits.Add(_mousePosition);
+                                var exits = Scene.Exits.Add(_mouseGridPos);
                                 ApplyChanges(Scene.With(exits: exits));
                             }
                             break;
                         case ToolType.Portal:
+                            if (_window.ButtonPress(MouseButton.Left))
+                            {
+                                var sides = PortalValidSides(_mouseGridPos, Scene.Walls);
+                                if (sides.Count > 0)
+                                {
+                                    var side = sides
+                                        .OrderBy(item => ((Vector2)item.Vector - mousePos.Frac(Vector2.One)).Length)
+                                        .First();
+                                    var link = new PortalLink(new PortalBuilder(_mouseGridPos, side));
+                                    Scene.Links.Add(link);
+
+                                }
+                            }
                             break;
                         case ToolType.Link:
                             break;
@@ -269,7 +283,7 @@ namespace TimeLoopInc.Editor
             }
 
             var gui = _menu.Render();
-            gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 130), _mousePosition.ToString()));
+            gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 130), _mouseGridPos.ToString()));
             _window.Layers.Add(gui);
         }
     }

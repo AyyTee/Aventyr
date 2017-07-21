@@ -110,6 +110,16 @@ namespace Game.Common
             return new Vector2d(Math.Floor(v.X), Math.Floor(v.Y)) * floorBy;
         }
 
+        public static Vector2 Frac(this Vector2 vector, Vector2 fracBy)
+        {
+            return vector - vector.Floor(fracBy);
+        }
+
+        public static Vector2d Frac(this Vector2d vector, Vector2d fracBy)
+        {
+            return vector - vector.Floor(fracBy);
+        }
+
         public static Vector2d Lerp(this Vector2d start, Vector2d end, double T) => start * (1 - T) + end * T;
 
         public static Vector2 Lerp(this Vector2 start, Vector2 end, float T) => start * (1 - T) + end * T;
