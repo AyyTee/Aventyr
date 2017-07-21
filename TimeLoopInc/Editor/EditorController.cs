@@ -35,45 +35,44 @@ namespace TimeLoopInc.Editor
             _window = window;
             _controller = controller;
 
+            _menu = new UiController(_window);
 
-            var editor = new Frame
+            _menu.Root = new Frame(out Frame rootFrame)
             {
-                new Button(out _, new Transform2(new Vector2(10, 10)), new Vector2(200, 90), Save)
+                new Frame(out Frame editor, new Transform2())
                 {
-                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Save As..."))
+                    new Button(out _, new Transform2(new Vector2(10, 10)), new Vector2(200, 90), Save)
+                    {
+                        new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Save As..."))
+                    },
+                    new Button(out _, new Transform2(new Vector2(10, 110)), new Vector2(200, 90), Load)
+                    {
+                        new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Load"))
+                    },
+                    new Button(out Button playButton, new Transform2(new Vector2(10, 210)), new Vector2(200, 90))
+                    {
+                        new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Play"))
+                    }
                 },
-                new Button(out _, new Transform2(new Vector2(10, 110)), new Vector2(200, 90), Load)
+                new Frame(out Frame endGame, new Transform2(), true)
                 {
-                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Load"))
-                },
-                new Button(out Button playButton, new Transform2(new Vector2(10, 210)), new Vector2(200, 90))
-                {
-                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Play"))
+                    new Button(out Button returnButton, new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
+                    {
+                        new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Return to editor"))
+                    },
+                    new Button(out _, new Transform2(new Vector2(10, 110)), new Vector2(200, 90))
+                    {
+                        new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Restart"))
+                    }
                 }
-            };
-
-            var endGame = new Frame
-            {
-                new Button(out Button returnButton, new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
-                {
-                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Return to editor"))
-                },
-                new Button(out _, new Transform2(new Vector2(10, 110)), new Vector2(200, 90))
-                {
-                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Restart"))
-                }
-            };
-
-            _menu = new UiController(_window)
-            {
-                editor
             };
 
             playButton.OnClick += () =>
             {
                 if (Scene.Entities.OfType<Player>().Any())
                 {
-                    _menu.Children = _menu.Children.Remove(editor).Add(endGame);
+                    editor.Hidden = true;
+                    endGame.Hidden = false;
                     _playScene = Scene.CreateScene();
                     _sceneRender = new SceneRender(_window, _playScene);
                 }
@@ -81,7 +80,9 @@ namespace TimeLoopInc.Editor
 
             returnButton.OnClick += () =>
             {
-                _menu.Children = _menu.Children.Remove(endGame).Add(editor);
+                editor.Hidden = false;
+                endGame.Hidden = true;
+                rootFrame.Children = rootFrame.Children.Remove(endGame).Add(editor);
                 _playScene = null;
             };
 
@@ -199,6 +200,47 @@ namespace TimeLoopInc.Editor
                     }
                 }
             }
+        }
+
+        public static HashSet<GridAngle> PortalValidSides(Vector2i worldPosition, ISet<Vector2i> walls)
+        {
+            var validSides = new HashSet<GridAngle>();
+            if (walls.Contains(worldPosition))
+            {
+                return validSides;
+            }
+
+            var up = worldPosition + new Vector2i(0, 1);
+            var down = worldPosition + new Vector2i(0, -1);
+            var left = worldPosition + new Vector2i(-1, 0);
+            var right = worldPosition + new Vector2i(1, 0);
+
+            var column = new[] { new Vector2i(0, -1), new Vector2i(), new Vector2i(0, 1) };
+            var row = new[] { new Vector2i(-1, 0), new Vector2i(), new Vector2i(1, 0) };
+
+            if (new[] { up, down }.All(item => !walls.Contains(item)))
+            {
+                if (column.Select(item => item + left).All(item => walls.Contains(item)))
+                {
+                    validSides.Add(GridAngle.Left);
+                }
+                if (column.Select(item => item + right).All(item => walls.Contains(item)))
+                {
+                    validSides.Add(GridAngle.Right);
+                }
+            }
+            else if (new[] { left, right }.All(item => !walls.Contains(item)))
+            {
+                if (row.Select(item => item + up).All(item => walls.Contains(item)))
+                {
+                    validSides.Add(GridAngle.Up);
+                }
+                if (row.Select(item => item + down).All(item => walls.Contains(item)))
+                {
+                    validSides.Add(GridAngle.Down);
+                }
+            }
+            return validSides;
         }
 
         void ApplyChanges(SceneBuilder newScene)

@@ -12,7 +12,7 @@ using OpenTK.Graphics;
 
 namespace Ui
 {
-    public class Button : IElement, IEnumerable<IElement>
+    public class Button : IElement
     {
         public delegate void ClickHandler();
         public event ClickHandler OnClick;
@@ -20,6 +20,8 @@ namespace Ui
         public Vector2 Size { get; set; }
 
         public Transform2 Transform { get; set; } = new Transform2();
+
+        public bool Hidden { get; set; }
 
         public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 

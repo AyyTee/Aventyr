@@ -8,10 +8,13 @@ using OpenTK;
 
 namespace Ui
 {
-    public interface IElement
+    public interface IElement : IEnumerable<IElement>
     {
-        ImmutableList<IElement> Children { get; }
         Transform2 Transform { get; }
+        /// <summary>
+        /// Element and descendent elements are excluded from processing.
+        /// </summary>
+        bool Hidden { get; }
 
         bool IsInside(Vector2 localPoint);
         List<Model> GetModels();

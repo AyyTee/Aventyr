@@ -12,9 +12,9 @@ using OpenTK.Input;
 
 namespace Ui
 {
-    public class UiController : IElement, IEnumerable<IElement>
+    public class UiController
     {
-        public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
+        public Frame Root { get; set; } = new Frame();
         readonly IVirtualWindow _window;
         ICamera2 _camera;
         List<UiWorldTransform> _flattenedUi = new List<UiWorldTransform>();
@@ -50,18 +50,22 @@ namespace Ui
         List<UiWorldTransform> AllChildren()
         {
             var list = new List<UiWorldTransform>();
-            _allChildren(this, new Transform2(), list);
+            _allChildren(Root, new Transform2(), list);
             return list;
         }
 
         void _allChildren(IElement element, Transform2 worldTransform, List<UiWorldTransform> list)
         {
-            foreach (var child in element.Children)
+            if (element.Hidden)
             {
-                var transform = worldTransform.Transform(child.Transform);
-                _allChildren(child, transform, list);
-                list.Add(new UiWorldTransform(child, transform));
+                return;
             }
+            var transform = worldTransform.Transform(element.Transform);
+            foreach (var child in element)
+            {
+                _allChildren(child, transform, list);
+            }
+            list.Add(new UiWorldTransform(element, transform));
         }
 
         public Layer Render()
@@ -93,13 +97,6 @@ namespace Ui
                 Element = element;
                 WorldTransform = worldTransform;
             }
-        }
-
-        public IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public void Add(IElement element)
-        {
-            Children = Children.Concat(new[] { element }).ToImmutableList();
         }
     }
 }

@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="TimeLoopIncTests\EditorControllerTests.cs" />
     <Compile Include="TimeLoopIncTests\SceneTests.cs" />
     <Compile Include="TankGameTests\TankGameTests.cs" />
     <Compile Include="GameTests\ActorTests.cs" />
@@ -128,10 +129,6 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TimeLoopIncTests\" />
-    <Folder Include="GameTests\" />
-    <Folder Include="TankGameTests\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Game.Common;
@@ -10,11 +11,11 @@ namespace Ui
 {
     public class TextBlock : IElement
     {
-        public ImmutableList<IElement> Children { get; } = new List<IElement>().ToImmutableList();
-
         public Transform2 Transform { get; set; } = new Transform2();
 
         public TextEntity Text { get; set; }
+
+        public bool Hidden { get; set; }
 
         public TextBlock(TextEntity text)
         {
@@ -34,5 +35,15 @@ namespace Ui
         }
 
         public bool IsInside(Vector2 localPoint) => false;
+
+        public IEnumerator<IElement> GetEnumerator()
+        {
+            return new List<IElement>().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }
