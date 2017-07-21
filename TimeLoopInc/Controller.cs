@@ -40,15 +40,15 @@ namespace TimeLoopInc
             _window = window;
             _menu = new UiController(_window)
             {
-                new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 80), StartGame)
+                new Button(out _, new Transform2(new Vector2(10, 10)), new Vector2(200, 80), StartGame)
                 {
                     new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Start Game"))
                 },
-                new Button(new Transform2(new Vector2(10, 100)), new Vector2(200, 80), StartLevelEditor)
+                new Button(out _, new Transform2(new Vector2(10, 100)), new Vector2(200, 80), StartLevelEditor)
                 {
                     new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Level Editor"))
                 },
-                new Button(new Transform2(new Vector2(10, 190)), new Vector2(200, 80), _window.Exit)
+                new Button(out _, new Transform2(new Vector2(10, 190)), new Vector2(200, 80), _window.Exit)
                 {
                     new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(), "Exit"))
                 }

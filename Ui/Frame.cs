@@ -19,8 +19,9 @@ namespace Ui
         {
         }
 
-        public Frame(Transform2 transform)
+        public Frame(out Frame id, Transform2 transform)
         {
+            id = this;
             Transform = transform;
         }
 

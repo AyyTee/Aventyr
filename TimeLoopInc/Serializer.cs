@@ -12,12 +12,20 @@ namespace TimeLoopInc
     {
         public static string Serialize<T>(T data)
         {
-            return JsonConvert.SerializeObject(data);
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            };
+            return JsonConvert.SerializeObject(data, settings);
         }
 
         public static T Deserialize<T>(string data)
         {
-            return JsonConvert.DeserializeObject<T>(data);
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            };
+            return JsonConvert.DeserializeObject<T>(data, settings);
         }
     }
 }

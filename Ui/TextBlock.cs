@@ -22,6 +22,12 @@ namespace Ui
             Text = text;
         }
 
+        public TextBlock(TextEntity text, out TextBlock id)
+            : this(text)
+        {
+            id = this;
+        }
+
         public List<Model> GetModels()
         {
             return Text.GetModels();

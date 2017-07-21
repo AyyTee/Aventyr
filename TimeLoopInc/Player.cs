@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace TimeLoopInc
 {
@@ -12,17 +13,22 @@ namespace TimeLoopInc
     public class Player : IGridEntity
     {
         [DataMember]
-        public Transform2i StartTransform { get; }
+        public Transform2i StartTransform { get; private set; }
         [DataMember]
-        public Vector2i PreviousVelocity { get; }
+        public Vector2i PreviousVelocity { get; private set; }
         [DataMember]
-        public Transform2i PreviousTransform { get; }
+        public Transform2i PreviousTransform { get; private set; }
         [DataMember]
-        public int PreviousTime { get; }
+        public int PreviousTime { get; private set; }
         [DataMember]
-        public int StartTime { get; }
+        public int StartTime { get; private set; }
         [DataMember]
         public List<MoveInput> Input { get; private set; } = new List<MoveInput>();
+
+        [JsonConstructor]
+        private Player()
+        {
+        }
 
         public Player(Transform2i startTransform, int startTime)
         {

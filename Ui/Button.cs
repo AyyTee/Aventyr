@@ -27,8 +27,9 @@ namespace Ui
         {
         }
 
-        public Button(Transform2 transform, Vector2 size, Action onClick = null)
+        public Button(out Button id, Transform2 transform, Vector2 size, Action onClick = null)
         {
+            id = this;
             Transform = transform;
             Size = size;
             if (onClick != null)

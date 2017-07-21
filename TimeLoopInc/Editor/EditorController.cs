@@ -35,33 +35,30 @@ namespace TimeLoopInc.Editor
             _window = window;
             _controller = controller;
 
-            var playButton = new Button(new Transform2(new Vector2(10, 210)), new Vector2(200, 90))
-            {
-                new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Play"))
-            };
 
             var editor = new Frame
             {
-                new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 90), Save)
+                new Button(out _, new Transform2(new Vector2(10, 10)), new Vector2(200, 90), Save)
                 {
                     new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Save As..."))
                 },
-                new Button(new Transform2(new Vector2(10, 110)), new Vector2(200, 90), Load)
+                new Button(out _, new Transform2(new Vector2(10, 110)), new Vector2(200, 90), Load)
                 {
                     new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Load"))
                 },
-                playButton
-            };
-
-            var returnButton = new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
-            {
-                new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Return to editor"))
+                new Button(out Button playButton, new Transform2(new Vector2(10, 210)), new Vector2(200, 90))
+                {
+                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Play"))
+                }
             };
 
             var endGame = new Frame
             {
-                returnButton,
-                new Button(new Transform2(new Vector2(10, 110)), new Vector2(200, 90))
+                new Button(out Button returnButton, new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
+                {
+                    new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Return to editor"))
+                },
+                new Button(out _, new Transform2(new Vector2(10, 110)), new Vector2(200, 90))
                 {
                     new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Restart"))
                 }
@@ -103,10 +100,13 @@ namespace TimeLoopInc.Editor
         void Load()
         {
             var filepath = Path.Combine(LevelPath, "Saved.xml");
-            _sceneChanges = new[]
+            if (File.Exists(filepath))
             {
-                Serializer.Deserialize<SceneBuilder>(File.ReadAllText(filepath))
-            }.ToList();
+                _sceneChanges = new[]
+                {
+                    Serializer.Deserialize<SceneBuilder>(File.ReadAllText(filepath))
+                }.ToList();
+            }
         }
 
         public void Update()

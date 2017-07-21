@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "GameProject\Game.csproj", "{CE5CD75D-8626-4CD8-83FC-B7A4868DAEC0}"
 EndProject
@@ -21,11 +21,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ui", "Ui\Ui.csproj", "{121543C8-986E-4F1F-BC66-419F682700B0}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "EditorWindow", "Editor\EditorWindow.csproj", "{55433843-7866-42EB-BD31-1D0C8B8DDD6E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorWindow", "Editor\EditorWindow.csproj", "{8AC53023-4D63-425A-B2F7-3728B5680BCE}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "DebugVisualizer", "CustomDebugVisualizer\DebugVisualizer.csproj", "{E9E5D134-520F-4BA1-ACBE-4296B54618A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugVisualizer", "CustomDebugVisualizer\DebugVisualizer.csproj", "{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "DebugVisualizerTests", "VisualizerTests\DebugVisualizerTests.csproj", "{108631F5-6CEC-49A8-A142-7A26FAB5DF2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugVisualizerTests", "VisualizerTests\DebugVisualizerTests.csproj", "{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,19 +69,19 @@ Global
 		{121543C8-986E-4F1F-BC66-419F682700B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{121543C8-986E-4F1F-BC66-419F682700B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{121543C8-986E-4F1F-BC66-419F682700B0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{55433843-7866-42EB-BD31-1D0C8B8DDD6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{55433843-7866-42EB-BD31-1D0C8B8DDD6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{55433843-7866-42EB-BD31-1D0C8B8DDD6E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{55433843-7866-42EB-BD31-1D0C8B8DDD6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{55433843-7866-42EB-BD31-1D0C8B8DDD6E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E9E5D134-520F-4BA1-ACBE-4296B54618A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E9E5D134-520F-4BA1-ACBE-4296B54618A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E9E5D134-520F-4BA1-ACBE-4296B54618A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E9E5D134-520F-4BA1-ACBE-4296B54618A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{108631F5-6CEC-49A8-A142-7A26FAB5DF2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{108631F5-6CEC-49A8-A142-7A26FAB5DF2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{108631F5-6CEC-49A8-A142-7A26FAB5DF2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{108631F5-6CEC-49A8-A142-7A26FAB5DF2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AC53023-4D63-425A-B2F7-3728B5680BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AC53023-4D63-425A-B2F7-3728B5680BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AC53023-4D63-425A-B2F7-3728B5680BCE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8AC53023-4D63-425A-B2F7-3728B5680BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AC53023-4D63-425A-B2F7-3728B5680BCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

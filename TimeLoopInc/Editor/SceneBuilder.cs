@@ -17,23 +17,19 @@ namespace TimeLoopInc.Editor
         [DataMember]
         public ImmutableList<IGridEntity> Entities { get; private set; } = new List<IGridEntity>().ToImmutableList();
         [DataMember]
-        public ImmutableList<PortalBuilder> Portals { get; private set; } = new List<PortalBuilder>().ToImmutableList();
-        [DataMember]
         public ImmutableList<PortalLink> Links { get; private set; } = new List<PortalLink>().ToImmutableList();
 
         public SceneBuilder With(
             ISet<Vector2i> walls = null, 
             ISet<Vector2i> exits = null, 
             IEnumerable<IGridEntity> entities = null, 
-            IEnumerable<PortalBuilder> portals = null)
+            IEnumerable<PortalLink> links = null)
         {
             var clone = (SceneBuilder)MemberwiseClone();
             clone.Walls = walls?.ToImmutableHashSet() ?? Walls;
             clone.Exits = exits?.ToImmutableHashSet() ?? Exits;
             clone.Entities = entities?.ToImmutableList() ?? Entities;
-            clone.Portals = portals?.ToImmutableList() ?? Portals;
-
-            DebugEx.Assert(clone.Links.All(item => clone.Portals.Contains(item.Portal0) && clone.Portals.Contains(item.Portal1)));
+            clone.Links = links?.ToImmutableList() ?? Links;
             return clone;
         }
 
