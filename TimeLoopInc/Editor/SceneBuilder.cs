@@ -38,15 +38,17 @@ namespace TimeLoopInc.Editor
             var portals = new List<TimePortal>();
             foreach (var link in Links)
             {
-                var portal0 = new TimePortal(link.Portal0.Position, link.Portal0.Direction);
-                if (link.Portal1 != null)
+                DebugEx.Assert(link.Portals.Any(item => item != null));
+
+                var linkPortals = link.Portals
+                    .Where(item => item != null)
+                    .Select(item => new TimePortal(item.Position, item.Direction)).ToList();
+                if (linkPortals.Count == 2)
                 {
-                    var portal1 = new TimePortal(link.Portal1.Position, link.Portal1.Direction);
-                    portal0.SetLinked(portal1);
-                    portal0.SetTimeOffset(link.TimeOffset);
-                    portals.Add(portal1);
+                    linkPortals[0].SetLinked(linkPortals[1]);
+                    linkPortals[0].SetTimeOffset(link.TimeOffset);
                 }
-                portals.Add(portal0);
+                portals.AddRange(linkPortals);
             }
             DebugEx.Assert(
                 portals.GroupBy(item => (item.Position, item.Direction)).All(item => item.Count() == 1),

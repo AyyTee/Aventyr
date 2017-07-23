@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -59,7 +59,7 @@ namespace TimeLoopInc.Editor
                     {
                         new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Return to editor"))
                     },
-                    new Button(out _, new Transform2(new Vector2(10, 110)), new Vector2(200, 90))
+                    new Button(out Button restart, new Transform2(new Vector2(10, 110)), new Vector2(200, 90))
                     {
                         new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Restart"))
                     }
@@ -80,8 +80,12 @@ namespace TimeLoopInc.Editor
             {
                 editor.Hidden = false;
                 endGame.Hidden = true;
-                rootFrame.Children = rootFrame.Children.Remove(endGame).Add(editor);
                 _sceneController = null;
+            };
+
+            restart.OnClick += () =>
+            {
+                _sceneController.SetInput(_sceneController.Input.Clear());
             };
 
             _camera = new GridCamera(new Transform2(), (float)_window.CanvasSize.XRatio);
@@ -127,7 +131,10 @@ namespace TimeLoopInc.Editor
                         case ToolType.Wall:
                             if (_window.ButtonPress(MouseButton.Left))
                             {
-                                ApplyChanges(Scene.With(Scene.Walls.Add(_mouseGridPos)));
+                                var walls = Scene.Walls.Add(_mouseGridPos);
+                                var links = GetValidPortals(Scene.Links, walls);
+                                var newScene = Scene.With(walls, links: links);
+                                ApplyChanges(newScene);
                             }
                             break;
                         case ToolType.Player:
@@ -164,20 +171,20 @@ namespace TimeLoopInc.Editor
                                     var side = sides
                                         .OrderBy(item => ((Vector2)item.Vector - mousePos.Frac(Vector2.One)).Length)
                                         .First();
-                                    
+
                                     var portal = new PortalBuilder(_mouseGridPos, side);
                                     var links = Scene.Links;
-                                    if (_window.ButtonDown(KeyBoth.Shift) && 
-                                        Scene.Links.Any() && 
-                                        Scene.Links.Last().Portal1 == null)
+                                    if (_window.ButtonDown(KeyBoth.Shift) &&
+                                        Scene.Links.Any() &&
+                                        Scene.Links.Last().Portals.Length == 1)
                                     {
                                         var previousLink = links.Last();
-                                        var newLink = new PortalLink(previousLink.Portal0, portal);
-                                        links = links.Remove(previousLink).Add(newLink);    
+                                        var newLink = new PortalLink(new[] { previousLink.Portals[0], portal });
+                                        links = links.Remove(previousLink).Add(newLink);
                                     }
                                     else
                                     {
-                                        links = links.Add(new PortalLink(portal));
+                                        links = links.Add(new PortalLink(new[] { portal }));
                                     }
 
                                     ApplyChanges(Scene.With(links: links));
@@ -222,6 +229,19 @@ namespace TimeLoopInc.Editor
                     }
                 }
             }
+        }
+
+        public static List<PortalLink> GetValidPortals(IEnumerable<PortalLink> links, ISet<Vector2i> walls)
+        {
+            return links
+                .Select(item =>
+                    new PortalLink(
+                        item.Portals
+                            .Where(portal => PortalValidSides(portal.Position, walls).Any())
+                            .ToArray(),
+                        item.TimeOffset))
+                .Where(item => item.Portals.Length > 0)
+                .ToList();
         }
 
         public static HashSet<GridAngle> PortalValidSides(Vector2i worldPosition, ISet<Vector2i> walls)
@@ -283,7 +303,7 @@ namespace TimeLoopInc.Editor
                 var layer = new Layer
                 {
                     Camera = _camera,
-                    Renderables = SceneRender.RenderInstant(scene, scene.GetSceneInstant(0), 1, scene.Portals)
+                    Renderables = SceneRender.RenderInstant(scene, scene.GetSceneInstant(0), 1, scene.Portals, _window.Fonts.Inconsolata)
                         .Cast<IRenderable>()
                         .ToList()
                 };

@@ -1,4 +1,4 @@
-﻿﻿using Game;
+﻿using Game;
 using Game.Common;
 using Game.Models;
 using Game.Portals;
@@ -24,10 +24,10 @@ namespace TimeLoopInc
         public SceneRender(IVirtualWindow window, Scene scene)
         {
             _grid = ModelFactory.CreateGrid(
-                new Vector2i(20, 20), 
-                Vector2.One, 
-                Color4.HotPink, 
-                Color4.LightPink, 
+                new Vector2i(20, 20),
+                Vector2.One,
+                Color4.HotPink,
+                Color4.LightPink,
                 new Vector3(-10, -10, -2));
             _window = window;
             _scene = scene;
@@ -47,8 +47,9 @@ namespace TimeLoopInc
             float t = (float)animationT;
 
             var worldLayer = new Layer();
+            var baseZoom = 15;
 
-            var cameraTransform = new Transform2().WithSize(25 * _zoomFactor);
+            var cameraTransform = new Transform2().WithSize(baseZoom * _zoomFactor);
             var cameraVelocity = new Vector2();
 
             var playerInstant = _scene.GetSceneInstant(_scene.CurrentTime).Entities.GetOrDefault(_scene.CurrentPlayer);
@@ -56,11 +57,11 @@ namespace TimeLoopInc
             if (playerInstant != null)
             {
                 var (transform, timeOffset) = GetCameraTransformAndTime(
-                    _scene.GetSceneInstant(_scene.CurrentTime), 
+                    _scene.GetSceneInstant(_scene.CurrentTime),
                     _scene.CurrentPlayer, t, _scene.Portals.ToList());
 
                 cameraTransform = transform
-                    .WithSize(25 * _zoomFactor);
+                    .WithSize(baseZoom * _zoomFactor);
                 time += timeOffset;
 
                 cameraVelocity = t == 0 || t == 1 ?
@@ -98,7 +99,7 @@ namespace TimeLoopInc
             var offset = GetOffset(offsetCount);
             if (!renderPortals)
             {
-                var renderables = RenderInstant(_scene, _scene.GetSceneInstant(time), t, worldLayer.Portals);
+                var renderables = RenderInstant(_scene, _scene.GetSceneInstant(time), t, worldLayer.Portals, _window.Fonts.Inconsolata);
                 renderables.Add(new Renderable { Models = new List<Model> { _grid }, IsPortalable = false });
                 foreach (var renderable in renderables)
                 {
@@ -160,7 +161,7 @@ namespace TimeLoopInc
 
         Vector2 GetOffset(int offsetCount) => new Vector2((offsetCount % 2) * 100, (offsetCount / 2) * 100);
 
-        public static List<Renderable> RenderInstant(Scene _scene, SceneInstant sceneInstant, float t, IEnumerable<IPortalRenderable> portals)
+        public static List<Renderable> RenderInstant(Scene _scene, SceneInstant sceneInstant, float t, IEnumerable<IPortalRenderable> portals, Font font)
         {
             var output = new List<Renderable>();
 
@@ -197,13 +198,6 @@ namespace TimeLoopInc
                 output.Add(renderable);
             }
 
-            foreach (var portal in _scene.Portals)
-            {
-                var line = (Renderable)Draw.Line(new LineF(portal.GetWorldVerts()), Color4.Blue, 0.08f);
-                line.IsPortalable = false;
-                output.Add(line);
-            }
-
             foreach (var wall in _scene.Walls)
             {
                 output.Add(CreateSquare(wall, 1, new Color4(0.8f, 1f, 0.5f, 1f)));
@@ -212,6 +206,42 @@ namespace TimeLoopInc
             foreach (var exit in _scene.Exits)
             {
                 output.Add(CreateSquare(exit, 1, new Color4(0.8f, 1f, 1f, 0.3f)));
+            }
+
+            foreach (var portal in _scene.Portals)
+            {
+                if (portal.Linked != null)
+                {
+                    var seed =
+                        (portal.Position.X + portal.Linked.Position.X) * 1000 +
+                        portal.Position.Y + portal.Linked.Position.Y;
+                    var random = new Random(seed);
+                    var color = random.Choose(Color4.ForestGreen, Color4.FloralWhite, Color4.Crimson, Color4.Chocolate);
+                    output.Add(CreateSquare(portal.Position, 1, color));
+
+                    var models = new List<Model>();
+                    for (int i = 0; i < GridAngle.CardinalDirections; i++)
+                    {
+                        var angle = new GridAngle(i);
+                        if (angle.Equals(portal.Direction))
+                        {
+                            continue;
+                        }
+
+                        var text = font.GetModel(portal.TimeOffset.ToString(), new Vector2(0.5f, 1f));
+                        text.Transform.Scale = new Vector3(0.014f, 0.014f, 0.014f);
+                        var offset = (Vector2)angle.Vector * 0.48f;
+                        text.Transform.Position = new Vector3(offset.X, offset.Y, 1);
+                        text.Transform.Rotation = new Quaternion(new Vector3(0, 0, 1), (float)(angle.Radians - Math.PI / 2));
+                        models.Add(text);
+                    }
+
+                    var renderable = new Renderable(new Transform2((Vector2)portal.Position + Vector2.One / 2), models);
+                    output.Add(renderable);
+                }
+                var line = (Renderable)Draw.Line(new LineF(portal.GetWorldVerts()), Color4.Blue, 0.08f);
+                line.IsPortalable = false;
+                output.Add(line);
             }
 
             return output;

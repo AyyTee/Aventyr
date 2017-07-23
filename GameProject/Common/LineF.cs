@@ -5,7 +5,6 @@ using System.Linq;
 using Game.Serialization;
 using OpenTK;
 using MathHelper = OpenTK.MathHelper;
-using Vector2 = OpenTK.Vector2;
 using Xna = Microsoft.Xna.Framework;
 
 namespace Game.Common
@@ -58,7 +57,7 @@ namespace Game.Common
         }
 
         public LineF(Vector2 start, float direction, float length)
-            : this(start, start + (Vector2)MathEx.AngleToVectorReversed(direction) * length)
+            : this(start, start + MathEx.AngleToVectorReversed(direction) * length)
         {
         }
         #endregion
@@ -85,10 +84,7 @@ namespace Game.Common
         /// <summary>
         /// Returns whether a point is left or right of the line.
         /// </summary>
-        public Side GetSideOf(Xna.Vector2 point)
-        {
-            return GetSideOf((Vector2)point);
-        }
+        public Side GetSideOf(Xna.Vector2 point) => GetSideOf((Vector2)point);
 
         /// <summary>
         /// Returns whether a line is left, right, or inbetween the line.
@@ -197,10 +193,7 @@ namespace Game.Common
         /// <summary>
         /// Swaps the start and end vertice for the line.
         /// </summary>
-        public LineF Reverse()
-        {
-            return new LineF(this[1], this[0]);
-        }
+        public LineF Reverse() => new LineF(this[1], this[0]);
 
         public LineF Transform(Matrix4 transformMatrix)
         {
@@ -250,10 +243,7 @@ namespace Game.Common
             return (float)MathEx.LineToAngle(_vertices[0], _vertices[1]);
         }
 
-        public LineF ShallowClone()
-        {
-            return new LineF(_vertices);
-        }
+        public LineF ShallowClone() => (LineF)MemberwiseClone();
 
         public LineF GetPerpendicularLeft(bool normalize = true)
         {

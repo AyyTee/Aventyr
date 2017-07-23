@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.Common;
 
 namespace Game
 {
@@ -9,6 +10,18 @@ namespace Game
     /// </remarks>
     public static class RandomEx
     {
+        public static T Choose<T>(this Random random, params T[] choices)
+        {
+            return choices[MathEx.ValueWrap(random.Next(), choices.Length)];
+        }
+
+        public static byte NextByte(this Random random)
+        {
+            var byteBuffer = new byte[1];
+            random.NextBytes(byteBuffer);
+            return byteBuffer[0];
+        }
+
         public static long NextLong(this Random rnd)
         {
             byte[] buffer = new byte[8];
