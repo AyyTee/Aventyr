@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using Game.Common;
@@ -114,8 +115,8 @@ namespace TimeLoopInc.Editor
 
         public void Update(double timeDelta)
         {
-            var mousePos = _window.MouseWorldPos(_camera).Floor(Vector2.One);
-            _mouseGridPos = (Vector2i)mousePos;
+            var mousePos = _window.MouseWorldPos(_camera);
+            _mouseGridPos = (Vector2i)mousePos.Floor(Vector2.One);
 
             _menu.Update(1);
             if (_isPlaying)
@@ -132,7 +133,9 @@ namespace TimeLoopInc.Editor
                             if (_window.ButtonPress(MouseButton.Left))
                             {
                                 var walls = Scene.Walls.Add(_mouseGridPos);
-                                var links = GetValidPortals(Scene.Links, walls);
+                                var links = GetPortals(
+                                    portal => PortalValidSides(portal.Position, walls).Any(),
+                                    Scene.Links);
                                 var newScene = Scene.With(walls, links: links);
                                 ApplyChanges(newScene);
                             }
@@ -169,23 +172,26 @@ namespace TimeLoopInc.Editor
                                 if (sides.Count > 0)
                                 {
                                     var side = sides
-                                        .OrderBy(item => ((Vector2)item.Vector - mousePos.Frac(Vector2.One)).Length)
+                                        .OrderBy(item => ((Vector2)item.Vector - mousePos.Frac(Vector2.One) + Vector2.One / 2).Length)
                                         .First();
 
-                                    var portal = new PortalBuilder(_mouseGridPos, side);
+                                    var newPortal = new PortalBuilder(_mouseGridPos, side);
                                     var links = Scene.Links;
                                     if (_window.ButtonDown(KeyBoth.Shift) &&
                                         Scene.Links.Any() &&
                                         Scene.Links.Last().Portals.Length == 1)
                                     {
                                         var previousLink = links.Last();
-                                        var newLink = new PortalLink(new[] { previousLink.Portals[0], portal });
+                                        var newLink = new PortalLink(new[] { previousLink.Portals[0], newPortal });
                                         links = links.Remove(previousLink).Add(newLink);
                                     }
                                     else
                                     {
-                                        links = links.Add(new PortalLink(new[] { portal }));
+                                        links = links.Add(new PortalLink(new[] { newPortal }));
                                     }
+
+                                    var collisions = PortalCollisions(newPortal, Scene.Links.SelectMany(item => item.Portals));
+                                    links = GetPortals(portal => !collisions.Contains(portal), links);
 
                                     ApplyChanges(Scene.With(links: links));
                                 }
@@ -231,17 +237,35 @@ namespace TimeLoopInc.Editor
             }
         }
 
-        public static List<PortalLink> GetValidPortals(IEnumerable<PortalLink> links, ISet<Vector2i> walls)
+        /// <summary>
+        /// Returns portals colliding with the given portal. This method assumes portals are in valid positions.
+        /// </summary>
+        public static List<PortalBuilder> PortalCollisions(PortalBuilder portal, IEnumerable<PortalBuilder> portals)
+        {
+            var collisionPlaces = new[]
+            {
+                portal.Position + portal.Direction.Vector.PerpendicularLeft,
+                portal.Position + portal.Direction.Vector.PerpendicularRight
+            };
+
+            return portals
+                .Where(item =>
+                    item.Position == portal.Position ||
+                    (item.Direction.Vector == portal.Direction.Vector && collisionPlaces.Contains(item.Position)))
+                .ToList();
+        }
+
+        public static ImmutableList<PortalLink> GetPortals(Func<PortalBuilder, bool> selector, IEnumerable<PortalLink> links)
         {
             return links
                 .Select(item =>
                     new PortalLink(
                         item.Portals
-                            .Where(portal => PortalValidSides(portal.Position, walls).Any())
+                            .Where(linkPortal => selector(linkPortal))
                             .ToArray(),
                         item.TimeOffset))
                 .Where(item => item.Portals.Length > 0)
-                .ToList();
+                .ToImmutableList();
         }
 
         public static HashSet<GridAngle> PortalValidSides(Vector2i worldPosition, ISet<Vector2i> walls)

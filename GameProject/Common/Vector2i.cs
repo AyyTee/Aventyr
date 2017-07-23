@@ -23,6 +23,9 @@ namespace Game.Common
         /// </summary>
         public double XRatio => X / (double)Y;
 
+        public Vector2i PerpendicularLeft => new Vector2i(-Y, X);
+        public Vector2i PerpendicularRight => new Vector2i(Y, -X);
+
         public Vector2i(int x, int y)
         {
             X = x;
