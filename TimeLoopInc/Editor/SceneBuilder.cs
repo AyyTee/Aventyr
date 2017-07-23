@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -20,9 +20,9 @@ namespace TimeLoopInc.Editor
         public ImmutableList<PortalLink> Links { get; private set; } = new List<PortalLink>().ToImmutableList();
 
         public SceneBuilder With(
-            ISet<Vector2i> walls = null, 
-            ISet<Vector2i> exits = null, 
-            IEnumerable<IGridEntity> entities = null, 
+            ISet<Vector2i> walls = null,
+            ISet<Vector2i> exits = null,
+            IEnumerable<IGridEntity> entities = null,
             IEnumerable<PortalLink> links = null)
         {
             var clone = (SceneBuilder)MemberwiseClone();
@@ -39,9 +39,14 @@ namespace TimeLoopInc.Editor
             foreach (var link in Links)
             {
                 var portal0 = new TimePortal(link.Portal0.Position, link.Portal0.Direction);
-                var portal1 = new TimePortal(link.Portal1.Position, link.Portal1.Direction);
-                portal0.SetLinked(portal1);
-                portal0.SetTimeOffset(link.TimeOffset);
+                if (link.Portal1 != null)
+                {
+                    var portal1 = new TimePortal(link.Portal1.Position, link.Portal1.Direction);
+                    portal0.SetLinked(portal1);
+                    portal0.SetTimeOffset(link.TimeOffset);
+                    portals.Add(portal1);
+                }
+                portals.Add(portal0);
             }
             DebugEx.Assert(
                 portals.GroupBy(item => (item.Position, item.Direction)).All(item => item.Count() == 1),

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,13 +20,12 @@ namespace TimeLoopInc.Editor
         readonly UiController _menu;
         readonly GridCamera _camera;
         readonly Controller _controller;
+        SceneController _sceneController;
         SceneBuilder Scene => _sceneChanges.Last();
-        bool _isPlaying => _playScene != null;
-        Scene _playScene;
+        bool _isPlaying => _sceneController != null;
         Vector2i _mouseGridPos;
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
         ToolType _tool = ToolType.Wall;
-        SceneRender _sceneRender;
 
         public EditorController(IVirtualWindow window, Controller controller)
         {
@@ -73,8 +72,7 @@ namespace TimeLoopInc.Editor
                 {
                     editor.Hidden = true;
                     endGame.Hidden = false;
-                    _playScene = Scene.CreateScene();
-                    _sceneRender = new SceneRender(_window, _playScene);
+                    _sceneController = new SceneController(window, new[] { Scene.CreateScene() });
                 }
             };
 
@@ -83,7 +81,7 @@ namespace TimeLoopInc.Editor
                 editor.Hidden = false;
                 endGame.Hidden = true;
                 rootFrame.Children = rootFrame.Children.Remove(endGame).Add(editor);
-                _playScene = null;
+                _sceneController = null;
             };
 
             _camera = new GridCamera(new Transform2(), (float)_window.CanvasSize.XRatio);
@@ -110,7 +108,7 @@ namespace TimeLoopInc.Editor
             }
         }
 
-        public void Update()
+        public void Update(double timeDelta)
         {
             var mousePos = _window.MouseWorldPos(_camera).Floor(Vector2.One);
             _mouseGridPos = (Vector2i)mousePos;
@@ -118,11 +116,7 @@ namespace TimeLoopInc.Editor
             _menu.Update(1);
             if (_isPlaying)
             {
-                var input = MoveInput.CreateFromKeyboard(_window);
-                if (input != null)
-                {
-                    _playScene.Step(input);
-                }
+                _sceneController.Update(timeDelta);
             }
             else
             {
@@ -170,9 +164,23 @@ namespace TimeLoopInc.Editor
                                     var side = sides
                                         .OrderBy(item => ((Vector2)item.Vector - mousePos.Frac(Vector2.One)).Length)
                                         .First();
-                                    var link = new PortalLink(new PortalBuilder(_mouseGridPos, side));
-                                    Scene.Links.Add(link);
+                                    
+                                    var portal = new PortalBuilder(_mouseGridPos, side);
+                                    var links = Scene.Links;
+                                    if (_window.ButtonDown(KeyBoth.Shift) && 
+                                        Scene.Links.Any() && 
+                                        Scene.Links.Last().Portal1 == null)
+                                    {
+                                        var previousLink = links.Last();
+                                        var newLink = new PortalLink(previousLink.Portal0, portal);
+                                        links = links.Remove(previousLink).Add(newLink);    
+                                    }
+                                    else
+                                    {
+                                        links = links.Add(new PortalLink(portal));
+                                    }
 
+                                    ApplyChanges(Scene.With(links: links));
                                 }
                             }
                             break;
@@ -262,11 +270,11 @@ namespace TimeLoopInc.Editor
             _sceneChanges.Add(newScene);
         }
 
-        public void Render()
+        public void Render(double timeDelta)
         {
             if (_isPlaying)
             {
-                _window.Layers.Add(_sceneRender.Render(1));
+                _sceneController.Render(timeDelta);
             }
             else
             {

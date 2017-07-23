@@ -1,4 +1,4 @@
-﻿using Game;
+﻿﻿using Game;
 using Game.Common;
 using Game.Models;
 using Game.Portals;
@@ -31,6 +31,7 @@ namespace TimeLoopInc
                 new Vector3(-10, -10, -2));
             _window = window;
             _scene = scene;
+            Camera = new GridCamera(new Transform2(), (float)_window.CanvasSize.XRatio);
         }
 
         public void Update(IVirtualWindow window)
@@ -123,7 +124,7 @@ namespace TimeLoopInc
                         var exitIndex = portalView.Children
                             .IndexOfFirstOrNull(item => item.PortalEntrance == view.PortalEntrance.Linked);
                         DebugEx.Assert(entranceIndex != exitIndex);
-                        if (exitIndex != null && entranceIndex < exitIndex)
+                        if (exitIndex == null || entranceIndex < exitIndex)
                         {
                             AddViewPortals(view, worldLayer, offset, offset);
                         }
@@ -173,7 +174,7 @@ namespace TimeLoopInc
                 {
                     case Player p:
                         {
-                            var model = ModelFactory.CreatePlane(Vector2.One * 0.98f, new Color4(), new Vector3(-0.49f));
+                            var model = ModelFactory.CreateCircle(new Vector3(), 0.48f, 16);
                             model.SetColor(Color4.Black);
 
                             renderable = new Renderable(transform);

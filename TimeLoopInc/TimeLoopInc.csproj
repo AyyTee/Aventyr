@@ -97,6 +97,7 @@
     <Compile Include="Editor\SceneBuilder.cs" />
     <Compile Include="Editor\PortalBuilder.cs" />
     <Compile Include="Editor\PortalLink.cs" />
+    <Compile Include="SceneController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -377,8 +377,7 @@ namespace Game.Rendering
                 }
                 mesh.AddTriangle(i, i + 1, detail - 1 - i);
             }
-            var model = new Model(mesh);
-            return model;
+            return new Model(mesh);
         }
 
         /// <summary>
