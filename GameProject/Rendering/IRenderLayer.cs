@@ -23,12 +23,12 @@ namespace Game.Rendering
             return new TextEntity(font, position, text, alignment, lineSpacing);
         }
 
-        public static IRenderable Rectangle(Vector2 topLeft, Vector2 bottomRight)
+        public static Renderable Rectangle(Vector2 topLeft, Vector2 bottomRight)
         {
             return Rectangle(topLeft, bottomRight, Color4.Black);
         }
 
-        public static IRenderable Rectangle(Vector2 topLeft, Vector2 bottomRight, Color4 color)
+        public static Renderable Rectangle(Vector2 topLeft, Vector2 bottomRight, Color4 color)
         {
             var plane = new Model(
                 ModelFactory.CreatePlaneMesh(
@@ -42,12 +42,12 @@ namespace Game.Rendering
             return GetRenderable(plane);
         }
 
-        public static IRenderable Line(LineF line)
+        public static Renderable Line(LineF line)
         {
             return Line(line, Color4.Black);
         }
 
-        public static IRenderable Line(LineF line, Color4 color, float thickness = 1)
+        public static Renderable Line(LineF line, Color4 color, float thickness = 1)
         {
             var plane = ModelFactory.CreateLinesWidth(new[] { line }, thickness);
             if (color.A < 1)
@@ -58,12 +58,12 @@ namespace Game.Rendering
             return GetRenderable(plane);
         }
 
-        public static IRenderable Triangle(Vector2 v0, Vector2 v1, Vector2 v2)
+        public static Renderable Triangle(Vector2 v0, Vector2 v1, Vector2 v2)
         {
             return Triangle(v0, v1, v2, Color4.Black);
         }
 
-        public static IRenderable Triangle(Vector2 v0, Vector2 v1, Vector2 v2, Color4 color)
+        public static Renderable Triangle(Vector2 v0, Vector2 v1, Vector2 v2, Color4 color)
         {
             var vArray = MathEx.SetWinding(new[] { v0, v1, v2 }, false);
             var triangle = ModelFactory.CreateTriangle(

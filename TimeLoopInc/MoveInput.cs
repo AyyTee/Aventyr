@@ -23,19 +23,19 @@ namespace TimeLoopInc
 
         public static MoveInput CreateFromKeyboard(IVirtualWindow window)
         {
-            if (window.ButtonPress(Key.W))
+            if (window.ButtonPress(Key.W) || window.ButtonPress(Key.Up))
             {
                 return new MoveInput(GridAngle.Up);
             }
-            if (window.ButtonPress(Key.S))
+            if (window.ButtonPress(Key.S) || window.ButtonPress(Key.Down))
             {
                 return new MoveInput(GridAngle.Down);
             }
-            if (window.ButtonPress(Key.A))
+            if (window.ButtonPress(Key.A) || window.ButtonPress(Key.Left))
             {
                 return new MoveInput(GridAngle.Left);
             }
-            if (window.ButtonPress(Key.D))
+            if (window.ButtonPress(Key.D) || window.ButtonPress(Key.Right))
             {
                 return new MoveInput(GridAngle.Right);
             }

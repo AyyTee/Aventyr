@@ -6,6 +6,7 @@ using System.Linq;
 using Game.Common;
 using Game.Rendering;
 using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Input;
 using Ui;
 
@@ -21,10 +22,12 @@ namespace TimeLoopInc.Editor
         readonly UiController _menu;
         readonly GridCamera _camera;
         readonly Controller _controller;
+        readonly PortalTool _portalTool;
         SceneController _sceneController;
         SceneBuilder Scene => _sceneChanges.Last();
         bool _isPlaying => _sceneController != null;
-        Vector2i _mouseGridPos;
+        Vector2 _mousePosition;
+        Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
         ToolType _tool = ToolType.Wall;
 
@@ -34,6 +37,8 @@ namespace TimeLoopInc.Editor
 
             _window = window;
             _controller = controller;
+
+            _portalTool = new PortalTool(_window);
 
             _menu = new UiController(_window);
 
@@ -115,8 +120,7 @@ namespace TimeLoopInc.Editor
 
         public void Update(double timeDelta)
         {
-            var mousePos = _window.MouseWorldPos(_camera);
-            _mouseGridPos = (Vector2i)mousePos.Floor(Vector2.One);
+            _mousePosition = _window.MouseWorldPos(_camera);
 
             _menu.Update(1);
             if (_isPlaying)
@@ -166,34 +170,11 @@ namespace TimeLoopInc.Editor
                             }
                             break;
                         case ToolType.Portal:
-                            if (_window.ButtonPress(MouseButton.Left))
                             {
-                                var sides = PortalValidSides(_mouseGridPos, Scene.Walls);
-                                if (sides.Count > 0)
+                                var newScene = _portalTool.Update(Scene, _camera);
+                                if (newScene != null)
                                 {
-                                    var side = sides
-                                        .OrderBy(item => ((Vector2)item.Vector - mousePos.Frac(Vector2.One) + Vector2.One / 2).Length)
-                                        .First();
-
-                                    var newPortal = new PortalBuilder(_mouseGridPos, side);
-                                    var links = Scene.Links;
-                                    if (_window.ButtonDown(KeyBoth.Shift) &&
-                                        Scene.Links.Any() &&
-                                        Scene.Links.Last().Portals.Length == 1)
-                                    {
-                                        var previousLink = links.Last();
-                                        var newLink = new PortalLink(new[] { previousLink.Portals[0], newPortal });
-                                        links = links.Remove(previousLink).Add(newLink);
-                                    }
-                                    else
-                                    {
-                                        links = links.Add(new PortalLink(new[] { newPortal }));
-                                    }
-
-                                    var collisions = PortalCollisions(newPortal, Scene.Links.SelectMany(item => item.Portals));
-                                    links = GetPortals(portal => !collisions.Contains(portal), links);
-
-                                    ApplyChanges(Scene.With(links: links));
+                                    ApplyChanges(newScene);
                                 }
                             }
                             break;
@@ -255,6 +236,9 @@ namespace TimeLoopInc.Editor
                 .ToList();
         }
 
+        /// <summary>
+        /// Returns portals that meet some criteria while preserving the links they are in.
+        /// </summary>
         public static ImmutableList<PortalLink> GetPortals(Func<PortalBuilder, bool> selector, IEnumerable<PortalLink> links)
         {
             return links
@@ -309,7 +293,7 @@ namespace TimeLoopInc.Editor
             return validSides;
         }
 
-        void ApplyChanges(SceneBuilder newScene)
+        public void ApplyChanges(SceneBuilder newScene)
         {
             _sceneChanges.Add(newScene);
         }
@@ -331,6 +315,12 @@ namespace TimeLoopInc.Editor
                         .Cast<IRenderable>()
                         .ToList()
                 };
+
+                if (_tool == ToolType.Portal)
+                {
+                    layer.Renderables.AddRange(_portalTool.Render(Scene, _camera));
+                }
+
                 _window.Layers.Add(layer);
             }
 
