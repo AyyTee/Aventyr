@@ -9,7 +9,7 @@ using OpenTK.Input;
 
 namespace TimeLoopInc.Editor
 {
-    public class PortalTool
+    public class PortalTool : ITool
     {
         readonly IVirtualWindow _window;
         PortalBuilder _lastPlaced;

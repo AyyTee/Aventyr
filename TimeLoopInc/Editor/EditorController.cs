@@ -32,14 +32,26 @@ namespace TimeLoopInc.Editor
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
         int _sceneChangeCurrent = 0;
-        ToolType _tool = ToolType.Wall;
+        ITool _tool;
+        readonly ImmutableDictionary<Key, Action> _hotkeys;
 
         public EditorController(IVirtualWindow window, Controller controller)
         {
+            _hotkeys = new Dictionary<Key, Action>
+            {
+                { Key.Number1, () => _tool = new WallTool(_window) },
+                { Key.Number2, () => _tool = new ExitTool(_window) },
+                { Key.Number3, () => _tool = new PlayerTool(_window) },
+                { Key.Number4, () => _tool = new BlockTool(_window) },
+                { Key.Number5, () => _tool = new PortalTool(_window) },
+                { Key.Number6, () => _tool = new LinkTool(_window) }
+            }.ToImmutableDictionary();
+
             _sceneChanges.Add(new SceneBuilder());
 
             _window = window;
             _controller = controller;
+            _tool = new WallTool(_window);
 
             _menu = new UiController(_window);
 
@@ -96,7 +108,7 @@ namespace TimeLoopInc.Editor
             };
 
             _camera = new GridCamera(new Transform2(), (float)_window.CanvasSize.XRatio);
-            _camera.WorldTransform = _camera.WorldTransform.WithSize(10);
+            _camera.WorldTransform = _camera.WorldTransform.WithSize(15);
         }
 
         void Save()
@@ -133,62 +145,16 @@ namespace TimeLoopInc.Editor
             {
                 if (_menu.Hover == null)
                 {
-                    switch (_tool)
+                    var v = MoveInput.CreateFromKeyboard(_window)?.Direction.Value.Vector;
+                    if (v != null)
                     {
-                        case ToolType.Wall:
-                            if (_window.ButtonPress(MouseButton.Left))
-                            {
-                                var walls = Scene.Walls.Add(_mouseGridPos);
-                                var links = GetPortals(
-                                    portal => PortalValidSides(portal.Position, walls).Any(),
-                                    Scene.Links);
-                                var newScene = Scene.With(walls, links: links);
-                                ApplyChanges(newScene);
-                            }
-                            break;
-                        case ToolType.Player:
-                            if (_window.ButtonPress(MouseButton.Left))
-                            {
-                                var entities = Scene.Entities
-                                    .RemoveAll(item => item is Player || item.StartTransform.Position == _mouseGridPos)
-                                    .Add(new Player(new Transform2i(_mouseGridPos), 0));
-                                ApplyChanges(Scene.With(entities: entities));
-                            }
-                            break;
-                        case ToolType.Block:
-                            if (_window.ButtonPress(MouseButton.Left))
-                            {
-                                var entities = Scene.Entities
-                                    .RemoveAll(item => item.StartTransform.Position == _mouseGridPos)
-                                    .Add(new Block(new Transform2i(_mouseGridPos)));
-                                ApplyChanges(Scene.With(entities: entities));
-                            }
-                            break;
-                        case ToolType.Exit:
-                            if (_window.ButtonPress(MouseButton.Left))
-                            {
-                                var exits = Scene.Exits.Add(_mouseGridPos);
-                                ApplyChanges(Scene.With(exits: exits));
-                            }
-                            break;
-                        case ToolType.Portal:
-                            {
-                                var newScene = _portalTool.Update(Scene, _camera);
-                                if (newScene != null)
-                                {
-                                    ApplyChanges(newScene);
-                                }
-                            }
-                            break;
-                        case ToolType.Link:
-                            {
-                                var newScene = _linkTool.Update(Scene, _camera);
-                                if (newScene != null)
-                                {
-                                    ApplyChanges(newScene);
-                                }
-                            }
-                            break;
+                        _camera.WorldTransform = _camera.WorldTransform.AddPosition((Vector2)v * 3);
+                    }
+
+                    var newScene = _tool.Update(Scene, _camera);
+                    if (newScene != null)
+                    {
+                        ApplyChanges(newScene);
                     }
 
                     if (_window.ButtonDown(KeyBoth.Control))
@@ -203,34 +169,20 @@ namespace TimeLoopInc.Editor
                         }
                     }
 
-                    if (_window.ButtonDown(Key.Number1))
-                    {
-                        _tool = ToolType.Wall;
-                    }
-                    else if (_window.ButtonDown(Key.Number2))
-                    {
-                        _tool = ToolType.Player;
-                    }
-                    else if (_window.ButtonDown(Key.Number3))
-                    {
-                        _tool = ToolType.Block;
-                    }
-                    else if (_window.ButtonDown(Key.Number4))
-                    {
-                        _tool = ToolType.Exit;
-                    }
-                    else if (_window.ButtonDown(Key.Number5))
-                    {
-                        _portalTool = new PortalTool(_window);
-                        _tool = ToolType.Portal;
-                    }
-                    else if (_window.ButtonDown(Key.Number6))
-                    {
-                        _linkTool = new LinkTool(_window);
-                        _tool = ToolType.Link;
-                    }
+                    _hotkeys
+                        .Where(item => _window.KeysPress().Contains(item.Key))
+                        .ForEach(item => item.Value());
                 }
             }
+        }
+
+        public static SceneBuilder Remove(SceneBuilder scene, Vector2i v)
+        {
+            return scene.With(
+                scene.Walls.Where(item => item != v).ToHashSet(), 
+                scene.Exits.Where(item => item != v).ToHashSet(), 
+                scene.Entities.Where(item => item.StartTransform.Position != v), 
+                GetPortals(portal => portal.Position != v, scene.Links));
         }
 
         /// <summary>
@@ -323,8 +275,7 @@ namespace TimeLoopInc.Editor
 
         public void UndoChanges()
         {
-            _portalTool = new PortalTool(_window);
-            _linkTool = new LinkTool(_window);
+            ResetTool();
             if (_sceneChangeCurrent > 0)
             {
                 _sceneChangeCurrent--;
@@ -333,12 +284,16 @@ namespace TimeLoopInc.Editor
 
         public void RedoChanges()
         {
-            _portalTool = new PortalTool(_window);
-            _linkTool = new LinkTool(_window);
+            ResetTool();
             if (_sceneChangeCurrent + 1 < _sceneChanges.Count)
             {
                 _sceneChangeCurrent++;
             }
+        }
+
+        void ResetTool()
+        {
+            _tool = (ITool)Activator.CreateInstance(_tool.GetType(), _window);
         }
 
         public void Render(double timeDelta)
@@ -359,14 +314,7 @@ namespace TimeLoopInc.Editor
                         .ToList()
                 };
 
-                if (_tool == ToolType.Portal)
-                {
-                    layer.Renderables.AddRange(_portalTool.Render(Scene, _camera));
-                }
-                else if (_tool == ToolType.Link)
-                {
-                    layer.Renderables.AddRange(_linkTool.Render(Scene, _camera));
-                }
+                layer.Renderables.AddRange(_tool.Render(Scene, _camera));
 
                 _window.Layers.Add(layer);
             }

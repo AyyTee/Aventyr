@@ -70,6 +70,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Editor\BlockTool.cs" />
+    <Compile Include="Editor\ExitTool.cs" />
+    <Compile Include="Editor\HotKey.cs" />
+    <Compile Include="Editor\ITool.cs" />
+    <Compile Include="Editor\PlayerTool.cs" />
+    <Compile Include="Editor\WallTool.cs" />
     <Compile Include="GridCamera.cs" />
     <Compile Include="SceneInstant.cs" />
     <Compile Include="SceneRender.cs" />
@@ -123,8 +129,6 @@
       <Name>Ui</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Editor\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -37,6 +37,26 @@ namespace Game.Rendering
 
     public static class IVirtualWindowEx
     {
+        public static IImmutableSet<Key> KeysPress(this IVirtualWindow window)
+        {
+            return window.KeyCurrent.Except(window.KeyPrevious);
+        }
+
+        public static IImmutableSet<Key> KeysRelease(this IVirtualWindow window)
+        {
+            return window.KeyPrevious.Except(window.KeyCurrent);
+        }
+
+        public static IImmutableSet<MouseButton> MousePress(this IVirtualWindow window)
+        {
+            return window.MouseCurrent.Except(window.MousePrevious);
+        }
+
+        public static IImmutableSet<MouseButton> MouseRelease(this IVirtualWindow window)
+        {
+            return window.MousePrevious.Except(window.MouseCurrent);
+        }
+
         public static bool MouseInside(this IVirtualWindow window)
         {
             return window.MousePosition.X >= 0 &&

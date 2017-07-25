@@ -11,7 +11,7 @@ using OpenTK.Input;
 
 namespace TimeLoopInc.Editor
 {
-    public class LinkTool
+    public class LinkTool : ITool
     {
         readonly IVirtualWindow _window;
         PortalBuilder _selected;
