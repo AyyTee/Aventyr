@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 namespace TimeLoopInc.Editor
 {
     [DataContract]
-    public class PortalLink
+    public class PortalLink : IMemberwiseEquatable<PortalLink>
     {
         [DataMember]
         public ImmutableArray<PortalBuilder> Portals { get; }
@@ -25,45 +25,18 @@ namespace TimeLoopInc.Editor
             TimeOffset = timeOffset;
         }
 
-        public static bool operator ==(PortalLink left, PortalLink right) => Equals(left, right);
-        public static bool operator !=(PortalLink left, PortalLink right) => !Equals(left, right);
-
-        public override bool Equals(object obj)
+        public bool Equals(PortalLink other)
         {
-            // Equality method has been explicity defined because MemberwiseEquatable doesn't correctly handle ImmutableArray.
-            if (obj is PortalLink link)
-            {
-                return Equals(this, link);
-            }
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            var hashCode = base.GetHashCode() ^ TimeOffset;
-            for (int i = 0; i < Portals.Length; i++)
-            {
-                hashCode ^= Portals[i].GetHashCode();
-            }
-            return hashCode;
-        }
-
-        public static bool Equals(PortalLink obj0, PortalLink obj1)
-        {
-            if (ReferenceEquals(obj0, obj1))
+            if (ReferenceEquals(this, other))
             {
                 return true;
             }
-            if (ReferenceEquals(obj0, null) || ReferenceEquals(obj1, null))
+
+            if (TimeOffset == other.TimeOffset && Portals.Length == other.Portals.Length)
             {
-                return false;
-            }
-            
-            if (obj0.TimeOffset == obj1.TimeOffset && obj0.Portals.Length == obj1.Portals.Length)
-            {
-                for (int i = 0; i < obj0.Portals.Length; i++)
+                for (int i = 0; i < Portals.Length; i++)
                 {
-                    if (obj0.Portals[i] != obj1.Portals[i])
+                    if (Portals[i] != other.Portals[i])
                     {
                         return false;
                     }
