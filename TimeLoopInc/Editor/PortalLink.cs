@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Equ;
 using Game.Common;
 
 namespace TimeLoopInc.Editor
 {
-    public class PortalLink
+    public class PortalLink : MemberwiseEquatable<PortalBuilder>
     {
         public ImmutableArray<PortalBuilder> Portals;
         public int TimeOffset { get; }

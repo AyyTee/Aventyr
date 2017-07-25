@@ -65,6 +65,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="MoreLinq">
+      <HintPath>..\packages\morelinq.2.6.0\lib\net40\MoreLinq.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GridCamera.cs" />
@@ -99,6 +102,7 @@
     <Compile Include="Editor\PortalLink.cs" />
     <Compile Include="SceneController.cs" />
     <Compile Include="Editor\PortalTool.cs" />
+    <Compile Include="Editor\LinkTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

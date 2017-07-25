@@ -87,6 +87,7 @@
     <Compile Include="GameTests\Vector2ExTests.cs" />
     <Compile Include="GameTests\Vector2iTests.cs" />
     <Compile Include="GameTests\VertexTests.cs" />
+    <Compile Include="TimeLoopIncTests\LinkToolTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

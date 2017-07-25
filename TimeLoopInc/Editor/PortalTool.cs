@@ -74,9 +74,7 @@ namespace TimeLoopInc.Editor
             if (_window.ButtonDown(KeyBoth.Shift) && previousPortal != null)
             {
                 var line = Draw.Line(
-                    new LineF(
-                        (Vector2)previousPortal.Position + Vector2.One / 2 + (Vector2)previousPortal.Direction.Vector / 2,
-                        _mousePosition),
+                    new LineF(previousPortal.Center, _mousePosition),
                     Color4.Black,
                     0.04f);
                 line.IsPortalable = false;

@@ -23,6 +23,7 @@ namespace TimeLoopInc.Editor
         readonly GridCamera _camera;
         readonly Controller _controller;
         readonly PortalTool _portalTool;
+        readonly LinkTool _linkTool;
         SceneController _sceneController;
         SceneBuilder Scene => _sceneChanges.Last();
         bool _isPlaying => _sceneController != null;
@@ -39,6 +40,7 @@ namespace TimeLoopInc.Editor
             _controller = controller;
 
             _portalTool = new PortalTool(_window);
+            _linkTool = new LinkTool(_window);
 
             _menu = new UiController(_window);
 
@@ -179,6 +181,13 @@ namespace TimeLoopInc.Editor
                             }
                             break;
                         case ToolType.Link:
+                            {
+                                var newScene = _linkTool.Update(Scene, _camera);
+                                if (newScene != null)
+                                {
+                                    ApplyChanges(newScene);
+                                }
+                            }
                             break;
                     }
 
@@ -319,6 +328,10 @@ namespace TimeLoopInc.Editor
                 if (_tool == ToolType.Portal)
                 {
                     layer.Renderables.AddRange(_portalTool.Render(Scene, _camera));
+                }
+                else if (_tool == ToolType.Link)
+                {
+                    layer.Renderables.AddRange(_linkTool.Render(Scene, _camera));
                 }
 
                 _window.Layers.Add(layer);
