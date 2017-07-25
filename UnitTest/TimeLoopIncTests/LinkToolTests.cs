@@ -3,6 +3,8 @@ using Game.Common;
 using NUnit.Framework;
 using TimeLoopInc;
 using TimeLoopInc.Editor;
+using System.Linq;
+using System.Collections.Immutable;
 
 namespace TimeLoopIncTests
 {
@@ -37,9 +39,9 @@ namespace TimeLoopIncTests
             var expected = new[]
             {
                 new PortalLink(new[] { portal0, }),
-                new PortalLink(new[] { portal1, portal2 })
+                new PortalLink(new[] { portal2, portal1 })
             };
-            Assert.AreEqual(links, result);
+            Assert.AreEqual(expected, result);
         }
     }
 }

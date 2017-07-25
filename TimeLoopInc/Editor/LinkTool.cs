@@ -25,6 +25,7 @@ namespace TimeLoopInc.Editor
         public SceneBuilder Update(SceneBuilder scene, ICamera2 camera)
         {
             var _mousePosition = _window.MouseWorldPos(camera);
+
             if (_window.ButtonPress(MouseButton.Left))
             {
                 if (_selected == null)
@@ -40,29 +41,43 @@ namespace TimeLoopInc.Editor
                         }
                     }
                 }
-            }
-            else if (_window.ButtonRelease(MouseButton.Left))
-            {
-                var portals = scene.Links
+                else
+                {
+                    var portals = scene.Links
                     .SelectMany(item => item.Portals)
                     .Where(item => item != _selected);
-                var nearest = NearestPortal(_mousePosition, portals);
-                if (nearest != null)
-                {
-                    var screenDistance = (_window.MousePosition - camera.WorldToScreen(nearest.Center, _window.CanvasSize)).Length;
-                    if (screenDistance < MaxSelectDistance)
+                    var nearest = NearestPortal(_mousePosition, portals);
+                    if (nearest != null)
                     {
-                        var newLinks = LinkPortals(_selected, nearest, scene.Links);
-                        _selected = null;
-                        if (newLinks.SequenceEqual(scene.Links))
+                        var screenDistance = (_window.MousePosition - camera.WorldToScreen(nearest.Center, _window.CanvasSize)).Length;
+                        if (screenDistance < MaxSelectDistance)
                         {
-                            return null;
+                            var newLinks = LinkPortals(_selected, nearest, scene.Links);
+                            _selected = null;
+                            if (newLinks.SequenceEqual(scene.Links))
+                            {
+                                return null;
+                            }
+                            return scene.With(links: newLinks);
                         }
-                        return scene.With(links: newLinks);
                     }
                 }
             }
+
+            if (_window.ButtonPress(MouseButton.Right))
+            {
+                _selected = null;
+            }
             return null;
+        }
+
+        public static PortalLink GetLink(PortalBuilder portal, IEnumerable<PortalLink> links)
+        {
+            if (portal == null)
+            {
+                return null;
+            }
+            return links.FirstOrDefault(item => item.Portals.Contains(portal));
         }
 
         public static ImmutableList<PortalLink> LinkPortals(PortalBuilder portal0, PortalBuilder portal1, IEnumerable<PortalLink> links)
@@ -73,7 +88,7 @@ namespace TimeLoopInc.Editor
             var previousLinks = new[]
             {
                 links.FirstOrDefault(item => item.Portals.Contains(portal0)),
-                links.First(item => item.Portals.Contains(portal1))
+                links.FirstOrDefault(item => item.Portals.Contains(portal1))
             };
             if (previousLinks[0] == previousLinks[1])
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using MoreLinq;
 using Game.Common;
 using Game.Rendering;
 using OpenTK;
@@ -22,14 +23,15 @@ namespace TimeLoopInc.Editor
         readonly UiController _menu;
         readonly GridCamera _camera;
         readonly Controller _controller;
-        readonly PortalTool _portalTool;
-        readonly LinkTool _linkTool;
+        PortalTool _portalTool;
+        LinkTool _linkTool;
         SceneController _sceneController;
-        SceneBuilder Scene => _sceneChanges.Last();
+        SceneBuilder Scene => _sceneChanges[_sceneChangeCurrent];
         bool _isPlaying => _sceneController != null;
         Vector2 _mousePosition;
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
+        int _sceneChangeCurrent = 0;
         ToolType _tool = ToolType.Wall;
 
         public EditorController(IVirtualWindow window, Controller controller)
@@ -38,9 +40,6 @@ namespace TimeLoopInc.Editor
 
             _window = window;
             _controller = controller;
-
-            _portalTool = new PortalTool(_window);
-            _linkTool = new LinkTool(_window);
 
             _menu = new UiController(_window);
 
@@ -117,6 +116,7 @@ namespace TimeLoopInc.Editor
                 {
                     Serializer.Deserialize<SceneBuilder>(File.ReadAllText(filepath))
                 }.ToList();
+                _sceneChangeCurrent = 0;
             }
         }
 
@@ -191,11 +191,15 @@ namespace TimeLoopInc.Editor
                             break;
                     }
 
-                    if (_window.ButtonDown(KeyBoth.Control) && _window.ButtonPress(Key.Z))
+                    if (_window.ButtonDown(KeyBoth.Control))
                     {
-                        if (_sceneChanges.Count > 1)
+                        if (_window.ButtonPress(Key.Y) || (_window.ButtonDown(KeyBoth.Shift) && _window.ButtonPress(Key.Z)))
                         {
-                            _sceneChanges.RemoveAt(_sceneChanges.Count - 1);
+                            RedoChanges();
+                        }
+                        else if (_window.ButtonPress(Key.Z))
+                        {
+                            UndoChanges();
                         }
                     }
 
@@ -217,10 +221,12 @@ namespace TimeLoopInc.Editor
                     }
                     else if (_window.ButtonDown(Key.Number5))
                     {
+                        _portalTool = new PortalTool(_window);
                         _tool = ToolType.Portal;
                     }
                     else if (_window.ButtonDown(Key.Number6))
                     {
+                        _linkTool = new LinkTool(_window);
                         _tool = ToolType.Link;
                     }
                 }
@@ -304,7 +310,35 @@ namespace TimeLoopInc.Editor
 
         public void ApplyChanges(SceneBuilder newScene)
         {
+            DebugEx.Assert(
+                newScene.Links
+                    .SelectMany(item => item.Portals)
+                    .GroupBy(item => item)
+                    .All(item => item.Count() == 1), 
+                "There should not be any duplicate portals.");
+            _sceneChangeCurrent++;
+            _sceneChanges.RemoveRange(_sceneChangeCurrent, _sceneChanges.Count - _sceneChangeCurrent);
             _sceneChanges.Add(newScene);
+        }
+
+        public void UndoChanges()
+        {
+            _portalTool = new PortalTool(_window);
+            _linkTool = new LinkTool(_window);
+            if (_sceneChangeCurrent > 0)
+            {
+                _sceneChangeCurrent--;
+            }
+        }
+
+        public void RedoChanges()
+        {
+            _portalTool = new PortalTool(_window);
+            _linkTool = new LinkTool(_window);
+            if (_sceneChangeCurrent + 1 < _sceneChanges.Count)
+            {
+                _sceneChangeCurrent++;
+            }
         }
 
         public void Render(double timeDelta)
