@@ -26,14 +26,18 @@ namespace TimeLoopInc.Editor
 
         public SceneBuilder Update(SceneBuilder scene, ICamera2 camera)
         {
+            var mousePosition = _window.MouseWorldPos(camera);
+            var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
             if (_window.ButtonPress(MouseButton.Left))
             {
-                var mousePosition = _window.MouseWorldPos(camera);
-                var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
                 var entities = scene.Entities
                     .RemoveAll(item => item is Player || item.StartTransform.Position == mouseGridPos)
                     .Add(new Player(new Transform2i(mouseGridPos), 0));
                 return scene.With(entities: entities);
+            }
+            else if (_window.ButtonPress(MouseButton.Right))
+            {
+                return EditorController.Remove(scene, mouseGridPos);
             }
             return null;
         }

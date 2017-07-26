@@ -26,15 +26,19 @@ namespace TimeLoopInc.Editor
 
         public SceneBuilder Update(SceneBuilder scene, ICamera2 camera)
         {
+            var mousePosition = _window.MouseWorldPos(camera);
+            var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
             if (_window.ButtonPress(MouseButton.Left))
             {
-                var mousePosition = _window.MouseWorldPos(camera);
-                var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
                 var walls = scene.Walls.Add(mouseGridPos);
                 var links = EditorController.GetPortals(
                     portal => EditorController.PortalValidSides(portal.Position, walls).Any(),
                     scene.Links);
                 return scene.With(walls, links: links);
+            }
+            else if (_window.ButtonPress(MouseButton.Right))
+            {
+                return EditorController.Remove(scene, mouseGridPos);
             }
             return null;
         }

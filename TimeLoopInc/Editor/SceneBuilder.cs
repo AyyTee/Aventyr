@@ -25,6 +25,15 @@ namespace TimeLoopInc.Editor
             IEnumerable<IGridEntity> entities = null,
             IEnumerable<PortalLink> links = null)
         {
+            // If nothing has changed, return the original scene.
+            if ((ReferenceEquals(Walls, walls) || walls == null) &&
+                (ReferenceEquals(Exits, exits) || exits == null) &&
+                (ReferenceEquals(Entities, entities) || entities == null) &&
+                (ReferenceEquals(Links, links) || links == null))
+            {
+                return this;
+            }
+
             var clone = (SceneBuilder)MemberwiseClone();
             clone.Walls = walls?.ToImmutableHashSet() ?? Walls;
             clone.Exits = exits?.ToImmutableHashSet() ?? Exits;
@@ -36,19 +45,17 @@ namespace TimeLoopInc.Editor
         public Scene CreateScene()
         {
             var portals = new List<TimePortal>();
-            foreach (var link in Links)
+            foreach (var link in Links.Where(item => item.Portals.Any()))
             {
-                DebugEx.Assert(link.Portals.Any(item => item != null));
-
-                var linkPortals = link.Portals
-                    .Where(item => item != null)
-                    .Select(item => new TimePortal(item.Position, item.Direction)).ToList();
-                if (linkPortals.Count == 2)
+                var portal0 = new TimePortal(link.Portals[0].Position, link.Portals[0].Direction);
+                portals.Add(portal0);
+                if (link.Portals.Length == 2)
                 {
-                    linkPortals[0].SetLinked(linkPortals[1]);
-                    linkPortals[0].SetTimeOffset(link.TimeOffset);
+                    var portal1 = new TimePortal(link.Portals[1].Position, link.Portals[1].Direction, true);
+                    portal0.SetLinked(portal1);
+                    portal0.SetTimeOffset(link.TimeOffset - 5);
+                    portals.Add(portal1);
                 }
-                portals.AddRange(linkPortals);
             }
             DebugEx.Assert(
                 portals.GroupBy(item => (item.Position, item.Direction)).All(item => item.Count() == 1),

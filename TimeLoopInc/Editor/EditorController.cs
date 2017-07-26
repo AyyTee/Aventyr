@@ -10,6 +10,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Input;
 using Ui;
+using Game;
 
 namespace TimeLoopInc.Editor
 {
@@ -23,8 +24,7 @@ namespace TimeLoopInc.Editor
         readonly UiController _menu;
         readonly GridCamera _camera;
         readonly Controller _controller;
-        PortalTool _portalTool;
-        LinkTool _linkTool;
+        readonly Frame _editor, _endGame;
         SceneController _sceneController;
         SceneBuilder Scene => _sceneChanges[_sceneChangeCurrent];
         bool _isPlaying => _sceneController != null;
@@ -33,18 +33,19 @@ namespace TimeLoopInc.Editor
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
         int _sceneChangeCurrent = 0;
         ITool _tool;
-        readonly ImmutableDictionary<Key, Action> _hotkeys;
+        readonly ImmutableDictionary<Hotkey, Action> _hotkeys;
 
         public EditorController(IVirtualWindow window, Controller controller)
         {
-            _hotkeys = new Dictionary<Key, Action>
+            _hotkeys = new Dictionary<Hotkey, Action>
             {
-                { Key.Number1, () => _tool = new WallTool(_window) },
-                { Key.Number2, () => _tool = new ExitTool(_window) },
-                { Key.Number3, () => _tool = new PlayerTool(_window) },
-                { Key.Number4, () => _tool = new BlockTool(_window) },
-                { Key.Number5, () => _tool = new PortalTool(_window) },
-                { Key.Number6, () => _tool = new LinkTool(_window) }
+                { new Hotkey(Key.Number1), () => _tool = new WallTool(_window) },
+                { new Hotkey(Key.Number2), () => _tool = new ExitTool(_window) },
+                { new Hotkey(Key.Number3), () => _tool = new PlayerTool(_window) },
+                { new Hotkey(Key.Number4), () => _tool = new BlockTool(_window) },
+                { new Hotkey(Key.Number5), () => _tool = new PortalTool(_window) },
+                { new Hotkey(Key.Number6), () => _tool = new LinkTool(_window) },
+                { new Hotkey(Key.P, true), Play}
             }.ToImmutableDictionary();
 
             _sceneChanges.Add(new SceneBuilder());
@@ -57,7 +58,7 @@ namespace TimeLoopInc.Editor
 
             _menu.Root = new Frame(out Frame rootFrame)
             {
-                new Frame(out Frame editor, new Transform2())
+                new Frame(out _editor, new Transform2())
                 {
                     new Button(out _, new Transform2(new Vector2(10, 10)), new Vector2(200, 90), Save)
                     {
@@ -67,12 +68,12 @@ namespace TimeLoopInc.Editor
                     {
                         new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Load"))
                     },
-                    new Button(out Button playButton, new Transform2(new Vector2(10, 210)), new Vector2(200, 90))
+                    new Button(out _, new Transform2(new Vector2(10, 210)), new Vector2(200, 90), Play)
                     {
                         new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Play"))
                     }
                 },
-                new Frame(out Frame endGame, new Transform2(), true)
+                new Frame(out _endGame, new Transform2(), true)
                 {
                     new Button(out Button returnButton, new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
                     {
@@ -85,20 +86,10 @@ namespace TimeLoopInc.Editor
                 }
             };
 
-            playButton.OnClick += () =>
-            {
-                if (Scene.Entities.OfType<Player>().Any())
-                {
-                    editor.Hidden = true;
-                    endGame.Hidden = false;
-                    _sceneController = new SceneController(window, new[] { Scene.CreateScene() });
-                }
-            };
-
             returnButton.OnClick += () =>
             {
-                editor.Hidden = false;
-                endGame.Hidden = true;
+                _editor.Hidden = false;
+                _endGame.Hidden = true;
                 _sceneController = null;
             };
 
@@ -109,6 +100,16 @@ namespace TimeLoopInc.Editor
 
             _camera = new GridCamera(new Transform2(), (float)_window.CanvasSize.XRatio);
             _camera.WorldTransform = _camera.WorldTransform.WithSize(15);
+        }
+
+        void Play()
+        {
+            if (Scene.Entities.OfType<Player>().Any())
+            {
+                _editor.Hidden = true;
+                _endGame.Hidden = false;
+                _sceneController = new SceneController(_window, new[] { Scene.CreateScene() });
+            }
         }
 
         void Save()
@@ -170,7 +171,7 @@ namespace TimeLoopInc.Editor
                     }
 
                     _hotkeys
-                        .Where(item => _window.KeysPress().Contains(item.Key))
+                        .Where(item => _window.HotkeyPress(item.Key))
                         .ForEach(item => item.Value());
                 }
             }
@@ -178,11 +179,12 @@ namespace TimeLoopInc.Editor
 
         public static SceneBuilder Remove(SceneBuilder scene, Vector2i v)
         {
+            var walls = scene.Walls.Where(item => item != v).ToHashSet();
             return scene.With(
-                scene.Walls.Where(item => item != v).ToHashSet(), 
+                walls, 
                 scene.Exits.Where(item => item != v).ToHashSet(), 
                 scene.Entities.Where(item => item.StartTransform.Position != v), 
-                GetPortals(portal => portal.Position != v, scene.Links));
+                GetPortals(portal => portal.Position != v && PortalValidSides(portal.Position, walls).Any(), scene.Links));
         }
 
         /// <summary>

@@ -1,21 +1,16 @@
 ﻿using Equ;
 using OpenTK.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TimeLoopInc.Editor
+namespace Game
 {
-    public class HotKey : MemberwiseEquatable<HotKey>
+    public class Hotkey : MemberwiseEquatable<Hotkey>
     {
         public bool Control { get; }
         public bool Shift { get; }
         public bool Alt { get; }
         public Key Key { get; }
 
-        public HotKey(Key key, bool control = false, bool shift = false, bool alt = false)
+        public Hotkey(Key key, bool control = false, bool shift = false, bool alt = false)
         {
             Key = key;
             Control = control;

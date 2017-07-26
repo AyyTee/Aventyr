@@ -24,14 +24,14 @@ namespace TimeLoopInc.Editor
 
         public SceneBuilder Update(SceneBuilder scene, ICamera2 camera)
         {
-            var _mousePosition = _window.MouseWorldPos(camera);
+            var mousePosition = _window.MouseWorldPos(camera);
 
             if (_window.ButtonPress(MouseButton.Left))
             {
                 if (_selected == null)
                 {
                     var portals = scene.Links.SelectMany(item => item.Portals);
-                    var nearest = NearestPortal(_mousePosition, portals);
+                    var nearest = NearestPortal(mousePosition, portals);
                     if (nearest != null)
                     {
                         var screenDistance = (_window.MousePosition - camera.WorldToScreen(nearest.Center, _window.CanvasSize)).Length;
@@ -46,7 +46,7 @@ namespace TimeLoopInc.Editor
                     var portals = scene.Links
                     .SelectMany(item => item.Portals)
                     .Where(item => item != _selected);
-                    var nearest = NearestPortal(_mousePosition, portals);
+                    var nearest = NearestPortal(mousePosition, portals);
                     if (nearest != null)
                     {
                         var screenDistance = (_window.MousePosition - camera.WorldToScreen(nearest.Center, _window.CanvasSize)).Length;
@@ -66,7 +66,15 @@ namespace TimeLoopInc.Editor
 
             if (_window.ButtonPress(MouseButton.Right))
             {
-                _selected = null;
+                if (_selected != null)
+                {
+                    _selected = null;
+                }
+                else
+                {
+                    var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
+                    return EditorController.Remove(scene, mouseGridPos);
+                }
             }
             return null;
         }

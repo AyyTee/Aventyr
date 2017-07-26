@@ -24,11 +24,10 @@ namespace TimeLoopInc.Editor
         /// </summary>
         public SceneBuilder Update(SceneBuilder scene, ICamera2 camera)
         {
+            var mousePosition = _window.MouseWorldPos(camera);
+            var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
             if (_window.ButtonPress(MouseButton.Left))
             {
-                var mousePosition = _window.MouseWorldPos(camera);
-                var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
-
                 var sides = EditorController.PortalValidSides(mouseGridPos, scene.Walls);
                 if (sides.Count > 0)
                 {
@@ -58,6 +57,10 @@ namespace TimeLoopInc.Editor
 
                     return scene.With(links: links);
                 }
+            }
+            else if (_window.ButtonPress(MouseButton.Right))
+            {
+                return EditorController.Remove(scene, mouseGridPos);
             }
             return null;
         }
