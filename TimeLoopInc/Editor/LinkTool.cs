@@ -13,20 +13,23 @@ namespace TimeLoopInc.Editor
 {
     public class LinkTool : ITool
     {
-        readonly IVirtualWindow _window;
+        readonly IEditorController _editor;
         PortalBuilder _selected;
         public float MaxSelectDistance { get; set; } = 100;
 
-        public LinkTool(IVirtualWindow window)
+        public LinkTool(IEditorController editor)
         {
-            _window = window;
+            _editor = editor;
         }
 
-        public SceneBuilder Update(SceneBuilder scene, ICamera2 camera)
+        public void Update()
         {
-            var mousePosition = _window.MouseWorldPos(camera);
+            var window = _editor.Window;
+            var camera = _editor.Camera;
+            var scene = _editor.Scene;
+            var mousePosition = window.MouseWorldPos(camera);
 
-            if (_window.ButtonPress(MouseButton.Left))
+            if (window.ButtonPress(MouseButton.Left))
             {
                 if (_selected == null)
                 {
@@ -34,7 +37,7 @@ namespace TimeLoopInc.Editor
                     var nearest = NearestPortal(mousePosition, portals);
                     if (nearest != null)
                     {
-                        var screenDistance = (_window.MousePosition - camera.WorldToScreen(nearest.Center, _window.CanvasSize)).Length;
+                        var screenDistance = (window.MousePosition - camera.WorldToScreen(nearest.Center, window.CanvasSize)).Length;
                         if (screenDistance < MaxSelectDistance)
                         {
                             _selected = nearest;
@@ -49,22 +52,21 @@ namespace TimeLoopInc.Editor
                     var nearest = NearestPortal(mousePosition, portals);
                     if (nearest != null)
                     {
-                        var screenDistance = (_window.MousePosition - camera.WorldToScreen(nearest.Center, _window.CanvasSize)).Length;
+                        var screenDistance = (window.MousePosition - camera.WorldToScreen(nearest.Center, window.CanvasSize)).Length;
                         if (screenDistance < MaxSelectDistance)
                         {
                             var newLinks = LinkPortals(_selected, nearest, scene.Links);
                             _selected = null;
                             if (newLinks.SequenceEqual(scene.Links))
                             {
-                                return null;
+                                return;
                             }
-                            return scene.With(links: newLinks);
+                            _editor.ApplyChanges(scene.With(links: newLinks));
                         }
                     }
                 }
             }
-
-            if (_window.ButtonPress(MouseButton.Right))
+            else if (window.ButtonPress(MouseButton.Right))
             {
                 if (_selected != null)
                 {
@@ -73,10 +75,9 @@ namespace TimeLoopInc.Editor
                 else
                 {
                     var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
-                    return EditorController.Remove(scene, mouseGridPos);
+                    _editor.ApplyChanges(EditorController.Remove(scene, mouseGridPos));
                 }
             }
-            return null;
         }
 
         public static PortalLink GetLink(PortalBuilder portal, IEnumerable<PortalLink> links)
@@ -122,11 +123,11 @@ namespace TimeLoopInc.Editor
             return null;
         }
 
-        public List<IRenderable> Render(SceneBuilder scene, ICamera2 camera)
+        public List<IRenderable> Render()
         {
             var output = new List<IRenderable>();
 
-            var _mousePosition = _window.MouseWorldPos(camera);
+            var _mousePosition = _editor.Window.MouseWorldPos(_editor.Camera);
             if (_selected != null)
             {
                 var line = Draw.Line(new LineF(_selected.Center, _mousePosition), Color4.Black, 0.04f);

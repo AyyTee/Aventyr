@@ -12,32 +12,33 @@ namespace TimeLoopInc.Editor
 {
     public class ExitTool : ITool
     {
-        readonly IVirtualWindow _window;
+        readonly IEditorController _editor;
 
-        public ExitTool(IVirtualWindow window)
+        public ExitTool(IEditorController editor)
         {
-            _window = window;
+            _editor = editor;
         }
 
-        public List<IRenderable> Render(SceneBuilder scene, ICamera2 camera)
+        public List<IRenderable> Render()
         {
             return new List<IRenderable>();
         }
 
-        public SceneBuilder Update(SceneBuilder scene, ICamera2 camera)
+        public void Update()
         {
-            var mousePosition = _window.MouseWorldPos(camera);
+            var window = _editor.Window;
+            var scene = _editor.Scene;
+            var mousePosition = window.MouseWorldPos(_editor.Camera);
             var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
-            if (_window.ButtonPress(MouseButton.Left))
+            if (window.ButtonPress(MouseButton.Left))
             {
                 var exits = scene.Exits.Add(mouseGridPos);
-                return scene.With(exits: exits);
+                _editor.ApplyChanges(scene.With(exits: exits));
             }
-            else if (_window.ButtonPress(MouseButton.Right))
+            else if (window.ButtonPress(MouseButton.Right))
             {
-                return EditorController.Remove(scene, mouseGridPos);
+                _editor.ApplyChanges(EditorController.Remove(scene, mouseGridPos));
             }
-            return null;
         }
     }
 }

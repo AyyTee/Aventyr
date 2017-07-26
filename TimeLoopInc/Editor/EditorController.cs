@@ -14,19 +14,19 @@ using Game;
 
 namespace TimeLoopInc.Editor
 {
-    public class EditorController
+    public class EditorController : IEditorController
     {
         enum ToolType { Player, Block, Wall, Portal, Link, Exit }
 
         public static string LevelPath => "Levels";
 
-        readonly IVirtualWindow _window;
+        public IVirtualWindow Window { get; }
         readonly UiController _menu;
-        readonly GridCamera _camera;
+        public GridCamera Camera { get; }
         readonly Controller _controller;
         readonly Frame _editor, _endGame;
         SceneController _sceneController;
-        SceneBuilder Scene => _sceneChanges[_sceneChangeCurrent];
+        public SceneBuilder Scene => _sceneChanges[_sceneChangeCurrent];
         bool _isPlaying => _sceneController != null;
         Vector2 _mousePosition;
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
@@ -39,22 +39,22 @@ namespace TimeLoopInc.Editor
         {
             _hotkeys = new Dictionary<Hotkey, Action>
             {
-                { new Hotkey(Key.Number1), () => _tool = new WallTool(_window) },
-                { new Hotkey(Key.Number2), () => _tool = new ExitTool(_window) },
-                { new Hotkey(Key.Number3), () => _tool = new PlayerTool(_window) },
-                { new Hotkey(Key.Number4), () => _tool = new BlockTool(_window) },
-                { new Hotkey(Key.Number5), () => _tool = new PortalTool(_window) },
-                { new Hotkey(Key.Number6), () => _tool = new LinkTool(_window) },
+                { new Hotkey(Key.Number1), () => _tool = new WallTool(this) },
+                { new Hotkey(Key.Number2), () => _tool = new ExitTool(this) },
+                { new Hotkey(Key.Number3), () => _tool = new PlayerTool(this) },
+                { new Hotkey(Key.Number4), () => _tool = new BlockTool(this) },
+                { new Hotkey(Key.Number5), () => _tool = new PortalTool(this) },
+                { new Hotkey(Key.Number6), () => _tool = new LinkTool(this) },
                 { new Hotkey(Key.P, true), Play}
             }.ToImmutableDictionary();
 
             _sceneChanges.Add(new SceneBuilder());
 
-            _window = window;
+            Window = window;
             _controller = controller;
-            _tool = new WallTool(_window);
+            _tool = new WallTool(this);
 
-            _menu = new UiController(_window);
+            _menu = new UiController(Window);
 
             _menu.Root = new Frame(out Frame rootFrame)
             {
@@ -62,26 +62,26 @@ namespace TimeLoopInc.Editor
                 {
                     new Button(out _, new Transform2(new Vector2(10, 10)), new Vector2(200, 90), Save)
                     {
-                        new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Save As..."))
+                        new TextBlock(new TextEntity(Window.Fonts.Inconsolata, new Vector2(10, 10), "Save As..."))
                     },
                     new Button(out _, new Transform2(new Vector2(10, 110)), new Vector2(200, 90), Load)
                     {
-                        new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Load"))
+                        new TextBlock(new TextEntity(Window.Fonts.Inconsolata, new Vector2(10, 10), "Load"))
                     },
                     new Button(out _, new Transform2(new Vector2(10, 210)), new Vector2(200, 90), Play)
                     {
-                        new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Play"))
+                        new TextBlock(new TextEntity(Window.Fonts.Inconsolata, new Vector2(10, 10), "Play"))
                     }
                 },
                 new Frame(out _endGame, new Transform2(), true)
                 {
                     new Button(out Button returnButton, new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
                     {
-                        new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Return to editor"))
+                        new TextBlock(new TextEntity(Window.Fonts.Inconsolata, new Vector2(10, 10), "Return to editor"))
                     },
                     new Button(out Button restart, new Transform2(new Vector2(10, 110)), new Vector2(200, 90))
                     {
-                        new TextBlock(new TextEntity(_window.Fonts.Inconsolata, new Vector2(10, 10), "Restart"))
+                        new TextBlock(new TextEntity(Window.Fonts.Inconsolata, new Vector2(10, 10), "Restart"))
                     }
                 }
             };
@@ -98,8 +98,8 @@ namespace TimeLoopInc.Editor
                 _sceneController.SetInput(_sceneController.Input.Clear());
             };
 
-            _camera = new GridCamera(new Transform2(), (float)_window.CanvasSize.XRatio);
-            _camera.WorldTransform = _camera.WorldTransform.WithSize(15);
+            Camera = new GridCamera(new Transform2(), (float)Window.CanvasSize.XRatio);
+            Camera.WorldTransform = Camera.WorldTransform.WithSize(15);
         }
 
         void Play()
@@ -108,7 +108,7 @@ namespace TimeLoopInc.Editor
             {
                 _editor.Hidden = true;
                 _endGame.Hidden = false;
-                _sceneController = new SceneController(_window, new[] { Scene.CreateScene() });
+                _sceneController = new SceneController(Window, new[] { Scene.CreateScene() });
             }
         }
 
@@ -135,7 +135,7 @@ namespace TimeLoopInc.Editor
 
         public void Update(double timeDelta)
         {
-            _mousePosition = _window.MouseWorldPos(_camera);
+            _mousePosition = Window.MouseWorldPos(Camera);
 
             _menu.Update(1);
             if (_isPlaying)
@@ -146,32 +146,28 @@ namespace TimeLoopInc.Editor
             {
                 if (_menu.Hover == null)
                 {
-                    var v = MoveInput.CreateFromKeyboard(_window)?.Direction.Value.Vector;
+                    var v = MoveInput.CreateFromKeyboard(Window)?.Direction.Value.Vector;
                     if (v != null)
                     {
-                        _camera.WorldTransform = _camera.WorldTransform.AddPosition((Vector2)v * 3);
+                        Camera.WorldTransform = Camera.WorldTransform.AddPosition((Vector2)v * 3);
                     }
 
-                    var newScene = _tool.Update(Scene, _camera);
-                    if (newScene != null)
-                    {
-                        ApplyChanges(newScene);
-                    }
+                    _tool.Update();
 
-                    if (_window.ButtonDown(KeyBoth.Control))
+                    if (Window.ButtonDown(KeyBoth.Control))
                     {
-                        if (_window.ButtonPress(Key.Y) || (_window.ButtonDown(KeyBoth.Shift) && _window.ButtonPress(Key.Z)))
+                        if (Window.ButtonPress(Key.Y) || (Window.ButtonDown(KeyBoth.Shift) && Window.ButtonPress(Key.Z)))
                         {
                             RedoChanges();
                         }
-                        else if (_window.ButtonPress(Key.Z))
+                        else if (Window.ButtonPress(Key.Z))
                         {
                             UndoChanges();
                         }
                     }
 
                     _hotkeys
-                        .Where(item => _window.HotkeyPress(item.Key))
+                        .Where(item => Window.HotkeyPress(item.Key))
                         .ForEach(item => item.Value());
                 }
             }
@@ -295,7 +291,7 @@ namespace TimeLoopInc.Editor
 
         void ResetTool()
         {
-            _tool = (ITool)Activator.CreateInstance(_tool.GetType(), _window);
+            _tool = (ITool)Activator.CreateInstance(_tool.GetType(), this);
         }
 
         public void Render(double timeDelta)
@@ -310,20 +306,20 @@ namespace TimeLoopInc.Editor
 
                 var layer = new Layer
                 {
-                    Camera = _camera,
-                    Renderables = SceneRender.RenderInstant(scene, scene.GetSceneInstant(0), 1, scene.Portals, _window.Fonts.Inconsolata)
+                    Camera = Camera,
+                    Renderables = SceneRender.RenderInstant(scene, scene.GetSceneInstant(0), 1, scene.Portals, Window.Fonts.Inconsolata)
                         .Cast<IRenderable>()
                         .ToList()
                 };
 
-                layer.Renderables.AddRange(_tool.Render(Scene, _camera));
+                layer.Renderables.AddRange(_tool.Render());
 
-                _window.Layers.Add(layer);
+                Window.Layers.Add(layer);
             }
 
             var gui = _menu.Render();
-            gui.Renderables.Add(Draw.Text(_window.Fonts.Inconsolata, new Vector2(0, 130), _mouseGridPos.ToString()));
-            _window.Layers.Add(gui);
+            gui.Renderables.Add(Draw.Text(Window.Fonts.Inconsolata, new Vector2(0, 130), _mouseGridPos.ToString()));
+            Window.Layers.Add(gui);
         }
     }
 }

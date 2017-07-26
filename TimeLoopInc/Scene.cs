@@ -446,6 +446,14 @@ namespace TimeLoopInc
             resultTransform = resultTransform.WithPosition(resultTransform.Position - offset);
             var posNextGrid = Transform2i.RoundTransform2d(resultTransform);
 
+            if (posNextGrid.Size < 0)
+            {
+                var angle = (posNextGrid.Direction.Value + 2) % GridAngle.CardinalDirections;
+                posNextGrid = posNextGrid
+                    .WithSize(Math.Abs(posNextGrid.Size))
+                    .WithRotation(new GridAngle(angle));
+            }
+
             if (!Walls.Contains(posNextGrid.Position))
             {
                 return ValueTuple.Create(

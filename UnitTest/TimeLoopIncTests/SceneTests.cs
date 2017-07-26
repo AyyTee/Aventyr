@@ -212,7 +212,7 @@ namespace TimeLoopIncTests
         }
 
         [Test]
-        public void MoveIntoPortalHasCorrectTransform()
+        public void MoveIntoPortalHasCorrectTransformTest0()
         {
             var portal0 = new TimePortal(new Vector2i(2, 0), GridAngle.Right);
             var portal1 = new TimePortal(new Vector2i(-10, 0), GridAngle.Left);
@@ -228,6 +228,26 @@ namespace TimeLoopIncTests
             var start = new Transform2i(new Vector2i(2, 0));
             var result = scene.Move(start, new Vector2i(1, 0), 0);
             var expected = new Transform2i(new Vector2i(-10, 0), GridAngle.Left, 1, true);
+            Assert.AreEqual(expected, result.Transform);
+        }
+
+        [Test]
+        public void MoveIntoPortalHasCorrectTransformTest1()
+        {
+            var portal0 = new TimePortal(new Vector2i(2, 0), GridAngle.Right);
+            var portal1 = new TimePortal(new Vector2i(-10, 0), GridAngle.Left, true);
+
+            portal0.SetLinked(portal1);
+            portal0.SetTimeOffset(5);
+
+            var scene = new Scene(
+                new HashSet<Vector2i>(),
+                new[] { portal0, portal1 },
+                new IGridEntity[0]);
+
+            var start = new Transform2i(new Vector2i(2, 0));
+            var result = scene.Move(start, new Vector2i(1, 0), 0);
+            var expected = new Transform2i(new Vector2i(-10, 0), GridAngle.Right, 1);
             Assert.AreEqual(expected, result.Transform);
         }
 

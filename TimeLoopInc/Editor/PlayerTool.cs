@@ -12,34 +12,35 @@ namespace TimeLoopInc.Editor
 {
     public class PlayerTool : ITool
     {
-        readonly IVirtualWindow _window;
+        readonly IEditorController _editor;
 
-        public PlayerTool(IVirtualWindow window)
+        public PlayerTool(IEditorController editor)
         {
-            _window = window;
+            _editor = editor;
         }
 
-        public List<IRenderable> Render(SceneBuilder scene, ICamera2 camera)
+        public List<IRenderable> Render()
         {
             return new List<IRenderable>();
         }
 
-        public SceneBuilder Update(SceneBuilder scene, ICamera2 camera)
+        public void Update()
         {
-            var mousePosition = _window.MouseWorldPos(camera);
+            var window = _editor.Window;
+            var scene = _editor.Scene;
+            var mousePosition = window.MouseWorldPos(_editor.Camera);
             var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
-            if (_window.ButtonPress(MouseButton.Left))
+            if (window.ButtonPress(MouseButton.Left))
             {
                 var entities = scene.Entities
                     .RemoveAll(item => item is Player || item.StartTransform.Position == mouseGridPos)
                     .Add(new Player(new Transform2i(mouseGridPos), 0));
-                return scene.With(entities: entities);
+                _editor.ApplyChanges(scene.With(entities: entities));
             }
-            else if (_window.ButtonPress(MouseButton.Right))
+            else if (window.ButtonPress(MouseButton.Right))
             {
-                return EditorController.Remove(scene, mouseGridPos);
+                _editor.ApplyChanges(EditorController.Remove(scene, mouseGridPos));
             }
-            return null;
         }
     }
 }

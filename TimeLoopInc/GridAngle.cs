@@ -42,5 +42,15 @@ namespace TimeLoopInc
         public static GridAngle Up => new GridAngle(1);
         public static GridAngle Left => new GridAngle(2);
         public static GridAngle Down => new GridAngle(3);
+
+        public static GridAngle Add(GridAngle left, GridAngle right)
+        {
+            return new GridAngle(left.Value + right.Value);
+        }
+
+        public static GridAngle operator +(GridAngle left, GridAngle right)
+        {
+            return Add(left, right);
+        }
     }
 }

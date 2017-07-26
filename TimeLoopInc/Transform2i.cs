@@ -28,7 +28,11 @@ namespace TimeLoopInc
 
         public Vector2i Scale => MirrorX ? new Vector2i(-Size, Size) : new Vector2i(Size, Size);
 
-        public Transform2i(Vector2i position = new Vector2i(), GridAngle gridRotation = new GridAngle(), int size = 1, bool mirrorX = false)
+        public Transform2i(
+            Vector2i position = new Vector2i(), 
+            GridAngle gridRotation = new GridAngle(), 
+            int size = 1, 
+            bool mirrorX = false)
         {
             DebugEx.Assert(size != 0);
             Position = position;
@@ -39,7 +43,7 @@ namespace TimeLoopInc
 
         public Transform2d ToTransform2d()
         {
-            return new Transform2d((Vector2d)Position, (float)Direction.Radians, Size, MirrorX);
+            return new Transform2d((Vector2d)Position, Direction.Radians, Size, MirrorX);
         }
 
         public static Transform2i RoundTransform2d(Transform2d transform)

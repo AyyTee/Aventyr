@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Editor\BlockTool.cs" />
     <Compile Include="Editor\ExitTool.cs" />
+    <Compile Include="Editor\IEditorController.cs" />
     <Compile Include="Editor\ITool.cs" />
     <Compile Include="Editor\PlayerTool.cs" />
     <Compile Include="Editor\WallTool.cs" />

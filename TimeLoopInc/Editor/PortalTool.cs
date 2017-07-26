@@ -11,22 +11,24 @@ namespace TimeLoopInc.Editor
 {
     public class PortalTool : ITool
     {
-        readonly IVirtualWindow _window;
+        readonly IEditorController _editor;
         PortalBuilder _lastPlaced;
 
-        public PortalTool(IVirtualWindow window)
+        public PortalTool(IEditorController editor)
         {
-            _window = window;
+            _editor = editor;
         }
 
         /// <summary>
         /// Returns a modified scene or null if no changes have been made.
         /// </summary>
-        public SceneBuilder Update(SceneBuilder scene, ICamera2 camera)
+        public void Update()
         {
-            var mousePosition = _window.MouseWorldPos(camera);
+            var window = _editor.Window;
+            var scene = _editor.Scene;
+            var mousePosition = window.MouseWorldPos(_editor.Camera);
             var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
-            if (_window.ButtonPress(MouseButton.Left))
+            if (window.ButtonPress(MouseButton.Left))
             {
                 var sides = EditorController.PortalValidSides(mouseGridPos, scene.Walls);
                 if (sides.Count > 0)
@@ -44,7 +46,7 @@ namespace TimeLoopInc.Editor
                     links = EditorController.GetPortals(portal => !collisions.Contains(portal), links);
 
                     links = links.Add(new PortalLink(new[] { newPortal }));
-                    if (_window.ButtonDown(KeyBoth.Shift) && _lastPlaced != null)
+                    if (window.ButtonDown(KeyBoth.Shift) && _lastPlaced != null)
                     {
                         DebugEx.Assert(LinkTool.GetLink(_lastPlaced, links).Portals.Length == 1);
                         links = LinkTool.LinkPortals(_lastPlaced, newPortal, links);
@@ -55,24 +57,24 @@ namespace TimeLoopInc.Editor
                         _lastPlaced = newPortal;
                     }
 
-                    return scene.With(links: links);
+                    _editor.ApplyChanges(scene.With(links: links));
                 }
             }
-            else if (_window.ButtonPress(MouseButton.Right))
+            else if (window.ButtonPress(MouseButton.Right))
             {
-                return EditorController.Remove(scene, mouseGridPos);
+                _editor.ApplyChanges(EditorController.Remove(scene, mouseGridPos));
             }
-            return null;
         }
 
-        public List<IRenderable> Render(SceneBuilder scene, ICamera2 camera)
+        public List<IRenderable> Render()
         {
             var output = new List<IRenderable>();
+            var window = _editor.Window;
 
-            var _mousePosition = _window.MouseWorldPos(camera);
+            var _mousePosition = window.MouseWorldPos(_editor.Camera);
 
-            var previousLink = scene.Links.LastOrDefault();
-            if (_window.ButtonDown(KeyBoth.Shift) && _lastPlaced != null)
+            var previousLink = _editor.Scene.Links.LastOrDefault();
+            if (window.ButtonDown(KeyBoth.Shift) && _lastPlaced != null)
             {
                 var line = Draw.Line(
                     new LineF(_lastPlaced.Center, _mousePosition),

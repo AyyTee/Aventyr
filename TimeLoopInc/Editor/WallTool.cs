@@ -12,35 +12,37 @@ namespace TimeLoopInc.Editor
 {
     public class WallTool : ITool
     {
-        readonly IVirtualWindow _window;
+        readonly IEditorController _editor;
 
-        public WallTool(IVirtualWindow window)
+        public WallTool(IEditorController editor)
         {
-            _window = window;
+            _editor = editor;
         }
 
-        public List<IRenderable> Render(SceneBuilder scene, ICamera2 camera)
+        public List<IRenderable> Render()
         {
             return new List<IRenderable>();
         }
 
-        public SceneBuilder Update(SceneBuilder scene, ICamera2 camera)
+        public void Update()
         {
-            var mousePosition = _window.MouseWorldPos(camera);
+            var window = _editor.Window;
+            var camera = _editor.Camera;
+            var scene = _editor.Scene;
+            var mousePosition = window.MouseWorldPos(camera);
             var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
-            if (_window.ButtonPress(MouseButton.Left))
+            if (window.ButtonPress(MouseButton.Left))
             {
                 var walls = scene.Walls.Add(mouseGridPos);
                 var links = EditorController.GetPortals(
                     portal => EditorController.PortalValidSides(portal.Position, walls).Any(),
                     scene.Links);
-                return scene.With(walls, links: links);
+                _editor.ApplyChanges(scene.With(walls, links: links));
             }
-            else if (_window.ButtonPress(MouseButton.Right))
+            else if (window.ButtonPress(MouseButton.Right))
             {
-                return EditorController.Remove(scene, mouseGridPos);
+                _editor.ApplyChanges(EditorController.Remove(scene, mouseGridPos));
             }
-            return null;
         }
     }
 }
