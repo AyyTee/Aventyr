@@ -29,6 +29,9 @@
     <Reference Include="MoreLinq, Version=2.6.20831.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
       <HintPath>..\packages\morelinq.2.6.0\lib\net40\MoreLinq.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="OpenTK">
       <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
@@ -59,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="TimeLoopIncTests\EditorControllerTests.cs" />
+    <Compile Include="TimeLoopIncTests\SceneRenderTests.cs" />
     <Compile Include="TimeLoopIncTests\SceneTests.cs" />
     <Compile Include="TankGameTests\TankGameTests.cs" />
     <Compile Include="GameTests\ActorTests.cs" />
@@ -134,6 +138,10 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="TimeLoopIncTests\Levels\PlayerLeftOfPortal.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

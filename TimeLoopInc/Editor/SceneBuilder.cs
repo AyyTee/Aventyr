@@ -53,7 +53,7 @@ namespace TimeLoopInc.Editor
                 {
                     var portal1 = new TimePortal(link.Portals[1].Position, link.Portals[1].Direction, true);
                     portal0.SetLinked(portal1);
-                    portal0.SetTimeOffset(link.TimeOffset - 5);
+                    portal0.SetTimeOffset(link.TimeOffset);
                     portals.Add(portal1);
                 }
             }

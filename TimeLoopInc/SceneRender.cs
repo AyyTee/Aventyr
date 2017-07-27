@@ -99,7 +99,7 @@ namespace TimeLoopInc
             var offset = GetOffset(offsetCount);
             if (!renderPortals)
             {
-                var renderables = RenderInstant(_scene, _scene.GetSceneInstant(time), t, worldLayer.Portals, _window.Fonts.Inconsolata);
+                var renderables = RenderInstant(_scene, _scene.GetSceneInstant(time), t, worldLayer.Portals, _window.Fonts?.Inconsolata);
                 renderables.Add(new Renderable { Models = new List<Model> { _grid }, IsPortalable = false });
                 foreach (var renderable in renderables)
                 {
@@ -216,7 +216,7 @@ namespace TimeLoopInc
                         (portal.Position.X + portal.Linked.Position.X) * 1000 +
                         portal.Position.Y + portal.Linked.Position.Y;
                     var random = new Random(seed);
-                    var color = random.Choose(Color4.ForestGreen, Color4.FloralWhite, Color4.Crimson, Color4.Chocolate);
+                    var color = random.Choose(Color4.ForestGreen, Color4.Crimson, Color4.Chocolate);
                     output.Add(CreateSquare(portal.Position, 1, color));
 
                     var models = new List<Model>();
@@ -228,18 +228,21 @@ namespace TimeLoopInc
                             continue;
                         }
 
-                        var text = font.GetModel(portal.TimeOffset.ToString(), new Vector2(0.5f, 1f));
-                        text.Transform.Scale = new Vector3(0.014f, 0.014f, 0.014f);
-                        var offset = (Vector2)angle.Vector * 0.48f;
-                        text.Transform.Position = new Vector3(offset.X, offset.Y, 1);
-                        text.Transform.Rotation = new Quaternion(new Vector3(0, 0, 1), (float)(angle.Radians - Math.PI / 2));
-                        models.Add(text);
+                        if (font != null)
+                        {
+                            var text = font.GetModel(portal.TimeOffset.ToString(), new Vector2(0.5f, 1f));
+                            text.Transform.Scale = new Vector3(0.014f, 0.014f, 0.014f);
+                            var offset = (Vector2)angle.Vector * 0.48f;
+                            text.Transform.Position = new Vector3(offset.X, offset.Y, 1);
+                            text.Transform.Rotation = new Quaternion(new Vector3(0, 0, 1), (float)(angle.Radians - Math.PI / 2));
+                            models.Add(text);
+                        }
                     }
 
                     var renderable = new Renderable(new Transform2((Vector2)portal.Position + Vector2.One / 2), models);
                     output.Add(renderable);
                 }
-                var line = (Renderable)Draw.Line(new LineF(portal.GetWorldVerts()), Color4.Blue, 0.08f);
+                var line = Draw.Line(new LineF(portal.GetWorldVerts()), Color4.Blue, 0.08f);
                 line.IsPortalable = false;
                 output.Add(line);
             }
@@ -266,8 +269,11 @@ namespace TimeLoopInc
             transform = transform.WithPosition(transform.Position + offset);
             var result = Ray.RayCast((Transform2)transform, new Transform2(-velocity * (1 - t)), portals, new Ray.Settings());
 
+            // Something isn't working with the camera's rotation. This offset corrects for whatever that is.
+            var rotationOffset = result.PortalsEntered.Count(item => !Portal.GetLinkedTransform(item.EnterData.EntrancePortal).MirrorX) * Math.PI;
+
             return ValueTuple.Create(
-                result.WorldTransform,
+                result.WorldTransform.AddRotation((float)rotationOffset),
                 result.PortalsEntered.Sum(item => ((TimePortal)item.EnterData.EntrancePortal).TimeOffset));
         }
 
