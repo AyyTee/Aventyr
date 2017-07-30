@@ -31,7 +31,7 @@ namespace TimeLoopInc.Editor
         Vector2 _mousePosition;
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
-        int _sceneChangeCurrent = 0;
+        int _sceneChangeCurrent;
         ITool _tool;
         readonly ImmutableDictionary<Hotkey, Action> _hotkeys;
 
@@ -60,28 +60,31 @@ namespace TimeLoopInc.Editor
             {
                 new Frame(out _editor, new Transform2())
                 {
-                    new Button(out _, new Transform2(new Vector2(10, 10)), new Vector2(200, 90), Save)
+                    new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 90), Save)
                     {
-                        new TextBlock(new TextEntity(Window.Fonts.Inconsolata, new Vector2(10, 10), "Save As..."))
+                        new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Save As...")
                     },
-                    new Button(out _, new Transform2(new Vector2(10, 110)), new Vector2(200, 90), Load)
+                    new Button(new Transform2(new Vector2(10, 110)), new Vector2(200, 90), Load)
                     {
-                        new TextBlock(new TextEntity(Window.Fonts.Inconsolata, new Vector2(10, 10), "Load"))
+                        new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Load")
                     },
-                    new Button(out _, new Transform2(new Vector2(10, 210)), new Vector2(200, 90), Play)
+                    new Button(new Transform2(new Vector2(10, 210)), new Vector2(200, 90), Play)
                     {
-                        new TextBlock(new TextEntity(Window.Fonts.Inconsolata, new Vector2(10, 10), "Play"))
+                        new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Play")
                     }
                 },
                 new Frame(out _endGame, new Transform2(), true)
                 {
                     new Button(out Button returnButton, new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
                     {
-                        new TextBlock(new TextEntity(Window.Fonts.Inconsolata, new Vector2(10, 10), "Return to editor"))
+                        new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Return to editor")
                     },
-                    new Button(out Button restart, new Transform2(new Vector2(10, 110)), new Vector2(200, 90))
+                    new Button(
+                        new Transform2(new Vector2(10, 110)), 
+                        new Vector2(200, 90), 
+                        () => _sceneController.SetInput(_sceneController.Input.Clear()))
                     {
-                        new TextBlock(new TextEntity(Window.Fonts.Inconsolata, new Vector2(10, 10), "Restart"))
+                        new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Restart")
                     }
                 }
             };
@@ -91,11 +94,6 @@ namespace TimeLoopInc.Editor
                 _editor.Hidden = false;
                 _endGame.Hidden = true;
                 _sceneController = null;
-            };
-
-            restart.OnClick += () =>
-            {
-                _sceneController.SetInput(_sceneController.Input.Clear());
             };
 
             Camera = new GridCamera(new Transform2(), (float)Window.CanvasSize.XRatio);

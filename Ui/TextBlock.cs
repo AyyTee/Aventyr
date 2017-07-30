@@ -6,6 +6,7 @@ using Game.Common;
 using Game.Models;
 using Game.Rendering;
 using OpenTK;
+using System.Linq;
 
 namespace Ui
 {
@@ -13,37 +14,36 @@ namespace Ui
     {
         public Transform2 Transform { get; set; } = new Transform2();
 
-        public TextEntity Text { get; set; }
+        public string Text { get; set; }
+
+        public Font Font { get; set; }
 
         public bool Hidden { get; set; }
 
-        public TextBlock(TextEntity text)
+        public TextBlock(Transform2 transform, Font font, string text)
         {
             DebugEx.Assert(text != null);
+            Transform = transform;
+            Font = font;
             Text = text;
         }
 
-        public TextBlock(TextEntity text, out TextBlock id)
-            : this(text)
+        public TextBlock(out TextBlock id, Transform2 transform, Font font, string text)
+            : this(transform, font, text)
         {
             id = this;
         }
 
         public List<Model> GetModels()
         {
-            return Text.GetModels();
+            return Font != null ?
+                new[] { Font.GetModel(Text) }.ToList() :
+                new List<Model>();
         }
 
         public bool IsInside(Vector2 localPoint) => false;
 
-        public IEnumerator<IElement> GetEnumerator()
-        {
-            return new List<IElement>().GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        public IEnumerator<IElement> GetEnumerator() => new List<IElement>().GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

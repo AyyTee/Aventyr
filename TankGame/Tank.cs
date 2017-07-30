@@ -41,8 +41,7 @@ namespace TankGame
                 PortalPair[i] = new TankPortal(Scene);
                 var portalEntity = new Entity(Scene);
                 portalEntity.SetParent(PortalPair[i]);
-                portalEntity.AddModel(ModelFactory.CreateLinesWidth( new[] { new LineF(Portal.Vertices) }, 0.1f));
-                portalEntity.ModelList[0].SetColor(new Color4(1f, 0f, 0f, 1f));
+                portalEntity.AddModel(ModelFactory.CreateLinesWidth( new[] { new LineF(Portal.Vertices) }, 0.1f, new Color4(1f, 0f, 0f, 1f)));
             }
             Portal.SetLinked(PortalPair[0], PortalPair[1]);
 
@@ -52,13 +51,12 @@ namespace TankGame
             Entity entity = new Entity(scene);
             entity.Name = "Player Tank Entity";
             entity.SetParent(this);
-            entity.AddModel(ModelFactory.CreateCube(new Vector3(0.8f, 1, 1)));
+            entity.AddModel(ModelFactory.CreateCube(new Vector3(0.8f, 1, 1), Color4.Black));
 
             Turret = new Entity(scene);
             Turret.Name = "Tank Turret";
-            Model turretModel = ModelFactory.CreateCube(new Vector3(0.6f, 0.3f, 0.3f));
+            Model turretModel = ModelFactory.CreateCube(new Vector3(0.6f, 0.3f, 0.3f), new Color4(0.5f, 0.5f, 0.5f, 1f));
             turretModel.Transform = new Transform3(new Vector3(0.25f, 0f, 0.5f));
-            turretModel.SetColor(new Color4(0.5f, 0.5f, 0.5f, 1f));
             Turret.AddModel(turretModel);
             Turret.SetParent(this);
 

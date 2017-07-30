@@ -16,27 +16,23 @@ namespace Game.Models
     public class Model : IShallowClone<Model>
     {
         [DataMember]
-        public Transform3 Transform = new Transform3();
-        /// <summary>If true then gl blending is enabled when rendering this model.</summary>
-        [DataMember]
-        public bool IsTransparent { get; set; }
+        public Transform3 Transform { get; set; } = new Transform3();
+        /// <summary>
+        /// If true then gl blending is enabled when rendering this model.
+        /// </summary>
+        public bool IsTransparent => Mesh.IsTransparent || (Texture?.IsTransparent ?? false);
 
         [DataMember]
-        public ITexture Texture;
-        /// <summary>
-        /// Color that is blended over top of mesh vertex colors.
-        /// </summary>
-        [DataMember]
-        public Color4 Color;
+        public ITexture Texture { get; set; }
         /// <summary>
         /// Offset for the mesh uv coordinates.
         /// </summary>
         [DataMember]
-        public Transform2 TransformUv = new Transform2();
+        public Transform2 TransformUv { get; set; } = new Transform2();
         [DataMember]
-        public bool Wireframe;
+        public bool Wireframe { get; set; }
         [DataMember]
-        public IMesh Mesh = new Mesh();
+        public IMesh Mesh { get; set; } = new Mesh();
         
         public Model()
         {
@@ -53,14 +49,11 @@ namespace Game.Models
         {
             Model clone = ShallowClone();
             clone.Transform = Transform;
-            clone.TransformUv = TransformUv;
             clone.Mesh = Mesh.ShallowClone();
             return clone;
         }
 
         public void SetTexture(ITexture texture) => Texture = texture;
-
-        public void SetColor(Color4 color) => Color = color;
 
         public Vector3[] GetVerts()
         {
@@ -100,7 +93,7 @@ namespace Game.Models
             var val = new Vector4[vertices.Count];
             for (int i = 0; i < val.Length; i++)
             {
-                val[i] = vertices[i].Color.Lerp(Color, Color.A).ToVector();
+                val[i] = vertices[i].Color.ToVector();
             }
             return val;
         }

@@ -81,7 +81,7 @@ namespace TimeLoopInc
                 Vector2 pos = new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, i), 0) * size;
                 var top = (topLeft + pos).Round(Vector2.One);
                 output.Add(Draw.Text(_font, top, i.ToString(), new Vector2(0.5f, 1)));
-                output.Add(Draw.Line(new LineF(top, top + size.YOnly())));
+                output.Add(Draw.Line(new LineF(top, top + size.YOnly()), Color4.Black));
             }
 
 
@@ -136,7 +136,7 @@ namespace TimeLoopInc
                 }
 
                 output.AddRange(meshes
-                    .Select(item => (IRenderable)new Renderable(new Model(item) { IsTransparent = true }))
+                    .Select(item => (IRenderable)new Renderable(new Model(item)))
                     .ToArray());
             }
 
@@ -149,7 +149,8 @@ namespace TimeLoopInc
                 Draw.Triangle(
                     position,
                     position + new Vector2(15, -18) * uiScale,
-                    position + new Vector2(-15, -18) * uiScale),
+                    position + new Vector2(-15, -18) * uiScale,
+                    Color4.Black),
                 Draw.Triangle(
                     position + new Vector2(0, -2) * uiScale,
                     position + new Vector2(11, -16) * uiScale,

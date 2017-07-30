@@ -15,7 +15,7 @@ namespace Game.Models
         [DataMember]
         public readonly Vector3 Position;
         [DataMember]
-        public readonly Color4 Color;
+        public readonly Color4 Color = Color4.White;
         [DataMember]
         public readonly Vector2 TextureCoord;
         [DataMember]

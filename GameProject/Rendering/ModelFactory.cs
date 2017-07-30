@@ -16,7 +16,7 @@ namespace Game.Rendering
 {
     public static class ModelFactory
     {
-        public static Model CreatePlane() => CreatePlane(new Vector2(1, 1), Color4.Black);
+        public static Model CreatePlane() => CreatePlane(new Vector2(1, 1), Color4.White);
 
         public static Model CreatePlane(Vector2 scale, Color4 color, Vector3 offset = new Vector3())
         {
@@ -29,7 +29,7 @@ namespace Game.Rendering
                 new Vertex(new Vector3(0f, scale.Y,  0f) + offset, new Vector2(0, 0), color),
                 new Vertex(new Vector3(scale.X, scale.Y,  0f) + offset, new Vector2(1, 0), color),
                 new Vertex(new Vector3(scale.X, 0f,  0f) + offset, new Vector2(1, 1), color),
-                new Vertex(new Vector3(0f, 0f,  0f) + offset, new Vector2(0, 1), color)
+                new Vertex(new Vector3(0f, 0f, 0f) + offset, new Vector2(0, 1), color)
             };
 
             var mesh = new Mesh { Vertices = vertices.ToList() };
@@ -57,7 +57,7 @@ namespace Game.Rendering
 
         public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight)
         {
-            return CreatePlaneMesh(topLeft, bottomRight, Color4.Black);
+            return CreatePlaneMesh(topLeft, bottomRight, Color4.White);
         }
 
         public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight, Color4 color)
@@ -100,7 +100,7 @@ namespace Game.Rendering
 
         public static Model CreateTriangle(Vector3 v0, Vector3 v1, Vector3 v2)
         {
-            return CreateTriangle(v0, v1, v2, Color4.Black);
+            return CreateTriangle(v0, v1, v2, Color4.White);
         }
 
         public static Model CreateTriangle(Vector3 v0, Vector3 v1, Vector3 v2, Color4 color)
@@ -113,41 +113,43 @@ namespace Game.Rendering
             return new Model(mesh);
         }
 
-        public static Model CreateCube() => CreateCube(new Vector3(1, 1, 1));
+        public static Model CreateCube() => CreateCube(Color4.White);
 
-        public static Model CreateCube(Vector3 scale)
+        public static Model CreateCube(Color4 color) => CreateCube(new Vector3(1, 1, 1), color);
+
+        public static Model CreateCube(Vector3 scale, Color4 color)
         {
             Vertex[] vertices = {
                 //left
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f) * scale, new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f) * scale, new Vector2(0.0f, 1.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f), color),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f) * scale, new Vector2(0.0f, 0.0f), color),
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f) * scale, new Vector2(0.0f, 1.0f), color),
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f), color),
                 //back
-                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f)),
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f), color),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f), color),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f), color),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f), color),
                 //right
-                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  0.5f) * scale, new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  0.5f) * scale, new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f), color),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f) * scale, new Vector2(1.0f, 1.0f), color),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f) * scale, new Vector2(1.0f, 0.0f), color),
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f), color),
                 //top
-                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f)),
-                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f)),
+                new Vertex(new Vector3(0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f), color),
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f), color),
+                new Vertex(new Vector3(0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f), color),
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f), color),
                 //front
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(0.0f, 1.0f)), 
-                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(1.0f, 0.0f)), 
-                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f) * scale, new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(1.0f, 1.0f)),
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(0.0f, 1.0f), color), 
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(1.0f, 0.0f), color), 
+                new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f) * scale, new Vector2(0.0f, 0.0f), color),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(1.0f, 1.0f), color),
                 //bottom
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f)), 
-                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f)),
-                new Vertex(new Vector3(0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f)),
-                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f))
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f), color), 
+                new Vertex(new Vector3(0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f), color),
+                new Vertex(new Vector3(0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f), color),
+                new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f), color)
             };
 
             int[] indices = {
@@ -171,61 +173,66 @@ namespace Game.Rendering
             return model;
         }
 
+        public static Model CreatePolygon(IList<Vector2> vertices, Vector3 offset = new Vector3())
+        {
+            return CreatePolygon(vertices, Color4.White, offset);
+        }
+
         /// <summary>
         /// Create a polygon model from an array of vertices. 
         /// If the polygon is degenerate or non-simple then the model will be empty.
         /// </summary>
-        public static Model CreatePolygon(IList<Vector2> vertices, Vector3 offset = new Vector3())
+        public static Model CreatePolygon(IList<Vector2> vertices, Color4 color, Vector3 offset = new Vector3())
         {
             var mesh = new Mesh();
-            AddPolygon(mesh, vertices, offset);
+            AddPolygon(mesh, vertices, color, offset);
             var model = new Model(mesh);
             return model;
             //return CreatePolygon(PolygonFactory.CreatePolygon(vertices), offset);
         }
 
-        public static Model CreatePolygon(Polygon polygon, Vector3 offset = new Vector3())
+        public static Model CreatePolygon(Polygon polygon, Color4 color, Vector3 offset = new Vector3())
         {
             var mesh = new Mesh();
-            AddPolygon(mesh, polygon, offset);
+            AddPolygon(mesh, polygon, color, offset);
             var model = new Model(mesh);
             return model;
         }
 
-        public static Model CreatePolygon(PolyTree polygon)
+        public static Model CreatePolygon(PolyTree polygon, Color4 color)
         {
             var mesh = new Mesh();
-            AddPolygon(mesh, polygon);
+            AddPolygon(mesh, polygon, color);
             var model = new Model(mesh);
             return model;
         }
 
-        public static int AddPolygon(Mesh model, IList<Vector2> v, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh model, IList<Vector2> v, Color4 color, Vector3 offset = new Vector3())
         {
-            return AddPolygon(model, PolygonFactory.CreatePolygon(v), offset);
+            return AddPolygon(model, PolygonFactory.CreatePolygon(v), color, offset);
         }
 
-        public static int AddPolygon(Mesh model, PolyTree polyTree, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh model, PolyTree polyTree, Color4 color, Vector3 offset = new Vector3())
         {
-            return AddPolygon(model, PolygonFactory.CreatePolygon(polyTree).ToArray(), offset);
+            return AddPolygon(model, PolygonFactory.CreatePolygon(polyTree).ToArray(), color, offset);
         }
 
-        public static int AddPolygon(Mesh model, List<List<IntPoint>> paths, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh model, List<List<IntPoint>> paths, Color4 color, Vector3 offset = new Vector3())
         {
-            return AddPolygon(model, PolygonFactory.CreatePolygon(paths).ToArray(), offset);
+            return AddPolygon(model, PolygonFactory.CreatePolygon(paths).ToArray(), color, offset);
         }
 
-        public static int AddPolygon(Mesh mesh, IList<Poly2Tri.Polygon> polygon, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh mesh, IList<Poly2Tri.Polygon> polygon, Color4 color, Vector3 offset = new Vector3())
         {
             int indexFirst = mesh.Vertices.Count;
             for (int i = 0; i < polygon.Count; i++)
             {
-                AddPolygon(mesh, polygon[i]);
+                AddPolygon(mesh, polygon[i], color);
             }
             return indexFirst;
         }
 
-        public static int AddPolygon(Mesh mesh, Poly2Tri.Polygon polygon, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh mesh, Poly2Tri.Polygon polygon, Color4 color, Vector3 offset = new Vector3())
         {
             int indexFirst = mesh.Vertices.Count;
             if (polygon == null)
@@ -242,7 +249,7 @@ namespace Game.Rendering
                 float ty = (float)((p.Y - polygon.MinY) / (polygon.MaxY - polygon.MinY));
                 var tc = new Vector2(tx, ty);
                 //verts[i] = new Vertex(v, tc);
-                mesh.Vertices.Add(new Vertex(v, tc));
+                mesh.Vertices.Add(new Vertex(v, tc, color));
             }
 
             foreach (DelaunayTriangle t in polygon.Triangles)
@@ -260,71 +267,71 @@ namespace Game.Rendering
             return indexFirst;
         }
 
-        public static Model CreateLines(IList<LineF> lines)
+        public static Model CreateLines(IList<LineF> lines, Color4 color)
         {
             var mesh = new Mesh();
-            AddLines(mesh, lines);
+            AddLines(mesh, lines, color);
             var model = new Model(mesh) {Wireframe = true};
             return model;
         }
 
-        public static void AddLines(Mesh mesh, IList<LineF> lines)
+        public static void AddLines(Mesh mesh, IList<LineF> lines, Color4 color)
         {
             for (int i = 0; i < lines.Count; i++)
             {
                 var v = new Vector3(lines[i][0].X, lines[i][0].Y, 0);
-                int index0 = mesh.AddVertex(new Vertex(v, new Vector2()));
+                int index0 = mesh.AddVertex(new Vertex(v, new Vector2(), color));
                 v = new Vector3(lines[i][1].X, lines[i][1].Y, 0);
-                int index1 = mesh.AddVertex(new Vertex(v, new Vector2()));
+                int index1 = mesh.AddVertex(new Vertex(v, new Vector2(), color));
                 mesh.AddTriangle(index0, index1, index1);
             }
         }
 
-        public static Model CreateLinesWidth(LineF[] lines, float width)
+        public static Model CreateLinesWidth(LineF[] lines, float width, Color4 color)
         {
             var mesh = new Mesh();
-            AddLinesWidth(mesh, lines, width);
+            AddLinesWidth(mesh, lines, width, color);
             var model = new Model(mesh);
             return model;
         }
 
-        public static void AddLinesWidth(Mesh mesh, LineF[] lines, float width)
+        public static void AddLinesWidth(Mesh mesh, LineF[] lines, float width, Color4 color)
         {
             for (var i = 0; i < lines.Length; i++)
             {
                 Vector2 vStart = lines[i][0];
                 Vector2 vEnd = lines[i][1];
-                AddLineWidth(mesh, vStart, vEnd, width);
+                AddLineWidth(mesh, vStart, vEnd, width, color);
             }
         }
 
-        public static Model CreateLineStripWidth(Vector2[] vertices, float width, bool closed)
+        public static Model CreateLineStripWidth(Vector2[] vertices, float width, bool closed, Color4 color)
         {
             var mesh = new Mesh();
-            AddLineStripWidth(mesh, vertices, width, closed);
+            AddLineStripWidth(mesh, vertices, width, closed, color);
             var model = new Model(mesh);
             return model;
         }
 
-        public static void AddLineStripWidth(Mesh mesh, Vector2[] vertices, float width, bool closed)
+        public static void AddLineStripWidth(Mesh mesh, Vector2[] vertices, float width, bool closed, Color4 color)
         {
             for (int i = 0; i < vertices.Length - 1; i++)
             {
-                AddLineWidth(mesh, vertices[i], vertices[i + 1], width);
+                AddLineWidth(mesh, vertices[i], vertices[i + 1], width, color);
             }
             if (closed)
             {
-                AddLineWidth(mesh, vertices[vertices.Length - 1], vertices[0], width);
+                AddLineWidth(mesh, vertices[vertices.Length - 1], vertices[0], width, color);
             }
         }
 
-        static void AddLineWidth(Mesh mesh, Vector2 v0, Vector2 v1, float width)
+        static void AddLineWidth(Mesh mesh, Vector2 v0, Vector2 v1, float width, Color4 color)
         {
             var vectors = PolygonFactory.CreateLineWidth(new LineF(v0, v1), width);
             var vertices = new Vertex[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
-                vertices[i] = new Vertex(vectors[i]);
+                vertices[i] = new Vertex(new Vector3(vectors[i]), new Vector2(), color);
             }
             int index = mesh.AddVertexRange(vertices);
             mesh.AddTriangle(index + 1, index + 2, index);
@@ -359,6 +366,11 @@ namespace Game.Rendering
 
         public static Model CreateCircle(Vector3 origin, float radius, int detail)
         {
+            return CreateCircle(origin, radius, detail, Color4.White);
+        }
+
+        public static Model CreateCircle(Vector3 origin, float radius, int detail, Color4 color)
+        {
             DebugEx.Assert(detail >= 3, "Detail must be greater or equal to 3.");
             var mesh = new Mesh();
             for (int i = 0; i < detail; i++)
@@ -366,7 +378,7 @@ namespace Game.Rendering
                 double rad = Math.PI * 2 * i / detail;
                 Vector3 pos = new Vector3((float)Math.Cos(rad), (float)Math.Sin(rad), 0) * radius + origin;
                 var textureCoord = new Vector2((float)(1 + Math.Cos(rad) / 2), (float)(1 + Math.Sin(rad) / 2));
-                mesh.Vertices.Add(new Vertex(pos, textureCoord));
+                mesh.Vertices.Add(new Vertex(pos, textureCoord, color));
             }
 
             for (int i = 0; i < detail - 1; i++)
@@ -389,14 +401,14 @@ namespace Game.Rendering
         /// <param name="arrowLength">Length of the arrow head.</param>
         /// <param name="arrowThickness">Thickness of the arrow head.</param>
         /// <returns></returns>
-        public static Model CreateArrow(Vector3 origin, Vector2 pointAt, float lineThickness, float arrowLength, float arrowThickness)
+        public static Model CreateArrow(Vector3 origin, Vector2 pointAt, float lineThickness, float arrowLength, float arrowThickness, Color4 color)
         {
             var mesh = new Mesh();
-            AddArrow(mesh, origin, pointAt, lineThickness, arrowLength, arrowThickness);
+            AddArrow(mesh, origin, pointAt, lineThickness, arrowLength, arrowThickness, color);
             return new Model(mesh);
         }
 
-        public static void AddArrow(Mesh mesh, Vector3 origin, Vector2 pointAt, float lineThickness, float arrowLength, float arrowThickness)
+        public static void AddArrow(Mesh mesh, Vector3 origin, Vector2 pointAt, float lineThickness, float arrowLength, float arrowThickness, Color4 color)
         {
             float length = pointAt.Length;
             Vector2[] polygon;
@@ -421,7 +433,7 @@ namespace Game.Rendering
                 };
             }
             polygon = Vector2Ex.Transform(polygon, Matrix4.CreateRotationZ((float)-(MathEx.VectorToAngleReversed(pointAt) + Math.PI / 2)));
-            AddPolygon(mesh, polygon, origin);
+            AddPolygon(mesh, polygon, color, origin);
         }
 
         public static Model CreateActorDebug(Actor actor)
@@ -432,7 +444,7 @@ namespace Game.Rendering
             {
                 var polygon = (PolygonShape)f.Shape;
                 Vector2[] vertices = Vector2Ex.ToOtk(polygon.Vertices);
-                AddLineStripWidth(mesh, vertices, 0.05f, true);
+                AddLineStripWidth(mesh, vertices, 0.05f, true, Color4.Yellow);
             }
             model.Mesh = mesh;
             Vector2 scale = actor.GetTransform().Scale;

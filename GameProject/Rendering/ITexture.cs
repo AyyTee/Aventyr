@@ -7,8 +7,8 @@ namespace Game.Rendering
         /// <summary>
         /// Size of texture in pixel coordinates.
         /// </summary>
-        /// <value>The size.</value>
         Vector2i Size { get; }
+        bool IsTransparent { get; }
 
         int GetId();
     }

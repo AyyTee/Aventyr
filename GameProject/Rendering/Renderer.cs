@@ -181,7 +181,7 @@ namespace Game.Rendering
                         for (int j = 0; j < portalViewList[i].Paths.Count; j++)
                         {
                             Vector2[] a = ClipperConvert.ToVector2(portalViewList[i].Paths[j]);
-                            ModelFactory.AddPolygon(mesh, a);
+                            ModelFactory.AddPolygon(mesh, a, Color4.White);
                         }
                         RenderModel(new Model(mesh), cam.GetViewMatrix());
                     }
@@ -274,7 +274,6 @@ namespace Game.Rendering
             using (_state.Push(EnableCap.DepthTest, false))
             {
                 var portalEdges = new Model();
-                portalEdges.IsTransparent = true;
                 portalEdges.SetTexture(_textures.LineBlur);
 
                 for (int i = 1; i < iterations; i++)
@@ -327,7 +326,7 @@ namespace Game.Rendering
                         {
                             continue;
                         }
-                        int index = ModelFactory.AddPolygon((Mesh)portalEdges.Mesh, lineWidth);
+                        int index = ModelFactory.AddPolygon((Mesh)portalEdges.Mesh, lineWidth, Color4.White);
 
                         IMesh mesh = portalEdges.Mesh;
                         for (int k = index; k < mesh.GetVertices().Count; k++)
@@ -346,7 +345,7 @@ namespace Game.Rendering
                             texCoordX += 0.5;
                             var texCoord = new Vector2((float)texCoordX, (float)(distance / line.Length));
 
-                            mesh.GetVertices()[k] = new Vertex(pos, texCoord);
+                            mesh.GetVertices()[k] = new Vertex(pos, texCoord, Color4.Black);
                         }
                     }
                 }
@@ -387,7 +386,6 @@ namespace Game.Rendering
                 else
                 {
                     GL.Uniform1(_activeShader.GetUniform("isTextured"), 0);
-                    //GL.BindTexture(TextureTarget.Texture2D, -1);
                 }
 
                 if (data.Model.Wireframe)

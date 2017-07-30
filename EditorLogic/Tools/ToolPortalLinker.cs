@@ -71,11 +71,17 @@ namespace EditorLogic.Tools
             if (_portalPrevious != null)
             {
                 _line.Models.Clear();
-                Model lineModel = Game.Rendering.ModelFactory.CreateLineStrip(new Vector2[] {
-                    Controller.GetMouseWorld(),
-                    _portalPrevious.GetWorldTransform().Position
-                });
-                lineModel.SetColor(new Color4(0.1f, 0.7f, 0.1f, 1f));
+                Model lineModel = Game.Rendering.ModelFactory.CreateLineStrip(
+                    new[] 
+                    {
+                        Controller.GetMouseWorld(),
+                        _portalPrevious.GetWorldTransform().Position
+                    }, 
+                    new[] 
+                    {
+                        new Color4(0.1f, 0.7f, 0.1f, 1f),
+                        new Color4(0.1f, 0.7f, 0.1f, 1f)
+                    });
                 _line.Models.Add(lineModel);
             }
         }

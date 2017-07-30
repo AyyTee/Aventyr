@@ -29,9 +29,8 @@ namespace TankGame
             SetVelocity(Transform2.CreateVelocity(velocity));
             Entity.SetParent(this);
 
-            Model model = ModelFactory.CreatePolygon(Vertices, new Vector3(0, 0, 1));
+            Model model = ModelFactory.CreatePolygon(Vertices, new Color4(1f, 1f, 0, 1f), new Vector3(0, 0, 1));
             //Model model = ModelFactory.CreateArrow(new Vector3(0f, 0f, 1f), velocity.Normalized() * 0.1f, 0.1f, 0.3f, 0.15f);
-            model.SetColor(new Color4(1f, 1f, 0, 1f));
             Entity.AddModel(model);
 
             OnCollision += Bullet_OnCollision;

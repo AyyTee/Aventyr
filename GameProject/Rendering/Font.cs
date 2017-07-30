@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using Game.Common;
+using OpenTK.Graphics;
 
 namespace Game.Rendering
 {
@@ -31,14 +32,19 @@ namespace Game.Rendering
             }
         }
 
+        public Model GetModel(string text, int lineSpacing = 0, int charSpacing = 0)
+        {
+            return GetModel(text, Color4.White, lineSpacing, charSpacing);
+        }
+
         /// <summary>
         /// Creates a model to render a string with
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public Model GetModel(string text, int lineSpacing = 0, int charSpacing = 0)
+        public Model GetModel(string text, Color4 color, int lineSpacing = 0, int charSpacing = 0)
         {
-            return GetModel(text, new Vector2(0, 0), lineSpacing, charSpacing);
+            return GetModel(text, color, new Vector2(0, 0), lineSpacing, charSpacing);
         }
 
         /// <summary>
@@ -49,7 +55,7 @@ namespace Game.Rendering
         /// (0,0) is top-left aligned, (0.5,0.5) is centered, and (1,1) is bottom-right aligned.</param>
         /// <param name="charSpacing"></param>
         /// <returns></returns>
-        public Model GetModel(string text, Vector2 alignment, int lineSpacing = 0, int charSpacing = 0)
+        public Model GetModel(string text, Color4 color, Vector2 alignment, int lineSpacing = 0, int charSpacing = 0)
         {
             var lineBreakText = text.Split('\n');
             var glyphData = lineBreakText.Select(textLine => new GlyphData[textLine.Length]).ToArray();
@@ -90,7 +96,7 @@ namespace Game.Rendering
                 }
             }
 
-            var vertices = GetVertices(glyphData.SelectMany(item => item));
+            var vertices = GetVertices(glyphData.SelectMany(item => item), color);
             var textMesh = new Mesh(
                 vertices, 
                 GetIndices(vertices.Count / _verticesPerGlyph).ToList());
@@ -99,12 +105,11 @@ namespace Game.Rendering
             var textModel = new Model(textMesh)
             {
                 Texture = _fontTextures[0],
-                IsTransparent = true
             };
             return textModel;
         }
 
-        List<Vertex> GetVertices(IEnumerable<GlyphData> glyphData)
+        List<Vertex> GetVertices(IEnumerable<GlyphData> glyphData, Color4 color)
         {
             var vertices = new List<Vertex>();
             foreach (var data in glyphData)
@@ -122,10 +127,10 @@ namespace Game.Rendering
                 var endPoint = data.EndPoint;
                 var startPoint = data.StartPoint;
 
-                vertices.Add(new Vertex(new Vector3(endPoint.X, startPoint.Y, 0), uvTopRight));
-                vertices.Add(new Vertex(new Vector3(endPoint.X, endPoint.Y, 0), uvBottomRight));
-                vertices.Add(new Vertex(new Vector3(startPoint.X, endPoint.Y, 0), uvBottomLeft));
-                vertices.Add(new Vertex(new Vector3(startPoint.X, startPoint.Y, 0), uvTopLeft));
+                vertices.Add(new Vertex(new Vector3(endPoint.X, startPoint.Y, 0), uvTopRight, color));
+                vertices.Add(new Vertex(new Vector3(endPoint.X, endPoint.Y, 0), uvBottomRight, color));
+                vertices.Add(new Vertex(new Vector3(startPoint.X, endPoint.Y, 0), uvBottomLeft, color));
+                vertices.Add(new Vertex(new Vector3(startPoint.X, startPoint.Y, 0), uvTopLeft, color));
             }
 
             return vertices;

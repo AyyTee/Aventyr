@@ -15,6 +15,8 @@ namespace Game.Models
         [DataMember]
         public List<int> Indices = new List<int>();
 
+        public bool IsTransparent => Vertices.Any(item => item.Color.A < 1);
+
         public Mesh()
         {
         }

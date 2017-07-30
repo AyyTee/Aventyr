@@ -85,19 +85,17 @@ namespace Game.Physics
             {
                 foreach (Body body in Scene.World.BodyList)
                 {
-                    Model model = ModelFactory.CreateCube();
+                    Model model = ModelFactory.CreateCube(new Color4(1, 0.5f, 0.5f, 1f));
                     model.Transform.Scale = new Vector3(0.03f, 0.03f, 0.03f);
                     _debugEntity.AddModel(model);
                     model.Transform.Position = new Vector3(body.Position.X, body.Position.Y, 10);
-                    model.SetColor(new Color4(1, 0.5f, 0.5f, 1f));
 
                     BodyData bodyUserData = BodyEx.GetData(body);
-                    Model positionPrev = ModelFactory.CreateCube();
+                    Model positionPrev = ModelFactory.CreateCube(new Color4(1f, 0f, 0f, 1f));
                     positionPrev.Transform.Scale = new Vector3(0.03f, 0.03f, 0.03f);
                     positionPrev.Transform.Rotation = new Quaternion(0, 1, 1, (float)Math.PI / 2);
                     _debugEntity.AddModel(positionPrev);
                     positionPrev.Transform.Position = new Vector3(bodyUserData.PreviousPosition.X, bodyUserData.PreviousPosition.Y, 10);
-                    positionPrev.SetColor(new Color4(1f, 0f, 0f, 1f));
                 }
             }
             #endregion
@@ -153,13 +151,13 @@ namespace Game.Physics
 
                     if (contact.Manifold.PointCount == 2)
                     {
+                        var lineColor = contact.Enabled ?
+                            new Color4(1f, 1f, 0.2f, 1f) :
+                            new Color4(0.5f, 0.5f, 0f, 1f);
                         Model line = ModelFactory.CreateLines(
-                            new[] {
-                            new LineF(vList[0], vList[1])
-                            });
-                        line.SetColor(contact.Enabled ? 
-                            new Color4(1f, 1f, 0.2f, 1f) : 
-                            new Color4(0.5f, 0.5f, 0f, 1f));
+                            new[] { new LineF(vList[0], vList[1]) },
+                            lineColor);
+                        
                         line.Transform.Position += new Vector3(0, 0, 5);
                         _debugEntity.AddModel(line);
                     }
@@ -179,33 +177,29 @@ namespace Game.Physics
                         {
                             arrowNormal *= -1;
                         }
-                        Model arrow = ModelFactory.CreateArrow(pos, arrowNormal, 0.02f * scale, 0.05f * scale, 0.03f * scale);
-                        _debugEntity.AddModel(arrow);
-
-                        Model model = ModelFactory.CreateCube();
-                        model.Transform.Scale = new Vector3(0.08f, 0.08f, 0.08f) * scale;
-                        _debugEntity.AddModel(model);
-                        if (contact.Enabled)
-                        {
-                            model.SetColor(new Color4(1f, 1f, 0.2f, 1f));
-                            arrow.SetColor(new Color4(1f, 1f, 0.2f, 1f));
-                        }
-                        else
-                        {
-                            model.SetColor(new Color4(0.5f, 0.5f, 0f, 1f));
-                            arrow.SetColor(new Color4(0.5f, 0.5f, 0f, 1f));
-                        }
+                        var arrowColor = contact.Enabled ?
+                            new Color4(1f, 1f, 0.2f, 1f) :
+                            new Color4(0.5f, 0.5f, 0f, 1f);
                         if (userData[0].IsPortalParentless() && userData[1].IsPortalParentless())
                         {
-                            arrow.SetColor(new Color4(0.7f, 0.5f, 0.2f, 1f));
+                            arrowColor = new Color4(0.7f, 0.5f, 0.2f, 1f);
                         }
+                        Model arrow = ModelFactory.CreateArrow(pos, arrowNormal, 0.02f * scale, 0.05f * scale, 0.03f * scale, arrowColor);
+                        _debugEntity.AddModel(arrow);
+
+                        var modelColor = contact.Enabled ?
+                            new Color4(1f, 1f, 0.2f, 1f) :
+                            new Color4(0.5f, 0.5f, 0f, 1f);
+                        Model model = ModelFactory.CreateCube(modelColor);
+                        model.Transform.Scale = new Vector3(0.08f, 0.08f, 0.08f) * scale;
+                        _debugEntity.AddModel(model);
+
                         model.Transform.Position = pos;
 
                         if (!userData[i].IsPortalParentless())
                         {
                             IList<Vector2> vertices = Vector2Ex.ToOtk(((PolygonShape)userData[i].Fixture.Shape).Vertices);
-                            Model fixtureModel = ModelFactory.CreatePolygon(vertices);
-                            fixtureModel.SetColor(new Color4(0f, 1f, 1f, 1f));
+                            Model fixtureModel = ModelFactory.CreatePolygon(vertices, new Color4(0f, 1f, 1f, 1f));
                             fixtureModel.Transform = userData[i].Actor.GetTransform().Get3D();
                             fixtureModel.Transform.Position += new Vector3(0, 0, 5);
                             fixtureModel.Transform.Scale = Vector3.One;

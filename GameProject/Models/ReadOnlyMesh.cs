@@ -11,6 +11,8 @@ namespace Game.Models
         public readonly ReadOnlyCollection<Vertex> Vertices;
         public readonly ReadOnlyCollection<int> Indices;
 
+        public bool IsTransparent => Vertices.Any(item => item.Color.A < 1);
+
         public ReadOnlyMesh(IMesh mesh)
             : this(mesh.GetVertices(), mesh.GetIndices())
         {

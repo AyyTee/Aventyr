@@ -9,15 +9,19 @@ namespace Game.Rendering
     {
         public static object LockDelete { get; } = new object();
 
+        [DataMember]
+        public bool IsTransparent { get; set; }
+
         /// <summary>GL texture id.</summary>
         readonly int _id;
 
         public Vector2i Size { get; }
 
-        public Texture(int id, Vector2i size)
+        public Texture(int id, Vector2i size, bool isTransparent = false)
         {
             _id = id;
             Size = size;
+            IsTransparent = isTransparent;
         }
 
         ~Texture()

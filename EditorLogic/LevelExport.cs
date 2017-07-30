@@ -47,9 +47,8 @@ namespace EditorLogic
 
             #region create background
             float size = 50;
-            Model background = Game.Rendering.ModelFactory.CreatePlane(Vector2.One * size, Color4.Black, new Vector3(-size / 2, -size / 2, 0));
+            Model background = Game.Rendering.ModelFactory.CreatePlane(Vector2.One * size, new Color4(1f, 1f, 0.5f, 1f), new Vector3(-size / 2, -size / 2, 0));
             background.Texture = window.Textures.Grid;
-            background.SetColor(new Color4(1f, 1f, 0.5f, 1f));
             background.Transform.Position = new Vector3(0, 0, -5f);
             background.TransformUv = background.TransformUv.WithSize(size);
             Entity back = new Entity(scene, new Transform2(new Vector2(0f, 0f)));
@@ -138,7 +137,7 @@ namespace EditorLogic
                         EditorWall castWall = (EditorWall)e;
                         actor.SetBodyType(BodyType.Static);
                         //actor.Vertices = castWall.Vertices;
-                        entity.AddModel(Game.Rendering.ModelFactory.CreatePolygon(castWall.Vertices));
+                        entity.AddModel(Game.Rendering.ModelFactory.CreatePolygon(castWall.Vertices, Color4.White));
                         //entity.AddModel(Game.ModelFactory.CreateActorDebug(actor));
                         dictionary.Add(castWall, actor);
                     }
@@ -179,7 +178,7 @@ namespace EditorLogic
                     Entity entity = new Entity(scene, new Transform2());
                     entity.Name = cast.Name;
                     entity.SetParent(actor);
-                    entity.AddModel(Game.Rendering.ModelFactory.CreatePolygon(polygon));
+                    entity.AddModel(Game.Rendering.ModelFactory.CreatePolygon(polygon, Color4.White));
 
                     scene.Add(player);
                     dictionary.Add(cast, player.Actor);

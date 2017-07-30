@@ -13,7 +13,12 @@ main()
 	if (isTextured == 1)
 	{
 		vec2 flipped_texcoord = vec2(f_texcoord.x, f_texcoord.y);
-		outputColor = texture(maintexture, flipped_texcoord);
+		vec4 color = texture(maintexture, flipped_texcoord);
+		color.x *= f_color.x;
+		color.y *= f_color.y;
+		color.z *= f_color.z;
+		color.w *= f_color.w;
+		outputColor = color;
 	}
 	else
 	{

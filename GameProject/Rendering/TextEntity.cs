@@ -8,6 +8,7 @@ using Game.Models;
 using System.Diagnostics;
 using OpenTK;
 using System.Runtime.Serialization;
+using OpenTK.Graphics;
 
 namespace Game.Rendering
 {
@@ -38,6 +39,11 @@ namespace Game.Rendering
         readonly Font _fontRenderer;
 
         public TextEntity(Font fontRenderer, Vector2 position, string text, Vector2 alignment = new Vector2(), int lineSpacing = 0)
+            : this(fontRenderer, position, text, Color4.White, alignment, lineSpacing)
+        {
+        }
+
+        public TextEntity(Font fontRenderer, Vector2 position, string text, Color4 color, Vector2 alignment = new Vector2(), int lineSpacing = 0)
         {
             DebugEx.Assert(text != null);
             Text = text;
@@ -69,7 +75,7 @@ namespace Game.Rendering
         {
             if (Dirty)
             {
-                TextModel = _fontRenderer?.GetModel(Text, Alignment, LineSpacing);
+                TextModel = _fontRenderer?.GetModel(Text, Color4.White, Alignment, LineSpacing);
                 Dirty = false;
             }
             return TextModel == null ?

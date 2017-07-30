@@ -71,7 +71,7 @@ namespace TankGame.Network
             _tankCamera = new TankCamera(camera, null);
 
             Entity entity2 = new Entity(Scene);
-            entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10), Color4.Black, new Vector3(-5, -5, 0)));
+            entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10), Color4.White, new Vector3(-5, -5, 0)));
             entity2.ModelList[0].SetTexture(_window.Textures?.@Default);
 
             PortalCommon.UpdateWorldTransform(Scene);
@@ -88,7 +88,7 @@ namespace TankGame.Network
             gui.Renderables.Add(Draw.Text(
                 _window.Fonts?.Inconsolata, 
                 new Vector2(0, _window.CanvasSize.Y),
-                $"Client\nId {_client.UniqueIdentifier}\n\nFPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }\n{_window.MousePosition}"));
+                $"Client\nId {_client.UniqueIdentifier}\n\nFPS\nAvg {(1 / _fpsCounter.GetAverage()).ToString("00.00")}\nMin {(1 / _fpsCounter.Queue.Max()).ToString("00.00")}\n{_window.MousePosition}"));
             _window.Layers.Add(gui);
         }
 

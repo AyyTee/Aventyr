@@ -16,12 +16,15 @@ namespace EditorLogic
 
         public static Model CreatePortal()
         {
+            return CreatePortal(ColorPortalDefault);
+        }
+
+        public static Model CreatePortal(Color4 color)
+        {
             Mesh arrow = new Mesh();
-            Game.Rendering.ModelFactory.AddArrow(arrow, new Vector3(0, -0.5f, 0), new Vector2(0, 1), 0.05f, 0.2f, 0.1f);
-            Game.Rendering.ModelFactory.AddArrow(arrow, new Vector3(), new Vector2(0.2f, 0), 0.05f, 0.2f, 0.1f);
-            Model arrowModel = new Model(arrow);
-            arrowModel.SetColor(ColorPortalDefault);
-            return arrowModel;
+            Game.Rendering.ModelFactory.AddArrow(arrow, new Vector3(0, -0.5f, 0), new Vector2(0, 1), 0.05f, 0.2f, 0.1f, ColorPortalDefault);
+            Game.Rendering.ModelFactory.AddArrow(arrow, new Vector3(), new Vector2(0.2f, 0), 0.05f, 0.2f, 0.1f, ColorPortalDefault);
+            return new Model(arrow);
         }
 
         public static Model CreatePlayer()

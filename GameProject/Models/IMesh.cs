@@ -8,6 +8,7 @@ namespace Game.Models
 {
     public interface IMesh : IShallowClone<IMesh>
     {
+        bool IsTransparent { get; }
         /// <summary>
         /// Get a shallow copy of list containing vertices in the mesh.
         /// </summary>

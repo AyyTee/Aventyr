@@ -175,8 +175,7 @@ namespace TimeLoopInc
                 {
                     case Player p:
                         {
-                            var model = ModelFactory.CreateCircle(new Vector3(), 0.48f, 16);
-                            model.SetColor(Color4.Black);
+                            var model = ModelFactory.CreateCircle(new Vector3(), 0.48f, 16, Color4.Black);
 
                             renderable = new Renderable(transform);
                             renderable.Models.Add(model);
@@ -186,8 +185,7 @@ namespace TimeLoopInc
                     case Block b:
                         {
                             var blockInstant = (BlockInstant)sceneInstant.Entities[b];
-                            var model = ModelFactory.CreatePlane(Vector2.One * blockInstant.Transform.Size * 0.98f, new Color4(), new Vector3(-0.49f));
-                            model.SetColor(new Color4(0.5f, 1f, 0.8f, 1f));
+                            var model = ModelFactory.CreatePlane(Vector2.One * blockInstant.Transform.Size * 0.98f, new Color4(0.5f, 1f, 0.8f, 1f), new Vector3(-0.49f));
 
                             renderable = new Renderable(transform);
                             renderable.Models.Add(model);
@@ -230,7 +228,7 @@ namespace TimeLoopInc
 
                         if (font != null)
                         {
-                            var text = font.GetModel(portal.TimeOffset.ToString(), new Vector2(0.5f, 1f));
+                            var text = font.GetModel(portal.TimeOffset.ToString(), Color4.White, new Vector2(0.5f, 1f));
                             text.Transform.Scale = new Vector3(0.014f, 0.014f, 0.014f);
                             var offset = (Vector2)angle.Vector * 0.48f;
                             text.Transform.Position = new Vector3(offset.X, offset.Y, 1);
@@ -280,9 +278,7 @@ namespace TimeLoopInc
 
         static Renderable CreateSquare(Vector2i position, int size, Color4 color)
         {
-            var model = ModelFactory.CreatePlane(Vector2.One * size * 0.98f, new Color4(), new Vector3(-size / 2f + 0.01f));
-            model.SetColor(color);
-
+            var model = ModelFactory.CreatePlane(Vector2.One * size * 0.98f, color, new Vector3(-size / 2f + 0.01f));
             return new Renderable(new Transform2((Vector2)position + Vector2.One * 0.5f * size))
             {
                 Models = new List<Model> { model }

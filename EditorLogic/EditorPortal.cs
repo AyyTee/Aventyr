@@ -22,7 +22,6 @@ namespace EditorLogic
         public IPortal Linked { get; set; }
         IPortalRenderable IPortalRenderable.Linked => Linked;
         public bool OneSided => false;
-        Model _portalModel;
 
         public EditorPortal(EditorScene editorScene)
             : base(editorScene)
@@ -42,22 +41,17 @@ namespace EditorLogic
         public override void Initialize()
         {
             base.Initialize();
-            _portalModel = ModelFactory.CreatePortal();
-            _portalModel.Transform.Position += new Vector3(0, 0, 2);
         }
 
         public override List<Model> GetModels()
         {
             List<Model> models = base.GetModels();
-            if (OnEdge)
-            {
-                _portalModel.SetColor(new Color4(0, 0.8f, 0.5f, 1));
-            }
-            else
-            {
-                _portalModel.SetColor(ModelFactory.ColorPortalDefault);
-            }
-            models.Add(_portalModel);
+            var portalColor = OnEdge ?
+                new Color4(0, 0.8f, 0.5f, 1) :
+                ModelFactory.ColorPortalDefault;
+            var portal = ModelFactory.CreatePortal(portalColor);
+            portal.Transform.Position += new Vector3(0, 0, 2);
+            models.Add(portal);
             return models;
         }
 

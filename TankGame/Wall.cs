@@ -9,6 +9,7 @@ using FarseerPhysics.Dynamics;
 using Game.Physics;
 using Game.Rendering;
 using TankGame.Network;
+using OpenTK.Graphics;
 
 namespace TankGame
 {
@@ -21,7 +22,7 @@ namespace TankGame
         {
             SetBodyType(BodyType.Static);
             Entity entity = new Entity(scene);
-            entity.AddModel(ModelFactory.CreatePolygon(vertices, new Vector3(0, 0, 1)));
+            entity.AddModel(ModelFactory.CreatePolygon(vertices, Color4.White, new Vector3(0, 0, 1)));
             entity.SetParent(this);
 
             SetCollisionCategory(Category.All);
