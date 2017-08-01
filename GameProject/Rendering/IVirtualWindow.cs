@@ -18,6 +18,7 @@ namespace Game.Rendering
         float RendersPerSecond { get; }
 
         bool HasFocus { get; }
+        string KeyString { get; }
         IImmutableSet<Key> KeyCurrent { get; }
         IImmutableSet<Key> KeyPrevious { get; }
         IImmutableSet<MouseButton> MouseCurrent { get; }

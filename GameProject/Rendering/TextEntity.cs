@@ -24,6 +24,8 @@ namespace Game.Rendering
         [DataMember]
         public string Text { get; private set; }
         [DataMember]
+        public Color4 Color { get; private set; }
+        [DataMember]
         public Vector2 Alignment { get; private set; }
         [DataMember]
         public int LineSpacing { get; private set; }
@@ -47,6 +49,7 @@ namespace Game.Rendering
         {
             DebugEx.Assert(text != null);
             Text = text;
+            Color = color;
             WorldTransform = new Transform2(position);
             _fontRenderer = fontRenderer;
             Alignment = alignment;
@@ -75,7 +78,7 @@ namespace Game.Rendering
         {
             if (Dirty)
             {
-                TextModel = _fontRenderer?.GetModel(Text, Color4.White, Alignment, LineSpacing);
+                TextModel = _fontRenderer?.GetModel(Text, Color, Alignment, LineSpacing);
                 Dirty = false;
             }
             return TextModel == null ?

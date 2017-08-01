@@ -30,6 +30,7 @@ namespace Game
         public TextureAssets Textures;
 
         bool _lockInput = false;
+        string KeyString = "";
         KeyboardState _virtualKeyboardState = new KeyboardState();
         MouseState _virtualMouseState = new MouseState();
         Vector2 _virtualMousePos = new Vector2();
@@ -72,7 +73,6 @@ namespace Game
             Textures = new TextureAssets();
             Renderer = new Renderer(this, Textures);
             Fonts = new FontAssets();
-            Textures = new TextureAssets();
 
             _soundEnabled = false;
             if (_soundEnabled)
@@ -84,6 +84,14 @@ namespace Game
 
             _window.UpdateFrame += (_, __) => { Update(); };
             _window.RenderFrame += (_, __) => { Render(); };
+            _window.KeyPress += (_, e) => { KeyString += e.KeyChar; };
+            _window.KeyDown += (_, e) =>
+            {
+                if (e.Key == Key.BackSpace)
+                {
+                    KeyString += '\b';
+                }
+            };
         }
 
         public void Run()
@@ -151,12 +159,14 @@ namespace Game
             foreach (var window in Renderer.Windows.OfType<VirtualWindow>())
             {
                 window.Update(
+                    KeyString,
                     _virtualKeyboardState.KeysDown(),
                     _virtualMouseState.ButtonsDown(),
                     new Vector2(_virtualMousePos.X - window.CanvasPosition.X, _virtualMousePos.Y/* + window.CanvasPosition.Y*/),
                     hasFocus,
                     _virtualMouseState.WheelPrecise);
             }
+            KeyString = "";
 
             foreach (var controller in _controllers)
             {

@@ -17,6 +17,11 @@ namespace Game.Rendering
             return new TextEntity(font, position, text, alignment, lineSpacing);
         }
 
+        public static IRenderable Text(Font font, Vector2 position, string text, Color4 color, Vector2 alignment = new Vector2(), int lineSpacing = 0)
+        {
+            return new TextEntity(font, position, text, color, alignment, lineSpacing);
+        }
+
         public static Renderable Rectangle(Vector2 topLeft, Vector2 bottomRight)
         {
             return Rectangle(topLeft, bottomRight, Color4.White);

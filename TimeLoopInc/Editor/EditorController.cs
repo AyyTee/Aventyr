@@ -71,7 +71,8 @@ namespace TimeLoopInc.Editor
                     new Button(new Transform2(new Vector2(10, 210)), new Vector2(200, 90), Play)
                     {
                         new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Play")
-                    }
+                    },
+                    new TextBox(new Transform2(new Vector2(220, 10)), new Vector2(200, 90), Window.Fonts.Inconsolata)
                 },
                 new Frame(out _endGame, new Transform2(), true)
                 {

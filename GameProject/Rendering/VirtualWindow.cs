@@ -22,6 +22,7 @@ namespace Game.Rendering
         public float UpdatesPerSecond => 60;
         public float RendersPerSecond => 60;
 
+        public string KeyString { get; private set; }
         public IImmutableSet<Key> KeyCurrent { get; private set; } = new HashSet<Key>().ToImmutableHashSet();
         public IImmutableSet<Key> KeyPrevious { get; private set; } = new HashSet<Key>().ToImmutableHashSet();
 
@@ -42,11 +43,18 @@ namespace Game.Rendering
             _resourceController.Renderer.Windows.Add(this);
         }
 
-        public void Update(ISet<Key> keyboardState, ISet<MouseButton> mouseState, Vector2 mousePosition, bool hasFocus, float mouseWheel)
+        public void Update(
+            string keyString, 
+            ISet<Key> keyboardState, 
+            ISet<MouseButton> mouseState, 
+            Vector2 mousePosition, 
+            bool hasFocus, 
+            float mouseWheel)
         {
             KeyPrevious = KeyCurrent;
             MousePrevious = MouseCurrent;
 
+            KeyString = keyString;
             KeyCurrent = keyboardState.ToImmutableHashSet();
             MouseCurrent = mouseState.ToImmutableHashSet();
 

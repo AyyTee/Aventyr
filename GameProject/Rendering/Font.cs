@@ -14,6 +14,22 @@ namespace Game.Rendering
 {
     public class Font
     {
+        public class Settings
+        {
+            public Color4 Color { get; } = Color4.White;
+            public Vector2 Alignment { get; }
+            public int LineSpacing { get; }
+            public int CharSpacing { get; }
+
+            public Settings(Color4 color, Vector2 alignment = new Vector2(), int lineSpacing = 0, int charSpacing = 0)
+            {
+                Color = color;
+                Alignment = alignment;
+                LineSpacing = lineSpacing;
+                CharSpacing = charSpacing;
+            }
+        }
+
         readonly TextureFile[] _fontTextures;
         readonly FontFile _fontFile;
         const int _indicesPerGlyph = 6;
@@ -34,17 +50,12 @@ namespace Game.Rendering
 
         public Model GetModel(string text, int lineSpacing = 0, int charSpacing = 0)
         {
-            return GetModel(text, Color4.White, lineSpacing, charSpacing);
+            return GetModel(text, Color4.White, new Vector2(), lineSpacing, charSpacing);
         }
 
-        /// <summary>
-        /// Creates a model to render a string with
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public Model GetModel(string text, Color4 color, int lineSpacing = 0, int charSpacing = 0)
+        public Model GetModel(string text, Settings settings)
         {
-            return GetModel(text, color, new Vector2(0, 0), lineSpacing, charSpacing);
+            return GetModel(text, settings.Color, settings.Alignment, settings.LineSpacing, settings.CharSpacing);
         }
 
         /// <summary>

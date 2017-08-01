@@ -112,7 +112,7 @@ namespace TankGame.Network
             gui.Renderables.Add(Draw.Text(
                 _window.Fonts?.Inconsolata,
                 new Vector2(),
-                $"Server\nId {_server.UniqueIdentifier}\n\nFPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }"));
+                $"Server\nId {_server.UniqueIdentifier}\n\nFPS\nAvg {(1 / _fpsCounter.GetAverage()).ToString("00.00")}\nMin {(1 / _fpsCounter.Queue.Max()).ToString("00.00")}"));
             _window.Layers.Add(gui);
         }
 

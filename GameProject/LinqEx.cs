@@ -146,5 +146,15 @@ namespace Game
                 (TResult?)enumerable.Max(selector) :
                 null;
         }
+
+        public static string CharsToString(this IEnumerable<char> enumerable)
+        {
+            var builder = new StringBuilder();
+            foreach (var c in enumerable)
+            {
+                builder.Append(c);
+            }
+            return builder.ToString();
+        }
     }
 }

@@ -30,6 +30,7 @@ namespace Ui
             : this(out id)
         {
             Transform = transform;
+            Hidden = hidden;
         }
 
         public List<Model> GetModels() => new List<Model>();

@@ -87,7 +87,7 @@ namespace TankGameTests
                     _netServer.Connections[0]);
                 _netServer.EnqueueArrivedMessage(message);
 
-                _clientWindow.Update(new HashSet<Key>() { Key.Space }, new HashSet<MouseButton>(), new Vector2());
+                _clientWindow.Update("", new HashSet<Key>() { Key.Space }, new HashSet<MouseButton>(), new Vector2());
                 _client.Update(1 / 60.0);
 
                 Assert.IsTrue(_client.Scene.GetAll().OfType<Bullet>().Count() <= 1);
@@ -173,7 +173,7 @@ namespace TankGameTests
             {
                 if (i < 100)
                 {
-                    _clientWindow.Update(new HashSet<Key>() { Key.W }, new HashSet<MouseButton>(), new Vector2());
+                    _clientWindow.Update("", new HashSet<Key>() { Key.W }, new HashSet<MouseButton>(), new Vector2());
                 }
 
                 server.Update(timeDelta);

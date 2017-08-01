@@ -33,6 +33,7 @@ namespace EditorLogic
 
         public bool HasFocus { get; private set; }
 
+        public string KeyString { get; private set; }
         public IImmutableSet<Key> KeyCurrent { get; private set; } = new HashSet<Key>().ToImmutableHashSet();
         public IImmutableSet<Key> KeyPrevious { get; private set; } = new HashSet<Key>().ToImmutableHashSet();
 
@@ -55,6 +56,7 @@ namespace EditorLogic
             Renderer = renderer;
             Textures = textures;
 
+            //_glControl.KeyDown += (_, e) => { KeyString.Add(new KeyboardKeyEventArgs() { Key = e.Key}) };
             _glControl.MouseMove += (_, e) => { _mousePos = new Vector2(e.X, e.Y); };
             _glControl.MouseWheel += control_MouseWheel;
 

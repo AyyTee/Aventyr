@@ -9,6 +9,7 @@ using Game.Models;
 using Game.Rendering;
 using OpenTK;
 using OpenTK.Input;
+using System.Text;
 
 namespace Ui
 {
@@ -19,6 +20,7 @@ namespace Ui
         ICamera2 _camera;
         List<UiWorldTransform> _flattenedUi = new List<UiWorldTransform>();
         public IElement Hover { get; private set; }
+        public TextBox Selected { get; private set; }
 
         public Transform2 Transform => new Transform2();
 
@@ -33,18 +35,62 @@ namespace Ui
             var mousePos = _window.MouseWorldPos(_camera);
             _flattenedUi = AllChildren();
 
-            var buttonHover = _flattenedUi
+            var hover = _flattenedUi
                 .FirstOrDefault(item =>
-                    item.Element is Button &&
                     item.Element.IsInside(
                         Vector2Ex.Transform(
                             mousePos,
                             item.WorldTransform.GetMatrix().Inverted())));
-            Hover = buttonHover?.Element;
+            Hover = hover?.Element;
             if (_window.ButtonPress(MouseButton.Left))
             {
-                (buttonHover?.Element as Button)?.Click();
+                if (Hover != null)
+                {
+                    switch (Hover)
+                    {
+                        case Button button:
+                            button.Click();
+                            break;
+                        case TextBox textBox:
+                            Selected = textBox;
+                            break;
+                    }
+                }
+                else
+                {
+                    Selected = null;
+                }
             }
+
+            if (Selected != null)
+            {
+                Selected.Text = ApplyBackspaces(Selected.Text + _window.KeyString);
+                switch (Selected.InputType)
+                {
+                    case TextBox.Input.Text:
+                        break;
+                    case TextBox.Input.Numbers:
+                        Selected.Text = Selected.Text
+                            .Where(char.IsDigit)
+                            .CharsToString();
+                        break;
+                }
+            }
+        }
+
+        public static string ApplyBackspaces(string stringWithBackspaces)
+        {
+            var newString = new StringBuilder();
+            for (int i = 0; i < stringWithBackspaces.Length; i++)
+            {
+                if (stringWithBackspaces[i] == '\b' && newString.Length > 0)
+                {
+                    newString.Remove(newString.Length - 1, 1);
+                    continue;
+                }
+                newString.Append(stringWithBackspaces[i]);
+            }
+            return newString.ToString();
         }
 
         List<UiWorldTransform> AllChildren()
