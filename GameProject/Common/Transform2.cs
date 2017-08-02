@@ -35,7 +35,7 @@ namespace Game.Common
         {
         }
 
-        public Transform2(Vector2 position, float rotation = 0, float size = 1, bool mirrorX = false)
+        public Transform2(Vector2 position = new Vector2(), float rotation = 0, float size = 1, bool mirrorX = false)
         {
             DebugEx.Assert(!Vector2Ex.IsNaN(position));
             DebugEx.Assert(!float.IsNaN(rotation));

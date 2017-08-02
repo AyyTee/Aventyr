@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TimeLoopInc
+namespace Aventyr
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var controller = new ResourceController(new Vector2i(1000, 800), "TimeLoopInc");
+            var controller = new ResourceController(new Vector2i(1000, 800), "Aventyr");
             var window = new VirtualWindow(controller)
             {
                 CanvasSize = controller.ClientSize
