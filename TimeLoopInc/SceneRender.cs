@@ -70,7 +70,7 @@ namespace TimeLoopInc
             }
 
             var worldCamera = new GridCamera(cameraTransform, (float)_window.CanvasSize.XRatio);
-            worldCamera.WorldVelocity = worldCamera.WorldVelocity.WithPosition(cameraVelocity / 6f);
+            worldCamera.WorldVelocity = worldCamera.WorldVelocity.WithPosition(cameraVelocity);
             worldLayer.Camera = worldCamera;
             Camera = worldCamera;
 
@@ -116,30 +116,13 @@ namespace TimeLoopInc
             foreach (var view in portalView.Children)
             {
                 var timeNext = time + ((TimePortal)view.PortalEntrance).TimeOffset;
-                // If there isn't any time offset then we can skip rendering a duplicate of the scene.
-                if (time == timeNext)
+
+                offsetCountNext++;
+                if (renderPortals)
                 {
-                    if (renderPortals)
-                    {
-                        var entranceIndex = portalView.Children.IndexOf(view);
-                        var exitIndex = portalView.Children
-                            .IndexOfFirstOrNull(item => item.PortalEntrance == view.PortalEntrance.Linked);
-                        DebugEx.Assert(entranceIndex != exitIndex);
-                        if (exitIndex == null || entranceIndex < exitIndex)
-                        {
-                            AddViewPortals(view, worldLayer, offset, offset);
-                        }
-                    }
+                    AddViewPortals(view, worldLayer, offset, GetOffset(offsetCountNext));
                 }
-                else
-                {
-                    offsetCountNext++;
-                    if (renderPortals)
-                    {
-                        AddViewPortals(view, worldLayer, offset, GetOffset(offsetCountNext));
-                    }
-                    offsetCountNext = RenderPortalView(view, worldLayer, timeNext, t, offsetCountNext, renderPortals);
-                }
+                offsetCountNext = RenderPortalView(view, worldLayer, timeNext, t, offsetCountNext, renderPortals);
             }
             return offsetCountNext;
         }

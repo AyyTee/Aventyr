@@ -14,5 +14,6 @@ namespace Game.Rendering
         ICamera2 Camera { get; }
         bool RenderPortalViews { get; }
         bool DepthTest { get; }
+        float MotionBlurFactor { get; }
     }
 }

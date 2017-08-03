@@ -160,7 +160,7 @@ namespace Game.Rendering
                 return;
             }
             PortalView portalView = PortalView.CalculatePortalViews(
-                shutterTime,
+                shutterTime * layer.MotionBlurFactor,
                 layer.Portals,
                 cam,
                 PortalRenderEnabled ? PortalRenderMax : 0);

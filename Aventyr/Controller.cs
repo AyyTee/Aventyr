@@ -24,10 +24,10 @@ namespace Aventyr
             _window = window;
 
             _scene = new Scene();
-            var portal0 = new FloatPortal(_scene, new Transform2(new Vector2(1, 0)));
-            var portal1 = new FloatPortal(_scene, new Transform2(new Vector2(2, 0)));
-            var portal2 = new FloatPortal(_scene, new Transform2(new Vector2(3, 0)));
-            var portal3 = new FloatPortal(_scene, new Transform2(new Vector2(4, 0)));
+            var portal0 = new FloatPortal(_scene, new Transform2(new Vector2(1, 0), (float)Math.PI)) { OneSided = true };
+            var portal1 = new FloatPortal(_scene, new Transform2(new Vector2(2, 0))) { OneSided = true };
+            var portal2 = new FloatPortal(_scene, new Transform2(new Vector2(3, 0), (float)Math.PI)) { OneSided = true };
+            var portal3 = new FloatPortal(_scene, new Transform2(new Vector2(4, 0))) { OneSided = true };
             var entity = new Entity(_scene, new Transform2(new Vector2(2.5f, 0)));
             var cube = ModelFactory.CreateCube(new Vector3(0.8f), Color4.Green);
             cube.Texture = _window.Textures.Default;
@@ -59,25 +59,22 @@ namespace Aventyr
 
         public void Update(double timeDelta)
         {
+            _camera.Velocity = Transform2.CreateVelocity();
             if (_window.ButtonDown(Key.W))
             {
-                _camera.Velocity = Transform2.CreateVelocity(new Vector2(0, 1f));
+                _camera.Velocity = _camera.Velocity.AddPosition(new Vector2(0, 2f));
             }
             else if (_window.ButtonDown(Key.S))
             {
-                _camera.Velocity = Transform2.CreateVelocity(new Vector2(0, -1f));
+                _camera.Velocity = _camera.Velocity.AddPosition(new Vector2(0, -2f));
             }
-            else if (_window.ButtonDown(Key.A))
+            if (_window.ButtonDown(Key.A))
             {
-                _camera.Velocity = Transform2.CreateVelocity(new Vector2(-1f, 0));
+                _camera.Velocity = _camera.Velocity.AddPosition(new Vector2(-2f, 0));
             }
             else if (_window.ButtonDown(Key.D))
             {
-                _camera.Velocity = Transform2.CreateVelocity(new Vector2(1f, 0));
-            }
-            else
-            {
-                _camera.Velocity = Transform2.CreateVelocity();
+                _camera.Velocity = _camera.Velocity.AddPosition(new Vector2(2f, 0));
             }
 
             _scene.Step();
