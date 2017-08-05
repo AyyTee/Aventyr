@@ -210,6 +210,7 @@
     <Compile Include="Rendering\HudCamera2.cs" />
     <Compile Include="Rendering\Renderable.cs" />
     <Compile Include="Rendering\TextEntity.cs" />
+    <Compile Include="Rendering\UberShader.cs" />
     <Compile Include="ResourceController.cs" />
     <Compile Include="Rendering\VirtualWindow.cs" />
     <Compile Include="RollingAverage.cs" />
@@ -322,12 +323,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Assets\Fonts\Inconsolata\Inconsolata.fnt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Assets\Shaders\fs_uber.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Assets\Shaders\vs_uber.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Assets\Sounds\TestSound.ogg">

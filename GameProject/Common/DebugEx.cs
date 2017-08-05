@@ -9,25 +9,23 @@ namespace Game.Common
         public delegate void FailDelegate(string message);
         public static event FailDelegate FailEvent;
 
+        [DebuggerStepThrough]
         public static void Assert(bool condition, string message = "")
         {
             if (!condition)
             {
-                _fail(message);
+                Fail(message);
             }
         }
 
+        [DebuggerStepThrough]
         public static void Fail(string message = "")
-        {
-            _fail(message);
-        }
-
-        static void _fail(string message)
         {
             FailEvent?.Invoke(message);
             Debugger.Break();
         }
 
+        [DebuggerStepThrough]
         public static void GlAssert(string message = "")
         {
             var glError = GL.GetError();

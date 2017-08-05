@@ -312,12 +312,11 @@ namespace TimeLoopInc.Editor
                 };
 
                 layer.Renderables.AddRange(_tool.Render());
-
                 Window.Layers.Add(layer);
             }
 
             var gui = _menu.Render();
-            gui.Renderables.Add(Draw.Text(Window.Fonts.Inconsolata, new Vector2(0, 130), _mouseGridPos.ToString()));
+            //gui.Renderables.Add(Draw.Text(Window.Fonts.Inconsolata, new Vector2(0, 130), _mouseGridPos.ToString()));
             Window.Layers.Add(gui);
         }
     }
