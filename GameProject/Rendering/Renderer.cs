@@ -138,9 +138,9 @@ namespace Game.Rendering
 
         class DrawData
         {
-            public int Index;
-            public readonly Model Model;
-            public readonly Matrix4 Offset;
+            public int Index { get; }
+            public Model Model { get; }
+            public Matrix4 Offset { get; }
 
             public DrawData(int index, Model model, Matrix4 offset)
             {
@@ -166,43 +166,34 @@ namespace Game.Rendering
                 PortalRenderEnabled ? PortalRenderMax : 0);
             List<PortalView> portalViewList = portalView.GetPortalViewList();
 
-            #region Draw portal FOVs to the stencil buffer.
+            
+            var data = new Data();
+
+            List<DrawData> portalViewModels = new List<DrawData>();
+            for (int i = 1; i < Math.Min(portalViewList.Count, StencilMaxValue); i++)
             {
-                GL.ColorMask(false, false, false, false);
-                GL.DepthMask(false);
-                using (_state.Push(EnableCap.DepthTest, false))
-                using (_state.Push(EnableCap.StencilTest, true))
+                var mesh = new Mesh();
+                for (int j = 0; j < portalViewList[i].Paths.Count; j++)
                 {
-                    GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
-                    for (int i = 1; i < Math.Min(portalViewList.Count, StencilMaxValue); i++)
-                    {
-                        GL.StencilFunc(StencilFunction.Always, i, StencilMask);
-                        var mesh = new Mesh();
-                        for (int j = 0; j < portalViewList[i].Paths.Count; j++)
-                        {
-                            Vector2[] a = ClipperConvert.ToVector2(portalViewList[i].Paths[j]);
-                            ModelFactory.AddPolygon(mesh, a, Color4.White);
-                        }
-                        RenderModel(new Model(mesh), cam.GetViewMatrix());
-                    }
+                    Vector2[] a = ClipperConvert.ToVector2(portalViewList[i].Paths[j]);
+                    ModelFactory.AddPolygon(mesh, a, Color4.White);
                 }
+
+                portalViewModels.Add(data.BufferModel(new Model(mesh), Matrix4.Identity));
             }
-            #endregion
 
-            List<DrawData> drawData = new List<DrawData>();
-
+            List<DrawData> sceneModels = new List<DrawData>();
             #region Get models.
             {
-                HashSet<Model> models = new HashSet<Model>();
                 foreach (IRenderable e in layer.Renderables)
                 {
                     if (!e.Visible)
                     {
                         continue;
                     }
-                    List<Clip.ClipModel> clipModels = Clip.GetClipModels(e, layer.Portals, PortalClipDepth);
+                    var clipModels = Clip.GetClipModels(e, layer.Portals, PortalClipDepth);
                     DebugEx.Assert(clipModels.All(item => item.Model != null));
-                    foreach (Clip.ClipModel clip in clipModels)
+                    foreach (var clip in clipModels)
                     {
                         if (clip.ClipLines.Length > 0)
                         {
@@ -212,27 +203,33 @@ namespace Game.Rendering
                             {
                                 model.Mesh = model.Mesh.Bisect(clip.ClipLines[i], clip.Model.Transform.GetMatrix() * transform, Side.Right);
                             }
-                            models.Add(model);
-                            drawData.Add(new DrawData(-1, model, transform));
+
+                            sceneModels.Add(data.BufferModel(model, transform));
                         }
                         else
                         {
-                            models.Add(clip.Model);
-                            drawData.Add(new DrawData(
-                                -1,
-                                clip.Model,
-                                clip.Entity.WorldTransform.GetMatrix() * clip.Transform));
+                            sceneModels.Add(data.BufferModel(clip.Model, clip.Entity.WorldTransform.GetMatrix() * clip.Transform));
                         }
                     }
                 }
-                var indexList = BufferModels(models.ToArray());
-                for (int i = 0; i < drawData.Count; i++)
-                {
-                    DrawData d = drawData[i];
-                    d.Index = indexList[d.Model];
-                }
             }
             #endregion
+
+            BufferData(data.Vertices.ToArray(), data.Colors.ToArray(), data.TexCoords.ToArray(), data.Indices.ToArray(), _iboElements);
+
+
+            GL.ColorMask(false, false, false, false);
+            GL.DepthMask(false);
+            using (_state.Push(EnableCap.DepthTest, false))
+            using (_state.Push(EnableCap.StencilTest, true))
+            {
+                GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
+                for (int i = 1; i < Math.Min(portalViewList.Count, StencilMaxValue); i++)
+                {
+                    GL.StencilFunc(StencilFunction.Always, i, StencilMask);
+                    Draw(new[] { portalViewModels[i - 1] }, cam.GetViewMatrix());
+                }
+            }
 
             #region Draw the scenes within each portal's Fov.
             {
@@ -245,7 +242,7 @@ namespace Game.Rendering
                     {
                         SetScissor(window, portalViewList[i], cam.GetViewMatrix());
                         GL.StencilFunc(StencilFunction.Equal, i, StencilMask);
-                        Draw(drawData.ToArray(), portalViewList[i].ViewMatrix);
+                        Draw(sceneModels.ToArray(), portalViewList[i].ViewMatrix);
                     }
                     SetScissor(window);
                 }
@@ -405,6 +402,48 @@ namespace Game.Rendering
             }
         }
 
+        public void RenderModel(Model model, Matrix4 viewMatrix)
+        {
+            DebugEx.Assert(model != null);
+            if (!RenderEnabled)
+            {
+                return;
+            }
+
+            BufferData(model.GetVerts(), model.GetColorData(), model.GetTextureCoords(), model.GetIndices(), _iboElements);
+
+            if (_activeShader.GetUniform("UVMatrix") != -1)
+            {
+                Matrix4 uvMatrix = model.TransformUv.GetMatrix();
+                GL.UniformMatrix4(_activeShader.GetUniform("UVMatrix"), false, ref uvMatrix);
+            }
+
+            if (model.Texture != null)
+            {
+                GL.Uniform1(_activeShader.GetUniform("isTextured"), 1);
+                GL.BindTexture(TextureTarget.Texture2D, model.Texture.GetId());
+            }
+            else
+            {
+                GL.Uniform1(_activeShader.GetUniform("isTextured"), 0);
+            }
+
+            if (model.Wireframe)
+            {
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            }
+            using (_state.Push(EnableCap.CullFace, !model.Wireframe))
+            using (_state.Push(EnableCap.Blend, model.IsTransparent))
+            {
+                RenderSetTransformMatrix(Matrix4.Identity, model, viewMatrix);
+                GL.DrawElements(PrimitiveType.Triangles, model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
+            }
+            if (model.Wireframe)
+            {
+                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+            }
+        }
+
         /// <summary>Sets scissor region around a portalview.</summary>
         /// <param name="view"></param>
         /// <param name="viewMatrix">Camera view matrix, do not use view matrix for the portalview.</param>
@@ -455,59 +494,12 @@ namespace Game.Rendering
             GL.CullFace(Matrix4Ex.IsMirrored(viewMatrix) ? CullFaceMode.Front : CullFaceMode.Back);
         }
 
-        public void RenderModel(Model model, Matrix4 viewMatrix)
-        {
-            DebugEx.Assert(model != null);
-            if (!RenderEnabled)
-            {
-                return;
-            }
-
-            BufferData(model.GetVerts(), model.GetColorData(), model.GetTextureCoords(), model.GetIndices(), _iboElements);
-
-            if (_activeShader.GetUniform("UVMatrix") != -1)
-            {
-                Matrix4 uvMatrix = model.TransformUv.GetMatrix();
-                GL.UniformMatrix4(_activeShader.GetUniform("UVMatrix"), false, ref uvMatrix);
-            }
-
-            if (model.Texture != null)
-            {
-                GL.Uniform1(_activeShader.GetUniform("isTextured"), 1);
-                GL.BindTexture(TextureTarget.Texture2D, model.Texture.GetId());
-            }
-            else
-            {
-                GL.Uniform1(_activeShader.GetUniform("isTextured"), 0);
-            }
-
-            if (model.Wireframe)
-            {
-                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-            }
-            using (_state.Push(EnableCap.CullFace, !model.Wireframe))
-            using (_state.Push(EnableCap.Blend, model.IsTransparent))
-            {
-                RenderSetTransformMatrix(Matrix4.Identity, model, viewMatrix);
-                GL.DrawElements(PrimitiveType.Triangles, model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
-            }
-            if (model.Wireframe)
-            {
-                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
-            }
-        }
-
-        Dictionary<Model, int> BufferModels(Model[] models)
+        Dictionary<Model, int> BufferModels(Model[] models, Data data)
         {
             var indexList = new Dictionary<Model, int>();
-
-            var vertices = new List<Vector3>();
-            var colors = new List<Vector4>();
-            var texCoords = new List<Vector2>();
-            var indices = new List<int>();
             for (int i = 0; i < models.Length; i++)
             {
-                indexList.Add(models[i], indices.Count);
+                indexList.Add(models[i], data.Indices.Count);
 
                 Vector3[] modelVerts = models[i].GetVerts();
 
@@ -515,17 +507,44 @@ namespace Game.Rendering
                 for (int j = 0; j < modelIndices.Length; j++)
                 {
                     DebugEx.Assert(modelIndices[j] >= 0 && modelIndices[j] < modelVerts.Length);
-                    modelIndices[j] += vertices.Count;
+                    modelIndices[j] += data.Vertices.Count;
                 }
-                indices.AddRange(modelIndices);
+                data.Indices.AddRange(modelIndices);
 
-                vertices.AddRange(modelVerts);
-                colors.AddRange(models[i].GetColorData());
-                texCoords.AddRange(models[i].GetTextureCoords());
+                data.Vertices.AddRange(modelVerts);
+                data.Colors.AddRange(models[i].GetColorData());
+                data.TexCoords.AddRange(models[i].GetTextureCoords());
             }
-
-            BufferData(vertices.ToArray(), colors.ToArray(), texCoords.ToArray(), indices.ToArray(), _iboElements);
             return indexList;
+        }
+
+        class Data
+        {
+            public List<Vector3> Vertices { get; } = new List<Vector3>();
+            public List<Vector4> Colors { get; } = new List<Vector4>();
+            public List<Vector2> TexCoords { get; } = new List<Vector2>();
+            public List<int> Indices { get; } = new List<int>();
+
+            public DrawData BufferModel(Model model, Matrix4 offset)
+            {
+                var index = Indices.Count;
+
+                Vector3[] modelVerts = model.GetVerts();
+
+                int[] modelIndices = model.GetIndices();
+                for (int j = 0; j < modelIndices.Length; j++)
+                {
+                    DebugEx.Assert(modelIndices[j] >= 0 && modelIndices[j] < modelVerts.Length);
+                    modelIndices[j] += Vertices.Count;
+                }
+                Indices.AddRange(modelIndices);
+
+                Vertices.AddRange(modelVerts);
+                Colors.AddRange(model.GetColorData());
+                TexCoords.AddRange(model.GetTextureCoords());
+
+                return new DrawData(index, model, offset);
+            }
         }
 
         void BufferData(Vector3[] vertdata, Vector4[] coldata, Vector2[] texcoorddata, int[] indices, int indexBuffer)

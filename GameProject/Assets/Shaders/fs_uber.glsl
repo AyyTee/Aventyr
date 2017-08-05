@@ -5,7 +5,9 @@ in vec2 f_texcoord;
 out vec4 outputColor;
 
 uniform int isTextured;
+//uniform int isDithered;
 uniform sampler2D maintexture;
+//uniform sampler2D bayer_matrix;
 
 void
 main()
