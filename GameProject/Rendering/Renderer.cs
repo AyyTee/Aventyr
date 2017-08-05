@@ -26,8 +26,6 @@ namespace Game.Rendering
         public int StencilMaxValue => 1 << StencilBits;
         public int StencilMask => StencilMaxValue - 1;
 
-        /// <summary>Flag for preventing rendering occuring.  Intended for benchmarking purposes.</summary>
-        public bool RenderEnabled { get; set; } = true;
         Shader _activeShader;
 
         readonly Dictionary<string, Shader> _shaders = new Dictionary<string, Shader>();
@@ -144,6 +142,7 @@ namespace Game.Rendering
 
             public DrawData(int index, Model model, Matrix4 offset)
             {
+                Debug.Assert(model != null);
                 Index = index;
                 Model = model;
                 Offset = offset;
@@ -215,7 +214,16 @@ namespace Game.Rendering
             }
             #endregion
 
-            BufferData(data.Vertices.ToArray(), data.Colors.ToArray(), data.TexCoords.ToArray(), data.Indices.ToArray(), _iboElements);
+            var portalEdgesData = data.BufferModel(
+                GetPortalEdges(portalViewList, cam), 
+                Matrix4.Identity);
+
+            BufferData(
+                data.Vertices.ToArray(), 
+                data.Colors.ToArray(), 
+                data.TexCoords.ToArray(), 
+                data.Indices.ToArray(), 
+                _iboElements);
 
 
             GL.ColorMask(false, false, false, false);
@@ -249,105 +257,101 @@ namespace Game.Rendering
             }
             #endregion
 
-            RenderPortalEdges(portalViewList, cam);
+            using (_state.Push(EnableCap.StencilTest, false))
+            using (_state.Push(EnableCap.DepthTest, false))
+            {
+                Draw(new[] { portalEdgesData }, cam.GetViewMatrix(false));
+            }
         }
 
-        /// <summary>
-        /// Draw the edges for each portal potentially including motion blur.
-        /// </summary>
-        /// <param name="portalViewList"></param>
-        /// <param name="cam"></param>
-        void RenderPortalEdges(List<PortalView> portalViewList, ICamera2 cam)
+        Model GetPortalEdges(List<PortalView> portalViewList, ICamera2 cam)
         {
             int iterations = Math.Min(portalViewList.Count, StencilMaxValue);
             /* Escape early if there aren't any visible portals.
              * The first iteration is just for the main view which doesn't have portal edges.*/
             if (iterations <= 1)
             {
-                return;
+                return new Model();
             }
 
-            using (_state.Push(EnableCap.StencilTest, false))
-            using (_state.Push(EnableCap.DepthTest, false))
+            var portalEdges = new Model();
+            portalEdges.SetTexture(_textures.LineBlur);
+
+            for (int i = 1; i < iterations; i++)
             {
-                var portalEdges = new Model();
-                portalEdges.SetTexture(_textures.LineBlur);
-
-                for (int i = 1; i < iterations; i++)
+                for (int j = 0; j < 2; j++)
                 {
-                    for (int j = 0; j < 2; j++)
+                    LineF line = portalViewList[i].FovLines[j];
+                    float minWidth = Math.Abs(cam.WorldTransform.Size) / 300;
+                    double angleDiff = GetLineBlurAngle(line, portalViewList[i].FovLinesPrevious[j]);
+                    float widthEnd = (float)Math.Tan(angleDiff) * line.Length;
+                    widthEnd = Math.Max(widthEnd, minWidth);
+
+                    Vector2[] lineWidth = PolygonFactory.CreateLineWidth(line, minWidth);
+
+                    Vector2 camPos = cam.WorldTransform.Position;
+                    Vector2[] lineWidthOff = Vector2Ex.Transform(lineWidth, Matrix4.CreateTranslation(new Vector3(-camPos)));
+                    Vector2[] lineTarget = PolygonFactory.CreateLineWidth(line.Translate(-camPos), minWidth, widthEnd);
+                    Matrix4d homography = Matrix4d.CreateTranslation(new Vector3d((Vector2d)(-camPos)));
+                    homography *= MathEx.GetHomography(lineWidthOff, lineTarget);
+                    homography *= Matrix4d.CreateTranslation(new Vector3d((Vector2d)camPos));
+
+                    bool obscured = true;
+                    for (int k = 0; k < portalViewList[i].Parent.Paths.Count; k++)
                     {
-                        LineF line = portalViewList[i].FovLines[j];
-                        float minWidth = Math.Abs(cam.WorldTransform.Size) / 300;
-                        double angleDiff = GetLineBlurAngle(line, portalViewList[i].FovLinesPrevious[j]);
-                        float widthEnd = (float)Math.Tan(angleDiff) * line.Length;
-                        widthEnd = Math.Max(widthEnd, minWidth);
-
-                        Vector2[] lineWidth = PolygonFactory.CreateLineWidth(line, minWidth);
-
-                        Vector2 camPos = cam.WorldTransform.Position;
-                        Vector2[] lineWidthOff = Vector2Ex.Transform(lineWidth, Matrix4.CreateTranslation(new Vector3(-camPos)));
-                        Vector2[] lineTarget = PolygonFactory.CreateLineWidth(line.Translate(-camPos), minWidth, widthEnd);
-                        Matrix4d homography = Matrix4d.CreateTranslation(new Vector3d((Vector2d)(-camPos)));
-                        homography *= MathEx.GetHomography(lineWidthOff, lineTarget);
-                        homography *= Matrix4d.CreateTranslation(new Vector3d((Vector2d)camPos));
-
-                        bool obscured = true;
-                        for (int k = 0; k < portalViewList[i].Parent.Paths.Count; k++)
+                        List<IntPoint> path = portalViewList[i].Parent.Paths[k];
+                        if (Clipper.PointInPolygon(ClipperConvert.ToIntPoint(line[0]), path) == 1)
                         {
-                            List<IntPoint> path = portalViewList[i].Parent.Paths[k];
-                            if (Clipper.PointInPolygon(ClipperConvert.ToIntPoint(line[0]), path) == 1)
-                            {
-                                obscured = false;
-                                break;
-                            }
-                        }
-                        if (obscured)
-                        {
-                            continue;
-                        }
-
-                        foreach (PortalView p in portalViewList[i].Parent.Children)
-                        {
-                            if (p == portalViewList[i])
-                            {
-                                continue;
-                            }
-                            if (p.PortalLine.IsInsideFov(camPos, line[0]))
-                            {
-                                obscured = true;
-                                break;
-                            }
-                        }
-                        if (obscured)
-                        {
-                            continue;
-                        }
-                        int index = ModelFactory.AddPolygon((Mesh)portalEdges.Mesh, lineWidth, Color4.White);
-
-                        IMesh mesh = portalEdges.Mesh;
-                        for (int k = index; k < mesh.GetVertices().Count; k++)
-                        {
-                            Vertex vertex = mesh.GetVertices()[k];
-                            Vector3 pos = Vector3Ex.Transform(vertex.Position, homography);
-                            pos.Z = cam.UnitZToWorld(pos.Z);
-
-                            var v = new Vector2(vertex.Position.X, vertex.Position.Y);
-                            double distance = MathEx.PointLineDistance(v, line.GetPerpendicularLeft(), false);
-                            double texCoordX = MathEx.PointLineDistance(v, line, false) / minWidth;
-                            if (line.GetSideOf(v) == Side.Left)
-                            {
-                                texCoordX *= -1;
-                            }
-                            texCoordX += 0.5;
-                            var texCoord = new Vector2((float)texCoordX, (float)(distance / line.Length));
-
-                            mesh.GetVertices()[k] = new Vertex(pos, texCoord, Color4.Black);
+                            obscured = false;
+                            break;
                         }
                     }
+                    if (obscured)
+                    {
+                        continue;
+                    }
+
+                    foreach (PortalView p in portalViewList[i].Parent.Children)
+                    {
+                        if (p == portalViewList[i])
+                        {
+                            continue;
+                        }
+                        if (p.PortalLine.IsInsideFov(camPos, line[0]))
+                        {
+                            obscured = true;
+                            break;
+                        }
+                    }
+                    if (obscured)
+                    {
+                        continue;
+                    }
+                    int index = ModelFactory.AddPolygon((Mesh)portalEdges.Mesh, lineWidth, Color4.White);
+
+                    IMesh mesh = portalEdges.Mesh;
+                    for (int k = index; k < mesh.GetVertices().Count; k++)
+                    {
+                        Vertex vertex = mesh.GetVertices()[k];
+                        Vector3 pos = Vector3Ex.Transform(vertex.Position, homography);
+                        pos.Z = cam.UnitZToWorld(pos.Z);
+
+                        var v = new Vector2(vertex.Position.X, vertex.Position.Y);
+                        double distance = MathEx.PointLineDistance(v, line.GetPerpendicularLeft(), false);
+                        double texCoordX = MathEx.PointLineDistance(v, line, false) / minWidth;
+                        if (line.GetSideOf(v) == Side.Left)
+                        {
+                            texCoordX *= -1;
+                        }
+                        texCoordX += 0.5;
+                        var texCoord = new Vector2((float)texCoordX, (float)(distance / line.Length));
+
+                        mesh.GetVertices()[k] = new Vertex(pos, texCoord, Color4.Black);
+                    }
                 }
-                RenderModel(portalEdges, cam.GetViewMatrix(false));
             }
+
+            return portalEdges;
         }
 
         float GetLineBlurAngle(LineF line, LineF linePrev)
@@ -363,10 +367,10 @@ namespace Game.Rendering
             for (int i = 0; i < drawData.Length; i++)
             {
                 DrawData data = drawData[i];
-                DebugEx.Assert(data.Model != null);
-                if (!RenderEnabled)
+
+                if (!data.Model.GetIndices().Any())
                 {
-                    return;
+                    continue;
                 }
 
                 if (_activeShader.GetUniform("UVMatrix") != -1)
@@ -399,48 +403,6 @@ namespace Game.Rendering
                 {
                     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
                 }
-            }
-        }
-
-        public void RenderModel(Model model, Matrix4 viewMatrix)
-        {
-            DebugEx.Assert(model != null);
-            if (!RenderEnabled)
-            {
-                return;
-            }
-
-            BufferData(model.GetVerts(), model.GetColorData(), model.GetTextureCoords(), model.GetIndices(), _iboElements);
-
-            if (_activeShader.GetUniform("UVMatrix") != -1)
-            {
-                Matrix4 uvMatrix = model.TransformUv.GetMatrix();
-                GL.UniformMatrix4(_activeShader.GetUniform("UVMatrix"), false, ref uvMatrix);
-            }
-
-            if (model.Texture != null)
-            {
-                GL.Uniform1(_activeShader.GetUniform("isTextured"), 1);
-                GL.BindTexture(TextureTarget.Texture2D, model.Texture.GetId());
-            }
-            else
-            {
-                GL.Uniform1(_activeShader.GetUniform("isTextured"), 0);
-            }
-
-            if (model.Wireframe)
-            {
-                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-            }
-            using (_state.Push(EnableCap.CullFace, !model.Wireframe))
-            using (_state.Push(EnableCap.Blend, model.IsTransparent))
-            {
-                RenderSetTransformMatrix(Matrix4.Identity, model, viewMatrix);
-                GL.DrawElements(PrimitiveType.Triangles, model.GetIndices().Length, DrawElementsType.UnsignedInt, 0);
-            }
-            if (model.Wireframe)
-            {
-                GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             }
         }
 
