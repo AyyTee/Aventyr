@@ -19,6 +19,7 @@ namespace Game.Rendering
 
         public bool IsTransparent => _texture.IsTransparent;
         public Vector2i Size => _texture.Size;
+        public int Id => _texture.Id;
 
         public TextureFile(string filename)
         {
@@ -26,17 +27,13 @@ namespace Game.Rendering
             LoadImage();
         }
 
-        public int GetId()
-        {
-            if (_texture == null)
-            {
-                LoadImage();
-            }
-            return _texture.GetId();
-        }
-
         void LoadImage(Bitmap image)
         {
+            if (_texture != null)
+            {
+                return;
+            }
+
             int texId = GL.GenTexture();
 
             GL.BindTexture(TextureTarget.Texture2D, texId);

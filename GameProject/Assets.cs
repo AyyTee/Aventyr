@@ -6,51 +6,51 @@ using System.IO;
 
 public class FontAssets 
 {
-	public readonly List<Font> Fonts;
+    public readonly List<Font> Fonts;
  
-	public readonly Font @Arial = new Font(Path.Combine(new[] { @"Assets", @"Fonts", @"Arial", @"Arial.fnt"})); 
-	public readonly Font @Inconsolata = new Font(Path.Combine(new[] { @"Assets", @"Fonts", @"Inconsolata", @"Inconsolata.fnt"})); 
-	
-	public FontAssets()
-	{
-		Fonts = new List<Font>() {
-			@Arial,
-			@Inconsolata,
-		};
-	}
+    public Font @Arial { get; } = new Font(Path.Combine(new[] { @"Assets", @"Fonts", @"Arial", @"Arial.fnt"})); 
+    public Font @Inconsolata { get; } = new Font(Path.Combine(new[] { @"Assets", @"Fonts", @"Inconsolata", @"Inconsolata.fnt"})); 
+
+    public FontAssets()
+    {
+        Fonts = new List<Font>() {
+            @Arial,
+            @Inconsolata,
+        };
+    }
 }
 
 public class TextureAssets 
 {
-	public readonly List<TextureFile> Textures;
+    public readonly List<TextureFile> Textures;
  
-	public readonly TextureFile @BayerMatrix = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"BayerMatrix.png"})); 
-	public readonly TextureFile @Default = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"Default.png"})); 
-	public readonly TextureFile @Grid = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"Grid.png"})); 
-	public readonly TextureFile @LineBlur = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"LineBlur.png"})); 
-	
-	public TextureAssets()
-	{
-		Textures = new List<TextureFile>() {
-			@BayerMatrix,
-			@Default,
-			@Grid,
-			@LineBlur,
-		};
-	}
+    public TextureFile @BayerMatrix { get; } = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"BayerMatrix.png"})); 
+    public TextureFile @Default { get; } = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"Default.png"})); 
+    public TextureFile @Grid { get; } = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"Grid.png"})); 
+    public TextureFile @LineBlur { get; } = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"LineBlur.png"})); 
+
+    public TextureAssets()
+    {
+        Textures = new List<TextureFile>() {
+            @BayerMatrix,
+            @Default,
+            @Grid,
+            @LineBlur,
+        };
+    }
 }
 
 public class SoundAssets 
 {
-	public readonly List<Sound> Sounds;
+    public readonly List<Sound> Sounds;
  
-	public readonly Sound @TestSound = new Sound(Path.Combine(new[] { @"Assets", @"Sounds", @"TestSound.ogg"})); 
-	
-	public SoundAssets()
-	{
-		Sounds = new List<Sound>() {
-			@TestSound,
-		};
-	}
+    public Sound @TestSound { get; } = new Sound(Path.Combine(new[] { @"Assets", @"Sounds", @"TestSound.ogg"})); 
+
+    public SoundAssets()
+    {
+        Sounds = new List<Sound>() {
+            @TestSound,
+        };
+    }
 }
 

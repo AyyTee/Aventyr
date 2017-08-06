@@ -56,7 +56,9 @@ namespace Game.Rendering
             GL.PointSize(15f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            _shaders.Add("uber", new Shader(UberShader.VertexShader, UberShader.FragmentShader));
+            DebugEx.Assert(_textures.BayerMatrix.Size.X == _textures.BayerMatrix.Size.Y);
+            var uberShader = new UberShader(_textures.BayerMatrix.Size.X);
+            _shaders.Add("uber", new Shader(uberShader.VertexShader, uberShader.FragmentShader));
 
             // Skip display mode diagnostics on Mac as it doesn't seem to support GetInteger.
             if (Configuration.RunningOnMacOS)
@@ -370,29 +372,25 @@ namespace Game.Rendering
                 }
 
                 Matrix4 uvMatrix = data.Model.TransformUv.GetMatrix();
-                GL.UniformMatrix4(_activeShader.Uniforms["UVMatrix"].Address, false, ref uvMatrix);
+                GL.UniformMatrix4(_activeShader.Uniforms[UberShader.UvMatrix].Address, false, ref uvMatrix);
 
+                GL.Uniform1(
+                    _activeShader.Uniforms[UberShader.IsTextured].Address, 
+                    data.Model.Texture != null ? 1 : 0);
                 if (data.Model.Texture != null)
                 {
-                    GL.Uniform1(_activeShader.Uniforms["isTextured"].Address, 1);
-                    
-
-                    var texLoc = _activeShader.Uniforms["maintexture"].Address;
-                    GL.Uniform1(texLoc, 0);
-
+                    GL.Uniform1(_activeShader.Uniforms[UberShader.MainTexture].Address, 0);
                     GL.ActiveTexture(TextureUnit.Texture0);
-                    GL.BindTexture(TextureTarget.Texture2D, data.Model.Texture.GetId());
-                    //GL.BindTexture(TextureTarget.Texture2D, _textures.BayerMatrix.GetId());
-                }
-                else
-                {
-                    GL.Uniform1(_activeShader.Uniforms["isTextured"].Address, 0);
+                    GL.BindTexture(TextureTarget.Texture2D, data.Model.Texture.Id);
                 }
 
-                //var texLoc1 = _activeShader.Uniforms["bayer_matrix"].Address;
-                //GL.Uniform1(texLoc1, 1);
-                //GL.ActiveTexture(TextureUnit.Texture1);
-                //GL.BindTexture(TextureTarget.Texture2D, _textures.BayerMatrix.GetId());
+                GL.Uniform1(_activeShader.Uniforms[UberShader.BayerMatrix].Address, 1);
+                GL.ActiveTexture(TextureUnit.Texture1);
+                GL.BindTexture(TextureTarget.Texture2D, _textures.BayerMatrix.Id);
+
+                GL.Uniform1(
+                    _activeShader.Uniforms[UberShader.IsDithered].Address, 
+                    data.Model.IsDithered ? 1 : 0);
 
                 if (data.Model.Wireframe)
                 {
@@ -494,18 +492,23 @@ namespace Game.Rendering
         {
             DebugEx.Assert(coldata.Length == vertdata.Length);
             DebugEx.Assert(texcoorddata.Length == vertdata.Length);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.Buffers["vPosition"]);
+
+            // Buffer vertex coordinates.
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.Buffers[UberShader.VertPosition]);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(vertdata.Length * Vector3.SizeInBytes), vertdata, BufferUsageHint.StreamDraw);
-            GL.VertexAttribPointer(_activeShader.Attributes["vPosition"].Address, 3, VertexAttribPointerType.Float, false, 0, 0);
+            GL.VertexAttribPointer(_activeShader.Attributes[UberShader.VertPosition].Address, 3, VertexAttribPointerType.Float, false, 0, 0);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.Buffers["vColor"]);
+            // Buffer vertex colors.
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.Buffers[UberShader.VertColor]);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(coldata.Length * Vector4.SizeInBytes), coldata, BufferUsageHint.StreamDraw);
-            GL.VertexAttribPointer(_activeShader.Attributes["vColor"].Address, 4, VertexAttribPointerType.Float, true, 0, 0);
+            GL.VertexAttribPointer(_activeShader.Attributes[UberShader.VertColor].Address, 4, VertexAttribPointerType.Float, true, 0, 0);
 
-            GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.Buffers["texcoord"]);
+            // Buffer vertex UV coordinates.
+            GL.BindBuffer(BufferTarget.ArrayBuffer, _activeShader.Buffers[UberShader.VertUvCoord]);
             GL.BufferData(BufferTarget.ArrayBuffer, (IntPtr)(texcoorddata.Length * Vector2.SizeInBytes), texcoorddata, BufferUsageHint.StreamDraw);
-            GL.VertexAttribPointer(_activeShader.Attributes["texcoord"].Address, 2, VertexAttribPointerType.Float, true, 0, 0);
+            GL.VertexAttribPointer(_activeShader.Attributes[UberShader.VertUvCoord].Address, 2, VertexAttribPointerType.Float, true, 0, 0);
 
+            // Buffer indices.
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indexBuffer);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(indices.Length * sizeof(int)), indices, BufferUsageHint.StreamDraw);
         }
@@ -514,8 +517,8 @@ namespace Game.Rendering
         {
             Matrix4 modelMatrix = model.Transform.GetMatrix() * offset;
             UpdateCullFace(modelMatrix * viewMatrix);
-            GL.UniformMatrix4(_activeShader.Uniforms["modelMatrix"].Address, false, ref modelMatrix);
-            GL.UniformMatrix4(_activeShader.Uniforms["viewMatrix"].Address, false, ref viewMatrix);
+            GL.UniformMatrix4(_activeShader.Uniforms[UberShader.ModelMatrix].Address, false, ref modelMatrix);
+            GL.UniformMatrix4(_activeShader.Uniforms[UberShader.ViewMatrix].Address, false, ref viewMatrix);
         }
     }
 }

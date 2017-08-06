@@ -6,60 +6,94 @@ using System.Threading.Tasks;
 
 namespace Game.Rendering
 {
-    public static class UberShader
+    public class UberShader
     {
-        public static string FragmentShader => @"
-#version 330
+        const string Version = "330";
 
-in vec4 f_color;
-in vec2 f_texcoord;
-out vec4 outputColor;
+        const string FragColor = nameof(FragColor);
+        const string FragUvCoord = nameof(FragUvCoord);
+        const string OutputColor = nameof(OutputColor);
 
-uniform int isTextured;
-//uniform int isDithered;
-uniform sampler2D maintexture;
-//uniform sampler2D bayer_matrix;
+        public const string IsTextured = nameof(IsTextured);
+        public const string IsDithered = nameof(IsDithered);
+        public const string MainTexture = nameof(MainTexture);
+        public const string BayerMatrix = nameof(BayerMatrix);
+
+        public const string VertPosition = nameof(VertPosition);
+        public const string VertColor = nameof(VertColor);
+        public const string VertUvCoord = nameof(VertUvCoord);
+        public const string ModelMatrix = nameof(ModelMatrix);
+        public const string UvMatrix = nameof(UvMatrix);
+        public const string ViewMatrix = nameof(ViewMatrix);
+
+        readonly int _bayerMatrixSize;
+
+        public string FragmentShader => $@"
+#version {Version}
+
+in vec4 {FragColor};
+in vec2 {FragUvCoord};
+out vec4 {OutputColor};
+
+uniform int {IsTextured};
+uniform int {IsDithered};
+uniform sampler2D {MainTexture};
+uniform sampler2D {BayerMatrix};
 
 void
 main()
-{
-	if (isTextured == 1)
-	{
-		vec2 flipped_texcoord = vec2(f_texcoord.x, f_texcoord.y);
-		vec4 color = texture(maintexture, flipped_texcoord);
-		color.x *= f_color.x;
-		color.y *= f_color.y;
-		color.z *= f_color.z;
-		color.w *= f_color.w;
-		//color.x = (int(gl_FragCoord.x) % 100) / 100;//texture(bayer_matrix, gl_FragCoord.xy).x;
-		outputColor = color;
-	}
+{{
+	if ({IsTextured} == 1)
+	{{
+		vec2 flipped_texcoord = vec2({FragUvCoord}.x, {FragUvCoord}.y);
+		vec4 color = texture({MainTexture}, flipped_texcoord) * {FragColor};
+		{OutputColor} = color;
+	}}
 	else
-	{
-		outputColor = f_color;
-	}
-}
-";
-        public static string VertexShader => @"
-#version 330
+	{{
+		{OutputColor} = {FragColor};
+	}}
 
-in vec3 vPosition;
-in vec4 vColor;
-in vec2 texcoord;
-out vec4 f_color;
-out vec2 f_texcoord;
-uniform mat4 modelMatrix;
-uniform mat4 UVMatrix;
-uniform mat4 viewMatrix;
+    if ({IsDithered} == 1)
+    {{
+        {OutputColor}.w += texture({BayerMatrix}, gl_FragCoord.xy / {_bayerMatrixSize}).x;
+        {OutputColor}.w = {OutputColor}.w > 1 ? 1 : 0;
+    }}
+
+    /* This condition will never be met but it prevents attributes and uniforms from getting 
+     * optimized away when we're trying to debug.*/
+    if ({IsTextured} == 2)
+    {{
+        {OutputColor}.x = {FragUvCoord}.x;
+    }}
+}}
+";
+
+        public string VertexShader => $@"
+#version {Version}
+
+in vec3 {VertPosition};
+in vec4 {VertColor};
+in vec2 {VertUvCoord};
+out vec4 {FragColor};
+out vec2 {FragUvCoord};
+uniform mat4 {ModelMatrix};
+uniform mat4 {UvMatrix};
+uniform mat4 {ViewMatrix};
 
 void
 main()
-{
-	vec4 v = UVMatrix * vec4(texcoord.x, texcoord.y, 0.0, 1.0);
-	f_texcoord = v.xy;
-	f_color = vColor;
-	gl_Position = viewMatrix * modelMatrix * vec4(vPosition, 1.0);
-}
+{{
+	vec4 v = {UvMatrix} * vec4({VertUvCoord}.x, {VertUvCoord}.y, 0.0, 1.0);
+	{FragUvCoord} = v.xy;
+	{FragColor} = {VertColor};
+	gl_Position = {ViewMatrix} * {ModelMatrix} * vec4({VertPosition}, 1.0);
+}}
 ";
+
+        public UberShader(int bayerMatrixSize)
+        {
+            _bayerMatrixSize = bayerMatrixSize;
+        }
     }
 }

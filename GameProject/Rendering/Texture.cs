@@ -10,38 +10,28 @@ namespace Game.Rendering
         public static object LockDelete { get; } = new object();
 
         [DataMember]
-        public bool IsTransparent { get; set; }
+        public bool IsTransparent { get; }
 
         /// <summary>GL texture id.</summary>
-        readonly int _id;
+        public int Id { get; private set; }
 
         public Vector2i Size { get; }
 
         public Texture(int id, Vector2i size, bool isTransparent = false)
         {
-            _id = id;
+            Id = id;
             Size = size;
             IsTransparent = isTransparent;
         }
 
-        ~Texture()
-        {
-            Dispose();
-        }
-
         public void Dispose()
         {
-            if (_id == -1) return;
+            if (Id == -1) return;
             lock (LockDelete)
             {
                 //throw new NotImplementedException();
                 //ResourceController.TextureGarbage.Add(_id);
             }
-        }
-
-        public int GetId()
-        {
-            return _id;
         }
     }
 }

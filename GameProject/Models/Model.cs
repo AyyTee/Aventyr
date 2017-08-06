@@ -32,6 +32,8 @@ namespace Game.Models
         [DataMember]
         public bool Wireframe { get; set; }
         [DataMember]
+        public bool IsDithered { get; set; }
+        [DataMember]
         public IMesh Mesh { get; set; } = new Mesh();
         
         public Model()

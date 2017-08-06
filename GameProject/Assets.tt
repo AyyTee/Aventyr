@@ -8,19 +8,19 @@
 <#@ import namespace="Game" #>
 <#@ output extension=".cs" #>
 <#
-	var ResourcePaths = new List<string>();
-	var FieldNames = new List<string>();
+    var ResourcePaths = new List<string>();
+    var FieldNames = new List<string>();
 
-	var FontPath = Host.ResolvePath(AssetPaths.FontFolder);
-	var ClassNames = new[] { "FontAssets", "TextureAssets", "SoundAssets", };
-	var ResourceTypes = new[] { "Font", "TextureFile", "Sound", };
-	var FileTypes = new[] { "*.fnt", "*.png", "*.ogg", };
-	var CollectionNames = new[] { "Fonts", "Textures", "Sounds", };
-	var Directories = new[] {
-		Host.ResolvePath(AssetPaths.FontFolder),
-		Host.ResolvePath(AssetPaths.TextureFolder),
-		Host.ResolvePath(AssetPaths.SoundFolder),
-	};
+    var FontPath = Host.ResolvePath(AssetPaths.FontFolder);
+    var ClassNames = new[] { "FontAssets", "TextureAssets", "SoundAssets", };
+    var ResourceTypes = new[] { "Font", "TextureFile", "Sound", };
+    var FileTypes = new[] { "*.fnt", "*.png", "*.ogg", };
+    var CollectionNames = new[] { "Fonts", "Textures", "Sounds", };
+    var Directories = new[] {
+        Host.ResolvePath(AssetPaths.FontFolder),
+        Host.ResolvePath(AssetPaths.TextureFolder),
+        Host.ResolvePath(AssetPaths.SoundFolder),
+    };
 #>
 // This is generated code.
 using Game.Rendering;
@@ -31,50 +31,50 @@ using System.IO;
 <# 
 for (int i = 0; i < ClassNames.Length; i++) 
 { 
-	FieldNames.Clear();
-	ResourcePaths.Clear();
-	foreach (string filepath in Directory.EnumerateFiles(Directories[i], FileTypes[i], SearchOption.AllDirectories))
-	{
-		FieldNames.Add(Path.GetFileNameWithoutExtension(filepath));
+    FieldNames.Clear();
+    ResourcePaths.Clear();
+    foreach (string filepath in Directory.EnumerateFiles(Directories[i], FileTypes[i], SearchOption.AllDirectories))
+    {
+        FieldNames.Add(Path.GetFileNameWithoutExtension(filepath));
 
-		string[] folderNames = filepath.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
+        string[] folderNames = filepath.Split(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
 
-		int index = Array.IndexOf(folderNames, AssetPaths.AssetFolder);
-		string pathCode = "Path.Combine(new[] { ";
-		for (int j = index; j < folderNames.Length; j++)
-		{
-			pathCode += "@\"" + folderNames[j] + "\"";
-			if (j + 1 < folderNames.Length)
-			{
-				pathCode += ", ";
-			}
-		}
-		pathCode += "})";
-		ResourcePaths.Add(pathCode);
-	}
+        int index = Array.IndexOf(folderNames, AssetPaths.AssetFolder);
+        string pathCode = "Path.Combine(new[] { ";
+        for (int j = index; j < folderNames.Length; j++)
+        {
+            pathCode += "@\"" + folderNames[j] + "\"";
+            if (j + 1 < folderNames.Length)
+            {
+                pathCode += ", ";
+            }
+        }
+        pathCode += "})";
+        ResourcePaths.Add(pathCode);
+    }
 #>
 public class <#= ClassNames[i] #> 
 {
-	public readonly List<<#= ResourceTypes[i]#>> <#= CollectionNames[i]#>;
+    public readonly List<<#= ResourceTypes[i]#>> <#= CollectionNames[i]#>;
 <# 
-	for (int j = 0; j < FieldNames.Count; j++) 
-	{ 
+    for (int j = 0; j < FieldNames.Count; j++) 
+    { 
 #> 
-	public readonly <#= ResourceTypes[i]#> @<#= FieldNames[j] #> = new <#= ResourceTypes[i]#>(<#= ResourcePaths[j] #>);<#}#> 
-	
-	public <#= ClassNames[i]#>()
-	{
-		<#= CollectionNames[i]#> = new List<<#= ResourceTypes[i]#>>() {
-<#		
-		for (int j = 0; j < FieldNames.Count; j++) 
-		{ 
+    public <#= ResourceTypes[i]#> @<#= FieldNames[j] #> { get; } = new <#= ResourceTypes[i]#>(<#= ResourcePaths[j] #>);<#}#> 
+
+    public <#= ClassNames[i]#>()
+    {
+        <#= CollectionNames[i]#> = new List<<#= ResourceTypes[i]#>>() {
+<#        
+        for (int j = 0; j < FieldNames.Count; j++) 
+        { 
 #>
-			@<#= FieldNames[j]#>,
-<#		
-		}
+            @<#= FieldNames[j]#>,
+<#        
+        }
 #>
-		};
-	}
+        };
+    }
 }
 
 <#

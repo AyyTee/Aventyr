@@ -105,7 +105,7 @@ namespace TimeLoopInc
             var output = new List<IRenderable>();
             foreach (var box in boxes)
             {
-                var xValues = new[] { box.StartTime - 0.5, box.StartTime, box.EndTime, box.EndTime + 0.5 }
+                var xValues = new[] { box.StartTime - 0.9, box.StartTime, box.EndTime, box.EndTime + 0.9 }
                     .Select(item => TimeToX(item, topLeft, size))
                     .ToArray();
                 var yValues = new[] { box.Row, box.Row + 1 }
@@ -136,7 +136,7 @@ namespace TimeLoopInc
                 }
 
                 output.AddRange(meshes
-                    .Select(item => (IRenderable)new Renderable(new Model(item)))
+                    .Select(item => (IRenderable)new Renderable(new Model(item) { IsDithered = true }))
                     .ToArray());
             }
 

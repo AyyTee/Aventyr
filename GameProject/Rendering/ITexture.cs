@@ -9,7 +9,6 @@ namespace Game.Rendering
         /// </summary>
         Vector2i Size { get; }
         bool IsTransparent { get; }
-
-        int GetId();
+        int Id { get; }
     }
 }
