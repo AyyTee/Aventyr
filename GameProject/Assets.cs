@@ -24,7 +24,6 @@ public class TextureAssets
 {
     public readonly List<TextureFile> Textures;
  
-    public TextureFile @BayerMatrix { get; } = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"BayerMatrix.png"})); 
     public TextureFile @Default { get; } = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"Default.png"})); 
     public TextureFile @Grid { get; } = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"Grid.png"})); 
     public TextureFile @LineBlur { get; } = new TextureFile(Path.Combine(new[] { @"Assets", @"Textures", @"LineBlur.png"})); 
@@ -32,7 +31,6 @@ public class TextureAssets
     public TextureAssets()
     {
         Textures = new List<TextureFile>() {
-            @BayerMatrix,
             @Default,
             @Grid,
             @LineBlur,

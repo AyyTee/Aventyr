@@ -56,9 +56,7 @@ namespace Game.Rendering
             GL.PointSize(15f);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-            DebugEx.Assert(_textures.BayerMatrix.Size.X == _textures.BayerMatrix.Size.Y);
-            var uberShader = new UberShader(_textures.BayerMatrix.Size.X);
-            _shaders.Add("uber", new Shader(uberShader.VertexShader, uberShader.FragmentShader));
+            _shaders.Add("uber", new Shader(UberShader.GetVertexShader(), UberShader.GetFragmentShader()));
 
             // Skip display mode diagnostics on Mac as it doesn't seem to support GetInteger.
             if (Configuration.RunningOnMacOS)
@@ -383,10 +381,6 @@ namespace Game.Rendering
                     GL.ActiveTexture(TextureUnit.Texture0);
                     GL.BindTexture(TextureTarget.Texture2D, data.Model.Texture.Id);
                 }
-
-                GL.Uniform1(_activeShader.Uniforms[UberShader.BayerMatrix].Address, 1);
-                GL.ActiveTexture(TextureUnit.Texture1);
-                GL.BindTexture(TextureTarget.Texture2D, _textures.BayerMatrix.Id);
 
                 GL.Uniform1(
                     _activeShader.Uniforms[UberShader.IsDithered].Address, 

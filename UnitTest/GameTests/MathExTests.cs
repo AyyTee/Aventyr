@@ -666,6 +666,32 @@ namespace GameTests
         #endregion
 
         [Test]
+        public void BayerMatrix1Iteration()
+        {
+            var result = MathEx.BayerMatrix(1);
+            var expected = new[,] 
+            {
+                { 0, 3 },
+                { 2, 1 }
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void BayerMatrix2Iterations()
+        {
+            var result = MathEx.BayerMatrix(2);
+            var expected = new[,]
+            {
+                { 0, 12, 3, 15 },
+                { 8, 4, 11, 7 },
+                { 2, 14, 1, 13 },
+                { 10, 6, 9, 5 }
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
         public void AngleToVectorReversedTest0()
         {
             var result = MathEx.VectorToAngleReversed(new Vector2d(1, 0));

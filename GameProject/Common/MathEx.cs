@@ -655,6 +655,43 @@ namespace Game.Common
         }
         #endregion
 
+        /// <summary>
+        /// Generates a bayer matrix. The matrices size is 2^iterations.
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public static int[,] BayerMatrix(int iterations)
+        {
+            Debug.Assert(iterations >= 0);
+            if (iterations == 0)
+            {
+                return new[,] { { 0 } };
+            }
+
+            var size = 1 << iterations;
+            var matrix = new int[size, size];
+
+            var halfSize = size / 2;
+            var nestedMatrix = BayerMatrix(iterations - 1);
+            InsertNestedMatrix(matrix, nestedMatrix, 0, 0, 0);
+            InsertNestedMatrix(matrix, nestedMatrix, halfSize, halfSize, 1);
+            InsertNestedMatrix(matrix, nestedMatrix, halfSize, 0, 2);
+            InsertNestedMatrix(matrix, nestedMatrix, 0, halfSize, 3);
+            return matrix;
+        }
+
+        static void InsertNestedMatrix(int[,] matrix, int[,] nestedMatrix, int offsetX, int offsetY, int valueOffset)
+        {
+            for (int i = 0; i < nestedMatrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < nestedMatrix.GetLength(1); j++)
+                {
+                    var a = nestedMatrix[j, i] * 4 + valueOffset;
+                    matrix[j + offsetX, i + offsetY] = a;
+                }
+            }
+        }
+
         public static double LineToAngle(Vector2d v0, Vector2d v1) => VectorToAngleReversed(v1 - v0);
         public static double LineToAngle(Vector2 v0, Vector2 v1) => LineToAngle(new Vector2d(v0.X, v0.Y), new Vector2d(v1.X, v1.Y));
 

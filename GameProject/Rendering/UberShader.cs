@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Game.Rendering
 {
-    public class UberShader
+    public static class UberShader
     {
         const string Version = "330";
 
@@ -17,7 +18,6 @@ namespace Game.Rendering
         public const string IsTextured = nameof(IsTextured);
         public const string IsDithered = nameof(IsDithered);
         public const string MainTexture = nameof(MainTexture);
-        public const string BayerMatrix = nameof(BayerMatrix);
 
         public const string VertPosition = nameof(VertPosition);
         public const string VertColor = nameof(VertColor);
@@ -26,9 +26,21 @@ namespace Game.Rendering
         public const string UvMatrix = nameof(UvMatrix);
         public const string ViewMatrix = nameof(ViewMatrix);
 
-        readonly int _bayerMatrixSize;
+        public static string GetFragmentShader()
+        {
+            var iterations = 3;
+            var bayerMatrix = MathEx.BayerMatrix(iterations);
+            var matrixWidth = 1 << iterations;
+            var elementCount = matrixWidth * matrixWidth;
 
-        public string FragmentShader => $@"
+            var stringBuilder = new StringBuilder();
+            for (int i = 0; i < elementCount; i++)
+            {
+                var value = bayerMatrix[i / matrixWidth, i % matrixWidth] / (float)elementCount;
+                stringBuilder.Append((i == 0 ? "" : ", ") + value);
+            }
+
+            return $@"
 #version {Version}
 
 in vec4 {FragColor};
@@ -38,7 +50,8 @@ out vec4 {OutputColor};
 uniform int {IsTextured};
 uniform int {IsDithered};
 uniform sampler2D {MainTexture};
-uniform sampler2D {BayerMatrix};
+
+const float bayerMatrix[{elementCount}] = float[] ({stringBuilder.ToString()});
 
 void
 main()
@@ -56,7 +69,7 @@ main()
 
     if ({IsDithered} == 1)
     {{
-        {OutputColor}.w += texture({BayerMatrix}, gl_FragCoord.xy / {_bayerMatrixSize}).x;
+        {OutputColor}.w += bayerMatrix[(int(gl_FragCoord.y) % {matrixWidth}) * {matrixWidth} + int(gl_FragCoord.x) % {matrixWidth}];
         {OutputColor}.w = {OutputColor}.w > 1 ? 1 : 0;
     }}
 
@@ -68,8 +81,11 @@ main()
     }}
 }}
 ";
+        }
 
-        public string VertexShader => $@"
+        public static string GetVertexShader()
+        {
+            return $@"
 #version {Version}
 
 in vec3 {VertPosition};
@@ -90,10 +106,6 @@ main()
 	gl_Position = {ViewMatrix} * {ModelMatrix} * vec4({VertPosition}, 1.0);
 }}
 ";
-
-        public UberShader(int bayerMatrixSize)
-        {
-            _bayerMatrixSize = bayerMatrixSize;
         }
     }
 }
