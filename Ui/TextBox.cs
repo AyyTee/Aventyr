@@ -20,25 +20,44 @@ namespace Ui
         public bool Hidden { get; set; }
         public Vector2 Size { get; set; }
         public Font Font { get; }
-        public string Text { get; set; } = "";
+        public Func<string> GetText { get; }
+        public Action<string> SetText { get; }
+        public string Text => GetText();
+        public string DisplayText { get; set; } = "";
         public Input InputType { get; set; } = Input.Numbers;
         public int CursorStart { get; set; }
         public int CursorEnd { get; set; }
+        public bool Selected { get; private set; }
 
-        public TextBox(Transform2 transform, Vector2 size, Font font, string text = "")
+        public TextBox(Transform2 transform, Vector2 size, Font font, Func<string> getText = null, Action<string> setText = null)
         {
             DebugEx.Assert(transform != null);
             DebugEx.Assert(size.X >= 0 && size.Y >= 0);
             Transform = transform;
             Size = size;
             Font = font;
-            Text = text;
+
+            GetText = getText ?? (() => "");
+            SetText = setText;
         }
 
-        public TextBox(out TextBox id, Transform2 transform, Vector2 size, Font font, string text = "")
-            : this(transform, size, font, text)
+        public TextBox(out TextBox id, Transform2 transform, Vector2 size, Font font, Func<string> getText = null, Action<string> setText = null)
+            : this(transform, size, font, getText, setText)
         {
             id = this;
+        }
+
+        public void SetSelected(bool selected)
+        {
+            Selected = selected;
+            if (selected)
+            {
+                DisplayText = GetText();
+            }
+            else if (!selected && DisplayText != GetText())
+            {
+                SetText?.Invoke(DisplayText);
+            }
         }
 
         public List<Model> GetModels()
@@ -49,7 +68,7 @@ namespace Ui
             {
                 models.AddRange(Draw.Rectangle(new Vector2(), Size, Color4.Brown).GetModels());
                 models.AddRange(Draw.Rectangle(margin, Size - margin, Color4.White).GetModels());
-                models.AddRange(Draw.Text(Font, margin, Text, Color4.Black).GetModels());
+                models.AddRange(Draw.Text(Font, margin, Selected ? DisplayText : GetText(), Color4.Black).GetModels());
             }
             return models;
         }

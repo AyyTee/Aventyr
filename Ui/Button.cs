@@ -25,17 +25,7 @@ namespace Ui
 
         public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 
-        public Button()
-        {
-        }
-
-        public Button(out Button id, Transform2 transform, Vector2 size, Action onClick = null)
-            : this(transform, size, onClick)
-        {
-            id = this;
-        }
-
-        public Button(Transform2 transform, Vector2 size, Action onClick = null)
+        public Button(Transform2 transform = null, Vector2 size = new Vector2(), Action onClick = null)
         {
             Transform = transform;
             Size = size;
@@ -43,6 +33,12 @@ namespace Ui
             {
                 OnClick += () => { onClick(); };
             }
+        }
+
+        public Button(out Button id, Transform2 transform = null, Vector2 size = new Vector2(), Action onClick = null)
+            : this(transform, size, onClick)
+        {
+            id = this;
         }
 
         public void Click()

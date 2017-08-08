@@ -30,17 +30,14 @@ namespace TimeLoopInc.Editor
             var scene = _editor.Scene;
             var mousePosition = window.MouseWorldPos(_editor.Camera);
             var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
-            if (window.ButtonPress(MouseButton.Left))
+            if (window.ButtonPress(_editor.PlaceButton))
             {
                 var entities = scene.Entities
                     .RemoveAll(item => item is Player || item.StartTransform.Position == mouseGridPos)
                     .Add(new Player(new Transform2i(mouseGridPos), 0));
                 _editor.ApplyChanges(scene.With(entities: entities));
             }
-            else if (window.ButtonPress(MouseButton.Right))
-            {
-                _editor.ApplyChanges(EditorController.Remove(scene, mouseGridPos));
-            }
+            EditorController.DeleteAndSelect(_editor, mouseGridPos);
         }
     }
 }

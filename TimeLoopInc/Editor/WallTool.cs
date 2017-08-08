@@ -41,7 +41,7 @@ namespace TimeLoopInc.Editor
             }
             else if (window.ButtonPress(MouseButton.Right))
             {
-                _editor.ApplyChanges(EditorController.Remove(scene, mouseGridPos));
+                _editor.ApplyChanges(scene.With(walls: scene.Walls.Remove(mouseGridPos)));
             }
         }
     }

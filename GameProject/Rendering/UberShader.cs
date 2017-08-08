@@ -56,16 +56,16 @@ const float bayerMatrix[{elementCount}] = float[] ({stringBuilder.ToString()});
 void
 main()
 {{
-	if ({IsTextured} == 1)
-	{{
-		vec2 flipped_texcoord = vec2({FragUvCoord}.x, {FragUvCoord}.y);
-		vec4 color = texture({MainTexture}, flipped_texcoord) * {FragColor};
-		{OutputColor} = color;
-	}}
-	else
-	{{
-		{OutputColor} = {FragColor};
-	}}
+    if ({IsTextured} == 1)
+    {{
+        vec2 flippedTexcoord = vec2({FragUvCoord}.x, {FragUvCoord}.y);
+        vec4 color = texture({MainTexture}, flippedTexcoord) * {FragColor};
+        {OutputColor} = color;
+    }}
+    else
+    {{
+        {OutputColor} = {FragColor};
+    }}
 
     if ({IsDithered} == 1)
     {{
@@ -100,10 +100,10 @@ uniform mat4 {ViewMatrix};
 void
 main()
 {{
-	vec4 v = {UvMatrix} * vec4({VertUvCoord}.x, {VertUvCoord}.y, 0.0, 1.0);
-	{FragUvCoord} = v.xy;
-	{FragColor} = {VertColor};
-	gl_Position = {ViewMatrix} * {ModelMatrix} * vec4({VertPosition}, 1.0);
+    vec4 v = {UvMatrix} * vec4({VertUvCoord}.x, {VertUvCoord}.y, 0.0, 1.0);
+    {FragUvCoord} = v.xy;
+    {FragColor} = {VertColor};
+    gl_Position = {ViewMatrix} * {ModelMatrix} * vec4({VertPosition}, 1.0);
 }}
 ";
         }

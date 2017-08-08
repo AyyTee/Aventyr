@@ -1,4 +1,6 @@
-﻿using Game.Rendering;
+﻿using Game.Common;
+using Game.Rendering;
+using OpenTK.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,10 @@ namespace TimeLoopInc.Editor
         GridCamera Camera { get; }
         SceneBuilder Scene { get; }
 
-        void ApplyChanges(SceneBuilder changedScene);
+        MouseButton PlaceButton { get; }
+        MouseButton SelectButton { get; }
+        Key DeleteButton { get; }
+
+        void ApplyChanges(SceneBuilder changedScene, bool undoSkip = false);
     }
 }

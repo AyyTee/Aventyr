@@ -11,6 +11,8 @@ namespace TimeLoopInc.Editor
     public class SceneBuilder
     {
         [DataMember]
+        public Vector2i? Selected { get; private set; }
+        [DataMember]
         public ImmutableHashSet<Vector2i> Walls { get; private set; } = new HashSet<Vector2i>().ToImmutableHashSet();
         [DataMember]
         public ImmutableHashSet<Vector2i> Exits { get; private set; } = new HashSet<Vector2i>().ToImmutableHashSet();
@@ -18,6 +20,17 @@ namespace TimeLoopInc.Editor
         public ImmutableList<IGridEntity> Entities { get; private set; } = new List<IGridEntity>().ToImmutableList();
         [DataMember]
         public ImmutableList<PortalLink> Links { get; private set; } = new List<PortalLink>().ToImmutableList();
+
+        public SceneBuilder With(Vector2i? selected)
+        {
+            if (Selected == selected)
+            {
+                return this;
+            }
+            var clone = (SceneBuilder)MemberwiseClone();
+            clone.Selected = selected;
+            return clone;
+        }
 
         public SceneBuilder With(
             ISet<Vector2i> walls = null,

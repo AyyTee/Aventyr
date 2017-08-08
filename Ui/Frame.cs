@@ -13,24 +13,20 @@ namespace Ui
     {
         public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 
-        public Transform2 Transform { get; set; } = new Transform2();
+        public Transform2 Transform { get; set; }
 
         public bool Hidden { get; set; }
 
-        public Frame()
+        public Frame(Transform2 transform = null, bool hidden = false)
         {
+            Transform = transform ?? new Transform2();
+            Hidden = hidden;
         }
 
-        public Frame(out Frame id)
+        public Frame(out Frame id, Transform2 transform = null, bool hidden = false)
+            : this(transform, hidden)
         {
             id = this;
-        }
-
-        public Frame(out Frame id, Transform2 transform, bool hidden = false)
-            : this(out id)
-        {
-            Transform = transform;
-            Hidden = hidden;
         }
 
         public List<Model> GetModels() => new List<Model>();

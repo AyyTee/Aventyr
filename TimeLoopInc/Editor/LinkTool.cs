@@ -14,7 +14,6 @@ namespace TimeLoopInc.Editor
     public class LinkTool : ITool
     {
         readonly IEditorController _editor;
-        PortalBuilder _selected;
         public float MaxSelectDistance { get; set; } = 100;
 
         public LinkTool(IEditorController editor)
@@ -29,9 +28,10 @@ namespace TimeLoopInc.Editor
             var scene = _editor.Scene;
             var mousePosition = window.MouseWorldPos(camera);
 
-            if (window.ButtonPress(MouseButton.Left))
+            var selectedPortal = SelectedPortal(scene);
+            if (window.ButtonPress(_editor.PlaceButton))
             {
-                if (_selected == null)
+                if (selectedPortal == null)
                 {
                     var portals = scene.Links.SelectMany(item => item.Portals);
                     var nearest = NearestPortal(mousePosition, portals);
@@ -40,44 +40,34 @@ namespace TimeLoopInc.Editor
                         var screenDistance = (window.MousePosition - camera.WorldToScreen(nearest.Center, window.CanvasSize)).Length;
                         if (screenDistance < MaxSelectDistance)
                         {
-                            _selected = nearest;
+                            selectedPortal = nearest;
+                            _editor.ApplyChanges(scene.With(selectedPortal.Position), true);
                         }
                     }
                 }
                 else
                 {
                     var portals = scene.Links
-                    .SelectMany(item => item.Portals)
-                    .Where(item => item != _selected);
+                        .SelectMany(item => item.Portals)
+                        .Where(item => item != selectedPortal);
                     var nearest = NearestPortal(mousePosition, portals);
                     if (nearest != null)
                     {
                         var screenDistance = (window.MousePosition - camera.WorldToScreen(nearest.Center, window.CanvasSize)).Length;
                         if (screenDistance < MaxSelectDistance)
                         {
-                            var newLinks = LinkPortals(_selected, nearest, scene.Links);
-                            _selected = null;
+                            var newLinks = LinkPortals(selectedPortal, nearest, scene.Links);
                             if (newLinks.SequenceEqual(scene.Links))
                             {
                                 return;
                             }
-                            _editor.ApplyChanges(scene.With(links: newLinks));
+                            _editor.ApplyChanges(scene.With(links: newLinks).With(null));
                         }
                     }
                 }
             }
-            else if (window.ButtonPress(MouseButton.Right))
-            {
-                if (_selected != null)
-                {
-                    _selected = null;
-                }
-                else
-                {
-                    var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
-                    _editor.ApplyChanges(EditorController.Remove(scene, mouseGridPos));
-                }
-            }
+            var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
+            EditorController.DeleteAndSelect(_editor, mouseGridPos);
         }
 
         public static PortalLink GetLink(PortalBuilder portal, IEnumerable<PortalLink> links)
@@ -114,6 +104,13 @@ namespace TimeLoopInc.Editor
             return links.ToImmutableList();
         }
 
+        public static PortalBuilder SelectedPortal(SceneBuilder scene)
+        {
+            return scene.Links
+                .SelectMany(item => item.Portals)
+                .FirstOrDefault(item => item.Position == scene.Selected);
+        }
+
         PortalBuilder NearestPortal(Vector2 position, IEnumerable<PortalBuilder> portals)
         {
             if (portals.Any())
@@ -128,9 +125,10 @@ namespace TimeLoopInc.Editor
             var output = new List<IRenderable>();
 
             var _mousePosition = _editor.Window.MouseWorldPos(_editor.Camera);
-            if (_selected != null)
+            var selectedPortal = SelectedPortal(_editor.Scene);
+            if (selectedPortal != null)
             {
-                var line = Draw.Line(new LineF(_selected.Center, _mousePosition), Color4.Black, 0.04f);
+                var line = Draw.Line(new LineF(selectedPortal.Center, _mousePosition), Color4.Black, 0.04f);
                 output.Add(line);
             }
             return output;

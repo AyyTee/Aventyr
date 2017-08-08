@@ -52,29 +52,44 @@ namespace Ui
                             button.Click();
                             break;
                         case TextBox textBox:
-                            Selected = textBox;
+                            SetSelected(textBox);
                             break;
                     }
                 }
                 else
                 {
-                    Selected = null;
+                    SetSelected(null);
                 }
+            }
+
+            if (_window.ButtonPress(Key.Enter))
+            {
+                SetSelected(null);
             }
 
             if (Selected != null)
             {
-                Selected.Text = ApplyBackspaces(Selected.Text + _window.KeyString);
+                Selected.DisplayText = ApplyBackspaces(Selected.DisplayText + _window.KeyString);
                 switch (Selected.InputType)
                 {
                     case TextBox.Input.Text:
                         break;
                     case TextBox.Input.Numbers:
-                        Selected.Text = Selected.Text
-                            .Where(char.IsDigit)
+                        Selected.DisplayText = Selected.DisplayText
+                            .Where(item => char.IsDigit(item) || item == '-')
                             .CharsToString();
                         break;
                 }
+            }
+        }
+
+        public void SetSelected(TextBox selected)
+        {
+            if (selected != Selected)
+            {
+                Selected?.SetSelected(false);
+                Selected = selected;
+                Selected?.SetSelected(true);
             }
         }
 

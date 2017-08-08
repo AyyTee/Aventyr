@@ -25,6 +25,9 @@ namespace TimeLoopInc.Editor
         public GridCamera Camera { get; }
         readonly Controller _controller;
         readonly Frame _editor, _endGame;
+        public MouseButton PlaceButton { get; } = MouseButton.Right;
+        public MouseButton SelectButton { get; } = MouseButton.Left;
+        public Key DeleteButton { get; } = Key.Delete;
         SceneController _sceneController;
         public SceneBuilder Scene => _sceneChanges[_sceneChangeCurrent];
         bool _isPlaying => _sceneController != null;
@@ -72,7 +75,12 @@ namespace TimeLoopInc.Editor
                     {
                         new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Play")
                     },
-                    new TextBox(new Transform2(new Vector2(220, 10)), new Vector2(200, 90), Window.Fonts.Inconsolata)
+                    new TextBox(
+                        new Transform2(new Vector2(220, 10)), 
+                        new Vector2(200, 90), 
+                        Window.Fonts.Inconsolata, 
+                        TimeOffsetGetText, 
+                        TimeOffsetSetText)
                 },
                 new Frame(out _endGame, new Transform2(), true)
                 {
@@ -132,6 +140,32 @@ namespace TimeLoopInc.Editor
             }
         }
 
+        string TimeOffsetGetText()
+        {
+            if (_tool is PortalTool portalTool)
+            {
+                var link = LinkTool.GetLink(LinkTool.SelectedPortal(Scene), Scene.Links);
+                return link?.TimeOffset.ToString() ?? "";
+            }
+            return "";
+        }
+
+        void TimeOffsetSetText(string newText)
+        {
+            if (_tool is PortalTool portalTool)
+            {
+                var link = LinkTool.GetLink(LinkTool.SelectedPortal(Scene), Scene.Links);
+                if (link != null)
+                {
+                    if (int.TryParse(newText, out int newValue))
+                    {
+                        var newLinks = Scene.Links.Remove(link).Add(new PortalLink(link.Portals, newValue));
+                        ApplyChanges(Scene.With(links: newLinks));
+                    }
+                }
+            }
+        }
+
         public void Update(double timeDelta)
         {
             _mousePosition = Window.MouseWorldPos(Camera);
@@ -169,6 +203,18 @@ namespace TimeLoopInc.Editor
                         .Where(item => Window.HotkeyPress(item.Key))
                         .ForEach(item => item.Value());
                 }
+            }
+        }
+
+        public static void DeleteAndSelect(IEditorController editor, Vector2i mouseGridPos)
+        {
+            if (editor.Window.ButtonPress(editor.DeleteButton))
+            {
+                editor.ApplyChanges(Remove(editor.Scene, mouseGridPos));
+            }
+            if (editor.Window.ButtonPress(editor.SelectButton))
+            {
+                editor.ApplyChanges(editor.Scene.With(mouseGridPos), true);
             }
         }
 
@@ -257,7 +303,7 @@ namespace TimeLoopInc.Editor
             return validSides;
         }
 
-        public void ApplyChanges(SceneBuilder newScene)
+        public void ApplyChanges(SceneBuilder newScene, bool undoSkip = false)
         {
             DebugEx.Assert(
                 newScene.Links
