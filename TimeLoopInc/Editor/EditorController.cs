@@ -61,19 +61,22 @@ namespace TimeLoopInc.Editor
 
             _menu.Root = new Frame(out Frame rootFrame)
             {
-                new Frame(out _editor, new Transform2())
+                new Frame(out _editor)
                 {
-                    new Button(new Transform2(new Vector2(10, 10)), new Vector2(200, 90), Save)
+                    new StackFrame(spacing: 5)
                     {
-                        new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Save As...")
-                    },
-                    new Button(new Transform2(new Vector2(10, 110)), new Vector2(200, 90), Load)
-                    {
-                        new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Load")
-                    },
-                    new Button(new Transform2(new Vector2(10, 210)), new Vector2(200, 90), Play)
-                    {
-                        new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Play")
+                        new Button(size: new Vector2(200, 90), onClick: Save)
+                        {
+                            new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Save As...")
+                        },
+                        new Button(size: new Vector2(200, 90), onClick: Load)
+                        {
+                            new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Load")
+                        },
+                        new Button(size: new Vector2(200, 90), onClick: Play)
+                        {
+                            new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Play")
+                        }
                     },
                     new TextBox(
                         new Transform2(new Vector2(220, 10)), 

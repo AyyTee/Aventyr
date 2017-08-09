@@ -12,22 +12,20 @@ using OpenTK.Graphics;
 
 namespace Ui
 {
-    public class Button : IElement
+    public class Button : BranchElement, IElement
     {
         public delegate void ClickHandler();
         public event ClickHandler OnClick;
 
         public Vector2 Size { get; set; }
 
-        public Transform2 Transform { get; set; } = new Transform2();
+        public Transform2 Transform { get; set; }
 
         public bool Hidden { get; set; }
 
-        public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
-
         public Button(Transform2 transform = null, Vector2 size = new Vector2(), Action onClick = null)
         {
-            Transform = transform;
+            Transform = transform ?? new Transform2();
             Size = size;
             if (onClick != null)
             {
@@ -57,13 +55,6 @@ namespace Ui
         public bool IsInside(Vector2 localPoint)
         {
             return MathEx.PointInRectangle(new Vector2(), Size, localPoint);
-        }
-
-        public IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public void Add(IElement element)
-        {
-            Children = Children.Concat(new[] { element }).ToImmutableList();
         }
     }
 }
