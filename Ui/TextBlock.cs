@@ -20,6 +20,8 @@ namespace Ui
 
         public bool Hidden { get; set; }
 
+        public Vector2 Size { get; set; }
+
         public TextBlock(Transform2 transform, Font font, string text)
         {
             DebugEx.Assert(text != null);

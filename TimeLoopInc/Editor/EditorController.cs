@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -63,7 +63,7 @@ namespace TimeLoopInc.Editor
             {
                 new Frame(out _editor)
                 {
-                    new StackFrame(spacing: 5)
+                    new StackFrame(spacing: new Vector2(5, 0))
                     {
                         new Button(size: new Vector2(200, 90), onClick: Save)
                         {

@@ -8,6 +8,7 @@ using Game.Common;
 using Game.Models;
 using OpenTK;
 using System.Collections.Immutable;
+using MoreLinq;
 
 namespace Ui
 {
@@ -19,9 +20,11 @@ namespace Ui
 
         public bool IsVertical { get; set; }
 
-        public float Spacing { get; set; }
+        public Vector2 Spacing { get; set; }
 
-        public StackFrame(Transform2 transform = null, bool hidden = false, bool isVertical = true, float spacing = 0)
+        public Vector2 Size { get; set; }
+
+        public StackFrame(Transform2 transform = null, bool hidden = false, bool isVertical = true, Vector2 spacing = new Vector2())
         {
             Transform = transform ?? new Transform2();
             Hidden = hidden;
@@ -29,10 +32,25 @@ namespace Ui
             Spacing = spacing;
         }
 
-        public StackFrame(out StackFrame id, Transform2 transform = null, bool hidden = false, bool isVertical = true, float spacing = 0)
+        public StackFrame(out StackFrame id, Transform2 transform = null, bool hidden = false, bool isVertical = true, Vector2 spacing = new Vector2())
             : this(transform, hidden, isVertical)
         {
             id = this;
+        }
+
+        public override List<(IElement Child, Transform2 LocalTransform)> GetLocalTransforms()
+        {
+            var offset = new Vector2();
+            var childTransforms = new List<(IElement Child, Transform2 LocalTransform)>();
+            for (int i = 0; i < Children.Count; i++)
+            {
+                childTransforms.Add((Children[i], new Transform2(offset)));
+                offset += Spacing;
+                offset += IsVertical ?
+                    Children[i].Size.YOnly() :
+                    Children[i].Size.XOnly();
+            }
+            return childTransforms;
         }
 
         public bool IsInside(Vector2 localPoint)

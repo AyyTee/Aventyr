@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Game;
@@ -15,8 +15,10 @@ namespace Ui
         /// Element and descendent elements are excluded from processing.
         /// </summary>
         bool Hidden { get; }
+        Vector2 Size { get; }
 
         bool IsInside(Vector2 localPoint);
         List<Model> GetModels();
+
     }
 }

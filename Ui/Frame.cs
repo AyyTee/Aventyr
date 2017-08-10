@@ -15,6 +15,8 @@ namespace Ui
 
         public bool Hidden { get; set; }
 
+        public Vector2 Size { get; set; }
+
         public Frame(Transform2 transform = null, bool hidden = false)
         {
             Transform = transform ?? new Transform2();
