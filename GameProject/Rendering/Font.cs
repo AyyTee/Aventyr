@@ -16,10 +16,15 @@ namespace Game.Rendering
     {
         public class Settings
         {
-            public Color4 Color { get; } = Color4.White;
+            public Color4 Color { get; }
             public Vector2 Alignment { get; }
             public int LineSpacing { get; }
             public int CharSpacing { get; }
+
+            public Settings(Vector2 alignment = new Vector2(), int lineSpacing = 0, int charSpacing = 0)
+                : this(Color4.White, alignment, lineSpacing, charSpacing)
+            {
+            }
 
             public Settings(Color4 color, Vector2 alignment = new Vector2(), int lineSpacing = 0, int charSpacing = 0)
             {
@@ -30,7 +35,7 @@ namespace Game.Rendering
             }
         }
 
-        readonly TextureFile[] _fontTextures;
+        readonly ITexture[] _fontTextures;
         readonly FontFile _fontFile;
         const int _indicesPerGlyph = 6;
         const int _verticesPerGlyph = 4;
@@ -46,6 +51,45 @@ namespace Game.Rendering
             {
                 _fontTextures[i] = new TextureFile(Path.Combine(path, _fontFile.Pages[i].File));
             }
+        }
+
+        public Font(FontFile fontFile, IEnumerable<ITexture> textures)
+        {
+            _fontFile = fontFile;
+            _fontTextures = textures.ToArray();
+        }
+
+        public Vector2i Size(string text, Settings settings)
+        {
+            Debug.Assert(!text.Contains('\r'));
+
+            var lineBreakText = text.Split('\n');
+            var lineHeight = _fontFile.Info.Size + settings.LineSpacing;
+
+            var posCurrent = new Vector2i();
+            var maxX = 0;
+            for (int i = 0; i < lineBreakText.Length; i++)
+            {
+                for (int j = 0; j < lineBreakText[i].Length; j++)
+                {
+                    // Get the data for this character. If it doesn't exist we use the question mark instead.
+                    var fontChar = _fontFile.CharLookup.GetOrDefault(lineBreakText[i][j]) ?? _fontFile.CharLookup['?'];
+
+                    if (j + 1 < lineBreakText[i].Length)
+                    {
+                        posCurrent += new Vector2i(GetKerning(lineBreakText[i][j], lineBreakText[i][j + 1]), 0);
+                    }
+                    else
+                    {
+                        maxX = Math.Max(maxX, posCurrent.X + fontChar.Width);
+                    }
+                    
+                    posCurrent += new Vector2i(fontChar.XAdvance + settings.CharSpacing, 0);
+                }
+                posCurrent = new Vector2i(0, posCurrent.Y + lineHeight);
+            }
+            var maxY = Math.Max(0, lineBreakText.Length * lineHeight - settings.LineSpacing);
+            return new Vector2i(maxX, maxY);
         }
 
         public Model GetModel(string text, int lineSpacing = 0, int charSpacing = 0)
@@ -68,6 +112,7 @@ namespace Game.Rendering
         /// <returns></returns>
         public Model GetModel(string text, Color4 color, Vector2 alignment, int lineSpacing = 0, int charSpacing = 0)
         {
+            Debug.Assert(!text.Contains('\r'));
             var lineBreakText = text.Split('\n');
             var glyphData = lineBreakText.Select(textLine => new GlyphData[textLine.Length]).ToArray();
 

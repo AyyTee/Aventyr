@@ -14,7 +14,7 @@ namespace Ui
 {
     public class StackFrame : BranchElement, IElement
     {
-        public Transform2 Transform { get; set; }
+        public Func<ElementArgs, Transform2> Transform { get; }
 
         public bool Hidden { get; set; }
 
@@ -24,15 +24,15 @@ namespace Ui
 
         public Vector2 Size { get; set; }
 
-        public StackFrame(Transform2 transform = null, bool hidden = false, bool isVertical = true, Vector2 spacing = new Vector2())
+        public StackFrame(Func<ElementArgs, Transform2> transform = null, bool hidden = false, bool isVertical = true, Vector2 spacing = new Vector2())
         {
-            Transform = transform ?? new Transform2();
+            Transform = transform ?? (_ => new Transform2());
             Hidden = hidden;
             IsVertical = isVertical;
             Spacing = spacing;
         }
 
-        public StackFrame(out StackFrame id, Transform2 transform = null, bool hidden = false, bool isVertical = true, Vector2 spacing = new Vector2())
+        public StackFrame(out StackFrame id, Func<ElementArgs, Transform2> transform = null, bool hidden = false, bool isVertical = true, Vector2 spacing = new Vector2())
             : this(transform, hidden, isVertical)
         {
             id = this;

@@ -34,17 +34,20 @@ namespace TimeLoopInc
             {
                 Root = new Frame
                 {
-                    new Button(out _, new Transform2(new Vector2(10, 10)), new Vector2(200, 80), StartGame)
+                    new StackFrame(spacing: new Vector2(0, 5))
                     {
-                        new TextBlock(new Transform2(), _window.Fonts.Inconsolata, "Start Game")
-                    },
-                    new Button(out _, new Transform2(new Vector2(10, 100)), new Vector2(200, 80), StartLevelEditor)
-                    {
-                        new TextBlock(new Transform2(), _window.Fonts.Inconsolata, "Level Editor")
-                    },
-                    new Button(out _, new Transform2(new Vector2(10, 190)), new Vector2(200, 80), _window.Exit)
-                    {
-                        new TextBlock(new Transform2(), _window.Fonts.Inconsolata, "Exit")
+                        new Button(size: new Vector2(200, 80), onClick: StartGame)
+                        {
+                            new TextBlock(_ => new Transform2(), _window.Fonts.Inconsolata, "Start Game")
+                        },
+                        new Button(size: new Vector2(200, 80), onClick: StartLevelEditor)
+                        {
+                            new TextBlock(_ => new Transform2(), _window.Fonts.Inconsolata, "Level Editor")
+                        },
+                        new Button(size: new Vector2(200, 80), onClick: _window.Exit)
+                        {
+                            new TextBlock(_ => new Transform2(), _window.Fonts.Inconsolata, "Exit")
+                        }
                     }
                 }
             };

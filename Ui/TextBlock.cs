@@ -7,12 +7,13 @@ using Game.Models;
 using Game.Rendering;
 using OpenTK;
 using System.Linq;
+using OpenTK.Graphics;
 
 namespace Ui
 {
     public class TextBlock : IElement
     {
-        public Transform2 Transform { get; set; } = new Transform2();
+        public Func<ElementArgs, Transform2> Transform { get; }
 
         public string Text { get; set; }
 
@@ -20,17 +21,17 @@ namespace Ui
 
         public bool Hidden { get; set; }
 
-        public Vector2 Size { get; set; }
+        public Vector2 Size => (Vector2)(Font?.Size(Text, new Font.Settings(Color4.White)) ?? new Vector2i());
 
-        public TextBlock(Transform2 transform, Font font, string text)
+        public TextBlock(Func<ElementArgs, Transform2> transform = null, Font font = null, string text = "")
         {
             DebugEx.Assert(text != null);
-            Transform = transform;
+            Transform = transform ?? (_ => new Transform2());
             Font = font;
             Text = text;
         }
 
-        public TextBlock(out TextBlock id, Transform2 transform, Font font, string text)
+        public TextBlock(out TextBlock id, Func<ElementArgs, Transform2> transform = null, Font font = null, string text = "")
             : this(transform, font, text)
         {
             id = this;

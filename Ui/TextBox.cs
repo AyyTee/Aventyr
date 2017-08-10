@@ -16,7 +16,7 @@ namespace Ui
     {
         public enum Input { Text, Numbers }
 
-        public Transform2 Transform { get; set; } = new Transform2();
+        public Func<ElementArgs, Transform2> Transform { get; }
         public bool Hidden { get; set; }
         public Vector2 Size { get; set; }
         public Font Font { get; }
@@ -29,11 +29,10 @@ namespace Ui
         public int CursorEnd { get; set; }
         public bool Selected { get; private set; }
 
-        public TextBox(Transform2 transform, Vector2 size, Font font, Func<string> getText = null, Action<string> setText = null)
+        public TextBox(Func<ElementArgs, Transform2> transform = null, Vector2 size = new Vector2(), Font font = null, Func<string> getText = null, Action<string> setText = null)
         {
-            DebugEx.Assert(transform != null);
             DebugEx.Assert(size.X >= 0 && size.Y >= 0);
-            Transform = transform;
+            Transform = transform ?? (_ => new Transform2());
             Size = size;
             Font = font;
 
@@ -41,7 +40,7 @@ namespace Ui
             SetText = setText;
         }
 
-        public TextBox(out TextBox id, Transform2 transform, Vector2 size, Font font, Func<string> getText = null, Action<string> setText = null)
+        public TextBox(out TextBox id, Func<ElementArgs, Transform2> transform = null, Vector2 size = new Vector2(), Font font = null, Func<string> getText = null, Action<string> setText = null)
             : this(transform, size, font, getText, setText)
         {
             id = this;

@@ -111,21 +111,32 @@ namespace Ui
         List<UiWorldTransform> AllChildren()
         {
             var list = new List<UiWorldTransform>();
-            _allChildren(Root, new Transform2(), list);
+            _allChildren(Root, new Transform2(), list, null);
             return list;
         }
 
-        void _allChildren(IElement element, Transform2 worldTransform, List<UiWorldTransform> list)
+        void _allChildren(IElement element, Transform2 worldTransform, List<UiWorldTransform> list, IElement parent)
         {
             if (element.Hidden)
             {
                 return;
             }
-            var transform = worldTransform.Transform(element.Transform);
-            foreach (var child in element)
+            var transform = worldTransform.Transform(element.Transform(new ElementArgs(parent, element, DateTime.UtcNow)));
+            if (element is BranchElement branch)
             {
-                _allChildren(child, transform, list);
+                foreach (var child in branch.GetLocalTransforms())
+                {
+                    _allChildren(child.Child, transform.Transform(child.LocalTransform), list, element);
+                }
             }
+            else
+            {
+                foreach (var child in element)
+                {
+                    _allChildren(child, transform, list, element);
+                }
+            }
+            
             list.Add(new UiWorldTransform(element, transform));
         }
 

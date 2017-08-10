@@ -11,19 +11,19 @@ namespace Ui
 {
     public class Frame : BranchElement, IElement
     {
-        public Transform2 Transform { get; set; }
+        public Func<ElementArgs, Transform2> Transform { get; }
 
         public bool Hidden { get; set; }
 
         public Vector2 Size { get; set; }
 
-        public Frame(Transform2 transform = null, bool hidden = false)
+        public Frame(Func<ElementArgs, Transform2> transform = null, bool hidden = false)
         {
-            Transform = transform ?? new Transform2();
+            Transform = transform ?? (_ => new Transform2());
             Hidden = hidden;
         }
 
-        public Frame(out Frame id, Transform2 transform = null, bool hidden = false)
+        public Frame(out Frame id, Func<ElementArgs, Transform2> transform = null, bool hidden = false)
             : this(transform, hidden)
         {
             id = this;

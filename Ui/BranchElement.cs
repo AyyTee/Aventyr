@@ -17,7 +17,7 @@ namespace Ui
 
         public virtual List<(IElement Child, Transform2 LocalTransform)> GetLocalTransforms()
         {
-            return new List<(IElement Child, Transform2 LocalTransform)>();
+            return Children.Select(item => (item, new Transform2())).ToList();
         }
 
         public IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();

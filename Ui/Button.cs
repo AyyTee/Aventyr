@@ -19,13 +19,13 @@ namespace Ui
 
         public Vector2 Size { get; set; }
 
-        public Transform2 Transform { get; set; }
+        public Func<ElementArgs, Transform2> Transform { get; }
 
         public bool Hidden { get; set; }
 
-        public Button(Transform2 transform = null, Vector2 size = new Vector2(), Action onClick = null)
+        public Button(Func<ElementArgs, Transform2> transform = null, Vector2 size = new Vector2(), Action onClick = null)
         {
-            Transform = transform ?? new Transform2();
+            Transform = transform ?? (_ => new Transform2());
             Size = size;
             if (onClick != null)
             {
@@ -33,7 +33,7 @@ namespace Ui
             }
         }
 
-        public Button(out Button id, Transform2 transform = null, Vector2 size = new Vector2(), Action onClick = null)
+        public Button(out Button id, Func<ElementArgs, Transform2> transform = null, Vector2 size = new Vector2(), Action onClick = null)
             : this(transform, size, onClick)
         {
             id = this;

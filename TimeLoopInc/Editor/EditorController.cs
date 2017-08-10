@@ -63,40 +63,40 @@ namespace TimeLoopInc.Editor
             {
                 new Frame(out _editor)
                 {
-                    new StackFrame(spacing: new Vector2(5, 0))
+                    new StackFrame(spacing: new Vector2(0, 5))
                     {
                         new Button(size: new Vector2(200, 90), onClick: Save)
                         {
-                            new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Save As...")
+                            new TextBlock(p => new Transform2((p.Parent.Size - p.Self.Size) / 2), Window.Fonts.Inconsolata, "Save As...")
                         },
                         new Button(size: new Vector2(200, 90), onClick: Load)
                         {
-                            new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Load")
+                            new TextBlock(p => new Transform2((p.Parent.Size - p.Self.Size) / 2), Window.Fonts.Inconsolata, "Load")
                         },
                         new Button(size: new Vector2(200, 90), onClick: Play)
                         {
-                            new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Play")
+                            new TextBlock(p => new Transform2((p.Parent.Size - p.Self.Size) / 2), Window.Fonts.Inconsolata, "Play")
                         }
                     },
                     new TextBox(
-                        new Transform2(new Vector2(220, 10)), 
+                        _ => new Transform2(new Vector2(220, 10)), 
                         new Vector2(200, 90), 
                         Window.Fonts.Inconsolata, 
                         TimeOffsetGetText, 
                         TimeOffsetSetText)
                 },
-                new Frame(out _endGame, new Transform2(), true)
+                new Frame(out _endGame, hidden: true)
                 {
-                    new Button(out Button returnButton, new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
+                    new Button(out Button returnButton, _ => new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
                     {
-                        new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Return to editor")
+                        new TextBlock(_ => new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Return to editor")
                     },
                     new Button(
-                        new Transform2(new Vector2(10, 110)), 
+                        _ => new Transform2(new Vector2(10, 110)), 
                         new Vector2(200, 90), 
                         () => _sceneController.SetInput(_sceneController.Input.Clear()))
                     {
-                        new TextBlock(new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Restart")
+                        new TextBlock(_ => new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Restart")
                     }
                 }
             };

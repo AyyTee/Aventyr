@@ -56,6 +56,9 @@ namespace Game.Common
         public static explicit operator Vector2d(Vector2i v) => new Vector2d(v.X, v.Y);
         public static explicit operator Vector2i(Vector2d v) => new Vector2i((int)v.X, (int)v.Y);
 
+        public static Vector2i ComponentMax(Vector2i v0, Vector2i v1) => new Vector2i(Math.Max(v0.X, v1.X), Math.Max(v0.Y, v1.Y));
+        public static Vector2i ComponentMin(Vector2i v0, Vector2i v1) => new Vector2i(Math.Min(v0.X, v1.X), Math.Min(v0.Y, v1.Y));
+
         public override string ToString() => $"({X},{Y})";
 
         public override bool Equals(object obj)
