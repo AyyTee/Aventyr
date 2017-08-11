@@ -19,13 +19,16 @@ namespace Ui
 
         public Vector2 Size { get; set; }
 
-        public Func<ElementArgs, Transform2> Transform { get; }
+        public ElementArgs ElementArgs { get; set; }
+
+        internal Func<ElementArgs, Transform2> GetTransform { get; }
+        public Transform2 Transform => GetTransform(ElementArgs);
 
         public bool Hidden { get; set; }
 
         public Button(Func<ElementArgs, Transform2> transform = null, Vector2 size = new Vector2(), Action onClick = null)
         {
-            Transform = transform ?? (_ => new Transform2());
+            GetTransform = transform ?? (_ => new Transform2());
             Size = size;
             if (onClick != null)
             {

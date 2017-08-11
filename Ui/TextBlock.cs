@@ -13,7 +13,10 @@ namespace Ui
 {
     public class TextBlock : IElement
     {
-        public Func<ElementArgs, Transform2> Transform { get; }
+        public ElementArgs ElementArgs { get; set; }
+
+        internal Func<ElementArgs, Transform2> GetTransform { get; }
+        public Transform2 Transform => GetTransform(ElementArgs);
 
         public string Text { get; set; }
 
@@ -26,7 +29,7 @@ namespace Ui
         public TextBlock(Func<ElementArgs, Transform2> transform = null, Font font = null, string text = "")
         {
             DebugEx.Assert(text != null);
-            Transform = transform ?? (_ => new Transform2());
+            GetTransform = transform ?? (_ => new Transform2());
             Font = font;
             Text = text;
         }

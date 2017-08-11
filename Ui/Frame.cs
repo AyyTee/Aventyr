@@ -11,7 +11,10 @@ namespace Ui
 {
     public class Frame : BranchElement, IElement
     {
-        public Func<ElementArgs, Transform2> Transform { get; }
+        public ElementArgs ElementArgs { get; set; }
+
+        internal Func<ElementArgs, Transform2> GetTransform { get; }
+        public Transform2 Transform => GetTransform(ElementArgs);
 
         public bool Hidden { get; set; }
 
@@ -19,7 +22,7 @@ namespace Ui
 
         public Frame(Func<ElementArgs, Transform2> transform = null, bool hidden = false)
         {
-            Transform = transform ?? (_ => new Transform2());
+            GetTransform = transform ?? (_ => new Transform2());
             Hidden = hidden;
         }
 

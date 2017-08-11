@@ -22,8 +22,6 @@ namespace Ui
         public IElement Hover { get; private set; }
         public TextBox Selected { get; private set; }
 
-        public Transform2 Transform => new Transform2();
-
         public UiController(IVirtualWindow window)
         {
             _window = window;
@@ -33,6 +31,8 @@ namespace Ui
         {
             _camera = new HudCamera2(_window.CanvasSize);
             var mousePos = _window.MouseWorldPos(_camera);
+
+            UpdateElementArgs(Root);
             _flattenedUi = AllChildren();
 
             var hover = _flattenedUi
@@ -108,6 +108,21 @@ namespace Ui
             return newString.ToString();
         }
 
+        void UpdateElementArgs(IElement root)
+        {
+            root.ElementArgs = new ElementArgs(null, root, DateTime.UtcNow);
+            _updateElementArgs(root);
+        }
+
+        void _updateElementArgs(IElement element)
+        {
+            foreach (var child in element)
+            {
+                child.ElementArgs = new ElementArgs(element, child, DateTime.UtcNow);
+                _updateElementArgs(child);
+            }
+        }
+
         List<UiWorldTransform> AllChildren()
         {
             var list = new List<UiWorldTransform>();
@@ -121,7 +136,7 @@ namespace Ui
             {
                 return;
             }
-            var transform = worldTransform.Transform(element.Transform(new ElementArgs(parent, element, DateTime.UtcNow)));
+            var transform = worldTransform.Transform(element.Transform);
             if (element is BranchElement branch)
             {
                 foreach (var child in branch.GetLocalTransforms())

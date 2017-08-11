@@ -10,7 +10,8 @@ namespace Ui
 {
     public interface IElement : IEnumerable<IElement>
     {
-        Func<ElementArgs, Transform2> Transform { get; }
+        ElementArgs ElementArgs { get; set; }
+        Transform2 Transform { get; }
         /// <summary>
         /// Element and descendent elements are excluded from processing.
         /// </summary>
