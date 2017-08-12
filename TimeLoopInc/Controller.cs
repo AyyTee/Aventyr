@@ -33,19 +33,19 @@ namespace TimeLoopInc
             _menu = new UiController(_window);
             _menu.Root.Children = new IElement[]
             {
-                new StackFrame(width: _ => 200, spacing: 5)
+                new StackFrame(width: _ => 200, spacing: _ => 5)
                 {
                     new Button(height: _ => 80, onClick: StartGame)
                     {
-                        new TextBlock(ElementEx.Center, _window.Fonts.Inconsolata, "Start Game")
+                        new TextBlock(ElementEx.Center, _ => _window.Fonts.Inconsolata, _ => "Start Game")
                     },
                     new Button(height: _ => 80, onClick: StartLevelEditor)
                     {
-                        new TextBlock(ElementEx.Center, _window.Fonts.Inconsolata, "Level Editor")
+                        new TextBlock(ElementEx.Center, _ => _window.Fonts.Inconsolata, _ => "Level Editor")
                     },
                     new Button(height: _ => 80, onClick: _window.Exit)
                     {
-                        new TextBlock(ElementEx.Center, _window.Fonts.Inconsolata, "Exit")
+                        new TextBlock(ElementEx.Center, _ => _window.Fonts.Inconsolata, _ => "Exit")
                     }
                 }
             }.ToImmutableList();

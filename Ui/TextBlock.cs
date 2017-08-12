@@ -13,36 +13,39 @@ namespace Ui
 {
     public class TextBlock : Element, IElement
     {
-        public string Text { get; set; }
+        public Func<ElementArgs, string> TextFunc { get; protected set; }
+        public Func<ElementArgs, Font> FontFunc { get; protected set; }
 
-        public Font Font { get; set; }
-
-        Vector2 GetSize => (Vector2)(Font?.GetSize(Text, new Font.Settings(Color4.White)) ?? new Vector2i());
-
-        public TextBlock(Func<ElementArgs, Transform2> transform = null, Font font = null, string text = "")
+        public TextBlock(Func<ElementArgs, Transform2> transform = null, Func<ElementArgs, Font> font = null, Func<ElementArgs, string> text = null)
             : base(transform)
         {
-            WidthFunc = _ => GetSize.X;
-            HeightFunc = _ => GetSize.Y;
+            WidthFunc = _ => GetSize().X;
+            HeightFunc = _ => GetSize().Y;
             DebugEx.Assert(text != null);
-            Font = font;
-            Text = text;
+            FontFunc = font ?? (_ => null);
+            TextFunc = text ?? (_ => "");
         }
 
-        public TextBlock(out TextBlock id, Func<ElementArgs, Transform2> transform = null, Font font = null, string text = "")
+        public TextBlock(out TextBlock id, Func<ElementArgs, Transform2> transform = null, Func<ElementArgs, Font> font = null, Func<ElementArgs, string> text = null)
             : this(transform, font, text)
         {
             id = this;
         }
 
-        public List<Model> GetModels()
+        public string GetText() => TextFunc(ElementArgs);
+        public Font GetFont() => FontFunc(ElementArgs);
+
+        Vector2 GetSize() => (Vector2)(GetFont()?.GetSize(GetText(), new Font.Settings(Color4.White)) ?? new Vector2i());
+
+        public override List<Model> GetModels()
         {
-            return Font != null ?
-                new[] { Font.GetModel(Text) }.ToList() :
+            var font = GetFont();
+            return font != null ?
+                new[] { font.GetModel(GetText()) }.ToList() :
                 new List<Model>();
         }
 
-        public bool IsInside(Vector2 localPoint) => false;
+        public override bool IsInside(Vector2 localPoint) => false;
 
         public IEnumerator<IElement> GetEnumerator() => new List<IElement>().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

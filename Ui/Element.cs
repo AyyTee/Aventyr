@@ -1,4 +1,8 @@
 ﻿using Game.Common;
+using Game.Models;
+using Game.Rendering;
+using OpenTK;
+using OpenTK.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,10 +11,8 @@ using System.Threading.Tasks;
 
 namespace Ui
 {
-    public class Element
+    public abstract class Element
     {
-        protected static NullReferenceException NullArgException => new NullReferenceException();
-
         public ElementArgs ElementArgs { get; set; }
 
         public Func<ElementArgs, Transform2> TransformFunc { get; protected set; }
@@ -24,30 +26,20 @@ namespace Ui
             Func<ElementArgs, float> height = null,
             Func<ElementArgs, bool> hidden = null)
         {
+            ElementArgs = new ElementArgs(null, (IElement)this);
+
             TransformFunc = transform ?? (_ => new Transform2());
             WidthFunc = width ?? (args => args.Parent.GetWidth());
             HeightFunc = height ?? (args => args.Parent.GetHeight());
             HiddenFunc = hidden ?? (_ => false);
         }
 
-        public Transform2 GetTransform()
-        {
-            return TransformFunc(ElementArgs ?? throw NullArgException);
-        }
+        public Transform2 GetTransform() => TransformFunc(ElementArgs);
+        public float GetWidth() => WidthFunc(ElementArgs);
+        public float GetHeight() => HeightFunc(ElementArgs);
+        public bool GetHidden() => HiddenFunc(ElementArgs);
 
-        public float GetWidth()
-        {
-            return WidthFunc(ElementArgs ?? throw NullArgException);
-        }
-
-        public float GetHeight()
-        {
-            return HeightFunc(ElementArgs ?? throw NullArgException);
-        }
-
-        public bool GetHidden()
-        {
-            return HiddenFunc(ElementArgs ?? throw NullArgException);
-        }
+        public virtual bool IsInside(Vector2 localPoint) => false;
+        public virtual List<Model> GetModels() => Draw.Rectangle(new Vector2(), new Vector2(GetWidth(), GetHeight()), new Color4(0f, 0f, 0f, 0.3f)).GetModels();
     }
 }

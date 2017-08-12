@@ -11,11 +11,11 @@ using System.Collections.Immutable;
 
 namespace Ui
 {
-    public abstract class BranchElement : Element, IEnumerable<IElement>
+    public abstract class NodeElement : Element, IElement
     {
         public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 
-        public BranchElement(
+        public NodeElement(
             Func<ElementArgs, Transform2> transform = null, 
             Func<ElementArgs, float> width = null, 
             Func<ElementArgs, float> height = null, 
@@ -28,7 +28,7 @@ namespace Ui
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         public void Add(IElement element)
         {
-            Children = Children.Concat(new[] { element }).ToImmutableList();
+            Children = Children.Add(element);
         }
     }
 }

@@ -71,7 +71,7 @@ namespace Ui
         {
             var models = new List<Model>();
             var margin = new Vector2(2, 2);
-            var size = this.Size();
+            var size = this.GetSize();
             if (size != new Vector2())
             {
                 models.AddRange(Draw.Rectangle(new Vector2(), size, Color4.Brown).GetModels());
@@ -83,7 +83,7 @@ namespace Ui
 
         public bool IsInside(Vector2 localPoint)
         {
-            return MathEx.PointInRectangle(new Vector2(), this.Size(), localPoint);
+            return MathEx.PointInRectangle(new Vector2(), this.GetSize(), localPoint);
         }
 
         public IEnumerator<IElement> GetEnumerator() => new List<IElement>().GetEnumerator();

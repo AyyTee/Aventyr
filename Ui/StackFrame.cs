@@ -16,28 +16,42 @@ namespace Ui
     {
         public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 
-        public IEnumerator<IElement> GetEnumerator() => GetSubFrames().GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public void Add(IElement element)
-        {
-            Children = Children.Concat(new[] { element }).ToImmutableList();
-        }
-
         public bool IsVertical { get; }
 
-        public float Spacing { get; set; }
+        public Func<ElementArgs, float> SpacingFunc { get; }
 
         public StackFrame(
             Func<ElementArgs, Transform2> transform = null, 
             Func<ElementArgs, float> width = null,
             Func<ElementArgs, float> height = null,
             Func<ElementArgs, bool> hidden = null, 
-            bool isVertical = true, 
-            float spacing = 0)
+            bool isVertical = true,
+            Func<ElementArgs, float> spacing = null)
             : base(transform, width, height, hidden)
         {
             IsVertical = isVertical;
-            Spacing = spacing;
+            SpacingFunc = spacing ?? (_ => 0);
+
+            if (IsVertical && height == null)
+            {
+                HeightFunc = _ =>
+                {
+                    var last = this.LastOrDefault();
+                    return last == null ?
+                        0 :
+                        last.GetTransform().Position.Y + last.GetHeight();
+                };
+            }
+            else if (!IsVertical && width == null)
+            {
+                WidthFunc = _ =>
+                {
+                    var last = this.LastOrDefault();
+                    return last == null ? 
+                        0 :
+                        last.GetTransform().Position.X + last.GetWidth();
+                };
+            }
         }
 
         public StackFrame(
@@ -46,12 +60,21 @@ namespace Ui
             Func<ElementArgs, float> width = null,
             Func<ElementArgs, float> height = null,
             Func<ElementArgs, bool> hidden = null, 
-            bool isVertical = true, 
-            Vector2 spacing = new Vector2())
-            : this(transform, width, height, hidden, isVertical)
+            bool isVertical = true,
+            Func<ElementArgs, float> spacing = null)
+            : this(transform, width, height, hidden, isVertical, spacing)
         {
             id = this;
         }
+
+        public IEnumerator<IElement> GetEnumerator() => GetSubFrames().GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public void Add(IElement element)
+        {
+            Children = Children.Add(element);
+        }
+
+        public float GetSpacing() => SpacingFunc(ElementArgs);
 
         List<IElement> GetSubFrames()
         {
@@ -61,24 +84,21 @@ namespace Ui
                 return subFrames;
             }
 
+            Frame firstFrame;
             if (IsVertical)
             {
-                subFrames.Add(new Frame(
+                firstFrame = new Frame(
                     width: args => args.Parent.GetWidth(), 
-                    height: _ => Children[0].GetHeight())
-                {
-                    Children[0]
-                });
+                    height: _ => Children[0].GetHeight());
             }
             else
             {
-                subFrames.Add(new Frame(
+                firstFrame = new Frame(
                     width: _ => Children[0].GetWidth(), 
-                    height: args => args.Parent.GetHeight())
-                {
-                    Children[0]
-                });
+                    height: args => args.Parent.GetHeight());
             }
+            subFrames.Add(firstFrame);
+            firstFrame.Add(Children[0]);
 
             foreach (var child in Children.Skip(1))
             {
@@ -88,24 +108,19 @@ namespace Ui
                 {
                     frame = new Frame(
                         args => previousFrame.GetTransform()
-                            .AddPosition(new Vector2(0, previousFrame.GetHeight() + ((StackFrame)args.Parent).Spacing)),
+                            .AddPosition(new Vector2(0, previousFrame.GetHeight() + ((StackFrame)args.Parent).GetSpacing())),
                         args => args.Parent.GetWidth(),
-                        _ => child.GetHeight())
-                    {
-                        child
-                    };
+                        _ => child.GetHeight());
                 }
                 else
                 {
                     frame = new Frame(
                         args => previousFrame.GetTransform()
-                            .AddPosition(new Vector2(previousFrame.GetWidth() + ((StackFrame)args.Parent).Spacing, 0)),
+                            .AddPosition(new Vector2(previousFrame.GetWidth() + ((StackFrame)args.Parent).GetSpacing(), 0)),
                         _ => child.GetWidth(),
-                        args => args.Parent.GetHeight())
-                    {
-                        child
-                    };
+                        args => args.Parent.GetHeight());
                 }
+                frame.Add(child);
                 subFrames.Add(frame);
             }
 
@@ -115,16 +130,6 @@ namespace Ui
             }
 
             return subFrames;
-        }
-
-        public bool IsInside(Vector2 localPoint)
-        {
-            return false;
-        }
-
-        public List<Model> GetModels()
-        {
-            return new List<Model>();
         }
     }
 }

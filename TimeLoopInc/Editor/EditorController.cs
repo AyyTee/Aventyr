@@ -63,42 +63,38 @@ namespace TimeLoopInc.Editor
             {
                 new Frame(hidden: _ => _isPlaying)
                 {
-                    new StackFrame(width: _ => 200, spacing: 5)
+                    new StackFrame(width: _ => 200, spacing: _ => 5)
                     {
                         new Button(height: _ => 90, onClick: Save)
                         {
-                            new TextBlock(ElementEx.Center, Window.Fonts.Inconsolata, "Save As...")
+                            new TextBlock(ElementEx.Center, _ => Window.Fonts.Inconsolata, _ => "Save As...")
                         },
                         new Button(height: _ => 90, onClick: Load)
                         {
-                            new TextBlock(ElementEx.Center, Window.Fonts.Inconsolata, "Load")
+                            new TextBlock(ElementEx.Center, _ => Window.Fonts.Inconsolata, _ => "Load")
                         },
                         new Button(height: _ => 90, onClick: Play)
                         {
-                            new TextBlock(ElementEx.Center, Window.Fonts.Inconsolata, "Play")
+                            new TextBlock(ElementEx.Center, _ => Window.Fonts.Inconsolata, _ => "Play")
                         }
                     },
                     new TextBox(
-                        _ => new Transform2(new Vector2(220, 10)), 
-                        _ => 200, 
-                        _ => 90, 
-                        Window.Fonts.Inconsolata, 
-                        TimeOffsetGetText, 
+                        _ => new Transform2(new Vector2(220, 10)),
+                        _ => 200,
+                        _ => 90,
+                        Window.Fonts.Inconsolata,
+                        TimeOffsetGetText,
                         TimeOffsetSetText)
                 },
-                new Frame(hidden: _ => !_isPlaying)
+                new StackFrame(height: _ => 90, spacing: _ => 5, hidden: _ => !_isPlaying, isVertical: false)
                 {
-                    new Button(_ => new Transform2(new Vector2(10, 10)), _ => 200, _ => 90, () => _sceneController = null)
+                    new Button(width: _ => 200, onClick: () => _sceneController = null)
                     {
-                        new TextBlock(_ => new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Return to editor")
+                        new TextBlock(_ => new Transform2(new Vector2(10, 10)), _ => Window.Fonts.Inconsolata, _ => "Return to editor")
                     },
-                    new Button(
-                        _ => new Transform2(new Vector2(10, 110)), 
-                        _ => 200,
-                        _ => 90, 
-                        () => _sceneController.SetInput(_sceneController.Input.Clear()))
+                    new Button(width: _ => 200, onClick: () => _sceneController.SetInput(_sceneController.Input.Clear()))
                     {
-                        new TextBlock(_ => new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Restart")
+                        new TextBlock(_ => new Transform2(new Vector2(10, 10)), _ => Window.Fonts.Inconsolata, _ => "Restart")
                     }
                 }
             }.ToImmutableList();

@@ -12,7 +12,7 @@ using OpenTK.Graphics;
 
 namespace Ui
 {
-    public class Button : BranchElement, IElement
+    public class Button : NodeElement, IElement
     {
         public Action OnClick { get; }
 
@@ -31,17 +31,17 @@ namespace Ui
             id = this;
         }
 
-        public List<Model> GetModels()
+        public override List<Model> GetModels()
         {
             return new[]
             {
-                ModelFactory.CreatePlane(this.Size(), Color4.Black),
+                ModelFactory.CreatePlane(this.GetSize(), Color4.Black),
             }.ToList();
         }
 
-        public bool IsInside(Vector2 localPoint)
+        public override bool IsInside(Vector2 localPoint)
         {
-            return MathEx.PointInRectangle(new Vector2(), this.Size(), localPoint);
+            return MathEx.PointInRectangle(new Vector2(), this.GetSize(), localPoint);
         }
     }
 }
