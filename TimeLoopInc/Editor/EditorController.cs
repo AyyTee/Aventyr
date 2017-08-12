@@ -59,54 +59,49 @@ namespace TimeLoopInc.Editor
 
             _menu = new UiController(Window);
 
-            _menu.Root = new Frame(out Frame rootFrame)
+            _menu.Root.Children = new IElement[]
             {
-                new Frame(out _editor)
+                new Frame(hidden: _ => _isPlaying)
                 {
-                    new StackFrame(spacing: new Vector2(0, 5))
+                    new StackFrame(width: _ => 200, spacing: 5)
                     {
-                        new Button(size: new Vector2(200, 90), onClick: Save)
+                        new Button(height: _ => 90, onClick: Save)
                         {
-                            new TextBlock(p => new Transform2((p.Parent.Size - p.Self.Size) / 2), Window.Fonts.Inconsolata, "Save As...")
+                            new TextBlock(ElementEx.Center, Window.Fonts.Inconsolata, "Save As...")
                         },
-                        new Button(size: new Vector2(200, 90), onClick: Load)
+                        new Button(height: _ => 90, onClick: Load)
                         {
-                            new TextBlock(p => new Transform2((p.Parent.Size - p.Self.Size) / 2), Window.Fonts.Inconsolata, "Load")
+                            new TextBlock(ElementEx.Center, Window.Fonts.Inconsolata, "Load")
                         },
-                        new Button(size: new Vector2(200, 90), onClick: Play)
+                        new Button(height: _ => 90, onClick: Play)
                         {
-                            new TextBlock(p => new Transform2((p.Parent.Size - p.Self.Size) / 2), Window.Fonts.Inconsolata, "Play")
+                            new TextBlock(ElementEx.Center, Window.Fonts.Inconsolata, "Play")
                         }
                     },
                     new TextBox(
                         _ => new Transform2(new Vector2(220, 10)), 
-                        new Vector2(200, 90), 
+                        _ => 200, 
+                        _ => 90, 
                         Window.Fonts.Inconsolata, 
                         TimeOffsetGetText, 
                         TimeOffsetSetText)
                 },
-                new Frame(out _endGame, hidden: true)
+                new Frame(hidden: _ => !_isPlaying)
                 {
-                    new Button(out Button returnButton, _ => new Transform2(new Vector2(10, 10)), new Vector2(200, 90))
+                    new Button(_ => new Transform2(new Vector2(10, 10)), _ => 200, _ => 90, () => _sceneController = null)
                     {
                         new TextBlock(_ => new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Return to editor")
                     },
                     new Button(
                         _ => new Transform2(new Vector2(10, 110)), 
-                        new Vector2(200, 90), 
+                        _ => 200,
+                        _ => 90, 
                         () => _sceneController.SetInput(_sceneController.Input.Clear()))
                     {
                         new TextBlock(_ => new Transform2(new Vector2(10, 10)), Window.Fonts.Inconsolata, "Restart")
                     }
                 }
-            };
-
-            returnButton.OnClick += () =>
-            {
-                _editor.Hidden = false;
-                _endGame.Hidden = true;
-                _sceneController = null;
-            };
+            }.ToImmutableList();
 
             Camera = new GridCamera(new Transform2(), (float)Window.CanvasSize.XRatio);
             Camera.WorldTransform = Camera.WorldTransform.WithSize(15);
@@ -116,8 +111,6 @@ namespace TimeLoopInc.Editor
         {
             if (Scene.Entities.OfType<Player>().Any())
             {
-                _editor.Hidden = true;
-                _endGame.Hidden = false;
                 _sceneController = new SceneController(Window, new[] { Scene.CreateScene() });
             }
         }

@@ -11,23 +11,13 @@ namespace Ui
 {
     public class Frame : BranchElement, IElement
     {
-        public ElementArgs ElementArgs { get; set; }
-
-        internal Func<ElementArgs, Transform2> GetTransform { get; }
-        public Transform2 Transform => GetTransform(ElementArgs);
-
-        public bool Hidden { get; set; }
-
-        public Vector2 Size { get; set; }
-
-        public Frame(Func<ElementArgs, Transform2> transform = null, bool hidden = false)
+        public Frame(Func<ElementArgs, Transform2> transform = null, Func<ElementArgs, float> width = null, Func<ElementArgs, float> height = null, Func<ElementArgs, bool> hidden = null)
+            : base(transform, width, height, hidden)
         {
-            GetTransform = transform ?? (_ => new Transform2());
-            Hidden = hidden;
         }
 
-        public Frame(out Frame id, Func<ElementArgs, Transform2> transform = null, bool hidden = false)
-            : this(transform, hidden)
+        public Frame(out Frame id, Func<ElementArgs, Transform2> transform = null, Func<ElementArgs, float> width = null, Func<ElementArgs, float> height = null, Func<ElementArgs, bool> hidden = null)
+            : this(transform, width, height, hidden)
         {
             id = this;
         }

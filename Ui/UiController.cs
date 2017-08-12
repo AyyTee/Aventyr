@@ -15,7 +15,7 @@ namespace Ui
 {
     public class UiController
     {
-        public Frame Root { get; set; } = new Frame();
+        public Frame Root { get; }
         readonly IVirtualWindow _window;
         ICamera2 _camera;
         List<UiWorldTransform> _flattenedUi = new List<UiWorldTransform>();
@@ -25,6 +25,7 @@ namespace Ui
         public UiController(IVirtualWindow window)
         {
             _window = window;
+            Root = new Frame(width: _ => _window.CanvasSize.X, height: _ => _window.CanvasSize.Y);
         }
 
         public void Update(float uiScale)
@@ -49,7 +50,7 @@ namespace Ui
                     switch (Hover)
                     {
                         case Button button:
-                            button.Click();
+                            button.OnClick.Invoke();
                             break;
                         case TextBox textBox:
                             SetSelected(textBox);
@@ -110,7 +111,7 @@ namespace Ui
 
         void UpdateElementArgs(IElement root)
         {
-            root.ElementArgs = new ElementArgs(null, root, DateTime.UtcNow);
+            root.ElementArgs = new ElementArgs(null, root);
             _updateElementArgs(root);
         }
 
@@ -118,7 +119,7 @@ namespace Ui
         {
             foreach (var child in element)
             {
-                child.ElementArgs = new ElementArgs(element, child, DateTime.UtcNow);
+                child.ElementArgs = new ElementArgs(element, child);
                 _updateElementArgs(child);
             }
         }
@@ -132,24 +133,14 @@ namespace Ui
 
         void _allChildren(IElement element, Transform2 worldTransform, List<UiWorldTransform> list, IElement parent)
         {
-            if (element.Hidden)
+            if (element.GetHidden())
             {
                 return;
             }
-            var transform = worldTransform.Transform(element.Transform);
-            if (element is BranchElement branch)
+            var transform = worldTransform.Transform(element.GetTransform());
+            foreach (var child in element)
             {
-                foreach (var child in branch.GetLocalTransforms())
-                {
-                    _allChildren(child.Child, transform.Transform(child.LocalTransform), list, element);
-                }
-            }
-            else
-            {
-                foreach (var child in element)
-                {
-                    _allChildren(child, transform, list, element);
-                }
+                _allChildren(child, transform, list, element);
             }
             
             list.Add(new UiWorldTransform(element, transform));

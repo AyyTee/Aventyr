@@ -11,13 +11,17 @@ using System.Collections.Immutable;
 
 namespace Ui
 {
-    public abstract class BranchElement : IEnumerable<IElement>
+    public abstract class BranchElement : Element, IEnumerable<IElement>
     {
         public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 
-        public virtual List<(IElement Child, Transform2 LocalTransform)> GetLocalTransforms()
+        public BranchElement(
+            Func<ElementArgs, Transform2> transform = null, 
+            Func<ElementArgs, float> width = null, 
+            Func<ElementArgs, float> height = null, 
+            Func<ElementArgs, bool> hidden = null)
+            : base(transform, width, height, hidden)
         {
-            return Children.Select(item => (item, new Transform2())).ToList();
         }
 
         public IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();

@@ -30,27 +30,25 @@ namespace TimeLoopInc
         public Controller(IVirtualWindow window)
         {
             _window = window;
-            _menu = new UiController(_window)
+            _menu = new UiController(_window);
+            _menu.Root.Children = new IElement[]
             {
-                Root = new Frame
+                new StackFrame(width: _ => 200, spacing: 5)
                 {
-                    new StackFrame(spacing: new Vector2(0, 5))
+                    new Button(height: _ => 80, onClick: StartGame)
                     {
-                        new Button(size: new Vector2(200, 80), onClick: StartGame)
-                        {
-                            new TextBlock(_ => new Transform2(), _window.Fonts.Inconsolata, "Start Game")
-                        },
-                        new Button(size: new Vector2(200, 80), onClick: StartLevelEditor)
-                        {
-                            new TextBlock(_ => new Transform2(), _window.Fonts.Inconsolata, "Level Editor")
-                        },
-                        new Button(size: new Vector2(200, 80), onClick: _window.Exit)
-                        {
-                            new TextBlock(_ => new Transform2(), _window.Fonts.Inconsolata, "Exit")
-                        }
+                        new TextBlock(ElementEx.Center, _window.Fonts.Inconsolata, "Start Game")
+                    },
+                    new Button(height: _ => 80, onClick: StartLevelEditor)
+                    {
+                        new TextBlock(ElementEx.Center, _window.Fonts.Inconsolata, "Level Editor")
+                    },
+                    new Button(height: _ => 80, onClick: _window.Exit)
+                    {
+                        new TextBlock(ElementEx.Center, _window.Fonts.Inconsolata, "Exit")
                     }
                 }
-            };
+            }.ToImmutableList();
 
 
             _editor = new EditorController(_window, this);

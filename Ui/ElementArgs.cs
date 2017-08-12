@@ -10,13 +10,11 @@ namespace Ui
     {
         public IElement Parent { get; }
         public IElement Self { get; }
-        public DateTime Time { get; }
 
-        public ElementArgs(IElement parent, IElement self, DateTime time)
+        public ElementArgs(IElement parent, IElement self)
         {
             Parent = parent;
             Self = self;
-            Time = time;
         }
     }
 }

@@ -12,48 +12,110 @@ using MoreLinq;
 
 namespace Ui
 {
-    public class StackFrame : BranchElement, IElement
+    public class StackFrame : Element, IElement
     {
-        public ElementArgs ElementArgs { get; set; }
+        public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 
-        internal Func<ElementArgs, Transform2> GetTransform { get; }
-        public Transform2 Transform => GetTransform(ElementArgs);
-
-        public bool Hidden { get; set; }
-
-        public bool IsVertical { get; set; }
-
-        public Vector2 Spacing { get; set; }
-
-        public Vector2 Size { get; set; }
-
-        public StackFrame(Func<ElementArgs, Transform2> transform = null, bool hidden = false, bool isVertical = true, Vector2 spacing = new Vector2())
+        public IEnumerator<IElement> GetEnumerator() => GetSubFrames().GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public void Add(IElement element)
         {
-            GetTransform = transform ?? (_ => new Transform2());
+            Children = Children.Concat(new[] { element }).ToImmutableList();
+        }
+
+        public bool IsVertical { get; }
+
+        public float Spacing { get; set; }
+
+        public StackFrame(
+            Func<ElementArgs, Transform2> transform = null, 
+            Func<ElementArgs, float> width = null,
+            Func<ElementArgs, float> height = null,
+            bool hidden = false, 
+            bool isVertical = true, 
+            float spacing = 0)
+            : base(transform, width, height)
+        {
             Hidden = hidden;
             IsVertical = isVertical;
             Spacing = spacing;
         }
 
-        public StackFrame(out StackFrame id, Func<ElementArgs, Transform2> transform = null, bool hidden = false, bool isVertical = true, Vector2 spacing = new Vector2())
-            : this(transform, hidden, isVertical)
+        public StackFrame(
+            out StackFrame id, 
+            Func<ElementArgs, Transform2> transform = null,
+            Func<ElementArgs, float> width = null,
+            Func<ElementArgs, float> height = null,
+            bool hidden = false, 
+            bool isVertical = true, 
+            Vector2 spacing = new Vector2())
+            : this(transform, width, height, hidden, isVertical)
         {
             id = this;
         }
 
-        public override List<(IElement Child, Transform2 LocalTransform)> GetLocalTransforms()
+        List<IElement> GetSubFrames()
         {
-            var offset = new Vector2();
-            var childTransforms = new List<(IElement Child, Transform2 LocalTransform)>();
-            for (int i = 0; i < Children.Count; i++)
+            var subFrames = new List<IElement>();
+            if (!Children.Any())
             {
-                childTransforms.Add((Children[i], new Transform2(offset)));
-                offset += Spacing;
-                offset += IsVertical ?
-                    Children[i].Size.YOnly() :
-                    Children[i].Size.XOnly();
+                return subFrames;
             }
-            return childTransforms;
+
+            if (IsVertical)
+            {
+                subFrames.Add(new Frame(
+                    width: args => args.Parent.GetWidth(), 
+                    height: _ => Children[0].GetHeight())
+                {
+                    Children[0]
+                });
+            }
+            else
+            {
+                subFrames.Add(new Frame(
+                    width: _ => Children[0].GetWidth(), 
+                    height: args => args.Parent.GetHeight())
+                {
+                    Children[0]
+                });
+            }
+
+            foreach (var child in Children.Skip(1))
+            {
+                Frame frame;
+                var previousFrame = subFrames.Last();
+                if (IsVertical)
+                {
+                    frame = new Frame(
+                        args => previousFrame.GetTransform()
+                            .AddPosition(new Vector2(0, previousFrame.GetHeight() + ((StackFrame)args.Parent).Spacing)),
+                        args => args.Parent.GetWidth(),
+                        _ => child.GetHeight())
+                    {
+                        child
+                    };
+                }
+                else
+                {
+                    frame = new Frame(
+                        args => previousFrame.GetTransform()
+                            .AddPosition(new Vector2(previousFrame.GetWidth() + ((StackFrame)args.Parent).Spacing, 0)),
+                        _ => child.GetWidth(),
+                        args => args.Parent.GetHeight())
+                    {
+                        child
+                    };
+                }
+                subFrames.Add(frame);
+            }
+
+            foreach (var frame in subFrames)
+            {
+                frame.ElementArgs = new ElementArgs(this, frame);
+            }
+
+            return subFrames;
         }
 
         public bool IsInside(Vector2 localPoint)

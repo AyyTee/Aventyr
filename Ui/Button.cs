@@ -14,50 +14,34 @@ namespace Ui
 {
     public class Button : BranchElement, IElement
     {
-        public delegate void ClickHandler();
-        public event ClickHandler OnClick;
+        public Action OnClick { get; }
 
-        public Vector2 Size { get; set; }
-
-        public ElementArgs ElementArgs { get; set; }
-
-        internal Func<ElementArgs, Transform2> GetTransform { get; }
-        public Transform2 Transform => GetTransform(ElementArgs);
-
-        public bool Hidden { get; set; }
-
-        public Button(Func<ElementArgs, Transform2> transform = null, Vector2 size = new Vector2(), Action onClick = null)
+        public Button(Func<ElementArgs, Transform2> transform = null, Func<ElementArgs, float> width = null, Func<ElementArgs, float> height = null, Action onClick = null)
+            : base(transform, width, height)
         {
-            GetTransform = transform ?? (_ => new Transform2());
-            Size = size;
             if (onClick != null)
             {
                 OnClick += () => { onClick(); };
             }
         }
 
-        public Button(out Button id, Func<ElementArgs, Transform2> transform = null, Vector2 size = new Vector2(), Action onClick = null)
-            : this(transform, size, onClick)
+        public Button(out Button id, Func<ElementArgs, Transform2> transform = null, Func<ElementArgs, float> width = null, Func<ElementArgs, float> height = null, Action onClick = null)
+            : this(transform, width, height, onClick)
         {
             id = this;
-        }
-
-        public void Click()
-        {
-            OnClick?.Invoke();
         }
 
         public List<Model> GetModels()
         {
             return new[]
             {
-                ModelFactory.CreatePlane(Size, Color4.Black),
+                ModelFactory.CreatePlane(this.Size(), Color4.Black),
             }.ToList();
         }
 
         public bool IsInside(Vector2 localPoint)
         {
-            return MathEx.PointInRectangle(new Vector2(), Size, localPoint);
+            return MathEx.PointInRectangle(new Vector2(), this.Size(), localPoint);
         }
     }
 }
