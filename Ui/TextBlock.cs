@@ -13,11 +13,16 @@ namespace Ui
 {
     public class TextBlock : Element, IElement
     {
-        public Func<ElementArgs, string> TextFunc { get; protected set; }
-        public Func<ElementArgs, Font> FontFunc { get; protected set; }
+        public ElementFunc<string> TextFunc { get; protected set; }
+        public ElementFunc<Font> FontFunc { get; protected set; }
 
-        public TextBlock(ElementFunc<Transform2> transform = null, Func<ElementArgs, Font> font = null, Func<ElementArgs, string> text = null, ElementFunc<bool> hidden = null)
-            : base(transform: transform, hidden: hidden)
+        public TextBlock(
+            ElementFunc<float> x = null, 
+            ElementFunc<float> y = null, 
+            ElementFunc<Font> font = null, 
+            ElementFunc<string> text = null, 
+            ElementFunc<bool> hidden = null)
+            : base(x, y, hidden: hidden)
         {
             WidthFunc = _ => GetSize().X;
             HeightFunc = _ => GetSize().Y;
@@ -26,8 +31,8 @@ namespace Ui
             TextFunc = text ?? (_ => "");
         }
 
-        public TextBlock(out TextBlock id, ElementFunc<Transform2> transform = null, Func<ElementArgs, Font> font = null, Func<ElementArgs, string> text = null, ElementFunc<bool> hidden = null)
-            : this(transform, font, text, hidden)
+        public TextBlock(out TextBlock id, ElementFunc<float> x = null, ElementFunc<float> y = null, ElementFunc<Font> font = null, ElementFunc<string> text = null, ElementFunc<bool> hidden = null)
+            : this(x, y, font, text, hidden)
         {
             id = this;
         }

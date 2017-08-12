@@ -211,7 +211,7 @@ namespace TimeLoopInc
 
                         if (font != null)
                         {
-                            var text = font.GetModel(portal.TimeOffset.ToString(), Color4.White, new Vector2(0.5f, 1f));
+                            var text = font.GetModel(portal.TimeOffset.ToString(), Color4.White, 0.5f);
                             text.Transform.Scale = new Vector3(0.014f, 0.014f, 0.014f);
                             var offset = (Vector2)angle.Vector * 0.48f;
                             text.Transform.Position = new Vector3(offset.X, offset.Y, 1);

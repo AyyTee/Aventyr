@@ -21,13 +21,14 @@ namespace Ui
         public ElementFunc<float> SpacingFunc { get; }
 
         public StackFrame(
-            ElementFunc<Transform2> transform = null,
+            ElementFunc<float> x = null, 
+            ElementFunc<float> y = null,
             ElementFunc<float> width = null,
             ElementFunc<float> height = null,
             ElementFunc<bool> hidden = null, 
             bool isVertical = true,
             ElementFunc<float> spacing = null)
-            : base(transform, width, height, hidden)
+            : base(x, y, width, height, hidden)
         {
             IsVertical = isVertical;
             SpacingFunc = spacing ?? (_ => 0);
@@ -39,7 +40,7 @@ namespace Ui
                     var last = this.LastOrDefault();
                     return last == null ?
                         0 :
-                        last.GetTransform().Position.Y + last.GetHeight();
+                        last.GetY() + last.GetHeight();
                 };
             }
             else if (!IsVertical && width == null)
@@ -49,20 +50,21 @@ namespace Ui
                     var last = this.LastOrDefault();
                     return last == null ? 
                         0 :
-                        last.GetTransform().Position.X + last.GetWidth();
+                        last.GetX() + last.GetWidth();
                 };
             }
         }
 
         public StackFrame(
-            out StackFrame id, 
-            ElementFunc<Transform2> transform = null,
+            out StackFrame id,
+            ElementFunc<float> x = null, 
+            ElementFunc<float> y = null,
             ElementFunc<float> width = null,
             ElementFunc<float> height = null,
             ElementFunc<bool> hidden = null, 
             bool isVertical = true,
             ElementFunc<float> spacing = null)
-            : this(transform, width, height, hidden, isVertical, spacing)
+            : this(x, y, width, height, hidden, isVertical, spacing)
         {
             id = this;
         }
@@ -107,17 +109,17 @@ namespace Ui
                 if (IsVertical)
                 {
                     frame = new Frame(
-                        args => previousFrame.GetTransform()
-                            .AddPosition(new Vector2(0, previousFrame.GetHeight() + ((StackFrame)args.Parent).GetSpacing())),
+                        _ => 0,
+                        args => previousFrame.GetY() + previousFrame.GetHeight() + ((StackFrame)args.Parent).GetSpacing(),
                         args => args.Parent.GetWidth(),
-                        _ => child.GetHeight());
+                        ElementEx.ChildHeight());
                 }
                 else
                 {
                     frame = new Frame(
-                        args => previousFrame.GetTransform()
-                            .AddPosition(new Vector2(previousFrame.GetWidth() + ((StackFrame)args.Parent).GetSpacing(), 0)),
-                        _ => child.GetWidth(),
+                        args => previousFrame.GetX() + previousFrame.GetWidth() + ((StackFrame)args.Parent).GetSpacing(),
+                        _ => 0,
+                        ElementEx.ChildWidth(),
                         args => args.Parent.GetHeight());
                 }
                 frame.Add(child);

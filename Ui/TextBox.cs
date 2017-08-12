@@ -16,10 +16,9 @@ namespace Ui
     {
         public enum Input { Text, Numbers }
 
-        public Font Font { get; }
+        public ElementFunc<Font> FontFunc { get; }
         public Func<string> GetText { get; }
         public Action<string> SetText { get; }
-        public string Text => GetText();
         public string DisplayText { get; set; } = "";
         public Input InputType { get; set; } = Input.Numbers;
         public int CursorStart { get; set; }
@@ -27,34 +26,39 @@ namespace Ui
         public bool Selected { get; private set; }
 
         public TextBox(
-            ElementFunc<Transform2> transform = null,
+            ElementFunc<float> x = null,
+            ElementFunc<float> y = null,
             ElementFunc<float> width = null, 
-            ElementFunc<float> height = null, 
-            Font font = null, 
+            ElementFunc<float> height = null,
+            ElementFunc<Font> font = null, 
             Func<string> getText = null, 
             Action<string> setText = null,
             ElementFunc<bool> hidden = null)
-            : base(transform, width, height, hidden)
+            : base(x, y, width, height, hidden)
         {
-            Font = font;
+            FontFunc = font;
 
-            GetText = getText ?? (() => "");
-            SetText = setText;
+            GetText = getText ?? (() => DisplayText);
+            SetText = setText ?? (newText => DisplayText = newText);
         }
 
         public TextBox(
-            out TextBox id, 
+            out TextBox id,
+            ElementFunc<float> x = null,
+            ElementFunc<float> y = null,
             ElementFunc<Transform2> transform = null,
             ElementFunc<float> width = null, 
-            ElementFunc<float> height = null, 
-            Font font = null, 
+            ElementFunc<float> height = null,
+            ElementFunc<Font> font = null, 
             Func<string> getText = null, 
             Action<string> setText = null,
             ElementFunc<bool> hidden = null)
-            : this(transform, width, height, font, getText, setText, hidden)
+            : this(x, y, width, height, font, getText, setText, hidden)
         {
             id = this;
         }
+
+        public Font GetFont() => FontFunc(ElementArgs);
 
         public void SetSelected(bool selected)
         {
@@ -78,7 +82,14 @@ namespace Ui
             {
                 models.AddRange(Draw.Rectangle(new Vector2(), size, Color4.Brown).GetModels());
                 models.AddRange(Draw.Rectangle(margin, size - margin, Color4.White).GetModels());
-                models.AddRange(Draw.Text(Font, margin, Selected ? DisplayText : GetText(), Color4.Black).GetModels());
+                var font = GetFont();
+                var text = Selected ? DisplayText : GetText();
+                var textModel = font.GetModel(text, Color4.Black);
+                textModel.Transform.Position += new Vector3(
+                    margin.X, 
+                    (size.Y - font.GetSize(text, new Font.Settings()).Y) / 2, 
+                    0); 
+                models.Add(textModel);
             }
             return models;
         }

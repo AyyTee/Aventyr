@@ -26,7 +26,7 @@ namespace Game.Rendering
         [DataMember]
         public Color4 Color { get; private set; }
         [DataMember]
-        public Vector2 Alignment { get; private set; }
+        public float AlignX { get; private set; }
         [DataMember]
         public int LineSpacing { get; private set; }
         [DataMember]
@@ -40,19 +40,19 @@ namespace Game.Rendering
         bool Dirty = true;
         readonly Font _fontRenderer;
 
-        public TextEntity(Font fontRenderer, Vector2 position, string text, Vector2 alignment = new Vector2(), int lineSpacing = 0)
+        public TextEntity(Font fontRenderer, Vector2 position, string text, float alignment = 0, int lineSpacing = 0)
             : this(fontRenderer, position, text, Color4.White, alignment, lineSpacing)
         {
         }
 
-        public TextEntity(Font fontRenderer, Vector2 position, string text, Color4 color, Vector2 alignment = new Vector2(), int lineSpacing = 0)
+        public TextEntity(Font fontRenderer, Vector2 position, string text, Color4 color, float alignment = 0, int lineSpacing = 0)
         {
             DebugEx.Assert(text != null);
             Text = text;
             Color = color;
             WorldTransform = new Transform2(position);
             _fontRenderer = fontRenderer;
-            Alignment = alignment;
+            AlignX = alignment;
             LineSpacing = lineSpacing;
         }
 
@@ -65,11 +65,11 @@ namespace Game.Rendering
             }
         }
 
-        public void SetAlignment(Vector2 alignment)
+        public void SetAlignment(float alignX)
         {
-            if (alignment != Alignment)
+            if (alignX != AlignX)
             {
-                Alignment = alignment;
+                AlignX = alignX;
                 Dirty = true;
             }
         }
@@ -78,7 +78,7 @@ namespace Game.Rendering
         {
             if (Dirty)
             {
-                TextModel = _fontRenderer?.GetModel(Text, Color, Alignment, LineSpacing);
+                TextModel = _fontRenderer?.GetModel(Text, Color, AlignX, LineSpacing);
                 Dirty = false;
             }
             return TextModel == null ?

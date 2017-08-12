@@ -11,6 +11,7 @@ using OpenTK.Graphics;
 using OpenTK.Input;
 using Ui;
 using Game;
+using static Ui.ElementEx;
 
 namespace TimeLoopInc.Editor
 {
@@ -32,7 +33,7 @@ namespace TimeLoopInc.Editor
         bool _isPlaying => _sceneController != null;
         bool _isSaving;
         DateTime _saveStart;
-        public string SaveName { get; set; } = "";
+        public string SaveName { get; set; } = "Level.txt";
         Vector2 _mousePosition;
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
@@ -67,24 +68,23 @@ namespace TimeLoopInc.Editor
                 {
                     new StackFrame(width: _ => 200, spacing: _ => 5)
                     {
-                        new Button(height: _ => 90, onClick: Save)
+                        new Button(height: _ => 90, onClick: ShowSaveDialogue)
                         {
-                            new TextBlock(ElementEx.Center, _ => Window.Fonts.Inconsolata, _ => "Save As...")
+                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
                         },
                         new Button(height: _ => 90, onClick: Load)
                         {
-                            new TextBlock(ElementEx.Center, _ => Window.Fonts.Inconsolata, _ => "Load")
+                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
                         },
                         new Button(height: _ => 90, onClick: Play)
                         {
-                            new TextBlock(ElementEx.Center, _ => Window.Fonts.Inconsolata, _ => "Play")
+                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
                         }
                     },
                     new TextBox(
-                        _ => new Transform2(new Vector2(220, 10)),
-                        _ => 200,
-                        _ => 90,
-                        Window.Fonts.Inconsolata,
+                        _ => 220, _ => 10,
+                        _ => 200, _ => 90,
+                        _ => Window.Fonts.Inconsolata,
                         TimeOffsetGetText,
                         TimeOffsetSetText)
                 },
@@ -92,25 +92,48 @@ namespace TimeLoopInc.Editor
                 {
                     new Button(width: _ => 200, onClick: () => _sceneController = null)
                     {
-                        new TextBlock(ElementEx.Center,  _ => Window.Fonts.Inconsolata, _ => "Return to editor")
+                        new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Return to editor")
                     },
                     new Button(width: _ => 200, onClick: () => _sceneController.SetInput(_sceneController.Input.Clear()))
                     {
-                        new TextBlock(ElementEx.Center,  _ => Window.Fonts.Inconsolata, _ => "Restart")
+                        new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Restart")
                     }
                 },
-                new Frame(ElementEx.Center, ElementEx.ChildWidth, ElementEx.ChildHeight, _ => !_isSaving)
+                new Frame(AlignX(0.5f), FallIn, ChildWidth(), ChildHeight(), _ => !_isSaving)
                 {
-                    new StackFrame(height: _ => 100, isVertical: false, spacing: _ => 20)
+                    new StackFrame(height: _ => 50, isVertical: false, spacing: _ => 20)
                     {
-                        new TextBlock(font: _ => Window.Fonts.Inconsolata, text: _ => "File Name:"),
-                        new TextBox(width: _ => 400, font: Window.Fonts.Inconsolata, getText: () => SaveName, setText: text => SaveName = text)
+                        new TextBlock(y: AlignY(0.5f), font: _ => Window.Fonts.Inconsolata, text: _ => "File Name:"),
+                        new TextBox(
+                            y: AlignY(0.5f), 
+                            width: _ => 400, 
+                            font: _ => Window.Fonts.Inconsolata,
+                            getText: () => SaveName, 
+                            setText: text => SaveName = text),
+                        new Button(width: _ => 100, onClick: Save)
+                        {
+                            new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Save")
+                        },
+                        new Button(width: _ => 100, onClick: () => _isSaving = false)
+                        {
+                            new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Cancel")
+                        }
                     }
                 }
             }.ToImmutableList();
 
             Camera = new GridCamera(new Transform2(), (float)Window.CanvasSize.XRatio);
             Camera.WorldTransform = Camera.WorldTransform.WithSize(15);
+        }
+
+        float FallIn(ElementArgs args)
+        {
+            var animationLength = TimeSpan.FromSeconds(0.2);
+            var height = args.Self.GetHeight();
+            var startValue = -height;
+            var endValue = (args.Parent.GetHeight() - height) / 2;
+            var t = (float)MathHelper.Clamp((DateTime.UtcNow - _saveStart).TotalSeconds / animationLength.TotalSeconds, 0, 1);
+            return (endValue - startValue) * t + startValue;
         }
 
         void Play()
@@ -121,14 +144,18 @@ namespace TimeLoopInc.Editor
             }
         }
 
-        void Save()
+        void ShowSaveDialogue()
         {
             _isSaving = true;
             _saveStart = DateTime.UtcNow;
-            //var filepath = Path.Combine(LevelPath, "Saved.xml");
-            //Directory.CreateDirectory(LevelPath);
+        }
 
-            //File.WriteAllText(filepath, Serializer.Serialize(Scene));
+        void Save()
+        {
+            var filepath = Path.Combine(LevelPath, SaveName);
+            Directory.CreateDirectory(LevelPath);
+
+            File.WriteAllText(filepath, Serializer.Serialize(Scene));
         }
 
         void Load()

@@ -39,6 +39,8 @@ namespace Game.Common
         public Vector2i Divide(int value) => new Vector2i(X / value, Y / value);
         public Vector2i Divide(Vector2i Vector2i) => new Vector2i(X / Vector2i.X, Y / Vector2i.Y);
         public Vector2i Negate() => new Vector2i(-X, -Y);
+        public Vector2i XOnly() => new Vector2i(X, 0);
+        public Vector2i YOnly() => new Vector2i(0, Y);
 
         public static Vector2i operator +(Vector2i p0, Vector2i p1) => p0.Add(p1);
         public static Vector2i operator -(Vector2i p0, Vector2i p1) => p0.Subtract(p1);

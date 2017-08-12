@@ -37,15 +37,15 @@ namespace TimeLoopInc
                 {
                     new Button(height: _ => 80, onClick: StartGame)
                     {
-                        new TextBlock(ElementEx.Center, _ => _window.Fonts.Inconsolata, _ => "Start Game")
+                        new TextBlock(ElementEx.AlignX(0.5f), ElementEx.AlignY(0.5f), _ => _window.Fonts.Inconsolata, _ => "Start Game")
                     },
                     new Button(height: _ => 80, onClick: StartLevelEditor)
                     {
-                        new TextBlock(ElementEx.Center, _ => _window.Fonts.Inconsolata, _ => "Level Editor")
+                        new TextBlock(ElementEx.AlignX(0.5f), ElementEx.AlignY(0.5f), _ => _window.Fonts.Inconsolata, _ => "Level Editor")
                     },
                     new Button(height: _ => 80, onClick: _window.Exit)
                     {
-                        new TextBlock(ElementEx.Center, _ => _window.Fonts.Inconsolata, _ => "Exit")
+                        new TextBlock(ElementEx.AlignX(0.5f), ElementEx.AlignY(0.5f), _ => _window.Fonts.Inconsolata, _ => "Exit")
                     }
                 }
             }.ToImmutableList();

@@ -18,19 +18,25 @@ namespace Game.Rendering
         public class Settings
         {
             public Color4 Color { get; }
-            public Vector2 Alignment { get; }
+            /// <summary>
+            /// Horizontal text alignment. 
+            /// Left aligned = 0, 
+            /// Center aligned = 0.5, 
+            /// Right aligned = 1
+            /// </summary>
+            public float AlignX { get; }
             public int LineSpacing { get; }
             public int CharSpacing { get; }
 
-            public Settings(Vector2 alignment = new Vector2(), int lineSpacing = 0, int charSpacing = 0)
-                : this(Color4.White, alignment, lineSpacing, charSpacing)
+            public Settings(float alignX = 0, int lineSpacing = 0, int charSpacing = 0)
+                : this(Color4.White, alignX, lineSpacing, charSpacing)
             {
             }
 
-            public Settings(Color4 color, Vector2 alignment = new Vector2(), int lineSpacing = 0, int charSpacing = 0)
+            public Settings(Color4 color, float alignX = 0, int lineSpacing = 0, int charSpacing = 0)
             {
                 Color = color;
-                Alignment = alignment;
+                AlignX = alignX;
                 LineSpacing = lineSpacing;
                 CharSpacing = charSpacing;
             }
@@ -98,41 +104,33 @@ namespace Game.Rendering
             return glyphs;
         }
 
-        public Model GetModel(string text, Vector2 alignment = new Vector2(), int lineSpacing = 0, int charSpacing = 0)
+        public Model GetModel(string text, float alignX = 0, int lineSpacing = 0, int charSpacing = 0)
         {
-            return GetModel(text, Color4.White, new Vector2(), lineSpacing, charSpacing);
+            return GetModel(text, Color4.White, 0, lineSpacing, charSpacing);
         }
 
-        public Model GetModel(string text, Color4 color, Vector2 alignment = new Vector2(), int lineSpacing = 0, int charSpacing = 0)
+        public Model GetModel(string text, Color4 color, float alignX = 0, int lineSpacing = 0, int charSpacing = 0)
         {
-            return GetModel(text, new Settings(color, alignment, lineSpacing, charSpacing));
+            return GetModel(text, new Settings(color, alignX, lineSpacing, charSpacing));
         }
 
         /// <summary>
         /// Creates a model to render a string with
         /// </summary>
-        /// <param name="text"></param>
-        /// <param name="alignment">Percentage of offset to apply to the text model. 
-        /// (0,0) is top-left aligned, (0.5,0.5) is centered, and (1,1) is bottom-right aligned.</param>
-        /// <param name="charSpacing"></param>
-        /// <returns></returns>
         public Model GetModel(string text, Settings settings)
         {
             Debug.Assert(!text.Contains('\r'));
             var glyphs = GetGlyphs(text, settings);
 
-            if (settings.Alignment != new Vector2())
+            if (settings.AlignX != 0)
             {
-                int yMax = glyphs.Last().Last().EndPoint.Y;
-
-                int yOffset = (int)(-yMax * settings.Alignment.Y);
                 foreach (var line in glyphs)
                 {
                     int lineWidth = line.Last()?.EndPoint.X ?? 0;
-                    int xOffset = (int)(-lineWidth * settings.Alignment.X);
+                    int xOffset = (int)(-lineWidth * settings.AlignX);
                     foreach (var data in line)
                     {
-                        data.Point += new Vector2i(xOffset, yOffset);
+                        data.Point += new Vector2i(xOffset, 0);
                     }
                 }
             }

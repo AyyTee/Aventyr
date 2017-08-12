@@ -12,12 +12,12 @@ namespace Game.Rendering
 {
     public static class Draw
     {
-        public static IRenderable Text(Font font, Vector2 position, string text, Vector2 alignment = new Vector2(), int lineSpacing = 0)
+        public static IRenderable Text(Font font, Vector2 position, string text, float alignment = 0, int lineSpacing = 0)
         {
             return new TextEntity(font, position, text, alignment, lineSpacing);
         }
 
-        public static IRenderable Text(Font font, Vector2 position, string text, Color4 color, Vector2 alignment = new Vector2(), int lineSpacing = 0)
+        public static IRenderable Text(Font font, Vector2 position, string text, Color4 color, float alignment = 0, int lineSpacing = 0)
         {
             return new TextEntity(font, position, text, color, alignment, lineSpacing);
         }
