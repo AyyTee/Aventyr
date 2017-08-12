@@ -31,12 +31,11 @@ namespace Ui
             Func<ElementArgs, Transform2> transform = null, 
             Func<ElementArgs, float> width = null,
             Func<ElementArgs, float> height = null,
-            bool hidden = false, 
+            Func<ElementArgs, bool> hidden = null, 
             bool isVertical = true, 
             float spacing = 0)
-            : base(transform, width, height)
+            : base(transform, width, height, hidden)
         {
-            Hidden = hidden;
             IsVertical = isVertical;
             Spacing = spacing;
         }
@@ -46,7 +45,7 @@ namespace Ui
             Func<ElementArgs, Transform2> transform = null,
             Func<ElementArgs, float> width = null,
             Func<ElementArgs, float> height = null,
-            bool hidden = false, 
+            Func<ElementArgs, bool> hidden = null, 
             bool isVertical = true, 
             Vector2 spacing = new Vector2())
             : this(transform, width, height, hidden, isVertical)

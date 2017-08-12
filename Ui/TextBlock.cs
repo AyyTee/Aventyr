@@ -17,7 +17,7 @@ namespace Ui
 
         public Font Font { get; set; }
 
-        Vector2 GetSize => (Vector2)(Font?.Size(Text, new Font.Settings(Color4.White)) ?? new Vector2i());
+        Vector2 GetSize => (Vector2)(Font?.GetSize(Text, new Font.Settings(Color4.White)) ?? new Vector2i());
 
         public TextBlock(Func<ElementArgs, Transform2> transform = null, Font font = null, string text = "")
             : base(transform)

@@ -29,7 +29,7 @@ namespace GameTests
         {
             var (font, fontFile) = GetFont();
 
-            var result = font.Size("Q", new Font.Settings(lineSpacing: lineSpacing, charSpacing: charSpacing));
+            var result = font.GetSize("Q", new Font.Settings(lineSpacing: lineSpacing, charSpacing: charSpacing));
             var expected = new Vector2i(fontFile.CharLookup['Q'].Width, fontFile.Info.Size);
             Assert.AreEqual(expected, result);
         }
@@ -41,7 +41,7 @@ namespace GameTests
         {
             var (font, fontFile) = GetFont();
 
-            var result = font.Size("", new Font.Settings(lineSpacing: lineSpacing, charSpacing: charSpacing));
+            var result = font.GetSize("", new Font.Settings(lineSpacing: lineSpacing, charSpacing: charSpacing));
             var expected = new Vector2i(0, fontFile.Info.Size);
             Assert.AreEqual(expected, result);
         }
@@ -51,7 +51,7 @@ namespace GameTests
         {
             var (font, fontFile) = GetFont();
 
-            var result = font.Size("\n", new Font.Settings());
+            var result = font.GetSize("\n", new Font.Settings());
             var expected = new Vector2i(0, fontFile.Info.Size * 2);
             Assert.AreEqual(expected, result);
         }
@@ -67,12 +67,12 @@ namespace GameTests
             var (font, fontFile) = GetFont();
 
             var settings = new Font.Settings(lineSpacing: lineSpacing, charSpacing: charSpacing);
-            var result = font.Size(text, settings);
+            var result = font.GetSize(text, settings);
             var model = font.GetModel(text, settings);
             // Get the size of the of model.
             var lineCount = text.Split('\n').Length;
             var expected = new Vector2i(
-                (int)Math.Round(model.GetVerts().Max(item => item.X) - model.GetVerts().Min(item => item.X)),
+                (int)Math.Round(model.GetVerts().Max(item => item.X)),
                 fontFile.Info.Size * lineCount + lineSpacing * (lineCount - 1));
             Assert.AreEqual(expected, result);
         }

@@ -9,6 +9,7 @@ using System.Linq;
 using System.IO;
 using Game.Common;
 using OpenTK.Graphics;
+using MoreLinq;
 
 namespace Game.Rendering
 {
@@ -59,15 +60,23 @@ namespace Game.Rendering
             _fontTextures = textures.ToArray();
         }
 
-        public Vector2i Size(string text, Settings settings)
+        public Vector2i GetSize(string text, Settings settings)
         {
-            Debug.Assert(!text.Contains('\r'));
-
-            var lineBreakText = text.Split('\n');
             var lineHeight = _fontFile.Info.Size + settings.LineSpacing;
 
+            var glyphs = GetGlyphs(text, settings);
+            return new Vector2i(
+                glyphs.SelectMany(item => item).MaxOrNull(item => item.EndPoint.X) ?? 0, 
+                Math.Max(0, glyphs.Length * lineHeight - settings.LineSpacing));
+        }
+
+        GlyphData[][] GetGlyphs(string text, Settings settings)
+        {
+            Debug.Assert(!text.Contains('\r'));
+            var lineBreakText = text.Split('\n');
+            var glyphs = lineBreakText.Select(textLine => new GlyphData[textLine.Length]).ToArray();
+
             var posCurrent = new Vector2i();
-            var maxX = 0;
             for (int i = 0; i < lineBreakText.Length; i++)
             {
                 for (int j = 0; j < lineBreakText[i].Length; j++)
@@ -75,31 +84,28 @@ namespace Game.Rendering
                     // Get the data for this character. If it doesn't exist we use the question mark instead.
                     var fontChar = _fontFile.CharLookup.GetOrDefault(lineBreakText[i][j]) ?? _fontFile.CharLookup['?'];
 
+                    glyphs[i][j] = new GlyphData(posCurrent, fontChar);
+
                     if (j + 1 < lineBreakText[i].Length)
                     {
                         posCurrent += new Vector2i(GetKerning(lineBreakText[i][j], lineBreakText[i][j + 1]), 0);
                     }
-                    else
-                    {
-                        maxX = Math.Max(maxX, posCurrent.X + fontChar.Width);
-                    }
-                    
+
                     posCurrent += new Vector2i(fontChar.XAdvance + settings.CharSpacing, 0);
                 }
-                posCurrent = new Vector2i(0, posCurrent.Y + lineHeight);
+                posCurrent = new Vector2i(0, posCurrent.Y + _fontFile.Info.Size + settings.LineSpacing);
             }
-            var maxY = Math.Max(0, lineBreakText.Length * lineHeight - settings.LineSpacing);
-            return new Vector2i(maxX, maxY);
+            return glyphs;
         }
 
-        public Model GetModel(string text, int lineSpacing = 0, int charSpacing = 0)
+        public Model GetModel(string text, Vector2 alignment = new Vector2(), int lineSpacing = 0, int charSpacing = 0)
         {
             return GetModel(text, Color4.White, new Vector2(), lineSpacing, charSpacing);
         }
 
-        public Model GetModel(string text, Settings settings)
+        public Model GetModel(string text, Color4 color, Vector2 alignment = new Vector2(), int lineSpacing = 0, int charSpacing = 0)
         {
-            return GetModel(text, settings.Color, settings.Alignment, settings.LineSpacing, settings.CharSpacing);
+            return GetModel(text, new Settings(color, alignment, lineSpacing, charSpacing));
         }
 
         /// <summary>
@@ -110,41 +116,20 @@ namespace Game.Rendering
         /// (0,0) is top-left aligned, (0.5,0.5) is centered, and (1,1) is bottom-right aligned.</param>
         /// <param name="charSpacing"></param>
         /// <returns></returns>
-        public Model GetModel(string text, Color4 color, Vector2 alignment, int lineSpacing = 0, int charSpacing = 0)
+        public Model GetModel(string text, Settings settings)
         {
             Debug.Assert(!text.Contains('\r'));
-            var lineBreakText = text.Split('\n');
-            var glyphData = lineBreakText.Select(textLine => new GlyphData[textLine.Length]).ToArray();
+            var glyphs = GetGlyphs(text, settings);
 
-            var posCurrent = new Vector2i();
-            for (int i = 0; i < lineBreakText.Length; i++)
+            if (settings.Alignment != new Vector2())
             {
-                for (int j = 0; j < lineBreakText[i].Length; j++)
-                {
-                    // Get the data for this character. If it doesn't exist we use the question mark instead.
-                    var fontChar = _fontFile.CharLookup.GetOrDefault(lineBreakText[i][j]) ?? _fontFile.CharLookup['?'];
+                int yMax = glyphs.Last().Last().EndPoint.Y;
 
-                    glyphData[i][j] = new GlyphData(posCurrent, fontChar);
-
-                    if (j + 1 < lineBreakText[i].Length)
-                    {
-                        posCurrent += new Vector2i(GetKerning(lineBreakText[i][j], lineBreakText[i][j + 1]), 0);
-                    }
-
-                    posCurrent += new Vector2i(fontChar.XAdvance + charSpacing, 0);
-                }
-                posCurrent = new Vector2i(0, posCurrent.Y + _fontFile.Info.Size + lineSpacing);
-            }
-
-            if (alignment != new Vector2())
-            {
-                int yMax = glyphData.Last().Last().EndPoint.Y;
-
-                int yOffset = (int)(-yMax * alignment.Y);
-                foreach (var line in glyphData)
+                int yOffset = (int)(-yMax * settings.Alignment.Y);
+                foreach (var line in glyphs)
                 {
                     int lineWidth = line.Last()?.EndPoint.X ?? 0;
-                    int xOffset = (int)(-lineWidth * alignment.X);
+                    int xOffset = (int)(-lineWidth * settings.Alignment.X);
                     foreach (var data in line)
                     {
                         data.Point += new Vector2i(xOffset, yOffset);
@@ -152,7 +137,7 @@ namespace Game.Rendering
                 }
             }
 
-            var vertices = GetVertices(glyphData.SelectMany(item => item), color);
+            var vertices = GetVertices(glyphs.SelectMany(item => item), settings.Color);
             var textMesh = new Mesh(
                 vertices, 
                 GetIndices(vertices.Count / _verticesPerGlyph).ToList());
