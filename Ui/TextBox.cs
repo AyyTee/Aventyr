@@ -27,13 +27,14 @@ namespace Ui
         public bool Selected { get; private set; }
 
         public TextBox(
-            Func<ElementArgs, Transform2> transform = null, 
-            Func<ElementArgs, float> width = null, 
-            Func<ElementArgs, float> height = null, 
+            ElementFunc<Transform2> transform = null,
+            ElementFunc<float> width = null, 
+            ElementFunc<float> height = null, 
             Font font = null, 
             Func<string> getText = null, 
-            Action<string> setText = null)
-            : base(transform, width, height)
+            Action<string> setText = null,
+            ElementFunc<bool> hidden = null)
+            : base(transform, width, height, hidden)
         {
             Font = font;
 
@@ -43,13 +44,14 @@ namespace Ui
 
         public TextBox(
             out TextBox id, 
-            Func<ElementArgs, Transform2> transform = null, 
-            Func<ElementArgs, float> width = null, 
-            Func<ElementArgs, float> height = null, 
+            ElementFunc<Transform2> transform = null,
+            ElementFunc<float> width = null, 
+            ElementFunc<float> height = null, 
             Font font = null, 
             Func<string> getText = null, 
-            Action<string> setText = null)
-            : this(transform, width, height, font, getText, setText)
+            Action<string> setText = null,
+            ElementFunc<bool> hidden = null)
+            : this(transform, width, height, font, getText, setText, hidden)
         {
             id = this;
         }
@@ -67,7 +69,7 @@ namespace Ui
             }
         }
 
-        public List<Model> GetModels()
+        public override List<Model> GetModels()
         {
             var models = new List<Model>();
             var margin = new Vector2(2, 2);
@@ -81,7 +83,7 @@ namespace Ui
             return models;
         }
 
-        public bool IsInside(Vector2 localPoint)
+        public override bool IsInside(Vector2 localPoint)
         {
             return MathEx.PointInRectangle(new Vector2(), this.GetSize(), localPoint);
         }

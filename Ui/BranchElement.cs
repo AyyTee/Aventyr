@@ -16,10 +16,10 @@ namespace Ui
         public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 
         public NodeElement(
-            Func<ElementArgs, Transform2> transform = null, 
-            Func<ElementArgs, float> width = null, 
-            Func<ElementArgs, float> height = null, 
-            Func<ElementArgs, bool> hidden = null)
+            ElementFunc<Transform2> transform = null,
+            ElementFunc<float> width = null, 
+            ElementFunc<float> height = null, 
+            ElementFunc<bool> hidden = null)
             : base(transform, width, height, hidden)
         {
         }

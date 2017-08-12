@@ -24,13 +24,15 @@ namespace TimeLoopInc.Editor
         readonly UiController _menu;
         public GridCamera Camera { get; }
         readonly Controller _controller;
-        readonly Frame _editor, _endGame;
         public MouseButton PlaceButton { get; } = MouseButton.Right;
         public MouseButton SelectButton { get; } = MouseButton.Left;
         public Key DeleteButton { get; } = Key.Delete;
         SceneController _sceneController;
         public SceneBuilder Scene => _sceneChanges[_sceneChangeCurrent];
         bool _isPlaying => _sceneController != null;
+        bool _isSaving;
+        DateTime _saveStart;
+        public string SaveName { get; set; } = "";
         Vector2 _mousePosition;
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
@@ -90,11 +92,19 @@ namespace TimeLoopInc.Editor
                 {
                     new Button(width: _ => 200, onClick: () => _sceneController = null)
                     {
-                        new TextBlock(_ => new Transform2(new Vector2(10, 10)), _ => Window.Fonts.Inconsolata, _ => "Return to editor")
+                        new TextBlock(ElementEx.Center,  _ => Window.Fonts.Inconsolata, _ => "Return to editor")
                     },
                     new Button(width: _ => 200, onClick: () => _sceneController.SetInput(_sceneController.Input.Clear()))
                     {
-                        new TextBlock(_ => new Transform2(new Vector2(10, 10)), _ => Window.Fonts.Inconsolata, _ => "Restart")
+                        new TextBlock(ElementEx.Center,  _ => Window.Fonts.Inconsolata, _ => "Restart")
+                    }
+                },
+                new Frame(ElementEx.Center, ElementEx.ChildWidth, ElementEx.ChildHeight, _ => !_isSaving)
+                {
+                    new StackFrame(height: _ => 100, isVertical: false, spacing: _ => 20)
+                    {
+                        new TextBlock(font: _ => Window.Fonts.Inconsolata, text: _ => "File Name:"),
+                        new TextBox(width: _ => 400, font: Window.Fonts.Inconsolata, getText: () => SaveName, setText: text => SaveName = text)
                     }
                 }
             }.ToImmutableList();
@@ -113,10 +123,12 @@ namespace TimeLoopInc.Editor
 
         void Save()
         {
-            var filepath = Path.Combine(LevelPath, "Saved.xml");
-            Directory.CreateDirectory(LevelPath);
+            _isSaving = true;
+            _saveStart = DateTime.UtcNow;
+            //var filepath = Path.Combine(LevelPath, "Saved.xml");
+            //Directory.CreateDirectory(LevelPath);
 
-            File.WriteAllText(filepath, Serializer.Serialize(Scene));
+            //File.WriteAllText(filepath, Serializer.Serialize(Scene));
         }
 
         void Load()

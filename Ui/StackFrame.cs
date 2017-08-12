@@ -18,15 +18,15 @@ namespace Ui
 
         public bool IsVertical { get; }
 
-        public Func<ElementArgs, float> SpacingFunc { get; }
+        public ElementFunc<float> SpacingFunc { get; }
 
         public StackFrame(
-            Func<ElementArgs, Transform2> transform = null, 
-            Func<ElementArgs, float> width = null,
-            Func<ElementArgs, float> height = null,
-            Func<ElementArgs, bool> hidden = null, 
+            ElementFunc<Transform2> transform = null,
+            ElementFunc<float> width = null,
+            ElementFunc<float> height = null,
+            ElementFunc<bool> hidden = null, 
             bool isVertical = true,
-            Func<ElementArgs, float> spacing = null)
+            ElementFunc<float> spacing = null)
             : base(transform, width, height, hidden)
         {
             IsVertical = isVertical;
@@ -56,12 +56,12 @@ namespace Ui
 
         public StackFrame(
             out StackFrame id, 
-            Func<ElementArgs, Transform2> transform = null,
-            Func<ElementArgs, float> width = null,
-            Func<ElementArgs, float> height = null,
-            Func<ElementArgs, bool> hidden = null, 
+            ElementFunc<Transform2> transform = null,
+            ElementFunc<float> width = null,
+            ElementFunc<float> height = null,
+            ElementFunc<bool> hidden = null, 
             bool isVertical = true,
-            Func<ElementArgs, float> spacing = null)
+            ElementFunc<float> spacing = null)
             : this(transform, width, height, hidden, isVertical, spacing)
         {
             id = this;

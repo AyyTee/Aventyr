@@ -27,7 +27,13 @@ namespace Ui
     public static class ElementEx
     {
         public static Transform2 Center(ElementArgs args) => new Transform2((args.Parent.GetSize() - args.Self.GetSize()) / 2);
+        public static float ChildWidth(ElementArgs args) => 
+            args.Self.MaxOrNull(child => child.GetTransform().Position.X + child.GetWidth()) ?? 0;
+        public static float ChildHeight(ElementArgs args) =>
+            args.Self.MaxOrNull(child => child.GetTransform().Position.Y + child.GetHeight()) ?? 0;
 
         public static Vector2 GetSize(this IElement element) => new Vector2(element.GetWidth(), element.GetHeight());
     }
+
+    public delegate T ElementFunc<T>(ElementArgs args);
 }

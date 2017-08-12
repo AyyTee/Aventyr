@@ -16,8 +16,8 @@ namespace Ui
         public Func<ElementArgs, string> TextFunc { get; protected set; }
         public Func<ElementArgs, Font> FontFunc { get; protected set; }
 
-        public TextBlock(Func<ElementArgs, Transform2> transform = null, Func<ElementArgs, Font> font = null, Func<ElementArgs, string> text = null)
-            : base(transform)
+        public TextBlock(ElementFunc<Transform2> transform = null, Func<ElementArgs, Font> font = null, Func<ElementArgs, string> text = null, ElementFunc<bool> hidden = null)
+            : base(transform: transform, hidden: hidden)
         {
             WidthFunc = _ => GetSize().X;
             HeightFunc = _ => GetSize().Y;
@@ -26,8 +26,8 @@ namespace Ui
             TextFunc = text ?? (_ => "");
         }
 
-        public TextBlock(out TextBlock id, Func<ElementArgs, Transform2> transform = null, Func<ElementArgs, Font> font = null, Func<ElementArgs, string> text = null)
-            : this(transform, font, text)
+        public TextBlock(out TextBlock id, ElementFunc<Transform2> transform = null, Func<ElementArgs, Font> font = null, Func<ElementArgs, string> text = null, ElementFunc<bool> hidden = null)
+            : this(transform, font, text, hidden)
         {
             id = this;
         }

@@ -107,6 +107,10 @@
     <None Include="OpenTK.dll.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Aventyr\Aventyr.csproj">
+      <Project>{db003817-7a1c-494d-b7fa-32917367b328}</Project>
+      <Name>Aventyr</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EditorLogic\EditorLogic.csproj">
       <Project>{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}</Project>
       <Name>EditorLogic</Name>

@@ -15,16 +15,16 @@ namespace Ui
     {
         public ElementArgs ElementArgs { get; set; }
 
-        public Func<ElementArgs, Transform2> TransformFunc { get; protected set; }
-        public Func<ElementArgs, float> WidthFunc { get; protected set; }
-        public Func<ElementArgs, float> HeightFunc { get; protected set; }
-        public Func<ElementArgs, bool> HiddenFunc { get; protected set; }
+        public ElementFunc<Transform2> TransformFunc { get; protected set; }
+        public ElementFunc<float> WidthFunc { get; protected set; }
+        public ElementFunc<float> HeightFunc { get; protected set; }
+        public ElementFunc<bool> HiddenFunc { get; protected set; }
 
         public Element(
-            Func<ElementArgs, Transform2> transform = null,
-            Func<ElementArgs, float> width = null,
-            Func<ElementArgs, float> height = null,
-            Func<ElementArgs, bool> hidden = null)
+            ElementFunc<Transform2> transform = null,
+            ElementFunc<float> width = null,
+            ElementFunc<float> height = null,
+            ElementFunc<bool> hidden = null)
         {
             ElementArgs = new ElementArgs(null, (IElement)this);
 
@@ -40,6 +40,6 @@ namespace Ui
         public bool GetHidden() => HiddenFunc(ElementArgs);
 
         public virtual bool IsInside(Vector2 localPoint) => false;
-        public virtual List<Model> GetModels() => Draw.Rectangle(new Vector2(), new Vector2(GetWidth(), GetHeight()), new Color4(0f, 0f, 0f, 0.3f)).GetModels();
+        public virtual List<Model> GetModels() => new List<Model>();//Draw.Rectangle(new Vector2(), new Vector2(GetWidth(), GetHeight()), new Color4(0f, 0f, 0f, 0.3f)).GetModels();
     }
 }

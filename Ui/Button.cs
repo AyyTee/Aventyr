@@ -16,7 +16,7 @@ namespace Ui
     {
         public Action OnClick { get; }
 
-        public Button(Func<ElementArgs, Transform2> transform = null, Func<ElementArgs, float> width = null, Func<ElementArgs, float> height = null, Action onClick = null)
+        public Button(ElementFunc<Transform2> transform = null, ElementFunc<float> width = null, ElementFunc<float> height = null, Action onClick = null)
             : base(transform, width, height)
         {
             if (onClick != null)
@@ -25,7 +25,7 @@ namespace Ui
             }
         }
 
-        public Button(out Button id, Func<ElementArgs, Transform2> transform = null, Func<ElementArgs, float> width = null, Func<ElementArgs, float> height = null, Action onClick = null)
+        public Button(out Button id, ElementFunc<Transform2> transform = null, ElementFunc<float> width = null, ElementFunc<float> height = null, Action onClick = null)
             : this(transform, width, height, onClick)
         {
             id = this;
