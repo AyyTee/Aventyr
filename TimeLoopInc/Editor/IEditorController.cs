@@ -11,6 +11,8 @@ namespace TimeLoopInc.Editor
 {
     public interface IEditorController
     {
+        string LevelName { get; set; }
+        string SavePath { get; }
         IVirtualWindow Window { get; }
         GridCamera Camera { get; }
         SceneBuilder Scene { get; }

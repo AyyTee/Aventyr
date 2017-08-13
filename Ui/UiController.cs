@@ -50,7 +50,10 @@ namespace Ui
                     switch (Hover)
                     {
                         case Button button:
-                            button.OnClick.Invoke();
+                            if (button.GetEnabled())
+                            {
+                                button.OnClick.Invoke();
+                            }
                             break;
                         case TextBox textBox:
                             SetSelected(textBox);

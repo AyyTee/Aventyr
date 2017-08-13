@@ -19,7 +19,7 @@ namespace TimeLoopInc.Editor
     {
         enum ToolType { Player, Block, Wall, Portal, Link, Exit }
 
-        public static string LevelPath => "Levels";
+        public string SavePath => "Levels";
 
         public IVirtualWindow Window { get; }
         readonly UiController _menu;
@@ -31,9 +31,7 @@ namespace TimeLoopInc.Editor
         SceneController _sceneController;
         public SceneBuilder Scene => _sceneChanges[_sceneChangeCurrent];
         bool _isPlaying => _sceneController != null;
-        bool _isSaving;
-        DateTime _saveStart;
-        public string SaveName { get; set; } = "Level.txt";
+        public string LevelName { get; set; } = "Level";
         Vector2 _mousePosition;
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
@@ -62,23 +60,25 @@ namespace TimeLoopInc.Editor
 
             _menu = new UiController(Window);
 
+            SaveDialogue saveDialogue = null;
+
             _menu.Root.Children = new IElement[]
             {
                 new Frame(hidden: _ => _isPlaying)
                 {
                     new StackFrame(width: _ => 200, spacing: _ => 5)
                     {
-                        new Button(height: _ => 90, onClick: ShowSaveDialogue)
+                        new Button(height: _ => 90, onClick: () => saveDialogue.Show())
                         {
-                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
+                            new Text(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
                         },
                         new Button(height: _ => 90, onClick: Load)
                         {
-                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
+                            new Text(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
                         },
                         new Button(height: _ => 90, onClick: Play)
                         {
-                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
+                            new Text(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
                         }
                     },
                     new TextBox(
@@ -92,48 +92,19 @@ namespace TimeLoopInc.Editor
                 {
                     new Button(width: _ => 200, onClick: () => _sceneController = null)
                     {
-                        new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Return to editor")
+                        new Text(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Return to editor")
                     },
                     new Button(width: _ => 200, onClick: () => _sceneController.SetInput(_sceneController.Input.Clear()))
                     {
-                        new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Restart")
+                        new Text(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Restart")
                     }
                 },
-                new Frame(AlignX(0.5f), FallIn, ChildWidth(), ChildHeight(), _ => !_isSaving)
-                {
-                    new StackFrame(height: _ => 50, isVertical: false, spacing: _ => 20)
-                    {
-                        new TextBlock(y: AlignY(0.5f), font: _ => Window.Fonts.Inconsolata, text: _ => "File Name:"),
-                        new TextBox(
-                            y: AlignY(0.5f), 
-                            width: _ => 400, 
-                            font: _ => Window.Fonts.Inconsolata,
-                            getText: () => SaveName, 
-                            setText: text => SaveName = text),
-                        new Button(width: _ => 100, onClick: Save)
-                        {
-                            new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Save")
-                        },
-                        new Button(width: _ => 100, onClick: () => _isSaving = false)
-                        {
-                            new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Cancel")
-                        }
-                    }
-                }
+                new Text(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName),
+                new SaveDialogue(out saveDialogue, this)
             }.ToImmutableList();
 
             Camera = new GridCamera(new Transform2(), (float)Window.CanvasSize.XRatio);
             Camera.WorldTransform = Camera.WorldTransform.WithSize(15);
-        }
-
-        float FallIn(ElementArgs args)
-        {
-            var animationLength = TimeSpan.FromSeconds(0.2);
-            var height = args.Self.GetHeight();
-            var startValue = -height;
-            var endValue = (args.Parent.GetHeight() - height) / 2;
-            var t = (float)MathHelper.Clamp((DateTime.UtcNow - _saveStart).TotalSeconds / animationLength.TotalSeconds, 0, 1);
-            return (endValue - startValue) * t + startValue;
         }
 
         void Play()
@@ -144,23 +115,9 @@ namespace TimeLoopInc.Editor
             }
         }
 
-        void ShowSaveDialogue()
-        {
-            _isSaving = true;
-            _saveStart = DateTime.UtcNow;
-        }
-
-        void Save()
-        {
-            var filepath = Path.Combine(LevelPath, SaveName);
-            Directory.CreateDirectory(LevelPath);
-
-            File.WriteAllText(filepath, Serializer.Serialize(Scene));
-        }
-
         void Load()
         {
-            var filepath = Path.Combine(LevelPath, "Saved.xml");
+            var filepath = Path.Combine(SavePath, "Saved.xml");
             if (File.Exists(filepath))
             {
                 _sceneChanges = new[]

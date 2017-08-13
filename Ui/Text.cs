@@ -11,12 +11,12 @@ using OpenTK.Graphics;
 
 namespace Ui
 {
-    public class TextBlock : Element, IElement
+    public class Text : Element, IElement
     {
         public ElementFunc<string> TextFunc { get; protected set; }
         public ElementFunc<Font> FontFunc { get; protected set; }
 
-        public TextBlock(
+        public Text(
             ElementFunc<float> x = null, 
             ElementFunc<float> y = null, 
             ElementFunc<Font> font = null, 
@@ -31,7 +31,7 @@ namespace Ui
             TextFunc = text ?? (_ => "");
         }
 
-        public TextBlock(out TextBlock id, ElementFunc<float> x = null, ElementFunc<float> y = null, ElementFunc<Font> font = null, ElementFunc<string> text = null, ElementFunc<bool> hidden = null)
+        public Text(out Text id, ElementFunc<float> x = null, ElementFunc<float> y = null, ElementFunc<Font> font = null, ElementFunc<string> text = null, ElementFunc<bool> hidden = null)
             : this(x, y, font, text, hidden)
         {
             id = this;
