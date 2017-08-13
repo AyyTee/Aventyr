@@ -73,28 +73,30 @@ namespace Ui
 
             if (Selected != null)
             {
-                Selected.DisplayText = ApplyBackspaces(Selected.DisplayText + _window.KeyString);
+                var text = Selected.GetText();
+                var newText = ApplyBackspaces(text + _window.KeyString);
+                
                 switch (Selected.InputType)
                 {
                     case TextBox.Input.Text:
                         break;
                     case TextBox.Input.Numbers:
-                        Selected.DisplayText = Selected.DisplayText
+                        newText = newText
                             .Where(item => char.IsDigit(item) || item == '-')
                             .CharsToString();
                         break;
+                }
+
+                if (text != newText)
+                {
+                    Selected.SetText(newText);
                 }
             }
         }
 
         public void SetSelected(TextBox selected)
         {
-            if (selected != Selected)
-            {
-                Selected?.SetSelected(false);
-                Selected = selected;
-                Selected?.SetSelected(true);
-            }
+            Selected = selected;
         }
 
         public static string ApplyBackspaces(string stringWithBackspaces)

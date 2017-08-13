@@ -13,8 +13,8 @@ namespace Ui
 {
     public class Text : Element, IElement
     {
-        public ElementFunc<string> TextFunc { get; protected set; }
-        public ElementFunc<Font> FontFunc { get; protected set; }
+        public ElementFunc<string> TextFunc { get; }
+        public ElementFunc<Font> FontFunc { get; }
 
         public Text(
             ElementFunc<float> x = null, 

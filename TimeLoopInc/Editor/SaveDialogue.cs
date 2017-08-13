@@ -8,6 +8,7 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Ui;
 using static Ui.ElementEx;
@@ -43,7 +44,8 @@ namespace TimeLoopInc.Editor
                                 width: _ => 400,
                                 font: _ => font,
                                 getText: () => _editor.LevelName,
-                                setText: text => _editor.LevelName = text),
+                                setText: text => _editor.LevelName = text,
+                                backgroundColor: args => ValidName(((TextBox)args.Self).GetText()) ? Color4.White : Color4.Red),
                             new Button(width: _ => 100, onClick: Save)
                             {
                                 new Text(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Save")
@@ -80,6 +82,11 @@ namespace TimeLoopInc.Editor
                 _isSaving = false;
                 _saveStart = DateTime.UtcNow;
             }
+        }
+
+        bool ValidName(string fileName)
+        {
+            return Regex.IsMatch(fileName, @"^[\w]+$");
         }
 
         void Save()

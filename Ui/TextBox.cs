@@ -17,13 +17,12 @@ namespace Ui
         public enum Input { Text, Numbers }
 
         public ElementFunc<Font> FontFunc { get; }
+        public ElementFunc<Color4> BackgroundColorFunc { get; } 
         public Func<string> GetText { get; }
         public Action<string> SetText { get; }
-        public string DisplayText { get; set; } = "";
         public Input InputType { get; set; } = Input.Numbers;
         public int CursorStart { get; set; }
         public int CursorEnd { get; set; }
-        public bool Selected { get; private set; }
 
         public TextBox(
             ElementFunc<float> x = null,
@@ -33,45 +32,37 @@ namespace Ui
             ElementFunc<Font> font = null, 
             Func<string> getText = null, 
             Action<string> setText = null,
+            ElementFunc<Color4> backgroundColor = null,
             ElementFunc<bool> hidden = null)
             : base(x, y, width, height, hidden)
         {
             FontFunc = font;
 
-            GetText = getText ?? (() => DisplayText);
-            SetText = setText ?? (newText => DisplayText = newText);
+            var defaultText = "";
+            GetText = getText ?? (() => defaultText);
+            SetText = setText ?? (newText => defaultText = newText);
+
+            BackgroundColorFunc = backgroundColor ?? (_ => Color4.White);
         }
 
         public TextBox(
             out TextBox id,
             ElementFunc<float> x = null,
             ElementFunc<float> y = null,
-            ElementFunc<Transform2> transform = null,
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null,
             ElementFunc<Font> font = null, 
             Func<string> getText = null, 
             Action<string> setText = null,
+            ElementFunc<Color4> backgroundColor = null,
             ElementFunc<bool> hidden = null)
-            : this(x, y, width, height, font, getText, setText, hidden)
+            : this(x, y, width, height, font, getText, setText, backgroundColor, hidden)
         {
             id = this;
         }
 
         public Font GetFont() => FontFunc(ElementArgs);
-
-        public void SetSelected(bool selected)
-        {
-            Selected = selected;
-            if (selected)
-            {
-                DisplayText = GetText();
-            }
-            else if (!selected && DisplayText != GetText())
-            {
-                SetText?.Invoke(DisplayText);
-            }
-        }
+        public Color4 GetBackgroundColor() => BackgroundColorFunc(ElementArgs);
 
         public override List<Model> GetModels()
         {
@@ -81,9 +72,9 @@ namespace Ui
             if (size != new Vector2())
             {
                 models.AddRange(Draw.Rectangle(new Vector2(), size, Color4.Brown).GetModels());
-                models.AddRange(Draw.Rectangle(margin, size - margin, Color4.White).GetModels());
+                models.AddRange(Draw.Rectangle(margin, size - margin, GetBackgroundColor()).GetModels());
                 var font = GetFont();
-                var text = Selected ? DisplayText : GetText();
+                var text = GetText();
                 var textModel = font.GetModel(text, Color4.Black);
                 textModel.Transform.Position += new Vector3(
                     margin.X, 

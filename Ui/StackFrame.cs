@@ -74,6 +74,7 @@ namespace Ui
         public void Add(IElement element)
         {
             Children = Children.Add(element);
+            element.ElementArgs = new ElementArgs(this, element);
         }
 
         public float GetSpacing() => SpacingFunc(ElementArgs);
