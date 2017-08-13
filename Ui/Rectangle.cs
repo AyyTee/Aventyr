@@ -40,6 +40,7 @@ namespace Ui
             id = this;
         }
 
+        [DetectLoopAspect]
         public Color4 GetColor() => ColorFunc(ElementArgs);
 
         public override List<Model> GetModels()

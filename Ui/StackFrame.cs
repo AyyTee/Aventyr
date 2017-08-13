@@ -15,6 +15,7 @@ namespace Ui
     public class StackFrame : Element, IElement
     {
         public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
+        ImmutableList<IElement> _cachedChildren;
 
         public bool IsVertical { get; }
 
@@ -74,65 +75,92 @@ namespace Ui
         public void Add(IElement element)
         {
             Children = Children.Add(element);
-            element.ElementArgs = new ElementArgs(this, element);
+            _cachedChildren = null;
         }
 
+        [DetectLoopAspect]
         public float GetSpacing() => SpacingFunc(ElementArgs);
 
-        List<IElement> GetSubFrames()
+        ImmutableList<IElement> GetSubFrames()
         {
+            if (_cachedChildren != null)
+            {
+                return _cachedChildren;
+            }
+
             var subFrames = new List<IElement>();
-            if (!Children.Any())
+            if (Children.Any())
             {
-                return subFrames;
-            }
-
-            Frame firstFrame;
-            if (IsVertical)
-            {
-                firstFrame = new Frame(
-                    width: args => args.Parent.GetWidth(), 
-                    height: _ => Children[0].GetHeight());
-            }
-            else
-            {
-                firstFrame = new Frame(
-                    width: _ => Children[0].GetWidth(), 
-                    height: args => args.Parent.GetHeight());
-            }
-            subFrames.Add(firstFrame);
-            firstFrame.Add(Children[0]);
-
-            foreach (var child in Children.Skip(1))
-            {
-                Frame frame;
-                var previousFrame = subFrames.Last();
+                ChildFrame firstFrame;
                 if (IsVertical)
                 {
-                    frame = new Frame(
-                        _ => 0,
-                        args => previousFrame.GetY() + previousFrame.GetHeight() + ((StackFrame)args.Parent).GetSpacing(),
-                        args => args.Parent.GetWidth(),
-                        ElementEx.ChildHeight());
+                    firstFrame = new ChildFrame(
+                        Children[0],
+                        width: args => args.Parent.GetWidth(),
+                        height: args => args.Self.First().GetHeight());
                 }
                 else
                 {
-                    frame = new Frame(
-                        args => previousFrame.GetX() + previousFrame.GetWidth() + ((StackFrame)args.Parent).GetSpacing(),
-                        _ => 0,
-                        ElementEx.ChildWidth(),
-                        args => args.Parent.GetHeight());
+                    firstFrame = new ChildFrame(
+                        Children[0],
+                        width: args => args.Self.First().GetWidth(),
+                        height: args => args.Parent.GetHeight());
                 }
-                frame.Add(child);
-                subFrames.Add(frame);
+                subFrames.Add(firstFrame);
+
+                foreach (var child in Children.Skip(1))
+                {
+                    ChildFrame frame;
+                    var previousFrame = subFrames.Last();
+                    if (IsVertical)
+                    {
+                        frame = new ChildFrame(
+                            child,
+                            _ => 0,
+                            args => previousFrame.GetY() + previousFrame.GetHeight() + ((StackFrame)args.Parent).GetSpacing(),
+                            args => args.Parent.GetWidth(),
+                            _ => child.GetHeight());
+                    }
+                    else
+                    {
+                        frame = new ChildFrame(
+                            child,
+                            args => previousFrame.GetX() + previousFrame.GetWidth() + ((StackFrame)args.Parent).GetSpacing(),
+                            _ => 0,
+                            _ => child.GetWidth(),
+                            args => args.Parent.GetHeight());
+                    }
+                    subFrames.Add(frame);
+                }
+
+                foreach (var frame in subFrames)
+                {
+                    frame.ElementArgs = new ElementArgs(this, frame);
+                    frame.First().ElementArgs = new ElementArgs(frame, frame.First());
+                }
             }
 
-            foreach (var frame in subFrames)
+            _cachedChildren = subFrames.ToImmutableList();
+            return _cachedChildren;
+        }
+
+        class ChildFrame : Element, IElement
+        {
+            public IElement Child { get; }
+
+            public ChildFrame(
+                IElement child,
+                ElementFunc<float> x = null,
+                ElementFunc<float> y = null,
+                ElementFunc<float> width = null,
+                ElementFunc<float> height = null)
+                : base(x, y, width, height)
             {
-                frame.ElementArgs = new ElementArgs(this, frame);
+                Child = child;
             }
 
-            return subFrames;
+            public IEnumerator<IElement> GetEnumerator() => new List<IElement> { Child }.GetEnumerator();
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
     }
 }

@@ -97,7 +97,7 @@
     <Compile Include="GameTests\Vector2iTests.cs" />
     <Compile Include="GameTests\VertexTests.cs" />
     <Compile Include="TimeLoopIncTests\LinkToolTests.cs" />
-    <Compile Include="Ui\StackFrameTests.cs" />
+    <Compile Include="UiTests\StackFrameTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -57,12 +57,12 @@ namespace TimeLoopInc
         public void StartGame()
         {
             var levels = new[]
-			{
-				CreateLevel0(),
-				CreateLevel1()
-			};
+            {
+                CreateLevel0(),
+                CreateLevel1()
+            };
             _sceneController = new SceneController(_window, levels);
-			_menuState = MenuState.InGame;
+            _menuState = MenuState.InGame;
         }
 
         public void StartLevelEditor()

@@ -28,12 +28,25 @@ namespace Ui
 
     public static class ElementEx
     {
-        public static ElementFunc<float> AlignX(float t) => 
+        public static ElementFunc<float> AlignX(float t) =>
             args => (args.Parent.GetWidth() - args.Self.GetWidth()) * t;
-        public static ElementFunc<float> AlignY(float t) => 
+        public static ElementFunc<float> AlignY(float t) =>
             args => (args.Parent.GetHeight() - args.Self.GetHeight()) * t;
-        public static ElementFunc<float> ChildWidth() => 
-            args => args.Self.MaxOrNull(child => child.GetX() + child.GetWidth()) ?? 0;
+        public static ElementFunc<float> ChildWidth() =>
+            args =>
+            {
+                var max = 0f;
+                foreach (var child in args.Self)
+                {
+                    var width = child.GetWidth();
+                    if (width > max)
+                    {
+                        max = width;
+                    }
+                }
+                return max;
+                //args.Self.MaxOrNull(child => child.GetX() + child.GetWidth()) ?? 0
+            };
         public static ElementFunc<float> ChildHeight() => 
             args => args.Self.MaxOrNull(child => child.GetY() + child.GetHeight()) ?? 0;
 

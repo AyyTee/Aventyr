@@ -37,10 +37,15 @@ namespace Ui
             HiddenFunc = hidden ?? (_ => false);
         }
 
+        [DetectLoopAspect]
         public float GetX() => XFunc(ElementArgs);
+        [DetectLoopAspect]
         public float GetY() => YFunc(ElementArgs);
+        [DetectLoopAspect]
         public float GetWidth() => WidthFunc(ElementArgs);
+        [DetectLoopAspect]
         public float GetHeight() => HeightFunc(ElementArgs);
+        [DetectLoopAspect]
         public bool GetHidden() => HiddenFunc(ElementArgs);
 
         public virtual bool IsInside(Vector2 localPoint) => false;

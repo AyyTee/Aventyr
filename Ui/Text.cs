@@ -37,7 +37,9 @@ namespace Ui
             id = this;
         }
 
+        [DetectLoopAspect]
         public string GetText() => TextFunc(ElementArgs);
+        [DetectLoopAspect]
         public Font GetFont() => FontFunc(ElementArgs);
 
         Vector2 GetSize() => (Vector2)(GetFont()?.GetSize(GetText(), new Font.Settings(Color4.White)) ?? new Vector2i());
