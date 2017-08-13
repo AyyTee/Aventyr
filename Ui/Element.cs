@@ -15,11 +15,11 @@ namespace Ui
     {
         public ElementArgs ElementArgs { get; set; }
 
-        protected ElementFunc<float> XFunc { get; set; }
-        protected ElementFunc<float> YFunc { get; set; }
-        protected ElementFunc<float> WidthFunc { get; set; }
-        protected ElementFunc<float> HeightFunc { get; set; }
-        protected ElementFunc<bool> HiddenFunc { get; set; }
+        internal ElementFunc<float> XFunc { get; set; }
+        internal ElementFunc<float> YFunc { get; set; }
+        internal ElementFunc<float> WidthFunc { get; set; }
+        internal ElementFunc<float> HeightFunc { get; set; }
+        internal ElementFunc<bool> HiddenFunc { get; set; }
 
         public Element(
             ElementFunc<float> x = null,

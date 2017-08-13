@@ -53,6 +53,8 @@ namespace Ui
         public static Vector2 GetPosition(this IElement element) => new Vector2(element.GetX(), element.GetY());
         public static Vector2 GetSize(this IElement element) => new Vector2(element.GetWidth(), element.GetHeight());
         public static Transform2 GetTransform(this IElement element) => new Transform2(element.GetPosition());
+        public static float GetBottom(this IElement element) => element.GetY() + element.GetHeight();
+        public static float GetRight(this IElement element) => element.GetX() + element.GetWidth();
     }
 
     public delegate T ElementFunc<T>(ElementArgs args);
