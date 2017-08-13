@@ -66,7 +66,7 @@ namespace TimeLoopInc.Editor
             {
                 new Frame(hidden: _ => _isPlaying)
                 {
-                    new StackFrame(width: _ => 200, spacing: _ => 5)
+                    new StackFrame(thickness: _ => 200, spacing: _ => 5)
                     {
                         new Button(height: _ => 90, onClick: () => saveDialogue.Show())
                         {
@@ -88,7 +88,7 @@ namespace TimeLoopInc.Editor
                         TimeOffsetGetText,
                         TimeOffsetSetText)
                 },
-                new StackFrame(height: _ => 90, spacing: _ => 5, hidden: _ => !_isPlaying, isVertical: false)
+                new StackFrame(thickness: _ => 90, spacing: _ => 5, hidden: _ => !_isPlaying, isVertical: false)
                 {
                     new Button(width: _ => 200, onClick: () => _sceneController = null)
                     {

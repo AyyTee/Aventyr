@@ -33,7 +33,7 @@ namespace TimeLoopInc
             _menu = new UiController(_window);
             _menu.Root.Children = new IElement[]
             {
-                new StackFrame(width: _ => 200, spacing: _ => 5)
+                new StackFrame(thickness: _ => 200, spacing: _ => 5)
                 {
                     new Button(height: _ => 80, onClick: StartGame)
                     {

@@ -27,7 +27,7 @@ namespace Ui
 
         public IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public void Add(IElement element)
+        public virtual void Add(IElement element)
         {
             Children = Children.Add(element);
             element.ElementArgs = new ElementArgs(this, element);

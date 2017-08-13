@@ -16,9 +16,8 @@ namespace Ui
     /// Stacks children elements either vertically or horizontally. 
     /// Note that this class overrides the x or y function of its children (based on whether it's horizontal or vertical respectively).
     /// </summary>
-    public class StackFrame : Element, IElement
+    public class StackFrame : NodeElement, IElement
     {
-        public ImmutableList<IElement> Children { get; set; } = new List<IElement>().ToImmutableList();
 
         public bool IsVertical { get; }
 
@@ -27,18 +26,18 @@ namespace Ui
         public StackFrame(
             ElementFunc<float> x = null, 
             ElementFunc<float> y = null,
-            ElementFunc<float> width = null,
-            ElementFunc<float> height = null,
+            ElementFunc<float> thickness = null,
             ElementFunc<bool> hidden = null, 
             bool isVertical = true,
             ElementFunc<float> spacing = null)
-            : base(x, y, width, height, hidden)
+            : base(x, y, hidden: hidden)
         {
             IsVertical = isVertical;
             SpacingFunc = spacing ?? (_ => 0);
 
-            if (IsVertical && height == null)
+            if (IsVertical)
             {
+                WidthFunc = thickness ?? (args => args.Parent.GetWidth());
                 HeightFunc = _ =>
                 {
                     var last = this.LastOrDefault();
@@ -47,7 +46,7 @@ namespace Ui
                         last.GetY() + last.GetHeight();
                 };
             }
-            else if (!IsVertical && width == null)
+            else if (!IsVertical)
             {
                 WidthFunc = _ =>
                 {
@@ -56,6 +55,7 @@ namespace Ui
                         0 :
                         last.GetX() + last.GetWidth();
                 };
+                HeightFunc = thickness ?? (args => args.Parent.GetHeight());
             }
         }
 
@@ -63,19 +63,16 @@ namespace Ui
             out StackFrame id,
             ElementFunc<float> x = null, 
             ElementFunc<float> y = null,
-            ElementFunc<float> width = null,
-            ElementFunc<float> height = null,
+            ElementFunc<float> thickness = null,
             ElementFunc<bool> hidden = null, 
             bool isVertical = true,
             ElementFunc<float> spacing = null)
-            : this(x, y, width, height, hidden, isVertical, spacing)
+            : this(x, y, thickness, hidden, isVertical, spacing)
         {
             id = this;
         }
 
-        public IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public void Add(IElement element)
+        public override void Add(IElement element)
         {
             var previous = this.LastOrDefault();
             Children = Children.Add(element);
@@ -99,5 +96,9 @@ namespace Ui
 
         [DetectLoopAspect]
         public float GetSpacing() => SpacingFunc(ElementArgs);
+        [DetectLoopAspect]
+        public float GetLength() => IsVertical ? GetHeight() : GetWidth();
+        [DetectLoopAspect]
+        public float GetThickness() => IsVertical ? GetWidth() : GetHeight();
     }
 }

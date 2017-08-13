@@ -21,7 +21,7 @@ namespace UiTests
         public void DetectStackOverflowTest0()
         {
             const float expected = 50;
-            var stackFrame = new StackFrame(width: ElementEx.ChildWidth())
+            var stackFrame = new StackFrame(thickness: ElementEx.ChildWidth())
             {
                 new Frame(width: _ => expected, height: _ => 50),
                 new Frame(height: _ => 50)
@@ -38,7 +38,7 @@ namespace UiTests
         public void DetectStackOverflowTest1()
         {
             const float expected = 50;
-            var stackFrame = new StackFrame(height: ElementEx.ChildHeight(), isVertical: false)
+            var stackFrame = new StackFrame(thickness: ElementEx.ChildHeight(), isVertical: false)
             {
                 new Frame(width: _ => 50, height: _ => expected),
                 new Frame(width: _ => 50)

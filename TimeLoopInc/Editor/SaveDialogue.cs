@@ -36,7 +36,7 @@ namespace TimeLoopInc.Editor
                 {
                     new Frame(AlignX(0.5f), FallInOut, ChildWidth(), ChildHeight())
                     {
-                        new StackFrame(height: _ => 50, isVertical: false, spacing: _ => 20)
+                        new StackFrame(thickness: _ => 50, isVertical: false, spacing: _ => 20)
                         {
                             new Text(y: AlignY(0.5f), font: _ => font, text: _ => "File Name:"),
                             new TextBox(
