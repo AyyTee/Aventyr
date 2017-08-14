@@ -32,6 +32,7 @@
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PostSharp, Version=5.0.31.0, Culture=neutral, PublicKeyToken=b13fd38b8f9c99d7" />
     <Reference Include="System" />
     <Reference Include="OpenTK">
       <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
@@ -97,7 +98,7 @@
     <Compile Include="GameTests\Vector2iTests.cs" />
     <Compile Include="GameTests\VertexTests.cs" />
     <Compile Include="TimeLoopIncTests\LinkToolTests.cs" />
-    <Compile Include="UiTests\StackFrameTests.cs" />
+    <Compile Include="UiTests\DetectLoopTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -20,13 +20,15 @@ namespace TimeLoopInc.Editor
         bool _isSaving;
         DateTime _saveStart;
         readonly IEditorController _editor;
-        readonly TimeSpan _animationLength = TimeSpan.FromSeconds(0.2);
+        readonly TimeSpan _animationLength = TimeSpan.FromSeconds(0.15);
+        string _saveName;
 
         public IImmutableList<IElement> Children { get; }
 
         public SaveDialogue(IEditorController editor)
         {
             _editor = editor;
+            _saveName = editor.LevelName;
             var font = _editor.Window.Fonts.Inconsolata;
             Children = new IElement[]
             {
@@ -43,8 +45,8 @@ namespace TimeLoopInc.Editor
                                 y: AlignY(0.5f),
                                 width: _ => 400,
                                 font: _ => font,
-                                getText: () => _editor.LevelName,
-                                setText: text => _editor.LevelName = text,
+                                getText: () => _saveName,
+                                setText: text => _saveName = text,
                                 backgroundColor: args => ValidName(((TextBox)args.Self).GetText()) ? Color4.White : Color4.Red),
                             new Button(width: _ => 100, onClick: Save)
                             {
@@ -97,6 +99,8 @@ namespace TimeLoopInc.Editor
             File.WriteAllText(filepath, Serializer.Serialize(_editor.Scene));
 
             Hide();
+
+            _editor.LevelName = _saveName;
         }
 
         float AnimationT()

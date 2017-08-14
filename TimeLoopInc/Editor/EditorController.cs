@@ -167,7 +167,7 @@ namespace TimeLoopInc.Editor
             {
                 if (_menu.Hover == null)
                 {
-                    var v = MoveInput.CreateFromKeyboard(Window)?.Direction.Value.Vector;
+                    var v = MoveInput.CreateFromKeyboard(Window)?.Direction?.Vector;
                     if (v != null)
                     {
                         Camera.WorldTransform = Camera.WorldTransform.AddPosition((Vector2)v * 3);

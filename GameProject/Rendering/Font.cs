@@ -43,32 +43,32 @@ namespace Game.Rendering
         }
 
         readonly ITexture[] _fontTextures;
-        readonly FontFile _fontFile;
+        public FontFile FontData { get; }
         const int _indicesPerGlyph = 6;
         const int _verticesPerGlyph = 4;
 
         public Font(string fontDataFile)
         {
-            _fontFile = FontLoader.Load(fontDataFile);
+            FontData = FontLoader.Load(fontDataFile);
             
-            _fontTextures = new TextureFile[_fontFile.Pages.Count];
+            _fontTextures = new TextureFile[FontData.Pages.Count];
             DebugEx.Assert(_fontTextures.Length == 1, "Multiple texture pages not supported yet.");
             var path = Path.GetDirectoryName(fontDataFile);
             for (int i = 0; i < _fontTextures.Length; i++)
             {
-                _fontTextures[i] = new TextureFile(Path.Combine(path, _fontFile.Pages[i].File));
+                _fontTextures[i] = new TextureFile(Path.Combine(path, FontData.Pages[i].File));
             }
         }
 
         public Font(FontFile fontFile, IEnumerable<ITexture> textures)
         {
-            _fontFile = fontFile;
+            FontData = fontFile;
             _fontTextures = textures.ToArray();
         }
 
         public Vector2i GetSize(string text, Settings settings)
         {
-            var lineHeight = _fontFile.Info.Size + settings.LineSpacing;
+            var lineHeight = FontData.Info.Size + settings.LineSpacing;
 
             var glyphs = GetGlyphs(text, settings);
             return new Vector2i(
@@ -76,11 +76,26 @@ namespace Game.Rendering
                 Math.Max(0, glyphs.Length * lineHeight - settings.LineSpacing));
         }
 
-        GlyphData[][] GetGlyphs(string text, Settings settings)
+        public Vector2i BaselinePosition(string text, int charIndex, Settings settings)
+        {
+            Debug.Assert(text != null);
+            if (text == "")
+            {
+                return new Vector2i();
+            }
+            var glyphs = GetGlyphs(text, settings)
+                .SelectMany(item => item)
+                .ElementAt(MathHelper.Clamp(charIndex, 0, text.Length - 1));
+            return charIndex >= text.Length ?
+                glyphs.Point + new Vector2i(glyphs.FontChar.XAdvance, 0) :
+                glyphs.Point;
+        }
+
+        public Glyph[][] GetGlyphs(string text, Settings settings)
         {
             Debug.Assert(!text.Contains('\r'));
             var lineBreakText = text.Split('\n');
-            var glyphs = lineBreakText.Select(textLine => new GlyphData[textLine.Length]).ToArray();
+            var glyphs = lineBreakText.Select(textLine => new Glyph[textLine.Length]).ToArray();
 
             var posCurrent = new Vector2i();
             for (int i = 0; i < lineBreakText.Length; i++)
@@ -88,9 +103,9 @@ namespace Game.Rendering
                 for (int j = 0; j < lineBreakText[i].Length; j++)
                 {
                     // Get the data for this character. If it doesn't exist we use the question mark instead.
-                    var fontChar = _fontFile.CharLookup.GetOrDefault(lineBreakText[i][j]) ?? _fontFile.CharLookup['?'];
+                    var fontChar = FontData.CharLookup.GetOrDefault(lineBreakText[i][j]) ?? FontData.CharLookup['?'];
 
-                    glyphs[i][j] = new GlyphData(posCurrent, fontChar);
+                    glyphs[i][j] = new Glyph(posCurrent, fontChar);
 
                     if (j + 1 < lineBreakText[i].Length)
                     {
@@ -99,7 +114,7 @@ namespace Game.Rendering
 
                     posCurrent += new Vector2i(fontChar.XAdvance + settings.CharSpacing, 0);
                 }
-                posCurrent = new Vector2i(0, posCurrent.Y + _fontFile.Info.Size + settings.LineSpacing);
+                posCurrent = new Vector2i(0, posCurrent.Y + FontData.Info.Size + settings.LineSpacing);
             }
             return glyphs;
         }
@@ -148,7 +163,7 @@ namespace Game.Rendering
             return textModel;
         }
 
-        List<Vertex> GetVertices(IEnumerable<GlyphData> glyphData, Color4 color)
+        List<Vertex> GetVertices(IEnumerable<Glyph> glyphData, Color4 color)
         {
             var vertices = new List<Vertex>();
             foreach (var data in glyphData)
@@ -157,7 +172,7 @@ namespace Game.Rendering
 
                 int uvX = fontChar.X;
                 int uvY = fontChar.Y;
-                Vector2 uvSize = new Vector2(_fontFile.Common.ScaleW, _fontFile.Common.ScaleH);
+                Vector2 uvSize = new Vector2(FontData.Common.ScaleW, FontData.Common.ScaleH);
                 var uvTopLeft = Vector2.Divide(new Vector2(uvX, uvY), uvSize);
                 var uvTopRight = Vector2.Divide(new Vector2(uvX + fontChar.Width, uvY), uvSize);
                 var uvBottomLeft = Vector2.Divide(new Vector2(uvX, uvY + fontChar.Height), uvSize);
@@ -177,12 +192,12 @@ namespace Game.Rendering
 
         int GetKerning(Char first, Char second)
         {
-            var fontCharNext = _fontFile.CharLookup.GetOrDefault(second);
+            var fontCharNext = FontData.CharLookup.GetOrDefault(second);
             if (fontCharNext == null)
             {
                 return 0;
             }
-            return _fontFile.KerningLookup[first].FirstOrDefault(item => item.Second == fontCharNext.ID)?.Amount ?? 0;
+            return FontData.KerningLookup[first].FirstOrDefault(item => item.Second == fontCharNext.ID)?.Amount ?? 0;
         }
 
         int[] GetIndices(int glyphCount)
@@ -202,12 +217,12 @@ namespace Game.Rendering
             return indices;
         }
 
-        class GlyphData
+        public class Glyph
         {
             public Vector2i Point;
             public FontChar FontChar;
 
-            public GlyphData(Vector2i point, FontChar fontChar)
+            public Glyph(Vector2i point, FontChar fontChar)
             {
                 Point = point;
                 FontChar = fontChar;

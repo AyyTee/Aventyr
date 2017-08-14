@@ -17,10 +17,9 @@ namespace Ui
         public enum Input { Text, Numbers }
 
         public ElementFunc<Font> FontFunc { get; }
-        public ElementFunc<Color4> BackgroundColorFunc { get; } 
+        public ElementFunc<Color4> BackgroundColorFunc { get; }
         public Func<string> GetText { get; }
         public Action<string> SetText { get; }
-        public Input InputType { get; set; } = Input.Numbers;
         public int CursorStart { get; set; }
         public int CursorEnd { get; set; }
 
@@ -75,12 +74,24 @@ namespace Ui
             {
                 models.AddRange(Draw.Rectangle(new Vector2(), size, Color4.Brown).GetModels());
                 models.AddRange(Draw.Rectangle(margin, size - margin, GetBackgroundColor()).GetModels());
+
+
+                var settings = new Font.Settings();
+
                 var font = GetFont();
                 var text = GetText();
+
+                var cursorPos = font.BaselinePosition(text, CursorStart, settings);
+
+                var cursor = Draw.Rectangle(
+                    (Vector2)(cursorPos + new Vector2i(-1, 4)),
+                    (Vector2)(cursorPos + new Vector2i(1, font.FontData.Info.Size + 4)), Color4.Black).GetModels();
+                models.AddRange(cursor);
+
                 var textModel = font.GetModel(text, Color4.Black);
                 textModel.Transform.Position += new Vector3(
                     margin.X, 
-                    (size.Y - font.GetSize(text, new Font.Settings()).Y) / 2, 
+                    (size.Y - font.GetSize(text, settings).Y) / 2, 
                     0); 
                 models.Add(textModel);
             }

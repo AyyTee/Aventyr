@@ -10,17 +10,41 @@ using Ui;
 namespace UiTests
 {
     [TestFixture]
-    public class StackFrameTests
+    public class DetectLoopTests
     {
-        [SetUp]
-        public void SetUp()
+        [Test]
+        public void TryExecuteTest0()
         {
+            var frame = new Frame(args => args.Self.First().GetX())
+            {
+                new Frame(args => args.Parent.First().GetX())
+            };
+
+            var result = DetectLoop.TryExecute(frame.GetX, out float value);
+
+            Assert.AreEqual(false, result);
+            Assert.AreEqual(0, value);
         }
 
         [Test]
-        public void DetectStackOverflowTest0()
+        public void TryExecuteTest1()
         {
-            const float expected = 50;
+            var expectedValue = 50;
+            var frame = new Frame(_ => expectedValue)
+            {
+                new Frame(args => args.Parent.First().GetX())
+            };
+
+            var result = DetectLoop.TryExecute(frame.GetX, out float value);
+
+            Assert.AreEqual(true, result);
+            Assert.AreEqual(expectedValue, value);
+        }
+
+        [Test]
+        public void StackFrameTest0()
+        {
+            const float expected = 40;
             var stackFrame = new StackFrame(thickness: ElementEx.ChildrenMaxX())
             {
                 new Frame(width: _ => expected, height: _ => 50),
@@ -35,9 +59,9 @@ namespace UiTests
         }
 
         [Test]
-        public void DetectStackOverflowTest1()
+        public void StackFrameTest1()
         {
-            const float expected = 50;
+            const float expected = 40;
             var stackFrame = new StackFrame(thickness: ElementEx.ChildrenMaxY(), isVertical: false)
             {
                 new Frame(width: _ => 50, height: _ => expected),
