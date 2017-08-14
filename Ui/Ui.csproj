@@ -71,7 +71,7 @@
     <Compile Include="BranchElement.cs" />
     <Compile Include="Element.cs" />
     <Compile Include="ElementArgs.cs" />
-    <Compile Include="LoopCheckAspect.cs" />
+    <Compile Include="DetectLoop.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IElement.cs" />
     <Compile Include="Rectangle.cs" />

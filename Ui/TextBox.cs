@@ -61,9 +61,9 @@ namespace Ui
             id = this;
         }
 
-        [DetectLoopAspect]
+        [DetectLoop]
         public Font GetFont() => FontFunc(ElementArgs);
-        [DetectLoopAspect]
+        [DetectLoop]
         public Color4 GetBackgroundColor() => BackgroundColorFunc(ElementArgs);
 
         public override List<Model> GetModels()

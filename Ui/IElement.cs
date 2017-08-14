@@ -32,23 +32,31 @@ namespace Ui
             args => (args.Parent.GetWidth() - args.Self.GetWidth()) * t;
         public static ElementFunc<float> AlignY(float t) =>
             args => (args.Parent.GetHeight() - args.Self.GetHeight()) * t;
-        public static ElementFunc<float> ChildWidth() =>
-            args =>
-            {
-                var max = 0f;
-                foreach (var child in args.Self)
+        public static ElementFunc<float> ChildrenMaxX()
+        {
+            return args => args.Self.MaxOrNull(
+                child =>
                 {
-                    var width = child.GetWidth();
-                    if (width > max)
+                    if (DetectLoop.TryExecute(child.GetX, out float x) && DetectLoop.TryExecute(child.GetWidth, out float width))
                     {
-                        max = width;
+                        return x + width;
                     }
-                }
-                return max;
-                //args.Self.MaxOrNull(child => child.GetX() + child.GetWidth()) ?? 0
-            };
-        public static ElementFunc<float> ChildHeight() => 
-            args => args.Self.MaxOrNull(child => child.GetY() + child.GetHeight()) ?? 0;
+                    return 0;
+                }) ?? 0;
+        }
+            
+        public static ElementFunc<float> ChildrenMaxY()
+        {
+            return args => args.Self.MaxOrNull(
+                child =>
+                {
+                    if (DetectLoop.TryExecute(child.GetY, out float y) && DetectLoop.TryExecute(child.GetHeight, out float height))
+                    {
+                        return y + height;
+                    }
+                    return 0;
+                }) ?? 0;
+        }
 
         public static Vector2 GetPosition(this IElement element) => new Vector2(element.GetX(), element.GetY());
         public static Vector2 GetSize(this IElement element) => new Vector2(element.GetWidth(), element.GetHeight());

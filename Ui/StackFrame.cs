@@ -94,11 +94,11 @@ namespace Ui
             }
         }
 
-        [DetectLoopAspect]
+        [DetectLoop]
         public float GetSpacing() => SpacingFunc(ElementArgs);
-        [DetectLoopAspect]
+        [DetectLoop]
         public float GetLength() => IsVertical ? GetHeight() : GetWidth();
-        [DetectLoopAspect]
+        [DetectLoop]
         public float GetThickness() => IsVertical ? GetWidth() : GetHeight();
     }
 }

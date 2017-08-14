@@ -34,7 +34,7 @@ namespace TimeLoopInc.Editor
                     color: _ => new Color4(0, 0, 0, AnimationT() * 0.3f), 
                     hidden: _ => AnimationT() <= 0)
                 {
-                    new Frame(AlignX(0.5f), FallInOut, ChildWidth(), ChildHeight())
+                    new Frame(AlignX(0.5f), FallInOut, ChildrenMaxX(), ChildrenMaxY())
                     {
                         new StackFrame(thickness: _ => 50, isVertical: false, spacing: _ => 20)
                         {

@@ -46,7 +46,7 @@ namespace Ui
             id = this;
         }
 
-        [DetectLoopAspect]
+        [DetectLoop]
         public bool GetEnabled() => EnabledFunc(ElementArgs);
 
         public override List<Model> GetModels()
