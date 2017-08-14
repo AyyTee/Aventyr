@@ -64,6 +64,7 @@ namespace TimeLoopInc.Editor
 
             _menu.Root.Children = new IElement[]
             {
+                new SaveDialogue(out saveDialogue, this),
                 new Frame(hidden: _ => _isPlaying)
                 {
                     new StackFrame(thickness: _ => 200, spacing: _ => 5)
@@ -99,8 +100,7 @@ namespace TimeLoopInc.Editor
                         new Text(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Restart")
                     }
                 },
-                new Text(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName),
-                new SaveDialogue(out saveDialogue, this)
+                new Text(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName)
             }.ToImmutableList();
 
             Camera = new GridCamera(new Transform2(), (float)Window.CanvasSize.XRatio);

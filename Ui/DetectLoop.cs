@@ -20,8 +20,8 @@ namespace Ui
         readonly static Stack<bool> _isThrown = new Stack<bool>();
         string _methodName;
         const int _indentSpaces = 4;
-        bool _writeToConsole { get; } = false;
-        string Indent => new String(' ', _callStack.Count * _indentSpaces);
+        readonly static bool _writeToConsole = false;
+        static string Indent => new String(' ', _callStack.Count * _indentSpaces);
 
         public override void CompileTimeInitialize(MethodBase method, AspectInfo aspectInfo)
         {
@@ -31,12 +31,12 @@ namespace Ui
 
         /// <summary>
         /// Invoke a function and return whether it got caught in a recursive loop. 
-        /// IMPORTANT: Only call this with functions that have no side effects and pass constant parameters. 
-        /// Additionally, [DetectLoop] must be added to any methods that can be called from this function, otherwise recursive loops might not be detected.
+        /// IMPORTANT: Only call this with functions that have no side effects and whose parameters are the same for any nested calls. 
+        /// Additionally, [DetectLoop] must be added to any methods that should be checked for recursive loops.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="func"></param>
-        /// <param name="result">Return value from invoked function.</param>
+        /// <typeparam name="T">Return type.</typeparam>
+        /// <param name="func">Function to try executing.</param>
+        /// <param name="result">Returned value from invoked function.</param>
         /// <returns>True if the method completed successfully, false if a recursive loop was detected.</returns>
         public static bool TryExecute<T>(Func<T> func, out T result)
         {
@@ -55,7 +55,8 @@ namespace Ui
                 return;
             }
 
-            if (_isThrown.Any() && _isThrown.Peek())
+            // If a recursive loop is detected then we bubble up the result immediately.
+            if (_isThrown.Peek())
             {
                 args.FlowBehavior = FlowBehavior.Return;
                 return;
@@ -63,16 +64,17 @@ namespace Ui
 
             if (_writeToConsole)
             {
-                Console.WriteLine(Indent + $"Push {args.Instance} { args.Method.Name}");
+                Console.WriteLine(Indent + $"Push {args.Instance} {_methodName}");
             }
 
+            // Check the call stack to determine if we've seen this instance and method before.
             for (int i = _callStack.Count - 1; i >= 0; i--)
             {
                 if (MethodsEqual(args, _callStack[i]))
                 {
                     if (_writeToConsole)
                     {
-                        Console.WriteLine(Indent + $"Loop at call depth {i}.  returns: {args.ReturnValue}");
+                        Console.WriteLine(Indent + $"Loop with call depth {i}. Returns: {args.ReturnValue}");
                     }
 
                     _isThrown.Pop();
@@ -81,6 +83,7 @@ namespace Ui
                     return;
                 }
             }
+
             _callStack.Add(new StackMethod(args.Instance, _methodName));
         }
 
@@ -96,7 +99,7 @@ namespace Ui
             _callStack.RemoveAt(_callStack.Count - 1);
             if (_writeToConsole)
             {
-                Console.WriteLine(Indent + $"Pop  {args.Instance} {args.Method.Name}  returns: {args.ReturnValue}");
+                Console.WriteLine(Indent + $"Pop  {args.Instance} {_methodName}  Returns: {args.ReturnValue}");
             }
 
             base.OnExit(args);

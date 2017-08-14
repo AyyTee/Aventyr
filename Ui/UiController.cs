@@ -132,11 +132,11 @@ namespace Ui
         List<UiWorldTransform> AllChildren()
         {
             var list = new List<UiWorldTransform>();
-            _allChildren(Root, new Transform2(), list, null);
+            _allChildren(Root, new Transform2(), list);
             return list;
         }
 
-        void _allChildren(IElement element, Transform2 worldTransform, List<UiWorldTransform> list, IElement parent)
+        void _allChildren(IElement element, Transform2 worldTransform, List<UiWorldTransform> list)
         {
             if (element.GetHidden())
             {
@@ -145,7 +145,7 @@ namespace Ui
             var transform = worldTransform.Transform(element.GetTransform());
             foreach (var child in element)
             {
-                _allChildren(child, transform, list, element);
+                _allChildren(child, transform, list);
             }
             
             list.Add(new UiWorldTransform(element, transform));
