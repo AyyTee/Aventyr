@@ -33,7 +33,7 @@ namespace Game
         public Vector2 MousePosition { get; set; }
         public Vector2 MousePositionPrevious { get; private set; }
 
-        public string KeyString { get; set; }
+        public string KeyString { get; set; } = "";
         public IImmutableSet<Key> KeyCurrent { get; set; } = new HashSet<Key>().ToImmutableHashSet();
         public IImmutableSet<Key> KeyPrevious { get; private set; } = new HashSet<Key>().ToImmutableHashSet();
 
@@ -42,7 +42,7 @@ namespace Game
 
         public event ExitHandler OnExit;
 
-        public void Update(string keyString, ISet<Key> keyboardState, ISet<MouseButton> mouseState, Vector2 mousePosition, bool hasFocus = true, float mouseWheel = 0)
+        public void Update(string keyString, ISet<Key> keyboardState, ISet<MouseButton> mouseState, Vector2 mousePosition = new Vector2(), bool hasFocus = true, float mouseWheel = 0)
         {
             KeyPrevious = KeyCurrent;
             MousePrevious = MouseCurrent;

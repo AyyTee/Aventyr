@@ -99,6 +99,7 @@
     <Compile Include="GameTests\VertexTests.cs" />
     <Compile Include="TimeLoopIncTests\LinkToolTests.cs" />
     <Compile Include="UiTests\DetectLoopTests.cs" />
+    <Compile Include="UiTests\TextInputTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -74,79 +74,24 @@ namespace Ui
             if (Selected != null)
             {
                 var text = Selected.GetText();
-                Selected.CursorStart = MoveCursor(text, Selected.CursorStart);
-
-                if (_window.KeyString != "")
-                {
-                    var newText = ApplyBackspaces(text.Insert(Selected.CursorStart, _window.KeyString));
-                    var cursorOffset = _window.KeyString.Length - _window.KeyString.Count(item => item == '\b') * 2;
-                    Selected.CursorStart = Math.Max(0, Selected.CursorStart + cursorOffset);
-
-                    if (text != newText)
-                    {
-                        Selected.SetText(newText);
-                    }
-                }
-                
+                DebugEx.Assert(Selected.CursorIndex != null);
+                var newCursorText = TextInput.Update(_window, new CursorText(text, Selected.CursorIndex));
+                Selected.SetText(newCursorText.Text);
+                Selected.CursorIndex = newCursorText.CursorIndex;
             }
-        }
-
-        int MoveCursor(string text, int cursorIndex)
-        {
-            var ctrlHeld = _window.ButtonDown(KeyBoth.Control);
-            if (_window.ButtonPress(Key.Left))
-            {
-                cursorIndex--;
-                if (ctrlHeld)
-                {
-                    while (cursorIndex > 0)
-                    {
-                        if (char.IsLetterOrDigit(text[cursorIndex]) && 
-                            !char.IsLetterOrDigit(text[cursorIndex - 1]))
-                        {
-                            break;
-                        }
-                        cursorIndex--;
-                    }
-                }
-            }
-            else if (_window.ButtonPress(Key.Right))
-            {
-                cursorIndex++;
-                if (ctrlHeld)
-                {
-                    while (cursorIndex < text.Length)
-                    {
-                        if (char.IsLetterOrDigit(text[cursorIndex]) && 
-                            !char.IsLetterOrDigit(text[cursorIndex - 1]))
-                        {
-                            break;
-                        }
-                        cursorIndex++;
-                    }
-                }
-            }
-            return MathHelper.Clamp(cursorIndex, 0, text.Length);
         }
 
         public void SetSelected(TextBox selected)
         {
-            Selected = selected;
-        }
-
-        public static string ApplyBackspaces(string stringWithBackspaces)
-        {
-            var newString = new StringBuilder();
-            for (int i = 0; i < stringWithBackspaces.Length; i++)
+            if (Selected != null)
             {
-                if (stringWithBackspaces[i] == '\b' && newString.Length > 0)
-                {
-                    newString.Remove(newString.Length - 1, 1);
-                    continue;
-                }
-                newString.Append(stringWithBackspaces[i]);
+                Selected.CursorIndex = null;
             }
-            return newString.ToString();
+            Selected = selected;
+            if (Selected != null)
+            {
+                Selected.CursorIndex = 0;
+            }
         }
 
         void UpdateElementArgs(IElement root)

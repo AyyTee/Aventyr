@@ -18,18 +18,17 @@ namespace Ui
 
         public ElementFunc<Font> FontFunc { get; }
         public ElementFunc<Color4> BackgroundColorFunc { get; }
-        public Func<string> GetText { get; }
+        public ElementFunc<string> TextFunc { get; }
         public Action<string> SetText { get; }
-        public int CursorStart { get; set; }
-        public int CursorEnd { get; set; }
+        public int? CursorIndex { get; set; }
 
         public TextBox(
             ElementFunc<float> x = null,
             ElementFunc<float> y = null,
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null,
-            ElementFunc<Font> font = null, 
-            Func<string> getText = null, 
+            ElementFunc<Font> font = null,
+            ElementFunc<string> getText = null, 
             Action<string> setText = null,
             ElementFunc<Color4> backgroundColor = null,
             ElementFunc<bool> hidden = null)
@@ -38,7 +37,7 @@ namespace Ui
             FontFunc = font;
 
             var defaultText = "";
-            GetText = getText ?? (() => defaultText);
+            TextFunc = getText ?? (_ => defaultText);
             SetText = setText ?? (newText => defaultText = newText);
 
             BackgroundColorFunc = backgroundColor ?? (_ => Color4.White);
@@ -50,8 +49,8 @@ namespace Ui
             ElementFunc<float> y = null,
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null,
-            ElementFunc<Font> font = null, 
-            Func<string> getText = null, 
+            ElementFunc<Font> font = null,
+            ElementFunc<string> getText = null, 
             Action<string> setText = null,
             ElementFunc<Color4> backgroundColor = null,
             ElementFunc<bool> hidden = null)
@@ -60,6 +59,8 @@ namespace Ui
             id = this;
         }
 
+        [DetectLoop]
+        public string GetText() => TextFunc(ElementArgs);
         [DetectLoop]
         public Font GetFont() => FontFunc(ElementArgs);
         [DetectLoop]
@@ -81,12 +82,15 @@ namespace Ui
                 var font = GetFont();
                 var text = GetText();
 
-                var cursorPos = font.BaselinePosition(text, CursorStart, settings);
+                if (CursorIndex != null)
+                {
+                    var cursorPos = font.BaselinePosition(text, (int)CursorIndex, settings);
 
-                var cursor = Draw.Rectangle(
-                    (Vector2)(cursorPos + new Vector2i(-1, 4)),
-                    (Vector2)(cursorPos + new Vector2i(1, font.FontData.Info.Size + 4)), Color4.Black).GetModels();
-                models.AddRange(cursor);
+                    var cursor = Draw.Rectangle(
+                        (Vector2)(cursorPos + new Vector2i(-1, 10)),
+                        (Vector2)(cursorPos + new Vector2i(1, font.FontData.Info.Size + 5)), Color4.Black).GetModels();
+                    models.AddRange(cursor);
+                }
 
                 var textModel = font.GetModel(text, Color4.Black);
                 textModel.Transform.Position += new Vector3(

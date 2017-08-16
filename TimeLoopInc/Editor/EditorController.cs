@@ -60,11 +60,9 @@ namespace TimeLoopInc.Editor
 
             _menu = new UiController(Window);
 
-            SaveDialogue saveDialogue = null;
-
             _menu.Root.Children = new IElement[]
             {
-                new SaveDialogue(out saveDialogue, this),
+                new SaveDialogue(out SaveDialogue saveDialogue, this),
                 new Frame(hidden: _ => _isPlaying)
                 {
                     new StackFrame(thickness: _ => 200, spacing: _ => 5)
@@ -128,7 +126,7 @@ namespace TimeLoopInc.Editor
             }
         }
 
-        string TimeOffsetGetText()
+        string TimeOffsetGetText(ElementArgs args)
         {
             if (_tool is PortalTool portalTool)
             {

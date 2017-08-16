@@ -45,7 +45,7 @@ namespace TimeLoopInc.Editor
                                 y: AlignY(0.5f),
                                 width: _ => 400,
                                 font: _ => font,
-                                getText: () => _saveName,
+                                getText: _ => _saveName,
                                 setText: text => _saveName = text,
                                 backgroundColor: args => ValidName(((TextBox)args.Self).GetText()) ? Color4.White : Color4.Red),
                             new Button(width: _ => 100, onClick: Save)
