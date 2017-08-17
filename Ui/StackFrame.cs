@@ -23,6 +23,13 @@ namespace Ui
 
         public ElementFunc<float> SpacingFunc { get; }
 
+        [DetectLoop]
+        public float Spacing => SpacingFunc(ElementArgs);
+        [DetectLoop]
+        public float Length => IsVertical ? Height : Width;
+        [DetectLoop]
+        public float Thickness => IsVertical ? Width : Height;
+
         public StackFrame(
             ElementFunc<float> x = null, 
             ElementFunc<float> y = null,
@@ -37,13 +44,13 @@ namespace Ui
 
             if (IsVertical)
             {
-                WidthFunc = thickness ?? (args => args.Parent.GetWidth());
+                WidthFunc = thickness ?? (args => args.Parent.Width);
                 HeightFunc = _ =>
                 {
                     var last = this.LastOrDefault();
                     return last == null ?
                         0 :
-                        last.GetY() + last.GetHeight();
+                        last.Y+ last.Height;
                 };
             }
             else if (!IsVertical)
@@ -53,9 +60,9 @@ namespace Ui
                     var last = this.LastOrDefault();
                     return last == null ? 
                         0 :
-                        last.GetX() + last.GetWidth();
+                        last.X+ last.Width;
                 };
-                HeightFunc = thickness ?? (args => args.Parent.GetHeight());
+                HeightFunc = thickness ?? (args => args.Parent.Height);
             }
         }
 
@@ -84,21 +91,14 @@ namespace Ui
             {
                 cast.YFunc = args => 
                     (previous?.GetBottom() ?? 0) + 
-                    (previous == null ? 0 : ((StackFrame)args.Parent).GetSpacing());
+                    (previous == null ? 0 : ((StackFrame)args.Parent).Spacing);
             }
             else
             {
                 cast.XFunc = args => 
                     (previous?.GetRight() ?? 0) + 
-                    (previous == null ? 0 : ((StackFrame)args.Parent).GetSpacing());
+                    (previous == null ? 0 : ((StackFrame)args.Parent).Spacing);
             }
         }
-
-        [DetectLoop]
-        public float GetSpacing() => SpacingFunc(ElementArgs);
-        [DetectLoop]
-        public float GetLength() => IsVertical ? GetHeight() : GetWidth();
-        [DetectLoop]
-        public float GetThickness() => IsVertical ? GetWidth() : GetHeight();
     }
 }

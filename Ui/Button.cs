@@ -16,6 +16,8 @@ namespace Ui
     {
         public Action OnClick { get; }
         public ElementFunc<bool> EnabledFunc { get; }
+        [DetectLoop]
+        public bool Enabled => EnabledFunc(ElementArgs);
 
         public Button(
             ElementFunc<float> x = null, 
@@ -45,9 +47,6 @@ namespace Ui
         {
             id = this;
         }
-
-        [DetectLoop]
-        public bool GetEnabled() => EnabledFunc(ElementArgs);
 
         public override List<Model> GetModels()
         {

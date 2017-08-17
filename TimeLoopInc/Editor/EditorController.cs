@@ -69,15 +69,15 @@ namespace TimeLoopInc.Editor
                     {
                         new Button(height: _ => 90, onClick: () => saveDialogue.Show())
                         {
-                            new Text(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
+                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
                         },
                         new Button(height: _ => 90, onClick: Load)
                         {
-                            new Text(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
+                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
                         },
                         new Button(height: _ => 90, onClick: Play)
                         {
-                            new Text(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
+                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
                         }
                     },
                     new TextBox(
@@ -91,14 +91,14 @@ namespace TimeLoopInc.Editor
                 {
                     new Button(width: _ => 200, onClick: () => _sceneController = null)
                     {
-                        new Text(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Return to editor")
+                        new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Return to editor")
                     },
                     new Button(width: _ => 200, onClick: () => _sceneController.SetInput(_sceneController.Input.Clear()))
                     {
-                        new Text(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Restart")
+                        new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Restart")
                     }
                 },
-                new Text(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName)
+                new TextBlock(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName)
             }.ToImmutableList();
 
             Camera = new GridCamera(new Transform2(), (float)Window.CanvasSize.XRatio);

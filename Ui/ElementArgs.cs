@@ -11,6 +11,7 @@ namespace Ui
         public IElement Parent { get; }
         public IElement Self { get; }
 
+
         public ElementArgs(IElement parent, IElement self)
         {
             Parent = parent;

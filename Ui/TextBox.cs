@@ -22,6 +22,13 @@ namespace Ui
         public Action<string> SetText { get; }
         public int? CursorIndex { get; set; }
 
+        [DetectLoop]
+        public string Text => TextFunc(ElementArgs);
+        [DetectLoop]
+        public Font Font => FontFunc(ElementArgs);
+        [DetectLoop]
+        public Color4 BackgroundColor => BackgroundColorFunc(ElementArgs);
+
         public TextBox(
             ElementFunc<float> x = null,
             ElementFunc<float> y = null,
@@ -59,13 +66,6 @@ namespace Ui
             id = this;
         }
 
-        [DetectLoop]
-        public string GetText() => TextFunc(ElementArgs);
-        [DetectLoop]
-        public Font GetFont() => FontFunc(ElementArgs);
-        [DetectLoop]
-        public Color4 GetBackgroundColor() => BackgroundColorFunc(ElementArgs);
-
         public override List<Model> GetModels()
         {
             var models = new List<Model>();
@@ -74,13 +74,13 @@ namespace Ui
             if (size != new Vector2())
             {
                 models.AddRange(Draw.Rectangle(new Vector2(), size, Color4.Brown).GetModels());
-                models.AddRange(Draw.Rectangle(margin, size - margin, GetBackgroundColor()).GetModels());
+                models.AddRange(Draw.Rectangle(margin, size - margin, BackgroundColor).GetModels());
 
 
                 var settings = new Font.Settings();
 
-                var font = GetFont();
-                var text = GetText();
+                var font = Font;
+                var text = Text;
 
                 if (CursorIndex != null)
                 {

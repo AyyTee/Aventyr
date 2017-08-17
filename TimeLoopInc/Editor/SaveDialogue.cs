@@ -40,21 +40,21 @@ namespace TimeLoopInc.Editor
                     {
                         new StackFrame(thickness: _ => 50, isVertical: false, spacing: _ => 20)
                         {
-                            new Text(y: AlignY(0.5f), font: _ => font, text: _ => "File Name:"),
+                            new TextBlock(y: AlignY(0.5f), font: _ => font, text: _ => "File Name:"),
                             new TextBox(
                                 y: AlignY(0.5f),
                                 width: _ => 400,
                                 font: _ => font,
                                 getText: _ => _saveName,
                                 setText: text => _saveName = text,
-                                backgroundColor: args => ValidName(((TextBox)args.Self).GetText()) ? Color4.White : Color4.Red),
+                                backgroundColor: args => ValidName(((TextBox)args.Self).Text) ? Color4.White : Color4.Red),
                             new Button(width: _ => 100, onClick: Save)
                             {
-                                new Text(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Save")
+                                new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Save")
                             },
                             new Button(width: _ => 100, onClick: Hide)
                             {
-                                new Text(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Cancel")
+                                new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Cancel")
                             }
                         }
                     }
@@ -115,9 +115,9 @@ namespace TimeLoopInc.Editor
 
         float FallInOut(ElementArgs args)
         {
-            var height = args.Self.GetHeight();
+            var height = args.Self.Height;
             var startValue = -height;
-            var endValue = (args.Parent.GetHeight() - height) / 2;
+            var endValue = (args.Parent.Height- height) / 2;
             return (endValue - startValue) * AnimationT() + startValue;
         }
 

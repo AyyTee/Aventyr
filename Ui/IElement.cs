@@ -13,14 +13,17 @@ namespace Ui
     {
         ElementArgs ElementArgs { get; set; }
 
-        float GetX();
-        float GetY();
+        float X { get; }
+
+        float Y { get; }
+
         /// <summary>
         /// Element and child elements are excluded from processing.
         /// </summary>
-        bool GetHidden();
-        float GetWidth();
-        float GetHeight();
+        bool Hidden { get; }
+        float Width { get; }
+
+        float Height { get; }
 
         bool IsInside(Vector2 localPoint);
         List<Model> GetModels();
@@ -29,15 +32,15 @@ namespace Ui
     public static class ElementEx
     {
         public static ElementFunc<float> AlignX(float t) =>
-            args => (args.Parent.GetWidth() - args.Self.GetWidth()) * t;
+            args => (args.Parent.Width- args.Self.Width) * t;
         public static ElementFunc<float> AlignY(float t) =>
-            args => (args.Parent.GetHeight() - args.Self.GetHeight()) * t;
+            args => (args.Parent.Height- args.Self.Height) * t;
         public static ElementFunc<float> ChildrenMaxX()
         {
             return args => args.Self.MaxOrNull(
                 child =>
                 {
-                    if (DetectLoop.TryExecute(child.GetX, out float x) && DetectLoop.TryExecute(child.GetWidth, out float width))
+                    if (DetectLoop.TryExecute(() => child.X, out float x) && DetectLoop.TryExecute(() => child.Width, out float width))
                     {
                         return x + width;
                     }
@@ -50,7 +53,7 @@ namespace Ui
             return args => args.Self.MaxOrNull(
                 child =>
                 {
-                    if (DetectLoop.TryExecute(child.GetY, out float y) && DetectLoop.TryExecute(child.GetHeight, out float height))
+                    if (DetectLoop.TryExecute(() => child.Y, out float y) && DetectLoop.TryExecute(() => child.Height, out float height))
                     {
                         return y + height;
                     }
@@ -58,11 +61,11 @@ namespace Ui
                 }) ?? 0;
         }
 
-        public static Vector2 GetPosition(this IElement element) => new Vector2(element.GetX(), element.GetY());
-        public static Vector2 GetSize(this IElement element) => new Vector2(element.GetWidth(), element.GetHeight());
+        public static Vector2 GetPosition(this IElement element) => new Vector2(element.X, element.Y);
+        public static Vector2 GetSize(this IElement element) => new Vector2(element.Width, element.Height);
         public static Transform2 GetTransform(this IElement element) => new Transform2(element.GetPosition());
-        public static float GetBottom(this IElement element) => element.GetY() + element.GetHeight();
-        public static float GetRight(this IElement element) => element.GetX() + element.GetWidth();
+        public static float GetBottom(this IElement element) => element.Y+ element.Height;
+        public static float GetRight(this IElement element) => element.X+ element.Width;
     }
 
     public delegate T ElementFunc<T>(ElementArgs args);

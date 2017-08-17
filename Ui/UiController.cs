@@ -50,7 +50,7 @@ namespace Ui
                     switch (Hover)
                     {
                         case Button button:
-                            if (button.GetEnabled())
+                            if (button.Enabled)
                             {
                                 button.OnClick.Invoke();
                             }
@@ -73,7 +73,7 @@ namespace Ui
 
             if (Selected != null)
             {
-                var text = Selected.GetText();
+                var text = Selected.Text;
                 DebugEx.Assert(Selected.CursorIndex != null);
                 var newCursorText = TextInput.Update(_window, new CursorText(text, Selected.CursorIndex));
                 Selected.SetText(newCursorText.Text);
@@ -118,7 +118,7 @@ namespace Ui
 
         void _allChildren(IElement element, Transform2 worldTransform, List<UiWorldTransform> list)
         {
-            if (element.GetHidden())
+            if (element.Hidden)
             {
                 return;
             }

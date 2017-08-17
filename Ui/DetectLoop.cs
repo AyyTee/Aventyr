@@ -2,6 +2,7 @@
 using PostSharp.Aspects;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace Ui
 {
     [Serializable]
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Property)]
     public class DetectLoop : OnMethodBoundaryAspect
     {
         readonly static List<StackMethod> _callStack = new List<StackMethod>();
@@ -50,13 +51,13 @@ namespace Ui
             base.OnEntry(args);
 
             // If TryExecute hasn't been called then we don't do anything here.
-            if (!_isThrown.Any())
+            if (!_isThrown.Any() && !Debugger.IsAttached)
             {
                 return;
             }
 
             // If a recursive loop is detected then we bubble up the result immediately.
-            if (_isThrown.Peek())
+            if (_isThrown.Any() && _isThrown.Peek())
             {
                 args.FlowBehavior = FlowBehavior.Return;
                 return;
@@ -77,6 +78,11 @@ namespace Ui
                         Console.WriteLine(Indent + $"Loop with call depth {i}. Returns: {args.ReturnValue}");
                     }
 
+                    if (!_isThrown.Any() && Debugger.IsAttached)
+                    {
+                        throw new StackOverflowException("Detected stack overflow early.");
+                    }
+
                     _isThrown.Pop();
                     _isThrown.Push(true);
                     args.FlowBehavior = FlowBehavior.Return;
@@ -90,7 +96,7 @@ namespace Ui
         public override void OnExit(MethodExecutionArgs args)
         {
             // If TryExecute hasn't been called then we don't do anything here.
-            if (!_isThrown.Any())
+            if (!_isThrown.Any() && !Debugger.IsAttached)
             {
                 return;
             }

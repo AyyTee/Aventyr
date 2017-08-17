@@ -14,6 +14,8 @@ namespace Ui
     public class Rectangle : NodeElement, IElement
     {
         public ElementFunc<Color4> ColorFunc { get; }
+        [DetectLoop]
+        public Color4 Color => ColorFunc(ElementArgs);
 
         public Rectangle(
             ElementFunc<float> x = null,
@@ -40,12 +42,9 @@ namespace Ui
             id = this;
         }
 
-        [DetectLoop]
-        public Color4 GetColor() => ColorFunc(ElementArgs);
-
         public override List<Model> GetModels()
         {
-            return Draw.Rectangle(new Vector2(), this.GetSize(), GetColor()).GetModels();
+            return Draw.Rectangle(new Vector2(), this.GetSize(), Color).GetModels();
         }
     }
 }
