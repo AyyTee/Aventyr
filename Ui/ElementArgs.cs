@@ -10,7 +10,7 @@ namespace Ui
     {
         public IElement Parent { get; }
         public IElement Self { get; }
-
+        public int Index => Parent.ToList().IndexOf(Self);
 
         public ElementArgs(IElement parent, IElement self)
         {

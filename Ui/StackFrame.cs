@@ -81,24 +81,32 @@ namespace Ui
 
         public override void Add(IElement element)
         {
-            var previous = this.LastOrDefault();
-            Children = Children.Add(element);
-
-            var cast = ((Element)element);
-
-            element.ElementArgs = new ElementArgs(this, element);
+            base.Add(element);
+            var cast = (Element)element;
             if (IsVertical)
             {
-                cast.YFunc = args => 
-                    (previous?.GetBottom() ?? 0) + 
-                    (previous == null ? 0 : ((StackFrame)args.Parent).Spacing);
+                cast.YFunc = ChildGetY;
             }
             else
             {
-                cast.XFunc = args => 
-                    (previous?.GetRight() ?? 0) + 
-                    (previous == null ? 0 : ((StackFrame)args.Parent).Spacing);
+                cast.XFunc = ChildGetX;
             }
+        }
+
+        float ChildGetX(ElementArgs args)
+        {
+            var previous = args.Parent.ElementAtOrDefault(args.Index - 1);
+            return
+                (previous?.GetRight() ?? 0) +
+                (previous == null ? 0 : ((StackFrame)args.Parent).Spacing);
+        }
+
+        float ChildGetY(ElementArgs args)
+        {
+            var previous = args.Parent.ElementAtOrDefault(args.Index - 1);
+            return
+                (previous?.GetBottom() ?? 0) +
+                (previous == null ? 0 : ((StackFrame)args.Parent).Spacing);
         }
     }
 }
