@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ui
+namespace Game
 {
     /// <summary>
     /// A list of unique items.
@@ -16,13 +16,22 @@ namespace Ui
     {
         List<T> _list = new List<T>();
 
-        public T this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public T this[int index]
+        {
+            get => _list[index];
+            set => _list[index] = value;
+        }
 
-        public int Count => throw new NotImplementedException();
-        public bool IsReadOnly => throw new NotImplementedException();
+        public int Count => _list.Count;
+        public bool IsReadOnly => false;
 
         public OrderedSet()
         {
+        }
+
+        public OrderedSet(IEnumerable<T> enumerable)
+        {
+            AddRange(enumerable);
         }
 
         /// <summary>
@@ -69,3 +78,4 @@ namespace Ui
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
+

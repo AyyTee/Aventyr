@@ -98,6 +98,7 @@
     <Compile Include="GameTests\Vector2iTests.cs" />
     <Compile Include="GameTests\VertexTests.cs" />
     <Compile Include="TimeLoopIncTests\LinkToolTests.cs" />
+    <Compile Include="UiTests\DataTemplateTests.cs" />
     <Compile Include="UiTests\DetectLoopTests.cs" />
     <Compile Include="UiTests\OrderedSetTests.cs" />
     <Compile Include="UiTests\TextInputTests.cs" />

@@ -156,5 +156,10 @@ namespace Game
             }
             return builder.ToString();
         }
+
+        public static OrderedSet<T> ToOrderedSet<T>(this IEnumerable<T> enumerable)
+        {
+            return new OrderedSet<T>(enumerable);
+        }
     }
 }

@@ -76,6 +76,23 @@ namespace UiTests
             Assert.AreEqual(expected, result);
         }
 
+        [Test]
+        public void StackFrameTest2()
+        {
+            //const float expected = 40;
+            //var stackFrame = new StackFrame(thickness: ElementEx.ChildrenMaxY(), isVertical: false)
+            //{
+            //    new Frame(width: _ => 50, height: _ => expected),
+            //    new Frame(width: _ => 50)
+            //};
+
+            //var result = stackFrame.Height;
+
+            //// If we make it this far then we haven't caused a stack overflow.
+
+            //Assert.AreEqual(expected, result);
+        }
+
         [Explicit]
         [Test]
         public void DebuggerHandlesRecursiveLoops()

@@ -13,7 +13,7 @@ namespace GameTests
     [TestFixture]
     public class FontTests
     {
-        public (Font, FontFile) GetFont()
+        public static (Font, FontFile) GetFont()
         {
             var workingDir = TestContext.CurrentContext.TestDirectory;
             var fontFile = FontLoader.Load(Path.Combine(workingDir, "Inconsolata.fnt"));

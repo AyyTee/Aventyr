@@ -23,14 +23,14 @@ namespace TimeLoopInc.Editor
         readonly TimeSpan _animationLength = TimeSpan.FromSeconds(0.15);
         string _saveName;
 
-        public IImmutableList<IElement> Children { get; }
+        public IEnumerable<IElement> Children { get; }
 
         public SaveDialogue(IEditorController editor)
         {
             _editor = editor;
             _saveName = editor.LevelName;
             var font = _editor.Window.Fonts.Inconsolata;
-            Children = new IElement[]
+            Children = new[]
             {
                 new Rectangle(
                     color: _ => new Color4(0, 0, 0, AnimationT() * 0.3f), 
@@ -59,7 +59,7 @@ namespace TimeLoopInc.Editor
                         }
                     }
                 }
-            }.ToImmutableList();
+            };
         }
 
         public SaveDialogue(out SaveDialogue id, IEditorController editor)

@@ -13,7 +13,7 @@ namespace Ui
 {
     public abstract class NodeElement : Element, IElement
     {
-        public ImmutableList<IBaseElement> Children { get; set; } = new List<IBaseElement>().ToImmutableList();
+        ImmutableList<IBaseElement> _children = new List<IBaseElement>().ToImmutableList();
 
         public NodeElement(
             ElementFunc<float> x = null, 
@@ -28,7 +28,7 @@ namespace Ui
         public IEnumerator<IElement> GetEnumerator()
         {
             var list = new List<IElement>();
-            foreach (var child in Children)
+            foreach (var child in _children)
             {
                 if (child is IElement element)
                 {
@@ -36,21 +36,33 @@ namespace Ui
                 }
                 else if (child is IDataTemplate template)
                 {
-                    list.AddRange(template.GetElements());
+                    var elements = template.GetElements();
+                    foreach (var templateElement in elements)
+                    {
+                        AddChild(templateElement);
+                    }
+                    list.AddRange(elements);
                 }
             }
             return list.GetEnumerator();
         }
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public virtual void Add(IElement element) 
+
+        protected virtual void AddChild(IElement element)
         {
-            Children = Children.Add(element);
             element.ElementArgs = new ElementArgs(this, element);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        public void Add(IElement element) 
+        {
+            _children = _children.Add(element);
+            AddChild(element);
         }
 
         public virtual void Add(IDataTemplate dataTemplate)
         {
-            Children = Children.Add(dataTemplate);
+            _children = _children.Add(dataTemplate);
         }
     }
 }

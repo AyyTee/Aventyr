@@ -61,6 +61,7 @@ namespace TimeLoopInc.Editor
             var root = new Frame()
             {
                 new SaveDialogue(out SaveDialogue saveDialogue, this),
+                new LoadDialogue(out LoadDialogue loadDialogue, this),
                 new Frame(hidden: _ => _isPlaying)
                 {
                     new StackFrame(thickness: _ => 200, spacing: _ => 5)
@@ -69,7 +70,7 @@ namespace TimeLoopInc.Editor
                         {
                             new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
                         },
-                        new Button(height: _ => 90, onClick: Load)
+                        new Button(height: _ => 90, onClick: () => loadDialogue.Show())
                         {
                             new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
                         },

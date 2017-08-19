@@ -23,21 +23,19 @@ namespace Ui
         public IEnumerable<IElement> GetElements()
         {
             var newCache = new Dictionary<T, IElement>();
-            var elements = DataFunc().Select(item =>
+            var data = DataFunc();
+            var elements = data.Select(item =>
                 {
                     var element = _cachedElements.GetOrDefault(item) ?? TemplateFunc(item);
                     newCache.Add(item, element);
                     return element;
-                });
+                }).ToList();
 
             _cachedElements = newCache;
             return elements;
         }
     }
 
-    /// <summary>
-    /// Only here so that we can have a non-generic Add method (which is needed for collection initializers).
-    /// </summary>
     public interface IDataTemplate : IBaseElement
     {
         IEnumerable<IElement> GetElements();

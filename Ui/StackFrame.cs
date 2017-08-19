@@ -79,9 +79,9 @@ namespace Ui
             id = this;
         }
 
-        public override void Add(IElement element)
+        protected override void AddChild(IElement element)
         {
-            base.Add(element);
+            base.AddChild(element);
             var cast = (Element)element;
             if (IsVertical)
             {

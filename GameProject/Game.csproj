@@ -167,6 +167,7 @@
     <Compile Include="Common\Transform2d.cs" />
     <Compile Include="Common\Vector4Ex.cs" />
     <Compile Include="Hotkey.cs" />
+    <Compile Include="OrderedSet.cs" />
     <Compile Include="Portals\SimplePortal.cs" />
     <Compile Include="PrecisionPairs.cs" />
     <Compile Include="FakeVirtualWindow.cs" />

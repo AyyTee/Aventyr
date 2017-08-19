@@ -74,6 +74,7 @@
     <Compile Include="Editor\ExitTool.cs" />
     <Compile Include="Editor\IEditorController.cs" />
     <Compile Include="Editor\ITool.cs" />
+    <Compile Include="Editor\LoadDialogue.cs" />
     <Compile Include="Editor\PlayerTool.cs" />
     <Compile Include="Editor\SaveDialogue.cs" />
     <Compile Include="Editor\WallTool.cs" />
