@@ -58,9 +58,7 @@ namespace TimeLoopInc.Editor
             _controller = controller;
             _tool = new WallTool(this);
 
-            _menu = new UiController(Window);
-
-            _menu.Root.Children = new IElement[]
+            var root = new Frame()
             {
                 new SaveDialogue(out SaveDialogue saveDialogue, this),
                 new Frame(hidden: _ => _isPlaying)
@@ -78,7 +76,8 @@ namespace TimeLoopInc.Editor
                         new Button(height: _ => 90, onClick: Play)
                         {
                             new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
-                        }
+                        },
+                        new DataTemplate<int>(() => new OrderedSet<int>(), _ => new TextBlock())
                     },
                     new TextBox(
                         _ => 220, _ => 10,
@@ -99,7 +98,9 @@ namespace TimeLoopInc.Editor
                     }
                 },
                 new TextBlock(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName)
-            }.ToImmutableList();
+            };
+
+            _menu = new UiController(Window, root);
 
             Camera = new GridCamera(new Transform2(), (float)Window.CanvasSize.XRatio);
             Camera.WorldTransform = Camera.WorldTransform.WithSize(15);

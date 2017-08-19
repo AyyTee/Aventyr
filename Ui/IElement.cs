@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace Ui
 {
-    public interface IElement : IEnumerable<IElement>
+    public interface IElement : IEnumerable<IElement>, IBaseElement
     {
         ElementArgs ElementArgs { get; set; }
 

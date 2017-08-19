@@ -17,7 +17,7 @@ namespace UiTests
         public void AddRangeTest0()
         {
             int count = 50;
-            var expected = Enumerable.Range(1, count).RandomSubset(count);
+            var expected = Enumerable.Range(1, count).RandomSubset(count).ToList();
 
             var ordered = new OrderedSet<int>();
             ordered.AddRange(expected);

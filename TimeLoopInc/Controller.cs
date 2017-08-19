@@ -30,8 +30,8 @@ namespace TimeLoopInc
         public Controller(IVirtualWindow window)
         {
             _window = window;
-            _menu = new UiController(_window);
-            _menu.Root.Children = new IElement[]
+
+            var root = new Frame()
             {
                 new StackFrame(thickness: _ => 200, spacing: _ => 5)
                 {
@@ -48,8 +48,8 @@ namespace TimeLoopInc
                         new TextBlock(ElementEx.AlignX(0.5f), ElementEx.AlignY(0.5f), _ => _window.Fonts.Inconsolata, _ => "Exit")
                     }
                 }
-            }.ToImmutableList();
-
+            };
+            _menu = new UiController(_window, root);
 
             _editor = new EditorController(_window, this);
         }

@@ -22,10 +22,15 @@ namespace Ui
         public IElement Hover { get; private set; }
         public TextBox Selected { get; private set; }
 
-        public UiController(IVirtualWindow window)
+        public UiController(IVirtualWindow window, Frame root)
         {
             _window = window;
-            Root = new Frame(width: _ => _window.CanvasSize.X, height: _ => _window.CanvasSize.Y);
+
+            Root = root;
+            Root.XFunc = _ => 0;
+            Root.YFunc = _ => 0;
+            Root.WidthFunc = _ => _window.CanvasSize.X;
+            Root.HeightFunc = _ => _window.CanvasSize.Y;
         }
 
         public void Update(float uiScale)
