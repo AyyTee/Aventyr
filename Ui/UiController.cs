@@ -21,6 +21,8 @@ namespace Ui
         List<UiWorldTransform> _flattenedUi = new List<UiWorldTransform>();
         public IElement Hover { get; private set; }
         public TextBox Selected { get; private set; }
+        public (IElement Element, DateTime Time) LastClick = (null, new DateTime());
+        public TimeSpan DoubleClickSpeed { get; set; } = TimeSpan.FromSeconds(1.5);
 
         public UiController(IVirtualWindow window, Frame root)
         {
@@ -35,6 +37,8 @@ namespace Ui
 
         public void Update(float uiScale)
         {
+            var time = DateTime.UtcNow;
+
             _camera = new HudCamera2(_window.CanvasSize);
             var mousePos = _window.MouseWorldPos(_camera);
 
@@ -50,6 +54,10 @@ namespace Ui
             Hover = hover?.Element;
             if (_window.ButtonPress(MouseButton.Left))
             {
+                var isDoubleClick = 
+                    (time - LastClick.Time < DoubleClickSpeed) && 
+                    LastClick.Element == Hover;
+
                 if (Hover != null)
                 {
                     switch (Hover)
@@ -57,7 +65,11 @@ namespace Ui
                         case Button button:
                             if (button.Enabled)
                             {
-                                button.OnClick.Invoke();
+                                var args = new ClickArgs(
+                                    isDoubleClick, 
+                                    button.ElementArgs.Parent, 
+                                    button.ElementArgs.Self);
+                                button.OnClick(args);
                             }
                             break;
                         case TextBox textBox:
@@ -69,6 +81,8 @@ namespace Ui
                 {
                     SetSelected(null);
                 }
+
+                LastClick = (Hover, time);
             }
 
             if (_window.ButtonPress(Key.Enter))

@@ -14,8 +14,9 @@ namespace Ui
 {
     public class Button : NodeElement, IElement
     {
-        public Action OnClick { get; }
-        public ElementFunc<bool> EnabledFunc { get; }
+        internal OnClickHandler OnClick { get; }
+        internal OnHoverHandler OnHover { get; }
+        protected ElementFunc<bool> EnabledFunc { get; }
         [DetectLoop]
         public bool Enabled => EnabledFunc(ElementArgs);
 
@@ -23,15 +24,14 @@ namespace Ui
             ElementFunc<float> x = null, 
             ElementFunc<float> y = null, 
             ElementFunc<float> width = null, 
-            ElementFunc<float> height = null, 
-            Action onClick = null, 
+            ElementFunc<float> height = null,
+            OnClickHandler onClick = null, 
+            OnHoverHandler onHover = null,
             ElementFunc<bool> enabled = null)
             : base(x, y , width, height)
         {
-            if (onClick != null)
-            {
-                OnClick += () => { onClick(); };
-            }
+            OnClick = onClick ?? (_ => { });
+            OnHover = onHover ?? (_ => { });
             EnabledFunc = enabled ?? (_ => true);
         }
 
@@ -40,10 +40,11 @@ namespace Ui
             ElementFunc<float> x = null, 
             ElementFunc<float> y = null, 
             ElementFunc<float> width = null, 
-            ElementFunc<float> height = null, 
-            Action onClick = null, 
+            ElementFunc<float> height = null,
+            OnClickHandler onClick = null,
+            OnHoverHandler onHover = null,
             ElementFunc<bool> enabled = null)
-            : this(x, y, width, height, onClick, enabled)
+            : this(x, y, width, height, onClick, onHover, enabled)
         {
             id = this;
         }

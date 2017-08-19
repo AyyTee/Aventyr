@@ -43,7 +43,7 @@ namespace TimeLoopInc
                     {
                         new TextBlock(ElementEx.AlignX(0.5f), ElementEx.AlignY(0.5f), _ => _window.Fonts.Inconsolata, _ => "Level Editor")
                     },
-                    new Button(height: _ => 80, onClick: _window.Exit)
+                    new Button(height: _ => 80, onClick: _ => _window.Exit())
                     {
                         new TextBlock(ElementEx.AlignX(0.5f), ElementEx.AlignY(0.5f), _ => _window.Fonts.Inconsolata, _ => "Exit")
                     }
@@ -54,7 +54,7 @@ namespace TimeLoopInc
             _editor = new EditorController(_window, this);
         }
 
-        public void StartGame()
+        public void StartGame(ClickArgs args)
         {
             var levels = new[]
             {
@@ -65,7 +65,7 @@ namespace TimeLoopInc
             _menuState = MenuState.InGame;
         }
 
-        public void StartLevelEditor()
+        public void StartLevelEditor(ClickArgs args)
         {
             _menuState = MenuState.Editor;
         }

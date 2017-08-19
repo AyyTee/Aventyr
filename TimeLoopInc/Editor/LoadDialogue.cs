@@ -52,11 +52,14 @@ namespace TimeLoopInc.Editor
                                     new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Cancel")
                                 }
                             },
-                            new StackFrame()
+                            new StackFrame(spacing: _ => 1)
                             {
                                 new DataTemplate<string>(
                                     () => _files.ToOrderedSet(),
-                                    name => new TextBlock(font: _ => _editor.Window.Fonts.Inconsolata, text: _ => name))
+                                    name => new Button(height: ChildrenMaxY())
+                                    {
+                                        new TextBlock(_ => 5, AlignY(0.5f), _ => _editor.Window.Fonts.Inconsolata, _ => name)
+                                    })
                             }
                         }
                     }
@@ -70,7 +73,7 @@ namespace TimeLoopInc.Editor
             id = this;
         }
 
-        void Load()
+        void Load(ClickArgs args)
         {
 
         }
@@ -85,7 +88,7 @@ namespace TimeLoopInc.Editor
             }
         }
 
-        public void Hide()
+        public void Hide(ClickArgs args)
         {
             if (AnimationT() >= 0)
             {

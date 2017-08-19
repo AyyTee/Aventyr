@@ -52,7 +52,7 @@ namespace TimeLoopInc.Editor
                             {
                                 new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Save")
                             },
-                            new Button(width: _ => 100, onClick: Hide)
+                            new Button(width: _ => 100, onClick: _ => Hide())
                             {
                                 new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Cancel")
                             }
@@ -91,7 +91,7 @@ namespace TimeLoopInc.Editor
             return Regex.IsMatch(fileName, @"^[\w]+$");
         }
 
-        void Save()
+        void Save(ClickArgs args)
         {
             var filepath = Path.Combine(_editor.SavePath, _editor.LevelName);
             Directory.CreateDirectory(_editor.SavePath);

@@ -66,15 +66,15 @@ namespace TimeLoopInc.Editor
                 {
                     new StackFrame(thickness: _ => 200, spacing: _ => 5)
                     {
-                        new Button(height: _ => 90, onClick: () => saveDialogue.Show())
+                        new Button(height: _ => 90, onClick: _ => saveDialogue.Show())
                         {
                             new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
                         },
-                        new Button(height: _ => 90, onClick: () => loadDialogue.Show())
+                        new Button(height: _ => 90, onClick: _ => loadDialogue.Show())
                         {
                             new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
                         },
-                        new Button(height: _ => 90, onClick: Play)
+                        new Button(height: _ => 90, onClick: _ => Play())
                         {
                             new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
                         },
@@ -89,11 +89,11 @@ namespace TimeLoopInc.Editor
                 },
                 new StackFrame(thickness: _ => 90, spacing: _ => 5, hidden: _ => !_isPlaying, isVertical: false)
                 {
-                    new Button(width: _ => 200, onClick: () => _sceneController = null)
+                    new Button(width: _ => 200, onClick: _ => _sceneController = null)
                     {
                         new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Return to editor")
                     },
-                    new Button(width: _ => 200, onClick: () => _sceneController.SetInput(_sceneController.Input.Clear()))
+                    new Button(width: _ => 200, onClick: _ => _sceneController.SetInput(_sceneController.Input.Clear()))
                     {
                         new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Restart")
                     }

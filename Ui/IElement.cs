@@ -40,11 +40,9 @@ namespace Ui
             return args => args.Self.MaxOrNull(
                 child =>
                 {
-                    if (DetectLoop.TryExecute(() => child.X, out float x) && DetectLoop.TryExecute(() => child.Width, out float width))
-                    {
-                        return x + width;
-                    }
-                    return 0;
+                    DetectLoop.TryExecute(() => child.X, out float x);
+                    DetectLoop.TryExecute(() => child.Width, out float width);
+                    return x + width;
                 }) ?? 0;
         }
             
@@ -53,11 +51,9 @@ namespace Ui
             return args => args.Self.MaxOrNull(
                 child =>
                 {
-                    if (DetectLoop.TryExecute(() => child.Y, out float y) && DetectLoop.TryExecute(() => child.Height, out float height))
-                    {
-                        return y + height;
-                    }
-                    return 0;
+                    DetectLoop.TryExecute(() => child.Y, out float y);
+                    DetectLoop.TryExecute(() => child.Height, out float height);
+                    return y + height;
                 }) ?? 0;
         }
 
