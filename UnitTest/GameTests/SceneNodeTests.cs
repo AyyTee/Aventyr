@@ -31,14 +31,23 @@ namespace GameTests
         //    return current.Minus(previous).Multiply(1/epsilon);
         //}
 
-        //public Transform2 GetRandomTransform(Random random)
-        //{
-        //    return new Transform2(
-        //            new Vector2((float)random.NextDouble() * 100 - 50, (float)random.NextDouble() * 100 - 50),
-        //            1 + (float)random.NextDouble(),
-        //            (float)random.NextDouble() * 2 + 1f,
-        //            random.NextDouble() > 0.5);
-        //}
+        public static Transform2 RandomTransform2(Random random)
+        {
+            return new Transform2(
+                    new Vector2((float)random.NextDouble() * 100 - 50, (float)random.NextDouble() * 100 - 50),
+                    1 + (float)random.NextDouble(),
+                    (float)random.NextDouble() * 2 + 1f,
+                    random.NextDouble() > 0.5);
+        }
+
+        public static Transform2d RandomTransform2d(Random random)
+        {
+            return new Transform2d(
+                    new Vector2d(random.NextDouble() * 10000 - 5000, random.NextDouble() * 10000 - 5000),
+                    random.NextDouble() * 500 - 250,
+                    random.NextDouble() * 3 + 0.1,
+                    random.NextDouble() > 0.5);
+        }
 
         //public Transform2 GetRandomVelocity(Random random)
         //{
@@ -84,7 +93,7 @@ namespace GameTests
         //    NodePortalable node = new NodePortalable(scene);
         //    node.SetTransform(new Transform2(new Vector2(100f, 33f), 13f, 311f));
         //    node.SetVelocity(Transform2.CreateVelocity(new Vector2(-1.3f, -5f), 3.11f, -14f));
-            
+
         //    NodePortalable parent = new NodePortalable(scene);
         //    node.SetParent(parent);
 
@@ -1058,7 +1067,7 @@ namespace GameTests
         //{
         //    Scene scene = new Scene();
         //    Actor actor = new Actor(scene, PolygonFactory.CreateRectangle(2, 2));
-            
+
 
         //    FixturePortal p0 = new FixturePortal(scene);
 
@@ -1068,7 +1077,7 @@ namespace GameTests
         //    p1.Linked = p0;
 
         //    p0.SetPosition(actor, new PolygonCoord(0, 0.5f), 1, true);
-            
+
 
 
         //    actor.SetTransform(new Transform2(new Vector2(1, 2)));

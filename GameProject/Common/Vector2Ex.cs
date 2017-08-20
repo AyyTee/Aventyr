@@ -23,6 +23,9 @@ namespace Game.Common
             return v0.X * v1.Y - v0.Y * v1.X;
         }
 
+        public static Vector2 Abs(this Vector2 v) => new Vector2(Math.Abs(v.X), Math.Abs(v.Y));
+        public static Vector2d Abs(this Vector2d v) => new Vector2d(Math.Abs(v.X), Math.Abs(v.Y));
+
         public static Vector2 LengthDir(double length, double direction)
         {
             return new Vector2(
@@ -86,11 +89,15 @@ namespace Game.Common
             return v - 2 * (v - Project(v, normal));
         }
 
+        public static Vector2 Round(this Vector2 vector) => vector.Round(Vector2.One);
+
         public static Vector2 Round(this Vector2 vector, Vector2 roundBy)
         {
             var v = Vector2.Divide(vector, roundBy);
             return new Vector2((float)Math.Round(v.X), (float)Math.Round(v.Y)) * roundBy;
         }
+
+        public static Vector2d Round(this Vector2d vector) => vector.Round(Vector2d.One);
 
         public static Vector2d Round(this Vector2d vector, Vector2d roundBy)
         {

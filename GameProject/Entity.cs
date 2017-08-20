@@ -29,6 +29,7 @@ namespace Game
         /// </summary>
         [DataMember]
         public bool DrawOverPortals { get; set; }
+        public bool PixelAlign => false;
         /// <summary>
         /// Gets or sets whether this Entity can be rendered.
         /// </summary>

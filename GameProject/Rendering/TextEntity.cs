@@ -29,6 +29,7 @@ namespace Game.Rendering
         public float AlignX { get; private set; }
         [DataMember]
         public int LineSpacing { get; private set; }
+        public bool PixelAlign => true;
         [DataMember]
         public List<ClipPath> ClipPaths { get; private set; } = new List<ClipPath>();
 

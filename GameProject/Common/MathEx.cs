@@ -693,12 +693,18 @@ namespace Game.Common
         }
 
         public static double LineToAngle(Vector2d v0, Vector2d v1) => VectorToAngleReversed(v1 - v0);
-        public static double LineToAngle(Vector2 v0, Vector2 v1) => LineToAngle(new Vector2d(v0.X, v0.Y), new Vector2d(v1.X, v1.Y));
+        public static float LineToAngle(Vector2 v0, Vector2 v1) => VectorToAngleReversed(v1 - v0);
 
         public static double VectorToAngleReversed(Vector2d v0) => VectorToAngle(new Vector2d(v0.X, -v0.Y));
-        public static double VectorToAngleReversed(Vector2 v0) => VectorToAngleReversed(new Vector2d(v0.X, v0.Y));
+        public static float VectorToAngleReversed(Vector2 v0) => VectorToAngle(new Vector2(v0.X, -v0.Y));
 
-        public static double AngleDiff(Vector2 v0, Vector2 v1) => AngleDiff(VectorToAngleReversed(v0), VectorToAngleReversed(v1));
+        public static float AngleDiff(Vector2 v0, Vector2 v1) => AngleDiff(VectorToAngleReversed(v0), VectorToAngleReversed(v1));
+        public static double AngleDiff(Vector2d v0, Vector2d v1) => AngleDiff(VectorToAngleReversed(v0), VectorToAngleReversed(v1));
+
+        public static float AngleDiff(float angle0, float angle1)
+        {
+            return (float)(((angle1 - angle0) % (Math.PI * 2) + Math.PI * 3) % (Math.PI * 2) - Math.PI);
+        }
 
         public static double AngleDiff(double angle0, double angle1)
         {
@@ -719,16 +725,20 @@ namespace Game.Common
                 (val + 2 * Math.PI) % (2 * Math.PI) - Math.PI / 2;
         }
 
-        public static double VectorToAngle(Vector2 v0) => VectorToAngle(new Vector2d(v0.X, v0.Y));
+        public static float VectorToAngle(Vector2 v0) => (float)VectorToAngle(new Vector2d(v0.X, v0.Y));
 
         /// <summary>
         /// Returns the difference between two numbers on a looping numberline.
         /// </summary>
-        /// <param name="val0"></param>
-        /// <param name="val1"></param>
-        /// <param name="wrapSize"></param>
-        /// <returns></returns>
         public static int ValueDiff(int val0, int val1, int wrapSize)
+        {
+            return ((val1 - val0) % (wrapSize) + (wrapSize * 3) / 2) % (wrapSize) - wrapSize / 2;
+        }
+
+        /// <summary>
+        /// Returns the difference between two numbers on a looping numberline.
+        /// </summary>
+        public static double ValueDiff(double val0, double val1, double wrapSize)
         {
             return ((val1 - val0) % (wrapSize) + (wrapSize * 3) / 2) % (wrapSize) - wrapSize / 2;
         }

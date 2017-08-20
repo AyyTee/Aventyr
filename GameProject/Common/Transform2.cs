@@ -149,7 +149,7 @@ namespace Game.Common
         public Transform2 AddPosition(Vector2 position) => new Transform2(position + Position, Rotation, Size, MirrorX);
         public Transform2 AddRotation(float rotation) => new Transform2(Position, rotation + Rotation, Size, MirrorX);
         public Transform2 AddSize(float size) => new Transform2(Position, Rotation, size + Size, MirrorX);
-        public Transform2 FlipMirrorX() => new Transform2(Position, Rotation, Size, !MirrorX);
+        public Transform2 ToggleMirrorX() => new Transform2(Position, Rotation, Size, !MirrorX);
 
         public Transform2 SetScale(Vector2 scale)
         {
@@ -220,6 +220,17 @@ namespace Game.Common
         public static Transform2 CreateVelocity(Vector2 linearVelocity, float angularVelocity = 0, float scalarVelocity = 0)
         {
             return new Transform2(linearVelocity, angularVelocity, scalarVelocity);
+        }
+
+        public static Transform2 FromPoints(Vector2 position, Vector2 unitUp, Vector2 unitRight)
+        {
+            var rightAngleMaxError = 0.00001f;
+            DebugEx.Assert(Math.Abs(unitUp.Length - unitRight.Length) < UniformScaleEpsilon, "Scale is not uniform.");
+            var diff = MathEx.AngleDiff(unitUp, unitRight);
+            DebugEx.Assert(MathEx.ValueDiff(diff, 0, Math.PI / 2) < rightAngleMaxError, $"{nameof(unitUp)} and {nameof(unitRight)} must form a right angle.");
+
+            float rotation = MathEx.AngleDiff(unitUp, new Vector2(0, 1));
+            return new Transform2(position, rotation, unitUp.Length, diff < 0);
         }
     }
 }

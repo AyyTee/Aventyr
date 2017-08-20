@@ -34,7 +34,7 @@ namespace Game.Common
         {
         }
 
-        public Transform2d(Vector2d position, double rotation = 0, double size = 1, bool mirrorX = false)
+        public Transform2d(Vector2d position = new Vector2d(), double rotation = 0, double size = 1, bool mirrorX = false)
         {
             DebugEx.Assert(!Vector2Ex.IsNaN(position));
             DebugEx.Assert(!double.IsNaN(rotation));
@@ -148,6 +148,7 @@ namespace Game.Common
         public Transform2d AddPosition(Vector2d position) => new Transform2d(position + Position, Rotation, Size, MirrorX);
         public Transform2d AddRotation(double rotation) => new Transform2d(Position, rotation + Rotation, Size, MirrorX);
         public Transform2d AddSize(double size) => new Transform2d(Position, Rotation, size + Size, MirrorX);
+        public Transform2d ToggleMirrorX() => new Transform2d(Position, Rotation, Size, !MirrorX);
 
         public Transform2d SetScale(Vector2d scale)
         {
@@ -218,6 +219,17 @@ namespace Game.Common
         public static Transform2d CreateVelocity(Vector2d linearVelocity, double angularVelocity = 0, double scalarVelocity = 0)
         {
             return new Transform2d(linearVelocity, angularVelocity, scalarVelocity);
+        }
+
+        public static Transform2d FromPoints(Vector2d position, Vector2d unitUp, Vector2d unitRight)
+        {
+            var rightAngleMaxError = 0.00001f;
+            DebugEx.Assert(Math.Abs(unitUp.Length - unitRight.Length) < UniformScaleEpsilon, "Scale is not uniform.");
+            var diff = MathEx.AngleDiff(unitUp, unitRight);
+            DebugEx.Assert(MathEx.ValueDiff(diff, 0, Math.PI / 2) < rightAngleMaxError, $"{nameof(unitUp)} and {nameof(unitRight)} must form a right angle.");
+
+            double rotation = MathEx.AngleDiff(unitUp, new Vector2d(0, 1));
+            return new Transform2d(position, rotation, unitUp.Length, diff < 0);
         }
     }
 }

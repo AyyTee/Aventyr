@@ -130,8 +130,7 @@ namespace Game.Portals
             }
 
             //If a static actor enters a portal then it's no longer static.
-            var actorCast = portalable as Actor;
-            if (actorCast != null && actorCast.BodyType == BodyType.Static)
+            if (portalable is Actor actorCast && actorCast.BodyType == BodyType.Static)
             {
                 actorCast.SetBodyType(BodyType.Kinematic);
             }
@@ -196,7 +195,7 @@ namespace Game.Portals
         public static Matrix4 GetLinkedMatrix(IPortalRenderable portalEnter, IPortalRenderable portalExit)
         {
             Transform2 transform = portalExit.WorldTransform
-                .FlipMirrorX();
+                .ToggleMirrorX();
             Matrix4 m = portalEnter.WorldTransform
                 .GetMatrix()
                 .Inverted();
@@ -212,7 +211,7 @@ namespace Game.Portals
         public static Transform2 GetLinkedTransform(IPortalRenderable portalEnter, IPortalRenderable portalExit)
         {
             Transform2 tExit = portalExit.WorldTransform
-                .FlipMirrorX();
+                .ToggleMirrorX();
             Transform2 tEnter = portalEnter.WorldTransform
                 .Inverted()
                 .Transform(tExit);

@@ -33,7 +33,7 @@ namespace GameTests
             Transform2 t = new Transform2(new Vector2(100, -200), (float)Math.PI / 4, 1);
 
             Vector2 normal = t.GetRight();
-            Vector2 reference = new Vector2((float)Math.Cos(Math.PI/4), (float)Math.Sin(Math.PI/4));
+            Vector2 reference = new Vector2((float)Math.Cos(Math.PI / 4), (float)Math.Sin(Math.PI / 4));
             Assert.IsTrue(Math.Abs(normal.X - reference.X) < 0.00001 && Math.Abs(normal.Y - reference.Y) < 0.00001);
         }
         [Test]
@@ -266,5 +266,35 @@ namespace GameTests
             Assert.IsTrue(Matrix4Ex.AlmostEqual(result.GetMatrix(), t0.GetMatrix() * t1.GetMatrix()));
         }
         #endregion
+
+        [Test]
+        public void FromPointsTest0()
+        {
+            var result = Transform2d.FromPoints(new Vector2d(), new Vector2d(0, 1), new Vector2d(1, 0));
+            Assert.AreEqual(new Transform2d(), result);
+        }
+
+        [Test]
+        public void FromPointsTest1()
+        {
+            var pos = new Vector2d(4, -2.4);
+            var result = Transform2d.FromPoints(pos, new Vector2d(0, 1), new Vector2d(1, 0));
+            Assert.AreEqual(new Transform2d(pos), result);
+        }
+
+        [Test]
+        public void FromPointsTest2()
+        {
+            var random = new Random(123123);
+            for (int i = 0; i < 500; i++)
+            {
+                var transform = SceneNodeTests.RandomTransform2d(random);
+                var result = Transform2d.FromPoints(transform.Position, transform.GetUp(), transform.GetRight());
+
+                var expected = transform.WithRotation(MathEx.ValueWrap(transform.Rotation, Math.PI * 2));
+                result = result.WithRotation(MathEx.ValueWrap(result.Rotation, Math.PI * 2));
+                Assert.IsTrue(expected.AlmostEqual(result));
+            }
+        }
     }
 }

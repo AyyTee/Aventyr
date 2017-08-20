@@ -43,6 +43,7 @@ namespace EditorLogic
         public bool DrawOverPortals { get; set; }
         [DataMember]
         public bool IsPortalable { get; set; }
+        public bool PixelAlign => false;
         [DataMember]
         public bool IsSelected { get; private set; }
         [DataMember]

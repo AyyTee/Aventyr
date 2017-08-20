@@ -166,8 +166,11 @@ namespace Ui
                         var element = item.Element;
                         var elementArgs = item.Element.ElementArgs;
                         return (IRenderable)new Renderable(
-                            item.WorldTransform, 
-                            element.GetModels(new ModelArgs(element == Selected, elementArgs.Parent, elementArgs.Self)));
+                            item.WorldTransform,
+                            element.GetModels(new ModelArgs(element == Selected, elementArgs.Parent, elementArgs.Self)))
+                        {
+                            PixelAlign = true
+                        };
                     })
                     .Reverse()
                     .ToList()
