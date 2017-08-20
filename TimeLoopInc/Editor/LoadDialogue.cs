@@ -24,12 +24,16 @@ namespace TimeLoopInc.Editor
         string[] _files = new string[0];
 
         public IEnumerable<IElement> Children { get; }
+        public Action<SceneBuilder> OnLoad { get; }
 
-        public LoadDialogue(IEditorController editor)
+        public string SelectedFile { get; set; }
+
+        public LoadDialogue(IEditorController editor = null, Action<SceneBuilder> onLoad = null)
         {
             _editor = editor;
             var font = _editor.Window.Fonts.Inconsolata;
 
+            OnLoad = onLoad ?? (_ => { });
             Children = new[]
             {
                 new Rectangle(
@@ -42,12 +46,11 @@ namespace TimeLoopInc.Editor
                         {
                             new StackFrame(thickness: _ => 50, isVertical: false, spacing: _ => 20)
                             {
-                                new TextBlock(y: AlignY(0.5f), font: _ => font, text: _ => "File Name:"),
-                                new Button(width: _ => 100, onClick: Load)
+                                new Button(width: _ => 100, onClick: _ => Load(), enabled: _ => SelectedFile != null)
                                 {
                                     new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Load")
                                 },
-                                new Button(width: _ => 100, onClick: Hide)
+                                new Button(width: _ => 100, onClick: _ => Hide())
                                 {
                                     new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Cancel")
                                 }
@@ -56,9 +59,14 @@ namespace TimeLoopInc.Editor
                             {
                                 new DataTemplate<string>(
                                     () => _files.ToOrderedSet(),
-                                    name => new Button(height: ChildrenMaxY())
+                                    name => new Radio<string>(
+                                        height: ChildrenMaxY(), 
+                                        onClick: RadioClick,
+                                        target: name, 
+                                        getValue: _ => SelectedFile, 
+                                        setValue: value => SelectedFile = value)
                                     {
-                                        new TextBlock(_ => 5, AlignY(0.5f), _ => _editor.Window.Fonts.Inconsolata, _ => name)
+                                        new TextBlock(_ => 5, AlignY(0.5f), _ => _editor?.Window.Fonts.Inconsolata, _ => name)
                                     })
                             }
                         }
@@ -67,15 +75,29 @@ namespace TimeLoopInc.Editor
             };
         }
 
-        public LoadDialogue(out LoadDialogue id, IEditorController editor)
-            : this(editor)
+        public LoadDialogue(out LoadDialogue id, IEditorController editor = null, Action<SceneBuilder> onLoad = null)
+            : this(editor, onLoad)
         {
             id = this;
         }
 
-        void Load(ClickArgs args)
+        void Load()
         {
+            if (File.Exists(SelectedFile))
+            {
+                Hide();
+                var scene = Serializer.Deserialize<SceneBuilder>(File.ReadAllText(SelectedFile));
+                OnLoad(scene);
+                _editor.LevelName = Path.GetFileNameWithoutExtension(SelectedFile);
+            }
+        }
 
+        void RadioClick(ClickArgs args)
+        {
+            if (args.IsDoubleClick)
+            {
+                Load();
+            }
         }
 
         public void Show()
@@ -84,11 +106,12 @@ namespace TimeLoopInc.Editor
             {
                 _isLoading = true;
                 _loadStart = DateTime.UtcNow;
+                SelectedFile = null;
                 _files = Directory.GetFiles(_editor.SavePath, "*", SearchOption.AllDirectories);
             }
         }
 
-        public void Hide(ClickArgs args)
+        public void Hide()
         {
             if (AnimationT() >= 0)
             {

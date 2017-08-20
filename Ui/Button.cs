@@ -49,11 +49,11 @@ namespace Ui
             id = this;
         }
 
-        public override List<Model> GetModels()
+        public override List<Model> GetModels(ModelArgs args)
         {
             return new[]
             {
-                ModelFactory.CreatePlane(this.GetSize(), Color4.Black),
+                ModelFactory.CreatePlane(this.GetSize(), Enabled ? Color4.Black : new Color4(0, 0, 0, 0.5f)),
             }.ToList();
         }
 

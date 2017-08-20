@@ -61,7 +61,7 @@ namespace TimeLoopInc.Editor
             var root = new Frame()
             {
                 new SaveDialogue(out SaveDialogue saveDialogue, this),
-                new LoadDialogue(out LoadDialogue loadDialogue, this),
+                new LoadDialogue(out LoadDialogue loadDialogue, this, Load),
                 new Frame(hidden: _ => _isPlaying)
                 {
                     new StackFrame(thickness: _ => 200, spacing: _ => 5)
@@ -77,8 +77,7 @@ namespace TimeLoopInc.Editor
                         new Button(height: _ => 90, onClick: _ => Play())
                         {
                             new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
-                        },
-                        new DataTemplate<int>(() => new OrderedSet<int>(), _ => new TextBlock())
+                        }
                     },
                     new TextBox(
                         _ => 220, _ => 10,
@@ -115,17 +114,13 @@ namespace TimeLoopInc.Editor
             }
         }
 
-        void Load()
+        void Load(SceneBuilder newScene)
         {
-            var filepath = Path.Combine(SavePath, "Saved.xml");
-            if (File.Exists(filepath))
+            _sceneChanges = new[]
             {
-                _sceneChanges = new[]
-                {
-                    Serializer.Deserialize<SceneBuilder>(File.ReadAllText(filepath))
-                }.ToList();
-                _sceneChangeCurrent = 0;
-            }
+                newScene
+            }.ToList();
+            _sceneChangeCurrent = 0;
         }
 
         string TimeOffsetGetText(ElementArgs args)

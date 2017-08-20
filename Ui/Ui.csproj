@@ -71,6 +71,7 @@
     <Compile Include="ClickArgs.cs" />
     <Compile Include="HoverArgs.cs" />
     <Compile Include="IBaseElement.cs" />
+    <Compile Include="ModelArgs.cs" />
     <Compile Include="NodeElement.cs" />
     <Compile Include="CursorText.cs" />
     <Compile Include="DataTemplate.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="DetectLoop.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IElement.cs" />
+    <Compile Include="Radio.cs" />
     <Compile Include="Rectangle.cs" />
     <Compile Include="StackFrame.cs" />
     <Compile Include="TextBox.cs" />

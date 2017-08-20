@@ -49,6 +49,6 @@ namespace Ui
         }
 
         public virtual bool IsInside(Vector2 localPoint) => false;
-        public virtual List<Model> GetModels() => new List<Model>();//Draw.Rectangle(new Vector2(), new Vector2(Width, Height), new Color4(0f, 0f, 0f, 0.3f)).GetModels();
+        public virtual List<Model> GetModels(ModelArgs args) => new List<Model>();//Draw.Rectangle(new Vector2(), new Vector2(Width, Height), new Color4(0f, 0f, 0f, 0.3f)).GetModels();
     }
 }

@@ -66,7 +66,7 @@ namespace Ui
             id = this;
         }
 
-        public override List<Model> GetModels()
+        public override List<Model> GetModels(ModelArgs args)
         {
             var models = new List<Model>();
             var margin = new Vector2(2, 2);

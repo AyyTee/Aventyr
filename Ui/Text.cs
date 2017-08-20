@@ -44,7 +44,7 @@ namespace Ui
             id = this;
         }
 
-        public override List<Model> GetModels()
+        public override List<Model> GetModels(ModelArgs args)
         {
             var font = Font;
             return font != null ?

@@ -22,7 +22,7 @@ namespace Ui
         public IElement Hover { get; private set; }
         public TextBox Selected { get; private set; }
         public (IElement Element, DateTime Time) LastClick = (null, new DateTime());
-        public TimeSpan DoubleClickSpeed { get; set; } = TimeSpan.FromSeconds(1.5);
+        public TimeSpan DoubleClickSpeed { get; set; } = TimeSpan.FromSeconds(0.6);
 
         public UiController(IVirtualWindow window, Frame root)
         {
@@ -65,6 +65,10 @@ namespace Ui
                         case Button button:
                             if (button.Enabled)
                             {
+                                if (button is IRadio radio)
+                                {
+                                    radio.SetValue();
+                                }
                                 var args = new ClickArgs(
                                     isDoubleClick, 
                                     button.ElementArgs.Parent, 
@@ -157,15 +161,18 @@ namespace Ui
                 DepthTest = false,
                 Camera = _camera,
                 Renderables = _flattenedUi
-                    .Select(item => (IRenderable)new Renderable(item.WorldTransform, item.Element.GetModels()))
+                    .Select(item =>
+                    {
+                        var element = item.Element;
+                        var elementArgs = item.Element.ElementArgs;
+                        return (IRenderable)new Renderable(
+                            item.WorldTransform, 
+                            element.GetModels(new ModelArgs(element == Selected, elementArgs.Parent, elementArgs.Self)));
+                    })
                     .Reverse()
                     .ToList()
             };
         }
-
-        public bool IsInside(Vector2 localPoint) => true;
-
-        public List<Model> GetModels() => new List<Model>();
 
         class UiWorldTransform
         {

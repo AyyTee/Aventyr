@@ -22,6 +22,9 @@ namespace Game.Rendering
         public bool IsPortalable { get; set; } = true;
 
         [DataMember]
+        public bool PixelAlign { get; set; }
+
+        [DataMember]
         public Transform2 WorldTransform { get; set; } = new Transform2();
         [DataMember]
         public Transform2 WorldVelocity { get; set; } = Transform2.CreateVelocity();

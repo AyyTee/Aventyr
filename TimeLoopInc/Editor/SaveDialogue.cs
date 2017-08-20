@@ -93,7 +93,7 @@ namespace TimeLoopInc.Editor
 
         void Save(ClickArgs args)
         {
-            var filepath = Path.Combine(_editor.SavePath, _editor.LevelName);
+            var filepath = Path.Combine(_editor.SavePath, _saveName);
             Directory.CreateDirectory(_editor.SavePath);
 
             File.WriteAllText(filepath, Serializer.Serialize(_editor.Scene));

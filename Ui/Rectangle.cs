@@ -42,7 +42,7 @@ namespace Ui
             id = this;
         }
 
-        public override List<Model> GetModels()
+        public override List<Model> GetModels(ModelArgs args)
         {
             return Draw.Rectangle(new Vector2(), this.GetSize(), Color).GetModels();
         }
