@@ -28,31 +28,5 @@ namespace GameTests
 
             return new Tuple<EditorScene, EditorWall>(scene, polygon);
         }
-
-        /// <summary>
-        /// Portals attached to a square should have no clipping regardless of its orientation and position.
-        /// </summary>
-        [Test]
-        [Ignore("Has been broken for a while.")]
-        public void FixturePortal()
-        {
-            EditorPortal portal0, portal1;
-            EditorScene scene = new EditorScene(new FakeVirtualWindow());
-            EditorWall polygon = new EditorWall(scene, PolygonFactory.CreateRectangle(2, 2));
-
-            portal0 = new EditorPortal(scene);
-            portal1 = new EditorPortal(scene);
-            portal0.SetTransform(polygon, new PolygonCoord(0, 0.5f));
-            portal1.SetTransform(polygon, new PolygonCoord(1, 0.5f));
-            portal0.Linked = portal1;
-            portal1.Linked = portal0;
-
-            for (float i = 0; i < MathEx.Tau; i += 0.01f)
-            {
-                polygon.SetTransform(new Transform2(new Vector2(100000, -123), i, 1));
-                List<Clip.ClipModel> clipmodels = Clip.GetClipModels(polygon, scene.GetPortalList().OfType<IPortalRenderable>(), 2);
-                Assert.IsTrue(clipmodels.Count == polygon.GetClippedModels().Count);
-            }
-        }
     }
 }

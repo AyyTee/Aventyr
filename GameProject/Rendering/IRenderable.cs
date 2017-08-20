@@ -3,6 +3,7 @@ using Game.Common;
 using Game.Models;
 using OpenTK;
 using System;
+using System.Linq;
 
 namespace Game.Rendering
 {
@@ -24,7 +25,7 @@ namespace Game.Rendering
 
     public static class IRenderableEx
     {
-        public static List<Model> GetClippedModels(this IRenderable renderable)
+        public static List<Model> GetClippedModels(this IRenderable renderable, Transform2 worldTransfom)
         {
             var clippedModels = new List<Model>();
             var models = renderable.GetModels();
@@ -33,7 +34,7 @@ namespace Game.Rendering
                 var clippedModel = model.ShallowClone();
                 foreach (var clipPath in renderable.ClipPaths)
                 {
-                    var matrix = clippedModel.Transform.GetMatrix() * renderable.WorldTransform.GetMatrix();
+                    var matrix = clippedModel.Transform.GetMatrix() * worldTransfom.GetMatrix();
                     clippedModel.Mesh = clippedModel.Mesh.Bisect(clipPath, matrix);
                 }
                 clippedModels.Add(clippedModel);
@@ -45,8 +46,8 @@ namespace Game.Rendering
         {
             if (renderable.PixelAlign)
             {
-                var maxDelta = 0.001f;
                 var transform = renderable.WorldTransform;
+
                 var up = transform.GetUp();
                 var right = transform.GetRight();
                 var points = new[]
@@ -56,58 +57,14 @@ namespace Game.Rendering
                     transform.Position + right,
                 };
                 var screen = camera.WorldToScreen(points, canvasSize);
-                if (ComponentMinDifference(screen[0], screen[1]) < maxDelta && 
-                    ComponentMinDifference(screen[0], screen[2]) < maxDelta &&
-                    Math.Abs(ComponentMaxDifference(screen[0], screen[1]) - 1) < maxDelta &&
-                    Math.Abs(ComponentMaxDifference(screen[0], screen[2]) - 1) < maxDelta)
-                {
-                    Vector2[] aligned;
-                    if (XAligned(screen[0], screen[1], maxDelta * 2))
-                    {
-                        aligned = new[]
-                        {
-                            screen[0].Round(),
-                            new Vector2((float)Math.Round(screen[0].X), (float)Math.Round(screen[1].Y)),
-                            new Vector2((float)Math.Round(screen[2].X), (float)Math.Round(screen[0].Y))
-                        };
-                    }
-                    else
-                    {
-                        aligned = new[]
-                        {
-                            screen[0].Round(),
-                            new Vector2((float)Math.Round(screen[1].X), (float)Math.Round(screen[0].Y)),
-                            new Vector2((float)Math.Round(screen[0].X), (float)Math.Round(screen[2].Y))
-                        };
-                    }
 
-                    var world = camera.ScreenToWorld(aligned, canvasSize);
-                    return Transform2.FromPoints(world[0], world[1], world[2]);
-                }
+                var delta = screen[0].Round() - screen[0];
+                var aligned = screen.Select(item => item - delta).ToArray();
+
+                var world = camera.ScreenToWorld(aligned, canvasSize);
+                return Transform2.FromPoints(world[0], world[1] - world[0], world[2] - world[0]);
             }
             return renderable.WorldTransform;
-        }
-        
-        static float ComponentMinDifference(Vector2 v0, Vector2 v1)
-        {
-            var delta = (v0 - v1).Abs();
-            return Math.Min(delta.X, delta.Y);
-        }
-
-        static float ComponentMaxDifference(Vector2 v0, Vector2 v1)
-        {
-            var delta = (v0 - v1).Abs();
-            return Math.Max(delta.X, delta.Y);
-        }
-
-        static bool XAligned(Vector2 v0, Vector2 v1, float maxDelta)
-        {
-            return Math.Abs(v0.X - v1.X) < 0.002f;
-        }
-
-        static bool YAligned(Vector2 v0, Vector2 v1, float maxDelta)
-        {
-            return Math.Abs(v0.X - v1.X) < 0.002f;
         }
     }
 }

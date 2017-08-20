@@ -15,15 +15,15 @@ namespace Game.Models
         public class ClipModel
         {
             public readonly LineF[] ClipLines;
+            public readonly Transform2 WorldTransform;
             public readonly Matrix4 Transform;
             public readonly Model Model;
-            public readonly IRenderable Entity;
 
-            public ClipModel(IRenderable entity, Model model, LineF[] clipLines, Matrix4 transform)
+            public ClipModel(Model model, LineF[] clipLines, Transform2 worldTransform, Matrix4 transform)
             {
-                Entity = entity;
                 Model = model;
                 ClipLines = clipLines;
+                WorldTransform = worldTransform;
                 Transform = transform;
             }
         }
@@ -42,27 +42,28 @@ namespace Game.Models
             }
         }
 
-        public static List<ClipModel> GetClipModels(IRenderable entity, IEnumerable<IPortalRenderable> portalList, int depth)
+        public static List<ClipModel> GetClipModels(IRenderable entity, IEnumerable<IPortalRenderable> portalList, int depth, ICamera2 camera, Vector2i canvasSize)
         {
             var clipModels = new List<ClipModel>();
             if (entity.WorldTransform == null)
             {
                 return clipModels;
             }
-            var models = entity.GetClippedModels();
+            var transform = entity.PixelAlignedWorldTransform(camera, canvasSize);
+            var models = entity.GetClippedModels(transform);
             DebugEx.Assert(models.All(item => item != null));
             if (entity.IsPortalable && !entity.DrawOverPortals)
             {
                 foreach (Model m in models)
                 {
-                    clipModels.AddRange(_getClipModels(entity, m, portalList, entity.WorldTransform.Position, null, Matrix4.Identity, depth, 0));
+                    clipModels.AddRange(_getClipModels(transform, m, portalList, entity.WorldTransform.Position, null, Matrix4.Identity, depth, 0));
                 }
             }
             else
             {
                 foreach (Model m in models)
                 {
-                    clipModels.Add(new ClipModel(entity, m, new LineF[0], Matrix4.Identity));
+                    clipModels.Add(new ClipModel(m, new LineF[0], transform, Matrix4.Identity));
                 }
             }
             return clipModels;
@@ -70,7 +71,7 @@ namespace Game.Models
 
         /// <param name="depth">Number of iterations.</param>
         /// <param name="clipModels">Adds the ClipModel instances to this list.</param>
-        static List<ClipModel> _getClipModels(IRenderable entity, Model model, IEnumerable<IPortalRenderable> portalList, Vector2 centerPoint, IPortalRenderable portalEnter, Matrix4 modelMatrix, int depth, int count)
+        static List<ClipModel> _getClipModels(Transform2 worldTransform, Model model, IEnumerable<IPortalRenderable> portalList, Vector2 centerPoint, IPortalRenderable portalEnter, Matrix4 modelMatrix, int depth, int count)
         {
             List<ClipModel> clipModels = new List<ClipModel>();
             if (depth <= 0)
@@ -80,8 +81,8 @@ namespace Game.Models
             
             var collisions = Portal.GetCollisions(
                 centerPoint, 
-                Vector2Ex.Transform(model.GetWorldConvexHull(), 
-                entity.WorldTransform.GetMatrix() * modelMatrix), 
+                Vector2Ex.Transform(model.GetWorldConvexHull(),
+                worldTransform.GetMatrix() * modelMatrix), 
                 portalList, 
                 PortalClipMargin);
 
@@ -113,10 +114,10 @@ namespace Game.Models
                 if (portalEnter == null || portal != portalEnter.Linked)
                 {
                     Vector2 centerPointNext = Vector2Ex.Transform(portal.WorldTransform.Position + normal, Portal.GetLinkedMatrix(portal));
-                    clipModels.AddRange(_getClipModels(entity, model, portalList, centerPointNext, portal, modelMatrix * Portal.GetLinkedMatrix(portal), depth - 1, count + 1));
+                    clipModels.AddRange(_getClipModels(worldTransform, model, portalList, centerPointNext, portal, modelMatrix * Portal.GetLinkedMatrix(portal), depth - 1, count + 1));
                 }
             }
-            clipModels.Add(new ClipModel(entity, model, clipLines.ToArray(), modelMatrix));
+            clipModels.Add(new ClipModel(model, clipLines.ToArray(), worldTransform, modelMatrix));
             return clipModels;
         }
 

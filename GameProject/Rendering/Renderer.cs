@@ -186,14 +186,14 @@ namespace Game.Rendering
                     {
                         continue;
                     }
-                    var clipModels = Clip.GetClipModels(e, layer.Portals, PortalClipDepth);
+                    var clipModels = Clip.GetClipModels(e, layer.Portals, PortalClipDepth, cam, window.CanvasSize);
                     DebugEx.Assert(clipModels.All(item => item.Model != null));
                     foreach (var clip in clipModels)
                     {
                         if (clip.ClipLines.Length > 0)
                         {
                             Model model = clip.Model.DeepClone();
-                            Matrix4 transform = clip.Entity.WorldTransform.GetMatrix() * clip.Transform;
+                            Matrix4 transform = clip.WorldTransform.GetMatrix() * clip.Transform;
                             for (int i = 0; i < clip.ClipLines.Length; i++)
                             {
                                 model.Mesh = model.Mesh.Bisect(clip.ClipLines[i], clip.Model.Transform.GetMatrix() * transform, Side.Right);
@@ -203,7 +203,7 @@ namespace Game.Rendering
                         }
                         else
                         {
-                            sceneModels.Add(data.BufferModel(clip.Model, clip.Entity.WorldTransform.GetMatrix() * clip.Transform));
+                            sceneModels.Add(data.BufferModel(clip.Model, clip.WorldTransform.GetMatrix() * clip.Transform));
                         }
                     }
                 }

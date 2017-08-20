@@ -169,7 +169,7 @@ namespace Ui
                             item.WorldTransform,
                             element.GetModels(new ModelArgs(element == Selected, elementArgs.Parent, elementArgs.Self)))
                         {
-                            PixelAlign = true
+                            PixelAlign = element is TextBlock || element is TextBox
                         };
                     })
                     .Reverse()
