@@ -76,5 +76,61 @@ namespace GameTests
                 fontFile.Info.Size * lineCount + lineSpacing * (lineCount - 1));
             Assert.AreEqual(expected, result);
         }
+
+        [Test]
+        public void GetBaselineTest0()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "test";
+            var glyphs = font.GetGlyphs(text, new Font.Settings());
+            var glyph = glyphs[0][0];
+
+            var result = font.BaselinePosition(text, 0, new Font.Settings());
+            var expected = new Vector2i(glyph.Point.X, fontFile.Common.Base);
+            Assert.AreEqual(result, expected);
+        }
+
+        [Test]
+        public void GetBaselineTest1()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "test";
+            var glyphs = font.GetGlyphs(text, new Font.Settings());
+            var glyph = glyphs[0][3];
+
+            var result = font.BaselinePosition(text, 4, new Font.Settings());
+            var expected = new Vector2i(glyph.Point.X + glyph.FontChar.XAdvance, fontFile.Common.Base);
+            Assert.AreEqual(result, expected);
+        }
+
+        [TestCase(0)]
+        [TestCase(2)]
+        [TestCase(-3)]
+        public void GetBaselineTest2(int lineSpacing)
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "test\n";
+            var glyphs = font.GetGlyphs(text, new Font.Settings());
+
+            var result = font.BaselinePosition(text, 5, new Font.Settings(lineSpacing: lineSpacing));
+            var expected = new Vector2i(0, fontFile.Common.LineHeight + lineSpacing + fontFile.Common.Base);
+            Assert.AreEqual(result, expected);
+        }
+
+        [Test]
+        public void GetBaselineTest3()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "";
+            var glyphs = font.GetGlyphs(text, new Font.Settings());
+
+            var result = font.BaselinePosition(text, 0, new Font.Settings());
+            var expected = new Vector2i(0, fontFile.Common.Base);
+            Assert.AreEqual(result, expected);
+        }
     }
 }

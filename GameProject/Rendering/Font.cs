@@ -68,7 +68,7 @@ namespace Game.Rendering
 
         public Vector2i GetSize(string text, Settings settings)
         {
-            var lineHeight = FontData.Info.Size + settings.LineSpacing;
+            var lineHeight = FontData.Common.LineHeight + settings.LineSpacing;
 
             var glyphs = GetGlyphs(text, settings);
             return new Vector2i(
@@ -79,16 +79,27 @@ namespace Game.Rendering
         public Vector2i BaselinePosition(string text, int charIndex, Settings settings)
         {
             Debug.Assert(text != null);
-            if (text == "")
+
+            var glyphs = GetGlyphs(text, settings);
+            var lineNumber = 0;
+            while (lineNumber < glyphs.Length && charIndex > glyphs[lineNumber].Length)
             {
-                return new Vector2i();
+                charIndex -= glyphs[lineNumber].Length + 1;
+                lineNumber++;
             }
-            var glyphs = GetGlyphs(text, settings)
-                .SelectMany(item => item)
-                .ElementAt(MathHelper.Clamp(charIndex, 0, text.Length - 1));
-            return charIndex >= text.Length ?
-                glyphs.Point + new Vector2i(glyphs.FontChar.XAdvance, 0) :
-                glyphs.Point;
+
+            var y = (FontData.Common.LineHeight + settings.LineSpacing) * lineNumber + FontData.Common.Base;
+            if (glyphs[lineNumber].Length == 0)
+            {
+                return new Vector2i(0, y);
+            }
+            else if (charIndex == glyphs[lineNumber].Length)
+            {
+                var glyph = glyphs[lineNumber][charIndex - 1];
+                return new Vector2i(glyph.Point.X + glyph.FontChar.XAdvance, y);
+            }
+            
+            return new Vector2i(glyphs[lineNumber][charIndex].Point.X, y);
         }
 
         public Glyph[][] GetGlyphs(string text, Settings settings)
@@ -114,7 +125,7 @@ namespace Game.Rendering
 
                     posCurrent += new Vector2i(fontChar.XAdvance + settings.CharSpacing, 0);
                 }
-                posCurrent = new Vector2i(0, posCurrent.Y + FontData.Info.Size + settings.LineSpacing);
+                posCurrent = new Vector2i(0, posCurrent.Y + FontData.Common.LineHeight + settings.LineSpacing);
             }
             return glyphs;
         }

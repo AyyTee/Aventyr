@@ -69,33 +69,36 @@ namespace Ui
         public override List<Model> GetModels(ModelArgs args)
         {
             var models = new List<Model>();
-            var margin = new Vector2(2, 2);
+            var margin = new Vector2i(2, 2);
             var size = this.GetSize();
             if (size != new Vector2())
             {
                 models.AddRange(Draw.Rectangle(new Vector2(), size, Color4.Brown).GetModels());
-                models.AddRange(Draw.Rectangle(margin, size - margin, BackgroundColor).GetModels());
-
+                models.AddRange(Draw.Rectangle((Vector2)margin, size - (Vector2)margin, BackgroundColor).GetModels());
 
                 var settings = new Font.Settings();
 
                 var font = Font;
                 var text = Text;
 
+                var textPos = new Vector2i(
+                    margin.X + 5,
+                    ((int)size.Y - font.GetSize(text, settings).Y) / 2);
+
                 if (CursorIndex != null)
                 {
-                    var cursorPos = font.BaselinePosition(text, (int)CursorIndex, settings);
+                    var cursorPos = textPos + font.BaselinePosition(text, (int)CursorIndex, settings);
 
                     var cursor = Draw.Rectangle(
-                        (Vector2)(cursorPos + new Vector2i(-1, 10)),
-                        (Vector2)(cursorPos + new Vector2i(1, font.FontData.Info.Size + 5)), Color4.Black).GetModels();
+                        (Vector2)(cursorPos + new Vector2i(-1, -font.FontData.Common.Base)),
+                        (Vector2)(cursorPos + new Vector2i(1, -font.FontData.Common.Base + font.FontData.Info.Size)), Color4.Black).GetModels();
                     models.AddRange(cursor);
                 }
 
                 var textModel = font.GetModel(text, Color4.Black);
                 textModel.Transform.Position += new Vector3(
-                    margin.X, 
-                    (size.Y - font.GetSize(text, settings).Y) / 2, 
+                    textPos.X,
+                    textPos.Y, 
                     0); 
                 models.Add(textModel);
             }
