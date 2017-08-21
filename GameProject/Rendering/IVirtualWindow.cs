@@ -90,7 +90,9 @@ namespace Game.Rendering
 
         public static bool HotkeyDown(this IVirtualWindow window, Hotkey hotkey)
         {
-            return window.ButtonDown(hotkey.Key) && window.ModifierKeysDown(hotkey);
+            return hotkey == null ?
+                false :
+                window.ButtonDown(hotkey.Key) && window.ModifierKeysDown(hotkey);
         }
 
         public static bool ButtonDown(this IVirtualWindow window, MouseButton input)
@@ -122,7 +124,9 @@ namespace Game.Rendering
 
         public static bool HotkeyPress(this IVirtualWindow window, Hotkey hotkey)
         {
-            return window.ButtonPress(hotkey.Key) && window.ModifierKeysDown(hotkey);
+            return hotkey == null ? 
+                false :
+                window.ButtonPress(hotkey.Key) && window.ModifierKeysDown(hotkey);
         }
 
         public static bool ButtonPress(this IVirtualWindow window, MouseButton input)
@@ -156,7 +160,9 @@ namespace Game.Rendering
 
         public static bool HotkeyRelease(this IVirtualWindow window, Hotkey hotkey)
         {
-            return window.ButtonRelease(hotkey.Key) && window.ModifierKeysDown(hotkey);
+            return hotkey == null ?
+                false :
+                window.ButtonRelease(hotkey.Key) && window.ModifierKeysDown(hotkey);
         }
 
         public static bool ButtonRelease(this IVirtualWindow window, MouseButton input)

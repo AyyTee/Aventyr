@@ -15,11 +15,14 @@ namespace Ui
     {
         public ElementFunc<string> TextFunc { get; }
         public ElementFunc<Font> FontFunc { get; }
+        public ElementFunc<int?> MaxWidthFunc { get; }
 
         [DetectLoop]
         public string Text => TextFunc(ElementArgs);
         [DetectLoop]
         public Font Font => FontFunc(ElementArgs);
+        [DetectLoop]
+        public int? MaxWidth => MaxWidthFunc(ElementArgs);
 
         Vector2 Size => (Vector2)(Font?.GetSize(Text, new Font.Settings(Color4.White)) ?? new Vector2i());
 
@@ -27,7 +30,8 @@ namespace Ui
             ElementFunc<float> x = null, 
             ElementFunc<float> y = null, 
             ElementFunc<Font> font = null, 
-            ElementFunc<string> text = null, 
+            ElementFunc<string> text = null,
+            ElementFunc<int?> maxWidthFunc = null,
             ElementFunc<bool> hidden = null)
             : base(x, y, hidden: hidden)
         {
@@ -36,10 +40,18 @@ namespace Ui
             DebugEx.Assert(text != null);
             FontFunc = font ?? (_ => null);
             TextFunc = text ?? (_ => "");
+            MaxWidthFunc = maxWidthFunc ?? (_ => null);
         }
 
-        public TextBlock(out TextBlock id, ElementFunc<float> x = null, ElementFunc<float> y = null, ElementFunc<Font> font = null, ElementFunc<string> text = null, ElementFunc<bool> hidden = null)
-            : this(x, y, font, text, hidden)
+        public TextBlock(
+            out TextBlock id, 
+            ElementFunc<float> x = null, 
+            ElementFunc<float> y = null, 
+            ElementFunc<Font> font = null, 
+            ElementFunc<string> text = null,
+            ElementFunc<int?> maxWidthFunc = null,
+            ElementFunc<bool> hidden = null)
+            : this(x, y, font, text, maxWidthFunc, hidden)
         {
             id = this;
         }
@@ -48,7 +60,7 @@ namespace Ui
         {
             var font = Font;
             return font != null ?
-                new[] { font.GetModel(Text) }.ToList() :
+                new[] { font.GetModel(Text, maxWidth: MaxWidth) }.ToList() :
                 new List<Model>();
         }
 

@@ -212,8 +212,8 @@ namespace TimeLoopInc
                         if (font != null)
                         {
                             var text = font.GetModel(portal.TimeOffset.ToString(), Color4.White, 0.5f);
-                            text.Transform.Scale = new Vector3(0.014f, 0.014f, 0.014f);
-                            var offset = (Vector2)angle.Vector * 0.48f;
+                            text.Transform.Scale = new Vector3(-0.014f, 0.014f, 0.014f);
+                            var offset = (Vector2)angle.Vector *  0.1f;
                             text.Transform.Position = new Vector3(offset.X, offset.Y, 1);
                             text.Transform.Rotation = new Quaternion(new Vector3(0, 0, 1), (float)(angle.Radians - Math.PI / 2));
                             models.Add(text);

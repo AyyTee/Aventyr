@@ -31,6 +31,11 @@ namespace TimeLoopInc.Editor
             var selectedPortal = SelectedPortal(scene);
             if (window.ButtonPress(_editor.PlaceButton))
             {
+                _editor.ApplyChanges(scene.With(null), true);
+            }
+
+            if (window.ButtonPress(_editor.SelectButton))
+            {
                 if (selectedPortal == null)
                 {
                     var portals = scene.Links.SelectMany(item => item.Portals);
@@ -66,8 +71,11 @@ namespace TimeLoopInc.Editor
                     }
                 }
             }
-            var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
-            EditorController.DeleteAndSelect(_editor, mouseGridPos);
+            else
+            {
+                var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
+                EditorController.DeleteAndSelect(_editor, mouseGridPos);
+            }
         }
 
         public static PortalLink GetLink(PortalBuilder portal, IEnumerable<PortalLink> links)

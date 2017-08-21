@@ -120,15 +120,17 @@ namespace GameTests
             Assert.AreEqual(result, expected);
         }
 
-        [Test]
-        public void GetBaselineTest3()
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(-1)]
+        public void GetBaselineTest3(int charIndex)
         {
             var (font, fontFile) = GetFont();
 
             var text = "";
             var glyphs = font.GetGlyphs(text, new Font.Settings());
 
-            var result = font.BaselinePosition(text, 0, new Font.Settings());
+            var result = font.BaselinePosition(text, charIndex, new Font.Settings());
             var expected = new Vector2i(0, fontFile.Common.Base);
             Assert.AreEqual(result, expected);
         }

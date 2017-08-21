@@ -79,11 +79,11 @@ namespace TimeLoopInc
             for (int i = (int)Math.Ceiling(MinTime - 0.01); i <= Math.Floor(MaxTime + 0.01); i++)
             {
                 Vector2 pos = new Vector2((float)MathEx.LerpInverse(MinTime, MaxTime, i), 0) * size;
-                var top = (topLeft + pos).Round(Vector2.One);
-                output.Add(Draw.Text(_font, top, i.ToString(), 0.5f));
+                var top = topLeft + pos;
+                var text = i.ToString();
+                output.Add(Draw.Text(_font, top - (Vector2)_font.GetSize(text) * new Vector2(0.5f, 1), text));
                 output.Add(Draw.Line(new LineF(top, top + size.YOnly()), Color4.Black));
             }
-
 
             output.AddRange(DrawParadoxes(boxes, topLeft, size, 1));
 

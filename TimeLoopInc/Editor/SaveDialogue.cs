@@ -28,7 +28,6 @@ namespace TimeLoopInc.Editor
         public SaveDialogue(IEditorController editor)
         {
             _editor = editor;
-            _saveName = editor.LevelName;
             var font = _editor.Window.Fonts.Inconsolata;
             Children = new[]
             {
@@ -74,6 +73,7 @@ namespace TimeLoopInc.Editor
             {
                 _isSaving = true;
                 _saveStart = DateTime.UtcNow;
+                _saveName = _editor.LevelName;
             }
         }
 

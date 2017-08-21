@@ -57,7 +57,7 @@ namespace TimeLoopInc.Editor
                         selectedPortal = newPortal;
                     }
 
-                    _editor.ApplyChanges(scene.With(links: links).With(selectedPortal.Position));
+                    _editor.ApplyChanges(scene.With(links: links).With(selectedPortal?.Position));
                 }
             }
             EditorController.DeleteAndSelect(_editor, mouseGridPos);

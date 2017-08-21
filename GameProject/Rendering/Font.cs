@@ -27,18 +27,20 @@ namespace Game.Rendering
             public float AlignX { get; }
             public int LineSpacing { get; }
             public int CharSpacing { get; }
+            public int? MaxWidth { get; }
 
-            public Settings(float alignX = 0, int lineSpacing = 0, int charSpacing = 0)
-                : this(Color4.White, alignX, lineSpacing, charSpacing)
+            public Settings(float alignX = 0, int lineSpacing = 0, int charSpacing = 0, int? maxWidth = null)
+                : this(Color4.White, alignX, lineSpacing, charSpacing, maxWidth)
             {
             }
 
-            public Settings(Color4 color, float alignX = 0, int lineSpacing = 0, int charSpacing = 0)
+            public Settings(Color4 color, float alignX = 0, int lineSpacing = 0, int charSpacing = 0, int? maxWidth = null)
             {
                 Color = color;
                 AlignX = alignX;
                 LineSpacing = lineSpacing;
                 CharSpacing = charSpacing;
+                MaxWidth = maxWidth;
             }
         }
 
@@ -66,25 +68,41 @@ namespace Game.Rendering
             _fontTextures = textures.ToArray();
         }
 
+        public Vector2i GetSize(string text)
+        {
+            return GetSize(text, new Settings());
+        }
+
         public Vector2i GetSize(string text, Settings settings)
         {
-            var lineHeight = FontData.Common.LineHeight + settings.LineSpacing;
-
             var glyphs = GetGlyphs(text, settings);
             return new Vector2i(
-                glyphs.SelectMany(item => item).MaxOrNull(item => item.EndPoint.X) ?? 0, 
-                Math.Max(0, glyphs.Length * lineHeight - settings.LineSpacing));
+                glyphs.SelectMany(item => item).MaxOrNull(item => item.EndPoint.X) ?? 0,
+                _getHeight(glyphs, settings));
+        }
+
+        private int _getHeight(Glyph[][] glyphs, Settings settings)
+        {
+            var lineHeight = FontData.Common.LineHeight + settings.LineSpacing;
+            return Math.Max(0, lineHeight * glyphs.Length - settings.LineSpacing);
+        }
+
+        public Vector2i BaselinePosition(string text, int charIndex)
+        {
+            return BaselinePosition(text, charIndex, new Settings());
         }
 
         public Vector2i BaselinePosition(string text, int charIndex, Settings settings)
         {
             Debug.Assert(text != null);
 
+            var index = MathHelper.Clamp(charIndex, 0, text.Length);
+
             var glyphs = GetGlyphs(text, settings);
             var lineNumber = 0;
-            while (lineNumber < glyphs.Length && charIndex > glyphs[lineNumber].Length)
+            while (lineNumber < glyphs.Length && index > glyphs[lineNumber].Length)
             {
-                charIndex -= glyphs[lineNumber].Length + 1;
+                index -= glyphs[lineNumber].Length + 1;
                 lineNumber++;
             }
 
@@ -93,13 +111,13 @@ namespace Game.Rendering
             {
                 return new Vector2i(0, y);
             }
-            else if (charIndex == glyphs[lineNumber].Length)
+            else if (index == glyphs[lineNumber].Length)
             {
-                var glyph = glyphs[lineNumber][charIndex - 1];
+                var glyph = glyphs[lineNumber][index - 1];
                 return new Vector2i(glyph.Point.X + glyph.FontChar.XAdvance, y);
             }
             
-            return new Vector2i(glyphs[lineNumber][charIndex].Point.X, y);
+            return new Vector2i(glyphs[lineNumber][index].Point.X, y);
         }
 
         public Glyph[][] GetGlyphs(string text, Settings settings)
@@ -127,26 +145,6 @@ namespace Game.Rendering
                 }
                 posCurrent = new Vector2i(0, posCurrent.Y + FontData.Common.LineHeight + settings.LineSpacing);
             }
-            return glyphs;
-        }
-
-        public Model GetModel(string text, float alignX = 0, int lineSpacing = 0, int charSpacing = 0)
-        {
-            return GetModel(text, Color4.White, 0, lineSpacing, charSpacing);
-        }
-
-        public Model GetModel(string text, Color4 color, float alignX = 0, int lineSpacing = 0, int charSpacing = 0)
-        {
-            return GetModel(text, new Settings(color, alignX, lineSpacing, charSpacing));
-        }
-
-        /// <summary>
-        /// Creates a model to render a string with
-        /// </summary>
-        public Model GetModel(string text, Settings settings)
-        {
-            Debug.Assert(!text.Contains('\r'));
-            var glyphs = GetGlyphs(text, settings);
 
             if (settings.AlignX != 0)
             {
@@ -160,6 +158,27 @@ namespace Game.Rendering
                     }
                 }
             }
+
+            return glyphs;
+        }
+
+        public Model GetModel(string text, float alignX = 0, int lineSpacing = 0, int charSpacing = 0, int? maxWidth = null)
+        {
+            return GetModel(text, Color4.White, 0, lineSpacing, charSpacing, maxWidth);
+        }
+
+        public Model GetModel(string text, Color4 color, float alignX = 0, int lineSpacing = 0, int charSpacing = 0, int? maxWidth = null)
+        {
+            return GetModel(text, new Settings(color, alignX, lineSpacing, charSpacing, maxWidth));
+        }
+
+        /// <summary>
+        /// Creates a model to render a string with
+        /// </summary>
+        public Model GetModel(string text, Settings settings)
+        {
+            Debug.Assert(!text.Contains('\r'));
+            var glyphs = GetGlyphs(text, settings);
 
             var vertices = GetVertices(glyphs.SelectMany(item => item), settings.Color);
             var textMesh = new Mesh(

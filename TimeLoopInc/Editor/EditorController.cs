@@ -36,27 +36,44 @@ namespace TimeLoopInc.Editor
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
         int _sceneChangeCurrent;
-        ITool _tool;
-        readonly ImmutableDictionary<Hotkey, Action> _hotkeys;
+        ToolData _tool;
+        readonly ImmutableArray<ToolData> _tools;
+
+        private class ToolData
+        {
+            public ITool Tool { get; }
+            public Hotkey Hotkey { get; }
+            public string Name { get; }
+            public string Hint { get; }
+
+            public ToolData(string name, ITool tool, string hint, Hotkey hotkey = null)
+            {
+                DebugEx.Assert(tool != null);
+                Name = name;
+                Tool = tool;
+                Hint = hint;
+                Hotkey = hotkey;
+            }
+        }
+
 
         public EditorController(IVirtualWindow window, Controller controller)
         {
-            _hotkeys = new Dictionary<Hotkey, Action>
+            _tools = new[]
             {
-                { new Hotkey(Key.Number1), () => _tool = new WallTool(this) },
-                { new Hotkey(Key.Number2), () => _tool = new ExitTool(this) },
-                { new Hotkey(Key.Number3), () => _tool = new PlayerTool(this) },
-                { new Hotkey(Key.Number4), () => _tool = new BlockTool(this) },
-                { new Hotkey(Key.Number5), () => _tool = new PortalTool(this) },
-                { new Hotkey(Key.Number6), () => _tool = new LinkTool(this) },
-                { new Hotkey(Key.P, true), Play}
-            }.ToImmutableDictionary();
+                new ToolData("Wall", new WallTool(this), "Left click to place.  Right click to remove.", new Hotkey(Key.Number1)),
+                new ToolData("Exit", new ExitTool(this), "Left click to select.  Right click to place.  Delete to remove.", new Hotkey(Key.Number2)),
+                new ToolData("Player", new PlayerTool(this), "Left click to select.  Right click to place.  Delete to remove.", new Hotkey(Key.Number3)),
+                new ToolData("Block", new BlockTool(this), "Left click to select.  Right click to place.  Delete to remove.", new Hotkey(Key.Number4)),
+                new ToolData("Portal", new PortalTool(this), "Left click to select.  Right click to place.  Delete to remove.  Shift+left links placed portal with previous.", new Hotkey(Key.Number5)),
+                new ToolData("Portal\nLink", new LinkTool(this), "Click two portals to link them.", new Hotkey(Key.Number6)),
+            }.ToImmutableArray();
 
             _sceneChanges.Add(new SceneBuilder());
 
             Window = window;
             _controller = controller;
-            _tool = new WallTool(this);
+            _tool = _tools[0];
 
             var root = new Frame()
             {
@@ -64,19 +81,40 @@ namespace TimeLoopInc.Editor
                 new LoadDialogue(out LoadDialogue loadDialogue, this, Load),
                 new Frame(hidden: _ => _isPlaying)
                 {
-                    new StackFrame(thickness: _ => 200, spacing: _ => 5)
+                    new StackFrame(spacing: _ => 20)
                     {
-                        new Button(height: _ => 90, onClick: _ => saveDialogue.Show())
+                        new StackFrame(thickness: _ => 200, spacing: _ => 5)
                         {
-                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
+                            new Button(height: _ => 90, onClick: _ => saveDialogue.Show())
+                            {
+                                new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
+                            },
+                            new Button(height: _ => 90, onClick: _ => loadDialogue.Show())
+                            {
+                                new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
+                            },
+                            new Button(height: _ => 90, onClick: _ => Play())
+                            {
+                                new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
+                            }
                         },
-                        new Button(height: _ => 90, onClick: _ => loadDialogue.Show())
+                        new StackFrame(thickness: _ => 120, spacing: _ => 2)
                         {
-                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
-                        },
-                        new Button(height: _ => 90, onClick: _ => Play())
-                        {
-                            new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
+                            new DataTemplate<ToolData>(
+                                () => new OrderedSet<ToolData>(_tools),
+                                data => new Radio<ToolData>(
+                                    height: ChildrenMaxY(),
+                                    target: data,
+                                    getValue: _ => _tool,
+                                    setValue: _ => _tool = data)
+                                {
+                                    new TextBlock(
+                                        AlignX(0.5f), 
+                                        AlignY(0.5f), 
+                                        _ => Window.Fonts.Inconsolata, 
+                                        _ => data.Name, 
+                                        args => (int)args.Parent.Width - 10)
+                                })
                         }
                     },
                     new TextBox(
@@ -97,7 +135,8 @@ namespace TimeLoopInc.Editor
                         new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Restart")
                     }
                 },
-                new TextBlock(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName)
+                new TextBlock(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName),
+                new TextBlock(x: _ => 5, y: AlignY(1), font: _ => Window.Fonts.Inconsolata, text: _ => _tool.Hint)
             };
 
             _menu = new UiController(Window, root);
@@ -125,7 +164,7 @@ namespace TimeLoopInc.Editor
 
         string TimeOffsetGetText(ElementArgs args)
         {
-            if (_tool is PortalTool portalTool)
+            if (_tool.Tool is PortalTool portalTool)
             {
                 var link = LinkTool.GetLink(LinkTool.SelectedPortal(Scene), Scene.Links);
                 return link?.TimeOffset.ToString() ?? "";
@@ -135,7 +174,7 @@ namespace TimeLoopInc.Editor
 
         void TimeOffsetSetText(string newText)
         {
-            if (_tool is PortalTool portalTool)
+            if (_tool.Tool is PortalTool portalTool)
             {
                 var link = LinkTool.GetLink(LinkTool.SelectedPortal(Scene), Scene.Links);
                 if (link != null)
@@ -168,7 +207,7 @@ namespace TimeLoopInc.Editor
                         Camera.WorldTransform = Camera.WorldTransform.AddPosition((Vector2)v * 3);
                     }
 
-                    _tool.Update();
+                    _tool.Tool.Update();
 
                     if (Window.ButtonDown(KeyBoth.Control))
                     {
@@ -182,9 +221,9 @@ namespace TimeLoopInc.Editor
                         }
                     }
 
-                    _hotkeys
-                        .Where(item => Window.HotkeyPress(item.Key))
-                        .ForEach(item => item.Value());
+                    _tools
+                        .Where(item => Window.HotkeyPress(item.Hotkey))
+                        .ForEach(item => _tool = item);
                 }
             }
         }
@@ -301,7 +340,6 @@ namespace TimeLoopInc.Editor
 
         public void UndoChanges()
         {
-            ResetTool();
             if (_sceneChangeCurrent > 0)
             {
                 _sceneChangeCurrent--;
@@ -310,16 +348,10 @@ namespace TimeLoopInc.Editor
 
         public void RedoChanges()
         {
-            ResetTool();
             if (_sceneChangeCurrent + 1 < _sceneChanges.Count)
             {
                 _sceneChangeCurrent++;
             }
-        }
-
-        void ResetTool()
-        {
-            _tool = (ITool)Activator.CreateInstance(_tool.GetType(), this);
         }
 
         public void Render(double timeDelta)
@@ -340,7 +372,7 @@ namespace TimeLoopInc.Editor
                         .ToList()
                 };
 
-                layer.Renderables.AddRange(_tool.Render());
+                layer.Renderables.AddRange(_tool.Tool.Render());
                 Window.Layers.Add(layer);
             }
 
