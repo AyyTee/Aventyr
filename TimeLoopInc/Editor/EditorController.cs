@@ -122,7 +122,8 @@ namespace TimeLoopInc.Editor
                         _ => 200, _ => 90,
                         _ => Window.Fonts.Inconsolata,
                         TimeOffsetGetText,
-                        TimeOffsetSetText)
+                        TimeOffsetSetText),
+                    new TextBlock(x: _ => 5, y: AlignY(1), font: _ => Window.Fonts.Inconsolata, text: _ => _tool.Hint)
                 },
                 new StackFrame(thickness: _ => 90, spacing: _ => 5, hidden: _ => !_isPlaying, isVertical: false)
                 {
@@ -136,7 +137,6 @@ namespace TimeLoopInc.Editor
                     }
                 },
                 new TextBlock(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName),
-                new TextBlock(x: _ => 5, y: AlignY(1), font: _ => Window.Fonts.Inconsolata, text: _ => _tool.Hint)
             };
 
             _menu = new UiController(Window, root);
