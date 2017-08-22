@@ -181,7 +181,7 @@ namespace TimeLoopInc
 
             foreach (var wall in _scene.Walls)
             {
-                output.Add(CreateSquare(wall, 1, new Color4(0.8f, 1f, 0.5f, 1f)));
+                output.Add(CreateWall(wall));
             }
 
             foreach (var exit in _scene.Exits)
@@ -258,6 +258,10 @@ namespace TimeLoopInc
                 result.PortalsEntered.Sum(item => ((TimePortal)item.EnterData.EntrancePortal).TimeOffset));
         }
 
+        public static Renderable CreateWall(Vector2i position)
+        {
+            return CreateSquare(position, 1, new Color4(0.8f, 1f, 0.5f, 1f));
+        }
 
         static Renderable CreateSquare(Vector2i position, int size, Color4 color)
         {
