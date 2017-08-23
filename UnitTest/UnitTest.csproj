@@ -111,6 +111,9 @@
     </None>
     <None Include="packages.config" />
     <None Include="OpenTK.dll.config" />
+    <None Include="TimeLoopIncTests\Levels\BugTest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Aventyr\Aventyr.csproj">

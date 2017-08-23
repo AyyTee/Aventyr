@@ -24,11 +24,13 @@ namespace TimeLoopInc.Editor
         string _saveName;
 
         public IEnumerable<IElement> Children { get; }
+        public Action<string> OnSave { get; }
 
-        public SaveDialogue(IEditorController editor)
+        public SaveDialogue(IEditorController editor = null, Action<string> onSave = null)
         {
             _editor = editor;
             var font = _editor.Window.Fonts.Inconsolata;
+            OnSave = onSave ?? (_ => { });
             Children = new[]
             {
                 new Rectangle(
@@ -61,8 +63,8 @@ namespace TimeLoopInc.Editor
             };
         }
 
-        public SaveDialogue(out SaveDialogue id, IEditorController editor)
-            : this(editor)
+        public SaveDialogue(out SaveDialogue id, IEditorController editor = null, Action<string> onSave = null)
+            : this(editor, onSave)
         {
             id = this;
         }
@@ -73,7 +75,7 @@ namespace TimeLoopInc.Editor
             {
                 _isSaving = true;
                 _saveStart = DateTime.UtcNow;
-                _saveName = _editor.LevelName;
+                _saveName = _editor?.LevelName ?? "";
             }
         }
 
@@ -93,14 +95,8 @@ namespace TimeLoopInc.Editor
 
         void Save(ClickArgs args)
         {
-            var filepath = Path.Combine(_editor.SavePath, _saveName);
-            Directory.CreateDirectory(_editor.SavePath);
-
-            File.WriteAllText(filepath, Serializer.Serialize(_editor.Scene));
-
             Hide();
-
-            _editor.LevelName = _saveName;
+            OnSave(_saveName);
         }
 
         float AnimationT()

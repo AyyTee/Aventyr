@@ -89,6 +89,9 @@ namespace TimeLoopInc.Editor
             }
         }
 
+        /// <summary>
+        /// </summary>
+        /// <remarks>Original code found here: http://ericw.ca/notes/bresenhams-line-algorithm-in-csharp.html </remarks>
         public static IEnumerable<Vector2i> GetPointsOnLine(Vector2i v0, Vector2i v1)
         {
             var x0 = v0.X;

@@ -120,7 +120,7 @@ namespace TimeLoopInc
 
         T GetEntityNext<T>(T entity) where T : IGridEntity
         {
-            return (T)Entities
+            return (T)Entities.ToList()
                 .FirstOrDefault(item => IsPrevious(entity, item));
         }
 

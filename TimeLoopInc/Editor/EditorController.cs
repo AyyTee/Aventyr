@@ -36,6 +36,7 @@ namespace TimeLoopInc.Editor
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
         List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
         int _sceneChangeCurrent;
+        int _saveChangeCurrent;
         ToolData _tool;
         readonly ImmutableArray<ToolData> _tools;
 
@@ -77,7 +78,7 @@ namespace TimeLoopInc.Editor
 
             var root = new Frame()
             {
-                new SaveDialogue(out SaveDialogue saveDialogue, this),
+                new SaveDialogue(out SaveDialogue saveDialogue, this, Save),
                 new LoadDialogue(out LoadDialogue loadDialogue, this, Load),
                 new Frame(hidden: _ => _isPlaying)
                 {
@@ -85,15 +86,19 @@ namespace TimeLoopInc.Editor
                     {
                         new StackFrame(thickness: _ => 200, spacing: _ => 5)
                         {
-                            new Button(height: _ => 90, onClick: _ => saveDialogue.Show())
+                            new Button(height: _ => 60, onClick: _ => NewLevel())
+                            {
+                                new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "New")
+                            },
+                            new Button(height: _ => 60, onClick: _ => saveDialogue.Show())
                             {
                                 new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
                             },
-                            new Button(height: _ => 90, onClick: _ => loadDialogue.Show())
+                            new Button(height: _ => 60, onClick: _ => loadDialogue.Show())
                             {
                                 new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
                             },
-                            new Button(height: _ => 90, onClick: _ => Play())
+                            new Button(height: _ => 60, onClick: _ => Play())
                             {
                                 new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
                             }
@@ -136,7 +141,7 @@ namespace TimeLoopInc.Editor
                         new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Restart")
                     }
                 },
-                new TextBlock(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName),
+                new TextBlock(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName + (_saveChangeCurrent == _sceneChangeCurrent ? "" : "*")),
             };
 
             _menu = new UiController(Window, root);
@@ -153,13 +158,34 @@ namespace TimeLoopInc.Editor
             }
         }
 
+        void NewLevel()
+        {
+            LevelName = "NewLevel";
+            SetScene(new SceneBuilder());
+        }
+
         void Load(SceneBuilder newScene)
+        {
+            SetScene(newScene);
+        }
+
+        void SetScene(SceneBuilder scene)
         {
             _sceneChanges = new[]
             {
-                newScene
+                scene
             }.ToList();
             _sceneChangeCurrent = 0;
+            _saveChangeCurrent = 0;
+        }
+
+        void Save(string saveName)
+        {
+            var filepath = Path.Combine(SavePath, saveName);
+            Directory.CreateDirectory(SavePath);
+
+            File.WriteAllText(filepath, Serializer.Serialize(Scene));
+            _saveChangeCurrent = _sceneChangeCurrent;
         }
 
         string TimeOffsetGetText(ElementArgs args)
@@ -201,7 +227,7 @@ namespace TimeLoopInc.Editor
             {
                 if (_menu.Hover == null)
                 {
-                    var v = MoveInput.CreateFromKeyboard(Window)?.Direction?.Vector;
+                    var v = MoveInput.FromKeyboard(Window)?.Direction?.Vector;
                     if (v != null)
                     {
                         Camera.WorldTransform = Camera.WorldTransform.AddPosition((Vector2)v * 3);

@@ -511,5 +511,15 @@ namespace TimeLoopIncTests
                 .First(item => item is Block));
             Assert.AreEqual(null, result, "Block entities should continue to exist indefinately.");
         }
+
+        [Test]
+        public void BugLevelTest0()
+        {
+            var scene = SceneRenderTests.LoadLevel("BugTest");
+
+            MoveInput.FromString("DDWWWWW").ForEach(item => scene.Step(item));
+
+            scene.GetTimelines();
+        }
     }
 }

@@ -17,7 +17,7 @@ namespace TimeLoopIncTests
     [TestFixture]
     public class SceneRenderTests
     {
-        TimeLoopInc.Scene LoadLevel(string filename)
+        public static TimeLoopInc.Scene LoadLevel(string filename)
         {
             var workingDir = TestContext.CurrentContext.TestDirectory;
             var levelData = File.ReadAllText(Path.Combine(workingDir, "TimeLoopIncTests", "Levels", filename));

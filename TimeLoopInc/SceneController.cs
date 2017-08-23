@@ -90,7 +90,7 @@ namespace TimeLoopInc
                 }
                 else
                 {
-                    var input = MoveInput.CreateFromKeyboard(_window);
+                    var input = MoveInput.FromKeyboard(_window);
                     if (input != null)
                     {
                         Input = Input.Add(input);

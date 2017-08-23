@@ -21,7 +21,7 @@ namespace TimeLoopInc
             Direction = direction;
         }
 
-        public static MoveInput CreateFromKeyboard(IVirtualWindow window)
+        public static MoveInput FromKeyboard(IVirtualWindow window)
         {
             if (window.ButtonPress(Key.W) || window.ButtonPress(Key.Up))
             {
@@ -44,6 +44,29 @@ namespace TimeLoopInc
                 return new MoveInput(null);
             }
             return null;
+        }
+
+        public static List<MoveInput> FromString(string input)
+        {
+            return input.ToUpper().Select(item =>
+            {
+                switch (item)
+                {
+                    case 'W':
+                        return new MoveInput(GridAngle.Up);
+                    case 'A':
+                        return new MoveInput(GridAngle.Left);
+                    case 'S':
+                        return new MoveInput(GridAngle.Down);
+                    case 'D':
+                        return new MoveInput(GridAngle.Right);
+                    case ' ':
+                        return new MoveInput(null);
+                    default:
+                        DebugEx.Fail($"'{item}' is an invalid character.");
+                        return null;
+                }
+            }).ToList();
         }
     }
 }
