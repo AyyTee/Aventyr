@@ -176,7 +176,7 @@ namespace TimeLoopIncTests
             scene.Step(new MoveInput(GridAngle.Right));
 
             Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
-            Assert.AreEqual(1, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
+            Assert.AreEqual(2, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
 
             for (int i = 0; i < portals[0].TimeOffset; i++)
             {
@@ -189,7 +189,7 @@ namespace TimeLoopIncTests
             scene.Step(new MoveInput(null));
 
             Assert.AreEqual(2, scene.GetEntities().OfType<Block>().Count());
-            Assert.AreEqual(1, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
+            Assert.AreEqual(2, scene.GetSceneInstant(scene.CurrentTime).Entities.Keys.OfType<Block>().Count());
         }
 
         [Test]
@@ -207,7 +207,7 @@ namespace TimeLoopIncTests
                 new[] { portal0, portal1 },
                 new IGridEntity[0]);
 
-            var result = scene.Move(new Transform2i(new Vector2i(2, 0)), new Vector2i(1, 0), 0);
+            var result = scene.Move(new Transform2i(new Vector2i(2, 0)), new Vector2i(1, 0), 0, true);
             Assert.AreEqual(timeOffset, result.Time);
         }
 
@@ -226,7 +226,7 @@ namespace TimeLoopIncTests
                 new IGridEntity[0]);
 
             var start = new Transform2i(new Vector2i(2, 0));
-            var result = scene.Move(start, new Vector2i(1, 0), 0);
+            var result = scene.Move(start, new Vector2i(1, 0), 0, true);
             var expected = new Transform2i(new Vector2i(-10, 0), GridAngle.Left, 1, true);
             Assert.AreEqual(expected, result.Transform);
         }
@@ -246,7 +246,7 @@ namespace TimeLoopIncTests
                 new IGridEntity[0]);
 
             var start = new Transform2i(new Vector2i(2, 0));
-            var result = scene.Move(start, new Vector2i(1, 0), 0);
+            var result = scene.Move(start, new Vector2i(1, 0), 0, true);
             var expected = new Transform2i(new Vector2i(-10, 0), GridAngle.Right, 1);
             Assert.AreEqual(expected, result.Transform);
         }

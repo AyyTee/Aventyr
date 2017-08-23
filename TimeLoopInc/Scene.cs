@@ -205,6 +205,8 @@ namespace TimeLoopInc
             var nextInstant = GetSceneInstant(CurrentTime + 1);
             CurrentTime = nextInstant.Time;
             //CurrentTime = EntityEndTime(CurrentPlayer) + 1;
+
+            GetSceneInstant(ChangeEndTime());
         }
 
         void InvalidateCache()
@@ -309,7 +311,7 @@ namespace TimeLoopInc
                 var velocity = (Vector2d)(player.GetInput(sceneInstant.Time)?.Direction?.Vector ?? new Vector2i());
                 velocity = Vector2Ex.TransformVelocity(velocity, playerInstant.Transform.GetMatrix());
                 var previousTransform = playerInstant.Transform;
-                var result = Move(playerInstant.Transform, (Vector2i)velocity, sceneInstant.Time);
+                var result = Move(playerInstant.Transform, (Vector2i)velocity, sceneInstant.Time, true);
                 playerInstant.PreviousVelocity = result.Velocity;
                 playerInstant.Transform = result.Transform;
                 if (result.Time != sceneInstant.Time)
@@ -369,7 +371,7 @@ namespace TimeLoopInc
                     {
                         blockInstant.IsPushed = true;
                         var previousTransform = blockInstant.Transform;
-                        var result = Move(blockInstant.Transform, directions[i].Vector, nextInstant.Time - 1);
+                        var result = Move(blockInstant.Transform, directions[i].Vector, nextInstant.Time - 1, false);
                         blockInstant.Transform = result.Transform;
                         blockInstant.PreviousVelocity = result.Velocity;
                         if (result.Time != nextInstant.Time - 1)
@@ -429,7 +431,7 @@ namespace TimeLoopInc
             return matchingPositions;
         }
 
-        public (Transform2i Transform, Vector2i Velocity, int Time) Move(Transform2i transform, Vector2i velocity, int time)
+        public (Transform2i Transform, Vector2i Velocity, int Time) Move(Transform2i transform, Vector2i velocity, int time, bool ignoreMoveableObstacles)
         {
             var offset = Vector2d.One / 2;
             var transform2d = transform.ToTransform2d();
@@ -454,7 +456,7 @@ namespace TimeLoopInc
                     .WithRotation(new GridAngle(angle));
             }
 
-            if (!Walls.Contains(posNextGrid.Position))
+            if (!Walls.Contains(posNextGrid.Position) && (ignoreMoveableObstacles || !GetSceneInstant(time).Entities.Any(item => item.Value.Transform.Position == posNextGrid.Position)))
             {
                 return ValueTuple.Create(
                     posNextGrid,
