@@ -75,16 +75,15 @@ namespace Game.Rendering
 
         public Vector2i GetSize(string text, Settings settings)
         {
-            var glyphs = GetGlyphs(text, settings);
-            return new Vector2i(
-                glyphs.SelectMany(item => item).MaxOrNull(item => item.EndPoint.X) ?? 0,
-                _getHeight(glyphs, settings));
+            return _getSize(GetGlyphs(text, settings), settings);
         }
 
-        private int _getHeight(Glyph[][] glyphs, Settings settings)
+        Vector2i _getSize(Glyph[][] glyphs, Settings settings)
         {
             var lineHeight = FontData.Common.LineHeight + settings.LineSpacing;
-            return Math.Max(0, lineHeight * glyphs.Length - settings.LineSpacing);
+            return new Vector2i(
+                glyphs.SelectMany(item => item).MaxOrNull(item => item.EndPoint.X) ?? 0,
+                Math.Max(0, lineHeight * glyphs.Length - settings.LineSpacing));
         }
 
         public Vector2i BaselinePosition(string text, int charIndex)
@@ -177,20 +176,32 @@ namespace Game.Rendering
                 posCurrent = AdvanceLine(posCurrent, settings);
             }
 
-            if (settings.AlignX != 0 && glyphs.Count > 1)
+            var glyphArray = glyphs.Select(item => item.ToArray()).ToArray();
+
+            AlignGlyphs(glyphArray, settings);
+
+            return glyphArray;
+        }
+
+        private void AlignGlyphs(Glyph[][] glyphs, Settings settings)
+        {
+            if (settings.AlignX != 0 && glyphs.Length > 1)
             {
-                foreach (var line in glyphs)
+                var maxWidth = _getSize(glyphs, settings).X;
+                for (int i = 0; i < glyphs.Length; i++)
                 {
-                    int lineWidth = line.Last()?.EndPoint.X ?? 0;
-                    int xOffset = (int)(-lineWidth * settings.AlignX);
-                    foreach (var data in line)
+                    if (glyphs[i].Length == 0)
                     {
-                        data.Point += new Vector2i(xOffset, 0);
+                        continue;
+                    }
+                    int lineWidth = glyphs[i].Last().EndPoint.X;
+                    int xOffset = (int)((maxWidth - lineWidth) * settings.AlignX);
+                    for (int j = 0; j < glyphs[i].Length; j++)
+                    {
+                        glyphs[i][j].Point += new Vector2i(xOffset, 0);
                     }
                 }
             }
-
-            return glyphs.Select(item => item.ToArray()).ToArray();
         }
 
         private static int WordStart(List<Glyph> text, int charIndex)

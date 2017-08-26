@@ -87,7 +87,7 @@
     <Compile Include="TextBox.cs" />
     <Compile Include="TextInput.cs" />
     <Compile Include="UiController.cs" />
-    <Compile Include="Text.cs" />
+    <Compile Include="TextBlock.cs" />
     <Compile Include="Button.cs" />
     <Compile Include="Frame.cs" />
   </ItemGroup>

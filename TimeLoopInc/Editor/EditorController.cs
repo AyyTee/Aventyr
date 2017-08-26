@@ -67,7 +67,7 @@ namespace TimeLoopInc.Editor
                 new ToolData("Player", new PlayerTool(this), "Left click to select.  Right click to place.  Delete to remove.", new Hotkey(Key.Number3)),
                 new ToolData("Block", new BlockTool(this), "Left click to select.  Right click to place.  Delete to remove.", new Hotkey(Key.Number4)),
                 new ToolData("Portal", new PortalTool(this), "Left click to select.  Right click to place.  Delete to remove.  Shift+left links placed portal with previous.", new Hotkey(Key.Number5)),
-                new ToolData("Portal\tLink", new LinkTool(this), "Click two portals to link them.", new Hotkey(Key.Number6)),
+                new ToolData("Portal Link", new LinkTool(this), "Click two portals to link them.", new Hotkey(Key.Number6)),
             }.ToImmutableArray();
 
             _sceneChanges.Add(new SceneBuilder());
@@ -118,7 +118,8 @@ namespace TimeLoopInc.Editor
                                         AlignY(0.5f), 
                                         _ => Window.Fonts.Inconsolata, 
                                         _ => data.Name, 
-                                        args => (int)args.Parent.Width - 10)
+                                        args => (int)args.Parent.Width - 10,
+                                        _ => 0.5f)
                                 })
                         }
                     },

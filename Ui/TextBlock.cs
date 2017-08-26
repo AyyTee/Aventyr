@@ -16,6 +16,7 @@ namespace Ui
         public ElementFunc<string> TextFunc { get; }
         public ElementFunc<Font> FontFunc { get; }
         public ElementFunc<int?> MaxWidthFunc { get; }
+        public ElementFunc<float> TextAlignmentFunc { get; }
 
         [DetectLoop]
         public string Text => TextFunc(ElementArgs);
@@ -23,15 +24,19 @@ namespace Ui
         public Font Font => FontFunc(ElementArgs);
         [DetectLoop]
         public int? MaxWidth => MaxWidthFunc(ElementArgs);
+        [DetectLoop]
+        public float TextAlignment => TextAlignmentFunc(ElementArgs);
 
-        Vector2 Size => (Vector2)(Font?.GetSize(Text, new Font.Settings(Color4.White, maxWidth: MaxWidth)) ?? new Vector2i());
+        Vector2 Size => (Vector2)(Font?.GetSize(Text, FontSettings) ?? new Vector2i());
+        Font.Settings FontSettings => new Font.Settings(Color4.White, TextAlignment, maxWidth: MaxWidth);
 
         public TextBlock(
             ElementFunc<float> x = null, 
             ElementFunc<float> y = null, 
             ElementFunc<Font> font = null, 
             ElementFunc<string> text = null,
-            ElementFunc<int?> maxWidthFunc = null,
+            ElementFunc<int?> maxWidth = null,
+            ElementFunc<float> textAlignment = null,
             ElementFunc<bool> hidden = null)
             : base(x, y, hidden: hidden)
         {
@@ -40,7 +45,8 @@ namespace Ui
             DebugEx.Assert(text != null);
             FontFunc = font ?? (_ => null);
             TextFunc = text ?? (_ => "");
-            MaxWidthFunc = maxWidthFunc ?? (_ => null);
+            MaxWidthFunc = maxWidth ?? (_ => null);
+            TextAlignmentFunc = textAlignment ?? (_ => 0);
         }
 
         public TextBlock(
@@ -49,9 +55,10 @@ namespace Ui
             ElementFunc<float> y = null, 
             ElementFunc<Font> font = null, 
             ElementFunc<string> text = null,
-            ElementFunc<int?> maxWidthFunc = null,
+            ElementFunc<int?> maxWidth = null,
+            ElementFunc<float> textAlignment = null,
             ElementFunc<bool> hidden = null)
-            : this(x, y, font, text, maxWidthFunc, hidden)
+            : this(x, y, font, text, maxWidth, textAlignment, hidden)
         {
             id = this;
         }
@@ -60,7 +67,7 @@ namespace Ui
         {
             var font = Font;
             return font != null ?
-                new[] { font.GetModel(Text, maxWidth: MaxWidth) }.ToList() :
+                new[] { font.GetModel(Text, FontSettings) }.ToList() :
                 new List<Model>();
         }
 
