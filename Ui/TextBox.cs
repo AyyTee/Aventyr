@@ -12,7 +12,7 @@ using OpenTK.Graphics;
 
 namespace Ui
 {
-    public class TextBox : Element, IElement
+    public class TextBox : Element, IElement, ISelectable
     {
         public enum Input { Text, Numbers }
 

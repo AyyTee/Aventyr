@@ -30,7 +30,7 @@ namespace GameTests
             var (font, fontFile) = GetFont();
 
             var result = font.GetSize("Q", new Font.Settings(lineSpacing: lineSpacing, charSpacing: charSpacing));
-            var expected = new Vector2i(fontFile.CharLookup['Q'].Width, fontFile.Info.Size);
+            var expected = new Vector2i(fontFile.CharLookup['Q'].Width, fontFile.Common.LineHeight);
             Assert.AreEqual(expected, result);
         }
 
@@ -42,7 +42,7 @@ namespace GameTests
             var (font, fontFile) = GetFont();
 
             var result = font.GetSize("", new Font.Settings(lineSpacing: lineSpacing, charSpacing: charSpacing));
-            var expected = new Vector2i(0, fontFile.Info.Size);
+            var expected = new Vector2i(0, fontFile.Common.LineHeight);
             Assert.AreEqual(expected, result);
         }
 
@@ -52,7 +52,19 @@ namespace GameTests
             var (font, fontFile) = GetFont();
 
             var result = font.GetSize("\n", new Font.Settings());
-            var expected = new Vector2i(0, fontFile.Info.Size * 2);
+            var expected = new Vector2i(0, fontFile.Common.LineHeight * 2);
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void SizeWithTextWrap()
+        {
+            var (font, fontFile) = GetFont();
+            var text = "Portal Link";
+            var size = font.GetSize("Portal");
+
+            var result = font.GetSize(text, new Font.Settings(maxWidth: size.X));
+            var expected = new Vector2i(size.X, fontFile.Common.LineHeight * 2);
             Assert.AreEqual(expected, result);
         }
 
@@ -73,9 +85,184 @@ namespace GameTests
             var lineCount = text.Split('\n').Length;
             var expected = new Vector2i(
                 (int)Math.Round(model.GetVerts().Max(item => item.X)),
-                fontFile.Info.Size * lineCount + lineSpacing * (lineCount - 1));
+                fontFile.Common.LineHeight * lineCount + lineSpacing * (lineCount - 1));
             Assert.AreEqual(expected, result);
         }
+
+        public string[] GlyphsToText(Font.Glyph[][] glyphs)
+        {
+            return glyphs
+                .Select(item => string.Join("", item.Select(glyph => glyph.Char)))
+                .ToArray();
+        }
+
+        #region TextWrap tests
+        [Test]
+        public void TextWrapTest0()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "ab ab";
+            var size = font.GetSize("ab");
+
+            var glyphs = font.GetGlyphs(text, new Font.Settings(maxWidth: size.X + 1));
+            var result = GlyphsToText(glyphs);
+            var expected = new[] 
+            {
+                "ab",
+                " ",
+                "ab"
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void TextWrapTest1()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "test test";
+            var size = font.GetSize("test");
+
+            var glyphs = font.GetGlyphs(text, new Font.Settings(maxWidth: size.X));
+            var result = GlyphsToText(glyphs);
+            var expected = new[]
+            {
+                "test",
+                " ",
+                "test"
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void TextWrapTest2()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "ababab";
+            var size = font.GetSize("ab");
+
+            var glyphs = font.GetGlyphs(text, new Font.Settings(maxWidth: size.X + 1));
+            var result = GlyphsToText(glyphs);
+            var expected = new[]
+            {
+                "ab",
+                "ab",
+                "ab"
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void TextWrapTest3()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "ababab";
+            var size = font.GetSize("ab");
+
+            var glyphs = font.GetGlyphs(text, new Font.Settings(maxWidth: size.X));
+            var result = GlyphsToText(glyphs);
+            var expected = new[]
+            {
+                "ab",
+                "ab",
+                "ab"
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void TextWrapTest4()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "test word   w";
+            var size = font.GetSize("test word  ");
+
+            var glyphs = font.GetGlyphs(text, new Font.Settings(maxWidth: size.X));
+            var result = GlyphsToText(glyphs);
+            var expected = new[]
+            {
+                "test ",
+                "word   w"
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void TextWrapTest5()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "test word\tw";
+            var size = font.GetSize("test word  ");
+
+            var glyphs = font.GetGlyphs(text, new Font.Settings(maxWidth: size.X));
+            var result = GlyphsToText(glyphs);
+            var expected = new[]
+            {
+                "test ",
+                "word    w"
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [TestCase(0)]
+        [TestCase(3)]
+        public void TextWrapTest6(int maxWidth)
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "test word";
+
+            var glyphs = font.GetGlyphs(text, new Font.Settings(maxWidth: maxWidth));
+            var result = GlyphsToText(glyphs);
+            var expected = new[]
+            {
+                "t", "e", "s", "t", " ", "w", "o", "r", "d"
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void TextWrapTest7()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "test\ntest";
+            var size = font.GetSize("test");
+
+            var glyphs = font.GetGlyphs(text, new Font.Settings(maxWidth: size.X));
+            var result = GlyphsToText(glyphs);
+            var expected = new[]
+            {
+                "test",
+                "test"
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void TextWrapTest8()
+        {
+            var (font, fontFile) = GetFont();
+
+            var text = "test \ntest";
+            var size = font.GetSize("test");
+
+            var glyphs = font.GetGlyphs(text, new Font.Settings(maxWidth: size.X));
+            var result = GlyphsToText(glyphs);
+            var expected = new[]
+            {
+                "test",
+                " ",
+                "test"
+            };
+            Assert.AreEqual(expected, result);
+        }
+        #endregion
 
         [Test]
         public void GetBaselineTest0()

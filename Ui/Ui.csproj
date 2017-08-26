@@ -71,6 +71,7 @@
     <Compile Include="ClickArgs.cs" />
     <Compile Include="HoverArgs.cs" />
     <Compile Include="IBaseElement.cs" />
+    <Compile Include="ISelectable.cs" />
     <Compile Include="ModelArgs.cs" />
     <Compile Include="NodeElement.cs" />
     <Compile Include="CursorText.cs" />

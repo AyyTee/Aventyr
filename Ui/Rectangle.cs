@@ -1,4 +1,5 @@
-﻿using Game.Models;
+﻿using Game.Common;
+using Game.Models;
 using Game.Rendering;
 using OpenTK;
 using OpenTK.Graphics;
@@ -45,6 +46,11 @@ namespace Ui
         public override List<Model> GetModels(ModelArgs args)
         {
             return Draw.Rectangle(new Vector2(), this.GetSize(), Color).GetModels();
+        }
+
+        public override bool IsInside(Vector2 localPoint)
+        {
+            return MathEx.PointInRectangle(new Vector2(), this.GetSize(), localPoint) && Color.A > 0;
         }
     }
 }

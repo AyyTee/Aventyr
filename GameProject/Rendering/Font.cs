@@ -4,7 +4,6 @@ using System.Drawing.Imaging;
 using Game.Models;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System.Diagnostics;
 using System.Linq;
 using System.IO;
 using Game.Common;
@@ -36,6 +35,7 @@ namespace Game.Rendering
 
             public Settings(Color4 color, float alignX = 0, int lineSpacing = 0, int charSpacing = 0, int? maxWidth = null)
             {
+                DebugEx.Assert(maxWidth == null || maxWidth >= 0);
                 Color = color;
                 AlignX = alignX;
                 LineSpacing = lineSpacing;
@@ -94,7 +94,7 @@ namespace Game.Rendering
 
         public Vector2i BaselinePosition(string text, int charIndex, Settings settings)
         {
-            Debug.Assert(text != null);
+            DebugEx.Assert(text != null);
 
             var index = MathHelper.Clamp(charIndex, 0, text.Length);
 
@@ -122,19 +122,22 @@ namespace Game.Rendering
 
         public Glyph[][] GetGlyphs(string text, Settings settings)
         {
-            Debug.Assert(!text.Contains('\r'));
-            var lineBreakText = text.Split('\n');
-            var glyphs = lineBreakText.Select(textLine => new Glyph[textLine.Length]).ToArray();
+            DebugEx.Assert(!text.Contains('\r'));
+            var lineBreakText = text.Replace("\t", "    ").Split('\n');
+            var glyphs = new List<List<Glyph>>();
 
             var posCurrent = new Vector2i();
             for (int i = 0; i < lineBreakText.Length; i++)
             {
+                glyphs.Add(new List<Glyph>());
                 for (int j = 0; j < lineBreakText[i].Length; j++)
                 {
+                    var glyphLine = glyphs.Last();
+
                     // Get the data for this character. If it doesn't exist we use the question mark instead.
                     var fontChar = FontData.CharLookup.GetOrDefault(lineBreakText[i][j]) ?? FontData.CharLookup['?'];
 
-                    glyphs[i][j] = new Glyph(posCurrent, fontChar);
+                    glyphLine.Add(new Glyph(posCurrent, fontChar, lineBreakText[i][j]));
 
                     if (j + 1 < lineBreakText[i].Length)
                     {
@@ -142,11 +145,39 @@ namespace Game.Rendering
                     }
 
                     posCurrent += new Vector2i(fontChar.XAdvance + settings.CharSpacing, 0);
+
+                    // Handle text wrapping.
+                    if (settings.MaxWidth != null && glyphLine.Last().EndPoint.X > settings.MaxWidth)
+                    {
+                        if (glyphLine.Count > 1)
+                        {
+                            int nextIndex = WordStart(glyphLine, glyphLine.Count - 1);
+                            if (nextIndex > 0)
+                            {
+                                j -= glyphLine.Count - nextIndex;
+                                glyphLine.RemoveRange(nextIndex, glyphLine.Count - nextIndex);
+                            }
+                            else
+                            {
+                                // If the line has no split points then we just break off the last char and continue on the next line.
+                                j--;
+                                glyphLine.RemoveRange(glyphLine.Count - 1, 1);
+                            }
+                        }
+
+                        if (j + 1 >= lineBreakText[i].Length)
+                        {
+                            break;
+                        }
+
+                        posCurrent = AdvanceLine(posCurrent, settings);
+                        glyphs.Add(new List<Glyph>());
+                    }
                 }
-                posCurrent = new Vector2i(0, posCurrent.Y + FontData.Common.LineHeight + settings.LineSpacing);
+                posCurrent = AdvanceLine(posCurrent, settings);
             }
 
-            if (settings.AlignX != 0)
+            if (settings.AlignX != 0 && glyphs.Count > 1)
             {
                 foreach (var line in glyphs)
                 {
@@ -159,7 +190,26 @@ namespace Game.Rendering
                 }
             }
 
-            return glyphs;
+            return glyphs.Select(item => item.ToArray()).ToArray();
+        }
+
+        private static int WordStart(List<Glyph> text, int charIndex)
+        {
+            while (charIndex > 0)
+            {
+                if (!char.IsWhiteSpace(text[charIndex].Char) &&
+                    char.IsWhiteSpace(text[charIndex - 1].Char))
+                {
+                    break;
+                }
+                charIndex--;
+            }
+            return charIndex;
+        }
+
+        private Vector2i AdvanceLine(Vector2i posCurrent, Settings settings)
+        {
+            return new Vector2i(0, posCurrent.Y + FontData.Common.LineHeight + settings.LineSpacing);
         }
 
         public Model GetModel(string text, float alignX = 0, int lineSpacing = 0, int charSpacing = 0, int? maxWidth = null)
@@ -177,7 +227,7 @@ namespace Game.Rendering
         /// </summary>
         public Model GetModel(string text, Settings settings)
         {
-            Debug.Assert(!text.Contains('\r'));
+            DebugEx.Assert(!text.Contains('\r'));
             var glyphs = GetGlyphs(text, settings);
 
             var vertices = GetVertices(glyphs.SelectMany(item => item), settings.Color);
@@ -249,17 +299,21 @@ namespace Game.Rendering
 
         public class Glyph
         {
-            public Vector2i Point;
-            public FontChar FontChar;
-
-            public Glyph(Vector2i point, FontChar fontChar)
-            {
-                Point = point;
-                FontChar = fontChar;
-            }
+            public Vector2i Point { get; set; }
+            public FontChar FontChar { get; }
+            public char Char { get; }
 
             public Vector2i StartPoint => new Vector2i(FontChar.XOffset, FontChar.YOffset) + Point;
             public Vector2i EndPoint => new Vector2i(FontChar.Width + FontChar.XOffset, FontChar.Height + FontChar.YOffset) + Point;
+
+            public Glyph(Vector2i point, FontChar fontChar, char @char)
+            {
+                Point = point;
+                FontChar = fontChar;
+                Char = @char;
+            }
+
+            public override string ToString() => Char.ToString();
         }
     }
 }

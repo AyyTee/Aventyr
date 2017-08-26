@@ -24,7 +24,7 @@ namespace Ui
         [DetectLoop]
         public int? MaxWidth => MaxWidthFunc(ElementArgs);
 
-        Vector2 Size => (Vector2)(Font?.GetSize(Text, new Font.Settings(Color4.White)) ?? new Vector2i());
+        Vector2 Size => (Vector2)(Font?.GetSize(Text, new Font.Settings(Color4.White, maxWidth: MaxWidth)) ?? new Vector2i());
 
         public TextBlock(
             ElementFunc<float> x = null, 
