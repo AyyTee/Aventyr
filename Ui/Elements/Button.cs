@@ -10,7 +10,7 @@ using Game.Rendering;
 using OpenTK;
 using OpenTK.Graphics;
 
-namespace Ui
+namespace Ui.Elements
 {
     public class Button : NodeElement, IElement
     {
@@ -18,7 +18,7 @@ namespace Ui
         internal OnHoverHandler OnHover { get; }
         internal ElementFunc<bool> EnabledFunc { get; }
         [DetectLoop]
-        public bool Enabled => EnabledFunc(ElementArgs);
+        public bool Enabled => InvokeFunc(EnabledFunc, nameof(Enabled));
 
         public Button(
             ElementFunc<float> x = null, 
@@ -29,12 +29,12 @@ namespace Ui
             OnHoverHandler onHover = null,
             ElementFunc<bool> enabled = null,
             ElementFunc<bool> hidden = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            Style style = null)
             : base(x, y , width, height, hidden, style)
         {
             OnClick = onClick ?? (_ => { });
             OnHover = onHover ?? (_ => { });
-            EnabledFunc = enabled ?? (_ => true);
+            EnabledFunc = enabled;
         }
 
         public Button(
@@ -47,10 +47,19 @@ namespace Ui
             OnHoverHandler onHover = null,
             ElementFunc<bool> enabled = null,
             ElementFunc<bool> hidden = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            Style style = null)
             : this(x, y, width, height, onClick, onHover, enabled, hidden, style)
         {
             id = this;
+        }
+
+        public static new Style DefaultStyle(IUiController controller)
+        {
+            var type = typeof(Button);
+            return new Style
+            {
+                new StyleElement(type, nameof(Enabled), _ => true),
+            };
         }
 
         public override List<Model> GetModels(ModelArgs args)

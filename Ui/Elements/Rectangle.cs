@@ -11,13 +11,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ui
+namespace Ui.Elements
 {
     public class Rectangle : NodeElement, IElement
     {
         public ElementFunc<Color4> ColorFunc { get; }
         [DetectLoop]
-        public Color4 Color => ColorFunc(ElementArgs);
+        public Color4 Color => InvokeFunc(ColorFunc, nameof(Color));
 
         public Rectangle(
             ElementFunc<float> x = null,
@@ -26,7 +26,7 @@ namespace Ui
             ElementFunc<float> height = null,
             ElementFunc<Color4> color = null,
             ElementFunc<bool> hidden = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            Style style = null)
             : base(x, y, width, height, hidden, style)
         {
             ColorFunc = color ?? (_ => Color4.White);
@@ -40,10 +40,19 @@ namespace Ui
             ElementFunc<float> height = null,
             ElementFunc<Color4> color = null,
             ElementFunc<bool> hidden = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            Style style = null)
             : this(x, y, width, height, color, hidden, style)
         {
             id = this;
+        }
+
+        public static new Style DefaultStyle(IUiController controller)
+        {
+            var type = typeof(Rectangle);
+            return new Style
+            {
+                new StyleElement(type, nameof(Color), _ => Color4.White),
+            };
         }
 
         public override List<Model> GetModels(ModelArgs args)

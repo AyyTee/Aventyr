@@ -9,7 +9,7 @@ using OpenTK;
 using System.Linq;
 using OpenTK.Graphics;
 
-namespace Ui
+namespace Ui.Elements
 {
     public class TextBlock : Element, IElement
     {
@@ -19,13 +19,13 @@ namespace Ui
         public ElementFunc<float> TextAlignmentFunc { get; }
 
         [DetectLoop]
-        public string Text => TextFunc(ElementArgs);
+        public string Text => InvokeFunc(TextFunc, nameof(Text));
         [DetectLoop]
-        public Font Font => FontFunc(ElementArgs);
+        public Font Font => InvokeFunc(FontFunc, nameof(Font));
         [DetectLoop]
-        public int? MaxWidth => MaxWidthFunc(ElementArgs);
+        public int? MaxWidth => InvokeFunc(MaxWidthFunc, nameof(MaxWidth));
         [DetectLoop]
-        public float TextAlignment => TextAlignmentFunc(ElementArgs);
+        public float TextAlignment => InvokeFunc(TextAlignmentFunc, nameof(TextAlignment));
 
         Vector2 Size => (Vector2)(Font?.GetSize(Text, FontSettings) ?? new Vector2i());
         Font.Settings FontSettings => new Font.Settings(Color4.White, TextAlignment, maxWidth: MaxWidth);
@@ -43,10 +43,10 @@ namespace Ui
             WidthFunc = _ => Size.X;
             HeightFunc = _ => Size.Y;
             DebugEx.Assert(text != null);
-            FontFunc = font ?? (_ => null);
+            FontFunc = font;
             TextFunc = text ?? (_ => "");
-            MaxWidthFunc = maxWidth ?? (_ => null);
-            TextAlignmentFunc = textAlignment ?? (_ => 0);
+            MaxWidthFunc = maxWidth;
+            TextAlignmentFunc = textAlignment;
         }
 
         public TextBlock(
@@ -61,6 +61,17 @@ namespace Ui
             : this(x, y, font, text, maxWidth, textAlignment, hidden)
         {
             id = this;
+        }
+
+        public static new Style DefaultStyle(IUiController controller)
+        {
+            var type = typeof(TextBlock);
+            return new Style
+            {
+                new StyleElement(type, nameof(Font), _ => controller.Fonts),
+                new StyleElement(type, nameof(MaxWidth), _ => null),
+                new StyleElement(type, nameof(TextAlignment), _ => 0f)
+            };
         }
 
         public override List<Model> GetModels(ModelArgs args)

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ui;
+using Ui.Elements;
 
 namespace UnitTest.UiTests
 {
@@ -15,10 +16,10 @@ namespace UnitTest.UiTests
         [Test]
         public void GetParentXFunc()
         {
-            var style = new Dictionary<(Type, string), ElementFunc<object>>
+            var style = new Style
             {
-                { (typeof(Element), nameof(Element.X)), _ => 10f }
-            }.ToImmutableDictionary();
+                new StyleElement(typeof(Element), nameof(Element.X), _ => 10f)
+            };
 
             new Frame(style: style)
             {
@@ -31,10 +32,10 @@ namespace UnitTest.UiTests
         [Test]
         public void OverrideXFunc()
         {
-            var style = new Dictionary<(Type, string), ElementFunc<object>>
+            var style = new Style
             {
-                { (typeof(Element), nameof(Element.X)), _ => 10f }
-            }.ToImmutableDictionary();
+                new StyleElement(typeof(Element), nameof(Element.X), _ => 10f)
+            };
 
             new Frame(style: style)
             {
@@ -42,6 +43,18 @@ namespace UnitTest.UiTests
             };
 
             Assert.AreEqual(15, child.X);
+        }
+
+        [Test]
+        public void ToImmutable()
+        {
+            var style = new Style
+            {
+                new StyleElement(typeof(Element), nameof(Element.X), _ => 0f)
+            };
+
+            var result = style.ToImmutable().Count;
+            Assert.AreEqual(1, result);
         }
     }
 }

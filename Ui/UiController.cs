@@ -11,10 +11,11 @@ using OpenTK;
 using OpenTK.Input;
 using System.Text;
 using OpenTK.Graphics;
+using Ui.Elements;
 
 namespace Ui
 {
-    public class UiController
+    public class UiController : IUiController
     {
         public Frame Root { get; }
         readonly IVirtualWindow _window;
@@ -24,6 +25,8 @@ namespace Ui
         public TextBox Selected { get; private set; }
         public (IElement Element, DateTime Time) LastClick = (null, new DateTime());
         public TimeSpan DoubleClickSpeed { get; set; } = TimeSpan.FromSeconds(0.6);
+
+        public FontAssets Fonts => _window.Fonts;
 
         public UiController(IVirtualWindow window, Frame root)
         {
@@ -39,14 +42,15 @@ namespace Ui
 
         public ImmutableDictionary<(Type, string), ElementFunc<object>> DefaultStyle()
         {
-            return Element.DefaultStyle()
-                //.Concat(Frame.DefaultStyle())
-                //.Concat(Button.DefaultStyle())
-                //.Concat(Radio<object>.DefaultStyle())
-                //.Concat(TextBlock.DefaultStyle())
-                //.Concat(TextBox.DefaultStyle())
-                //.Concat(Frame.DefaultStyle())
-                .ToImmutableDictionary();
+            return Element.DefaultStyle(this)
+                .Concat(Button.DefaultStyle(this))
+                .Concat(Element.DefaultStyle(this))
+                .Concat(Radio<object>.DefaultStyle(this))
+                .Concat(Rectangle.DefaultStyle(this))
+                .Concat(StackFrame.DefaultStyle(this))
+                .Concat(TextBlock.DefaultStyle(this))
+                .Concat(TextBox.DefaultStyle(this))
+                .ToImmutable();
         }
 
         public void Update(float uiScale)

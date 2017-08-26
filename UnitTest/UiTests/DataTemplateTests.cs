@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ui;
+using Ui.Elements;
 
 namespace UiTests
 {
@@ -21,7 +22,7 @@ namespace UiTests
             {
                 new DataTemplate<string>(
                     () => new OrderedSet<string> { "a", "ab", "abc" }, 
-                    text => new TextBlock(font: _ => font, text: _ => text))
+                    text => new TextBlock(font: _ => font, text: _ => text, maxWidth: _ => null, textAlignment: _ => 0))
             };
 
             Assert.AreEqual(3, stackFrame.Count());

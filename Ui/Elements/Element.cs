@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 
-namespace Ui
+namespace Ui.Elements
 {
     /// <summary>
     /// Base implementation of IElement.
@@ -37,14 +37,15 @@ namespace Ui
         [DetectLoop]
         public bool Hidden => InvokeFunc(HiddenFunc, nameof(Hidden));
 
-        public virtual ImmutableDictionary<(Type ElementType, string FuncName), ElementFunc<object>> Style { get; internal set; } = new Dictionary<(Type, string), ElementFunc<object>>().ToImmutableDictionary();
+        internal ImmutableDictionary<(Type ElementType, string FuncName), ElementFunc<object>> Style { get; set; }
 
         public Element(
             ElementFunc<float> x = null,
             ElementFunc<float> y = null,
             ElementFunc<float> width = null,
             ElementFunc<float> height = null,
-            ElementFunc<bool> hidden = null)
+            ElementFunc<bool> hidden = null,
+            Style style = null)
         {
             ElementArgs = new ElementArgs(null, this);
             XFunc = x;
@@ -52,6 +53,8 @@ namespace Ui
             WidthFunc = width;
             HeightFunc = height;
             HiddenFunc = hidden;
+
+            Style = style?.ToImmutable();
         }
 
         public T InvokeFunc<T>(ElementFunc<T> func, string funcName)
@@ -62,36 +65,39 @@ namespace Ui
                 return func(ElementArgs);
             }
             // Otherwise we recursively check parent elements for the specified func.
-            var parent = (Element)ElementArgs.Parent;
-            DebugEx.Assert(parent != null, $"No func found for {GetType().Name}.{funcName}");
-            return parent._invokeFunc<T>(GetType(), funcName);
+            return _invokeFunc<T>(this, funcName);
         }
 
-        T _invokeFunc<T>(Type elementType, string funcName)
+        T _invokeFunc<T>(Element element, string funcName)
         {
-            foreach (var type in GetType().InheritanceHierarchy())
+            if (element.Style != null && element.Style.Count > 0)
             {
-                var key = (type, funcName);
-                if (Style.Keys.Contains(key))
+                foreach (var type in GetType().InheritanceHierarchy())
                 {
-                    return (T)Style[key](ElementArgs);
+                    var key = (type, funcName);
+                    if (element.Style.Keys.Contains(key))
+                    {
+                        return (T)element.Style[key](ElementArgs);
+                    }
                 }
             }
-            var parent = (Element)ElementArgs.Parent;
-            DebugEx.Assert(parent != null, $"No func found for {elementType.Name}.{funcName}");
-            return parent._invokeFunc<T>(elementType, funcName);
+
+            var parent = (Element)element.ElementArgs.Parent;
+            DebugEx.Assert(parent != null, $"No func found for {GetType().Name}.{funcName}");
+            return _invokeFunc<T>(parent, funcName);
         }
 
-        public static ImmutableDictionary<(Type, string), ElementFunc<object>> DefaultStyle()
+        public static Style DefaultStyle(IUiController controller)
         {
-            return new Dictionary<(Type, string), ElementFunc<object>>
+            var type = typeof(Element);
+            return new Style
             {
-                { (typeof(Element), nameof(XFunc)), _ => 0 },
-                { (typeof(Element), nameof(YFunc)), _ => 0 },
-                { (typeof(Element), nameof(WidthFunc)), args => args.Parent.Width },
-                { (typeof(Element), nameof(HeightFunc)), args => args.Parent.Height },
-                { (typeof(Element), nameof(HiddenFunc)), args => false }
-            }.ToImmutableDictionary();
+                new StyleElement(type, nameof(X), _ => 0f),
+                new StyleElement(type, nameof(Y), _ => 0f),
+                new StyleElement(type, nameof(Width), args => args.Parent.Width),
+                new StyleElement(type, nameof(Height), args => args.Parent.Height),
+                new StyleElement(type, nameof(Hidden), args => false)
+            };
         }
 
         public virtual bool IsInside(Vector2 localPoint) => false;

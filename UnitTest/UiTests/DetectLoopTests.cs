@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ui;
+using Ui.Elements;
 
 namespace UiTests
 {
@@ -42,11 +43,23 @@ namespace UiTests
             Assert.AreEqual(expectedValue, value);
         }
 
+        public Style GetStyle()
+        {
+            var type = typeof(Element);
+            return new Style
+            {
+                new StyleElement(type, nameof(Element.X), _ => 0f),
+                new StyleElement(type, nameof(Element.Y), _ => 0f),
+                new StyleElement(type, nameof(Element.Width), args => args.Parent.Width),
+                new StyleElement(type, nameof(Element.Height), args => args.Parent.Height),
+            };
+        }
+
         [Test]
         public void StackFrameTest0()
         {
             const float expected = 40;
-            var stackFrame = new StackFrame(thickness: ElementEx.ChildrenMaxX())
+            var stackFrame = new StackFrame(thickness: ElementEx.ChildrenMaxX(), style: GetStyle())
             {
                 new Frame(width: _ => expected, height: _ => 50),
                 new Frame(height: _ => 50)
@@ -63,10 +76,10 @@ namespace UiTests
         public void StackFrameTest1()
         {
             const float expected = 40;
-            var stackFrame = new StackFrame(thickness: ElementEx.ChildrenMaxY(), isVertical: false)
+            var stackFrame = new StackFrame(_ => 0, thickness: ElementEx.ChildrenMaxY(), isVertical: false, style: GetStyle())
             {
-                new Frame(width: _ => 50, height: _ => expected),
-                new Frame(width: _ => 50)
+                new Frame(_ => 0, width: _ => 50, height: _ => expected),
+                new Frame(_ => 0, width: _ => 50)
             };
 
             var result = stackFrame.Height;

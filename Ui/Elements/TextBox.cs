@@ -10,7 +10,7 @@ using OpenTK;
 using Game.Rendering;
 using OpenTK.Graphics;
 
-namespace Ui
+namespace Ui.Elements
 {
     public class TextBox : Element, ISelectable
     {
@@ -25,9 +25,9 @@ namespace Ui
         [DetectLoop]
         public string Text => TextFunc(ElementArgs);
         [DetectLoop]
-        public Font Font => FontFunc(ElementArgs);
+        public Font Font => InvokeFunc(FontFunc, nameof(Font));
         [DetectLoop]
-        public Color4 BackgroundColor => BackgroundColorFunc(ElementArgs);
+        public Color4 BackgroundColor => InvokeFunc(BackgroundColorFunc, nameof(BackgroundColor));
 
         public TextBox(
             ElementFunc<float> x = null,
@@ -47,7 +47,7 @@ namespace Ui
             TextFunc = getText ?? (_ => defaultText);
             SetText = setText ?? (newText => defaultText = newText);
 
-            BackgroundColorFunc = backgroundColor ?? (_ => Color4.White);
+            BackgroundColorFunc = backgroundColor;
         }
 
         public TextBox(
@@ -105,23 +105,19 @@ namespace Ui
             return models;
         }
 
+        public static new Style DefaultStyle(IUiController controller)
+        {
+            var type = typeof(TextBox);
+            return new Style
+            {
+                new StyleElement(type, nameof(BackgroundColor), _ => Color4.White),
+                new StyleElement(type, nameof(Font), _ => controller.Fonts),
+            };
+        }
+
         public override bool IsInside(Vector2 localPoint)
         {
             return MathEx.PointInRectangle(new Vector2(), this.GetSize(), localPoint);
-        }
-
-        public static TextBox DefaultStyle(IVirtualWindow window)
-        {
-            return new TextBox(
-                _ => 0, 
-                _ => 0, 
-                args => args.Parent.Width, 
-                args => args.Parent.Height, 
-                _ => window.Fonts.Inconsolata, 
-                _ => "", 
-                _ => { }, 
-                _ => Color4.White, 
-                _ => false);
         }
     }
 }

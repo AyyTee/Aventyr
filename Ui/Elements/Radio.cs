@@ -8,7 +8,7 @@ using Game.Rendering;
 using OpenTK.Graphics;
 using System.Collections.Immutable;
 
-namespace Ui
+namespace Ui.Elements
 {
     public class Radio<T> : Button, IRadio, IElement
     {
@@ -32,7 +32,7 @@ namespace Ui
             Action<T> setValue = null,
             ElementFunc<bool> enabled = null, 
             ElementFunc<bool> hidden = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            Style style = null)
             : base(x, y, width, height, onClick, onHover, enabled, hidden, style)
         {
             var internalValue = default(T);
@@ -54,13 +54,21 @@ namespace Ui
             Action<T> setValue = null,
             ElementFunc<bool> enabled = null,
             ElementFunc<bool> hidden = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            Style style = null)
             : this(x, y, width, height, onClick, onHover, value, getValue, setValue, enabled, hidden, style)
         {
             id = this;
         }
 
         public void SetValue() => SetValueFunc(Target);
+
+        public static new Style DefaultStyle(IUiController controller)
+        {
+            var type = typeof(Radio<>);
+            return new Style
+            {
+            };
+        }
 
         public override List<Model> GetModels(ModelArgs args)
         {

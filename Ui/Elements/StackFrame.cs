@@ -10,7 +10,7 @@ using OpenTK;
 using System.Collections.Immutable;
 using MoreLinq;
 
-namespace Ui
+namespace Ui.Elements
 {
     /// <summary>
     /// Stacks children elements either vertically or horizontally. 
@@ -23,7 +23,7 @@ namespace Ui
         internal ElementFunc<float> SpacingFunc { get; }
 
         [DetectLoop]
-        public float Spacing => SpacingFunc(ElementArgs);
+        public float Spacing => InvokeFunc(SpacingFunc, nameof(Spacing));
         public float Length => IsVertical ? Height : Width;
         public float Thickness => IsVertical ? Width : Height;
 
@@ -34,7 +34,7 @@ namespace Ui
             ElementFunc<bool> hidden = null, 
             bool isVertical = true,
             ElementFunc<float> spacing = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            Style style = null)
             : base(x, y, hidden: hidden, style: style)
         {
             IsVertical = isVertical;
@@ -72,10 +72,19 @@ namespace Ui
             ElementFunc<bool> hidden = null, 
             bool isVertical = true,
             ElementFunc<float> spacing = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            Style style = null)
             : this(x, y, thickness, hidden, isVertical, spacing, style)
         {
             id = this;
+        }
+
+        public static new Style DefaultStyle(IUiController controller)
+        {
+            var type = typeof(StackFrame);
+            return new Style
+            {
+                new StyleElement(type, nameof(Spacing), _ => 0f),
+            };
         }
 
         protected override void AddChild(IElement element)

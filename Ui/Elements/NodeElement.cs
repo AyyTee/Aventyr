@@ -9,7 +9,7 @@ using Game.Models;
 using OpenTK;
 using System.Collections.Immutable;
 
-namespace Ui
+namespace Ui.Elements
 {
     /// <summary>
     /// An element that can have child elements.
@@ -24,10 +24,9 @@ namespace Ui
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null, 
             ElementFunc<bool> hidden = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
-            : base(x, y, width, height, hidden)
+            Style style = null)
+            : base(x, y, width, height, hidden, style)
         {
-            Style = style ?? new Dictionary<(Type, string), ElementFunc<object>>().ToImmutableDictionary();
         }
 
         public override IEnumerator<IElement> GetEnumerator()

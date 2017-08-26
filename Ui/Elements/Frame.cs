@@ -7,7 +7,7 @@ using Game.Common;
 using Game.Models;
 using OpenTK;
 
-namespace Ui
+namespace Ui.Elements
 {
     public class Frame : NodeElement, IElement
     {
@@ -17,7 +17,7 @@ namespace Ui
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null, 
             ElementFunc<bool> hidden = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            Style style = null)
             : base(x, y, width, height, hidden, style)
         {
         }
@@ -29,7 +29,7 @@ namespace Ui
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null, 
             ElementFunc<bool> hidden = null,
-            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            Style style = null)
             : this(x, y, width, height, hidden, style)
         {
             id = this;
