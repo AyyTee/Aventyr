@@ -10,6 +10,7 @@ using Game.Rendering;
 using OpenTK;
 using OpenTK.Input;
 using System.Text;
+using OpenTK.Graphics;
 
 namespace Ui
 {
@@ -29,10 +30,23 @@ namespace Ui
             _window = window;
 
             Root = root;
+            Root.Style = DefaultStyle();
             Root.XFunc = _ => 0;
             Root.YFunc = _ => 0;
             Root.WidthFunc = _ => _window.CanvasSize.X;
             Root.HeightFunc = _ => _window.CanvasSize.Y;
+        }
+
+        public ImmutableDictionary<(Type, string), ElementFunc<object>> DefaultStyle()
+        {
+            return Element.DefaultStyle()
+                //.Concat(Frame.DefaultStyle())
+                //.Concat(Button.DefaultStyle())
+                //.Concat(Radio<object>.DefaultStyle())
+                //.Concat(TextBlock.DefaultStyle())
+                //.Concat(TextBox.DefaultStyle())
+                //.Concat(Frame.DefaultStyle())
+                .ToImmutableDictionary();
         }
 
         public void Update(float uiScale)
@@ -44,6 +58,10 @@ namespace Ui
 
             UpdateElementArgs(Root);
             _flattenedUi = AllChildren();
+
+            DebugEx.Assert(
+                _flattenedUi.Distinct().Count() == _flattenedUi.Count, 
+                "Elements should not be used in multiple places.");
 
             var hover = _flattenedUi
                 .FirstOrDefault(item =>

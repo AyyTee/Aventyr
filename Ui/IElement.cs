@@ -28,6 +28,14 @@ namespace Ui
 
     public static class ElementEx
     {
+        public static IEnumerable<Type> InheritanceHierarchy(this Type type)
+        {
+            for (var current = type; current != null; current = current.BaseType)
+            {
+                yield return current;
+            }
+        }
+
         public static ElementFunc<float> AlignX(float t) =>
             args => (args.Parent.Width - args.Self.Width) * t;
         public static ElementFunc<float> AlignY(float t) =>

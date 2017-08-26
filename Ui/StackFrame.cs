@@ -18,16 +18,13 @@ namespace Ui
     /// </summary>
     public class StackFrame : NodeElement, IElement
     {
-
         public bool IsVertical { get; }
 
-        public ElementFunc<float> SpacingFunc { get; }
+        internal ElementFunc<float> SpacingFunc { get; }
 
         [DetectLoop]
         public float Spacing => SpacingFunc(ElementArgs);
-        [DetectLoop]
         public float Length => IsVertical ? Height : Width;
-        [DetectLoop]
         public float Thickness => IsVertical ? Width : Height;
 
         public StackFrame(
@@ -36,8 +33,9 @@ namespace Ui
             ElementFunc<float> thickness = null,
             ElementFunc<bool> hidden = null, 
             bool isVertical = true,
-            ElementFunc<float> spacing = null)
-            : base(x, y, hidden: hidden)
+            ElementFunc<float> spacing = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            : base(x, y, hidden: hidden, style: style)
         {
             IsVertical = isVertical;
             SpacingFunc = spacing ?? (_ => 0);
@@ -73,8 +71,9 @@ namespace Ui
             ElementFunc<float> thickness = null,
             ElementFunc<bool> hidden = null, 
             bool isVertical = true,
-            ElementFunc<float> spacing = null)
-            : this(x, y, thickness, hidden, isVertical, spacing)
+            ElementFunc<float> spacing = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            : this(x, y, thickness, hidden, isVertical, spacing, style)
         {
             id = this;
         }

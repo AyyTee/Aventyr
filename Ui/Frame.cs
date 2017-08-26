@@ -16,8 +16,9 @@ namespace Ui
             ElementFunc<float> y = null, 
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null, 
-            ElementFunc<bool> hidden = null)
-            : base(x, y, width, height, hidden)
+            ElementFunc<bool> hidden = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            : base(x, y, width, height, hidden, style)
         {
         }
 
@@ -27,8 +28,9 @@ namespace Ui
             ElementFunc<float> y = null, 
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null, 
-            ElementFunc<bool> hidden = null)
-            : this(x, y, width, height, hidden)
+            ElementFunc<bool> hidden = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            : this(x, y, width, height, hidden, style)
         {
             id = this;
         }

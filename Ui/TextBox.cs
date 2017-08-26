@@ -12,7 +12,7 @@ using OpenTK.Graphics;
 
 namespace Ui
 {
-    public class TextBox : Element, IElement, ISelectable
+    public class TextBox : Element, ISelectable
     {
         public enum Input { Text, Numbers }
 
@@ -110,7 +110,18 @@ namespace Ui
             return MathEx.PointInRectangle(new Vector2(), this.GetSize(), localPoint);
         }
 
-        public IEnumerator<IElement> GetEnumerator() => new List<IElement>().GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public static TextBox DefaultStyle(IVirtualWindow window)
+        {
+            return new TextBox(
+                _ => 0, 
+                _ => 0, 
+                args => args.Parent.Width, 
+                args => args.Parent.Height, 
+                _ => window.Fonts.Inconsolata, 
+                _ => "", 
+                _ => { }, 
+                _ => Color4.White, 
+                _ => false);
+        }
     }
 }

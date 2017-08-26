@@ -73,7 +73,9 @@ namespace Ui
 
         public override bool IsInside(Vector2 localPoint) => false;
 
-        public IEnumerator<IElement> GetEnumerator() => new List<IElement>().GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public static TextBlock DefaultStyle(IVirtualWindow window)
+        {
+            return new TextBlock(_ => 0, _ => 0, _ => window.Fonts.Inconsolata, _ => "", _ => null, _ => 0f, _ => false);
+        }
     }
 }

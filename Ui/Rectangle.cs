@@ -6,6 +6,7 @@ using OpenTK.Graphics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,8 +25,9 @@ namespace Ui
             ElementFunc<float> width = null,
             ElementFunc<float> height = null,
             ElementFunc<Color4> color = null,
-            ElementFunc<bool> hidden = null)
-            : base(x, y, width, height, hidden)
+            ElementFunc<bool> hidden = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            : base(x, y, width, height, hidden, style)
         {
             ColorFunc = color ?? (_ => Color4.White);
         }
@@ -37,8 +39,9 @@ namespace Ui
             ElementFunc<float> width = null,
             ElementFunc<float> height = null,
             ElementFunc<Color4> color = null,
-            ElementFunc<bool> hidden = null)
-            : this(x, y, width, height, color, hidden)
+            ElementFunc<bool> hidden = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            : this(x, y, width, height, color, hidden, style)
         {
             id = this;
         }

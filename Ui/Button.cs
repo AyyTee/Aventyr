@@ -16,7 +16,7 @@ namespace Ui
     {
         internal OnClickHandler OnClick { get; }
         internal OnHoverHandler OnHover { get; }
-        protected ElementFunc<bool> EnabledFunc { get; }
+        internal ElementFunc<bool> EnabledFunc { get; }
         [DetectLoop]
         public bool Enabled => EnabledFunc(ElementArgs);
 
@@ -27,8 +27,10 @@ namespace Ui
             ElementFunc<float> height = null,
             OnClickHandler onClick = null, 
             OnHoverHandler onHover = null,
-            ElementFunc<bool> enabled = null)
-            : base(x, y , width, height)
+            ElementFunc<bool> enabled = null,
+            ElementFunc<bool> hidden = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            : base(x, y , width, height, hidden, style)
         {
             OnClick = onClick ?? (_ => { });
             OnHover = onHover ?? (_ => { });
@@ -43,8 +45,10 @@ namespace Ui
             ElementFunc<float> height = null,
             OnClickHandler onClick = null,
             OnHoverHandler onHover = null,
-            ElementFunc<bool> enabled = null)
-            : this(x, y, width, height, onClick, onHover, enabled)
+            ElementFunc<bool> enabled = null,
+            ElementFunc<bool> hidden = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            : this(x, y, width, height, onClick, onHover, enabled, hidden, style)
         {
             id = this;
         }

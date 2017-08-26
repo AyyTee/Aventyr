@@ -11,7 +11,10 @@ using System.Collections.Immutable;
 
 namespace Ui
 {
-    public abstract class NodeElement : Element, IElement
+    /// <summary>
+    /// An element that can have child elements.
+    /// </summary>
+    public abstract class NodeElement : Element
     {
         ImmutableList<IBaseElement> _children = new List<IBaseElement>().ToImmutableList();
 
@@ -20,12 +23,14 @@ namespace Ui
             ElementFunc<float> y = null,
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null, 
-            ElementFunc<bool> hidden = null)
+            ElementFunc<bool> hidden = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
             : base(x, y, width, height, hidden)
         {
+            Style = style ?? new Dictionary<(Type, string), ElementFunc<object>>().ToImmutableDictionary();
         }
 
-        public IEnumerator<IElement> GetEnumerator()
+        public override IEnumerator<IElement> GetEnumerator()
         {
             var list = new List<IElement>();
             foreach (var child in _children)
@@ -51,8 +56,6 @@ namespace Ui
         {
             element.ElementArgs = new ElementArgs(this, element);
         }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public void Add(IElement element) 
         {

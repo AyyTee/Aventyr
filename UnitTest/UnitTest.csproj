@@ -101,7 +101,9 @@
     <Compile Include="TimeLoopIncTests\LinkToolTests.cs" />
     <Compile Include="UiTests\DataTemplateTests.cs" />
     <Compile Include="UiTests\DetectLoopTests.cs" />
+    <Compile Include="UiTests\MiscTests.cs" />
     <Compile Include="UiTests\OrderedSetTests.cs" />
+    <Compile Include="UiTests\StyleTests.cs" />
     <Compile Include="UiTests\TextInputTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Game.Models;
 using Game.Rendering;
 using OpenTK.Graphics;
+using System.Collections.Immutable;
 
 namespace Ui
 {
@@ -29,8 +30,10 @@ namespace Ui
             T target = default(T),
             ElementFunc<T> getValue = null,
             Action<T> setValue = null,
-            ElementFunc<bool> enabled = null)
-            : base(x, y, width, height, onClick, onHover, enabled)
+            ElementFunc<bool> enabled = null, 
+            ElementFunc<bool> hidden = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            : base(x, y, width, height, onClick, onHover, enabled, hidden, style)
         {
             var internalValue = default(T);
             GetValueFunc = getValue ?? (_ => internalValue);
@@ -49,8 +52,10 @@ namespace Ui
             T value = default(T),
             ElementFunc<T> getValue = null,
             Action<T> setValue = null,
-            ElementFunc<bool> enabled = null)
-            : this(x, y, width, height, onClick, onHover, value, getValue, setValue, enabled)
+            ElementFunc<bool> enabled = null,
+            ElementFunc<bool> hidden = null,
+            ImmutableDictionary<(Type, string), ElementFunc<object>> style = null)
+            : this(x, y, width, height, onClick, onHover, value, getValue, setValue, enabled, hidden, style)
         {
             id = this;
         }
