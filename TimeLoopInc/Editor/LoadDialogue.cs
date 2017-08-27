@@ -107,7 +107,10 @@ namespace TimeLoopInc.Editor
                 _isLoading = true;
                 _loadStart = DateTime.UtcNow;
                 SelectedFile = null;
-                _files = Directory.GetFiles(_editor.SavePath, "*", SearchOption.AllDirectories);
+                if (Directory.Exists(_editor.SavePath))
+                {
+                    _files = Directory.GetFiles(_editor.SavePath, "*", SearchOption.AllDirectories);
+                }
             }
         }
 
@@ -137,8 +140,5 @@ namespace TimeLoopInc.Editor
             var endValue = (args.Parent.Height - height) / 2;
             return (endValue - startValue) * AnimationT() + startValue;
         }
-
-        public IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

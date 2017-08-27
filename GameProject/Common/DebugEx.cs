@@ -9,7 +9,7 @@ namespace Game.Common
         public delegate void FailDelegate(string message);
         public static event FailDelegate FailEvent;
 
-        //[DebuggerStepThrough]
+        [DebuggerStepThrough]
         public static void Assert(bool condition, string message = "")
         {
             if (!condition)

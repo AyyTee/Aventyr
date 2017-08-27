@@ -18,10 +18,8 @@ namespace Ui
         /// </summary>
         readonly static Stack<bool> _isThrown = new Stack<bool>();
         const int _indentSpaces = 4;
-        readonly static bool _writeToConsole = true;
+        readonly static bool _writeToConsole = false;
         static string Indent => new String(' ', _callStack.Count * _indentSpaces);
-
-        static string _output = "";
 
         /// <summary>
         /// Invoke a function and return whether it got caught in a recursive loop. 
@@ -49,13 +47,13 @@ namespace Ui
             // If a recursive loop is detected then we bubble up the result immediately.
             if (_isThrown.Any() && _isThrown.Peek())
             {
+                _callStack.Add(current);
                 return false;
             }
 
             if (_writeToConsole)
             {
                 Console.WriteLine(Indent + $"Push {current.Element} {current.ElementProperty}");
-                _output += Indent + $"Push {current.Element} {current.ElementProperty}\n";
             }
 
             // Check the call stack to determine if we've seen this instance and method before.
@@ -66,7 +64,6 @@ namespace Ui
                 if (_writeToConsole)
                 {
                     Console.WriteLine(Indent + $"Loop detected!");
-                    _output += $"Loop detected!\n";
                 }
 
                 if (!_isThrown.Any() && Debugger.IsAttached)
@@ -96,7 +93,6 @@ namespace Ui
             if (_writeToConsole)
             {
                 Console.WriteLine(Indent + $"Pop  {current.Element} {current.ElementProperty}");
-                _output += Indent + $"Pop  {current.Element} {current.ElementProperty}\n";
             }
         }
 
