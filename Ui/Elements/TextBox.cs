@@ -9,22 +9,30 @@ using Game.Models;
 using OpenTK;
 using Game.Rendering;
 using OpenTK.Graphics;
+using Ui.Args;
 
 namespace Ui.Elements
 {
-    public class TextBox : Element, ISelectable
+    public class TextBox : Element, ITypeable, IHoverable
     {
         public enum Input { Text, Numbers }
 
+        public ElementAction<TypeArgs> OnTyping => TypeUpdate;
+        public ElementAction<SelectArgs> OnSelect => args => CursorIndex = args.IsSelected ? 0 : (int?)null;
+        public ElementAction<HoverArgs> OnHover => _ => { };
+
         internal ElementFunc<Font> _font;
         internal ElementFunc<Color4> _backgroundColor;
-        internal ElementFunc<string> _text;
-        public Action<string> SetText { get; }
+        internal ElementFunc<string> _getText;
+        internal Action<string> _setText;
         public int? CursorIndex { get; set; }
 
-        public string Text => InvokeFunc(_text);
-        public Font Font => InvokeFunc(_font);
-        public Color4 BackgroundColor => InvokeFunc(_backgroundColor);
+        public string Text {
+            get => GetValue(_getText);
+            set => _setText(value);
+        }
+        public Font Font => GetValue(_font);
+        public Color4 BackgroundColor => GetValue(_backgroundColor);
 
         public TextBox(
             ElementFunc<float> x = null,
@@ -41,8 +49,8 @@ namespace Ui.Elements
             _font = font;
 
             var defaultText = "";
-            _text = getText ?? (_ => defaultText);
-            SetText = setText ?? (newText => defaultText = newText);
+            _getText = getText ?? (_ => defaultText);
+            _setText = setText ?? (newText => defaultText = newText);
 
             _backgroundColor = backgroundColor;
         }
@@ -100,6 +108,14 @@ namespace Ui.Elements
                 models.Add(textModel);
             }
             return models;
+        }
+
+        void TypeUpdate(TypeArgs args)
+        {
+            DebugEx.Assert(CursorIndex != null);
+            var newCursorText = TextInput.Update(args.Window, new CursorText(Text, CursorIndex));
+            CursorIndex = newCursorText.CursorIndex;
+            Text = newCursorText.Text;
         }
 
         public static new Style DefaultStyle(IUiController controller)

@@ -12,6 +12,7 @@ using OpenTK.Input;
 using System.Text;
 using OpenTK.Graphics;
 using Ui.Elements;
+using Ui.Args;
 
 namespace Ui
 {
@@ -22,7 +23,7 @@ namespace Ui
         ICamera2 _camera;
         List<UiWorldTransform> _flattenedUi = new List<UiWorldTransform>();
         public Element Hover { get; private set; }
-        public TextBox Selected { get; private set; }
+        public ISelectable Selected { get; private set; }
         public (Element Element, DateTime Time) LastClick = (null, new DateTime());
         public TimeSpan DoubleClickSpeed { get; set; } = TimeSpan.FromSeconds(0.6);
 
@@ -73,37 +74,40 @@ namespace Ui
                         Vector2Ex.Transform(
                             mousePos,
                             item.WorldTransform.GetMatrix().Inverted())));
+
+            var hoverPrevious = Hover;
             Hover = hover?.Element;
+            if (Hover != hoverPrevious)
+            {
+                if (hoverPrevious is IHoverable hoverablePrevious)
+                {
+                    hoverablePrevious.OnHover(new HoverArgs(hoverablePrevious, false));
+                }
+                if (Hover is IHoverable hoverable)
+                {
+                    hoverable.OnHover(new HoverArgs(hoverable, true));
+                }
+            }
+
             if (_window.ButtonPress(MouseButton.Left))
             {
-                var isDoubleClick = 
-                    (time - LastClick.Time < DoubleClickSpeed) && 
-                    LastClick.Element == Hover;
-
-                if (Hover != null)
+                if (Hover is IRadio radio)
                 {
-                    switch (Hover)
-                    {
-                        case Button button:
-                            if (button.Enabled)
-                            {
-                                if (button is IRadio radio)
-                                {
-                                    radio.SetValue();
-                                }
-                                var args = new ClickArgs(
-                                    isDoubleClick, 
-                                    button.ElementArgs.Parent, 
-                                    button.ElementArgs.Self);
-                                button.OnClick(args);
-                            }
-                            break;
-                        case TextBox textBox:
-                            SetSelected(textBox);
-                            break;
-                    }
+                    radio.SetValue();
                 }
-                else
+                if (Hover is IClickable clickable)
+                {
+                    var isDoubleClick =
+                        (time - LastClick.Time < DoubleClickSpeed) &&
+                        LastClick.Element == Hover;
+
+                    clickable.OnClick(new ClickArgs(Hover, isDoubleClick));
+                }
+                if (Hover is ISelectable selectable)
+                {
+                    SetSelected(selectable);
+                }
+                if (Hover == null)
                 {
                     SetSelected(null);
                 }
@@ -116,26 +120,23 @@ namespace Ui
                 SetSelected(null);
             }
 
-            if (Selected != null)
+            if (Selected is ITypeable typeable)
             {
-                var text = Selected.Text;
-                DebugEx.Assert(Selected.CursorIndex != null);
-                var newCursorText = TextInput.Update(_window, new CursorText(text, Selected.CursorIndex));
-                Selected.SetText(newCursorText.Text);
-                Selected.CursorIndex = newCursorText.CursorIndex;
+                typeable.OnTyping(new TypeArgs(Selected, _window));
+                
             }
         }
 
-        public void SetSelected(TextBox selected)
+        public void SetSelected(ISelectable selected)
         {
             if (Selected != null)
             {
-                Selected.CursorIndex = null;
+                Selected.OnSelect(new SelectArgs(Selected, false));
             }
             Selected = selected;
             if (Selected != null)
             {
-                Selected.CursorIndex = 0;
+                Selected.OnSelect(new SelectArgs(Selected, true));
             }
         }
 

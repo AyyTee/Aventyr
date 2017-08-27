@@ -17,7 +17,7 @@ namespace Ui.Elements
     /// <summary>
     /// Base implementation of IElement.
     /// </summary>
-    public abstract class Element : IEnumerable<Element>, IBaseElement
+    public abstract class Element : IEnumerable<Element>, IElement
     {
         public ElementArgs ElementArgs { get; set; }
 
@@ -27,11 +27,11 @@ namespace Ui.Elements
         internal ElementFunc<float> _height;
         internal ElementFunc<bool> _hidden;
 
-        public float X => InvokeFunc(_x);
-        public float Y => InvokeFunc(_y);
-        public float Width => InvokeFunc(_width);
-        public float Height => InvokeFunc(_height);
-        public bool Hidden => InvokeFunc(_hidden);
+        public float X => GetValue(_x);
+        public float Y => GetValue(_y);
+        public float Width => GetValue(_width);
+        public float Height => GetValue(_height);
+        public bool Hidden => GetValue(_hidden);
 
         internal ImmutableDictionary<(Type ElementType, string FuncName), ElementFunc<object>> Style { get; set; }
         Dictionary<string, ElementFunc<object>> _funcCache = new Dictionary<string, ElementFunc<object>>();
@@ -54,7 +54,7 @@ namespace Ui.Elements
             Style = style?.ToImmutable();
         }
 
-        public T InvokeFunc<T>(ElementFunc<T> func, [CallerMemberName]string funcName = null)
+        public T GetValue<T>(ElementFunc<T> func, [CallerMemberName]string funcName = null)
         {
             DebugEx.Assert(funcName != null);
 

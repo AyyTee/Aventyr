@@ -16,7 +16,7 @@ namespace Ui.Elements
     public class Rectangle : NodeElement
     {
         internal ElementFunc<Color4> _color;
-        public Color4 Color => InvokeFunc(_color);
+        public Color4 Color => GetValue(_color);
 
         public Rectangle(
             ElementFunc<float> x = null,

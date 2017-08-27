@@ -7,15 +7,16 @@ using Game.Models;
 using Game.Rendering;
 using OpenTK.Graphics;
 using System.Collections.Immutable;
+using Ui.Args;
 
 namespace Ui.Elements
 {
     public class Radio<T> : Button, IRadio
     {
-        internal ElementFunc<T> _value;
-        internal Action<T> SetValueFunc { get; }
+        internal ElementFunc<T> _getValue;
+        internal Action<T> _setValue { get; }
         public T Target { get; }
-        public T Value => _value(ElementArgs);
+        public T Value => _getValue(ElementArgs);
 
         public bool Selected => Target.Equals(Value);
 
@@ -24,8 +25,8 @@ namespace Ui.Elements
             ElementFunc<float> y = null,
             ElementFunc<float> width = null,
             ElementFunc<float> height = null,
-            OnClickHandler onClick = null,
-            OnHoverHandler onHover = null,
+            ElementAction<ClickArgs> onClick = null,
+            ElementAction<HoverArgs> onHover = null,
             T target = default(T),
             ElementFunc<T> getValue = null,
             Action<T> setValue = null,
@@ -35,8 +36,8 @@ namespace Ui.Elements
             : base(x, y, width, height, onClick, onHover, enabled, hidden, style)
         {
             var internalValue = default(T);
-            _value = getValue ?? (_ => internalValue);
-            SetValueFunc = setValue ?? (value => internalValue = value);
+            _getValue = getValue ?? (_ => internalValue);
+            _setValue = setValue ?? (value => internalValue = value);
             Target = target;
         }
 
@@ -46,8 +47,8 @@ namespace Ui.Elements
             ElementFunc<float> y = null,
             ElementFunc<float> width = null,
             ElementFunc<float> height = null,
-            OnClickHandler onClick = null,
-            OnHoverHandler onHover = null,
+            ElementAction<ClickArgs> onClick = null,
+            ElementAction<HoverArgs> onHover = null,
             T value = default(T),
             ElementFunc<T> getValue = null,
             Action<T> setValue = null,
@@ -59,7 +60,7 @@ namespace Ui.Elements
             id = this;
         }
 
-        public void SetValue() => SetValueFunc(Target);
+        public void SetValue() => _setValue(Target);
 
         public static new Style DefaultStyle(IUiController controller)
         {
@@ -81,7 +82,7 @@ namespace Ui.Elements
         }
     }
 
-    public interface IRadio
+    public interface IRadio : IHoverable
     {
         bool Selected { get; }
 

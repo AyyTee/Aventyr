@@ -54,4 +54,5 @@ namespace Ui
     }
 
     public delegate T ElementFunc<T>(ElementArgs args);
+    public delegate void ElementAction<T>(T args) where T : ElementArgs;
 }

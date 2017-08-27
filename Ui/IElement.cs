@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Ui.Args;
 
 namespace Ui
 {
-    public interface ISelectable : IElement
+    public interface IElement : IBaseElement
     {
-        ElementAction<SelectArgs> OnSelect { get; }
+        ElementArgs ElementArgs { get; }
     }
 }

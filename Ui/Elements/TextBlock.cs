@@ -18,10 +18,10 @@ namespace Ui.Elements
         internal ElementFunc<int?> _maxWidth;
         internal ElementFunc<float> _textAlignment;
 
-        public string Text => InvokeFunc(_text);
-        public Font Font => InvokeFunc(_font);
-        public int? MaxWidth => InvokeFunc(_maxWidth);
-        public float TextAlignment => InvokeFunc(_textAlignment);
+        public string Text => GetValue(_text);
+        public Font Font => GetValue(_font);
+        public int? MaxWidth => GetValue(_maxWidth);
+        public float TextAlignment => GetValue(_textAlignment);
 
         Vector2 Size => (Vector2)(Font?.GetSize(Text, FontSettings) ?? new Vector2i());
         Font.Settings FontSettings => new Font.Settings(Color4.White, TextAlignment, maxWidth: MaxWidth);

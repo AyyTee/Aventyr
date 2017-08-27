@@ -9,23 +9,24 @@ using Game.Models;
 using Game.Rendering;
 using OpenTK;
 using OpenTK.Graphics;
+using Ui.Args;
 
 namespace Ui.Elements
 {
-    public class Button : NodeElement
+    public class Button : NodeElement, IClickable
     {
-        internal OnClickHandler OnClick { get; }
-        internal OnHoverHandler OnHover { get; }
+        public ElementAction<ClickArgs> OnClick { get; }
+        public ElementAction<HoverArgs> OnHover { get; }
         internal ElementFunc<bool> _enabled;
-        public bool Enabled => InvokeFunc(_enabled);
+        public bool Enabled => GetValue(_enabled);
 
         public Button(
             ElementFunc<float> x = null, 
             ElementFunc<float> y = null, 
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null,
-            OnClickHandler onClick = null, 
-            OnHoverHandler onHover = null,
+            ElementAction<ClickArgs> onClick = null,
+            ElementAction<HoverArgs> onHover = null,
             ElementFunc<bool> enabled = null,
             ElementFunc<bool> hidden = null,
             Style style = null)
@@ -42,8 +43,8 @@ namespace Ui.Elements
             ElementFunc<float> y = null, 
             ElementFunc<float> width = null, 
             ElementFunc<float> height = null,
-            OnClickHandler onClick = null,
-            OnHoverHandler onHover = null,
+            ElementAction<ClickArgs> onClick = null,
+            ElementAction<HoverArgs> onHover = null,
             ElementFunc<bool> enabled = null,
             ElementFunc<bool> hidden = null,
             Style style = null)

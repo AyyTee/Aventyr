@@ -7,8 +7,8 @@ using Ui.Args;
 
 namespace Ui
 {
-    public interface ISelectable : IElement
+    public interface ITypeable : ISelectable
     {
-        ElementAction<SelectArgs> OnSelect { get; }
+        ElementAction<TypeArgs> OnTyping { get; }
     }
 }

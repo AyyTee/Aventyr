@@ -22,7 +22,7 @@ namespace Ui.Elements
 
         internal ElementFunc<float> _spacing;
 
-        public float Spacing => InvokeFunc(_spacing);
+        public float Spacing => GetValue(_spacing);
         public float Length => IsVertical ? Height : Width;
         public float Thickness => IsVertical ? Width : Height;
 

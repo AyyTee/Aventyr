@@ -64,10 +64,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClickArgs.cs" />
-    <Compile Include="HoverArgs.cs" />
+    <Compile Include="Args\ClickArgs.cs" />
+    <Compile Include="Args\HoverArgs.cs" />
     <Compile Include="IBaseElement.cs" />
+    <Compile Include="IClickable.cs" />
+    <Compile Include="IElement.cs" />
+    <Compile Include="IHoverable.cs" />
     <Compile Include="ISelectable.cs" />
+    <Compile Include="ITypeable.cs" />
     <Compile Include="IUiController.cs" />
     <Compile Include="ModelArgs.cs" />
     <Compile Include="Elements\NodeElement.cs" />
@@ -81,9 +85,11 @@
     <Compile Include="Elements\Radio.cs" />
     <Compile Include="Elements\Rectangle.cs" />
     <Compile Include="Elements\StackFrame.cs" />
+    <Compile Include="Args\SelectArgs.cs" />
     <Compile Include="Style.cs" />
     <Compile Include="Elements\TextBox.cs" />
     <Compile Include="TextInput.cs" />
+    <Compile Include="Args\TypeArgs.cs" />
     <Compile Include="UiController.cs" />
     <Compile Include="Elements\TextBlock.cs" />
     <Compile Include="Elements\Button.cs" />
