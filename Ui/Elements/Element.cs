@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace Ui.Elements
 {
@@ -20,22 +21,22 @@ namespace Ui.Elements
     {
         public ElementArgs ElementArgs { get; set; }
 
-        internal ElementFunc<float> XFunc { get; set; }
-        internal ElementFunc<float> YFunc { get; set; }
-        internal ElementFunc<float> WidthFunc { get; set; }
-        internal ElementFunc<float> HeightFunc { get; set; }
-        internal ElementFunc<bool> HiddenFunc { get; set; }
+        internal ElementFunc<float> _x;
+        internal ElementFunc<float> _y;
+        internal ElementFunc<float> _width;
+        internal ElementFunc<float> _height;
+        internal ElementFunc<bool> _hidden;
 
         [DetectLoop]
-        public float X => InvokeFunc(XFunc, nameof(X));
+        public float X => InvokeFunc(_x);
         [DetectLoop]
-        public float Y => InvokeFunc(YFunc, nameof(Y));
+        public float Y => InvokeFunc(_y);
         [DetectLoop]
-        public float Width => InvokeFunc(WidthFunc, nameof(Width));
+        public float Width => InvokeFunc(_width);
         [DetectLoop]
-        public float Height => InvokeFunc(HeightFunc, nameof(Height));
+        public float Height => InvokeFunc(_height);
         [DetectLoop]
-        public bool Hidden => InvokeFunc(HiddenFunc, nameof(Hidden));
+        public bool Hidden => InvokeFunc(_hidden);
 
         internal ImmutableDictionary<(Type ElementType, string FuncName), ElementFunc<object>> Style { get; set; }
         Dictionary<string, ElementFunc<object>> _funcCache = new Dictionary<string, ElementFunc<object>>();
@@ -49,17 +50,19 @@ namespace Ui.Elements
             Style style = null)
         {
             ElementArgs = new ElementArgs(null, this);
-            XFunc = x;
-            YFunc = y;
-            WidthFunc = width;
-            HeightFunc = height;
-            HiddenFunc = hidden;
+            _x = x;
+            _y = y;
+            _width = width;
+            _height = height;
+            _hidden = hidden;
 
             Style = style?.ToImmutable();
         }
 
-        public T InvokeFunc<T>(ElementFunc<T> func, string funcName)
+        public T InvokeFunc<T>(ElementFunc<T> func, [CallerMemberName]string funcName = null)
         {
+            DebugEx.Assert(funcName != null);
+
             // If the result has been cached, invoke that.
             if (_funcCache.ContainsKey(funcName))
             {

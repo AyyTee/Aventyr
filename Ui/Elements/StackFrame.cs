@@ -20,10 +20,10 @@ namespace Ui.Elements
     {
         public bool IsVertical { get; }
 
-        internal ElementFunc<float> SpacingFunc { get; }
+        internal ElementFunc<float> _spacing;
 
         [DetectLoop]
-        public float Spacing => InvokeFunc(SpacingFunc, nameof(Spacing));
+        public float Spacing => InvokeFunc(_spacing);
         public float Length => IsVertical ? Height : Width;
         public float Thickness => IsVertical ? Width : Height;
 
@@ -38,12 +38,12 @@ namespace Ui.Elements
             : base(x, y, hidden: hidden, style: style)
         {
             IsVertical = isVertical;
-            SpacingFunc = spacing ?? (_ => 0);
+            _spacing = spacing;
 
             if (IsVertical)
             {
-                WidthFunc = thickness ?? (args => args.Parent.Width);
-                HeightFunc = _ =>
+                _width = thickness ?? (args => args.Parent.Width);
+                _height = _ =>
                 {
                     var last = this.LastOrDefault();
                     return last == null ?
@@ -53,14 +53,14 @@ namespace Ui.Elements
             }
             else if (!IsVertical)
             {
-                WidthFunc = _ =>
+                _width = _ =>
                 {
                     var last = this.LastOrDefault();
                     return last == null ? 
                         0 :
                         last.X+ last.Width;
                 };
-                HeightFunc = thickness ?? (args => args.Parent.Height);
+                _height = thickness ?? (args => args.Parent.Height);
             }
         }
 
@@ -93,11 +93,11 @@ namespace Ui.Elements
             var cast = (Element)element;
             if (IsVertical)
             {
-                cast.YFunc = ChildGetY;
+                cast._y = ChildGetY;
             }
             else
             {
-                cast.XFunc = ChildGetX;
+                cast._x = ChildGetX;
             }
         }
 

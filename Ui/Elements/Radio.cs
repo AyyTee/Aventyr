@@ -12,11 +12,11 @@ namespace Ui.Elements
 {
     public class Radio<T> : Button, IRadio, IElement
     {
-        internal ElementFunc<T> GetValueFunc { get; }
+        internal ElementFunc<T> _value;
         internal Action<T> SetValueFunc { get; }
         public T Target { get; }
         [DetectLoop]
-        public T Value => GetValueFunc(ElementArgs);
+        public T Value => _value(ElementArgs);
 
         public bool Selected => Target.Equals(Value);
 
@@ -36,7 +36,7 @@ namespace Ui.Elements
             : base(x, y, width, height, onClick, onHover, enabled, hidden, style)
         {
             var internalValue = default(T);
-            GetValueFunc = getValue ?? (_ => internalValue);
+            _value = getValue ?? (_ => internalValue);
             SetValueFunc = setValue ?? (value => internalValue = value);
             Target = target;
         }

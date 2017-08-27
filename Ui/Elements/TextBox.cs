@@ -16,18 +16,18 @@ namespace Ui.Elements
     {
         public enum Input { Text, Numbers }
 
-        public ElementFunc<Font> FontFunc { get; }
-        public ElementFunc<Color4> BackgroundColorFunc { get; }
-        public ElementFunc<string> TextFunc { get; }
+        internal ElementFunc<Font> _font;
+        internal ElementFunc<Color4> _backgroundColor;
+        internal ElementFunc<string> _text;
         public Action<string> SetText { get; }
         public int? CursorIndex { get; set; }
 
         [DetectLoop]
-        public string Text => TextFunc(ElementArgs);
+        public string Text => InvokeFunc(_text);
         [DetectLoop]
-        public Font Font => InvokeFunc(FontFunc, nameof(Font));
+        public Font Font => InvokeFunc(_font);
         [DetectLoop]
-        public Color4 BackgroundColor => InvokeFunc(BackgroundColorFunc, nameof(BackgroundColor));
+        public Color4 BackgroundColor => InvokeFunc(_backgroundColor);
 
         public TextBox(
             ElementFunc<float> x = null,
@@ -41,13 +41,13 @@ namespace Ui.Elements
             ElementFunc<bool> hidden = null)
             : base(x, y, width, height, hidden)
         {
-            FontFunc = font;
+            _font = font;
 
             var defaultText = "";
-            TextFunc = getText ?? (_ => defaultText);
+            _text = getText ?? (_ => defaultText);
             SetText = setText ?? (newText => defaultText = newText);
 
-            BackgroundColorFunc = backgroundColor;
+            _backgroundColor = backgroundColor;
         }
 
         public TextBox(

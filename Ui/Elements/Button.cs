@@ -16,9 +16,9 @@ namespace Ui.Elements
     {
         internal OnClickHandler OnClick { get; }
         internal OnHoverHandler OnHover { get; }
-        internal ElementFunc<bool> EnabledFunc { get; }
+        internal ElementFunc<bool> _enabled;
         [DetectLoop]
-        public bool Enabled => InvokeFunc(EnabledFunc, nameof(Enabled));
+        public bool Enabled => InvokeFunc(_enabled);
 
         public Button(
             ElementFunc<float> x = null, 
@@ -34,7 +34,7 @@ namespace Ui.Elements
         {
             OnClick = onClick ?? (_ => { });
             OnHover = onHover ?? (_ => { });
-            EnabledFunc = enabled;
+            _enabled = enabled;
         }
 
         public Button(

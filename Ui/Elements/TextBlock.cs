@@ -13,19 +13,19 @@ namespace Ui.Elements
 {
     public class TextBlock : Element, IElement
     {
-        public ElementFunc<string> TextFunc { get; }
-        public ElementFunc<Font> FontFunc { get; }
-        public ElementFunc<int?> MaxWidthFunc { get; }
-        public ElementFunc<float> TextAlignmentFunc { get; }
+        internal ElementFunc<string> _text;
+        internal ElementFunc<Font> _font;
+        internal ElementFunc<int?> _maxWidth;
+        internal ElementFunc<float> _textAlignment;
 
         [DetectLoop]
-        public string Text => InvokeFunc(TextFunc, nameof(Text));
+        public string Text => InvokeFunc(_text);
         [DetectLoop]
-        public Font Font => InvokeFunc(FontFunc, nameof(Font));
+        public Font Font => InvokeFunc(_font);
         [DetectLoop]
-        public int? MaxWidth => InvokeFunc(MaxWidthFunc, nameof(MaxWidth));
+        public int? MaxWidth => InvokeFunc(_maxWidth);
         [DetectLoop]
-        public float TextAlignment => InvokeFunc(TextAlignmentFunc, nameof(TextAlignment));
+        public float TextAlignment => InvokeFunc(_textAlignment);
 
         Vector2 Size => (Vector2)(Font?.GetSize(Text, FontSettings) ?? new Vector2i());
         Font.Settings FontSettings => new Font.Settings(Color4.White, TextAlignment, maxWidth: MaxWidth);
@@ -40,13 +40,13 @@ namespace Ui.Elements
             ElementFunc<bool> hidden = null)
             : base(x, y, hidden: hidden)
         {
-            WidthFunc = _ => Size.X;
-            HeightFunc = _ => Size.Y;
+            _width = _ => Size.X;
+            _height = _ => Size.Y;
             DebugEx.Assert(text != null);
-            FontFunc = font;
-            TextFunc = text ?? (_ => "");
-            MaxWidthFunc = maxWidth;
-            TextAlignmentFunc = textAlignment;
+            _font = font;
+            _text = text;
+            _maxWidth = maxWidth;
+            _textAlignment = textAlignment;
         }
 
         public TextBlock(
@@ -70,7 +70,8 @@ namespace Ui.Elements
             {
                 new StyleElement(type, nameof(Font), _ => controller.Fonts.Inconsolata),
                 new StyleElement(type, nameof(MaxWidth), _ => null),
-                new StyleElement(type, nameof(TextAlignment), _ => 0f)
+                new StyleElement(type, nameof(TextAlignment), _ => 0f),
+                new StyleElement(type, nameof(Text), _ => "")
             };
         }
 
@@ -83,10 +84,5 @@ namespace Ui.Elements
         }
 
         public override bool IsInside(Vector2 localPoint) => false;
-
-        public static TextBlock DefaultStyle(IVirtualWindow window)
-        {
-            return new TextBlock(_ => 0, _ => 0, _ => "", _ => window.Fonts.Inconsolata, _ => null, _ => 0f, _ => false);
-        }
     }
 }

@@ -34,10 +34,10 @@ namespace Ui
 
             Root = root;
             Root.Style = DefaultStyle();
-            Root.XFunc = _ => 0;
-            Root.YFunc = _ => 0;
-            Root.WidthFunc = _ => _window.CanvasSize.X;
-            Root.HeightFunc = _ => _window.CanvasSize.Y;
+            Root._x = _ => 0;
+            Root._y = _ => 0;
+            Root._width = _ => _window.CanvasSize.X;
+            Root._height = _ => _window.CanvasSize.Y;
         }
 
         public ImmutableDictionary<(Type, string), ElementFunc<object>> DefaultStyle()

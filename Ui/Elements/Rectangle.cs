@@ -15,9 +15,9 @@ namespace Ui.Elements
 {
     public class Rectangle : NodeElement, IElement
     {
-        public ElementFunc<Color4> ColorFunc { get; }
+        internal ElementFunc<Color4> _color;
         [DetectLoop]
-        public Color4 Color => InvokeFunc(ColorFunc, nameof(Color));
+        public Color4 Color => InvokeFunc(_color);
 
         public Rectangle(
             ElementFunc<float> x = null,
@@ -29,7 +29,7 @@ namespace Ui.Elements
             Style style = null)
             : base(x, y, width, height, hidden, style)
         {
-            ColorFunc = color ?? (_ => Color4.White);
+            _color = color;
         }
 
         public Rectangle(
