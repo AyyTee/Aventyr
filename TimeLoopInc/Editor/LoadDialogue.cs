@@ -32,7 +32,6 @@ namespace TimeLoopInc.Editor
         public LoadDialogue(IEditorController editor = null, Action<SceneBuilder> onLoad = null)
         {
             _editor = editor;
-            var font = _editor.Window.Fonts.Inconsolata;
 
             OnLoad = onLoad ?? (_ => { });
             Children = new[]
@@ -49,11 +48,11 @@ namespace TimeLoopInc.Editor
                             {
                                 new Button(width: _ => 100, onClick: _ => Load(), enabled: _ => SelectedFile != null)
                                 {
-                                    new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Load")
+                                    new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => "Load")
                                 },
                                 new Button(width: _ => 100, onClick: _ => Hide())
                                 {
-                                    new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Cancel")
+                                    new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => "Cancel")
                                 }
                             },
                             new StackFrame(spacing: _ => 1)
@@ -67,7 +66,7 @@ namespace TimeLoopInc.Editor
                                         getValue: _ => SelectedFile, 
                                         setValue: value => SelectedFile = value)
                                     {
-                                        new TextBlock(_ => 5, AlignY(0.5f), _ => _editor?.Window.Fonts.Inconsolata, _ => name)
+                                        new TextBlock(_ => 5, AlignY(0.5f), _ => name)
                                     })
                             }
                         }

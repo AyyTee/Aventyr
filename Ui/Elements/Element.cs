@@ -38,6 +38,7 @@ namespace Ui.Elements
         public bool Hidden => InvokeFunc(HiddenFunc, nameof(Hidden));
 
         internal ImmutableDictionary<(Type ElementType, string FuncName), ElementFunc<object>> Style { get; set; }
+        Dictionary<string, ElementFunc<object>> _funcCache = new Dictionary<string, ElementFunc<object>>();
 
         public Element(
             ElementFunc<float> x = null,
@@ -59,9 +60,15 @@ namespace Ui.Elements
 
         public T InvokeFunc<T>(ElementFunc<T> func, string funcName)
         {
+            // If the result has been cached, invoke that.
+            if (_funcCache.ContainsKey(funcName))
+            {
+                return (T)_funcCache[funcName](ElementArgs);
+            }
             // If a func is already set then we just invoke that.
             if (func != null)
             {
+                _funcCache.Add(funcName, args => func(args));
                 return func(ElementArgs);
             }
             // Otherwise we recursively check parent elements for the specified func.
@@ -75,9 +82,11 @@ namespace Ui.Elements
                 foreach (var type in GetType().InheritanceHierarchy())
                 {
                     var key = (type, funcName);
-                    if (element.Style.Keys.Contains(key))
+                    if (element.Style.ContainsKey(key))
                     {
-                        return (T)element.Style[key](ElementArgs);
+                        var func = element.Style[key];
+                        _funcCache.Add(funcName, func);
+                        return (T)func(ElementArgs);
                     }
                 }
             }

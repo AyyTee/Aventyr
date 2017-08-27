@@ -32,11 +32,11 @@ namespace Ui.Elements
         public TextBox(
             ElementFunc<float> x = null,
             ElementFunc<float> y = null,
-            ElementFunc<float> width = null, 
+            ElementFunc<float> width = null,
             ElementFunc<float> height = null,
-            ElementFunc<Font> font = null,
-            ElementFunc<string> getText = null, 
+            ElementFunc<string> getText = null,
             Action<string> setText = null,
+            ElementFunc<Font> font = null,
             ElementFunc<Color4> backgroundColor = null,
             ElementFunc<bool> hidden = null)
             : base(x, y, width, height, hidden)
@@ -54,14 +54,14 @@ namespace Ui.Elements
             out TextBox id,
             ElementFunc<float> x = null,
             ElementFunc<float> y = null,
-            ElementFunc<float> width = null, 
+            ElementFunc<float> width = null,
             ElementFunc<float> height = null,
-            ElementFunc<Font> font = null,
-            ElementFunc<string> getText = null, 
+            ElementFunc<string> getText = null,
             Action<string> setText = null,
+            ElementFunc<Font> font = null,
             ElementFunc<Color4> backgroundColor = null,
             ElementFunc<bool> hidden = null)
-            : this(x, y, width, height, font, getText, setText, backgroundColor, hidden)
+            : this(x, y, width, height, getText, setText, font, backgroundColor, hidden)
         {
             id = this;
         }
@@ -111,7 +111,7 @@ namespace Ui.Elements
             return new Style
             {
                 new StyleElement(type, nameof(BackgroundColor), _ => Color4.White),
-                new StyleElement(type, nameof(Font), _ => controller.Fonts),
+                new StyleElement(type, nameof(Font), _ => controller.Fonts.Inconsolata),
             };
         }
 

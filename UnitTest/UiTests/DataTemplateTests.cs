@@ -22,7 +22,7 @@ namespace UiTests
             {
                 new DataTemplate<string>(
                     () => new OrderedSet<string> { "a", "ab", "abc" }, 
-                    text => new TextBlock(font: _ => font, text: _ => text, maxWidth: _ => null, textAlignment: _ => 0))
+                    text => new TextBlock(text: _ => text, font: _ => font, maxWidth: _ => null, textAlignment: _ => 0))
             };
 
             Assert.AreEqual(3, stackFrame.Count());

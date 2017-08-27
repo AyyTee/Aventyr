@@ -31,10 +31,10 @@ namespace Ui.Elements
         Font.Settings FontSettings => new Font.Settings(Color4.White, TextAlignment, maxWidth: MaxWidth);
 
         public TextBlock(
-            ElementFunc<float> x = null, 
-            ElementFunc<float> y = null, 
-            ElementFunc<Font> font = null, 
+            ElementFunc<float> x = null,
+            ElementFunc<float> y = null,
             ElementFunc<string> text = null,
+            ElementFunc<Font> font = null,
             ElementFunc<int?> maxWidth = null,
             ElementFunc<float> textAlignment = null,
             ElementFunc<bool> hidden = null)
@@ -50,15 +50,15 @@ namespace Ui.Elements
         }
 
         public TextBlock(
-            out TextBlock id, 
-            ElementFunc<float> x = null, 
-            ElementFunc<float> y = null, 
-            ElementFunc<Font> font = null, 
+            out TextBlock id,
+            ElementFunc<float> x = null,
+            ElementFunc<float> y = null,
             ElementFunc<string> text = null,
+            ElementFunc<Font> font = null,
             ElementFunc<int?> maxWidth = null,
             ElementFunc<float> textAlignment = null,
             ElementFunc<bool> hidden = null)
-            : this(x, y, font, text, maxWidth, textAlignment, hidden)
+            : this(x, y, text, font, maxWidth, textAlignment, hidden)
         {
             id = this;
         }
@@ -68,7 +68,7 @@ namespace Ui.Elements
             var type = typeof(TextBlock);
             return new Style
             {
-                new StyleElement(type, nameof(Font), _ => controller.Fonts),
+                new StyleElement(type, nameof(Font), _ => controller.Fonts.Inconsolata),
                 new StyleElement(type, nameof(MaxWidth), _ => null),
                 new StyleElement(type, nameof(TextAlignment), _ => 0f)
             };
@@ -86,7 +86,7 @@ namespace Ui.Elements
 
         public static TextBlock DefaultStyle(IVirtualWindow window)
         {
-            return new TextBlock(_ => 0, _ => 0, _ => window.Fonts.Inconsolata, _ => "", _ => null, _ => 0f, _ => false);
+            return new TextBlock(_ => 0, _ => 0, _ => "", _ => window.Fonts.Inconsolata, _ => null, _ => 0f, _ => false);
         }
     }
 }

@@ -32,21 +32,32 @@ namespace TimeLoopInc
         {
             _window = window;
 
+            var menuButtons = new Style
+            {
+                new StyleElement(typeof(Button), nameof(Button.Height), _ => 80f),
+            };
+
+            var centerText = new Style
+            {
+                new StyleElement(typeof(TextBlock), nameof(TextBlock.X), args => ElementEx.AlignX(0.5f)(args)),
+                new StyleElement(typeof(TextBlock), nameof(TextBlock.Y), args => ElementEx.AlignY(0.5f)(args))
+            };
+
             var root = new Frame()
             {
-                new StackFrame(thickness: _ => 200, spacing: _ => 5)
+                new StackFrame(thickness: _ => 200, spacing: _ => 5, style: menuButtons.With(centerText))
                 {
-                    new Button(height: _ => 80, onClick: StartGame)
+                    new Button(onClick: StartGame)
                     {
-                        new TextBlock(ElementEx.AlignX(0.5f), ElementEx.AlignY(0.5f), _ => _window.Fonts.Inconsolata, _ => "Start Game")
+                        new TextBlock(text: _ => "Start Game")
                     },
-                    new Button(height: _ => 80, onClick: StartLevelEditor)
+                    new Button(onClick: StartLevelEditor)
                     {
-                        new TextBlock(ElementEx.AlignX(0.5f), ElementEx.AlignY(0.5f), _ => _window.Fonts.Inconsolata, _ => "Level Editor")
+                        new TextBlock(text: _ => "Level Editor")
                     },
-                    new Button(height: _ => 80, onClick: _ => _window.Exit())
+                    new Button(onClick: _ => _window.Exit())
                     {
-                        new TextBlock(ElementEx.AlignX(0.5f), ElementEx.AlignY(0.5f), _ => _window.Fonts.Inconsolata, _ => "Exit")
+                        new TextBlock(text: _ => "Exit")
                     }
                 }
             };

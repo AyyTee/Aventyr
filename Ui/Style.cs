@@ -17,6 +17,27 @@ namespace Ui
             Elements.Add(element);
         }
 
+        public void Add(Style style)
+        {
+            foreach (var element in style.Elements)
+            {
+                if (!Elements.Exists(item => item.Key.Equals(element.Key)))
+                {
+                    Elements.Add(element);
+                }
+            }
+        }
+
+        public Style With(params Style[] styles)
+        {
+            var newStyle = new Style { this };
+            foreach (var style in styles)
+            {
+                newStyle.Add(style);
+            }
+            return newStyle;
+        }
+
         public IEnumerator<StyleElement> GetEnumerator() => Elements.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

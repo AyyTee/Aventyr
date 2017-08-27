@@ -30,33 +30,31 @@ namespace TimeLoopInc.Editor
         public SaveDialogue(IEditorController editor = null, Action<string> onSave = null)
         {
             _editor = editor;
-            var font = _editor.Window.Fonts.Inconsolata;
             OnSave = onSave ?? (_ => { });
             Children = new[]
             {
                 new Rectangle(
-                    color: _ => new Color4(0, 0, 0, AnimationT() * 0.3f), 
+                    color: _ => new Color4(0, 0, 0, AnimationT() * 0.3f),
                     hidden: _ => AnimationT() <= 0)
                 {
                     new Frame(AlignX(0.5f), FallInOut, ChildrenMaxX(), ChildrenMaxY())
                     {
                         new StackFrame(thickness: _ => 50, isVertical: false, spacing: _ => 20)
                         {
-                            new TextBlock(y: AlignY(0.5f), font: _ => font, text: _ => "File Name:"),
+                            new TextBlock(y: AlignY(0.5f), text: _ => "File Name:"),
                             new TextBox(
                                 y: AlignY(0.5f),
                                 width: _ => 400,
-                                font: _ => font,
                                 getText: _ => _saveName,
                                 setText: text => _saveName = text,
                                 backgroundColor: args => ValidName(((TextBox)args.Self).Text) ? Color4.White : Color4.Red),
                             new Button(width: _ => 100, onClick: Save)
                             {
-                                new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Save")
+                                new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => "Save")
                             },
                             new Button(width: _ => 100, onClick: _ => Hide())
                             {
-                                new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => font, _ => "Cancel")
+                                new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => "Cancel")
                             }
                         }
                     }

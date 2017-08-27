@@ -77,6 +77,17 @@ namespace TimeLoopInc.Editor
             _controller = controller;
             _tool = _tools[0];
 
+            var menuButtons = new Style
+            {
+                new StyleElement(typeof(Button), nameof(Button.Height), _ => 60f),
+            };
+
+            var centerText = new Style
+            {
+                new StyleElement(typeof(TextBlock), nameof(TextBlock.X), args => AlignX(0.5f)(args)),
+                new StyleElement(typeof(TextBlock), nameof(TextBlock.Y), args => AlignY(0.5f)(args))
+            };
+
             var root = new Frame()
             {
                 new SaveDialogue(out SaveDialogue saveDialogue, this, Save),
@@ -85,26 +96,26 @@ namespace TimeLoopInc.Editor
                 {
                     new StackFrame(spacing: _ => 20)
                     {
-                        new StackFrame(thickness: _ => 200, spacing: _ => 5)
+                        new StackFrame(thickness: _ => 200, spacing: _ => 5, style: menuButtons.With(centerText))
                         {
-                            new Button(height: _ => 60, onClick: _ => NewLevel())
+                            new Button(onClick: _ => NewLevel())
                             {
-                                new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "New")
+                                new TextBlock(text: _ => "New")
                             },
-                            new Button(height: _ => 60, onClick: _ => saveDialogue.Show())
+                            new Button(onClick: _ => saveDialogue.Show())
                             {
-                                new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Save As...")
+                                new TextBlock(text: _ => "Save As...")
                             },
-                            new Button(height: _ => 60, onClick: _ => loadDialogue.Show())
+                            new Button(onClick: _ => loadDialogue.Show())
                             {
-                                new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Load")
+                                new TextBlock(text: _ => "Load")
                             },
-                            new Button(height: _ => 60, onClick: _ => Play())
+                            new Button(onClick: _ => Play())
                             {
-                                new TextBlock(AlignX(0.5f), AlignY(0.5f), _ => Window.Fonts.Inconsolata, _ => "Play")
+                                new TextBlock(text: _ => "Play")
                             }
                         },
-                        new StackFrame(thickness: _ => 120, spacing: _ => 2)
+                        new StackFrame(thickness: _ => 120, spacing: _ => 2, style: centerText)
                         {
                             new DataTemplate<ToolData>(
                                 () => new OrderedSet<ToolData>(_tools),
@@ -115,35 +126,31 @@ namespace TimeLoopInc.Editor
                                     setValue: _ => _tool = data)
                                 {
                                     new TextBlock(
-                                        AlignX(0.5f), 
-                                        AlignY(0.5f), 
-                                        _ => Window.Fonts.Inconsolata, 
-                                        _ => data.Name, 
-                                        args => (int)args.Parent.Width - 10,
-                                        _ => 0.5f)
+                                        text: _ => data.Name,
+                                        maxWidth: args => (int)args.Parent.Width - 10,
+                                        textAlignment: _ => 0.5f)
                                 })
                         }
                     },
                     new TextBox(
                         _ => 220, _ => 10,
                         _ => 200, _ => 90,
-                        _ => Window.Fonts.Inconsolata,
                         TimeOffsetGetText,
                         TimeOffsetSetText),
-                    new TextBlock(x: _ => 5, y: AlignY(1), font: _ => Window.Fonts.Inconsolata, text: _ => _tool.Hint)
+                    new TextBlock(x: _ => 5, y: AlignY(1), text: _ => _tool.Hint)
                 },
-                new StackFrame(thickness: _ => 90, spacing: _ => 5, hidden: _ => !_isPlaying, isVertical: false)
+                new StackFrame(thickness: _ => 90, spacing: _ => 5, hidden: _ => !_isPlaying, isVertical: false, style: centerText)
                 {
                     new Button(width: _ => 200, onClick: _ => _sceneController = null)
                     {
-                        new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Return to editor")
+                        new TextBlock(text: _ => "Return to editor")
                     },
                     new Button(width: _ => 200, onClick: _ => _sceneController.SetInput(_sceneController.Input.Clear()))
                     {
-                        new TextBlock(AlignX(0.5f), AlignY(0.5f),  _ => Window.Fonts.Inconsolata, _ => "Restart")
+                        new TextBlock(text: _ => "Restart")
                     }
                 },
-                new TextBlock(AlignX(1), _ => 0, _ => Window.Fonts.Inconsolata, _ => LevelName + (_saveChangeCurrent == _sceneChangeCurrent ? "" : "*")),
+                new TextBlock(AlignX(1), _ => 0, _ => LevelName + (_saveChangeCurrent == _sceneChangeCurrent ? "" : "*")),
             };
 
             _menu = new UiController(Window, root);
@@ -405,7 +412,6 @@ namespace TimeLoopInc.Editor
             }
 
             var gui = _menu.Render();
-            //gui.Renderables.Add(Draw.Text(Window.Fonts.Inconsolata, new Vector2(0, 130), _mouseGridPos.ToString()));
             Window.Layers.Add(gui);
         }
     }
