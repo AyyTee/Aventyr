@@ -140,5 +140,7 @@ namespace TimeLoopInc.Editor
             var endValue = (args.Parent.Height - height) / 2;
             return (endValue - startValue) * AnimationT() + startValue;
         }
+
+        public override IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();
     }
 }
