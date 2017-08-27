@@ -21,9 +21,9 @@ namespace Ui
         readonly IVirtualWindow _window;
         ICamera2 _camera;
         List<UiWorldTransform> _flattenedUi = new List<UiWorldTransform>();
-        public IElement Hover { get; private set; }
+        public Element Hover { get; private set; }
         public TextBox Selected { get; private set; }
-        public (IElement Element, DateTime Time) LastClick = (null, new DateTime());
+        public (Element Element, DateTime Time) LastClick = (null, new DateTime());
         public TimeSpan DoubleClickSpeed { get; set; } = TimeSpan.FromSeconds(0.6);
 
         public FontAssets Fonts => _window.Fonts;
@@ -139,13 +139,13 @@ namespace Ui
             }
         }
 
-        void UpdateElementArgs(IElement root)
+        void UpdateElementArgs(Element root)
         {
             root.ElementArgs = new ElementArgs(null, root);
             _updateElementArgs(root);
         }
 
-        void _updateElementArgs(IElement element)
+        void _updateElementArgs(Element element)
         {
             foreach (var child in element)
             {
@@ -161,7 +161,7 @@ namespace Ui
             return list;
         }
 
-        void _allChildren(IElement element, Transform2 worldTransform, List<UiWorldTransform> list)
+        void _allChildren(Element element, Transform2 worldTransform, List<UiWorldTransform> list)
         {
             if (element.Hidden)
             {
@@ -201,10 +201,10 @@ namespace Ui
 
         class UiWorldTransform
         {
-            public IElement Element { get; }
+            public Element Element { get; }
             public Transform2 WorldTransform { get; }
 
-            public UiWorldTransform(IElement element, Transform2 worldTransform)
+            public UiWorldTransform(Element element, Transform2 worldTransform)
             {
                 DebugEx.Assert(element != null);
                 DebugEx.Assert(worldTransform != null);

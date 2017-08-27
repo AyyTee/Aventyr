@@ -15,7 +15,7 @@ using Ui.Elements;
 
 namespace TimeLoopInc.Editor
 {
-    public class LoadDialogue : Element, IElement
+    public class LoadDialogue : Element
     {
         bool _isLoading;
         DateTime _loadStart;
@@ -24,7 +24,7 @@ namespace TimeLoopInc.Editor
 
         string[] _files = new string[0];
 
-        public IEnumerable<IElement> Children { get; }
+        public IEnumerable<Element> Children { get; }
         public Action<SceneBuilder> OnLoad { get; }
 
         public string SelectedFile { get; set; }
@@ -141,6 +141,6 @@ namespace TimeLoopInc.Editor
             return (endValue - startValue) * AnimationT() + startValue;
         }
 
-        public override IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();
+        public override IEnumerator<Element> GetEnumerator() => Children.GetEnumerator();
     }
 }

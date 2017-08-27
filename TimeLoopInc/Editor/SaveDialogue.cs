@@ -16,7 +16,7 @@ using static Ui.ElementEx;
 
 namespace TimeLoopInc.Editor
 {
-    public class SaveDialogue : Element, IElement
+    public class SaveDialogue : Element
     {
         bool _isSaving;
         DateTime _saveStart;
@@ -24,7 +24,7 @@ namespace TimeLoopInc.Editor
         readonly TimeSpan _animationLength = TimeSpan.FromSeconds(0.15);
         string _saveName;
 
-        public IEnumerable<IElement> Children { get; }
+        public IEnumerable<Element> Children { get; }
         public Action<string> OnSave { get; }
 
         public SaveDialogue(IEditorController editor = null, Action<string> onSave = null)
@@ -116,6 +116,6 @@ namespace TimeLoopInc.Editor
             return (endValue - startValue) * AnimationT() + startValue;
         }
 
-        public override IEnumerator<IElement> GetEnumerator() => Children.GetEnumerator();
+        public override IEnumerator<Element> GetEnumerator() => Children.GetEnumerator();
     }
 }

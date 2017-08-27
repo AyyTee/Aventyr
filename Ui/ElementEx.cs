@@ -6,26 +6,10 @@ using Game.Common;
 using Game.Models;
 using OpenTK;
 using System.Runtime.CompilerServices;
+using Ui.Elements;
 
 namespace Ui
 {
-    public interface IElement : IEnumerable<IElement>, IBaseElement
-    {
-        ElementArgs ElementArgs { get; set; }
-
-        float X { get; }
-        float Y { get; }
-        /// <summary>
-        /// Element and child elements are excluded from processing.
-        /// </summary>
-        bool Hidden { get; }
-        float Width { get; }
-        float Height { get; }
-
-        bool IsInside(Vector2 localPoint);
-        List<Model> GetModels(ModelArgs args);
-    }
-
     public static class ElementEx
     {
         public static IEnumerable<Type> InheritanceHierarchy(this Type type)
@@ -62,11 +46,11 @@ namespace Ui
                 }) ?? 0;
         }
 
-        public static Vector2 GetPosition(this IElement element) => new Vector2(element.X, element.Y);
-        public static Vector2 GetSize(this IElement element) => new Vector2(element.Width, element.Height);
-        public static Transform2 GetTransform(this IElement element) => new Transform2(element.GetPosition());
-        public static float GetBottom(this IElement element) => element.Y + element.Height;
-        public static float GetRight(this IElement element) => element.X + element.Width;
+        public static Vector2 GetPosition(this Element element) => new Vector2(element.X, element.Y);
+        public static Vector2 GetSize(this Element element) => new Vector2(element.Width, element.Height);
+        public static Transform2 GetTransform(this Element element) => new Transform2(element.GetPosition());
+        public static float GetBottom(this Element element) => element.Y + element.Height;
+        public static float GetRight(this Element element) => element.X + element.Width;
     }
 
     public delegate T ElementFunc<T>(ElementArgs args);

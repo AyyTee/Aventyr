@@ -29,12 +29,12 @@ namespace Ui.Elements
         {
         }
 
-        public override IEnumerator<IElement> GetEnumerator()
+        public override IEnumerator<Element> GetEnumerator()
         {
-            var list = new List<IElement>();
+            var list = new List<Element>();
             foreach (var child in _children)
             {
-                if (child is IElement element)
+                if (child is Element element)
                 {
                     list.Add(element);
                 }
@@ -51,12 +51,12 @@ namespace Ui.Elements
             return list.GetEnumerator();
         }
 
-        protected virtual void AddChild(IElement element)
+        protected virtual void AddChild(Element element)
         {
             element.ElementArgs = new ElementArgs(this, element);
         }
 
-        public void Add(IElement element) 
+        public void Add(Element element) 
         {
             _children = _children.Add(element);
             AddChild(element);

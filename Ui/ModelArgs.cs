@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ui.Elements;
 
 namespace Ui
 {
@@ -10,7 +11,7 @@ namespace Ui
     {
         public bool IsSelected { get; }
 
-        public ModelArgs(bool isSelected, IElement parent, IElement self) 
+        public ModelArgs(bool isSelected, Element parent, Element self) 
             : base(parent, self)
         {
             IsSelected = isSelected;

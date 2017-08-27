@@ -10,7 +10,7 @@ using System.Collections.Immutable;
 
 namespace Ui.Elements
 {
-    public class Radio<T> : Button, IRadio, IElement
+    public class Radio<T> : Button, IRadio
     {
         internal ElementFunc<T> _value;
         internal Action<T> SetValueFunc { get; }

@@ -11,7 +11,7 @@ using OpenTK.Graphics;
 
 namespace Ui.Elements
 {
-    public class TextBlock : Element, IElement
+    public class TextBlock : Element
     {
         internal ElementFunc<string> _text;
         internal ElementFunc<Font> _font;

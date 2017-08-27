@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Ui.Elements
 {
-    public class Rectangle : NodeElement, IElement
+    public class Rectangle : NodeElement
     {
         internal ElementFunc<Color4> _color;
         public Color4 Color => InvokeFunc(_color);

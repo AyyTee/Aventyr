@@ -17,7 +17,7 @@ namespace Ui.Elements
     /// <summary>
     /// Base implementation of IElement.
     /// </summary>
-    public abstract class Element : IElement
+    public abstract class Element : IEnumerable<Element>, IBaseElement
     {
         public ElementArgs ElementArgs { get; set; }
 
@@ -118,7 +118,7 @@ namespace Ui.Elements
         public virtual bool IsInside(Vector2 localPoint) => false;
         public virtual List<Model> GetModels(ModelArgs args) => new List<Model>();//Draw.Rectangle(new Vector2(), new Vector2(Width, Height), new Color4(0f, 0f, 0f, 0.3f)).GetModels();
 
-        public virtual IEnumerator<IElement> GetEnumerator() => new List<IElement>().GetEnumerator();
+        public virtual IEnumerator<Element> GetEnumerator() => new List<Element>().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

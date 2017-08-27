@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ui.Elements;
 
 namespace Ui
 {
     public class ElementArgs
     {
-        public IElement Parent { get; }
-        public IElement Self { get; }
+        public Element Parent { get; }
+        public Element Self { get; }
         public int Index => Parent.ToList().IndexOf(Self);
 
-        public ElementArgs(IElement parent, IElement self)
+        public ElementArgs(Element parent, Element self)
         {
             Parent = parent;
             Self = self;

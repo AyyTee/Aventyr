@@ -16,7 +16,7 @@ namespace Ui.Elements
     /// Stacks children elements either vertically or horizontally. 
     /// Note that this class overrides the x or y function of its children (based on whether it's horizontal or vertical respectively).
     /// </summary>
-    public class StackFrame : NodeElement, IElement
+    public class StackFrame : NodeElement
     {
         public bool IsVertical { get; }
 
@@ -86,7 +86,7 @@ namespace Ui.Elements
             };
         }
 
-        protected override void AddChild(IElement element)
+        protected override void AddChild(Element element)
         {
             base.AddChild(element);
             var cast = (Element)element;

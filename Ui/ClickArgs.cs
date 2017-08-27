@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ui.Elements;
 
 namespace Ui
 {
@@ -12,7 +13,7 @@ namespace Ui
     {
         public bool IsDoubleClick { get; }
 
-        public ClickArgs(bool isDoubleClick, IElement parent, IElement self)
+        public ClickArgs(bool isDoubleClick, Element parent, Element self)
             : base(parent, self)
         {
             IsDoubleClick = isDoubleClick;

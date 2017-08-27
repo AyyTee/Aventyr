@@ -12,7 +12,7 @@ using OpenTK.Graphics;
 
 namespace Ui.Elements
 {
-    public class Button : NodeElement, IElement
+    public class Button : NodeElement
     {
         internal OnClickHandler OnClick { get; }
         internal OnHoverHandler OnHover { get; }

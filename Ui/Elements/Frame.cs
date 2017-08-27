@@ -9,7 +9,7 @@ using OpenTK;
 
 namespace Ui.Elements
 {
-    public class Frame : NodeElement, IElement
+    public class Frame : NodeElement
     {
         public Frame(
             ElementFunc<float> x = null, 
