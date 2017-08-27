@@ -1,5 +1,4 @@
 ﻿using Game.Common;
-using PostSharp.Aspects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,33 +6,26 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Ui.Elements;
 
 namespace Ui
 {
-    [Serializable]
-    [AttributeUsage(AttributeTargets.Property)]
-    public class DetectLoop : OnMethodBoundaryAspect
+    public static class DetectLoop
     {
-        readonly static List<StackMethod> _callStack = new List<StackMethod>();
+        readonly static List<StackEntry> _callStack = new List<StackEntry>();
         /// <summary>
         /// Number of TryExecutes deep we are. False means no recursive loop is detected yet.
         /// </summary>
         readonly static Stack<bool> _isThrown = new Stack<bool>();
-        string _methodName;
         const int _indentSpaces = 4;
-        readonly static bool _writeToConsole = false;
+        readonly static bool _writeToConsole = true;
         static string Indent => new String(' ', _callStack.Count * _indentSpaces);
 
-        public override void CompileTimeInitialize(MethodBase method, AspectInfo aspectInfo)
-        {
-            base.CompileTimeInitialize(method, aspectInfo);
-            _methodName = method.Name;
-        }
+        static string _output = "";
 
         /// <summary>
         /// Invoke a function and return whether it got caught in a recursive loop. 
-        /// IMPORTANT: Only call this with functions that have no side effects and whose parameters are the same for any nested calls. 
-        /// Additionally, [DetectLoop] must be added to any methods that should be checked for recursive loops.
+        /// IMPORTANT: Only call this with functions that have no side effects and whose parameters are the same for any nested calls.
         /// </summary>
         /// <typeparam name="T">Return type.</typeparam>
         /// <param name="func">Function to try executing.</param>
@@ -46,54 +38,52 @@ namespace Ui
             return !_isThrown.Pop();
         }
 
-        public override void OnEntry(MethodExecutionArgs args)
+        public static bool OnEntry(StackEntry current)
         {
-            base.OnEntry(args);
-
             // If TryExecute hasn't been called then we don't do anything here.
             if (!_isThrown.Any() && !Debugger.IsAttached)
             {
-                return;
+                return true;
             }
 
             // If a recursive loop is detected then we bubble up the result immediately.
             if (_isThrown.Any() && _isThrown.Peek())
             {
-                args.FlowBehavior = FlowBehavior.Return;
-                return;
+                return false;
             }
 
             if (_writeToConsole)
             {
-                Console.WriteLine(Indent + $"Push {args.Instance} {_methodName}");
+                Console.WriteLine(Indent + $"Push {current.Element} {current.ElementProperty}");
+                _output += Indent + $"Push {current.Element} {current.ElementProperty}\n";
             }
 
             // Check the call stack to determine if we've seen this instance and method before.
-            for (int i = _callStack.Count - 1; i >= 0; i--)
+            if (_callStack.Contains(current))
             {
-                if (MethodsEqual(args, _callStack[i]))
+                _callStack.Add(current);
+
+                if (_writeToConsole)
                 {
-                    if (_writeToConsole)
-                    {
-                        Console.WriteLine(Indent + $"Loop with call depth {i}. Returns: {args.ReturnValue}");
-                    }
-
-                    if (!_isThrown.Any() && Debugger.IsAttached)
-                    {
-                        throw new StackOverflowException("Detected stack overflow early.");
-                    }
-
-                    _isThrown.Pop();
-                    _isThrown.Push(true);
-                    args.FlowBehavior = FlowBehavior.Return;
-                    return;
+                    Console.WriteLine(Indent + $"Loop detected!");
+                    _output += $"Loop detected!\n";
                 }
+
+                if (!_isThrown.Any() && Debugger.IsAttached)
+                {
+                    throw new StackOverflowException("Detected stack overflow early.");
+                }
+
+                _isThrown.Pop();
+                _isThrown.Push(true);
+                return false;
             }
 
-            _callStack.Add(new StackMethod(args.Instance, _methodName));
+            _callStack.Add(current);
+            return true;
         }
 
-        public override void OnExit(MethodExecutionArgs args)
+        public static void OnExit(StackEntry current)
         {
             // If TryExecute hasn't been called then we don't do anything here.
             if (!_isThrown.Any() && !Debugger.IsAttached)
@@ -101,31 +91,34 @@ namespace Ui
                 return;
             }
 
-            DebugEx.Assert(MethodsEqual(args, _callStack.Last()), "Stack is corrupted.");
+            DebugEx.Assert(current.Equals(_callStack.Last()), "Stack is corrupted.");
             _callStack.RemoveAt(_callStack.Count - 1);
             if (_writeToConsole)
             {
-                Console.WriteLine(Indent + $"Pop  {args.Instance} {_methodName}  Returns: {args.ReturnValue}");
+                Console.WriteLine(Indent + $"Pop  {current.Element} {current.ElementProperty}");
+                _output += Indent + $"Pop  {current.Element} {current.ElementProperty}\n";
+            }
+        }
+
+        public struct StackEntry : IDisposable
+        {
+            public Element Element { get; }
+            public string ElementProperty { get; }
+
+            public StackEntry(Element element, string elementProperty)
+            {
+                Element = element;
+                ElementProperty = elementProperty;
             }
 
-            base.OnExit(args);
-        }
-
-        bool MethodsEqual(MethodExecutionArgs methodArgs, StackMethod stackMethod)
-        {
-            return ReferenceEquals(stackMethod.Instance, methodArgs.Instance) &&
-                stackMethod.MethodName == _methodName;
-        }
-
-        struct StackMethod
-        {
-            public object Instance { get; }
-            public string MethodName { get; }
-
-            public StackMethod(object instance, string methodName)
+            public override string ToString()
             {
-                Instance = instance;
-                MethodName = methodName;
+                return $"{nameof(StackEntry)}: {Element}.{ElementProperty}";
+            }
+
+            public void Dispose()
+            {
+                OnExit(this);
             }
         }
     }

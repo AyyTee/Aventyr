@@ -47,9 +47,9 @@ namespace Ui
         public (Type, string) Key { get; }
         public ElementFunc<object> ElementFunc { get; }
 
-        public StyleElement(Type elementType, string funcName, ElementFunc<object> elementFunc)
+        public StyleElement(Type elementType, string elementProperty, ElementFunc<object> elementFunc)
         {
-            Key = (elementType, funcName);
+            Key = (elementType, elementProperty);
             ElementFunc = elementFunc;
         }
     }

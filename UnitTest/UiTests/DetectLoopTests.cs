@@ -58,6 +58,7 @@ namespace UiTests
         [Test]
         public void StackFrameTest0()
         {
+            Console.SetOut(TestContext.Progress);
             const float expected = 40;
             var stackFrame = new StackFrame(thickness: ElementEx.ChildrenMaxX(), style: GetStyle())
             {

@@ -17,7 +17,6 @@ namespace Ui.Elements
         internal OnClickHandler OnClick { get; }
         internal OnHoverHandler OnHover { get; }
         internal ElementFunc<bool> _enabled;
-        [DetectLoop]
         public bool Enabled => InvokeFunc(_enabled);
 
         public Button(

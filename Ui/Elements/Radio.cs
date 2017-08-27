@@ -15,7 +15,6 @@ namespace Ui.Elements
         internal ElementFunc<T> _value;
         internal Action<T> SetValueFunc { get; }
         public T Target { get; }
-        [DetectLoop]
         public T Value => _value(ElementArgs);
 
         public bool Selected => Target.Equals(Value);

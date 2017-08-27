@@ -16,7 +16,6 @@ namespace Ui.Elements
     public class Rectangle : NodeElement, IElement
     {
         internal ElementFunc<Color4> _color;
-        [DetectLoop]
         public Color4 Color => InvokeFunc(_color);
 
         public Rectangle(

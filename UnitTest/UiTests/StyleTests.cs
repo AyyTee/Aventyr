@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Ui;
 using Ui.Elements;
 
-namespace UnitTest.UiTests
+namespace UiTests
 {
     [TestFixture]
     public class StyleTests

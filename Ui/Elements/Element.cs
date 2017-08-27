@@ -27,21 +27,16 @@ namespace Ui.Elements
         internal ElementFunc<float> _height;
         internal ElementFunc<bool> _hidden;
 
-        [DetectLoop]
         public float X => InvokeFunc(_x);
-        [DetectLoop]
         public float Y => InvokeFunc(_y);
-        [DetectLoop]
         public float Width => InvokeFunc(_width);
-        [DetectLoop]
         public float Height => InvokeFunc(_height);
-        [DetectLoop]
         public bool Hidden => InvokeFunc(_hidden);
 
         internal ImmutableDictionary<(Type ElementType, string FuncName), ElementFunc<object>> Style { get; set; }
         Dictionary<string, ElementFunc<object>> _funcCache = new Dictionary<string, ElementFunc<object>>();
 
-        public Element(
+        protected Element(
             ElementFunc<float> x = null,
             ElementFunc<float> y = null,
             ElementFunc<float> width = null,
@@ -63,19 +58,27 @@ namespace Ui.Elements
         {
             DebugEx.Assert(funcName != null);
 
-            // If the result has been cached, invoke that.
-            if (_funcCache.ContainsKey(funcName))
+            using (var stackMethod = new DetectLoop.StackEntry(this, funcName))
             {
-                return (T)_funcCache[funcName](ElementArgs);
+                if (!DetectLoop.OnEntry(stackMethod))
+                {
+                    return default(T);
+                }
+
+                // If the result has been cached, invoke that.
+                if (_funcCache.ContainsKey(funcName))
+                {
+                    return (T)_funcCache[funcName](ElementArgs);
+                }
+                // If a func is already set then we just invoke that.
+                if (func != null)
+                {
+                    _funcCache.Add(funcName, args => func(args));
+                    return func(ElementArgs);
+                }
+                // Otherwise we recursively check parent elements for the specified func.
+                return _invokeFunc<T>(this, funcName);
             }
-            // If a func is already set then we just invoke that.
-            if (func != null)
-            {
-                _funcCache.Add(funcName, args => func(args));
-                return func(ElementArgs);
-            }
-            // Otherwise we recursively check parent elements for the specified func.
-            return _invokeFunc<T>(this, funcName);
         }
 
         T _invokeFunc<T>(Element element, string funcName)

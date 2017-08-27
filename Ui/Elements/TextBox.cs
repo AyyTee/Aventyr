@@ -22,11 +22,8 @@ namespace Ui.Elements
         public Action<string> SetText { get; }
         public int? CursorIndex { get; set; }
 
-        [DetectLoop]
         public string Text => InvokeFunc(_text);
-        [DetectLoop]
         public Font Font => InvokeFunc(_font);
-        [DetectLoop]
         public Color4 BackgroundColor => InvokeFunc(_backgroundColor);
 
         public TextBox(

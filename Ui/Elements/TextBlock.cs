@@ -18,13 +18,9 @@ namespace Ui.Elements
         internal ElementFunc<int?> _maxWidth;
         internal ElementFunc<float> _textAlignment;
 
-        [DetectLoop]
         public string Text => InvokeFunc(_text);
-        [DetectLoop]
         public Font Font => InvokeFunc(_font);
-        [DetectLoop]
         public int? MaxWidth => InvokeFunc(_maxWidth);
-        [DetectLoop]
         public float TextAlignment => InvokeFunc(_textAlignment);
 
         Vector2 Size => (Vector2)(Font?.GetSize(Text, FontSettings) ?? new Vector2i());
