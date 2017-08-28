@@ -43,15 +43,16 @@ namespace Ui
 
         public ImmutableDictionary<(Type, string), ElementFunc<object>> DefaultStyle()
         {
-            return Element.DefaultStyle(this)
-                .Concat(Button.DefaultStyle(this))
-                .Concat(Element.DefaultStyle(this))
-                .Concat(Radio<object>.DefaultStyle(this))
-                .Concat(Rectangle.DefaultStyle(this))
-                .Concat(StackFrame.DefaultStyle(this))
-                .Concat(TextBlock.DefaultStyle(this))
-                .Concat(TextBox.DefaultStyle(this))
-                .ToImmutable();
+            return new Style
+            {
+                Button.DefaultStyle(this),
+                Radio<object>.DefaultStyle(this),
+                Rectangle.DefaultStyle(this),
+                StackFrame.DefaultStyle(this),
+                TextBlock.DefaultStyle(this),
+                TextBox.DefaultStyle(this),
+                Element.DefaultStyle(this),
+            }.ToImmutable();
         }
 
         public void Update(float uiScale)
@@ -123,7 +124,6 @@ namespace Ui
             if (Selected is ITypeable typeable)
             {
                 typeable.OnTyping(new TypeArgs(Selected, _window));
-                
             }
         }
 

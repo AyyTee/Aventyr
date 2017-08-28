@@ -194,3 +194,11 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 *.userprefs
+
+# Blender backup files
+*blend1
+*blend2
+*blend3
+*blend4
+*blend5
+*blend6
