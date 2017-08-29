@@ -195,10 +195,11 @@ _Pvt_Extensions/
 ModelManifest.xml
 *.userprefs
 
-# Blender backup files
-*blend1
-*blend2
-*blend3
-*blend4
-*blend5
-*blend6
+# Blender files
+Assets/*.blend1
+Assets/*.blend2
+Assets/*.blend3
+Assets/*.blend4
+Assets/*.blend5
+Assets/*.blend6
+Assets/*.dae
