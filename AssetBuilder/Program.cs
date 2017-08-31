@@ -24,6 +24,7 @@ namespace AssetBuilder
         public static string BlenderPath => Path.Combine(ToolsPath, "Blender");
         public static string BlenderZipPath => Path.Combine(ToolsPath, "Blender.zip");
         public static string BlenderExePath => Path.Combine(BlenderPath, Directory.GetDirectories(BlenderPath).First(), "blender.exe");
+        public static string ModelsPath => Path.Combine(BuildPath, "Models");
 
         public static (long ReceivedBytes, long TotalBytes) DownloadProgress = (0, 0);
 
@@ -35,31 +36,48 @@ namespace AssetBuilder
                 throw new DirectoryNotFoundException("Assets folder is missing from root directory.");
             }
 
+
+            Clean();
+            Initalize();
+            FetchTools();
+            ExportModels();
+
+            Console.WriteLine("Build complete!");
+            Thread.Sleep(1000);
+        }
+
+        public static void Clean()
+        {
+            Console.WriteLine("Cleaning...");
             if (Directory.Exists(BuildPath))
             {
                 Directory.Delete(BuildPath, true);
             }
+        }
+
+        public static void Initalize()
+        {
+            Console.WriteLine("Initializing folder structure...");
             Directory.CreateDirectory(BuildPath);
+            Directory.CreateDirectory(ModelsPath);
             Directory.CreateDirectory(ToolsPath);
             Directory.CreateDirectory(BlenderPath);
+        }
 
-            FetchTools();
-
-            CommandLine(AssetsPath, $"{BlenderExePath} Models.blend --background --python BatchExport.py");
-
-            Console.WriteLine("Build complete!");
-            Console.ReadLine();
-            //var bitmap = new BitmapExtended();
-            //AtlasCreator.CreateAtlas("TexturePage", );
+        public static void ExportModels()
+        {
+            Console.WriteLine("Exporting models...\n");
+            CommandLine(AssetsPath, $"{BlenderExePath} Models.blend --background --python BatchExport.py -- {ModelsPath}");
         }
 
         public static void FetchTools()
         {
+            Console.WriteLine("Fetching tools...");
             if (!Directory.GetDirectories(BlenderPath).Any())
             {
                 if (!File.Exists(BlenderZipPath))
                 {
-                    Console.WriteLine("Downloading tools.  This could take several minutes...");
+                    Console.WriteLine("\tDownloading tools...");
                     Download();
                 }
 
@@ -69,7 +87,7 @@ namespace AssetBuilder
                 }
                 catch (InvalidDataException)
                 {
-                    Console.WriteLine("Zip file was corrupted.  Trying to download again...");
+                    Console.WriteLine("\tZip file was corrupted.  Trying to download again...");
                     Download();
                     ZipFile.ExtractToDirectory(BlenderZipPath, BlenderPath);
                 }
@@ -81,7 +99,7 @@ namespace AssetBuilder
             using (var client = new WebClient())
             {
                 client.DownloadProgressChanged += (_, e) => DownloadProgress = (e.BytesReceived, e.TotalBytesToReceive);
-                client.DownloadFileAsync(new Uri("http://download.blender.org/release/Blender2.70/blender-2.70a-windows32.zip"), BlenderZipPath);
+                client.DownloadFileAsync(new Uri("http://download.blender.org/release/Blender2.78/blender-2.78c-windows32.zip"), BlenderZipPath);
 
                 while (client.IsBusy)
                 {

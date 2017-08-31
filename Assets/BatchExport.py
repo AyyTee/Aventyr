@@ -1,18 +1,13 @@
 # exports each object into its own file
+# expects one argument for output path
 
 import bpy
 import os
+import sys
 
-# export to blend file location
-basedir = os.path.dirname(bpy.data.filepath)
-
-dir = os.path.join(basedir, "Models")
-
-if not os.path.exists(dir):
-    os.makedirs(dir)
-
-if not basedir:
-    raise Exception("Blend file is not saved")
+argv = sys.argv
+argv = argv[argv.index("--") + 1:]
+outputPath = argv[0]
 
 scene = bpy.context.scene
 
@@ -36,7 +31,7 @@ for obj in scene.objects:
     scene.objects.active = obj
 
     name = bpy.path.clean_name(obj.name)
-    fn = os.path.join(dir, name)
+    fn = os.path.join(outputPath, name)
 
     bpy.ops.export_scene.obj(filepath=fn + ".obj", use_selection=True)
 
