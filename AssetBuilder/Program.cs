@@ -1,7 +1,9 @@
 ﻿using AtlasTexturePacker.Library;
+using Game.Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -14,19 +16,21 @@ namespace AssetBuilder
 {
     public class Program
     {
-        static int BytesInKiloByte => 2 << 10;
-
-        public static string RootPath => Path.Combine(Environment.CurrentDirectory, "../../..");
+        public static string RootPath => Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "../../.."));
         public static string ToolsPath => Path.Combine(RootPath, "Tools");
         public static string BuildPath => Path.Combine(RootPath, "Build");
+        public static string BuildFontsPath => Path.Combine(BuildPath, "Fonts");
         public static string AssetsPath => Path.Combine(RootPath, "Assets");
+        public static string FontsPath => Path.Combine(AssetsPath, "Fonts");
 
         public static string BlenderPath => Path.Combine(ToolsPath, "Blender");
         public static string BlenderZipPath => Path.Combine(ToolsPath, "Blender.zip");
         public static string BlenderExePath => Path.Combine(BlenderPath, Directory.GetDirectories(BlenderPath).First(), "blender.exe");
         public static string ModelsPath => Path.Combine(BuildPath, "Models");
 
-        public static (long ReceivedBytes, long TotalBytes) DownloadProgress = (0, 0);
+        public static string BmFontPath => Path.Combine(ToolsPath, "bmfont64.exe");
+
+        public static volatile int FilesDownloaded = 0;
 
         public static void Main(string[] args)
         {
@@ -36,11 +40,12 @@ namespace AssetBuilder
                 throw new DirectoryNotFoundException("Assets folder is missing from root directory.");
             }
 
-
             Clean();
             Initalize();
             FetchTools();
             ExportModels();
+            RenderFonts();
+            CreateAtlas();
 
             Console.WriteLine("Build complete!");
             Thread.Sleep(1000);
@@ -62,59 +67,94 @@ namespace AssetBuilder
             Directory.CreateDirectory(ModelsPath);
             Directory.CreateDirectory(ToolsPath);
             Directory.CreateDirectory(BlenderPath);
+            Directory.CreateDirectory(BuildFontsPath);
         }
 
         public static void ExportModels()
         {
             Console.WriteLine("Exporting models...\n");
-            CommandLine(AssetsPath, $"{BlenderExePath} Models.blend --background --python BatchExport.py -- {ModelsPath}");
+            CommandLine($"{BlenderExePath} Models.blend --background --python BatchExport.py -- {ModelsPath}", AssetsPath);
         }
+
+        class ToolDownload
+        {
+            public Uri Uri { get; }
+            public string Filename { get; }
+            public Action DownloadCallback { get; }
+
+            public ToolDownload(Uri uri, string filename, Action downloadCallback = null)
+            {
+                Uri = uri;
+                Filename = filename;
+                DownloadCallback = downloadCallback ?? (() => { });
+            }
+        }
+
 
         public static void FetchTools()
         {
             Console.WriteLine("Fetching tools...");
-            if (!Directory.GetDirectories(BlenderPath).Any())
+            var toolDownloads = new[]
             {
-                if (!File.Exists(BlenderZipPath))
+                new ToolDownload(
+                    new Uri("http://download.blender.org/release/Blender2.78/blender-2.78c-windows32.zip"),
+                    BlenderZipPath, 
+                    () => ZipFile.ExtractToDirectory(BlenderZipPath, BlenderPath)),
+                new ToolDownload(
+                    new Uri("http://www.angelcode.com/products/bmfont/bmfont64.exe"), 
+                    BmFontPath)
+            };
+
+            foreach (var toolDownload in toolDownloads)
+            {
+                if (File.Exists(toolDownload.Filename))
                 {
-                    Console.WriteLine("\tDownloading tools...");
-                    Download();
+                    Interlocked.Increment(ref FilesDownloaded);
+                    continue;
                 }
 
-                try
+                using (var client = new WebClient())
                 {
-                    ZipFile.ExtractToDirectory(BlenderZipPath, BlenderPath);
-                }
-                catch (InvalidDataException)
-                {
-                    Console.WriteLine("\tZip file was corrupted.  Trying to download again...");
-                    Download();
-                    ZipFile.ExtractToDirectory(BlenderZipPath, BlenderPath);
+                    client.DownloadFileCompleted += (sender, e) =>
+                    {
+                        var tool = (ToolDownload)e.UserState;
+
+                        if (e.Error != null || e.Cancelled)
+                        {
+                            if (File.Exists(tool.Filename))
+                            {
+                                File.Delete(tool.Filename);
+                            }
+
+                            if (e.Error != null)
+                            {
+                                throw new Exception($"Failed to download {Path.GetFileName(tool.Filename)}.", e.Error);
+                            }
+                            else if (e.Cancelled)
+                            {
+                                throw new Exception($"File download cancelled for {Path.GetFileName(tool.Filename)}.");
+                            }
+                        }
+
+                        tool.DownloadCallback();
+
+                        Interlocked.Increment(ref FilesDownloaded);
+                        Console.WriteLine($"{Path.GetFileName(tool.Filename)} finished downloading.");
+                        Console.WriteLine($"{FilesDownloaded} / {toolDownloads.Length} downloaded.");
+                    };
+
+                    client.DownloadFileAsync(toolDownload.Uri, toolDownload.Filename, toolDownload);
                 }
             }
-        }
 
-        static void Download()
-        {
-            using (var client = new WebClient())
+            while (FilesDownloaded < toolDownloads.Length)
             {
-                client.DownloadProgressChanged += (_, e) => DownloadProgress = (e.BytesReceived, e.TotalBytesToReceive);
-                client.DownloadFileAsync(new Uri("http://download.blender.org/release/Blender2.78/blender-2.78c-windows32.zip"), BlenderZipPath);
-
-                while (client.IsBusy)
-                {
-                    if (DownloadProgress.TotalBytes > 0)
-                    {
-                        var percentage = (100 * DownloadProgress.ReceivedBytes) / DownloadProgress.TotalBytes;
-                        Console.WriteLine($"{percentage}% {DownloadProgress.ReceivedBytes / BytesInKiloByte}/{DownloadProgress.TotalBytes / BytesInKiloByte} kB remaining");
-                    }
-                    Thread.Sleep(2000);
-                }
+                Thread.Sleep(2000);
             }
         }
 
         /// <remarks>Original code found here: https://stackoverflow.com/a/32872174 </remarks>
-        public static void CommandLine(string workingDirectory, string command)
+        public static void CommandLine(string command, string workingDirectory = null)
         {
             var cmd = new Process();
             cmd.StartInfo.FileName = "cmd.exe";
@@ -122,7 +162,7 @@ namespace AssetBuilder
             cmd.StartInfo.RedirectStandardOutput = true;
             cmd.StartInfo.CreateNoWindow = true;
             cmd.StartInfo.UseShellExecute = false;
-            cmd.StartInfo.WorkingDirectory = workingDirectory;
+            cmd.StartInfo.WorkingDirectory = workingDirectory ?? Environment.CurrentDirectory;
             cmd.Start();
 
             cmd.StandardInput.WriteLine(command);
@@ -130,6 +170,29 @@ namespace AssetBuilder
             cmd.StandardInput.Close();
             cmd.WaitForExit();
             Console.WriteLine(cmd.StandardOutput.ReadToEnd());
+        }
+
+        private static void RenderFonts()
+        {
+            var fontConfigs = Directory.GetFiles(FontsPath, "*.bmfc", SearchOption.AllDirectories);
+            foreach (var fontConfig in fontConfigs)
+            {
+/* -c fontconfig.bmfc : Names the configuration file with the options for generating the font.
+ * -o outputfile.fnt : Names of the output font file.
+ * -t textfile.txt : Optional argument that names a text file. All characters present in the text file will be added to the font.*/
+                CommandLine($"{BmFontPath} -c {fontConfig} -o {Path.Combine(BuildFontsPath, Path.GetFileName(fontConfig))}");
+            }
+        }
+
+        private static void CreateAtlas()
+        {
+            var bitmaps = Directory
+                .GetFiles(Path.Combine(AssetsPath, "Textures"))
+                .Select(item => new BitmapExtended(item))
+                .ToArray();
+            var atlas = AtlasCreator.CreateAtlas("Atlas", bitmaps);
+            DebugEx.Assert(atlas.Length == 1);
+            atlas[0].texture.Save(Path.Combine(BuildPath, "Atlas.png"), ImageFormat.Png);
         }
     }
 }
