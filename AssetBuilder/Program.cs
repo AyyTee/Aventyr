@@ -1,8 +1,11 @@
 ﻿using AtlasTexturePacker.Library;
 using Game.Common;
+using Game.Rendering;
+using Game.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
@@ -44,8 +47,8 @@ namespace AssetBuilder
             Initalize();
             FetchTools();
             ExportModels();
-            RenderFonts();
-            CreateAtlas();
+            var fontCount = RenderFonts();
+            CreateAtlas(fontCount);
 
             Console.WriteLine("Build complete!");
             Thread.Sleep(1000);
@@ -89,7 +92,6 @@ namespace AssetBuilder
                 DownloadCallback = downloadCallback ?? (() => { });
             }
         }
-
 
         public static void FetchTools()
         {
@@ -172,25 +174,70 @@ namespace AssetBuilder
             Console.WriteLine(cmd.StandardOutput.ReadToEnd());
         }
 
-        private static void RenderFonts()
+        /// <returns>Number of fonts rendered.</returns>
+        private static int RenderFonts()
         {
             var fontConfigs = Directory.GetFiles(FontsPath, "*.bmfc", SearchOption.AllDirectories);
             foreach (var fontConfig in fontConfigs)
             {
-/* -c fontconfig.bmfc : Names the configuration file with the options for generating the font.
- * -o outputfile.fnt : Names of the output font file.
- * -t textfile.txt : Optional argument that names a text file. All characters present in the text file will be added to the font.*/
-                CommandLine($"{BmFontPath} -c {fontConfig} -o {Path.Combine(BuildFontsPath, Path.GetFileName(fontConfig))}");
+                /* -c fontconfig.bmfc : Names the configuration file with the options for generating the font.
+                 * -o outputfile.fnt : Names of the output font file.
+                 * -t textfile.txt : Optional argument that names a text file. All characters present in the text file will be added to the font.*/
+                var outputPath = Path.Combine(BuildFontsPath, Path.GetFileNameWithoutExtension(fontConfig));
+                CommandLine($"{BmFontPath} -c {fontConfig} -o {outputPath}");
             }
+
+            return fontConfigs.Length;
         }
 
-        private static void CreateAtlas()
+        private static void CreateAtlas(int fontCount)
         {
-            var bitmaps = Directory
+            var bitmaps = new List<BitmapExtended>();
+
+            // Sometimes we read in the fonts before BmFont has had time to finish creating them. Loop here if that happens.
+            string[] fontFiles;
+            do
+            {
+                fontFiles = Directory.GetFiles(BuildFontsPath, "*.fnt");
+                Thread.Sleep(200);
+            } while (fontFiles.Length < fontCount);
+
+            var count = 0;
+
+            var fonts = fontFiles.Select(item => FontLoader.Load(item)).ToList();
+            foreach (var font in fonts)
+            {
+                if (font.Pages.Count > 1)
+                {
+                    throw new NotImplementedException("Multipage fonts are not supported. Try making the font page larger instead.");
+                }
+
+                var fontImagePath = Path.Combine(BuildFontsPath, font.Pages[0].File);
+                DebugEx.Assert(File.Exists(fontImagePath));
+                var page = new Bitmap(fontImagePath);
+
+                foreach (var fontChar in font.Chars)
+                {
+                    var glyph = new BitmapExtended(fontChar.Width, fontChar.Height);
+                    glyph.Name = count.ToString();
+                    count++;
+                    for (int y = 0; y < fontChar.Height; y++)
+                    {
+                        for (int x = 0; x < fontChar.Width; x++)
+                        {
+                            var color = page.GetPixel(fontChar.X + x, fontChar.Y + y);
+                            glyph.SetPixel(x, y, color);
+                        }
+                    }
+                    bitmaps.Add(glyph);
+                }
+            }
+
+            bitmaps.AddRange(Directory
                 .GetFiles(Path.Combine(AssetsPath, "Textures"))
                 .Select(item => new BitmapExtended(item))
-                .ToArray();
-            var atlas = AtlasCreator.CreateAtlas("Atlas", bitmaps);
+                .ToArray());
+            var atlas = AtlasCreator.CreateAtlas("Atlas", bitmaps.ToArray());
             DebugEx.Assert(atlas.Length == 1);
             atlas[0].texture.Save(Path.Combine(BuildPath, "Atlas.png"), ImageFormat.Png);
         }

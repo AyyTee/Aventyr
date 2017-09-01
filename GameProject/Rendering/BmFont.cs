@@ -163,15 +163,27 @@ namespace Game.Rendering
         [XmlAttribute("id")]
         public Int32 ID { get; set; }
 
+        /// <summary>
+        /// X position of character in atlas.
+        /// </summary>
         [XmlAttribute("x")]
         public Int32 X { get; set; }
 
+        /// <summary>
+        /// Y position of character in atlas.
+        /// </summary>
         [XmlAttribute("y")]
         public Int32 Y { get; set; }
 
+        /// <summary>
+        /// Width of character in atlas.
+        /// </summary>
         [XmlAttribute("width")]
         public Int32 Width { get; set; }
 
+        /// <summary>
+        /// Height of character in atlas.
+        /// </summary>
         [XmlAttribute("height")]
         public Int32 Height { get; set; }
 
