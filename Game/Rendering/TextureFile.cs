@@ -21,10 +21,13 @@ namespace Game.Rendering
         public Vector2i Size => _texture.Size;
         public int Id => _texture.Id;
 
-        public TextureFile(string filename)
+        public TextureFile(string filename, bool deferLoad = false)
         {
             Filename = filename;
-            LoadImage();
+            if (!deferLoad)
+            {
+                LoadImage();
+            }
         }
 
         void LoadImage(Bitmap image)
@@ -60,8 +63,13 @@ namespace Game.Rendering
             _texture = new Texture(texId, (Vector2i)image.Size, HasTransparency(image));
         }
 
-        void LoadImage()
+        public void LoadImage()
         {
+            if (_texture != null)
+            {
+                return;
+            }
+
             try
             {
                 using (var file = new Bitmap(Filename))

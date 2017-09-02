@@ -1,7 +1,9 @@
-﻿namespace Ui
+﻿using Game;
+
+namespace Ui
 {
     public interface IUiController
     {
-        FontAssets Fonts { get; }
+        Resources Fonts { get; }
     }
 }

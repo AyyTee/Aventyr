@@ -16,9 +16,9 @@ namespace Game.Rendering
         public Vector2i CanvasSize { get; set; }
         public Vector2i CanvasPosition { get; set; }
         public float DpiScale => _resourceController.DpiScale;
-        public TextureAssets Textures => _resourceController.Textures;
+        public Resources Textures => _resourceController.Textures;
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
-        public FontAssets Fonts => _resourceController.Fonts;
+        public Resources Fonts => _resourceController.Fonts;
         public float UpdatesPerSecond => 60;
         public float RendersPerSecond => 60;
 

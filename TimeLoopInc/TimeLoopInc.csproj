@@ -122,7 +122,7 @@
       <Project>{A4610E4C-DD34-428B-BABB-779CA0B5993A}</Project>
       <Name>Farseer Physics</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameProject\Game.csproj">
+    <ProjectReference Include="..\Game\Game.csproj">
       <Project>{CE5CD75D-8626-4CD8-83FC-B7A4868DAEC0}</Project>
       <Name>Game</Name>
     </ProjectReference>

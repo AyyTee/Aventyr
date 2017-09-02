@@ -69,7 +69,7 @@ namespace EditorWindow
 
         public void GLControl_Load(object sender, EventArgs e)
         {
-            var textureAssets = new TextureAssets();
+            var textureAssets = new Resources();
             var renderer = new Renderer(new EditorClientSizeProvider(glControl), textureAssets);
             var window = new EditorVirtualWindow(glControl, renderer, textureAssets);
             _controllerEditor = new ControllerEditor(window);

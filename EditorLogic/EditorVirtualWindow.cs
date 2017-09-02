@@ -20,11 +20,11 @@ namespace EditorLogic
 
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
 
-        public TextureAssets Textures { get; private set; }
+        public Resources Textures { get; private set; }
 
         public IRenderer Renderer { get; private set; }
 
-        public FontAssets Fonts { get; private set; }
+        public Resources Fonts { get; private set; }
 
         readonly GLControl _glControl;
 
@@ -50,7 +50,7 @@ namespace EditorLogic
 
         public event ExitHandler OnExit;
 
-        public EditorVirtualWindow(GLControl glControl, IRenderer renderer, TextureAssets textures)
+        public EditorVirtualWindow(GLControl glControl, IRenderer renderer, Resources textures)
         {
             _glControl = glControl;
             Renderer = renderer;

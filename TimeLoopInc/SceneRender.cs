@@ -99,7 +99,7 @@ namespace TimeLoopInc
             var offset = GetOffset(offsetCount);
             if (!renderPortals)
             {
-                var renderables = RenderInstant(_scene, _scene.GetSceneInstant(time), t, worldLayer.Portals, _window.Fonts?.Inconsolata);
+                var renderables = RenderInstant(_scene, _scene.GetSceneInstant(time), t, worldLayer.Portals, _window.Fonts?.LatoRegular);
                 renderables.Add(new Renderable { Models = new List<Model> { _grid }, IsPortalable = false });
                 foreach (var renderable in renderables)
                 {

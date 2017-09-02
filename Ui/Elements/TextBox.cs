@@ -124,7 +124,7 @@ namespace Ui.Elements
             return new Style
             {
                 new StyleElement(type, nameof(BackgroundColor), _ => Color4.White),
-                new StyleElement(type, nameof(Font), _ => controller.Fonts.Inconsolata),
+                new StyleElement(type, nameof(Font), _ => controller.Fonts.LatoRegular),
             };
         }
 

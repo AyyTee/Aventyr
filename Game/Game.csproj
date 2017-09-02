@@ -112,6 +112,9 @@
     <Reference Include="MoreLinq, Version=2.6.20831.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
       <HintPath>..\packages\morelinq.2.6.0\lib\net40\MoreLinq.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Poly2Tri, Version=1.0.0.0, Culture=neutral, PublicKeyToken=db87057254d2bb1c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Poly2Tri.dll.1.0.4\lib\Net35\Poly2Tri.dll</HintPath>
@@ -196,6 +199,7 @@
     <Compile Include="Portals\PortalPath.cs" />
     <Compile Include="Portals\Portalable.cs" />
     <Compile Include="RandomEx.cs" />
+    <Compile Include="Rendering\Atlas.cs" />
     <Compile Include="Rendering\BmFont.cs" />
     <Compile Include="Rendering\Camera2.cs" />
     <Compile Include="Models\Clip.cs" />
@@ -214,6 +218,8 @@
     <Compile Include="Rendering\UberShader.cs" />
     <Compile Include="ResourceController.cs" />
     <Compile Include="Rendering\VirtualWindow.cs" />
+    <Compile Include="Resources.cs" />
+    <Compile Include="ResourcesGenerated.cs" />
     <Compile Include="RollingAverage.cs" />
     <Compile Include="Serialization\DeepClone.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
@@ -283,19 +289,10 @@
     <Compile Include="ClipPath.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Fonts\Arial\Arial_0.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="Assets\Assets.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Assets\Fonts\Inconsolata\Inconsolata_0.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Textures\Default.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Textures\Grid.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Textures\LineBlur.png">
+    <Content Include="Assets\Atlas.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Common\Transform3.tt">
@@ -314,18 +311,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Assets\Fonts\Arial\Arial.fnt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Assets\Fonts\Arial\Config.bmfc">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Assets\Fonts\Inconsolata\Inconsolata.fnt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Assets\Sounds\TestSound.ogg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -357,7 +342,11 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>rem xcopy /fy "$(SolutionDir)Build\Output\." "Assets\"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

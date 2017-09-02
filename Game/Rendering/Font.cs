@@ -9,9 +9,11 @@ using System.IO;
 using Game.Common;
 using OpenTK.Graphics;
 using MoreLinq;
+using System.Runtime.Serialization;
 
 namespace Game.Rendering
 {
+    [DataContract]
     public class Font
     {
         public class Settings
@@ -44,28 +46,21 @@ namespace Game.Rendering
             }
         }
 
-        readonly ITexture[] _fontTextures;
-        public FontFile FontData { get; }
+        [DataMember]
+        public ITexture[] FontTextures { get; private set; }
+        [DataMember]
+        public FontFile FontData { get; private set; }
         const int _indicesPerGlyph = 6;
         const int _verticesPerGlyph = 4;
 
-        public Font(string fontDataFile)
+        public Font()
         {
-            FontData = FontLoader.Load(fontDataFile);
-            
-            _fontTextures = new TextureFile[FontData.Pages.Count];
-            DebugEx.Assert(_fontTextures.Length == 1, "Multiple texture pages not supported yet.");
-            var path = Path.GetDirectoryName(fontDataFile);
-            for (int i = 0; i < _fontTextures.Length; i++)
-            {
-                _fontTextures[i] = new TextureFile(Path.Combine(path, FontData.Pages[i].File));
-            }
         }
 
         public Font(FontFile fontFile, IEnumerable<ITexture> textures)
         {
             FontData = fontFile;
-            _fontTextures = textures.ToArray();
+            FontTextures = textures.ToArray();
         }
 
         public Vector2i GetSize(string text)
@@ -249,7 +244,7 @@ namespace Game.Rendering
             DebugEx.Assert(textMesh.IsValid());
             var textModel = new Model(textMesh)
             {
-                Texture = _fontTextures[0],
+                Texture = FontTextures[0],
             };
             return textModel;
         }
@@ -288,7 +283,7 @@ namespace Game.Rendering
             {
                 return 0;
             }
-            return FontData.KerningLookup[first].FirstOrDefault(item => item.Second == fontCharNext.ID)?.Amount ?? 0;
+            return FontData.KerningLookup[first].FirstOrDefault(item => item.Second == fontCharNext.Id)?.Amount ?? 0;
         }
 
         int[] GetIndices(int glyphCount)

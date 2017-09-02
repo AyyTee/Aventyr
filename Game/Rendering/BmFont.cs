@@ -11,6 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 using Game.Common;
+using Newtonsoft;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Game.Rendering
 {
@@ -37,14 +40,28 @@ namespace Game.Rendering
         public List<FontKerning> Kernings { get; set; }
 
         [XmlIgnore]
+        [JsonIgnore]
         public Dictionary<char, FontChar> CharLookup { get; private set; }
         [XmlIgnore]
+        [JsonIgnore]
+        public FontChar MissingChar { get; private set; }
+        [XmlIgnore]
+        [JsonIgnore]
         public ILookup<char, FontKerning> KerningLookup { get; private set; }
+
+        [OnDeserialized]
+        void OnDeserialized(StreamingContext context)
+        {
+            Initialize();
+        }
 
         public void Initialize()
         {
             DebugEx.Assert(CharLookup == null || KerningLookup == null, "Already initialized.");
-            CharLookup = Chars.ToDictionary(item => Convert.ToChar(item.ID));
+            CharLookup = Chars
+                .Where(item => item.Id != -1)
+                .ToDictionary(item => Convert.ToChar(item.Id));
+            MissingChar = Chars.SingleOrDefault(item => item.Id == -1) ?? CharLookup['?'];
             KerningLookup = Kernings.ToLookup(item => Convert.ToChar(item.First));
         }
     }
@@ -151,7 +168,7 @@ namespace Game.Rendering
     public class FontPage
     {
         [XmlAttribute("id")]
-        public Int32 ID { get; set; }
+        public Int32 Id { get; set; }
 
         [XmlAttribute("file")]
         public String File { get; set; }
@@ -161,7 +178,7 @@ namespace Game.Rendering
     public class FontChar
     {
         [XmlAttribute("id")]
-        public Int32 ID { get; set; }
+        public Int32 Id { get; set; }
 
         /// <summary>
         /// X position of character in atlas.
@@ -222,12 +239,21 @@ namespace Game.Rendering
         {
             XmlSerializer deserializer = new XmlSerializer(typeof(FontFile));
             FontFile file;
-            using (TextReader textReader = new StreamReader(filename))
+            using (var textReader = new StreamReader(filename))
             {
                 file = (FontFile)deserializer.Deserialize(textReader);
             };
             file.Initialize();
             return file;
+        }
+
+        public static void Save(FontFile font, String filename)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(FontFile));
+            using (var textWriter = new StreamWriter(filename))
+            {
+                serializer.Serialize(textWriter, font);
+            };
         }
     }
 }

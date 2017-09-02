@@ -40,9 +40,9 @@ namespace Game.Rendering
 
         IClientSizeProvider _canvasSizeProvider;
 
-        readonly TextureAssets _textures;
+        readonly Resources _textures;
 
-        public Renderer(IClientSizeProvider canvasSizeProvider, TextureAssets textures)
+        public Renderer(IClientSizeProvider canvasSizeProvider, Resources textures)
         {
             _canvasSizeProvider = canvasSizeProvider;
             _textures = textures;

@@ -35,7 +35,11 @@
     <Reference Include="AtlasTexturePacker.Library, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AtlasTexturePackerLib.1.0.1\lib\AtlasTexturePacker.Library.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -58,7 +62,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GameProject\Game.csproj">
+    <ProjectReference Include="..\Game\Game.csproj">
       <Project>{CE5CD75D-8626-4CD8-83FC-B7A4868DAEC0}</Project>
       <Name>Game</Name>
     </ProjectReference>

@@ -77,7 +77,7 @@
     <None Include="OpenTK.dll.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GameProject\Game.csproj">
+    <ProjectReference Include="..\Game\Game.csproj">
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
       <Name>Game</Name>
     </ProjectReference>

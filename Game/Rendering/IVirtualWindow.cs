@@ -11,9 +11,9 @@ namespace Game.Rendering
         Vector2i CanvasPosition { get; }
         Vector2i CanvasSize { get; }
         float DpiScale { get; }
-        TextureAssets Textures { get; }
+        Resources Textures { get; }
         List<IRenderLayer> Layers { get; }
-        FontAssets Fonts { get; }
+        Resources Fonts { get; }
         float UpdatesPerSecond { get; }
         float RendersPerSecond { get; }
 

@@ -111,20 +111,10 @@
     <Compile Include="Tools\ToolPortalLinker.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="editor assets\models\coordinateArrowsTex.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Resource Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="editor assets\models\coordinateArrows.mtl">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="editor assets\models\coordinateArrows.obj">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="app.config" />
-    <None Include="editor assets\Thumbs.db" />
     <None Include="packages.config" />
     <None Include="OpenTK.dll.config" />
   </ItemGroup>
@@ -133,7 +123,7 @@
       <Project>{a4610e4c-dd34-428b-babb-779ca0b5993a}</Project>
       <Name>Farseer Physics</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameProject\Game.csproj">
+    <ProjectReference Include="..\Game\Game.csproj">
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
       <Name>Game</Name>
     </ProjectReference>

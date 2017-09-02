@@ -12,6 +12,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using System.Diagnostics;
 using Game.Common;
+using Newtonsoft.Json;
 
 namespace Game
 {
@@ -26,8 +27,8 @@ namespace Game
 
         public IRenderer Renderer { get; private set; }
 
-        public FontAssets Fonts;
-        public TextureAssets Textures;
+        public Resources Fonts;
+        public Resources Textures;
 
         bool _lockInput = false;
         string KeyString = "";
@@ -70,9 +71,10 @@ namespace Game
 
             DpiScale = ClientSize.X / (float)windowSize.X;
 
-            Textures = new TextureAssets();
-            Renderer = new Renderer(this, Textures);
-            Fonts = new FontAssets();
+            var data = File.ReadAllText(Path.Combine("Assets", "Assets.xml"));
+            Fonts = JsonConvert.DeserializeObject<Resources>(data, new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects});
+            Renderer = new Renderer(this, Fonts);
+            
 
             _soundEnabled = false;
             if (_soundEnabled)

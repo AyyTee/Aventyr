@@ -80,7 +80,7 @@
       <Project>{88dd432c-fac9-4bf4-99f6-69fba77a2b6b}</Project>
       <Name>DebugVisualizer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GameProject\Game.csproj">
+    <ProjectReference Include="..\Game\Game.csproj">
       <Project>{ce5cd75d-8626-4cd8-83fc-b7a4868daec0}</Project>
       <Name>Game</Name>
     </ProjectReference>
