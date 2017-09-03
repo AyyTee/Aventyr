@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "Game\Game.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farseer Physics", "FarseerPhysics\Farseer Physics.csproj", "{A4610E4C-DD34-428B-BABB-779CA0B5993A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorLogic", "EditorLogic\EditorLogic.csproj", "{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TankGame", "TankGame\TankGame.csproj", "{AA060735-819A-4094-AB53-ABDA3673E052}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TankGameTestFramework", "TankGameTestFramework\TankGameTestFramework.csproj", "{462AC7BF-9A9C-4CC3-9704-5A03D952C07D}"
@@ -21,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ui", "Ui\Ui.csproj", "{121543C8-986E-4F1F-BC66-419F682700B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorWindow", "Editor\EditorWindow.csproj", "{8AC53023-4D63-425A-B2F7-3728B5680BCE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugVisualizer", "CustomDebugVisualizer\DebugVisualizer.csproj", "{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugVisualizerTests", "VisualizerTests\DebugVisualizerTests.csproj", "{73FEB707-5BA2-4490-9190-6DCC9AB4BA6B}"
@@ -30,6 +26,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aventyr", "Aventyr\Aventyr.csproj", "{DB003817-7A1C-494D-B7FA-32917367B328}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetBuilder", "AssetBuilder\AssetBuilder.csproj", "{57F41756-A091-434E-9B01-348C0A1A12B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{77142CC5-9E20-480F-859E-51D0FF10A001}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +43,6 @@ Global
 		{A4610E4C-DD34-428B-BABB-779CA0B5993A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4610E4C-DD34-428B-BABB-779CA0B5993A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4610E4C-DD34-428B-BABB-779CA0B5993A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AB892CE8-6523-4EB1-B159-B8A8F9A0D3D8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AA060735-819A-4094-AB53-ABDA3673E052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AA060735-819A-4094-AB53-ABDA3673E052}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA060735-819A-4094-AB53-ABDA3673E052}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -73,11 +67,6 @@ Global
 		{121543C8-986E-4F1F-BC66-419F682700B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{121543C8-986E-4F1F-BC66-419F682700B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{121543C8-986E-4F1F-BC66-419F682700B0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8AC53023-4D63-425A-B2F7-3728B5680BCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8AC53023-4D63-425A-B2F7-3728B5680BCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8AC53023-4D63-425A-B2F7-3728B5680BCE}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{8AC53023-4D63-425A-B2F7-3728B5680BCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8AC53023-4D63-425A-B2F7-3728B5680BCE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88DD432C-FAC9-4BF4-99F6-69FBA77A2B6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -94,6 +83,10 @@ Global
 		{57F41756-A091-434E-9B01-348C0A1A12B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57F41756-A091-434E-9B01-348C0A1A12B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57F41756-A091-434E-9B01-348C0A1A12B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77142CC5-9E20-480F-859E-51D0FF10A001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77142CC5-9E20-480F-859E-51D0FF10A001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77142CC5-9E20-480F-859E-51D0FF10A001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77142CC5-9E20-480F-859E-51D0FF10A001}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

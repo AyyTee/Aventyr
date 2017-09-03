@@ -101,5 +101,11 @@ namespace Game.Physics
                     throw new NotImplementedException();
             }
         }
+
+        public Transform2 GetTransform()
+        {
+            Vector2[] vertices = Vector2Ex.ToOtk(((PolygonShape)Fixture.Shape).Vertices);
+            return PolygonEx.GetTransform(vertices, this);
+        }
     }
 }

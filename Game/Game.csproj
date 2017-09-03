@@ -147,32 +147,13 @@
   <ItemGroup>
     <Compile Include="Animation\AnimationDriver.cs" />
     <Compile Include="AssetPaths.cs" />
-    <Compile Include="Common\Casting.cs" />
-    <Compile Include="Common\GeometryUtil.cs" />
     <Compile Include="Animation\Curve.cs" />
     <Compile Include="Animation\Curve2.cs" />
     <Compile Include="Animation\CurveTransform2.cs" />
-    <Compile Include="Common\IAlmostEqual.cs" />
-    <Compile Include="Common\IGetWorldTransformVelocity.cs" />
-    <Compile Include="Common\IValueEquality.cs" />
-    <Compile Include="Common\Line.cs" />
-    <Compile Include="Common\Transform3.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Transform3.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Common\Transform2.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Transform2.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Common\Vector2i.cs" />
-    <Compile Include="Common\Transform2d.cs" />
-    <Compile Include="Common\Vector4Ex.cs" />
+    <Compile Include="Models\Clip.cs" />
     <Compile Include="Hotkey.cs" />
-    <Compile Include="OrderedSet.cs" />
+    <Compile Include="Physics\FixtureCoord.cs" />
     <Compile Include="Portals\SimplePortal.cs" />
-    <Compile Include="PrecisionPairs.cs" />
     <Compile Include="FakeVirtualWindow.cs" />
     <Compile Include="Assets.cs">
       <AutoGen>True</AutoGen>
@@ -180,14 +161,9 @@
       <DependentUpon>Assets.tt</DependentUpon>
     </Compile>
     <Compile Include="IController.cs" />
-    <Compile Include="IGetTransform.cs" />
-    <Compile Include="IGetTransformVelocity.cs" />
-    <Compile Include="IName.cs" />
     <Compile Include="InputEx.cs" />
-    <Compile Include="ITime.cs" />
     <Compile Include="Keyframe.cs" />
     <Compile Include="Keyframe2.cs" />
-    <Compile Include="LinqEx.cs" />
     <Compile Include="Physics\BodyMemento.cs" />
     <Compile Include="Physics\BodyData.cs" />
     <Compile Include="Physics\PortalJoint.cs" />
@@ -199,16 +175,10 @@
     <Compile Include="Portals\PortalPath.cs" />
     <Compile Include="Portals\Portalable.cs" />
     <Compile Include="RandomEx.cs" />
-    <Compile Include="Rendering\Atlas.cs" />
-    <Compile Include="Rendering\BmFont.cs" />
     <Compile Include="Rendering\Camera2.cs" />
-    <Compile Include="Models\Clip.cs" />
-    <Compile Include="ClipperConvert.cs" />
-    <Compile Include="Rendering\Color4Ex.cs" />
     <Compile Include="Rendering\Draw.cs" />
     <Compile Include="Rendering\GlStateManager.cs" />
     <Compile Include="Rendering\IClientSizeProvider.cs" />
-    <Compile Include="Rendering\IPortalRenderable.cs" />
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\IVirtualWindow.cs" />
     <Compile Include="Rendering\Layer.cs" />
@@ -222,27 +192,14 @@
     <Compile Include="ResourcesGenerated.cs" />
     <Compile Include="RollingAverage.cs" />
     <Compile Include="Serialization\DeepClone.cs" />
-    <Compile Include="ExceptionInvalidPolygon.cs" />
-    <Compile Include="GlobalEnums.cs" />
-    <Compile Include="Rendering\ICamera2.cs" />
     <Compile Include="Serialization\IDeepClone.cs" />
-    <Compile Include="Common\IPolygonCoord.cs" />
     <Compile Include="Portals\IPortal.cs" />
     <Compile Include="Portals\IPortalable.cs" />
-    <Compile Include="Rendering\IRenderable.cs" />
-    <Compile Include="Models\IMesh.cs" />
     <Compile Include="Rendering\IRenderLayer.cs" />
     <Compile Include="IScene.cs" />
     <Compile Include="ISceneObject.cs" />
-    <Compile Include="Serialization\IShallowClone.cs" />
     <Compile Include="IStep.cs" />
-    <Compile Include="Rendering\ITexture.cs" />
-    <Compile Include="Common\ITransformable2.cs" />
-    <Compile Include="ITreeNode.cs" />
     <Compile Include="IWall.cs" />
-    <Compile Include="Models\Mesh.cs" />
-    <Compile Include="Common\PolygonEx.cs" />
-    <Compile Include="Models\ReadOnlyMesh.cs" />
     <Compile Include="Rendering\ModelLoader.cs" />
     <Compile Include="EdgeData.cs" />
     <Compile Include="Entity.cs" />
@@ -251,17 +208,10 @@
     <Compile Include="Physics\FixtureEx.cs" />
     <Compile Include="Physics\FixtureData.cs" />
     <Compile Include="Portals\FloatPortal.cs" />
-    <Compile Include="Rendering\Font.cs" />
-    <Compile Include="Physics\FixtureCoord.cs" />
-    <Compile Include="Common\LineF.cs" />
-    <Compile Include="Common\MathEx.cs" />
-    <Compile Include="Common\Matrix4Ex.cs" />
     <Compile Include="Physics\BodyEx.cs" />
     <Compile Include="Rendering\ModelFactory.cs" />
     <Compile Include="Physics\PhysicsListener.cs" />
     <Compile Include="Physics\Actor.cs" />
-    <Compile Include="Common\PolygonCoord.cs" />
-    <Compile Include="Common\PolygonFactory.cs" />
     <Compile Include="Portals\Portal.cs" />
     <Compile Include="Portals\PortalPlacer.cs" />
     <Compile Include="Rendering\PortalView.cs" />
@@ -270,23 +220,13 @@
     <Compile Include="Ray.cs" />
     <Compile Include="SceneNode.cs" />
     <Compile Include="Serialization\Serializer.cs" />
-    <Compile Include="Rendering\Texture.cs" />
-    <Compile Include="Rendering\TextureFile.cs" />
     <Compile Include="Portals\FixturePortal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rendering\Shader.cs" />
-    <Compile Include="Models\Model.cs" />
     <Compile Include="Animation\BezierCurve.cs" />
-    <Compile Include="Common\Transform3d.cs" />
     <Compile Include="Tree.cs" />
-    <Compile Include="Models\Triangle.cs" />
-    <Compile Include="Common\Vector2Ex.cs" />
-    <Compile Include="Common\Vector3Ex.cs" />
-    <Compile Include="Models\Vertex.cs" />
     <Compile Include="WallCoord.cs" />
     <Compile Include="Physics\WorldEx.cs" />
-    <Compile Include="Common\DebugEx.cs" />
-    <Compile Include="ClipPath.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Assets.xml">
@@ -294,14 +234,6 @@
     </Content>
     <Content Include="Assets\Atlas.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Common\Transform3.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Transform3.cs</LastGenOutput>
-    </Content>
-    <Content Include="Common\Transform2.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Transform2.cs</LastGenOutput>
     </Content>
     <Content Include="favicon.ico" />
     <Content Include="Assets.tt">
@@ -334,6 +266,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{77142cc5-9e20-480f-859e-51d0ff10a001}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FarseerPhysics\Farseer Physics.csproj">
       <Project>{a4610e4c-dd34-428b-babb-779ca0b5993a}</Project>
       <Name>Farseer Physics</Name>

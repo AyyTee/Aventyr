@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{77142CC5-9E20-480F-859E-51D0FF10A001}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Common</RootNamespace>
+    <AssemblyName>Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="clipper_library, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\clipper_library.6.2.1\lib\net40\clipper_library.dll</HintPath>
+    </Reference>
+    <Reference Include="Equ, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EquWithDataContract.1.0.4\lib\net45\Equ.dll</HintPath>
+    </Reference>
+    <Reference Include="MoreLinq, Version=2.6.20831.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <HintPath>..\packages\morelinq.2.6.0\lib\net40\MoreLinq.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=2.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="Poly2Tri, Version=1.0.0.0, Culture=neutral, PublicKeyToken=db87057254d2bb1c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Poly2Tri.dll.1.0.4\lib\Net35\Poly2Tri.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.3.1\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0-preview2-25405-01\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ClipPath.cs" />
+    <Compile Include="ClipperConvert.cs" />
+    <Compile Include="ExceptionInvalidPolygon.cs" />
+    <Compile Include="GenerateSingles.cs" />
+    <Compile Include="GlobalEnums.cs" />
+    <Compile Include="IGetTransform.cs" />
+    <Compile Include="IGetTransformVelocity.cs" />
+    <Compile Include="IName.cs" />
+    <Compile Include="ITime.cs" />
+    <Compile Include="ITreeNode.cs" />
+    <Compile Include="LinqEx.cs" />
+    <Compile Include="Models\IMesh.cs" />
+    <Compile Include="Models\Mesh.cs" />
+    <Compile Include="Models\Model.cs" />
+    <Compile Include="Models\ReadOnlyMesh.cs" />
+    <Compile Include="OrderedSet.cs" />
+    <Compile Include="Rendering\AtlasTexture.cs" />
+    <Compile Include="Rendering\BmFont.cs" />
+    <Compile Include="Common\Casting.cs" />
+    <Compile Include="Common\DebugEx.cs" />
+    <Compile Include="Common\GeometryUtil.cs" />
+    <Compile Include="Common\IAlmostEqual.cs" />
+    <Compile Include="Common\IGetWorldTransformVelocity.cs" />
+    <Compile Include="Common\IPolygonCoord.cs" />
+    <Compile Include="Common\ITransformable2.cs" />
+    <Compile Include="Common\IValueEquality.cs" />
+    <Compile Include="Common\Line.cs" />
+    <Compile Include="Common\LineF.cs" />
+    <Compile Include="Common\MathEx.cs" />
+    <Compile Include="Common\Matrix4Ex.cs" />
+    <Compile Include="Common\PolygonCoord.cs" />
+    <Compile Include="Common\PolygonEx.cs" />
+    <Compile Include="Common\PolygonFactory.cs" />
+    <Compile Include="Common\Transform2.cs">
+      <DependentUpon>Transform2.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Common\Transform2d.cs" />
+    <Compile Include="Common\Transform3.cs">
+      <DependentUpon>Transform3.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Common\Transform3d.cs" />
+    <Compile Include="Common\Vector2Ex.cs" />
+    <Compile Include="Common\Vector2i.cs" />
+    <Compile Include="Common\Vector3Ex.cs" />
+    <Compile Include="Common\Vector4Ex.cs" />
+    <Compile Include="Rendering\Color4Ex.cs" />
+    <Compile Include="Rendering\Font.cs" />
+    <Compile Include="Rendering\ICamera2.cs" />
+    <Compile Include="Rendering\IPortalRenderable.cs" />
+    <Compile Include="Rendering\IRenderable.cs" />
+    <Compile Include="Serialization\IShallowClone.cs" />
+    <Compile Include="Rendering\ITexture.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\Texture.cs" />
+    <Compile Include="Rendering\TextureFile.cs" />
+    <Compile Include="Models\Triangle.cs" />
+    <Compile Include="Models\Vertex.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="OpenTK.dll.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Common\Transform2.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Transform2.cs</LastGenOutput>
+    </Content>
+    <Content Include="Common\Transform3.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Transform3.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FarseerPhysics\Farseer Physics.csproj">
+      <Project>{a4610e4c-dd34-428b-babb-779ca0b5993a}</Project>
+      <Name>Farseer Physics</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Physics\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

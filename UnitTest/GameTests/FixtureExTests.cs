@@ -27,7 +27,7 @@ namespace GameTests
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
             Assert.IsTrue(fixtureCoord.EdgeT == polyCoord.EdgeT);
-            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == PolygonEx.GetTransform(fixtureCoord));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == fixtureCoord.GetTransform());
         }
 
         public Vector2[] GetVertices()
@@ -51,7 +51,7 @@ namespace GameTests
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
             Assert.IsTrue(fixtureCoord.EdgeT == polyCoord.EdgeT);
-            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == PolygonEx.GetTransform(fixtureCoord));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == fixtureCoord.GetTransform());
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace GameTests
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
             Transform2 expected = PolygonEx.GetTransform(actor.GetWorldVertices(), polyCoord);
-            Transform2 result = PolygonEx.GetTransform(fixtureCoord);
+            Transform2 result = fixtureCoord.GetTransform();
             Assert.IsTrue(expected.AlmostEqual(result));
         }
 
@@ -86,7 +86,7 @@ namespace GameTests
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
-            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == PolygonEx.GetTransform(fixtureCoord));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == fixtureCoord.GetTransform());
         }
 
         [Test]
@@ -99,7 +99,7 @@ namespace GameTests
             PolygonCoord polyCoord = new PolygonCoord(4, 0.4f);
             FixtureCoord fixtureCoord = FixtureEx.GetFixtureEdgeCoord(actor, polyCoord);
 
-            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == PolygonEx.GetTransform(fixtureCoord));
+            Assert.IsTrue(PolygonEx.GetTransform(vertices, polyCoord) == fixtureCoord.GetTransform());
         }
 
         [Test]

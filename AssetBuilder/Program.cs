@@ -2,7 +2,6 @@
 using Game;
 using Game.Common;
 using Game.Rendering;
-using Game.Serialization;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -51,7 +50,7 @@ namespace AssetBuilder
             Initalize();
             FetchTools();
             ExportModels();
-            var fontCount = RenderFonts();
+            var fontCount = CreateBitmapFonts();
             CreateAtlas(fontCount);
 
             Console.WriteLine("Build complete!");
@@ -180,7 +179,7 @@ namespace AssetBuilder
         }
 
         /// <returns>Number of fonts rendered.</returns>
-        private static int RenderFonts()
+        private static int CreateBitmapFonts()
         {
             var fontConfigs = Directory.GetFiles(FontsPath, "*.bmfc", SearchOption.AllDirectories);
             foreach (var fontConfig in fontConfigs)

@@ -118,6 +118,10 @@
     <None Include="OpenTK.dll.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{77142cc5-9e20-480f-859e-51d0ff10a001}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FarseerPhysics\Farseer Physics.csproj">
       <Project>{A4610E4C-DD34-428B-BABB-779CA0B5993A}</Project>
       <Name>Farseer Physics</Name>

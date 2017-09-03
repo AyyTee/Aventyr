@@ -46,11 +46,6 @@ namespace Game
 
         public static readonly GraphicsMode DefaultGraphics = new GraphicsMode(32, 24, 8, 0);
 
-        /// <summary>
-        /// Keep pointless messages from the Poly2Tri library out of the console window.
-        /// </summary>
-        public static StreamWriter TrashLog = new StreamWriter(Stream.Null);
-
         readonly SoundSystem _soundSystem;
         bool _soundEnabled;
 
