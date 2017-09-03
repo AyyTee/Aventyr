@@ -271,7 +271,7 @@ namespace Game.Rendering
             }
 
             var portalEdges = new Model();
-            portalEdges.SetTexture(_textures.LineBlur);
+            portalEdges.SetTexture(_textures.LineBlur());
 
             for (int i = 1; i < iterations; i++)
             {

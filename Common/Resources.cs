@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AssetBuilder
+namespace Game
 {
     [DataContract]
     public partial class Resources
@@ -16,6 +16,8 @@ namespace AssetBuilder
         public ImmutableArray<AtlasTexture> Textures { get; private set; }
         [DataMember]
         public ImmutableArray<Font> Fonts { get; private set; }
+
+        public Font DefaultFont => Fonts.Single(item => item.FontData.Info.Face == "LatoRegular");
 
         public Resources()
         {

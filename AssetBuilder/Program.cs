@@ -266,9 +266,9 @@ namespace AssetBuilder
                     var charIndex = int.Parse(split[2]);
                     var fontChar = fonts[fontIndex].Chars[charIndex];
 
-                    fontChar.X = x;
+                    fontChar.X = x - 1;
                     fontChar.Y = y;
-                    fontChar.Width = rect.width - 1;
+                    fontChar.Width = rect.width;
                     fontChar.Height = rect.height;
                 }
                 else if (split[0] == texturePrefix)
@@ -310,13 +310,13 @@ namespace AssetBuilder
             var fonts = "";
             foreach (var font in assets.Fonts)
             {
-                fonts += $"        public Font @{font.FontData.Info.Face} => Fonts.Single(item => item.FontData.Info.Face == \"{font.FontData.Info.Face}\");\n";
+                fonts += $"        public static Font @{font.FontData.Info.Face}(this Resources resources) => resources.Fonts.Single(item => item.FontData.Info.Face == \"{font.FontData.Info.Face}\");\n";
             }
 
             var textures = "";
             foreach (var texture in assets.Textures)
             {
-                textures += $"        public AtlasTexture @{texture.Name} => Textures.Single(item => item.Name == \"{texture.Name}\");\n";
+                textures += $"        public static AtlasTexture @{texture.Name}(this Resources resources) => resources.Textures.Single(item => item.Name == \"{texture.Name}\");\n";
             }
 
             var code = 
@@ -327,14 +327,14 @@ using System.Linq;
 
 namespace Game
 {{
-    public partial class {nameof(Resources)}
+    public static class ResourcesEx
     {{
 {fonts}
 {textures}
     }}
 }}
 ";
-            File.WriteAllText(Path.Combine(RootPath, nameof(Game), $"{nameof(Resources)}Generated.cs"), code);
+            File.WriteAllText(Path.Combine(RootPath, nameof(Game), "ResourcesEx.cs"), code);
         }
 
         static BitmapExtended GetGlyph(Bitmap page, FontChar fontChar)

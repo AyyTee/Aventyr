@@ -402,7 +402,7 @@ namespace TimeLoopInc.Editor
                 var layer = new Layer
                 {
                     Camera = Camera,
-                    Renderables = SceneRender.RenderInstant(scene, scene.GetSceneInstant(0), 1, scene.Portals, Window.Fonts.LatoRegular)
+                    Renderables = SceneRender.RenderInstant(scene, scene.GetSceneInstant(0), 1, scene.Portals, Window.Fonts.LatoRegular())
                         .Cast<IRenderable>()
                         .ToList()
                 };

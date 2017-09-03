@@ -30,7 +30,7 @@ namespace Aventyr
             var portal3 = new FloatPortal(_scene, new Transform2(new Vector2(4, 0))) { OneSided = true };
             var entity = new Entity(_scene, new Transform2(new Vector2(2.5f, 0)));
             var cube = ModelFactory.CreateCube(new Vector3(0.8f), Color4.Green);
-            cube.Texture = _window.Textures.Default;
+            cube.Texture = _window.Textures.Default();
             entity.AddModel(cube);
             Portal.SetLinked(portal0, portal1);
             Portal.SetLinked(portal2, portal3);
@@ -44,7 +44,7 @@ namespace Aventyr
             _window.Layers.Clear();
 
             var plane = ModelFactory.CreatePlane(new Vector2(10), Color4.LightGray, new Vector3(-5, -5, 0));
-            plane.SetTexture(_window.Textures.Grid);
+            plane.SetTexture(_window.Textures.Grid());
             plane.TransformUv = new Transform2(size: 10);
             var background = new Renderable(
                 new Transform2(),
@@ -52,7 +52,7 @@ namespace Aventyr
             {
                 IsPortalable = false
             };
-            var layer = new Layer(_scene);
+            var layer = LayerEx.FromScene(_scene);
             layer.Renderables.Add(background);
             _window.Layers.Add(layer);
         }

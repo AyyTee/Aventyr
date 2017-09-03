@@ -34,7 +34,7 @@ namespace TimeLoopInc
         {
             _scene = _levels[_currentLevel].DeepClone();
             _sceneRender = new SceneRender(_window, _scene);
-            _timelineRender = new TimelineRender(_scene, _window.Fonts.LatoRegular);
+            _timelineRender = new TimelineRender(_scene, _window.Fonts.LatoRegular());
             _timelineRender.Selected = _scene.CurrentPlayer;
         }
 
@@ -122,11 +122,11 @@ namespace TimeLoopInc
                 Camera = new HudCamera2(_window.CanvasSize)
             };
             _timelineRender.Render(gui, new Vector2(50, _window.CanvasSize.Y - 150), new Vector2(_window.CanvasSize.X - 100, 140), _window.DpiScale, animationT);
-            gui.Renderables.Add(Draw.Text(_window.Fonts.LatoRegular, new Vector2(0, 0), "Time: " + _scene.CurrentTime.ToString()));
-            gui.Renderables.Add(Draw.Text(_window.Fonts.LatoRegular, new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString()));
+            gui.Renderables.Add(Draw.Text(_window.Fonts.LatoRegular(), new Vector2(0, 0), "Time: " + _scene.CurrentTime.ToString()));
+            gui.Renderables.Add(Draw.Text(_window.Fonts.LatoRegular(), new Vector2(0, 30), _sceneRender.GetMouseGrid().ToString()));
             _fpsCounter.Enqueue((float)timeDelta);
             gui.Renderables.Add(Draw.Text(
-                _window.Fonts?.LatoRegular,
+                _window.Fonts?.LatoRegular(),
                 new Vector2(0, 80),
                 $"FPS\nAvg { (1 / _fpsCounter.GetAverage()).ToString("00.00") }\nMin { (1 / _fpsCounter.Queue.Max()).ToString("00.00") }\n{_window.MousePosition}"));
             _window.Layers.Add(gui);

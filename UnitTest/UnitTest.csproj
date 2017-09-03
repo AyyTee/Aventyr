@@ -116,6 +116,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AssetBuilder\AssetBuilder.csproj">
+      <Project>{57f41756-a091-434e-9b01-348c0a1a12b1}</Project>
+      <Name>AssetBuilder</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Aventyr\Aventyr.csproj">
       <Project>{db003817-7a1c-494d-b7fa-32917367b328}</Project>
       <Name>Aventyr</Name>

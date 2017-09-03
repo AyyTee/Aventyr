@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Game.Portals;
 
 namespace Game.Rendering
 {
@@ -21,13 +20,6 @@ namespace Game.Rendering
 
         public Layer()
         {
-        }
-
-        public Layer(IScene scene)
-        {
-            Camera = scene.GetAll().OfType<ICamera2>().FirstOrDefault();
-            Portals = scene.GetAll().OfType<IPortalRenderable>().ToList();
-            Renderables = scene.GetAll().OfType<IRenderable>().ToList();
         }
     }
 }

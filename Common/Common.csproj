@@ -73,6 +73,7 @@
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="GenerateSingles.cs" />
     <Compile Include="GlobalEnums.cs" />
+    <Compile Include="HotKey.cs" />
     <Compile Include="IGetTransform.cs" />
     <Compile Include="IGetTransformVelocity.cs" />
     <Compile Include="IName.cs" />
@@ -118,10 +119,19 @@
     <Compile Include="Common\Vector3Ex.cs" />
     <Compile Include="Common\Vector4Ex.cs" />
     <Compile Include="Rendering\Color4Ex.cs" />
+    <Compile Include="Rendering\Draw.cs" />
     <Compile Include="Rendering\Font.cs" />
+    <Compile Include="Rendering\HudCamera2.cs" />
     <Compile Include="Rendering\ICamera2.cs" />
     <Compile Include="Rendering\IPortalRenderable.cs" />
     <Compile Include="Rendering\IRenderable.cs" />
+    <Compile Include="Rendering\IRenderLayer.cs" />
+    <Compile Include="Rendering\IVirtualWindow.cs" />
+    <Compile Include="Rendering\Layer.cs" />
+    <Compile Include="Rendering\ModelFactory.cs" />
+    <Compile Include="Rendering\Renderable.cs" />
+    <Compile Include="Rendering\TextEntity.cs" />
+    <Compile Include="Resources.cs" />
     <Compile Include="Serialization\IShallowClone.cs" />
     <Compile Include="Rendering\ITexture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -68,6 +68,7 @@ namespace Game
 
             var data = File.ReadAllText(Path.Combine("Assets", "Assets.xml"));
             Fonts = JsonConvert.DeserializeObject<Resources>(data, new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects});
+            Textures = Fonts;
             Renderer = new Renderer(this, Fonts);
             
 

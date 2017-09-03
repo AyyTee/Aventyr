@@ -7,7 +7,6 @@ using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
 using Game.Common;
 using Game.Models;
-using Game.Physics;
 using OpenTK;
 using Poly2Tri;
 using OpenTK.Graphics;
@@ -434,24 +433,6 @@ namespace Game.Rendering
             }
             polygon = Vector2Ex.Transform(polygon, Matrix4.CreateRotationZ((float)-(MathEx.VectorToAngleReversed(pointAt) + Math.PI / 2)));
             AddPolygon(mesh, polygon, color, origin);
-        }
-
-        public static Model CreateActorDebug(Actor actor)
-        {
-            var model = new Model();
-            var mesh = new Mesh();
-            foreach (Fixture f in actor.Body.FixtureList)
-            {
-                var polygon = (PolygonShape)f.Shape;
-                Vector2[] vertices = Vector2Ex.ToOtk(polygon.Vertices);
-                AddLineStripWidth(mesh, vertices, 0.05f, true, Color4.Yellow);
-            }
-            model.Mesh = mesh;
-            Vector2 scale = actor.GetTransform().Scale;
-            scale.X = 1 / scale.X;
-            scale.Y = 1 / scale.Y;
-            model.Transform = new Transform3(new Vector3(), new Vector3(scale));
-            return model;
         }
     }
 }

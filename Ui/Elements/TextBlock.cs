@@ -64,7 +64,7 @@ namespace Ui.Elements
             var type = typeof(TextBlock);
             return new Style
             {
-                new StyleElement(type, nameof(Font), _ => controller.Fonts.LatoRegular),
+                new StyleElement(type, nameof(Font), _ => controller.Fonts.DefaultFont),
                 new StyleElement(type, nameof(MaxWidth), _ => null),
                 new StyleElement(type, nameof(TextAlignment), _ => 0f),
                 new StyleElement(type, nameof(Text), _ => "")

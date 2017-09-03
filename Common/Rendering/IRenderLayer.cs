@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Game.Portals;
 using OpenTK;
 using OpenTK.Graphics;
 using Game.Common;
