@@ -7,6 +7,7 @@ using OpenTK.Graphics.OpenGL;
 using Game.Common;
 using System;
 using System.Runtime.InteropServices;
+using OpenTK;
 
 namespace Game.Rendering
 {
@@ -20,6 +21,8 @@ namespace Game.Rendering
         public bool IsTransparent => _texture.IsTransparent;
         public Vector2i Size => _texture.Size;
         public int Id => _texture.Id;
+
+        public Common.RectangleF UvBounds => _texture.UvBounds;
 
         public TextureFile(string filename, bool deferLoad = false)
         {

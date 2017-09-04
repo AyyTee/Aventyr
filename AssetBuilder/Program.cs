@@ -2,7 +2,9 @@
 using Game;
 using Game.Common;
 using Game.Rendering;
+using Game.Serialization;
 using Newtonsoft.Json;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -273,13 +275,12 @@ namespace AssetBuilder
                 }
                 else if (split[0] == texturePrefix)
                 {
-                    var texture = new AtlasTexture(
-                        atlasTexture, 
-                        new Vector2i(x, y), 
-                        new Vector2i(rect.width, rect.height), 
+                    textures.Add(new AtlasTexture(
+                        atlasTexture,
+                        new Vector2i(x - 1, y),
+                        new Vector2i(rect.width, rect.height),
                         Convert.ToBoolean(split[2]),
-                        split[1]);
-                    textures.Add(texture);
+                        split[1]));
                 }
                 else
                 {
@@ -299,8 +300,8 @@ namespace AssetBuilder
                 fonts.Select(item => new Game.Rendering.Font(item, new ITexture[] { atlasTexture })).ToImmutableArray());
 
             File.WriteAllText(
-                Path.Combine(outputAssetsPath, "Assets.xml"), 
-                JsonConvert.SerializeObject(assets, new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects }));
+                Path.Combine(outputAssetsPath, "Assets.json"),
+                Serializer.Serialize(assets));
 
             CreateAssetCode(assets);
         }

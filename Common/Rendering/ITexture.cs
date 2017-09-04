@@ -1,4 +1,5 @@
 ﻿using Game.Common;
+using OpenTK;
 
 namespace Game.Rendering
 {
@@ -10,5 +11,6 @@ namespace Game.Rendering
         Vector2i Size { get; }
         bool IsTransparent { get; }
         int Id { get; }
+        RectangleF UvBounds { get; }
     }
 }

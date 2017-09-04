@@ -18,6 +18,8 @@ namespace Game.Rendering
         public const string IsTextured = nameof(IsTextured);
         public const string IsDithered = nameof(IsDithered);
         public const string MainTexture = nameof(MainTexture);
+        public const string UvPosition = nameof(UvPosition);
+        public const string UvSize = nameof(UvSize);
 
         public const string VertPosition = nameof(VertPosition);
         public const string VertColor = nameof(VertColor);
@@ -50,6 +52,8 @@ out vec4 {OutputColor};
 uniform int {IsTextured};
 uniform int {IsDithered};
 uniform sampler2D {MainTexture};
+uniform vec2 {UvPosition};
+uniform vec2 {UvSize};
 
 const float bayerMatrix[{elementCount}] = float[] ({stringBuilder.ToString()});
 
@@ -58,7 +62,7 @@ main()
 {{
     if ({IsTextured} == 1)
     {{
-        vec2 flippedTexcoord = vec2({FragUvCoord}.x, {FragUvCoord}.y);
+        vec2 flippedTexcoord = fract(vec2({FragUvCoord}.x, {FragUvCoord}.y)) * {UvSize} + {UvPosition};
         vec4 color = texture({MainTexture}, flippedTexcoord) * {FragColor};
         {OutputColor} = color;
     }}

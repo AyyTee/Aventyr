@@ -1,4 +1,5 @@
 ﻿using Game.Common;
+using OpenTK;
 using System;
 using System.Runtime.Serialization;
 
@@ -16,6 +17,8 @@ namespace Game.Rendering
         public int Id { get; private set; }
 
         public Vector2i Size { get; }
+
+        public RectangleF UvBounds => new RectangleF(new Vector2(), Vector2.One);
 
         public Texture(int id, Vector2i size, bool isTransparent = false)
         {

@@ -13,6 +13,7 @@ using OpenTK.Graphics;
 using System.Diagnostics;
 using Game.Common;
 using Newtonsoft.Json;
+using Game.Serialization;
 
 namespace Game
 {
@@ -61,13 +62,12 @@ namespace Game
                 3,
                 3,
                 GraphicsContextFlags.ForwardCompatible);
-            var glError = GL.GetError();
             DebugEx.GlAssert();
 
             DpiScale = ClientSize.X / (float)windowSize.X;
 
-            var data = File.ReadAllText(Path.Combine("Assets", "Assets.xml"));
-            Fonts = JsonConvert.DeserializeObject<Resources>(data, new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects});
+            var data = File.ReadAllText(Path.Combine("Assets", "Assets.json"));
+            Fonts = Serializer.Deserialize<Resources>(data);
             Textures = Fonts;
             Renderer = new Renderer(this, Fonts);
             

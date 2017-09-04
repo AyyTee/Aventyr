@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="ClipPath.cs" />
     <Compile Include="ClipperConvert.cs" />
+    <Compile Include="Common\RectangleF.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="GenerateSingles.cs" />
     <Compile Include="GlobalEnums.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="Rendering\TextureFile.cs" />
     <Compile Include="Models\Triangle.cs" />
     <Compile Include="Models\Vertex.cs" />
+    <Compile Include="Serialization\Serializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

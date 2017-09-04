@@ -380,6 +380,11 @@ namespace Game.Rendering
                     GL.Uniform1(_activeShader.Uniforms[UberShader.MainTexture].Address, 0);
                     GL.ActiveTexture(TextureUnit.Texture0);
                     GL.BindTexture(TextureTarget.Texture2D, data.Model.Texture.Id);
+
+                    var uvPosition = data.Model.Texture.UvBounds.Position;
+                    var uvSize = data.Model.Texture.UvBounds.Size;
+                    GL.Uniform2(_activeShader.Uniforms[UberShader.UvPosition].Address, ref uvPosition);
+                    GL.Uniform2(_activeShader.Uniforms[UberShader.UvSize].Address, ref uvSize);
                 }
 
                 GL.Uniform1(
@@ -408,7 +413,6 @@ namespace Game.Rendering
         /// <param name="viewMatrix">Camera view matrix, do not use view matrix for the portalview.</param>
         void SetScissor(IVirtualWindow window, PortalView view, Matrix4 viewMatrix)
         {
-            //return;
             DebugEx.Assert(view != null);
             if (view.Paths == null)
             {
