@@ -20,11 +20,20 @@ namespace Game.Rendering
         [DataMember]
         public string Name { get; private set; }
         public int Id => Texture.Id;
-        public RectangleF UvBounds => new RectangleF(
-            new Vector2(Position.X / (float)Texture.Size.X, Position.Y / (float)Texture.Size.Y),
-            new Vector2(
-                Size.X / (float)Texture.Size.X,
-                Size.Y / (float)Texture.Size.Y));
+        public RectangleF UvBounds
+        {
+            get
+            {
+                var bounds = new RectangleF(
+                    new Vector2(Position.X / (float)Texture.Size.X, Position.Y / (float)Texture.Size.Y),
+                    new Vector2(
+                        Size.X / (float)Texture.Size.X,
+                        Size.Y / (float)Texture.Size.Y));
+                DebugEx.Assert((Vector2i)(bounds.Position * (Vector2)Texture.Size) == Position);
+                DebugEx.Assert((Vector2i)(bounds.Size * (Vector2)Texture.Size) == Size);
+                return bounds;
+            }
+        }
         [DataMember]
         public Vector2i Position { get; private set; }
         [DataMember]

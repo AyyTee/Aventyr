@@ -1,9 +1,7 @@
-﻿using AtlasTexturePacker.Library;
-using Game;
+﻿using Game;
 using Game.Common;
 using Game.Rendering;
 using Game.Serialization;
-using Newtonsoft.Json;
 using OpenTK;
 using System;
 using System.Collections.Generic;
@@ -198,7 +196,8 @@ namespace AssetBuilder
 
         private static void CreateAtlas(int fontCount)
         {
-            var bitmaps = new List<BitmapExtended>();
+            var glyphs = new List<Glyph>();
+            var atlasSize = new Vector2i(2048, 2048);
 
             // Sometimes we read in the fonts before BmFont has had time to finish creating them. Loop here if that happens.
             string[] fontFiles;
@@ -211,87 +210,73 @@ namespace AssetBuilder
             var fonts = fontFiles.Select(item =>
             {
                 var font = FontLoader.Load(item);
+                font.Common.ScaleW = atlasSize.X;
+                font.Common.ScaleH = atlasSize.Y;
                 font.Info.Face = Path.GetFileNameWithoutExtension(item);
                 return font;
             }).ToList();
-            var fontPrefix = "font";
-            var texturePrefix = "texture";
-            for (int i = 0; i < fonts.Count; i++)
-            {
-                if (fonts[i].Pages.Count > 1)
-                {
-                    throw new NotImplementedException("Multipage fonts are not supported. Try making the font page larger instead.");
-                }
 
-                var fontImagePath = Path.Combine(BuildFontsPath, fonts[i].Pages[0].File);
-                DebugEx.Assert(File.Exists(fontImagePath));
-                var page = new Bitmap(fontImagePath);
+            glyphs.AddRange(GetFontGlyphs(fonts));
 
-                for (int j = 0; j < fonts[i].Chars.Count; j++)
-                {
-                    var glyph = GetGlyph(page, fonts[i].Chars[j]);
-                    glyph.Name = $"{fontPrefix},{i},{j}";
-                    bitmaps.Add(glyph);
-                }
-            }
-
-            bitmaps.AddRange(Directory
+            glyphs.AddRange(Directory
                 .GetFiles(Path.Combine(AssetsPath, "Textures"))
-                .Select(item =>
-                {
-                    var bitmap = new BitmapExtended(item);
-                    bitmap.Name = $"{texturePrefix},{Path.GetFileNameWithoutExtension(item)},{BitmapIsTransparent(bitmap)}";
-                    return bitmap;
-                })
+                .Select(item => new TextureGlyph(new Bitmap(item), item))
                 .ToArray());
-            var atlas = AtlasCreator.CreateAtlas("Atlas", bitmaps.ToArray());
-
 
             var outputAssetsPath = Path.Combine(RootPath, nameof(Game), "Assets");
 
             var atlasTexture = new TextureFile(Path.Combine("Assets", "Atlas.png"), true);
-
-            DebugEx.Assert(atlas.Length == 1);
-            atlas[0].texture.Save(Path.Combine(outputAssetsPath, "Atlas.png"), ImageFormat.Png);
+            
+            var packer = new RectanglePacker(atlasSize);
+            foreach (var glyph in glyphs.OrderByDescending(item => item.Size.Area))
+            {
+                if (!packer.Pack(glyph.Size, out Vector2i pos))
+                {
+                    throw new Exception("Ran out of space.");
+                }
+                glyph.Position = pos;
+            }
+            var atlasBitmap = new Bitmap(atlasSize.X, atlasSize.Y);
 
             var textures = new List<AtlasTexture>();
 
-            foreach (var rect in atlas[0].uvRects)
+            foreach (var glyph in glyphs)
             {
-                var split = rect.name.Split(',');
-                var x = (int)Math.Round(rect.uvRect.X * atlas[0].texture.Width);
-                var y = (int)Math.Round(rect.uvRect.Y * atlas[0].texture.Height);
-                if (split[0] == fontPrefix)
+                if (glyph is FontGlyph fontGlyph)
                 {
-                    
-                    var fontIndex = int.Parse(split[1]);
-                    var charIndex = int.Parse(split[2]);
-                    var fontChar = fonts[fontIndex].Chars[charIndex];
+                    var fontChar = fontGlyph.Font.Chars[fontGlyph.CharIndex];
 
-                    fontChar.X = x - 1;
-                    fontChar.Y = y;
-                    fontChar.Width = rect.width;
-                    fontChar.Height = rect.height;
+                    fontChar.X = fontGlyph.Position.X;
+                    fontChar.Y = fontGlyph.Position.Y;
+                    fontChar.Width = fontGlyph.Size.X;
+                    fontChar.Height = fontGlyph.Size.Y;
                 }
-                else if (split[0] == texturePrefix)
+                else if (glyph is TextureGlyph textureGlyph)
                 {
                     textures.Add(new AtlasTexture(
                         atlasTexture,
-                        new Vector2i(x - 1, y),
-                        new Vector2i(rect.width, rect.height),
-                        Convert.ToBoolean(split[2]),
-                        split[1]));
+                        textureGlyph.Position,
+                        textureGlyph.Size,
+                        BitmapIsTransparent(textureGlyph.Bitmap),
+                        Path.GetFileNameWithoutExtension(textureGlyph.TexturePath)));
                 }
-                else
+
+                for (int y = 0; y < glyph.Size.Y; y++)
                 {
-                    DebugEx.Fail("Atlas textures must have a prefix for identification.");
+                    for (int x = 0; x < glyph.Size.X; x++)
+                    {
+                        atlasBitmap.SetPixel(
+                            glyph.Position.X + x, 
+                            glyph.Position.Y + y, 
+                            glyph.Bitmap.GetPixel(x, y));
+                    }
                 }
             }
 
+            atlasBitmap.Save(Path.Combine(outputAssetsPath, "Atlas.png"), ImageFormat.Png);
+
             foreach (var font in fonts)
             {
-                font.Common.ScaleW = atlas[0].texture.Width;
-                font.Common.ScaleH = atlas[0].texture.Height;
                 font.Pages.Clear();
             }
 
@@ -304,6 +289,31 @@ namespace AssetBuilder
                 Serializer.Serialize(assets));
 
             CreateAssetCode(assets);
+        }
+
+        static List<Glyph> GetFontGlyphs(IEnumerable<FontFile> fonts)
+        {
+            var glyphs = new List<Glyph>();
+            
+            foreach (var font in fonts)
+            {
+                if (font.Pages.Count > 1)
+                {
+                    throw new NotImplementedException("Multipage fonts are not supported. Try making the font page larger instead.");
+                }
+
+                var fontImagePath = Path.Combine(BuildFontsPath, font.Pages[0].File);
+                DebugEx.Assert(File.Exists(fontImagePath));
+                var page = new Bitmap(fontImagePath);
+
+                for (int j = 0; j < font.Chars.Count; j++)
+                {
+                    var bitmap = GlyphBitmap(page, font.Chars[j]);
+                    glyphs.Add(new FontGlyph(bitmap, font, j));
+                }
+            }
+
+            return glyphs;
         }
 
         public static void CreateAssetCode(Resources assets)
@@ -338,9 +348,9 @@ namespace Game
             File.WriteAllText(Path.Combine(RootPath, nameof(Game), "ResourcesEx.cs"), code);
         }
 
-        static BitmapExtended GetGlyph(Bitmap page, FontChar fontChar)
+        static Bitmap GlyphBitmap(Bitmap page, FontChar fontChar)
         {
-            var glyph = new BitmapExtended(fontChar.Width, fontChar.Height);
+            var glyph = new Bitmap(fontChar.Width, fontChar.Height);
             for (int y = 0; y < fontChar.Height; y++)
             {
                 for (int x = 0; x < fontChar.Width; x++)
@@ -352,14 +362,13 @@ namespace Game
             return glyph;
         }
 
-        static bool BitmapIsTransparent(BitmapExtended bitmap)
+        static bool BitmapIsTransparent(Bitmap bitmap)
         {
-            var pixels = bitmap.GetPixels();
-            for (int y = 0; y < pixels.Height; y++)
+            for (int y = 0; y < bitmap.Height; y++)
             {
-                for (int x = 0; x < pixels.Width; x++)
+                for (int x = 0; x < bitmap.Width; x++)
                 {
-                    if (pixels.GetPixel(x, y).A < 1)
+                    if (bitmap.GetPixel(x, y).A < 1)
                     {
                         return true;
                     }
