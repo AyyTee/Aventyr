@@ -230,11 +230,12 @@ namespace AssetBuilder
             var packer = new RectanglePacker(atlasSize);
             foreach (var glyph in glyphs.OrderByDescending(item => item.Size.Area))
             {
-                if (!packer.Pack(glyph.Size, out Vector2i pos))
+                var sizePlusMargin = glyph.Size + new Vector2i(2, 2);
+                if (!packer.Pack(sizePlusMargin, out Vector2i pos))
                 {
                     throw new Exception("Ran out of space.");
                 }
-                glyph.Position = pos;
+                glyph.Position = pos + new Vector2i(1, 1);
             }
             var atlasBitmap = new Bitmap(atlasSize.X, atlasSize.Y);
 
@@ -261,16 +262,7 @@ namespace AssetBuilder
                         Path.GetFileNameWithoutExtension(textureGlyph.TexturePath)));
                 }
 
-                for (int y = 0; y < glyph.Size.Y; y++)
-                {
-                    for (int x = 0; x < glyph.Size.X; x++)
-                    {
-                        atlasBitmap.SetPixel(
-                            glyph.Position.X + x, 
-                            glyph.Position.Y + y, 
-                            glyph.Bitmap.GetPixel(x, y));
-                    }
-                }
+                DrawGlyphToAtlas(atlasBitmap, glyph, glyph is TextureGlyph);
             }
 
             atlasBitmap.Save(Path.Combine(outputAssetsPath, "Atlas.png"), ImageFormat.Png);
@@ -289,6 +281,26 @@ namespace AssetBuilder
                 Serializer.Serialize(assets));
 
             CreateAssetCode(assets);
+        }
+
+        static void DrawGlyphToAtlas(Bitmap atlas, Glyph glyph, bool wrapMargin)
+        {
+            for (int y = -1; y < glyph.Size.Y + 1; y++)
+            {
+                for (int x = -1; x < glyph.Size.X + 1; x++)
+                {
+                    atlas.SetPixel(
+                        glyph.Position.X + x,
+                        glyph.Position.Y + y,
+                        glyph.Bitmap.GetPixel(
+                            wrapMargin ? 
+                                MathEx.ValueWrap(x, glyph.Size.X) : 
+                                MathHelper.Clamp(x, 0, glyph.Size.X - 1),
+                            wrapMargin ? 
+                                MathEx.ValueWrap(y, glyph.Size.Y) : 
+                                MathHelper.Clamp(y, 0, glyph.Size.Y - 1)));
+                }
+            }
         }
 
         static List<Glyph> GetFontGlyphs(IEnumerable<FontFile> fonts)

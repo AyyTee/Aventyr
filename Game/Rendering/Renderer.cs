@@ -354,7 +354,7 @@ namespace Game.Rendering
         {
             const float angleMax = (float)(1f * Math.PI / 4);
             float angleScale = 80f;
-            float angleDiff = (float)Math.Abs(MathEx.AngleDiff(line.Angle(), linePrev.Angle()) * angleScale);
+            float angleDiff = Math.Abs(MathEx.AngleDiff(line.Angle(), linePrev.Angle()) * angleScale);
             return Math.Min(angleDiff, angleMax);
         }
 
@@ -380,6 +380,8 @@ namespace Game.Rendering
                     GL.Uniform1(_activeShader.Uniforms[UberShader.MainTexture].Address, 0);
                     GL.ActiveTexture(TextureUnit.Texture0);
                     GL.BindTexture(TextureTarget.Texture2D, data.Model.Texture.Id);
+
+                    GL.TextureParameter(data.Model.Texture.Id, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
 
                     var uvPosition = data.Model.Texture.UvBounds.Position;
                     var uvSize = data.Model.Texture.UvBounds.Size;

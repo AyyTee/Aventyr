@@ -62,8 +62,8 @@ main()
 {{
     if ({IsTextured} == 1)
     {{
-        vec2 flippedTexcoord = fract(vec2({FragUvCoord}.x, {FragUvCoord}.y)) * {UvSize} + {UvPosition};
-        vec4 color = texture({MainTexture}, flippedTexcoord) * {FragColor};
+        vec2 textureCoord = fract({FragUvCoord}) * {UvSize} + {UvPosition};
+        vec4 color = texture({MainTexture}, textureCoord) * {FragColor};
         {OutputColor} = color;
     }}
     else

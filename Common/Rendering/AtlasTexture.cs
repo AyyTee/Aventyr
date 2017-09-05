@@ -25,12 +25,14 @@ namespace Game.Rendering
             get
             {
                 var bounds = new RectangleF(
-                    new Vector2(Position.X / (float)Texture.Size.X, Position.Y / (float)Texture.Size.Y),
                     new Vector2(
-                        Size.X / (float)Texture.Size.X,
-                        Size.Y / (float)Texture.Size.Y));
-                DebugEx.Assert((Vector2i)(bounds.Position * (Vector2)Texture.Size) == Position);
-                DebugEx.Assert((Vector2i)(bounds.Size * (Vector2)Texture.Size) == Size);
+                        (Position.X + 0.5f) / Texture.Size.X,
+                        (Position.Y + 0.5f) / Texture.Size.Y),
+                    new Vector2(
+                        (Size.X - 1) / (float)Texture.Size.X,
+                        (Size.Y - 1) / (float)Texture.Size.Y));
+                //DebugEx.Assert((Vector2i)(bounds.Position * (Vector2)Texture.Size) == Position);
+                //DebugEx.Assert((Vector2i)(bounds.Size * (Vector2)Texture.Size) == Size);
                 return bounds;
             }
         }
