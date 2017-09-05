@@ -79,13 +79,13 @@ namespace TimeLoopInc.Editor
 
             var menuButtons = new Style
             {
-                new StyleElement(typeof(Button), nameof(Button.Height), _ => 60f),
+                new StyleElement<Button, float>(nameof(Button.Height), _ => 60),
             };
 
             var centerText = new Style
             {
-                new StyleElement(typeof(TextBlock), nameof(TextBlock.X), args => AlignX(0.5f)(args)),
-                new StyleElement(typeof(TextBlock), nameof(TextBlock.Y), args => AlignY(0.5f)(args))
+                new StyleElement<TextBlock, float>(nameof(TextBlock.X), args => AlignX(0.5f)(args)),
+                new StyleElement<TextBlock, float>(nameof(TextBlock.Y), args => AlignY(0.5f)(args))
             };
 
             var root = new Frame()

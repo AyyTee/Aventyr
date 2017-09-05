@@ -18,7 +18,7 @@ namespace UiTests
         {
             var style = new Style
             {
-                new StyleElement(typeof(Element), nameof(Element.X), _ => 10f)
+                new StyleElement<Element, float>(nameof(Element.X), _ => 10)
             };
 
             new Frame(style: style)
@@ -34,7 +34,7 @@ namespace UiTests
         {
             var style = new Style
             {
-                new StyleElement(typeof(Element), nameof(Element.X), _ => 10f)
+                new StyleElement<Element, float>(nameof(Element.X), _ => 10)
             };
 
             new Frame(style: style)
@@ -50,7 +50,7 @@ namespace UiTests
         {
             var style = new Style
             {
-                new StyleElement(typeof(Element), nameof(Element.X), _ => 0f)
+                new StyleElement<Element, float>(nameof(Element.X), _ => 0)
             };
 
             var result = style.ToImmutable().Count;

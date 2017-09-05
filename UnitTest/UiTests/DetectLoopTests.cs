@@ -45,13 +45,12 @@ namespace UiTests
 
         public Style GetStyle()
         {
-            var type = typeof(Element);
             return new Style
             {
-                new StyleElement(type, nameof(Element.X), _ => 0f),
-                new StyleElement(type, nameof(Element.Y), _ => 0f),
-                new StyleElement(type, nameof(Element.Width), args => args.Parent.Width),
-                new StyleElement(type, nameof(Element.Height), args => args.Parent.Height),
+                new StyleElement<Element, float>(nameof(Element.X), _ => 0),
+                new StyleElement<Element, float>(nameof(Element.Y), _ => 0f),
+                new StyleElement<Element, float>(nameof(Element.Width), args => args.Parent.Width),
+                new StyleElement<Element, float>(nameof(Element.Height), args => args.Parent.Height),
             };
         }
 
