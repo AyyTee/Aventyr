@@ -21,22 +21,6 @@ namespace AssetBuilder
 {
     public class Program
     {
-        public static string RootPath => Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "../../../.."));
-        public static string ToolsPath => Path.Combine(RootPath, "Tools");
-        public static string BuildPath => Path.Combine(RootPath, "Build");
-        public static string TempPath => Path.Combine(RootPath, "Temp");
-        public static string BuildFontsPath => Path.Combine(BuildPath, "Fonts");
-        public static string BuildOutputPath => Path.Combine(BuildPath, "Output");
-        public static string AssetsPath => Path.Combine(RootPath, "Assets");
-        public static string FontsPath => Path.Combine(AssetsPath, "Fonts");
-        public static string SourcePath => Path.Combine(RootPath, "Source");
-
-        public static string BlenderPath => Path.Combine(ToolsPath, "Blender");
-        public static string BlenderExePath => Path.Combine(BlenderPath, Directory.GetDirectories(BlenderPath).First(), "blender.exe");
-        public static string ModelsPath => Path.Combine(BuildPath, "Models");
-
-        public static string BmFontPath => Path.Combine(ToolsPath, "bmfont64.exe");
-
         public static volatile int FilesDownloaded = 0;
 
         public static void Main(string[] args)
@@ -50,48 +34,51 @@ namespace AssetBuilder
             CreateAtlas(fontCount);
 
             Console.WriteLine("Build complete!");
-            Thread.Sleep(1000);
         }
 
         public static void Assert()
         {
             // Make sure we really are in the correct folder before we start adding and deleting stuff.
-            if (!Directory.Exists(AssetsPath))
+            if (!Directory.Exists(Paths.Assets))
             {
-                throw new DirectoryNotFoundException("Assets folder is missing from root directory.");
+                throw new DirectoryNotFoundException("Assets folder could not be found.");
             }
 
-            if (!Directory.Exists(SourcePath))
+            if (!Directory.Exists(Paths.GameSource))
             {
-                throw new DirectoryNotFoundException("Source folder is missing from root directory.");
+                throw new DirectoryNotFoundException("Game project folder could not be found.");
             }
         }
 
         public static void Clean()
         {
             Console.WriteLine("Cleaning...");
-            if (Directory.Exists(BuildPath))
+            if (Directory.Exists(Paths.Build))
             {
-                Directory.Delete(BuildPath, true);
+                Directory.Delete(Paths.Build, true);
+            }
+
+            if (Directory.Exists(Paths.Temp))
+            {
+                Directory.Delete(Paths.Temp, true);
             }
         }
 
         public static void Initalize()
         {
             Console.WriteLine("Initializing folder structure...");
-            Directory.CreateDirectory(BuildPath);
-            Directory.CreateDirectory(TempPath);
-            Directory.CreateDirectory(ModelsPath);
-            Directory.CreateDirectory(ToolsPath);
-            Directory.CreateDirectory(BlenderPath);
-            Directory.CreateDirectory(BuildFontsPath);
-            Directory.CreateDirectory(BuildOutputPath);
+            Directory.CreateDirectory(Paths.Build);
+            Directory.CreateDirectory(Paths.TempFonts);
+            Directory.CreateDirectory(Paths.Blender);
+            Directory.CreateDirectory(Paths.Temp);
+            Directory.CreateDirectory(Paths.Models);
+            Directory.CreateDirectory(Paths.Tools);
         }
 
         public static void ExportModels()
         {
             Console.WriteLine("Exporting models...\n");
-            CommandLine($"{BlenderExePath} Models.blend --background --python BatchExport.py -- {ModelsPath}", AssetsPath);
+            CommandLine($"{Paths.BlenderExe} Models.blend --background --python BatchExport.py -- {Paths.Models}", Paths.Assets);
         }
 
         class ToolDownload
@@ -112,17 +99,17 @@ namespace AssetBuilder
         {
             Console.WriteLine("Fetching tools...");
 
-            var blenderZipPath = Path.Combine(ToolsPath, "Blender.zip");
+            var blenderZipPath = Path.Combine(Paths.Tools, "Blender.zip");
 
             var toolDownloads = new[]
             {
                 new ToolDownload(
                     new Uri("http://download.blender.org/release/Blender2.78/blender-2.78c-windows32.zip"),
                     blenderZipPath, 
-                    () => ZipFile.ExtractToDirectory(blenderZipPath, BlenderPath)),
+                    () => ZipFile.ExtractToDirectory(blenderZipPath, Paths.Blender)),
                 new ToolDownload(
-                    new Uri("http://www.angelcode.com/products/bmfont/bmfont64.exe"), 
-                    BmFontPath)
+                    new Uri("http://www.angelcode.com/products/bmfont/bmfont64.exe"),
+                    Paths.BmFont)
             };
 
             foreach (var toolDownload in toolDownloads)
@@ -195,14 +182,14 @@ namespace AssetBuilder
         /// <returns>Number of fonts rendered.</returns>
         private static int CreateBitmapFonts()
         {
-            var fontConfigs = Directory.GetFiles(FontsPath, "*.bmfc", SearchOption.AllDirectories);
+            var fontConfigs = Directory.GetFiles(Paths.Fonts, "*.bmfc", SearchOption.AllDirectories);
             foreach (var fontConfig in fontConfigs)
             {
                 /* -c fontconfig.bmfc : Names the configuration file with the options for generating the font.
                  * -o outputfile.fnt : Names of the output font file.
                  * -t textfile.txt : Optional argument that names a text file. All characters present in the text file will be added to the font.*/
-                var outputPath = Path.Combine(BuildFontsPath, Path.GetFileNameWithoutExtension(fontConfig));
-                CommandLine($"{BmFontPath} -c {fontConfig} -o {outputPath}");
+                var outputPath = Path.Combine(Paths.TempFonts, Path.GetFileNameWithoutExtension(fontConfig));
+                CommandLine($"{Paths.BmFont} -c {fontConfig} -o {outputPath}");
             }
 
             return fontConfigs.Length;
@@ -217,7 +204,7 @@ namespace AssetBuilder
             string[] fontFiles;
             do
             {
-                fontFiles = Directory.GetFiles(BuildFontsPath, "*.fnt");
+                fontFiles = Directory.GetFiles(Paths.TempFonts, "*.fnt");
                 Thread.Sleep(200);
             } while (fontFiles.Length < fontCount);
 
@@ -233,13 +220,11 @@ namespace AssetBuilder
             glyphs.AddRange(GetFontGlyphs(fonts));
 
             glyphs.AddRange(Directory
-                .GetFiles(Path.Combine(AssetsPath, "Textures"))
+                .GetFiles(Path.Combine(Paths.Assets, "Textures"))
                 .Select(item => new TextureGlyph(new Bitmap(item), item))
                 .ToArray());
 
-            var outputAssetsPath = Path.Combine(SourcePath, nameof(Game), "Assets");
-
-            var atlasTexture = new TextureFile(Path.Combine("Assets", "Atlas.png"), true);
+            var atlasTexture = new TextureFile("Atlas.png", true);
             
             var packer = new RectanglePacker(atlasSize);
             foreach (var glyph in glyphs.OrderByDescending(item => item.Size.Area))
@@ -279,7 +264,7 @@ namespace AssetBuilder
                 DrawGlyphToAtlas(atlasBitmap, glyph, glyph is TextureGlyph);
             }
 
-            atlasBitmap.Save(Path.Combine(outputAssetsPath, "Atlas.png"), ImageFormat.Png);
+            atlasBitmap.Save(Path.Combine(Paths.Build, "Atlas.png"), ImageFormat.Png);
 
             foreach (var font in fonts)
             {
@@ -291,7 +276,7 @@ namespace AssetBuilder
                 fonts.Select(item => new Game.Rendering.Font(item, new ITexture[] { atlasTexture })).ToImmutableArray());
 
             File.WriteAllText(
-                Path.Combine(outputAssetsPath, "Assets.json"),
+                Path.Combine(Paths.Build, "Assets.json"),
                 Serializer.Serialize(assets));
 
             CreateAssetCode(assets);
@@ -328,7 +313,7 @@ namespace AssetBuilder
                     throw new NotImplementedException("Multipage fonts are not supported. Try making the font page larger instead.");
                 }
 
-                var fontImagePath = Path.Combine(BuildFontsPath, font.Pages[0].File);
+                var fontImagePath = Path.Combine(Paths.TempFonts, font.Pages[0].File);
                 DebugEx.Assert(File.Exists(fontImagePath));
                 var page = new Bitmap(fontImagePath);
 
@@ -371,7 +356,7 @@ namespace Game
     }}
 }}
 ";
-            File.WriteAllText(Path.Combine(SourcePath, "Game", "ResourcesEx.cs"), code);
+            File.WriteAllText(Path.Combine(Paths.GameSource, "ResourcesEx.cs"), code);
         }
 
         static Bitmap GlyphBitmap(Bitmap page, FontChar fontChar)

@@ -66,7 +66,7 @@ namespace Game
 
             DpiScale = ClientSize.X / (float)windowSize.X;
 
-            var data = File.ReadAllText(Path.Combine("Assets", "Assets.json"));
+            var data = File.ReadAllText(Path.Combine(Resources.ResourcePath, "Assets.json"));
             Fonts = Serializer.Deserialize<Resources>(data);
             Textures = Fonts;
             Renderer = new Renderer(this, Fonts);

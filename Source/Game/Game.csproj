@@ -146,7 +146,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animation\AnimationDriver.cs" />
-    <Compile Include="AssetPaths.cs" />
     <Compile Include="Animation\Curve.cs" />
     <Compile Include="Animation\Curve2.cs" />
     <Compile Include="Animation\CurveTransform2.cs" />
@@ -154,11 +153,6 @@
     <Compile Include="Physics\FixtureCoord.cs" />
     <Compile Include="Portals\SimplePortal.cs" />
     <Compile Include="FakeVirtualWindow.cs" />
-    <Compile Include="Assets.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Assets.tt</DependentUpon>
-    </Compile>
     <Compile Include="IController.cs" />
     <Compile Include="InputEx.cs" />
     <Compile Include="Keyframe.cs" />
@@ -219,20 +213,10 @@
     <Compile Include="Physics\WorldEx.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Atlas.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="favicon.ico" />
-    <Content Include="Assets.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Assets.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Assets\Assets.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -271,7 +255,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>rem xcopy /fy "$(SolutionDir)Build\Output\." "Assets\"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -18,6 +19,8 @@ namespace Game
         public ImmutableArray<Font> Fonts { get; private set; }
 
         public Font DefaultFont => Fonts.Single(item => item.FontData.Info.Face == "LatoRegular");
+
+        public static string ResourcePath => Path.Combine("..", "..", "..", "..", "Build");
 
         public Resources()
         {

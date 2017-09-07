@@ -75,7 +75,7 @@ namespace Game.Rendering
 
             try
             {
-                using (var file = new Bitmap(Filename))
+                using (var file = new Bitmap(Path.Combine(Resources.ResourcePath, Filename)))
                 {
                     LoadImage(file);
                 }
