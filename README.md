@@ -1,4 +1,4 @@
-# Aventyr
+# Aventyr Project
 A 2D portal game I am working on.
 
 A quick demo of the physics engine is available here:
