@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>AssetBuilder</RootNamespace>
     <AssemblyName>AssetBuilder</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -71,6 +72,10 @@
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{77142cc5-9e20-480f-859e-51d0ff10a001}</Project>
       <Name>Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileFormatWavefront\FileFormatWavefront.csproj">
+      <Project>{878ec1c4-d57e-4749-ae1f-41f393977655}</Project>
+      <Name>FileFormatWavefront</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

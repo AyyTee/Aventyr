@@ -16,7 +16,7 @@ namespace Game.Rendering
     {
         Texture _texture;
         [DataMember]
-        public string Filename { get; }
+        public string Filepath { get; }
 
         public bool IsTransparent => _texture.IsTransparent;
         public Vector2i Size => _texture.Size;
@@ -24,9 +24,9 @@ namespace Game.Rendering
 
         public Common.RectangleF UvBounds => _texture.UvBounds;
 
-        public TextureFile(string filename, bool deferLoad = false)
+        public TextureFile(string filepath, bool deferLoad = false)
         {
-            Filename = filename;
+            Filepath = filepath;
             if (!deferLoad)
             {
                 LoadImage();
@@ -75,7 +75,7 @@ namespace Game.Rendering
 
             try
             {
-                using (var file = new Bitmap(Path.Combine(Resources.ResourcePath, Filename)))
+                using (var file = new Bitmap(Path.Combine(Resources.ResourcePath, Filepath)))
                 {
                     LoadImage(file);
                 }

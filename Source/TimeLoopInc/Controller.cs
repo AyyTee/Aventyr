@@ -15,6 +15,7 @@ using Ui;
 using TimeLoopInc.Editor;
 using Ui.Elements;
 using Ui.Args;
+using System.IO;
 
 namespace TimeLoopInc
 {
@@ -32,8 +33,6 @@ namespace TimeLoopInc
         public Controller(IVirtualWindow window)
         {
             _window = window;
-
-            //FileFormatWavefront.FileFormatObj.Load("");
 
             var menuButtons = new Style
             {

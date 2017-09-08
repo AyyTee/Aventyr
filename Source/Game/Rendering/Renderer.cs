@@ -377,16 +377,11 @@ namespace Game.Rendering
                     data.Model.Texture != null ? 1 : 0);
                 if (data.Model.Texture != null)
                 {
-                    GL.Uniform1(_activeShader.Uniforms[UberShader.MainTexture].Address, 0);
-                    GL.ActiveTexture(TextureUnit.Texture0);
-                    GL.BindTexture(TextureTarget.Texture2D, data.Model.Texture.Id);
+                    _state.SetTexture(data.Model.Texture, _activeShader);
 
                     GL.TextureParameter(data.Model.Texture.Id, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
 
-                    var uvPosition = data.Model.Texture.UvBounds.Position;
-                    var uvSize = data.Model.Texture.UvBounds.Size;
-                    GL.Uniform2(_activeShader.Uniforms[UberShader.UvPosition].Address, ref uvPosition);
-                    GL.Uniform2(_activeShader.Uniforms[UberShader.UvSize].Address, ref uvSize);
+                    _state.SetUvBounds(data.Model.Texture.UvBounds, _activeShader);
                 }
 
                 GL.Uniform1(

@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetBuilder", "AssetBuilde
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "Common\Common.csproj", "{77142CC5-9E20-480F-859E-51D0FF10A001}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileFormatWavefront", "FileFormatWavefront\FileFormatWavefront.csproj", "{878EC1C4-D57E-4749-AE1F-41F393977655}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{77142CC5-9E20-480F-859E-51D0FF10A001}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77142CC5-9E20-480F-859E-51D0FF10A001}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77142CC5-9E20-480F-859E-51D0FF10A001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{878EC1C4-D57E-4749-AE1F-41F393977655}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{878EC1C4-D57E-4749-AE1F-41F393977655}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{878EC1C4-D57E-4749-AE1F-41F393977655}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{878EC1C4-D57E-4749-AE1F-41F393977655}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

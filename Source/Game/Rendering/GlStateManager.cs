@@ -15,6 +15,9 @@ namespace Game.Rendering
     {
         readonly Dictionary<EnableCap, Stack<bool>> _enableCapStacks = new Dictionary<EnableCap, Stack<bool>>();
 
+        int _currentTexture = -1;
+        RectangleF? _uvBounds = null;
+
         public GlStateManager()
         {
             // Only initialize the enable caps we'll be using.
@@ -29,7 +32,7 @@ namespace Game.Rendering
         {
             var stack = new Stack<bool>();
             stack.Push(initialValue);
-            Set(cap, initialValue);
+            SetValue(cap, initialValue);
             _enableCapStacks.Add(cap, stack);
         }
 
@@ -44,7 +47,7 @@ namespace Game.Rendering
             stateChange.Dispose();
         }
 
-        static void Set(EnableCap enableCap, bool enable)
+        static void SetValue(EnableCap enableCap, bool enable)
         {
             if (enable)
             {
@@ -54,6 +57,34 @@ namespace Game.Rendering
             {
                 GL.Disable(enableCap);
             }
+        }
+
+        public void SetTexture(ITexture texture, Shader activeShader)
+        {
+            if (_currentTexture != texture.Id)
+            {
+                GL.Uniform1(activeShader.Uniforms[UberShader.MainTexture].Address, 0);
+                GL.ActiveTexture(TextureUnit.Texture0);
+                GL.BindTexture(TextureTarget.Texture2D, texture.Id);
+
+                _currentTexture = texture.Id;
+            }
+        }
+
+        public void SetUvBounds(RectangleF uvBounds, Shader activeShader)
+        {
+            var uvPosition = uvBounds.Position;
+            var uvSize = uvBounds.Size;
+            if (uvPosition != _uvBounds?.Position)
+            {
+                GL.Uniform2(activeShader.Uniforms[UberShader.UvPosition].Address, ref uvPosition);
+            }
+            if (uvSize != _uvBounds?.Size)
+            {
+                GL.Uniform2(activeShader.Uniforms[UberShader.UvSize].Address, ref uvSize);
+            }
+
+            _uvBounds = uvBounds;
         }
 
         public class StateChange : IDisposable
@@ -75,7 +106,7 @@ namespace Game.Rendering
                 stateManager._enableCapStacks[enableCap].Push(current);
                 if (current != _previous)
                 {
-                    Set(EnableCap, current);
+                    SetValue(EnableCap, current);
                 }
             }
 
@@ -89,7 +120,7 @@ namespace Game.Rendering
                     DebugEx.Assert(_stateManager._enableCapStacks[EnableCap].Count == _stackSize, $"{nameof(StateChange)} disposed out of order.");
                     if (Current != _previous)
                     {
-                        Set(EnableCap, _previous);
+                        SetValue(EnableCap, _previous);
                     }
                 }
             }

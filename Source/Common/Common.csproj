@@ -84,6 +84,7 @@
     <Compile Include="Models\IMesh.cs" />
     <Compile Include="Models\Mesh.cs" />
     <Compile Include="Models\Model.cs" />
+    <Compile Include="Models\ModelFile.cs" />
     <Compile Include="Models\ReadOnlyMesh.cs" />
     <Compile Include="OrderedSet.cs" />
     <Compile Include="Rendering\AtlasTexture.cs" />
@@ -164,6 +165,10 @@
     <ProjectReference Include="..\FarseerPhysics\Farseer Physics.csproj">
       <Project>{a4610e4c-dd34-428b-babb-779ca0b5993a}</Project>
       <Name>Farseer Physics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileFormatWavefront\FileFormatWavefront.csproj">
+      <Project>{878ec1c4-d57e-4749-ae1f-41f393977655}</Project>
+      <Name>FileFormatWavefront</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

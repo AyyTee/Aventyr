@@ -1,4 +1,5 @@
-﻿using Game.Rendering;
+﻿using Common.Models;
+using Game.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -17,6 +18,8 @@ namespace Game
         public ImmutableArray<AtlasTexture> Textures { get; private set; }
         [DataMember]
         public ImmutableArray<Font> Fonts { get; private set; }
+        [DataMember]
+        public ImmutableArray<ModelFile> Models { get; private set; }
 
         public Font DefaultFont => Fonts.Single(item => item.FontData.Info.Face == "LatoRegular");
 
@@ -28,10 +31,11 @@ namespace Game
             Fonts = new Font[0].ToImmutableArray();
         }
 
-        public Resources(ImmutableArray<AtlasTexture> textures, ImmutableArray<Font> fonts)
+        public Resources(ImmutableArray<AtlasTexture> textures, ImmutableArray<Font> fonts, ImmutableArray<ModelFile> models)
         {
             Textures = textures;
             Fonts = fonts;
+            Models = models;
         }
     }
 }
