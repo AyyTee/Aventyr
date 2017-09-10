@@ -13,8 +13,8 @@ namespace Common.Models
     [DataContract]
     public class ModelFile
     {
-        Scene _model;
-        public Scene Model
+        Model _model;
+        public Model Model
         {
             get
             {

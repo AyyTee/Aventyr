@@ -68,6 +68,7 @@
     <Compile Include="GameTests\FakeTexture.cs" />
     <Compile Include="GameTests\FontTests.cs" />
     <Compile Include="GameTests\IRenderableExTests.cs" />
+    <Compile Include="GameTests\ModelTests.cs" />
     <Compile Include="TimeLoopIncTests\EditorControllerTests.cs" />
     <Compile Include="TimeLoopIncTests\SceneRenderTests.cs" />
     <Compile Include="TimeLoopIncTests\SceneTests.cs" />
@@ -109,6 +110,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Data\Box.mtl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Box.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Inconsolata.fnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -134,6 +141,10 @@
     <ProjectReference Include="..\FarseerPhysics\Farseer Physics.csproj">
       <Project>{A4610E4C-DD34-428B-BABB-779CA0B5993A}</Project>
       <Name>Farseer Physics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FileFormatWavefront\FileFormatWavefront.csproj">
+      <Project>{878ec1c4-d57e-4749-ae1f-41f393977655}</Project>
+      <Name>FileFormatWavefront</Name>
     </ProjectReference>
     <ProjectReference Include="..\Game\Game.csproj">
       <Project>{CE5CD75D-8626-4CD8-83FC-B7A4868DAEC0}</Project>

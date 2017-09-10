@@ -19,35 +19,30 @@ namespace Game.Rendering
         public bool IsTransparent { get; private set; }
         [DataMember]
         public string Name { get; private set; }
+        [DataMember]
+        public bool MirrorY { get; private set; }
         public int Id => Texture.Id;
-        public RectangleF UvBounds
-        {
-            get
-            {
-                var bounds = new RectangleF(
-                    new Vector2(
-                        (Position.X + 0.5f) / Texture.Size.X,
-                        (Position.Y + 0.5f) / Texture.Size.Y),
-                    new Vector2(
-                        (Size.X - 1) / (float)Texture.Size.X,
-                        (Size.Y - 1) / (float)Texture.Size.Y));
-                //DebugEx.Assert((Vector2i)(bounds.Position * (Vector2)Texture.Size) == Position);
-                //DebugEx.Assert((Vector2i)(bounds.Size * (Vector2)Texture.Size) == Size);
-                return bounds;
-            }
-        }
+        public RectangleF UvBounds => 
+            new RectangleF(
+                new Vector2(
+                    Position.X / (float)Texture.Size.X,
+                    (Position.Y + (MirrorY ? Size.Y : 0)) / (float)Texture.Size.Y),
+                new Vector2(
+                    Size.X / (float)Texture.Size.X,
+                    Size.Y / (float)Texture.Size.Y * (MirrorY ? -1 : 1)));
         [DataMember]
         public Vector2i Position { get; private set; }
         [DataMember]
         public Vector2i Size { get; private set; }
 
-        public AtlasTexture(TextureFile texture, Vector2i position, Vector2i size, bool isTranparent, string name)
+        public AtlasTexture(TextureFile texture, Vector2i position, Vector2i size, bool isTranparent, string name, bool mirrorY = false)
         {
             Texture = texture;
             Position = position;
             Size = size;
             IsTransparent = isTranparent;
             Name = name;
+            MirrorY = mirrorY;
         }
     }
 }

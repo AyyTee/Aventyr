@@ -6,18 +6,18 @@ namespace FileFormatWavefront.Model
     public struct Index
     {
         /// <summary>
-        /// The vertex index.
+        /// The Vector3 index.
         /// </summary>
-        public int vertex;
+        public int Vertex;
 
         /// <summary>
         /// The uv index.
         /// </summary>
-        public int? uv;
+        public int? Uv;
 
         /// <summary>
         /// The normal index.
         /// </summary>
-        public int? normal;
+        public int? Normal;
     }
 }

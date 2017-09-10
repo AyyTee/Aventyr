@@ -40,6 +40,7 @@ namespace TimeLoopInc.Editor
         int _saveChangeCurrent;
         ToolData _tool;
         readonly ImmutableArray<ToolData> _tools;
+        readonly SceneRender _sceneRender;
 
         private class ToolData
         {
@@ -76,6 +77,7 @@ namespace TimeLoopInc.Editor
             Window = window;
             _controller = controller;
             _tool = _tools[0];
+            _sceneRender = new SceneRender(Window, new TimeLoopInc.Scene());
 
             var menuButtons = new Style
             {
@@ -398,11 +400,12 @@ namespace TimeLoopInc.Editor
             else
             {
                 var scene = Scene.CreateScene();
+                _sceneRender.Scene = scene;
 
                 var layer = new Layer
                 {
                     Camera = Camera,
-                    Renderables = SceneRender.RenderInstant(scene, scene.GetSceneInstant(0), 1, scene.Portals, Window.Fonts.LatoRegular())
+                    Renderables = _sceneRender.RenderInstant(scene.GetSceneInstant(0), 1, scene.Portals, Window.Resources.LatoRegular())
                         .Cast<IRenderable>()
                         .ToList()
                 };

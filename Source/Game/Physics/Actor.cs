@@ -41,11 +41,6 @@ namespace Game.Physics
         public BodyType BodyType { get; private set; }
         [DataMember]
         Vector2 _scale = new Vector2(1, 1);
-        /// <summary>
-        /// Used for storing body data when serialized.
-        /// </summary>
-        [DataMember]
-        BodyMemento _body;
         [DataMember]
         Vector2[] _vertices;
         /// <summary>Copy of local coordinates for collision mask.</summary>

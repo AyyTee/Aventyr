@@ -6,6 +6,7 @@ using System.Linq;
 using FileFormatWavefront.Extensions;
 using FileFormatWavefront.Internals;
 using FileFormatWavefront.Model;
+using OpenTK.Graphics;
 
 namespace FileFormatWavefront
 {
@@ -190,17 +191,17 @@ namespace FileFormatWavefront
             return textureMap;
         }
 
-        private static Colour ReadColour(string lineData)
+        private static Color4 ReadColour(string lineData)
         {
 
             //  Get the colour parts.
             var colourParts = lineData.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            return new Colour
+            return new Color4
             {
-                r = float.Parse(colourParts[0]),
-                g = float.Parse(colourParts[1]),
-                b = float.Parse(colourParts[2]),
-                a = colourParts.Length == 4 ? float.Parse(colourParts[3]) : 1.0f,
+                R = float.Parse(colourParts[0]),
+                G = float.Parse(colourParts[1]),
+                B = float.Parse(colourParts[2]),
+                A = colourParts.Length == 4 ? float.Parse(colourParts[3]) : 1.0f,
             };
         }
 

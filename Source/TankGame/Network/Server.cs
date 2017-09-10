@@ -60,7 +60,7 @@ namespace TankGame.Network
 
             Entity entity2 = new Entity(_scene);
             entity2.AddModel(ModelFactory.CreatePlane(new Vector2(10, 10), Color.White, new Vector3(-5, -5, 0)));
-            entity2.ModelList[0].SetTexture(_window.Textures?.Default());
+            entity2.ModelList[0].SetTexture(_window.Resources?.Default());
 
             _walls.Add(InitNetObject(new Wall(_scene, PolygonFactory.CreateRectangle(3, 2))));
             _walls[0].SetTransform(new Transform2(new Vector2(3, 0)));
@@ -110,7 +110,7 @@ namespace TankGame.Network
 
             _fpsCounter.Enqueue((float)timeDelta);
             gui.Renderables.Add(Draw.Text(
-                _window.Fonts?.LatoRegular(),
+                _window.Resources?.LatoRegular(),
                 new Vector2(),
                 $"Server\nId {_server.UniqueIdentifier}\n\nFPS\nAvg {(1 / _fpsCounter.GetAverage()).ToString("00.00")}\nMin {(1 / _fpsCounter.Queue.Max()).ToString("00.00")}"));
             _window.Layers.Add(gui);

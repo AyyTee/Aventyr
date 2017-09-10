@@ -5,6 +5,8 @@ using System.Linq;
 using FileFormatWavefront.Extensions;
 using FileFormatWavefront.Internals;
 using FileFormatWavefront.Model;
+using OpenTK;
+using System.Collections.Immutable;
 
 namespace FileFormatWavefront
 {
@@ -22,7 +24,7 @@ namespace FileFormatWavefront
         /// <returns>
         /// A <see cref="FileLoadResult{TModel}" /> containing the file load result.
         /// </returns>
-        public static FileLoadResult<Scene> Load(string path, bool loadTextureImages)
+        public static FileLoadResult<Model.Model> Load(string path, bool loadTextureImages)
         {
             //  Create a stream reader.
             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -44,13 +46,13 @@ namespace FileFormatWavefront
         /// <returns>
         /// The file load result.
         /// </returns>
-        private static FileLoadResult<Scene> ReadScene(StreamReader reader, string path, bool loadTextureImages)
+        private static FileLoadResult<Model.Model> ReadScene(StreamReader reader, string path, bool loadTextureImages)
         {
             //  Keep track of messages and the raw data we will use to build a scene.
             var messages = new List<Message>();
-            var uvs = new List<UV>();
-            var normals = new List<Vertex>();
-            var vertices = new List<Vertex>();
+            var uvs = new List<Vector2>();
+            var normals = new List<Vector3>();
+            var vertices = new List<Vector3>();
             var interimFaces = new List<InterimFace>();
             var materials = new List<Material>();
             var groups = new List<Group>();
@@ -75,8 +77,7 @@ namespace FileFormatWavefront
                     continue;
 
                 //  Try and read the line type and data.
-                string lineType, lineData;
-                if (LineData.TryReadLineType(line, out lineType, out lineData) == false)
+                if (LineData.TryReadLineType(line, out string lineType, out string lineData) == false)
                     continue;
 
                 //  Read texture coordinates.
@@ -88,11 +89,11 @@ namespace FileFormatWavefront
                         var dataStrings = lineData.Split(dataSeparators, StringSplitOptions.RemoveEmptyEntries);
 
                         //  Add the UV.
-                        uvs.Add(new UV
-                                {
-                                    u = float.Parse(dataStrings[0]),
-                                    v = float.Parse(dataStrings[1])
-                                });
+                        uvs.Add(new Vector2
+                            {
+                                X = float.Parse(dataStrings[0]),
+                                Y = float.Parse(dataStrings[1])
+                            });
                     }
                     catch (Exception exception)
                     {
@@ -106,11 +107,11 @@ namespace FileFormatWavefront
                     {
                         //  Split the line data into normal coordinates.
                         var dataStrings = lineData.Split(dataSeparators, StringSplitOptions.RemoveEmptyEntries);
-                        normals.Add(new Vertex
+                        normals.Add(new Vector3
                                 {
-                                    x = float.Parse(dataStrings[0]),
-                                    y = float.Parse(dataStrings[1]),
-                                    z = float.Parse(dataStrings[2])
+                                    X = float.Parse(dataStrings[0]),
+                                    Y = float.Parse(dataStrings[1]),
+                                    Z = float.Parse(dataStrings[2])
                                 });
                     }
                     catch (Exception exception)
@@ -119,23 +120,23 @@ namespace FileFormatWavefront
                             "There was an error reading the normal data.", exception));
                     }
                 }
-                else if (lineType.IsLineType(LineTypeVertex))
+                else if (lineType.IsLineType(LineTypeVector3))
                 {
                     try
                     {
-                        //  Split the line data into vertex coordinates.
+                        //  Split the line data into Vector3 coordinates.
                         var dataStrings = lineData.Split(dataSeparators, StringSplitOptions.RemoveEmptyEntries);
-                        vertices.Add(new Vertex
+                        vertices.Add(new Vector3
                                 {
-                                    x = float.Parse(dataStrings[0]),
-                                    y = float.Parse(dataStrings[1]),
-                                    z = float.Parse(dataStrings[2])
+                                    X = float.Parse(dataStrings[0]),
+                                    Y = float.Parse(dataStrings[1]),
+                                    Z = float.Parse(dataStrings[2])
                                 });
                     }
                     catch (Exception exception)
                     {
                         messages.Add(new Message(MessageType.Error, path, lineNumberCounter,
-                            "There was an error reading the vertex data.", exception));
+                            "There was an error reading the Vector3 data.", exception));
                     }
                 }
                 else if (lineType.IsLineType(LineTypeFace))
@@ -150,14 +151,14 @@ namespace FileFormatWavefront
                         {
                             //  Split the parts.
                             var parts = indexString.Split(new[] { '/' }, StringSplitOptions.None);
-                            var vertex = MapIndex(vertices.Count, int.Parse(parts[0]));
+                            var Vector3 = MapIndex(vertices.Count, int.Parse(parts[0]));
                             var uv = (parts.Length > 1 && parts[1].Length > 0) ? (int?)MapIndex(uvs.Count, int.Parse(parts[1])) : null;
                             var normal = (parts.Length > 2 && parts[2].Length > 0) ? (int?)MapIndex(normals.Count, int.Parse(parts[2])) : null;
                             indices.Add(new Index
                                         {
-                                            vertex = vertex,
-                                            uv = uv,
-                                            normal = normal
+                                            Vertex = Vector3,
+                                            Uv = uv,
+                                            Normal = normal
                                         });
                         }
                         interimFaces.Add(new InterimFace
@@ -192,7 +193,7 @@ namespace FileFormatWavefront
                     catch (Exception exception)
                     {
                         messages.Add(new Message(MessageType.Error, path, lineNumberCounter,
-                            string.Format("Failed to load material file '{0}'.", materialPath), exception));
+                            $"Failed to load material file '{materialPath}'.", exception));
                     }
                 }
                 else if (lineType.IsLineType(LineTypeUseMaterial))
@@ -213,13 +214,12 @@ namespace FileFormatWavefront
                     if(currentGroup == null)
                     {
                         messages.Add(new Message(MessageType.Warning, path, lineNumberCounter,
-                            string.Format("Cannot set smoothing group '{0}' as the current context has no group.", lineData)));
+                            $"Cannot set smoothing group '{lineData}' as the current context has no group."));
                     }
                     else
                     {
                         //  The smoothing group is an int, if we can get it.
-                        int smoothingGroup;
-                        if(int.TryParse(lineData, out smoothingGroup))
+                        if (int.TryParse(lineData, out int smoothingGroup))
                             currentGroup.SetSmoothingGroup(smoothingGroup);
                         currentGroup.SetSmoothingGroup(null);
                     }
@@ -230,14 +230,14 @@ namespace FileFormatWavefront
                     if (objectName != null)
                     {
                         messages.Add(new Message(MessageType.Warning, path, lineNumberCounter,
-                            string.Format("An object name statement to set the name to '{0}' will overwrite the current object name '{1}'.", lineData, objectName)));
+                            $"An object name statement to set the name to '{lineData}' will overwrite the current object name '{objectName}'."));
                     }
                     objectName = lineData;
                 }
                 else
                 {
                     messages.Add(new Message(MessageType.Warning, path, lineNumberCounter,
-                            string.Format("Skipped unknown line type '{0}'.", lineType)));
+                            $"Skipped unknown line type '{lineType}'."));
                 }
             }
 
@@ -250,7 +250,7 @@ namespace FileFormatWavefront
                 var material = materials.FirstOrDefault(m => m.Name == interimFace.materialName);
                 if (material == null)
                     messages.Add(new Message(MessageType.Warning, path, lineNumberCounter,
-                        string.Format("Material '{0}' is referenced for a face, but not included in any material files.", interimFace.materialName)));
+                        $"Material '{interimFace.materialName}' is referenced for a face, but not included in any material files."));
 
                 //  If the face is grouped, add it to the group. Otherwise add it to the ungrouped faces.
                 var face = new Face(material, interimFace.indices);
@@ -260,7 +260,16 @@ namespace FileFormatWavefront
                     ungroupedFaces.Add(face);
             }
 
-            return new FileLoadResult<Scene>(new Scene(vertices, uvs, normals, ungroupedFaces, groups, materials, objectName), messages);
+            return new FileLoadResult<Model.Model>(
+                new Model.Model(
+                    vertices.ToImmutableArray(), 
+                    uvs.ToImmutableArray(), 
+                    normals.ToImmutableArray(), 
+                    ungroupedFaces.ToImmutableArray(), 
+                    groups.ToImmutableArray(), 
+                    materials.ToImmutableArray(), 
+                    objectName), 
+                messages);
         }
 
         /// <summary>
@@ -278,7 +287,7 @@ namespace FileFormatWavefront
 
         private const string LineTypeTextureCoordinate = "vt";
         private const string LineTypeNormalCoordinate = "vn";
-        private const string LineTypeVertex = "v";
+        private const string LineTypeVector3 = "v";
         private const string LineTypeFace = "f";
         private const string LineTypeMaterialLibrary = "mtllib";
         private const string LineTypeUseMaterial = "usemtl";
@@ -296,7 +305,6 @@ namespace FileFormatWavefront
             public Group group;
             public string materialName;
             public List<Index> indices;
-            public bool smoothShading;
         }
     }
 }

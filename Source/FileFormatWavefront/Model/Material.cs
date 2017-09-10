@@ -1,3 +1,5 @@
+using OpenTK.Graphics;
+
 namespace FileFormatWavefront.Model
 {
     /// <summary>
@@ -13,16 +15,16 @@ namespace FileFormatWavefront.Model
         /// <summary>
         /// Gets the ambient.
         /// </summary>
-        public Colour Ambient { get; internal set; }
+        public Color4 Ambient { get; internal set; }
 
         /// <summary>
         /// Gets the diffuse.
         /// </summary>
-        public Colour Diffuse { get; internal set; }
+        public Color4 Diffuse { get; internal set; }
         /// <summary>
         /// Gets the specular.
         /// </summary>
-        public Colour Specular { get; internal set; }
+        public Color4 Specular { get; internal set; }
         /// <summary>
         /// Gets the shininess.
         /// </summary>

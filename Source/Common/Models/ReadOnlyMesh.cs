@@ -3,55 +3,28 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Game.Common;
+using System.Collections.Immutable;
 
 namespace Game.Models
 {
     public class ReadOnlyMesh : IMesh
     {
-        public readonly ReadOnlyCollection<Vertex> Vertices;
-        public readonly ReadOnlyCollection<int> Indices;
+        public readonly ImmutableArray<Vertex> Vertices;
+        public readonly ImmutableArray<int> Indices;
 
         public bool IsTransparent => Vertices.Any(item => item.Color.A < 1);
 
         public ReadOnlyMesh(IMesh mesh)
-            : this(mesh.GetVertices(), mesh.GetIndices())
+            : this(mesh.GetVertices().ToImmutableArray(), mesh.GetIndices().ToImmutableArray())
         {
         }
 
-        public ReadOnlyMesh(IList<Vertex> vertices, IList<int> indices)
+        public ReadOnlyMesh(ImmutableArray<Vertex> vertices, ImmutableArray<int> indices)
         {
-            Vertices = new ReadOnlyCollection<Vertex>(vertices);
-            Indices = new ReadOnlyCollection<int>(indices);
-            DebugEx.Assert(Indices.Count == 0 || Indices.Max() < Vertices.Count);
-            DebugEx.Assert(Indices.Count % 3 == 0);
-        }
-
-        public ReadOnlyMesh(IEnumerable<Triangle> triangles)
-        {
-            List<Vertex> vertices = new List<Vertex>();
-            List<int> triangleIndices = new List<int>();
-
-            foreach (Triangle t in triangles)
-            {
-                int[] triangle = new int[3];
-                for (int j = 0; j < 3; j++)
-                {
-                    Vertex v = t[0].ShallowClone();
-                    int index = vertices.FindIndex(item => v.Equals(item));
-                    if (index != -1)
-                    {
-                        triangle[j] = index;
-                    }
-                    else
-                    {
-                        triangle[j] = vertices.Count - 1;
-                    }
-                }
-                triangleIndices.AddRange(triangle);
-            }
-
-            Vertices = new ReadOnlyCollection<Vertex>(vertices);
-            Indices = new ReadOnlyCollection<int>(triangleIndices);
+            Vertices = vertices;
+            Indices = indices;
+            DebugEx.Assert(Indices.Length == 0 || Indices.Max() < Vertices.Length);
+            DebugEx.Assert(Indices.Length % 3 == 0);
         }
 
         public List<Vertex> GetVertices()

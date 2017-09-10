@@ -379,7 +379,11 @@ namespace Game.Rendering
                 {
                     _state.SetTexture(data.Model.Texture, _activeShader);
 
+                    var interpolation = data.Model.LinearInterpolation ? 
+                        TextureMinFilter.Linear : 
+                        TextureMinFilter.Nearest;
                     GL.TextureParameter(data.Model.Texture.Id, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+                    GL.TextureParameter(data.Model.Texture.Id, TextureParameterName.TextureMagFilter, (int)interpolation);
 
                     _state.SetUvBounds(data.Model.Texture.UvBounds, _activeShader);
                 }

@@ -33,7 +33,7 @@ for obj in scene.objects:
     name = bpy.path.clean_name(obj.name)
     fn = os.path.join(outputPath, name)
 
-    bpy.ops.export_scene.obj(filepath=fn + ".obj", use_selection=True)
+    bpy.ops.export_scene.obj(filepath=fn + ".obj", use_selection=True, axis_up='Z', axis_forward='X')
 
     # undo the renaming step
     for material in materials:

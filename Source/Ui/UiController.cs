@@ -27,7 +27,7 @@ namespace Ui
         public (Element Element, DateTime Time) LastClick = (null, new DateTime());
         public TimeSpan DoubleClickSpeed { get; set; } = TimeSpan.FromSeconds(0.6);
 
-        public Resources Fonts => _window.Fonts;
+        public Resources Fonts => _window.Resources;
 
         public UiController(IVirtualWindow window, Frame root)
         {

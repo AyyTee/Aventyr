@@ -266,7 +266,8 @@ namespace AssetBuilder
                         textureGlyph.Position,
                         textureGlyph.Size,
                         BitmapIsTransparent(textureGlyph.Bitmap),
-                        Path.GetFileNameWithoutExtension(textureGlyph.TexturePath)));
+                        Path.GetFileNameWithoutExtension(textureGlyph.TexturePath),
+                        true));
                 }
 
                 DrawGlyphToAtlas(atlasBitmap, glyph, glyph is TextureGlyph);

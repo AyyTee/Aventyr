@@ -6,6 +6,10 @@ using Game.Rendering;
 using Game.Serialization;
 using OpenTK;
 using OpenTK.Graphics;
+using System.Linq;
+using System.Collections.Immutable;
+using FileFormatWavefront.Model;
+using System.IO;
 
 namespace Game.Models
 {
@@ -35,6 +39,8 @@ namespace Game.Models
         public bool IsDithered { get; set; }
         [DataMember]
         public IMesh Mesh { get; set; } = new Mesh();
+        [DataMember]
+        public bool LinearInterpolation { get; set; }
         
         public Model()
         {
@@ -109,6 +115,65 @@ namespace Game.Models
                 val[i] = vertices[i].TextureCoord;
             }
             return val;
+        }
+
+        public static List<Model> FromWavefront(FileFormatWavefront.Model.Model model, IVirtualWindow window)
+        {
+            return model.UngroupedFaces
+                .GroupBy(item => item.Material)
+                .Select(item => new Model
+                    {
+                        Mesh = GetMesh(model, item.ToArray()),
+                        Texture = window.Resources.Textures.First(texture => texture.Name == Path.GetFileNameWithoutExtension(item.Key.Name))
+                    })
+                .ToList();
+        }
+
+        static ReadOnlyMesh GetMesh(FileFormatWavefront.Model.Model model, Face[] faces)
+        {
+            var indices = new List<int>();
+            var vertices = new List<Vertex>();
+
+            for (int i = 0; i < faces.Length; i++)
+            {
+                indices.AddRange(GetIndices(faces[i], vertices.Count));
+
+                for (int j = 0; j < faces[i].Indices.Count; j++)
+                {
+                    var indice = faces[i].Indices[j];
+                    vertices.Add(new Vertex(
+                        model.Vertices[indice.Vertex],
+                        indice.Uv == null ?
+                            new Vector2() :
+                            model.Uvs[(int)indice.Uv], 
+                        Color4.White));
+                }
+            }
+
+            return new ReadOnlyMesh(vertices.ToImmutableArray(), indices.ToImmutableArray());
+        }
+
+        static int[] GetIndices(Face face, int offset)
+        {
+            DebugEx.Assert(face.Indices.Count >= 3);
+            var count = (face.Indices.Count - 3) * 3 + 3;
+            var indices = new int[count];
+
+            indices[1] = 1;
+            for (int i = 2; i < indices.Length; i++)
+            {
+                if (i % 3 != 0)
+                {
+                    indices[i] = (i + 1) / 3 + 1;
+                }
+            }
+
+            for (int i = 0; i < indices.Length; i++)
+            {
+                indices[i] += offset;
+            }
+
+            return indices;
         }
     }
 }
