@@ -15,6 +15,8 @@ namespace TimeLoopInc.Editor
         [DataMember]
         public ImmutableHashSet<Vector2i> Walls { get; private set; } = new HashSet<Vector2i>().ToImmutableHashSet();
         [DataMember]
+        public ImmutableHashSet<Vector2i> Floor { get; private set; } = new HashSet<Vector2i>().ToImmutableHashSet();
+        [DataMember]
         public ImmutableHashSet<Vector2i> Exits { get; private set; } = new HashSet<Vector2i>().ToImmutableHashSet();
         [DataMember]
         public ImmutableList<IGridEntity> Entities { get; private set; } = new List<IGridEntity>().ToImmutableList();

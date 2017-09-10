@@ -7,7 +7,7 @@
     <ProjectGuid>{77142CC5-9E20-480F-859E-51D0FF10A001}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Common</RootNamespace>
+    <RootNamespace>Game</RootNamespace>
     <AssemblyName>Common</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -71,6 +71,7 @@
     <Compile Include="ClipPath.cs" />
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="Common\RectangleF.cs" />
+    <Compile Include="Common\RectangleI.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="GenerateSingles.cs" />
     <Compile Include="GlobalEnums.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="ITime.cs" />
     <Compile Include="ITreeNode.cs" />
     <Compile Include="LinqEx.cs" />
+    <Compile Include="ModelGroup.cs" />
     <Compile Include="Models\IMesh.cs" />
     <Compile Include="Models\Mesh.cs" />
     <Compile Include="Models\Model.cs" />

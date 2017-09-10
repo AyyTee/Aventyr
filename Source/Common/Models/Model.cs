@@ -10,6 +10,7 @@ using System.Linq;
 using System.Collections.Immutable;
 using FileFormatWavefront.Model;
 using System.IO;
+using Common;
 
 namespace Game.Models
 {
@@ -117,16 +118,17 @@ namespace Game.Models
             return val;
         }
 
-        public static List<Model> FromWavefront(FileFormatWavefront.Model.Model model, IVirtualWindow window)
+        public static ModelGroup FromWavefront(FileFormatWavefront.Model.Model model, IVirtualWindow window)
         {
-            return model.UngroupedFaces
-                .GroupBy(item => item.Material)
-                .Select(item => new Model
-                    {
-                        Mesh = GetMesh(model, item.ToArray()),
-                        Texture = window.Resources.Textures.First(texture => texture.Name == Path.GetFileNameWithoutExtension(item.Key.Name))
-                    })
-                .ToList();
+            return new ModelGroup(
+                model.UngroupedFaces
+                    .GroupBy(item => item.Material)
+                    .Select(item => new Model
+                        {
+                            Mesh = GetMesh(model, item.ToArray()),
+                            Texture = window.Resources.Textures.First(texture => texture.Name == Path.GetFileNameWithoutExtension(item.Key.Name))
+                        })
+                    .ToImmutableArray());
         }
 
         static ReadOnlyMesh GetMesh(FileFormatWavefront.Model.Model model, Face[] faces)

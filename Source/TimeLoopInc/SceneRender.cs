@@ -1,4 +1,5 @@
-﻿using Game;
+﻿using Common;
+using Game;
 using Game.Common;
 using Game.Models;
 using Game.Portals;
@@ -18,7 +19,7 @@ namespace TimeLoopInc
         readonly IVirtualWindow _window;
         public Scene Scene { get; set; }
         readonly Model _grid;
-        readonly Model _box;
+        readonly ModelGroup _box;
         float _zoomFactor = 1;
         public GridCamera Camera;
 
@@ -30,17 +31,11 @@ namespace TimeLoopInc
             _grid = ModelFactory.CreatePlane(new Vector2(size, size), Color4.White, new Vector3(-size/2, -size/2, 0));
             _grid.Texture = TextureResources.Floor(_window.Resources);
             _grid.TransformUv = new Transform2(size: size);
-            //_grid = ModelFactory.CreateGrid(
-            //    new Vector2i(20, 20),
-            //    Vector2.One,
-            //    Color4.HotPink,
-            //    Color4.LightPink,
-            //    new Vector3(-10, -10, -2));
             
             Scene = scene;
             Camera = new GridCamera(new Transform2(), (float)_window.CanvasSize.XRatio);
 
-            _box = Model.FromWavefront(ModelResources.Box(_window.Resources).Model, _window)[0];
+            _box = Model.FromWavefront(ModelResources.Box(_window.Resources).Model, _window);
         }
 
         public void Update(IVirtualWindow window)
@@ -179,7 +174,7 @@ namespace TimeLoopInc
                             var blockInstant = (BlockInstant)sceneInstant.Entities[b];
 
                             renderable = new Renderable(transform);
-                            renderable.Models.Add(_box);
+                            renderable.Models.AddRange(_box.Models);
                             break;
                         }
                 }
@@ -266,6 +261,32 @@ namespace TimeLoopInc
             return ValueTuple.Create(
                 result.WorldTransform.AddRotation((float)rotationOffset),
                 result.PortalsEntered.Sum(item => ((TimePortal)item.EnterData.EntrancePortal).TimeOffset));
+        }
+
+        public static List<Model> GetWallModels(ISet<Vector2i> floor, ModelGroup wallModel)
+        {
+            var output = new List<Model>();
+
+            foreach (var floorTile in floor)
+            {
+                for (int i = 0; i < GridAngle.CardinalDirections; i++)
+                {
+                    var angle = new GridAngle(i);
+                    if (!floor.Contains(floorTile + angle.Vector))
+                    {
+                        output.AddRange(
+                            wallModel.Models.Select(item =>
+                            {
+                                var clone = item.ShallowClone();
+                                clone.Transform.Position = new Vector3(floorTile.X, floorTile.Y, 0);
+                                clone.Transform.Rotation = new Quaternion(new Vector3(0, 0, (float)angle.Radians));
+                                return clone;
+                            }));
+                    }
+                }
+            }
+
+            return output;
         }
 
         public static Renderable CreateWall(Vector2i position)
