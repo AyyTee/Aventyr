@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using System.Diagnostics;
 using Game.Common;
 
 namespace Game.Rendering
@@ -61,6 +60,7 @@ namespace Game.Rendering
 
         public void SetTexture(ITexture texture, Shader activeShader)
         {
+            DebugEx.Assert(texture.Id != -1);
             if (_currentTexture != texture.Id)
             {
                 GL.Uniform1(activeShader.Uniforms[UberShader.MainTexture].Address, 0);

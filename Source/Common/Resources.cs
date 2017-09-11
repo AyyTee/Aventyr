@@ -15,11 +15,11 @@ namespace Game
     public partial class Resources
     {
         [DataMember]
-        public ImmutableArray<AtlasTexture> Textures { get; private set; }
+        public ImmutableArray<AtlasTexture> Textures { get; private set; } = new AtlasTexture[] { }.ToImmutableArray();
         [DataMember]
-        public ImmutableArray<Font> Fonts { get; private set; }
+        public ImmutableArray<Font> Fonts { get; private set; } = new Font[] { }.ToImmutableArray();
         [DataMember]
-        public ImmutableArray<ModelFile> Models { get; private set; }
+        public ImmutableArray<ModelFile> Models { get; private set; } = new ModelFile[] { }.ToImmutableArray();
 
         public Font DefaultFont => Fonts.Single(item => item.FontData.Info.Face == "LatoRegular");
 

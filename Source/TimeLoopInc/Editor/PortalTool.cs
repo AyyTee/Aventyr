@@ -29,7 +29,7 @@ namespace TimeLoopInc.Editor
             var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
             if (window.ButtonPress(_editor.PlaceButton))
             {
-                var sides = EditorController.PortalValidSides(mouseGridPos, scene.Walls);
+                var sides = EditorController.PortalValidSides(mouseGridPos, scene.Floor);
                 if (sides.Count > 0)
                 {
                     var side = sides

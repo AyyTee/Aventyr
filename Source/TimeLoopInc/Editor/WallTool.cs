@@ -8,6 +8,7 @@ using OpenTK.Input;
 using OpenTK;
 using Game.Common;
 using OpenTK.Graphics;
+using Game.Models;
 
 namespace TimeLoopInc.Editor
 {
@@ -29,15 +30,34 @@ namespace TimeLoopInc.Editor
                 var camera = _editor.Camera;
                 
                 var mousePosition = window.MouseWorldPos(camera);
-                var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
 
-                var walls = GetPointsOnLine(mouseGridPos, (Vector2i)scene.Selected);
+                var color = window.ButtonDown(MouseButton.Left) ? 
+                    new Color4(1, 1, 1, 0.5f) : 
+                    new Color4(1, 0, 0, 0.5f);
 
-                return walls
-                    .Select(item => (IRenderable)Draw.Rectangle((Vector2)item, (Vector2)item + Vector2.One, new Color4(1, 0.5f, 0.5f, 0.5f)))
-                    .ToList();
+                var selectionRegion = (RectangleF)GetSelection(mousePosition);
+
+                var selection = new Model(
+                    ModelFactory.CreatePlaneMesh(
+                        selectionRegion.Position, 
+                        selectionRegion.Position + selectionRegion.Size, 
+                        selectionRegion.Size, 
+                        color))
+                {
+                    Texture = _editor.Window.Resources.Floor()
+                };
+
+                return new List<IRenderable> { new Renderable(selection) };
             }
             return new List<IRenderable>();
+        }
+
+        RectangleI GetSelection(Vector2 mouseWorldPos)
+        {
+            var mouseGridPos = (Vector2i)mouseWorldPos.Floor(Vector2.One);
+            var vMin = Vector2i.ComponentMin(_editor.Scene.Selected.Value, mouseGridPos);
+            var vMax = Vector2i.ComponentMax(_editor.Scene.Selected.Value, mouseGridPos) + new Vector2i(1, 1);
+            return new RectangleI(vMin, vMax - vMin);
         }
 
         public void Update()
@@ -46,12 +66,12 @@ namespace TimeLoopInc.Editor
             var camera = _editor.Camera;
             var mousePosition = window.MouseWorldPos(camera);
             var mouseGridPos = (Vector2i)mousePosition.Floor(Vector2.One);
-            var occupied = _editor.Scene.Walls.Contains(mouseGridPos);
+            var occupied = _editor.Scene.Floor.Contains(mouseGridPos);
             if (window.ButtonPress(MouseButton.Left))
             {
                 if (!occupied)
                 {
-                    var walls = _editor.Scene.Walls.Add(mouseGridPos);
+                    var walls = _editor.Scene.Floor.Add(mouseGridPos);
                     var links = EditorController.GetPortals(
                         portal => EditorController.PortalValidSides(portal.Position, walls).Any(),
                         _editor.Scene.Links);
@@ -63,27 +83,30 @@ namespace TimeLoopInc.Editor
             {
                 if (occupied)
                 {
-                    _editor.ApplyChanges(_editor.Scene.With(walls: _editor.Scene.Walls.Remove(mouseGridPos)));
+                    _editor.ApplyChanges(_editor.Scene.With(floor: _editor.Scene.Floor.Remove(mouseGridPos)));
                 }
                 _editor.ApplyChanges(_editor.Scene.With(mouseGridPos), true);
             }
 
             if (_editor.Scene.Selected != null)
             {
+                var selection = GetSelection(mousePosition);
                 if (window.ButtonRelease(MouseButton.Left))
                 {
                     if (mouseGridPos != _editor.Scene.Selected)
                     {
-                        var walls = GetPointsOnLine(mouseGridPos, (Vector2i)_editor.Scene.Selected).Concat(_editor.Scene.Walls);
-                        _editor.ApplyChanges(_editor.Scene.With(walls: new HashSet<Vector2i>(walls)).With(mouseGridPos));
+                        var floor = Enumerable
+                            .Range(0, selection.Size.X * selection.Size.Y)
+                            .Select(item => selection.Position + new Vector2i(item % selection.Size.X, item / selection.Size.X));
+                        _editor.ApplyChanges(_editor.Scene.With(floor: _editor.Scene.Floor.Union(floor)).With(mouseGridPos));
                     }
                 }
                 else if (window.ButtonRelease(MouseButton.Right))
                 {
                     if (mouseGridPos != _editor.Scene.Selected)
                     {
-                        var walls = _editor.Scene.Walls.Except(GetPointsOnLine(mouseGridPos, (Vector2i)_editor.Scene.Selected));
-                        _editor.ApplyChanges(_editor.Scene.With(walls: new HashSet<Vector2i>(walls)).With(mouseGridPos));
+                        var floor = _editor.Scene.Floor.Where(item => !MathEx.PointInRectangle(selection, item));
+                        _editor.ApplyChanges(_editor.Scene.With(floor: new HashSet<Vector2i>(floor)).With(mouseGridPos));
                     }
                 }
             }

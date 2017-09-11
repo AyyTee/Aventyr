@@ -13,8 +13,6 @@ namespace TimeLoopInc.Editor
         [DataMember]
         public Vector2i? Selected { get; private set; }
         [DataMember]
-        public ImmutableHashSet<Vector2i> Walls { get; private set; } = new HashSet<Vector2i>().ToImmutableHashSet();
-        [DataMember]
         public ImmutableHashSet<Vector2i> Floor { get; private set; } = new HashSet<Vector2i>().ToImmutableHashSet();
         [DataMember]
         public ImmutableHashSet<Vector2i> Exits { get; private set; } = new HashSet<Vector2i>().ToImmutableHashSet();
@@ -35,13 +33,13 @@ namespace TimeLoopInc.Editor
         }
 
         public SceneBuilder With(
-            ISet<Vector2i> walls = null,
+            ISet<Vector2i> floor = null,
             ISet<Vector2i> exits = null,
             IEnumerable<IGridEntity> entities = null,
             IEnumerable<PortalLink> links = null)
         {
             // If nothing has changed, return the original scene.
-            if ((ReferenceEquals(Walls, walls) || walls == null) &&
+            if ((ReferenceEquals(Floor, floor) || floor == null) &&
                 (ReferenceEquals(Exits, exits) || exits == null) &&
                 (ReferenceEquals(Entities, entities) || entities == null) &&
                 (ReferenceEquals(Links, links) || links == null))
@@ -50,7 +48,7 @@ namespace TimeLoopInc.Editor
             }
 
             var clone = (SceneBuilder)MemberwiseClone();
-            clone.Walls = walls?.ToImmutableHashSet() ?? Walls;
+            clone.Floor = floor?.ToImmutableHashSet() ?? Floor;
             clone.Exits = exits?.ToImmutableHashSet() ?? Exits;
             clone.Entities = entities?.ToImmutableList() ?? Entities;
             clone.Links = links?.ToImmutableList() ?? Links;
@@ -76,7 +74,7 @@ namespace TimeLoopInc.Editor
                 portals.GroupBy(item => (item.Position, item.Direction)).All(item => item.Count() == 1),
                 "Portals should not sit on top of eachother.");
 
-            return new Scene(Walls, portals, Entities, Exits);
+            return new Scene(Floor, portals, Entities, Exits);
         }
     }
 }

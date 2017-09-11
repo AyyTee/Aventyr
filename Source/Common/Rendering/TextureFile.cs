@@ -24,13 +24,9 @@ namespace Game.Rendering
 
         public Common.RectangleF UvBounds => _texture.UvBounds;
 
-        public TextureFile(string filepath, bool deferLoad = false)
+        public TextureFile(string filepath)
         {
             Filepath = filepath;
-            if (!deferLoad)
-            {
-                LoadImage();
-            }
         }
 
         void LoadImage(Bitmap image)
@@ -73,16 +69,9 @@ namespace Game.Rendering
                 return;
             }
 
-            try
+            using (var file = new Bitmap(Path.Combine(Resources.ResourcePath, Filepath)))
             {
-                using (var file = new Bitmap(Path.Combine(Resources.ResourcePath, Filepath)))
-                {
-                    LoadImage(file);
-                }
-            }
-            catch (FileNotFoundException)
-            {
-                DebugEx.Assert(false, "Texture missing.");
+                LoadImage(file);
             }
         }
 

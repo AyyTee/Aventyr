@@ -38,21 +38,21 @@ namespace Game.Rendering
             return mesh;
         }
 
-		public static Mesh CreatePlaneMesh(Vector2 scale, Color4 c0, Color4 c1, Color4 c2, Color4 c3, Vector3 offset = new Vector3())
-		{
-			Vertex[] vertices = {
-				new Vertex(new Vector3(0f, scale.Y,  0f) + offset, new Vector2(0, 0), c0),
-				new Vertex(new Vector3(scale.X, scale.Y,  0f) + offset, new Vector2(1, 0), c1),
-				new Vertex(new Vector3(scale.X, 0f,  0f) + offset, new Vector2(1, 1), c2),
-				new Vertex(new Vector3(0f, 0f,  0f) + offset, new Vector2(0, 1), c3)
-			};
+        public static Mesh CreatePlaneMesh(Vector2 scale, Color4 c0, Color4 c1, Color4 c2, Color4 c3, Vector2 uvScale, Vector3 offset = new Vector3())
+        {
+            Vertex[] vertices = {
+                new Vertex(new Vector3(0f, scale.Y,  0f) + offset, new Vector2(), c0),
+                new Vertex(new Vector3(scale.X, scale.Y,  0f) + offset, uvScale.XOnly(), c1),
+                new Vertex(new Vector3(scale.X, 0f,  0f) + offset, uvScale, c2),
+                new Vertex(new Vector3(0f, 0f,  0f) + offset, uvScale.YOnly(), c3)
+            };
 
-			var mesh = new Mesh { Vertices = vertices.ToList() };
-			mesh.Indices.AddRange(new[] { 0, 2, 1 });
-			mesh.Indices.AddRange(new[] { 0, 3, 2 });
+            var mesh = new Mesh { Vertices = vertices.ToList() };
+            mesh.Indices.AddRange(new[] { 0, 2, 1 });
+            mesh.Indices.AddRange(new[] { 0, 3, 2 });
 
-			return mesh;
-		}
+            return mesh;
+        }
 
         public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight)
         {
@@ -64,22 +64,33 @@ namespace Game.Rendering
             return CreatePlaneMesh(topLeft, bottomRight, color, color, color, color);
         }
 
-		public static Mesh CreatePlaneMesh(
-            Vector2 topLeft, 
-            Vector2 bottomRight, 
-            Color4 c0, 
-            Color4 c1, 
-            Color4 c2, 
+        public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight, Vector2 uvScale)
+        {
+            var color = Color4.White;
+            return CreatePlaneMesh(bottomRight - topLeft, color, color, color, color, uvScale, new Vector3(topLeft));
+        }
+
+        public static Mesh CreatePlaneMesh(Vector2 topLeft, Vector2 bottomRight, Vector2 uvScale, Color4 color)
+        {
+            return CreatePlaneMesh(bottomRight - topLeft, color, color, color, color, uvScale, new Vector3(topLeft));
+        }
+
+        public static Mesh CreatePlaneMesh(
+            Vector2 topLeft,
+            Vector2 bottomRight,
+            Color4 c0,
+            Color4 c1,
+            Color4 c2,
             Color4 c3)
-		{
-			return CreatePlaneMesh(bottomRight - topLeft, c0, c1, c2, c3, new Vector3(topLeft));
-		}
+        {
+            return CreatePlaneMesh(bottomRight - topLeft, c0, c1, c2, c3, Vector2.One, new Vector3(topLeft));
+        }
 
         public static Model CreateGrid(
-            Vector2i gridSize, 
-            Vector2 gridTileSize, 
-            Color4 evenTileColor, 
-            Color4 oddTileColor, 
+            Vector2i gridSize,
+            Vector2 gridTileSize,
+            Color4 evenTileColor,
+            Color4 oddTileColor,
             Vector3 offset = new Vector3())
         {
             Mesh mesh = new Mesh();
@@ -88,7 +99,7 @@ namespace Game.Rendering
                 for (int j = 0; j < gridSize.Y; j++)
                 {
                     var plane = CreatePlaneMesh(
-                        gridTileSize, 
+                        gridTileSize,
                         (i + j) % 2 == 0 ? evenTileColor : oddTileColor,
                         new Vector3(i * gridTileSize.X, j * gridTileSize.Y, 0) + offset);
                     mesh.AddMesh(plane);
@@ -140,12 +151,12 @@ namespace Game.Rendering
                 new Vertex(new Vector3(0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f), color),
                 new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f), color),
                 //front
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(0.0f, 1.0f), color), 
-                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(1.0f, 0.0f), color), 
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(0.0f, 1.0f), color),
+                new Vertex(new Vector3(-0.5f, 0.5f,  0.5f) * scale, new Vector2(1.0f, 0.0f), color),
                 new Vertex(new Vector3(-0.5f, 0.5f,  -0.5f) * scale, new Vector2(0.0f, 0.0f), color),
                 new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(1.0f, 1.0f), color),
                 //bottom
-                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f), color), 
+                new Vertex(new Vector3(-0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 1.0f), color),
                 new Vertex(new Vector3(0.5f, -0.5f,  -0.5f) * scale, new Vector2(1.0f, 0.0f), color),
                 new Vertex(new Vector3(0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 0.0f), color),
                 new Vertex(new Vector3(-0.5f, -0.5f,  0.5f) * scale, new Vector2(0.0f, 1.0f), color)
@@ -270,7 +281,7 @@ namespace Game.Rendering
         {
             var mesh = new Mesh();
             AddLines(mesh, lines, color);
-            var model = new Model(mesh) {Wireframe = true};
+            var model = new Model(mesh) { Wireframe = true };
             return model;
         }
 
@@ -350,14 +361,14 @@ namespace Game.Rendering
                 {
                     color = colors[i];
                 }
-                
+
                 var v = new Vector3(vertices[i].X, vertices[i].Y, 0);
                 int index0 = mesh.AddVertex(new Vertex(v, new Vector2(), color));
                 v = new Vector3(vertices[i + 1].X, vertices[i + 1].Y, 0);
                 int index1 = mesh.AddVertex(new Vertex(v, new Vector2(), color));
                 mesh.AddTriangle(index0, index1, index1);
             }
-            var model = new Model(mesh) {Wireframe = true};
+            var model = new Model(mesh) { Wireframe = true };
             return model;
         }
 

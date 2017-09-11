@@ -68,7 +68,6 @@
     <Compile Include="GameTests\FakeTexture.cs" />
     <Compile Include="GameTests\FontTests.cs" />
     <Compile Include="GameTests\IRenderableExTests.cs" />
-    <Compile Include="GameTests\ModelTests.cs" />
     <Compile Include="TimeLoopIncTests\EditorControllerTests.cs" />
     <Compile Include="TimeLoopIncTests\SceneRenderTests.cs" />
     <Compile Include="TimeLoopIncTests\SceneTests.cs" />
@@ -110,12 +109,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Data\Box.mtl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Box.obj">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Inconsolata.fnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

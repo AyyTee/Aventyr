@@ -29,7 +29,7 @@ namespace TimeLoopIncTests
         public void CorrectCameraTransformTest0()
         {
             var scene = LoadLevel("PlayerLeftOfPortal.xml");
-            var window = new FakeVirtualWindow();
+            var window = new FakeVirtualWindow(Config.Resources);
 
             var sceneRender = new SceneRender(window, scene);
             scene.Step(new MoveInput(GridAngle.Right));
@@ -45,7 +45,7 @@ namespace TimeLoopIncTests
         public void CorrectCameraTransformTest1()
         {
             var scene = LoadLevel("PlayerLeftOfPortal.xml");
-            var window = new FakeVirtualWindow();
+            var window = new FakeVirtualWindow(Config.Resources);
 
             var sceneRender = new SceneRender(window, scene);
             scene.Step(new MoveInput(GridAngle.Right));

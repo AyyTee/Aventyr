@@ -188,6 +188,11 @@ namespace Game.Common
         }
         #endregion
         #region Inside
+        public static bool PointInRectangle(RectangleI rectangle, Vector2i point)
+        {
+            return PointInRectangle(rectangle.Position, rectangle.Position + rectangle.Size, point);
+        }
+
         public static bool PointInRectangle(Vector2d v0, Vector2d v1, Vector2d point)
         {
             return ((point.X >= v0.X && point.X <= v1.X) || (point.X <= v0.X && point.X >= v1.X)) &&
@@ -195,6 +200,12 @@ namespace Game.Common
         }
 
         public static bool PointInRectangle(Vector2 v0, Vector2 v1, Vector2 point)
+        {
+            return ((point.X >= v0.X && point.X <= v1.X) || (point.X <= v0.X && point.X >= v1.X)) &&
+                ((point.Y >= v0.Y && point.Y <= v1.Y) || (point.Y <= v0.Y && point.Y >= v1.Y));
+        }
+
+        public static bool PointInRectangle(Vector2i v0, Vector2i v1, Vector2i point)
         {
             return ((point.X >= v0.X && point.X <= v1.X) || (point.X <= v0.X && point.X >= v1.X)) &&
                 ((point.Y >= v0.Y && point.Y <= v1.Y) || (point.Y <= v0.Y && point.Y >= v1.Y));

@@ -1,5 +1,6 @@
-﻿using FileFormatWavefront.Model;
-using Game;
+﻿using Game;
+using Game.Models;
+using Game.Rendering;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,16 +14,7 @@ namespace Common.Models
     [DataContract]
     public class ModelFile
     {
-        Model _model;
-        public Model Model
-        {
-            get
-            {
-                Load();
-                return _model;
-            }
-            private set => _model = value;
-        }
+        ModelGroup _model;
 
         public string Name => Path.GetFileNameWithoutExtension(Filepath);
 
@@ -31,15 +23,16 @@ namespace Common.Models
 
         public ModelFile(string filepath) => Filepath = filepath;
 
-        public void Load()
+        public ModelGroup Load(IVirtualWindow window)
         {
             if (_model == null)
             {
                 var loadResult = FileFormatWavefront.FileFormatObj.Load(Path.Combine(Resources.ResourcePath, Filepath), false);
-                Model = loadResult.Model;
+                _model = Model.FromWavefront(loadResult.Model, window);
             }
+            return _model;
         }
 
-        public void Unload() => Model = null;
+        public void Unload() => _model = null;
     }
 }

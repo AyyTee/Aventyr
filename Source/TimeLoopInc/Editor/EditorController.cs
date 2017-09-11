@@ -279,7 +279,7 @@ namespace TimeLoopInc.Editor
 
         public static SceneBuilder Remove(SceneBuilder scene, Vector2i v)
         {
-            var walls = scene.Walls.Where(item => item != v).ToHashSet();
+            var walls = scene.Floor.Where(item => item != v).ToHashSet();
             return scene.With(
                 walls, 
                 scene.Exits.Where(item => item != v).ToHashSet(), 

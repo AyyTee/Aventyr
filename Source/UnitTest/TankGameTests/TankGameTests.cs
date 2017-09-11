@@ -33,12 +33,12 @@ namespace TankGameTests
             NetTime.SetTime(0);
 
             _netClient = new FakeNetClient(TankGameTestFramework.Program.ClientUniqueId);
-            _clientWindow = new FakeVirtualWindow();
+            _clientWindow = new FakeVirtualWindow(Config.Resources);
             _client = new Client(_clientWindow, null, _netClient);
             _client.Init();
 
             _netServer = new FakeNetServer(TankGameTestFramework.Program.ServerUniqueId);
-            _serverWindow = new FakeVirtualWindow();
+            _serverWindow = new FakeVirtualWindow(Config.Resources);
             _server = new Server(_serverWindow, _netServer);
             _server.Init();
 

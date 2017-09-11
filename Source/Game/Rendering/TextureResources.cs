@@ -10,13 +10,13 @@ namespace Game.Rendering
         public static Font @LatoItalic(this Resources resources) => resources.Fonts.Single(item => item.FontData.Info.Face == "LatoItalic");
         public static Font @LatoRegular(this Resources resources) => resources.Fonts.Single(item => item.FontData.Info.Face == "LatoRegular");
 
-        public static AtlasTexture @Box(this Resources resources) => resources.Textures.Single(item => item.Name == "Box");
-        public static AtlasTexture @Default(this Resources resources) => resources.Textures.Single(item => item.Name == "Default");
-        public static AtlasTexture @Floor(this Resources resources) => resources.Textures.Single(item => item.Name == "Floor");
-        public static AtlasTexture @Grid(this Resources resources) => resources.Textures.Single(item => item.Name == "Grid");
-        public static AtlasTexture @LineBlur(this Resources resources) => resources.Textures.Single(item => item.Name == "LineBlur");
-        public static AtlasTexture @Wall(this Resources resources) => resources.Textures.Single(item => item.Name == "Wall");
-        public static AtlasTexture @WallFade(this Resources resources) => resources.Textures.Single(item => item.Name == "WallFade");
+        public static ITexture @Box(this Resources resources) => resources.Textures.Single(item => item.Name == "Box");
+        public static ITexture @Default(this Resources resources) => resources.Textures.Single(item => item.Name == "Default");
+        public static ITexture @Floor(this Resources resources) => resources.Textures.Single(item => item.Name == "Floor");
+        public static ITexture @Grid(this Resources resources) => resources.Textures.Single(item => item.Name == "Grid");
+        public static ITexture @LineBlur(this Resources resources) => resources.Textures.Single(item => item.Name == "LineBlur");
+        public static ITexture @Wall(this Resources resources) => resources.Textures.Single(item => item.Name == "Wall");
+        public static ITexture @WallFade(this Resources resources) => resources.Textures.Single(item => item.Name == "WallFade");
 
     }
 }

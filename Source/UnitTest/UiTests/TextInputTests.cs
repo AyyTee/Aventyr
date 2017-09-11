@@ -18,7 +18,7 @@ namespace UiTests
         [SetUp]
         public void SetUp()
         {
-            _window = new FakeVirtualWindow();
+            _window = new FakeVirtualWindow(Config.Resources);
         }
 
         void SetInput(IEnumerable<Key> keys = null, string keyString = "")

@@ -28,8 +28,7 @@ namespace Game
 
         public IRenderer Renderer { get; private set; }
 
-        public Resources Fonts;
-        public Resources Textures;
+        public Resources Resources;
 
         bool _lockInput = false;
         string KeyString = "";
@@ -67,9 +66,13 @@ namespace Game
             DpiScale = ClientSize.X / (float)windowSize.X;
 
             var data = File.ReadAllText(Path.Combine(Resources.ResourcePath, "Assets.json"));
-            Fonts = Serializer.Deserialize<Resources>(data);
-            Textures = Fonts;
-            Renderer = new Renderer(this, Fonts);
+            Resources = Serializer.Deserialize<Resources>(data);
+            Renderer = new Renderer(this, Resources);
+
+            foreach (var texture in Resources.Textures)
+            {
+                texture.Texture.LoadImage();
+            }
             
 
             _soundEnabled = false;

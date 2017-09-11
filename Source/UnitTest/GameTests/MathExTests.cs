@@ -892,7 +892,38 @@ namespace GameTests
                     MathEx.Lerp(start, end, expected));
                 Assert.AreEqual(expected, result, ErrorMargin);
             }
-            
+        }
+
+        [Test]
+        public void PointInRectangleTest0()
+        {
+            var point = new Vector2i(-1, -1);
+            var result = MathEx.PointInRectangle(new RectangleI(new Vector2i(), new Vector2i(2, 3)), point);
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void PointInRectangleTest1()
+        {
+            var point = new Vector2i();
+            var result = MathEx.PointInRectangle(new RectangleI(new Vector2i(), new Vector2i(2, 3)), point);
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void PointInRectangleTest2()
+        {
+            var point = new Vector2i(2, 3);
+            var result = MathEx.PointInRectangle(new RectangleI(new Vector2i(), new Vector2i(2, 3)), point);
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void PointInRectangleTest3()
+        {
+            var point = new Vector2i(3, 3);
+            var result = MathEx.PointInRectangle(new RectangleI(new Vector2i(), new Vector2i(2, 3)), point);
+            Assert.IsFalse(result);
         }
     }
 }

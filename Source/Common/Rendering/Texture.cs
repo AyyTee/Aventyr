@@ -20,7 +20,7 @@ namespace Game.Rendering
 
         public RectangleF UvBounds => new RectangleF(new Vector2(), Vector2.One);
 
-        public Texture(int id, Vector2i size, bool isTransparent = false)
+        public Texture(int id = -1, Vector2i size = new Vector2i(), bool isTransparent = false)
         {
             Id = id;
             Size = size;

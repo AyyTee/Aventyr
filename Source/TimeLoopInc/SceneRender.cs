@@ -35,7 +35,7 @@ namespace TimeLoopInc
             Scene = scene;
             Camera = new GridCamera(new Transform2(), (float)_window.CanvasSize.XRatio);
 
-            _box = Model.FromWavefront(ModelResources.Box(_window.Resources).Model, _window);
+            _box = ModelResources.Box(_window.Resources).Load(_window);
         }
 
         public void Update(IVirtualWindow window)

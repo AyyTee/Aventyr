@@ -19,7 +19,7 @@ namespace Game
         public float DpiScale { get; set; } = 1;
 
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
-        public Resources Resources { get; } = new Resources();
+        public Resources Resources { get; }
 
         public float UpdatesPerSecond => 60;
         public float RendersPerSecond => 60;
@@ -40,6 +40,11 @@ namespace Game
         public IImmutableSet<MouseButton> MousePrevious { get; private set; } = new HashSet<MouseButton>().ToImmutableHashSet();
 
         public event ExitHandler OnExit;
+
+        public FakeVirtualWindow(Resources resources)
+        {
+            Resources = resources;
+        }
 
         public void Update(string keyString, ISet<Key> keyboardState, ISet<MouseButton> mouseState, Vector2 mousePosition = new Vector2(), bool hasFocus = true, float mouseWheel = 0)
         {

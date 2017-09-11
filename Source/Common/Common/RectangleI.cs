@@ -1,4 +1,6 @@
-﻿using Game.Common;
+﻿using Equ;
+using Game.Common;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 namespace Game.Common
 {
     [DataContract]
-    public class RectangleI
+    public struct RectangleI
     {
         [DataMember]
         public Vector2i Position { get; private set; }
@@ -21,5 +23,8 @@ namespace Game.Common
             Position = position;
             Size = size;
         }
+
+        public static explicit operator RectangleF(RectangleI v) => new RectangleF((Vector2)v.Position, (Vector2)v.Size);
+        public static explicit operator RectangleI(RectangleF v) => new RectangleI((Vector2i)v.Position, (Vector2i)v.Size);
     }
 }

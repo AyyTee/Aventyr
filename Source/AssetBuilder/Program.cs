@@ -1,6 +1,7 @@
 ﻿using Common.Models;
 using Game;
 using Game.Common;
+using Game.Models;
 using Game.Rendering;
 using Game.Serialization;
 using OpenTK;
@@ -232,7 +233,7 @@ namespace AssetBuilder
                 .Select(item => new TextureGlyph(new Bitmap(item), item))
                 .ToArray());
 
-            var atlasTexture = new TextureFile("Atlas.png", true);
+            var atlasTexture = new TextureFile("Atlas.png");
             
             var packer = new RectanglePacker(atlasSize);
             foreach (var glyph in glyphs.OrderByDescending(item => item.Size.Area))
@@ -344,16 +345,20 @@ namespace AssetBuilder
 
         public static void CreateAssetCode(Resources assets)
         {
+            var resourceType = nameof(Resources);
+
             var fonts = "";
             foreach (var font in assets.Fonts)
             {
-                fonts += $"        public static Font @{font.FontData.Info.Face}(this Resources resources) => resources.Fonts.Single(item => item.FontData.Info.Face == \"{font.FontData.Info.Face}\");\n";
+                fonts += 
+$"        public static {nameof(Game.Rendering.Font)} @{font.FontData.Info.Face}(this {resourceType} resources) => resources.Fonts.Single(item => item.FontData.Info.Face == \"{font.FontData.Info.Face}\");\n";
             }
 
             var textures = "";
             foreach (var texture in assets.Textures)
             {
-                textures += $"        public static AtlasTexture @{texture.Name}(this Resources resources) => resources.Textures.Single(item => item.Name == \"{texture.Name}\");\n";
+                textures += 
+$"        public static {nameof(ITexture)} @{texture.Name}(this {resourceType} resources) => resources.Textures.Single(item => item.Name == \"{texture.Name}\");\n";
             }
 
             GenerateAssetCode("Rendering", "TextureResources", $"{fonts}\n{textures}");
@@ -361,7 +366,8 @@ namespace AssetBuilder
             var models = "";
             foreach (var model in assets.Models)
             {
-                models += $"        public static ModelFile @{model.Name}(this Resources resources) => resources.Models.Single(item => item.Name == \"{model.Name}\");\n";
+                models += 
+$"        public static {nameof(ModelFile)} @{model.Name}(this {resourceType} resources) => resources.Models.Single(item => item.Name == \"{model.Name}\");\n";
             }
 
             GenerateAssetCode("Models", "ModelResources", models);
