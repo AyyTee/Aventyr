@@ -76,5 +76,13 @@ namespace TimeLoopInc.Editor
 
             return new Scene(Floor, portals, Entities, Exits);
         }
+
+        public static SceneBuilder Default()
+        {
+            var scene = new SceneBuilder();
+            var size = new Vector2i(8, 8);
+            scene.Floor = FloorTool.FloorRectangle(new RectangleI(-size / 2, size)).ToImmutableHashSet();
+            return scene;
+        }
     }
 }

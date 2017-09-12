@@ -24,6 +24,14 @@ namespace Game.Common
             Size = size;
         }
 
+        public RectangleI With(Vector2i? position = null, Vector2i? size = null)
+        {
+            var clone = (RectangleI)MemberwiseClone();
+            clone.Position = position ?? Position;
+            clone.Size = size ?? Size;
+            return clone;
+        }
+
         public static explicit operator RectangleF(RectangleI v) => new RectangleF((Vector2)v.Position, (Vector2)v.Size);
         public static explicit operator RectangleI(RectangleF v) => new RectangleI((Vector2i)v.Position, (Vector2i)v.Size);
     }

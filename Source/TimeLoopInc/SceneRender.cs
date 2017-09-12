@@ -182,10 +182,21 @@ namespace TimeLoopInc
                 output.Add(renderable);
             }
 
-            foreach (var wall in Scene.Walls)
+            var floor = new Model(ModelFactory.CreatePlaneMesh(new Vector2(), Vector2.One))
             {
-                output.Add(CreateWall(wall));
-            }
+                Texture = _window.Resources.Floor()
+            };
+            output.AddRange(
+                Scene.Walls.Select(
+                    item => new Renderable(
+                        new Transform2((Vector2)item),
+                        new[] { floor }.ToList())
+                    {
+                        IsPortalable = false
+                    }));
+
+            var wallModels = GetWallModels(Scene.Walls, ModelResources.Wall(_window.Resources).Load(_window));
+            output.Add(new Renderable(new Transform2(), wallModels));
 
             foreach (var exit in Scene.Exits)
             {
@@ -278,8 +289,10 @@ namespace TimeLoopInc
                             wallModel.Models.Select(item =>
                             {
                                 var clone = item.ShallowClone();
-                                clone.Transform.Position = new Vector3(floorTile.X, floorTile.Y, 0);
-                                clone.Transform.Rotation = new Quaternion(new Vector3(0, 0, (float)angle.Radians));
+                                clone.Transform = new Transform3(
+                                    new Vector3(floorTile.X + 0.5f, floorTile.Y + 0.5f, 0),
+                                    Vector3.One,
+                                    new Quaternion(new Vector3(0, 0, 1), (float)angle.Radians));
                                 return clone;
                             }));
                     }
@@ -287,11 +300,6 @@ namespace TimeLoopInc
             }
 
             return output;
-        }
-
-        public static Renderable CreateWall(Vector2i position)
-        {
-            return CreateSquare(position, 1, new Color4(0.8f, 1f, 0.5f, 1f));
         }
 
         static Renderable CreateSquare(Vector2i position, int size, Color4 color)

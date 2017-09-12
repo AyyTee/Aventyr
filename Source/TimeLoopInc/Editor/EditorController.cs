@@ -35,7 +35,7 @@ namespace TimeLoopInc.Editor
         public string LevelName { get; set; } = "Level";
         Vector2 _mousePosition;
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
-        List<SceneBuilder> _sceneChanges = new List<SceneBuilder>();
+        List<SceneBuilder> _sceneChanges;
         int _sceneChangeCurrent;
         int _saveChangeCurrent;
         ToolData _tool;
@@ -64,7 +64,7 @@ namespace TimeLoopInc.Editor
         {
             _tools = new[]
             {
-                new ToolData("Wall", new WallTool(this), "Left click to place.  Right click to remove.", new Hotkey(Key.Number1)),
+                new ToolData("Wall", new FloorTool(this), "Left click to place.  Right click to remove.", new Hotkey(Key.Number1)),
                 new ToolData("Exit", new ExitTool(this), "Left click to select.  Right click to place.  Delete to remove.", new Hotkey(Key.Number2)),
                 new ToolData("Player", new PlayerTool(this), "Left click to select.  Right click to place.  Delete to remove.", new Hotkey(Key.Number3)),
                 new ToolData("Block", new BlockTool(this), "Left click to select.  Right click to place.  Delete to remove.", new Hotkey(Key.Number4)),
@@ -72,7 +72,7 @@ namespace TimeLoopInc.Editor
                 new ToolData("Portal Link", new LinkTool(this), "Click two portals to link them.", new Hotkey(Key.Number6)),
             }.ToImmutableArray();
 
-            _sceneChanges.Add(new SceneBuilder());
+            NewLevel();
 
             Window = window;
             _controller = controller;
@@ -172,7 +172,7 @@ namespace TimeLoopInc.Editor
         void NewLevel()
         {
             LevelName = "NewLevel";
-            SetScene(new SceneBuilder());
+            SetScene(SceneBuilder.Default());
         }
 
         void Load(SceneBuilder newScene)

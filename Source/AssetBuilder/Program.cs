@@ -410,7 +410,7 @@ namespace Game.{@namespace}
             {
                 for (int x = 0; x < bitmap.Width; x++)
                 {
-                    if (bitmap.GetPixel(x, y).A < 1)
+                    if (bitmap.GetPixel(x, y).A < 255)
                     {
                         return true;
                     }

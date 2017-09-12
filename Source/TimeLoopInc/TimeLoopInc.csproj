@@ -77,7 +77,7 @@
     <Compile Include="Editor\LoadDialogue.cs" />
     <Compile Include="Editor\PlayerTool.cs" />
     <Compile Include="Editor\SaveDialogue.cs" />
-    <Compile Include="Editor\WallTool.cs" />
+    <Compile Include="Editor\FloorTool.cs" />
     <Compile Include="GridCamera.cs" />
     <Compile Include="SceneInstant.cs" />
     <Compile Include="SceneRender.cs" />
