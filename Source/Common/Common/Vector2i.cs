@@ -63,6 +63,35 @@ namespace Game.Common
         public static Vector2i ComponentMax(Vector2i v0, Vector2i v1) => new Vector2i(Math.Max(v0.X, v1.X), Math.Max(v0.Y, v1.Y));
         public static Vector2i ComponentMin(Vector2i v0, Vector2i v1) => new Vector2i(Math.Min(v0.X, v1.X), Math.Min(v0.Y, v1.Y));
 
+        /// <summary>
+        /// Returns all adjacent values relative to the origin.
+        /// </summary>
+        /// <param name="includeDiagonals">Include values that are diagonally adjacent.</param>
+        public static Vector2i[] Adjacent(bool includeDiagonals)
+        {
+            if (includeDiagonals)
+            {
+                return new[]
+                {
+                    new Vector2i(1, 0),
+                    new Vector2i(1, 1),
+                    new Vector2i(0, 1),
+                    new Vector2i(-1, 1),
+                    new Vector2i(-1, 0),
+                    new Vector2i(-1, -1),
+                    new Vector2i(0, -1),
+                    new Vector2i(1, -1)
+                };
+            }
+            return new[]
+            {
+                new Vector2i(1, 0),
+                new Vector2i(0, 1),
+                new Vector2i(-1, 0),
+                new Vector2i(0, -1),
+            };
+        }
+
         public override string ToString() => $"({X},{Y})";
 
         public override bool Equals(object obj)

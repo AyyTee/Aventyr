@@ -278,6 +278,84 @@ namespace TimeLoopInc
         {
             var output = new List<Model>();
 
+            var bounds = MathEx.Bounds(floor);
+
+            bounds = new RectangleI(bounds.Position - new Vector2i(1, 1), bounds.Size + new Vector2i(2, 2));
+            var wallEdges = new Dictionary<Vector2i, bool[]>();
+            for (int y = 0; y < bounds.Size.Y + 1; y++)
+            {
+                for (int x = 0; x < bounds.Size.X + 1; x++)
+                {
+                    var pos = bounds.Position + new Vector2i(x, y);
+                    if (floor.Contains(pos))
+                    {
+                        continue;
+                    }
+
+                    var directions = GridAngle.CardinalDirections * 2;
+                    var wallEdge = new bool[directions];
+                    for (int i = 0; i < directions; i++)
+                    {
+                        var angle = (Math.PI * 2 * i) / directions;
+                        var vector = pos + (Vector2i)MathEx.AngleToVector(angle).Round();
+                        if (floor.Contains(vector))
+                        {
+                            wallEdge[i] = true;
+                            if (i % 2 == 0)
+                            {
+                                wallEdge[MathEx.ValueWrap(i - 1, directions)] = true;
+                                wallEdge[MathEx.ValueWrap(i + 1, directions)] = true;
+                            }
+                        }
+                    }
+
+                    if (wallEdge.All(item => !item))
+                    {
+                        continue;
+                    }
+
+                    wallEdges.Add(pos, wallEdge);
+                }
+            }
+
+            var mesh = new Mesh();
+            var wallHeight = 2;
+            var indices = new[]
+            {
+                0, 1, 3,
+                0, 7, 1,
+                0, 5, 7,
+                0, 3, 5,
+                1, 7, 8,
+                3, 1, 2,
+                3, 4, 5,
+                5, 6, 7
+            };
+            foreach (var wallEdge in wallEdges)
+            {
+                var pos = wallEdge.Key;
+                var highlight = wallEdge.Value;
+                var lightColor = Color4.White;
+                var darkColor = Color4.Black;
+                var vertices = new[]
+                {
+                    new Vertex(new Vector3(pos.X + 0.5f, pos.Y + 0.5f, wallHeight), new Vector2(), darkColor),
+
+                    new Vertex(new Vector3(pos.X + 1.0f, pos.Y + 0.5f, wallHeight), new Vector2(), highlight[0] ? lightColor : darkColor),
+                    new Vertex(new Vector3(pos.X + 1.0f, pos.Y + 1.0f, wallHeight), new Vector2(), highlight[1] ? lightColor : darkColor),
+                    new Vertex(new Vector3(pos.X + 0.5f, pos.Y + 1.0f, wallHeight), new Vector2(), highlight[2] ? lightColor : darkColor),
+                    new Vertex(new Vector3(pos.X + 0.0f, pos.Y + 1.0f, wallHeight), new Vector2(), highlight[3] ? lightColor : darkColor),
+                    new Vertex(new Vector3(pos.X + 0.0f, pos.Y + 0.5f, wallHeight), new Vector2(), highlight[4] ? lightColor : darkColor),
+                    new Vertex(new Vector3(pos.X + 0.0f, pos.Y + 0.0f, wallHeight), new Vector2(), highlight[5] ? lightColor : darkColor),
+                    new Vertex(new Vector3(pos.X + 0.5f, pos.Y + 0.0f, wallHeight), new Vector2(), highlight[6] ? lightColor : darkColor),
+                    new Vertex(new Vector3(pos.X + 1.0f, pos.Y + 0.0f, wallHeight), new Vector2(), highlight[7] ? lightColor : darkColor)
+                };
+
+                var index = mesh.AddVertexRange(vertices);
+                mesh.Indices.AddRange(indices.Select(item => item + index));
+            }
+            output.Add(new Model(mesh));
+
             foreach (var floorTile in floor)
             {
                 for (int i = 0; i < GridAngle.CardinalDirections; i++)

@@ -1014,5 +1014,24 @@ namespace Game.Common
             }
             yield break;
         }
+
+        public static RectangleI Bounds(IEnumerable<Vector2i> vectors)
+        {
+            if (!vectors.Any())
+            {
+                return new RectangleI();
+            }
+
+            var min = vectors.First();
+            var max = min;
+
+            foreach (var v in vectors)
+            {
+                min = Vector2i.ComponentMin(min, v);
+                max = Vector2i.ComponentMax(max, v);
+            }
+
+            return new RectangleI(min, max - min);
+        }
     }
 }
