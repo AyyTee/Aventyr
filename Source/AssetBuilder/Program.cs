@@ -24,13 +24,14 @@ namespace AssetBuilder
     public class Program
     {
         public static volatile int FilesDownloaded = 0;
+        public static StringBuilder BuildLog = new StringBuilder();
 
         public static void Main(string[] args)
         {
             // Soft flag indicates that assets should be built only if the build folder is empty.
             if (args.Contains("-soft") && Directory.EnumerateFiles(Paths.Build, "*", SearchOption.AllDirectories).Any())
             {
-                Console.WriteLine("Build folder contains assets. Build process skipped.");
+                WriteLine("Build folder contains assets. Build process skipped.");
                 return;
             }
 
@@ -42,7 +43,15 @@ namespace AssetBuilder
             var fontCount = CreateBitmapFonts();
             CreateAtlas(fontCount);
 
-            Console.WriteLine("Build complete!");
+            WriteLine("Build complete!");
+
+            File.WriteAllText(Path.Combine(Paths.Temp, "Log.txt"), BuildLog.ToString());
+        }
+
+        public static void WriteLine(string text)
+        {
+            Console.WriteLine(text);
+            BuildLog.Append(text + "\n");
         }
 
         public static void Assert()
@@ -61,7 +70,7 @@ namespace AssetBuilder
 
         public static void Clean()
         {
-            Console.WriteLine("Cleaning...");
+            WriteLine("Cleaning...");
             if (Directory.Exists(Paths.Build))
             {
                 Directory.Delete(Paths.Build, true);
@@ -75,7 +84,7 @@ namespace AssetBuilder
 
         public static void Initalize()
         {
-            Console.WriteLine("Initializing folder structure...");
+            WriteLine("Initializing folder structure...");
             Directory.CreateDirectory(Paths.Build);
             Directory.CreateDirectory(Paths.TempFonts);
             Directory.CreateDirectory(Paths.Blender);
@@ -86,7 +95,7 @@ namespace AssetBuilder
 
         public static void ExportModels()
         {
-            Console.WriteLine("Exporting models...\n");
+            WriteLine("Exporting models...\n");
             CommandLine($"{Paths.BlenderExe} Models.blend --background --python BatchExport.py -- {Paths.Models}", Paths.Assets);
         }
 
@@ -106,7 +115,7 @@ namespace AssetBuilder
 
         public static void FetchTools()
         {
-            Console.WriteLine("Fetching tools...");
+            WriteLine("Fetching tools...");
 
             var blenderZipPath = Path.Combine(Paths.Tools, "Blender.zip");
 
@@ -155,8 +164,8 @@ namespace AssetBuilder
                         tool.DownloadCallback();
 
                         Interlocked.Increment(ref FilesDownloaded);
-                        Console.WriteLine($"{Path.GetFileName(tool.Filename)} finished downloading.");
-                        Console.WriteLine($"{FilesDownloaded} / {toolDownloads.Length} downloaded.");
+                        WriteLine($"{Path.GetFileName(tool.Filename)} finished downloading.");
+                        WriteLine($"{FilesDownloaded} / {toolDownloads.Length} downloaded.");
                     };
 
                     client.DownloadFileAsync(toolDownload.Uri, toolDownload.Filename, toolDownload);
@@ -185,7 +194,7 @@ namespace AssetBuilder
             cmd.StandardInput.Flush();
             cmd.StandardInput.Close();
             cmd.WaitForExit();
-            Console.WriteLine(cmd.StandardOutput.ReadToEnd());
+            WriteLine(cmd.StandardOutput.ReadToEnd());
         }
 
         /// <returns>Number of fonts rendered.</returns>

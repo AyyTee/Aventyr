@@ -195,7 +195,7 @@ namespace TimeLoopInc
                         IsPortalable = false
                     }));
 
-            var wallModels = GetWallModels(Scene.Walls, ModelResources.Wall(_window.Resources).Load(_window));
+            var wallModels = GetWallModels(_window.Resources, Scene.Walls, ModelResources.Wall(_window.Resources).Load(_window));
             output.Add(new Renderable(new Transform2(), wallModels));
 
             foreach (var exit in Scene.Exits)
@@ -274,7 +274,7 @@ namespace TimeLoopInc
                 result.PortalsEntered.Sum(item => ((TimePortal)item.EnterData.EntrancePortal).TimeOffset));
         }
 
-        public static List<Model> GetWallModels(ISet<Vector2i> floor, ModelGroup wallModel)
+        public static List<Model> GetWallModels(Resources resources, ISet<Vector2i> floor, ModelGroup wallModel)
         {
             var output = new List<Model>();
 
@@ -320,41 +320,41 @@ namespace TimeLoopInc
 
             var mesh = new Mesh();
             var wallHeight = 2;
+
             var indices = new[]
             {
-                0, 1, 3,
-                0, 7, 1,
-                0, 5, 7,
-                0, 3, 5,
-                1, 7, 8,
-                3, 1, 2,
-                3, 4, 5,
-                5, 6, 7
+                0, 1, 2,
+                0, 2, 3,
+                0, 3, 4,
+                0, 4, 5,
+                0, 5, 6,
+                0, 6, 7,
+                0, 7, 8,
+                0, 8, 1
             };
             foreach (var wallEdge in wallEdges)
             {
                 var pos = wallEdge.Key;
                 var highlight = wallEdge.Value;
-                var lightColor = Color4.White;
-                var darkColor = Color4.Black;
+                var uv0 = new Vector2();
+                var uv1 = new Vector2(1, 1);
                 var vertices = new[]
                 {
-                    new Vertex(new Vector3(pos.X + 0.5f, pos.Y + 0.5f, wallHeight), new Vector2(), darkColor),
-
-                    new Vertex(new Vector3(pos.X + 1.0f, pos.Y + 0.5f, wallHeight), new Vector2(), highlight[0] ? lightColor : darkColor),
-                    new Vertex(new Vector3(pos.X + 1.0f, pos.Y + 1.0f, wallHeight), new Vector2(), highlight[1] ? lightColor : darkColor),
-                    new Vertex(new Vector3(pos.X + 0.5f, pos.Y + 1.0f, wallHeight), new Vector2(), highlight[2] ? lightColor : darkColor),
-                    new Vertex(new Vector3(pos.X + 0.0f, pos.Y + 1.0f, wallHeight), new Vector2(), highlight[3] ? lightColor : darkColor),
-                    new Vertex(new Vector3(pos.X + 0.0f, pos.Y + 0.5f, wallHeight), new Vector2(), highlight[4] ? lightColor : darkColor),
-                    new Vertex(new Vector3(pos.X + 0.0f, pos.Y + 0.0f, wallHeight), new Vector2(), highlight[5] ? lightColor : darkColor),
-                    new Vertex(new Vector3(pos.X + 0.5f, pos.Y + 0.0f, wallHeight), new Vector2(), highlight[6] ? lightColor : darkColor),
-                    new Vertex(new Vector3(pos.X + 1.0f, pos.Y + 0.0f, wallHeight), new Vector2(), highlight[7] ? lightColor : darkColor)
+                    new Vertex(new Vector3(pos.X + 0.5f, pos.Y + 0.5f, wallHeight), uv1),
+                    new Vertex(new Vector3(pos.X + 1.0f, pos.Y + 0.5f, wallHeight), highlight[0] ? uv0 : uv1),
+                    new Vertex(new Vector3(pos.X + 1.0f, pos.Y + 1.0f, wallHeight), highlight[1] ? uv0 : uv1),
+                    new Vertex(new Vector3(pos.X + 0.5f, pos.Y + 1.0f, wallHeight), highlight[2] ? uv0 : uv1),
+                    new Vertex(new Vector3(pos.X + 0.0f, pos.Y + 1.0f, wallHeight), highlight[3] ? uv0 : uv1),
+                    new Vertex(new Vector3(pos.X + 0.0f, pos.Y + 0.5f, wallHeight), highlight[4] ? uv0 : uv1),
+                    new Vertex(new Vector3(pos.X + 0.0f, pos.Y + 0.0f, wallHeight), highlight[5] ? uv0 : uv1),
+                    new Vertex(new Vector3(pos.X + 0.5f, pos.Y + 0.0f, wallHeight), highlight[6] ? uv0 : uv1),
+                    new Vertex(new Vector3(pos.X + 1.0f, pos.Y + 0.0f, wallHeight), highlight[7] ? uv0 : uv1)
                 };
 
                 var index = mesh.AddVertexRange(vertices);
                 mesh.Indices.AddRange(indices.Select(item => item + index));
             }
-            output.Add(new Model(mesh));
+            output.Add(new Model(mesh) { Texture = resources.WallFade() });
 
             foreach (var floorTile in floor)
             {

@@ -42,7 +42,7 @@ namespace Game.Models
         }
 
         public Vertex(Vector3 position, Vector2 textureCoord)
-            : this(position, textureCoord, new Color4(), new Vector3())
+            : this(position, textureCoord, Color4.White, new Vector3())
         {
         }
 
