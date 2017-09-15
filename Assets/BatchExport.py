@@ -11,6 +11,8 @@ outputPath = argv[0]
 
 scene = bpy.context.scene
 
+bpy.ops.object.mode_set(mode='OBJECT')
+
 bpy.ops.object.select_all(action='DESELECT')
 
 for obj in scene.objects:
