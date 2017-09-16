@@ -36,6 +36,7 @@ namespace Game.Rendering
         public float ZNear => -10000f;
         public float ZFar => 10000f;
         public double Fov => Math.PI / 4;
+        public bool IsOrtho => true;
 
         [DataMember]
         public Action<EnterCallbackData, Transform2, Transform2> EnterPortal { get; set; }

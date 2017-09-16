@@ -177,7 +177,7 @@ namespace Game.Rendering
                 portalViewModels.Add(data.BufferModel(new Model(mesh), Matrix4.Identity));
             }
 
-            List<DrawData> sceneModels = new List<DrawData>();
+            var sceneModels = new List<DrawData>();
             #region Get models.
             {
                 foreach (IRenderable e in layer.Renderables)

@@ -16,6 +16,7 @@ namespace Game.Rendering
         /// Field of view in radians.  Only affects perspective view matrices, not orthographic view matrices.
         /// </summary>
         double Fov { get; }
+        bool IsOrtho { get; }
         float ZNear { get; }
         float ZFar { get; }
     }

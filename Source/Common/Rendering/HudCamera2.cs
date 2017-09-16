@@ -23,6 +23,7 @@ namespace Game.Rendering
         public float ZNear => -10000f;
         public float ZFar => 10000f;
         public double Fov => Math.PI / 4;
+        public bool IsOrtho => true;
 
         public Vector2i CanvasSize { get; set; }
 

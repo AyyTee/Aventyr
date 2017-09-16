@@ -341,7 +341,7 @@ namespace Game.Rendering
             var vertices = new Vertex[vectors.Length];
             for (int i = 0; i < vectors.Length; i++)
             {
-                vertices[i] = new Vertex(new Vector3(vectors[i]), new Vector2(), color);
+                vertices[i] = new Vertex(new Vector3(vectors[i].X, vectors[i].Y, 0), new Vector2(), color);
             }
             int index = mesh.AddVertexRange(vertices);
             mesh.AddTriangle(index + 1, index + 2, index);
