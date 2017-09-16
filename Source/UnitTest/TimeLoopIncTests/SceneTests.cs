@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TimeLoopInc;
+using TimeLoopInc.Editor;
 
 namespace TimeLoopIncTests
 {
@@ -21,7 +22,7 @@ namespace TimeLoopIncTests
         public void GetStateInstantTest0()
         {
             var block = new Block(new Transform2i());
-            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), new[] { block });
+            var scene = new Scene(FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))), new List<TimePortal>(), new[] { block });
 
             var result = scene.GetSceneInstant(0).Entities.Count;
             Assert.AreEqual(1, result);
@@ -31,7 +32,7 @@ namespace TimeLoopIncTests
         public void GetStateInstantTest1()
         {
             var block = new Block(new Transform2i());
-            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), new[] { block });
+            var scene = new Scene(FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))), new List<TimePortal>(), new[] { block });
 
             var result = scene.GetSceneInstant(1).Entities.Count;
             Assert.AreEqual(1, result);
@@ -41,7 +42,7 @@ namespace TimeLoopIncTests
         public void GetStateInstantTest2()
         {
             var block = new Block(new Transform2i());
-            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), new[] { block });
+            var scene = new Scene(FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))), new List<TimePortal>(), new[] { block });
 
             var result = scene.GetSceneInstant(-1).Entities.Count;
             Assert.AreEqual(1, result);
@@ -51,7 +52,7 @@ namespace TimeLoopIncTests
         public void GetStateInstantTest3()
         {
             var block = new Block(new Transform2i(), 2);
-            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), new[] { block });
+            var scene = new Scene(FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))), new List<TimePortal>(), new[] { block });
 
             Assert.AreEqual(0, scene.GetSceneInstant(1).Entities.Count);
         }
@@ -64,7 +65,7 @@ namespace TimeLoopIncTests
                 new Block(new Transform2i(new Vector2i(2, 1)), 1),
                 new Block(new Transform2i(new Vector2i(2, 2)), 2),
             };
-            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), blocks);
+            var scene = new Scene(FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))), new List<TimePortal>(), blocks);
 
             Assert.AreEqual(3, scene.GetSceneInstant(10).Entities.Count);
         }
@@ -73,7 +74,7 @@ namespace TimeLoopIncTests
         public void RotationRoundingBug()
         {
             var player = new Player(new Transform2i(gridRotation: new GridAngle(5)), 0);
-            var scene = new Scene(new HashSet<Vector2i>(), new List<TimePortal>(), new[] { player });
+            var scene = new Scene(FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))), new List<TimePortal>(), new[] { player });
 
             scene.Step(new MoveInput(new GridAngle()));
 
@@ -96,7 +97,7 @@ namespace TimeLoopIncTests
         public void PlayerMovesForwardInTime()
         {
             var scene = new Scene(
-                new HashSet<Vector2i>(),
+                FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))),
                 CreateTwoPortals(),
                 new[] { new Player(new Transform2i(new Vector2i(1, 0)), 0) });
 
@@ -109,7 +110,7 @@ namespace TimeLoopIncTests
         public void PlayerMovesBackwardInTime()
         {
             var scene = new Scene(
-                new HashSet<Vector2i>(),
+                FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))),
                 CreateTwoPortals(-5),
                 new[] { new Player(new Transform2i(new Vector2i(1, 0)), 0) });
 
@@ -128,7 +129,7 @@ namespace TimeLoopIncTests
             };
 
             var scene = new Scene(
-                new HashSet<Vector2i>(),
+                FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))),
                 CreateTwoPortals(),
                 entities);
 
@@ -166,7 +167,7 @@ namespace TimeLoopIncTests
             var portals = CreateTwoPortals(-5);
 
             var scene = new Scene(
-                new HashSet<Vector2i>(),
+                FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))),
                 portals,
                 entities);
 
@@ -203,7 +204,7 @@ namespace TimeLoopIncTests
             portal0.SetTimeOffset(timeOffset);
 
             var scene = new Scene(
-                new HashSet<Vector2i>(),
+                FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))),
                 new[] { portal0, portal1 },
                 new IGridEntity[0]);
 
@@ -221,7 +222,7 @@ namespace TimeLoopIncTests
             portal0.SetTimeOffset(5);
 
             var scene = new Scene(
-                new HashSet<Vector2i>(),
+                FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))),
                 new[] { portal0, portal1 },
                 new IGridEntity[0]);
 
@@ -241,7 +242,7 @@ namespace TimeLoopIncTests
             portal0.SetTimeOffset(5);
 
             var scene = new Scene(
-                new HashSet<Vector2i>(),
+                FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))),
                 new[] { portal0, portal1 },
                 new IGridEntity[0]);
 
@@ -271,7 +272,7 @@ namespace TimeLoopIncTests
                 new Block(new Transform2i(new Vector2i(2, 2)), 0),
             };
 
-            var scene = new Scene(new HashSet<Vector2i>(), Portals, entities);
+            var scene = new Scene(FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))), Portals, entities);
 
             scene.Step(new MoveInput(GridAngle.Left));
 
@@ -293,7 +294,7 @@ namespace TimeLoopIncTests
             };
 
             var scene = new Scene(
-                new HashSet<Vector2i>(),
+                FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))),
                 CreateTwoPortals(-5),
                 entities);
 
@@ -307,7 +308,7 @@ namespace TimeLoopIncTests
         [Test]
         public void ParadoxTest0()
         {
-            var scene = new Scene();
+            var scene = new Scene(FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))), new TimePortal[0], new IGridEntity[0]);
 
             var block0 = new Block(new Transform2i(), 0);
             var block1 = new Block(new Transform2i().WithRotation(new GridAngle(1)), 0);
@@ -320,11 +321,10 @@ namespace TimeLoopIncTests
             Assert.AreEqual(expected, result);
         }
 
-        public static Scene CreateDefaultScene(HashSet<Vector2i> walls = null)
+        public static Scene CreateDefaultScene(IEnumerable<Vector2i> floor = null)
         {
-            walls = walls ?? new HashSet<Vector2i>
-            {
-            };
+            floor = floor ?? FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22)));
+
             var player = new Player(new Transform2i(), 0);
 
             var portal0 = new TimePortal(new Vector2i(1, 0), GridAngle.Right);
@@ -344,7 +344,7 @@ namespace TimeLoopIncTests
                 new Block(new Transform2i(new Vector2i(1, 0)), 0),
             };
 
-            return new Scene(walls, Portals, entities);
+            return new Scene(floor, Portals, entities);
         }
 
         [Test]
@@ -400,7 +400,10 @@ namespace TimeLoopIncTests
         [Test]
         public void PortalWithWallAtExit()
         {
-            var scene = CreateDefaultScene(new HashSet<Vector2i> { new Vector2i(-1, 0) });
+            var floor = FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22)))
+                .Where(item => item != new Vector2i(-1, 0));
+
+            var scene = CreateDefaultScene(floor);
             scene.SetEntities(new[] { new Player(new Transform2i(), 0) });
 
             // Go back in time and then travel back to the present.

@@ -29,6 +29,11 @@ namespace TimeLoopIncTests
         public void CorrectCameraTransformTest0()
         {
             var scene = LoadLevel("PlayerLeftOfPortal.xml");
+            scene = new TimeLoopInc.Scene(
+                FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))),
+                scene.Portals,
+                scene.GetEntities());
+
             var window = new FakeVirtualWindow(Config.Resources);
 
             var sceneRender = new SceneRender(window, scene);
@@ -45,6 +50,11 @@ namespace TimeLoopIncTests
         public void CorrectCameraTransformTest1()
         {
             var scene = LoadLevel("PlayerLeftOfPortal.xml");
+            scene = new TimeLoopInc.Scene(
+                FloorTool.FloorRectangle(new RectangleI(new Vector2i(-11, -11), new Vector2i(22, 22))),
+                scene.Portals,
+                scene.GetEntities());
+
             var window = new FakeVirtualWindow(Config.Resources);
 
             var sceneRender = new SceneRender(window, scene);

@@ -17,7 +17,7 @@ namespace TimeLoopInc
     public class Scene : IDeepClone<Scene>
     {
         [DataMember]
-        public readonly ImmutableHashSet<Vector2i> Walls = new HashSet<Vector2i>().ToImmutableHashSet();
+        public readonly ImmutableHashSet<Vector2i> Floor = new HashSet<Vector2i>().ToImmutableHashSet();
         [DataMember]
         public readonly ImmutableList<TimePortal> Portals = new List<TimePortal>().ToImmutableList();
         [DataMember]
@@ -38,11 +38,11 @@ namespace TimeLoopInc
         }
 
         public Scene(
-            ISet<Vector2i> walls, 
+            IEnumerable<Vector2i> floor, 
             IEnumerable<TimePortal> portals, 
             IEnumerable<IGridEntity> entities)
         {
-            Walls = walls.ToImmutableHashSet();
+            Floor = floor.ToImmutableHashSet();
             Portals = portals.ToImmutableList();
 
             DebugEx.Assert(entities.All(item => item != null));
@@ -51,11 +51,11 @@ namespace TimeLoopInc
         }
 
         public Scene(
-            ISet<Vector2i> walls, 
+            IEnumerable<Vector2i> floor, 
             IEnumerable<TimePortal> portals, 
             IEnumerable<IGridEntity> entities, 
             ISet<Vector2i> exits)
-            : this(walls, portals, entities)
+            : this(floor, portals, entities)
         {
             Exits = exits.ToImmutableHashSet();
         }
@@ -456,7 +456,7 @@ namespace TimeLoopInc
                     .WithRotation(new GridAngle(angle));
             }
 
-            if (!Walls.Contains(posNextGrid.Position) && (ignoreMoveableObstacles || !GetSceneInstant(time).Entities.Any(item => item.Value.Transform.Position == posNextGrid.Position)))
+            if (Floor.Contains(posNextGrid.Position) && (ignoreMoveableObstacles || !GetSceneInstant(time).Entities.Any(item => item.Value.Transform.Position == posNextGrid.Position)))
             {
                 return ValueTuple.Create(
                     posNextGrid,

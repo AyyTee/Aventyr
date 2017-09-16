@@ -28,8 +28,7 @@ namespace TimeLoopInc
             _window = window;
 
             var size = 100;
-            _grid = ModelFactory.CreatePlane(new Vector2(size, size), Color4.White, new Vector3(-size/2, -size/2, 0));
-            _grid.Texture = TextureResources.Floor(_window.Resources);
+            _grid = ModelFactory.CreatePlane(new Vector2(size, size), Color4.DarkGray, new Vector3(-size/2, -size/2, 0));
             _grid.TransformUv = new Transform2(size: size);
             
             Scene = scene;
@@ -187,7 +186,7 @@ namespace TimeLoopInc
                 Texture = _window.Resources.Floor()
             };
             output.AddRange(
-                Scene.Walls.Select(
+                Scene.Floor.Select(
                     item => new Renderable(
                         new Transform2((Vector2)item),
                         new[] { floor }.ToList())
@@ -195,7 +194,7 @@ namespace TimeLoopInc
                         IsPortalable = false
                     }));
 
-            var wallModels = GetWallModels(_window.Resources, Scene.Walls, ModelResources.Wall(_window.Resources).Load(_window));
+            var wallModels = GetWallModels(_window.Resources, Scene.Floor, ModelResources.Wall(_window.Resources).Load(_window));
             output.Add(new Renderable(new Transform2(), wallModels));
 
             foreach (var exit in Scene.Exits)
@@ -240,6 +239,7 @@ namespace TimeLoopInc
                     output.Add(renderable);
                 }
                 var line = Draw.Line(new LineF(portal.GetWorldVerts()), Color4.Blue, 0.08f);
+                line.Models[0].Transform.Position += new Vector3(0, 0, 0.5f);
                 line.IsPortalable = false;
                 output.Add(line);
             }
@@ -354,7 +354,7 @@ namespace TimeLoopInc
                 var index = mesh.AddVertexRange(vertices);
                 mesh.Indices.AddRange(indices.Select(item => item + index));
             }
-            output.Add(new Model(mesh) { Texture = resources.WallFade() });
+            //output.Add(new Model(mesh) { Texture = resources.WallFade() });
 
             foreach (var floorTile in floor)
             {

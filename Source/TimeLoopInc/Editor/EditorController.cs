@@ -279,12 +279,12 @@ namespace TimeLoopInc.Editor
 
         public static SceneBuilder Remove(SceneBuilder scene, Vector2i v)
         {
-            var walls = scene.Floor.Where(item => item != v).ToHashSet();
+            var floor = scene.Floor.Where(item => item != v).ToHashSet();
             return scene.With(
-                walls, 
+                floor, 
                 scene.Exits.Where(item => item != v).ToHashSet(), 
                 scene.Entities.Where(item => item.StartTransform.Position != v), 
-                GetPortals(portal => portal.Position != v && PortalValidSides(portal.Position, walls).Any(), scene.Links));
+                GetPortals(portal => portal.Position != v && PortalValidSides(portal.Position, floor).Any(), scene.Links));
         }
 
         /// <summary>
@@ -321,10 +321,10 @@ namespace TimeLoopInc.Editor
                 .ToImmutableList();
         }
 
-        public static HashSet<GridAngle> PortalValidSides(Vector2i worldPosition, ISet<Vector2i> walls)
+        public static HashSet<GridAngle> PortalValidSides(Vector2i worldPosition, ISet<Vector2i> floor)
         {
             var validSides = new HashSet<GridAngle>();
-            if (walls.Contains(worldPosition))
+            if (!floor.Contains(worldPosition))
             {
                 return validSides;
             }
@@ -337,24 +337,24 @@ namespace TimeLoopInc.Editor
             var column = new[] { new Vector2i(0, -1), new Vector2i(), new Vector2i(0, 1) };
             var row = new[] { new Vector2i(-1, 0), new Vector2i(), new Vector2i(1, 0) };
 
-            if (new[] { up, down }.All(item => !walls.Contains(item)))
+            if (new[] { up, down }.All(item => floor.Contains(item)))
             {
-                if (column.Select(item => item + left).All(item => walls.Contains(item)))
+                if (column.Select(item => item + left).All(item => !floor.Contains(item)))
                 {
                     validSides.Add(GridAngle.Left);
                 }
-                if (column.Select(item => item + right).All(item => walls.Contains(item)))
+                if (column.Select(item => item + right).All(item => !floor.Contains(item)))
                 {
                     validSides.Add(GridAngle.Right);
                 }
             }
-            else if (new[] { left, right }.All(item => !walls.Contains(item)))
+            else if (new[] { left, right }.All(item => floor.Contains(item)))
             {
-                if (row.Select(item => item + up).All(item => walls.Contains(item)))
+                if (row.Select(item => item + up).All(item => !floor.Contains(item)))
                 {
                     validSides.Add(GridAngle.Up);
                 }
-                if (row.Select(item => item + down).All(item => walls.Contains(item)))
+                if (row.Select(item => item + down).All(item => !floor.Contains(item)))
                 {
                     validSides.Add(GridAngle.Down);
                 }

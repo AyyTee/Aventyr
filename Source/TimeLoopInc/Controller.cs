@@ -86,7 +86,7 @@ namespace TimeLoopInc
 
         public Scene CreateLevel0()
         {
-            var walls = new HashSet<Vector2i> { };
+            var floor = new HashSet<Vector2i> { };
             var player = new Player(new Transform2i(), 0);
 
             var portal0 = new TimePortal(new Vector2i(1, 0), GridAngle.Right);
@@ -106,12 +106,12 @@ namespace TimeLoopInc
                 new Block(new Transform2i(new Vector2i(1, 0))),
             };
 
-            return new Scene(walls, Portals, entities, new HashSet<Vector2i> { new Vector2i(0, 2) });
+            return new Scene(floor, Portals, entities, new HashSet<Vector2i> { new Vector2i(0, 2) });
         }
 
         public Scene CreateLevel1()
         {
-            var walls = new HashSet<Vector2i>
+            var floor = new HashSet<Vector2i>
             {
                 new Vector2i(-1, 0)
             };
@@ -134,7 +134,7 @@ namespace TimeLoopInc
                 new Block(new Transform2i(new Vector2i(1, 0))),
             };
 
-            return new Scene(walls, Portals, entities, new HashSet<Vector2i> { new Vector2i(0, 2) });
+            return new Scene(floor, Portals, entities, new HashSet<Vector2i> { new Vector2i(0, 2) });
         }
 
         public void Render(double timeDelta)
