@@ -14,10 +14,7 @@ namespace TimeLoopInc
         static void Main(string[] args)
         {
             var controller = new ResourceController(new Vector2i(1000, 800), "TimeLoopInc");
-            var window = new VirtualWindow(controller)
-            {
-                CanvasSize = controller.ClientSize
-            };
+            var window = new VirtualWindow(controller);
             window.OnExit += controller.Exit;
             controller.AddController(new Controller(window));
 

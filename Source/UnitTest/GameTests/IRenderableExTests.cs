@@ -17,7 +17,7 @@ namespace GameTests
         [TestCase(false)]
         public void PixelAlignedWorldTransformTest0(bool pixelAlign)
         {
-            var camera = new HudCamera2(new Vector2i(800, 600));
+            var camera = new HudCamera2(() => new Vector2i(800, 600));
             var renderable = new Renderable() { PixelAlign = pixelAlign };
 
             var result = renderable.PixelAlignedWorldTransform(camera, camera.CanvasSize);

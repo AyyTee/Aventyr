@@ -59,7 +59,7 @@ namespace Ui
         {
             var time = DateTime.UtcNow;
 
-            _camera = new HudCamera2(_window.CanvasSize);
+            _camera = new HudCamera2(() => _window.CanvasSize);
             var mousePos = _window.MouseWorldPos(_camera);
 
             UpdateElementArgs(Root);

@@ -79,7 +79,9 @@ namespace Game.Common
         {
             if (_matrixUpdate)
             {
+#pragma warning disable
                 _matrix = Matrix4.Scale(Scale) * Matrix4.CreateFromAxisAngle(new Vector3(Rotation.X, Rotation.Y, Rotation.Z), Rotation.W) * Matrix4.CreateTranslation(Position);
+#pragma warning restore
                 _matrixUpdate = false;
             }
             return _matrix;

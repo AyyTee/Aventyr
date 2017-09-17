@@ -49,18 +49,10 @@ namespace TankGameTestFramework
 
             server.EnqueueArrivedMessage(new FakeNetIncomingMessage(new FakeNetOutgoingMessage(), server.Connections[0], NetIncomingMessageType.StatusChanged));
 
-            var windowClient = new VirtualWindow(controller)
-            {
-                CanvasSize = center,
-                CanvasPosition = new Vector2i(0, center.Y)
-            };
+            var windowClient = new VirtualWindow(controller, () => center, () => new Vector2i(0, center.Y));
             controller.AddController(new Server(windowClient, server));
 
-            var windowServer = new VirtualWindow(controller)
-            {
-                CanvasSize = center,
-                CanvasPosition = center
-            };
+            var windowServer = new VirtualWindow(controller, () => center, () => center);
             controller.AddController(new Client(windowServer, null, client));
 
             var netController = new NetworkController();

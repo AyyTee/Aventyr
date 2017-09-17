@@ -119,7 +119,7 @@ namespace TimeLoopInc
             var gui = new Layer
             {
                 DepthTest = false,
-                Camera = new HudCamera2(_window.CanvasSize)
+                Camera = new HudCamera2(() => _window.CanvasSize)
             };
             _timelineRender.Render(gui, new Vector2(50, _window.CanvasSize.Y - 150), new Vector2(_window.CanvasSize.X - 100, 140), _window.DpiScale, animationT);
             gui.Renderables.Add(Draw.Text(_window.Resources.LatoRegular(), new Vector2(0, 0), "Time: " + _scene.CurrentTime.ToString()));

@@ -62,14 +62,14 @@ namespace Game.Rendering
             _texture = new Texture(texId, (Vector2i)image.Size, HasTransparency(image));
         }
 
-        public void LoadImage()
+        public void LoadImage(string resourceFolder)
         {
             if (_texture != null)
             {
                 return;
             }
 
-            using (var file = new Bitmap(Path.Combine(Resources.ResourcePath, Filepath)))
+            using (var file = new Bitmap(Path.Combine(resourceFolder, Filepath)))
             {
                 LoadImage(file);
             }

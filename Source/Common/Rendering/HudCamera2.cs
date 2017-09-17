@@ -25,14 +25,15 @@ namespace Game.Rendering
         public double Fov => Math.PI / 4;
         public bool IsOrtho => true;
 
-        public Vector2i CanvasSize { get; set; }
+        public Vector2i CanvasSize => CanvasSizeFunc();
+        public Func<Vector2i> CanvasSizeFunc { get; }
 
         public Transform2 WorldTransform => new Transform2(new Vector2(0, CanvasSize.Y), 0, -CanvasSize.Y, true);
         public Transform2 WorldVelocity => Transform2.CreateVelocity();
 
-        public HudCamera2(Vector2i canvasSize)
+        public HudCamera2(Func<Vector2i> canvasSize)
         {
-            CanvasSize = canvasSize;
+            CanvasSizeFunc = canvasSize;
         }
     }
 }

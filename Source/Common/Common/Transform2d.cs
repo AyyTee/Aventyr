@@ -55,9 +55,11 @@ namespace Game.Common
 
         public Matrix4d GetMatrix()
         {
+#pragma warning disable
             return Matrix4d.Scale(new Vector3d(Scale.X, Scale.Y, 1)) * 
                 Matrix4d.CreateRotationZ(Rotation) * 
                 Matrix4d.CreateTranslation(new Vector3d(Position));
+#pragma warning restore
         }
 
         public Vector2d GetUp() => Vector2Ex.TransformVelocity(new Vector2d(0, 1), GetMatrix());
@@ -101,7 +103,9 @@ namespace Game.Common
                 invert.Rotation = Rotation;
             }
             invert = invert.SetScale(new Vector2d(1 / Scale.X, 1 / Scale.Y));
+#pragma warning disable
             Matrix4d mat = Matrix4d.CreateRotationZ(-Rotation) * Matrix4d.Scale(new Vector3d(invert.Scale));
+#pragma warning restore
             invert.Position = Vector2Ex.Transform(-Position, mat);
             DebugEx.Assert(Matrix4Ex.AlmostEqual(GetMatrix().Inverted(), invert.GetMatrix()));
             return invert;

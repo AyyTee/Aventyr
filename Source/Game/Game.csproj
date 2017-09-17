@@ -127,7 +127,6 @@
     <Compile Include="RandomEx.cs" />
     <Compile Include="Rendering\Camera2.cs" />
     <Compile Include="Rendering\GlStateManager.cs" />
-    <Compile Include="Rendering\IClientSizeProvider.cs" />
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\LayerEx.cs" />
     <Compile Include="Rendering\TextureResources.cs" />

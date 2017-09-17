@@ -17,7 +17,7 @@ using Game.Serialization;
 
 namespace Game
 {
-    public class ResourceController : IClientSizeProvider
+    public class ResourceController
     {
         public List<int> TextureGarbage = new List<int>();
 
@@ -51,27 +51,17 @@ namespace Game
 
         public ResourceController(Vector2i windowSize, string windowName = "Game")
         {
-            _window = new GameWindow(
-                windowSize.X,
-                windowSize.Y,
-                DefaultGraphics,
-                windowName,
-                GameWindowFlags.FixedWindow,
-                DisplayDevice.Default,
-                3,
-                3,
-                GraphicsContextFlags.ForwardCompatible);
-            DebugEx.GlAssert();
+            _window = GetWindow(windowSize, windowName);
 
             DpiScale = ClientSize.X / (float)windowSize.X;
 
             var data = File.ReadAllText(Path.Combine(Resources.ResourcePath, "Assets.json"));
             Resources = Serializer.Deserialize<Resources>(data);
-            Renderer = new Renderer(this, Resources);
+            Renderer = new Renderer(() => (Vector2i)_window.ClientSize, Resources);
 
             foreach (var texture in Resources.Textures)
             {
-                texture.Texture.LoadImage();
+                texture.Texture.LoadImage(Resources.ResourcePath);
             }
             
 
@@ -93,6 +83,22 @@ namespace Game
                     KeyString += '\b';
                 }
             };
+        }
+
+        public static GameWindow GetWindow(Vector2i size, string windowName = "")
+        {
+            var window = new GameWindow(
+                size.X,
+                size.Y,
+                DefaultGraphics,
+                windowName,
+                GameWindowFlags.FixedWindow,
+                DisplayDevice.Default,
+                3,
+                3,
+                GraphicsContextFlags.ForwardCompatible);
+            DebugEx.GlAssert();
+            return window;
         }
 
         public void Run()

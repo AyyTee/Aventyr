@@ -106,7 +106,7 @@ namespace TankGame.Network
             _window.Layers.Add(LayerEx.FromScene(_scene));
 
             var gui = new Layer();
-            gui.Camera = new HudCamera2(_window.CanvasSize);
+            gui.Camera = new HudCamera2(() => _window.CanvasSize);
 
             _fpsCounter.Enqueue((float)timeDelta);
             gui.Renderables.Add(Draw.Text(

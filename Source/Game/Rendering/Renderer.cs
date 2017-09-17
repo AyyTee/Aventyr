@@ -36,15 +36,14 @@ namespace Game.Rendering
 
         public List<IVirtualWindow> Windows { get; private set; } = new List<IVirtualWindow>();
 
-        Vector2i ClientSize => _canvasSizeProvider.ClientSize;
-
-        IClientSizeProvider _canvasSizeProvider;
+        Vector2i ClientSize => _canvasSizeFunc();
+        Func<Vector2i> _canvasSizeFunc;
 
         readonly Resources _textures;
 
-        public Renderer(IClientSizeProvider canvasSizeProvider, Resources textures)
+        public Renderer(Func<Vector2i> canvasSize, Resources textures)
         {
-            _canvasSizeProvider = canvasSizeProvider;
+            _canvasSizeFunc = canvasSize;
             _textures = textures;
 
             _state = new GlStateManager();

@@ -13,8 +13,12 @@ namespace Game.Rendering
     public class VirtualWindow : IVirtualWindow
     {
         readonly ResourceController _resourceController;
-        public Vector2i CanvasSize { get; set; }
-        public Vector2i CanvasPosition { get; set; }
+
+        public Func<Vector2i> CanvasSizeFunc { get; }
+        public Vector2i CanvasSize => CanvasSizeFunc();
+        public Func<Vector2i> CanvasPositionFunc { get; }
+        public Vector2i CanvasPosition => CanvasPositionFunc();
+
         public float DpiScale => _resourceController.DpiScale;
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
         public Resources Resources => _resourceController.Resources;
@@ -36,10 +40,13 @@ namespace Game.Rendering
 
         public event ExitHandler OnExit;
 
-        public VirtualWindow(ResourceController resourceController)
+        public VirtualWindow(ResourceController resourceController, Func<Vector2i> canvasSize = null, Func<Vector2i> canvasPosition = null)
         {
             _resourceController = resourceController;
             _resourceController.Renderer.Windows.Add(this);
+
+            CanvasSizeFunc = canvasSize ?? (() => _resourceController.ClientSize);
+            CanvasPositionFunc = canvasPosition ?? (() => new Vector2i());
         }
 
         public void Update(

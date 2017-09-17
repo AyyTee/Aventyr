@@ -23,7 +23,6 @@ namespace TankGame
             
             var resourceController = new ResourceController(new Vector2i(1000, 800), args[0]);
             var window = new VirtualWindow(resourceController);
-            window.CanvasSize = resourceController.ClientSize;
 
 
             var config = NetworkHelper.GetDefaultConfig();

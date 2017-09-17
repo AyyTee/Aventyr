@@ -1,4 +1,5 @@
 ﻿using Game;
+using Game.Common;
 using NUnit.Framework;
 using OpenTK.Input;
 using System;
@@ -18,7 +19,7 @@ namespace UiTests
         [SetUp]
         public void SetUp()
         {
-            _window = new FakeVirtualWindow(Config.Resources);
+            _window = new FakeVirtualWindow(Config.Resources, () => new Vector2i(1000, 800));
         }
 
         void SetInput(IEnumerable<Key> keys = null, string keyString = "")

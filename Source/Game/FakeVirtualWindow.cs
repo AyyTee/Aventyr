@@ -14,8 +14,11 @@ namespace Game
 {
     public class FakeVirtualWindow : IVirtualWindow
     {
-        public Vector2i CanvasPosition => new Vector2i();
-        public Vector2i CanvasSize => new Vector2i(1000, 800);
+        public Func<Vector2i> CanvasSizeFunc { get; }
+        public Vector2i CanvasSize => CanvasSizeFunc();
+        public Func<Vector2i> CanvasPositionFunc { get; }
+        public Vector2i CanvasPosition => CanvasPositionFunc();
+
         public float DpiScale { get; set; } = 1;
 
         public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
@@ -41,9 +44,12 @@ namespace Game
 
         public event ExitHandler OnExit;
 
-        public FakeVirtualWindow(Resources resources)
+        public FakeVirtualWindow(Resources resources, Func<Vector2i> canvasSize, Func<Vector2i> canvasPosition = null)
         {
             Resources = resources;
+
+            CanvasSizeFunc = canvasSize;
+            CanvasPositionFunc = canvasPosition ?? (() => new Vector2i());
         }
 
         public void Update(string keyString, ISet<Key> keyboardState, ISet<MouseButton> mouseState, Vector2 mousePosition = new Vector2(), bool hasFocus = true, float mouseWheel = 0)

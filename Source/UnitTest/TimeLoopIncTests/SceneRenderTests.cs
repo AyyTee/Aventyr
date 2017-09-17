@@ -34,7 +34,7 @@ namespace TimeLoopIncTests
                 scene.Portals,
                 scene.GetEntities());
 
-            var window = new FakeVirtualWindow(Config.Resources);
+            var window = new FakeVirtualWindow(Config.Resources, () => new Vector2i(1000, 800));
 
             var sceneRender = new SceneRender(window, scene);
             scene.Step(new MoveInput(GridAngle.Right));
@@ -55,7 +55,7 @@ namespace TimeLoopIncTests
                 scene.Portals,
                 scene.GetEntities());
 
-            var window = new FakeVirtualWindow(Config.Resources);
+            var window = new FakeVirtualWindow(Config.Resources, () => new Vector2i(1000, 800));
 
             var sceneRender = new SceneRender(window, scene);
             scene.Step(new MoveInput(GridAngle.Right));
