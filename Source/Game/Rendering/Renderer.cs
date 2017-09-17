@@ -28,6 +28,8 @@ namespace Game.Rendering
 
         Shader _activeShader;
 
+        public static Color4 BackgroundColor { get; } = Color4.HotPink;
+
         readonly Dictionary<string, Shader> _shaders = new Dictionary<string, Shader>();
 
         readonly GlStateManager _state;
@@ -48,7 +50,7 @@ namespace Game.Rendering
 
             _state = new GlStateManager();
 
-            GL.ClearColor(Color4.HotPink);
+            GL.ClearColor(BackgroundColor);
             GL.CullFace(CullFaceMode.Back);
 
             GL.ClearStencil(0);
@@ -210,27 +212,30 @@ namespace Game.Rendering
             #endregion
 
             var portalEdgesData = data.BufferModel(
-                GetPortalEdges(portalViewList, cam), 
+                GetPortalEdges(portalViewList, cam),
                 Matrix4.Identity);
 
             BufferData(
-                data.Vertices.ToArray(), 
-                data.Colors.ToArray(), 
-                data.TexCoords.ToArray(), 
-                data.Indices.ToArray(), 
+                data.Vertices.ToArray(),
+                data.Colors.ToArray(),
+                data.TexCoords.ToArray(),
+                data.Indices.ToArray(),
                 _iboElements);
 
-
-            GL.ColorMask(false, false, false, false);
-            GL.DepthMask(false);
-            using (_state.Push(EnableCap.DepthTest, false))
-            using (_state.Push(EnableCap.StencilTest, true))
+            var portalIterations = Math.Min(portalViewList.Count, StencilMaxValue);
+            if (portalIterations > 1)
             {
-                GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
-                for (int i = 1; i < Math.Min(portalViewList.Count, StencilMaxValue); i++)
+                GL.ColorMask(false, false, false, false);
+                GL.DepthMask(false);
+                using (_state.Push(EnableCap.DepthTest, false))
+                using (_state.Push(EnableCap.StencilTest, true))
                 {
-                    GL.StencilFunc(StencilFunction.Always, i, StencilMask);
-                    Draw(new[] { portalViewModels[i - 1] }, cam.GetViewMatrix());
+                    GL.StencilOp(StencilOp.Replace, StencilOp.Replace, StencilOp.Replace);
+                    for (int i = 1; i < portalIterations; i++)
+                    {
+                        GL.StencilFunc(StencilFunction.Always, i, StencilMask);
+                        Draw(new[] { portalViewModels[i - 1] }, cam.GetViewMatrix());
+                    }
                 }
             }
 

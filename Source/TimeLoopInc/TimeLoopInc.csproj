@@ -82,7 +82,6 @@
     <Compile Include="GridCamera.cs" />
     <Compile Include="SceneInstant.cs" />
     <Compile Include="SceneRender.cs" />
-    <Compile Include="Serializer.cs" />
     <Compile Include="Timeline.cs" />
     <Compile Include="IDeepClone.cs" />
     <Compile Include="BlockInstant.cs" />

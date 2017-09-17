@@ -1,6 +1,6 @@
 ﻿using Game;
 using Game.Common;
-using Newtonsoft.Json;
+using Game.Serialization;
 using NUnit.Framework;
 using OpenTK;
 using System;

@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using Game.Common;
 using System.Drawing;
 using System.Drawing.Imaging;
+using TimeLoopInc;
+using Game.Models;
 
 namespace GameTests
 {
@@ -34,7 +36,9 @@ namespace GameTests
 
             _window.ClientSize = new Size(size.X, size.Y);
 
-            var resourceFolder = Path.Combine(TestContext.CurrentContext.TestDirectory, Resources.ResourcePath);
+            var resourceFolder = Path.Combine(
+                TestContext.CurrentContext.TestDirectory, 
+                Resources.ResourcePath);
 
             _resources = Serializer.Deserialize<Resources>(
                 File.ReadAllText(Path.Combine(resourceFolder, "Assets.json")));
@@ -50,11 +54,44 @@ namespace GameTests
             _virtualWindow = new FakeVirtualWindow(_resources, _clientSizeFunc);
             _layer = new Layer
             {
-                DepthTest = false,
                 Camera = new HudCamera2(_clientSizeFunc),
             };
             _virtualWindow.Layers.Add(_layer);
             _renderer.Windows.Add(_virtualWindow);
+        }
+
+        public static void BitmapCompare(Bitmap expected, Bitmap result)
+        {
+            Assert.AreEqual(expected.Size, result.Size, "Bitmap sizes aren't equal.");
+            for (int y = 0; y < result.Height; y++)
+            {
+                for (int x = 0; x < result.Width; x++)
+                {
+                    if (expected.GetPixel(x, y) != result.GetPixel(x, y))
+                    {
+                        Assert.Fail($"Bitmaps are not equal at {x},{y}.");
+                    }
+                }
+            }
+        }
+
+        public static Bitmap GrabScreenshot(Vector2i clientSize)
+        {
+            // Read OpenGL buffer into a bitmap so we can iterate the pixels
+            var bmp = new Bitmap(clientSize.X, clientSize.Y);
+            var data = bmp.LockBits(
+                new Rectangle(new Point(), new Size(clientSize.X, clientSize.Y)),
+                ImageLockMode.WriteOnly,
+                System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+
+            GL.Flush();
+            GL.ReadBuffer(ReadBufferMode.Back);
+            GL.ReadPixels(0, 0, clientSize.X, clientSize.Y, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte, data.Scan0);
+            DebugEx.GlAssert();
+            bmp.UnlockBits(data);
+            bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+            return bmp;
         }
 
         [Test]
@@ -62,6 +99,7 @@ namespace GameTests
         {
             var size = _clientSizeFunc();
 
+            _layer.DepthTest = false;
             _layer.Renderables.Add(Draw.Line(new LineF(new Vector2(), (Vector2)size), Color4.DarkOrange, 5f));
 
             for (int y = 0; y < size.Y; y += 100)
@@ -85,38 +123,42 @@ namespace GameTests
             BitmapCompare(expected, result);
         }
 
-        public void BitmapCompare(Bitmap expected, Bitmap result)
+        [Test]
+        public void DepthTest0()
         {
-            Assert.AreEqual(expected.Size, result.Size, "Bitmap sizes aren't equal.");
-            for (int y = 0; y < result.Height; y++)
+            _layer.Camera = new GridCamera(
+                new Transform2(size: 15),
+                (float)_clientSizeFunc().XRatio);
+
+            var output = new List<IRenderable>();
+
+            var redSquare = SceneRender.CreateSquare(new Vector2i(), 2, Color.Red);
+            redSquare.Models[0].Transform.Position = new Vector3(0, 0, 0.01f);
+            output.Add(redSquare);
+
+            var whiteSquare = new Model(ModelFactory.CreatePlaneMesh(new Vector2(), Vector2.One));
+            output.Add(new Renderable(
+                new Transform2(),
+                new[] { whiteSquare }.ToList()));
+
+            _layer.Renderables.AddRange(output);
+
+            _layer.Camera.GetViewMatrix(false);
+
+            _renderer.Render();
+            var bitmap = GrabScreenshot(_clientSizeFunc());
+
+            for (int y = 0; y < bitmap.Height; y++)
             {
-                for (int x = 0; x < result.Width; x++)
+                for (int x = 0; x < bitmap.Width; x++)
                 {
-                    Assert.AreEqual(
-                        expected.GetPixel(x, y), 
-                        result.GetPixel(x, y), 
-                        $"Bitmaps are not equal at {x},{y}.");
+                    var pixel = bitmap.GetPixel(x, y);
+                    if (pixel != Color4.Red && pixel != Renderer.BackgroundColor)
+                    {
+                        Assert.Fail($"White square is visible at {x},{y}.");
+                    }
                 }
             }
-        }
-
-        public Bitmap GrabScreenshot(Vector2i clientSize)
-        {
-            // Read OpenGL buffer into a bitmap so we can iterate the pixels
-            var bmp = new Bitmap(clientSize.X, clientSize.Y);
-            var data = bmp.LockBits(
-                new Rectangle(new Point(), new Size(clientSize.X, clientSize.Y)), 
-                ImageLockMode.WriteOnly,
-                System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-
-            GL.Flush();
-            GL.ReadBuffer(ReadBufferMode.Back);
-            GL.ReadPixels(0, 0, clientSize.X, clientSize.Y, OpenTK.Graphics.OpenGL.PixelFormat.Bgr, PixelType.UnsignedByte, data.Scan0);
-            DebugEx.GlAssert();
-            bmp.UnlockBits(data);
-            bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
-
-            return bmp;
         }
     }
 }

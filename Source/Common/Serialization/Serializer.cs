@@ -19,13 +19,17 @@ namespace Game.Serialization
             return JsonConvert.SerializeObject(data, new JsonSerializerSettings
             {
                 PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+                TypeNameHandling = TypeNameHandling.Auto,
                 Converters = new[] { new Vector2Converter() }
             });
         }
 
         public static T Deserialize<T>(string data)
         {
-            return JsonConvert.DeserializeObject<T>(data);
+            return JsonConvert.DeserializeObject<T>(data, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            });
         }
 
         class Vector2Converter : JsonConverter

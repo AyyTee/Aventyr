@@ -149,6 +149,7 @@ namespace TimeLoopInc
 
         public List<Renderable> RenderInstant(SceneInstant sceneInstant, float t, IEnumerable<IPortalRenderable> portals, Font font)
         {
+            DebugEx.Assert(font != null);
             var output = new List<Renderable>();
 
             foreach (var gridEntity in sceneInstant.Entities.Keys.OfType<IGridEntity>())
@@ -224,15 +225,13 @@ namespace TimeLoopInc
                             continue;
                         }
 
-                        if (font != null)
-                        {
-                            var text = font.GetModel(portal.TimeOffset.ToString(), Color4.White, 0.5f);
-                            text.Transform.Scale = new Vector3(-0.014f, 0.014f, 0.014f);
-                            var offset = (Vector2)angle.Vector *  0.1f;
-                            text.Transform.Position = new Vector3(offset.X, offset.Y, 0.03f);
-                            text.Transform.Rotation = new Quaternion(new Vector3(0, 0, 1), (float)(angle.Radians - Math.PI / 2));
-                            models.Add(text);
-                        }
+
+                        var text = font.GetModel(portal.TimeOffset.ToString(), Color4.White, 0.5f);
+                        text.Transform.Scale = new Vector3(-0.014f, 0.014f, 0.014f);
+                        var offset = (Vector2)angle.Vector *  0.1f;
+                        text.Transform.Position = new Vector3(offset.X, offset.Y, 0.03f);
+                        text.Transform.Rotation = new Quaternion(new Vector3(0, 0, 1), (float)(angle.Radians - Math.PI / 2));
+                        models.Add(text);
                     }
 
                     var renderable = new Renderable(new Transform2((Vector2)portal.Position + Vector2.One / 2), models);
@@ -380,7 +379,7 @@ namespace TimeLoopInc
             return output;
         }
 
-        static Renderable CreateSquare(Vector2i position, int size, Color4 color)
+        public static Renderable CreateSquare(Vector2i position, int size, Color4 color)
         {
             var model = ModelFactory.CreatePlane(Vector2.One * size * 0.98f, color, new Vector3(-size / 2f + 0.01f, -size / 2f + 0.01f, 0));
             return new Renderable(new Transform2((Vector2)position + Vector2.One * 0.5f * size))
