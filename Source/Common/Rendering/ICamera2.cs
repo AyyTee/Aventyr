@@ -39,8 +39,8 @@ namespace Game.Rendering
             var cameraZ = isOrtho ? 50f : (float)camera.GetWorldZ();
             Vector3 eye = new Vector3(transform.Position) + new Vector3(0, 0, cameraZ);
 
-            var zNear = 0.01f;
-            var zFar = 10000f;
+            var zNear = 1;
+            var zFar = 1000;
 
             if (isOrtho)
             {

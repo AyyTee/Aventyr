@@ -213,7 +213,7 @@ namespace TimeLoopInc
                     var random = new Random(seed);
                     var color = random.Choose(Color4.ForestGreen, Color4.Crimson, Color4.Chocolate);
                     var square = CreateSquare(portal.Position, 1, color);
-                    square.Models[0].Transform.Position = new Vector3(0, 0, 0.01f);
+                    square.Models[0].Transform.Position = new Vector3(0, 0, 0.001f);
                     output.Add(square);
 
                     var models = new List<Model>();
@@ -229,7 +229,7 @@ namespace TimeLoopInc
                         var text = font.GetModel(portal.TimeOffset.ToString(), Color4.White, 0.5f);
                         text.Transform.Scale = new Vector3(-0.014f, 0.014f, 0.014f);
                         var offset = (Vector2)angle.Vector *  0.1f;
-                        text.Transform.Position = new Vector3(offset.X, offset.Y, 0.03f);
+                        text.Transform.Position = new Vector3(offset.X, offset.Y, 0.002f);
                         text.Transform.Rotation = new Quaternion(new Vector3(0, 0, 1), (float)(angle.Radians - Math.PI / 2));
                         models.Add(text);
                     }
@@ -237,7 +237,7 @@ namespace TimeLoopInc
                     var renderable = new Renderable(new Transform2((Vector2)portal.Position + Vector2.One / 2), models);
                     output.Add(renderable);
                 }
-                var line = Draw.Line(new LineF(portal.GetWorldVerts()), Color4.Blue, 0.08f);
+                var line = Draw.Line(new LineF(portal.GetWorldVerts()), Color4.Blue, 0.002f);
                 line.Models[0].Transform.Position += new Vector3(0, 0, 0.01f);
                 line.IsPortalable = false;
                 output.Add(line);

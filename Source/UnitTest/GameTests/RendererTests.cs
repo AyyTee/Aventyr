@@ -37,7 +37,7 @@ namespace GameTests
             _window.ClientSize = new Size(size.X, size.Y);
 
             var resourceFolder = Path.Combine(
-                TestContext.CurrentContext.TestDirectory, 
+                TestContext.CurrentContext.TestDirectory,
                 Resources.ResourcePath);
 
             _resources = Serializer.Deserialize<Resources>(
@@ -109,9 +109,9 @@ namespace GameTests
                     var v = new Vector2(x, y);
                     _layer.Renderables.Add(Draw.Rectangle(v, v + Vector2.One, Color4.Green));
                     var text = Draw.Text(
-                        _resources.DefaultFont, 
-                        v, 
-                        $"{x}\n{y}", 
+                        _resources.DefaultFont,
+                        v,
+                        $"{x}\n{y}",
                         new Color4(0.1f, 0.2f, 0.3f, 1));
                     _layer.Renderables.Add(text);
                 }
@@ -123,8 +123,9 @@ namespace GameTests
             BitmapCompare(expected, result);
         }
 
-        [Test]
-        public void DepthTest0()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DepthTest0(bool drawRedFirst)
         {
             _layer.Camera = new GridCamera(
                 new Transform2(size: 15),
@@ -132,14 +133,31 @@ namespace GameTests
 
             var output = new List<IRenderable>();
 
-            var redSquare = SceneRender.CreateSquare(new Vector2i(), 2, Color.Red);
-            redSquare.Models[0].Transform.Position = new Vector3(0, 0, 0.01f);
-            output.Add(redSquare);
+            Action drawRed = () =>
+            {
+                var redSquare = SceneRender.CreateSquare(new Vector2i(), 2, Color.Red);
+                redSquare.Models[0].Transform.Position = new Vector3(0, 0, 0.0007f);
+                output.Add(redSquare);
+            };
 
-            var whiteSquare = new Model(ModelFactory.CreatePlaneMesh(new Vector2(), Vector2.One));
-            output.Add(new Renderable(
-                new Transform2(),
-                new[] { whiteSquare }.ToList()));
+            Action drawWhite = () =>
+            {
+                var whiteSquare = new Model(ModelFactory.CreatePlaneMesh(new Vector2(), Vector2.One));
+                output.Add(new Renderable(
+                    new Transform2(),
+                    new[] { whiteSquare }.ToList()));
+            };
+
+            if (drawRedFirst)
+            {
+                drawRed();
+                drawWhite();
+            }
+            else
+            {
+                drawWhite();
+                drawRed();
+            }
 
             _layer.Renderables.AddRange(output);
 
