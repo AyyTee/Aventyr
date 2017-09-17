@@ -13,7 +13,7 @@ namespace Aventyr
     {
         static void Main(string[] args)
         {
-            var controller = new ResourceController(new Vector2i(400, 300), "Aventyr");
+            var controller = new ResourceController(new Vector2i(1000, 800), "Aventyr");
             var window = new VirtualWindow(controller);
             window.OnExit += controller.Exit;
             controller.AddController(new Controller(window));

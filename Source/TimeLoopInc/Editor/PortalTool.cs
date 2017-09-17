@@ -78,9 +78,6 @@ namespace TimeLoopInc.Editor
                     new LineF(selectedPortal.Center, _mousePosition),
                     Color4.Black,
                     0.04f);
-                line.IsPortalable = false;
-                line.DrawOverPortals = true;
-                line.Models.ForEach(item => item.Transform.Position += new Vector3(0, 0, 10));
                 output.Add(line);
             }
 

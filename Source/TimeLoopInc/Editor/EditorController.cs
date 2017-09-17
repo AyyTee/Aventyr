@@ -63,6 +63,11 @@ namespace TimeLoopInc.Editor
 
         public EditorController(IVirtualWindow window, Controller controller)
         {
+            NewLevel();
+
+            Window = window;
+            _controller = controller;
+
             _tools = new[]
             {
                 new ToolData("Wall", new FloorTool(this), "Left click to place.  Right click to remove.", new Hotkey(Key.Number1)),
@@ -73,10 +78,6 @@ namespace TimeLoopInc.Editor
                 new ToolData("Portal Link", new LinkTool(this), "Click two portals to link them.", new Hotkey(Key.Number6)),
             }.ToImmutableArray();
 
-            NewLevel();
-
-            Window = window;
-            _controller = controller;
             _tool = _tools[0];
             _sceneRender = new SceneRender(Window, new TimeLoopInc.Scene());
 
@@ -160,6 +161,7 @@ namespace TimeLoopInc.Editor
 
             Camera = new GridCamera(new Transform2(), (float)Window.CanvasSize.XRatio);
             Camera.WorldTransform = Camera.WorldTransform.WithSize(15);
+            Camera.IsOrtho = true;
         }
 
         void Play()
@@ -411,8 +413,15 @@ namespace TimeLoopInc.Editor
                         .ToList()
                 };
 
-                layer.Renderables.AddRange(_tool.Tool.Render());
+                var toolLayer = new Layer
+                {
+                    Camera = Camera,
+                    DepthTest = false
+                };
+
+                toolLayer.Renderables.AddRange(_tool.Tool.Render());
                 Window.Layers.Add(layer);
+                Window.Layers.Add(toolLayer);
             }
 
             var gui = _menu.Render();

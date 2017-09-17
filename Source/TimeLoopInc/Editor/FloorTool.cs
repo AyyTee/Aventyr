@@ -26,15 +26,17 @@ namespace TimeLoopInc.Editor
         {
             var window = _editor.Window;
             var scene = _editor.Scene;
+            var output = new List<IRenderable>();
             if ((window.ButtonDown(MouseButton.Left) || window.ButtonDown(MouseButton.Right)) && scene.Selected != null)
             {
                 var camera = _editor.Camera;
                 
                 var mousePosition = window.MouseWorldPos(camera);
 
-                var color = window.ButtonDown(MouseButton.Left) ? 
-                    new Color4(1, 1, 1, 0.5f) : 
+                var fillColor = window.ButtonDown(MouseButton.Left) ? 
+                    new Color4(0.5f, 0.5f, 1, 0.5f) : 
                     new Color4(1, 0, 0, 0.5f);
+                var outlineColor = new Color4(fillColor.R, fillColor.G, fillColor.B, 1);
 
                 var selectionRegion = (RectangleF)GetSelection(mousePosition);
 
@@ -43,15 +45,20 @@ namespace TimeLoopInc.Editor
                         selectionRegion.Position, 
                         selectionRegion.Position + selectionRegion.Size, 
                         selectionRegion.Size, 
-                        color))
+                        fillColor))
                 {
                     Texture = _editor.Window.Resources.Floor(),
-                    Transform = new Transform3(new Vector3(0, 0, 10))
                 };
 
-                return new List<IRenderable> { new Renderable(selection) };
+                output.Add(new Renderable(selection));
+                output.Add(
+                    Draw.RectangleOutline(
+                        selectionRegion.Position, 
+                        selectionRegion.Position + selectionRegion.Size, 
+                        fillColor, 
+                        0.05f));
             }
-            return new List<IRenderable>();
+            return output;
         }
 
         RectangleI GetSelection(Vector2 mouseWorldPos)

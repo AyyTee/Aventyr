@@ -21,7 +21,7 @@ namespace TimeLoopInc
         public Transform2 WorldTransform { get; set; } = new Transform2();
         public Transform2 WorldVelocity { get; set; } = Transform2.CreateVelocity();
 
-        public bool IsOrtho => false;
+        public bool IsOrtho { get; set; } = true;
 
         public GridCamera(Transform2 worldTransform, float aspect)
         {

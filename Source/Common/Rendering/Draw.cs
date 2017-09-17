@@ -29,12 +29,27 @@ namespace Game.Rendering
 
         public static Renderable Rectangle(Vector2 topLeft, Vector2 bottomRight, Color4 color)
         {
-            var plane = new Model(
+            var model = new Model(
                 ModelFactory.CreatePlaneMesh(
                     Vector2.ComponentMin(topLeft, bottomRight),
                     Vector2.ComponentMax(topLeft, bottomRight),
                     color));
-            return GetRenderable(plane);
+            return GetRenderable(model);
+        }
+
+        public static Renderable RectangleOutline(Vector2 topLeft, Vector2 bottomRight, Color4 color, float thickness)
+        {
+            var model = ModelFactory.CreateLineStripWidth(
+                new[] {
+                    topLeft,
+                    new Vector2(topLeft.X, bottomRight.Y),
+                    bottomRight,
+                    new Vector2(bottomRight.X, topLeft.Y),
+                }, 
+                thickness, 
+                true, 
+                color);
+            return GetRenderable(model);
         }
 
         public static Renderable Line(LineF line)

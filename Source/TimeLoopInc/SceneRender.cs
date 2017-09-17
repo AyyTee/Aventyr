@@ -33,6 +33,7 @@ namespace TimeLoopInc
             
             Scene = scene;
             Camera = new GridCamera(new Transform2(), (float)_window.CanvasSize.XRatio);
+            Camera.IsOrtho = false;
 
             _box = ModelResources.Box(_window.Resources).Load(_window);
         }
@@ -73,6 +74,7 @@ namespace TimeLoopInc
             }
 
             var worldCamera = new GridCamera(cameraTransform, (float)_window.CanvasSize.XRatio);
+            worldCamera.IsOrtho = false;
             worldCamera.WorldVelocity = worldCamera.WorldVelocity.WithPosition(cameraVelocity);
             worldLayer.Camera = worldCamera;
             Camera = worldCamera;

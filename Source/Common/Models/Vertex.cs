@@ -13,13 +13,13 @@ namespace Game.Models
     public class Vertex : MemberwiseEquatable<Vertex>, IShallowClone<Vertex>
     {
         [DataMember]
-        public readonly Vector3 Position;
+        public Vector3 Position { get; private set; }
         [DataMember]
-        public readonly Color4 Color = Color4.White;
+        public Color4 Color { get; private set; } = Color4.White;
         [DataMember]
-        public readonly Vector2 TextureCoord;
+        public Vector2 TextureCoord { get; private set; }
         [DataMember]
-        public readonly Vector3 Normal;
+        public Vector3 Normal { get; private set; }
 
         public Vertex()
             : this(new Vector3())
@@ -85,6 +85,16 @@ namespace Game.Models
             Vector3 position = Vector3Ex.Transform(Position, transform);
             Vector3 normal = Vector3Ex.Transform(Normal, transform);
             return new Vertex(position, TextureCoord, Color, normal);
+        }
+
+        public Vertex With(Vector3? position = null, Vector2? textureCoord = null, Color4? color = null, Vector3? normal = null)
+        {
+            var clone = (Vertex)MemberwiseClone();
+            clone.Position = position ?? Position;
+            clone.TextureCoord = textureCoord ?? TextureCoord;
+            clone.Color = color ?? Color;
+            clone.Normal = normal ?? Normal;
+            return clone;
         }
     }
 }
