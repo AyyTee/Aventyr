@@ -27,8 +27,7 @@ namespace Game.Common
             return new Transform3d(
                 (Vector3d)t.Position, 
                 (Vector3d)t.Scale, 
-                new Quaterniond((Vector3d)t.Rotation.Xyz, t.Rotation.W), 
-                t.FixedScale);
+                new Quaterniond((Vector3d)t.Rotation.Xyz, t.Rotation.W));
         }
 
         public static explicit operator Transform3(Transform3d t)
@@ -36,8 +35,7 @@ namespace Game.Common
             return new Transform3(
                 (Vector3)t.Position, 
                 (Vector3)t.Scale,
-                new Quaternion((Vector3)t.Rotation.Xyz, (float)t.Rotation.W), 
-                t.FixedScale);
+                new Quaternion((Vector3)t.Rotation.Xyz, (float)t.Rotation.W));
         }
     }
 }

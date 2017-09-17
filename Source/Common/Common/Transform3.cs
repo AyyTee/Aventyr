@@ -12,33 +12,27 @@ namespace Game.Common
     public partial class Transform3
     {
         Matrix4 _matrix;
-        bool _matrixUpdate = true;
+        bool _dirty = true;
         Vector3 _position;
         Quaternion _rotation = new Quaternion(0, 0, 1, 0);
         Vector3 _scale = new Vector3(1, 1, 1);
 
-        public bool FixedScale { get; private set; }
-
         public Quaternion Rotation {
-            get { return _rotation; }
-            set { _rotation = value; _matrixUpdate = true; }
+            get => _rotation;
+            set { _rotation = value; _dirty = true; }
         }
         public Vector3 Scale
         {
-            get { return _scale; }
+            get => _scale;
             set
             {
-                if (FixedScale)
-                {
-                    DebugEx.Assert(Math.Abs(value.X) == Math.Abs(value.Y) && Math.Abs(value.Y) == Math.Abs(value.Z), "Transforms with fixed scale cannot have non-uniform scale.");
-                }
-                _matrixUpdate = true;
+                _dirty = true;
                 _scale = value;
             }
         }
         public Vector3 Position {
-            get { return _position; }
-            set { _position = value; _matrixUpdate = true; }
+            get => _position;
+            set { _position = value; _dirty = true; }
         }
 
         public Transform3()
@@ -56,12 +50,11 @@ namespace Game.Common
             Scale = scale;
         }
 
-        public Transform3(Vector3 position, Vector3 scale, Quaternion rotation, bool fixedScale = false)
+        public Transform3(Vector3 position, Vector3 scale, Quaternion rotation)
         {
             Position = position;
             Scale = scale;
             Rotation = rotation;
-            FixedScale = fixedScale;
         }
 
         public Transform3 ShallowClone()
@@ -71,18 +64,17 @@ namespace Game.Common
                 Rotation = new Quaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W),
                 Position = new Vector3(Position),
                 Scale = new Vector3(Scale),
-                FixedScale = FixedScale
             };
         }
 
         public Matrix4 GetMatrix()
         {
-            if (_matrixUpdate)
+            if (_dirty)
             {
 #pragma warning disable
                 _matrix = Matrix4.Scale(Scale) * Matrix4.CreateFromAxisAngle(new Vector3(Rotation.X, Rotation.Y, Rotation.Z), Rotation.W) * Matrix4.CreateTranslation(Position);
 #pragma warning restore
-                _matrixUpdate = false;
+                _dirty = false;
             }
             return _matrix;
         }

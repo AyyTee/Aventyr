@@ -20,8 +20,6 @@ namespace Game.Rendering
         /// Use orthographic projection when rendering. Otherwise use perspective projection.
         /// </summary>
         bool IsOrtho { get; }
-        float ZNear { get; }
-        float ZFar { get; }
     }
 
     public static class ICamera2Ex
@@ -32,29 +30,34 @@ namespace Game.Rendering
         public static Matrix4 GetViewMatrix(this ICamera2 camera, bool isOrtho = true)
         {
             Transform2 transform = camera.WorldTransform;
-            var m = Matrix4.CreateRotationZ(transform.Rotation);
-            Vector3 lookat = new Vector3(transform.Position) + Vector3Ex.Transform(new Vector3(0, 0, -1), m);
-            Vector3 eye;
-            Matrix4 perspective;
+            Vector3 lookat = 
+                new Vector3(transform.Position) + 
+                Vector3Ex.Transform(
+                    new Vector3(0, 0, -1), 
+                    Matrix4.CreateRotationZ(transform.Rotation));
+
+            var cameraZ = isOrtho ? 50f : (float)camera.GetWorldZ();
+            Vector3 eye = new Vector3(transform.Position) + new Vector3(0, 0, cameraZ);
+
+            var zNear = 0.01f;
+            var zFar = 10000f;
 
             if (isOrtho)
             {
-                float x = camera.ViewOffset.X / 2;
-                float y = camera.ViewOffset.Y / 2;
-
+                float x = camera.ViewOffset.X * 0.5f * transform.Scale.X * camera.Aspect;
+                float y = camera.ViewOffset.Y * 0.5f * transform.Scale.Y;
                 float width = transform.Scale.X * camera.Aspect;
                 float height = transform.Scale.Y;
-                x *= transform.Scale.X * camera.Aspect;
-                y *= transform.Scale.Y;
-                perspective = Matrix4.CreateOrthographicOffCenter(x - width / 2, x + width / 2, y - height / 2, y + height / 2, camera.ZNear, camera.ZFar);
-                eye = new Vector3(transform.Position) + new Vector3(0, 0, 50);
-                return Matrix4.LookAt(eye, lookat, new Vector3(GetUp(camera))) * perspective;
+                return 
+                    Matrix4.LookAt(eye, lookat, new Vector3(GetUp(camera))) * 
+                    Matrix4.CreateOrthographicOffCenter(x - width / 2, x + width / 2, y - height / 2, y + height / 2, zNear, zFar);
             }
 
-            perspective = Matrix4.CreatePerspectiveFieldOfView((float)camera.Fov, camera.Aspect, 0.01f, 10000f);
-            perspective = Matrix4.CreateScale(transform.Scale.X, transform.Scale.Y, Math.Abs(transform.Size)) * perspective;
-            eye = new Vector3(transform.Position) + new Vector3(0, 0, (float)GetWorldZ(camera));
-            return Matrix4.LookAt(eye, lookat, new Vector3(GetUp(camera))) * perspective * Matrix4.CreateTranslation(new Vector3(-camera.ViewOffset.X, -camera.ViewOffset.Y, 0));
+            return 
+                Matrix4.LookAt(eye, lookat, new Vector3(GetUp(camera))) *
+                Matrix4.CreateScale(transform.Scale.X, transform.Scale.Y, Math.Abs(transform.Size)) *
+                Matrix4.CreatePerspectiveFieldOfView((float)camera.Fov, camera.Aspect, zNear, zFar) * 
+                Matrix4.CreateTranslation(new Vector3(-camera.ViewOffset.X, -camera.ViewOffset.Y, 0));
         }
 
         public static float UnitZToWorld(this ICamera2 camera, float z)
@@ -67,7 +70,9 @@ namespace Game.Rendering
             return Math.Abs(camera.WorldTransform.Size / (2 * Math.Tan(camera.Fov / 2)));
         }
 
-        //get xy world offset needed to make v appear to overlap target in screen space.
+        /// <summary>
+        /// World offset needed to make v appear to overlap target in screen space.
+        /// </summary>
         public static Vector2 GetOverlapOffset(this ICamera2 camera, Vector3 v, Vector3 target)
         {
             Vector3 cameraPos = new Vector3(camera.WorldTransform.Position);

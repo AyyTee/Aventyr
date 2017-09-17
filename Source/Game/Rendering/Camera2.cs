@@ -33,8 +33,6 @@ namespace Game.Rendering
         }
         [DataMember]
         public Vector2 ViewOffset { get; set; }
-        public float ZNear => -10000f;
-        public float ZFar => 10000f;
         public double Fov => Math.PI / 4;
         public bool IsOrtho => true;
 

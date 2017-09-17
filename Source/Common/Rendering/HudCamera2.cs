@@ -20,8 +20,6 @@ namespace Game.Rendering
 
         public Vector2 ViewOffset => Vector2.One;
 
-        public float ZNear => -10000f;
-        public float ZFar => 10000f;
         public double Fov => Math.PI / 4;
         public bool IsOrtho => true;
 

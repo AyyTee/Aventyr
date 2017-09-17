@@ -22,8 +22,6 @@ namespace GameTests
             public float Aspect { get; set; } = 1;
             public double Fov { get; set; } = Math.PI / 4;
             public Vector2 ViewOffset { get; set; }
-            public float ZFar { get; set; } = 10000;
-            public float ZNear { get; set; } = 0.1f;
             public Transform2 WorldTransform { get; set; } = new Transform2();
             public Transform2 WorldVelocity { get; set; } = Transform2.CreateVelocity();
             public string Name { get; set; } = nameof(SimpleCamera2);

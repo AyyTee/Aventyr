@@ -16,8 +16,6 @@ namespace TimeLoopInc
 
         public Vector2 ViewOffset => new Vector2();
 
-        public float ZNear => 0.001f;
-        public float ZFar => 10000f;
         public double Fov => Math.PI / 4;
 
         public Transform2 WorldTransform { get; set; } = new Transform2();
