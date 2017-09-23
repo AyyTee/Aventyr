@@ -239,8 +239,8 @@ namespace TimeLoopInc
                     var renderable = new Renderable(new Transform2((Vector2)portal.Position + Vector2.One / 2), models);
                     output.Add(renderable);
                 }
-                var line = Draw.Line(new LineF(portal.GetWorldVerts()), Color4.Blue, 0.002f);
-                line.Models[0].Transform.Position += new Vector3(0, 0, 0.01f);
+                var line = Draw.Line(new LineF(portal.GetWorldVerts()), Color4.Blue, 0.2f);
+                line.Models[0].Transform.Position += new Vector3(0, 0, 0.0015f);
                 line.IsPortalable = false;
                 output.Add(line);
             }

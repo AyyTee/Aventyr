@@ -257,10 +257,13 @@ namespace Game.Rendering
             }
             #endregion
 
-            using (_state.Push(EnableCap.StencilTest, false))
-            using (_state.Push(EnableCap.DepthTest, false))
+            if (portalIterations > 1)
             {
-                Draw(new[] { portalEdgesData }, cam.GetViewMatrix(false));
+                using (_state.Push(EnableCap.StencilTest, false))
+                using (_state.Push(EnableCap.DepthTest, false))
+                {
+                    Draw(new[] { portalEdgesData }, cam.GetViewMatrix(false, 0.1f, 100));
+                }
             }
         }
 

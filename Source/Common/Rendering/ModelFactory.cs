@@ -125,6 +125,8 @@ namespace Game.Rendering
 
         public static Model CreateCube() => CreateCube(Color4.White);
 
+        public static Model CreateCube(Vector3 scale) => CreateCube(scale, Color4.White);
+
         public static Model CreateCube(Color4 color) => CreateCube(new Vector3(1, 1, 1), color);
 
         public static Model CreateCube(Vector3 scale, Color4 color)

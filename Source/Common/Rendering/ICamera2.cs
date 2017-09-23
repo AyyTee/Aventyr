@@ -27,8 +27,9 @@ namespace Game.Rendering
         /// <summary>
         /// Create a view matrix for this Camera
         /// </summary>
-        public static Matrix4 GetViewMatrix(this ICamera2 camera, bool isOrtho = true)
+        public static Matrix4 GetViewMatrix(this ICamera2 camera, bool isOrtho = true, float zNear = 1, float zFar = 1000)
         {
+            DebugEx.Assert(zFar > zNear);
             Transform2 transform = camera.WorldTransform;
             Vector3 lookat = 
                 new Vector3(transform.Position) + 
@@ -38,9 +39,6 @@ namespace Game.Rendering
 
             var cameraZ = isOrtho ? 50f : (float)camera.GetWorldZ();
             Vector3 eye = new Vector3(transform.Position) + new Vector3(0, 0, cameraZ);
-
-            var zNear = 1;
-            var zFar = 1000;
 
             if (isOrtho)
             {
@@ -53,9 +51,9 @@ namespace Game.Rendering
                     Matrix4.CreateOrthographicOffCenter(x - width / 2, x + width / 2, y - height / 2, y + height / 2, zNear, zFar);
             }
 
-            return 
+            return
                 Matrix4.LookAt(eye, lookat, new Vector3(GetUp(camera))) *
-                Matrix4.CreateScale(transform.Scale.X, transform.Scale.Y, Math.Abs(transform.Size)) *
+                Matrix4.CreateScale(transform.MirrorX ? -1 : 1, 1, 1) *
                 Matrix4.CreatePerspectiveFieldOfView((float)camera.Fov, camera.Aspect, zNear, zFar) * 
                 Matrix4.CreateTranslation(new Vector3(-camera.ViewOffset.X, -camera.ViewOffset.Y, 0));
         }
@@ -65,7 +63,7 @@ namespace Game.Rendering
             return (1 - z) * (float)GetWorldZ(camera);
         }
 
-        static double GetWorldZ(this ICamera2 camera)
+        public static double GetWorldZ(this ICamera2 camera)
         {
             return Math.Abs(camera.WorldTransform.Size / (2 * Math.Tan(camera.Fov / 2)));
         }

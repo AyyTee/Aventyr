@@ -25,11 +25,7 @@ namespace GameTests
             public Transform2 WorldTransform { get; set; } = new Transform2();
             public Transform2 WorldVelocity { get; set; } = Transform2.CreateVelocity();
             public string Name { get; set; } = nameof(SimpleCamera2);
-            public bool IsOrtho => true;
-
-            public void Remove()
-            {
-            }
+            public bool IsOrtho { get; set; } = true;
         }
 
         [Test]
@@ -57,6 +53,36 @@ namespace GameTests
 
             Vector2 result = camera.ScreenToClip(new Vector2(), new Vector2i(800, 600));
             Assert.IsTrue(result == new Vector2(-1f, 1f));
+        }
+
+        [Test]
+        [Ignore("GetViewMatrix currently doesn't support world space near/far planes.")]
+        public void ClipPlaneTest0()
+        {
+            var camera = new SimpleCamera2();
+            camera.WorldTransform = camera.WorldTransform.WithSize(20);
+
+            var viewMatrix = camera.GetViewMatrix(false);
+
+            var z = camera.GetWorldZ();
+            var worldZNear = Math.Min(z - 0.1, 10);
+            var worldZFar = -10.0;
+
+            var mInverse = viewMatrix.Inverted();
+            var cube = new[] {
+                new Vector3(1, 1, 1),
+                new Vector3(-1, 1, 1),
+                new Vector3(1, -1, 1),
+                new Vector3(-1, -1, 1),
+                new Vector3(1, 1, -1),
+                new Vector3(-1, 1, -1),
+                new Vector3(1, -1, -1),
+                new Vector3(-1, -1, -1),
+            }.Select(item => Vector3Ex.Transform(item, mInverse)).ToArray();
+
+            var maxError = 0.001;
+            Assert.IsTrue(cube.Take(4).All(item => Math.Abs(item.Z - worldZFar) < maxError));
+            Assert.IsTrue(cube.Skip(4).All(item => Math.Abs(item.Z - worldZNear) < maxError));
         }
     }
 }
