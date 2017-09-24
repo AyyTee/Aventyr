@@ -16,7 +16,7 @@ namespace Game.Rendering
         [DataMember]
         public Vector2i CanvasSize { get; private set; }
         [DataMember]
-        public List<IRenderLayer> Layers { get; private set; }
+        public List<IRenderLayer> Layers { get; set; }
         [DataMember]
         public float RendersPerSecond { get; private set; }
 

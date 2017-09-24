@@ -100,10 +100,10 @@ namespace Game.Rendering
             if (window is IVirtualWindow virtualWindow)
             {
                 var index = Windows.IndexOf(window);
-                if (virtualWindow.HotkeyPress(new Hotkey(OpenTK.Input.Key.Number1 + index, true)))
+                if (virtualWindow.HotkeyPress(new Hotkey(OpenTK.Input.Key.Number1 + index, true, true)))
                 {
                     File.WriteAllText(
-                        $"Window_{index}_{_renderCount}.txt", 
+                        $"Window_{index}_{_renderCount}.json", 
                         Serializer.Serialize(window));
                 }
             }
@@ -133,12 +133,8 @@ namespace Game.Rendering
                 GL.Viewport(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.X, window.CanvasSize.Y);
                 foreach (var layer in window.Layers)
                 {
-                    using (_state.Push(EnableCap.DepthTest, layer.DepthTest))
-                    {
-                        DrawPortalAll(window, layer, 1 / window.RendersPerSecond);
-                    }
-                    GL.Clear(ClearBufferMask.DepthBufferBit);
-                    GL.Clear(ClearBufferMask.StencilBufferBit);
+                    DrawPortalAll(window, layer, 1 / window.RendersPerSecond);
+                    GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.StencilBufferBit);
                 }
             }
 
@@ -256,7 +252,7 @@ namespace Game.Rendering
                     for (int i = 1; i < portalIterations; i++)
                     {
                         GL.StencilFunc(StencilFunction.Always, i, StencilMask);
-                        Draw(new[] { portalViewModels[i - 1] }, cam.GetViewMatrix());
+                        Draw(new[] { portalViewModels[i - 1] }, cam.GetViewMatrix(), true);
                     }
                 }
             }
@@ -272,7 +268,7 @@ namespace Game.Rendering
                     {
                         SetScissor(window, portalViewList[i], cam.GetViewMatrix());
                         GL.StencilFunc(StencilFunction.Equal, i, StencilMask);
-                        Draw(sceneModels.ToArray(), portalViewList[i].ViewMatrix);
+                        Draw(sceneModels.ToArray(), portalViewList[i].ViewMatrix, layer.DepthTest);
                     }
                     SetScissor(window);
                 }
@@ -284,7 +280,7 @@ namespace Game.Rendering
                 using (_state.Push(EnableCap.StencilTest, false))
                 using (_state.Push(EnableCap.DepthTest, false))
                 {
-                    Draw(new[] { portalEdgesData }, cam.GetViewMatrix(false, 0.1f, 100));
+                    Draw(new[] { portalEdgesData }, cam.GetViewMatrix(false, 0.1f, 100), true);
                 }
             }
         }
@@ -387,7 +383,17 @@ namespace Game.Rendering
             return Math.Min(angleDiff, angleMax);
         }
 
-        void Draw(DrawData[] drawData, Matrix4 viewMatrix)
+        /// <summary>
+        /// Draw a list of buffered models.
+        /// </summary>
+        /// <param name="drawData"></param>
+        /// <param name="viewMatrix"></param>
+        /// <param name="clearDepthBufferPerModel">
+        /// If true, the depth buffer will be cleared after every model draw. 
+        /// This is intended for ui where draw order is used instead of z depth for 
+        /// determining visibility.
+        /// </param>
+        void Draw(DrawData[] drawData, Matrix4 viewMatrix, bool clearDepthBufferPerModel)
         {
             for (int i = 0; i < drawData.Length; i++)
             {
@@ -396,6 +402,11 @@ namespace Game.Rendering
                 if (!data.Model.GetIndices().Any())
                 {
                     continue;
+                }
+
+                if (!clearDepthBufferPerModel)
+                {
+                    GL.Clear(ClearBufferMask.DepthBufferBit);
                 }
 
                 Matrix4 uvMatrix = data.Model.TransformUv.GetMatrix();

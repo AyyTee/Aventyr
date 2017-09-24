@@ -72,7 +72,9 @@
     <Compile Include="GameTests\FakeTexture.cs" />
     <Compile Include="GameTests\FontTests.cs" />
     <Compile Include="GameTests\IRenderableExTests.cs" />
+    <Compile Include="GameTests\IVirtualWindowExTests.cs" />
     <Compile Include="GameTests\RendererTests.cs" />
+    <Compile Include="Paths.cs" />
     <Compile Include="TimeLoopIncTests\EditorControllerTests.cs" />
     <Compile Include="TimeLoopIncTests\SceneRenderTests.cs" />
     <Compile Include="TimeLoopIncTests\SceneTests.cs" />
@@ -176,7 +178,10 @@
     <Content Include="Data\HudDrawingTest0.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\Window_0_0.txt">
+    <None Include="Data\LevelEditor.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Content Include="Data\LevelEditor.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TimeLoopIncTests\Levels\PlayerLeftOfPortal.xml">

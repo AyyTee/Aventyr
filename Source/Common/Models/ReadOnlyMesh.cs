@@ -4,15 +4,23 @@ using System.Diagnostics;
 using System.Linq;
 using Game.Common;
 using System.Collections.Immutable;
+using System.Runtime.Serialization;
 
 namespace Game.Models
 {
+    [DataContract]
     public class ReadOnlyMesh : IMesh
     {
-        public readonly ImmutableArray<Vertex> Vertices;
-        public readonly ImmutableArray<int> Indices;
+        [DataMember]
+        public readonly ImmutableArray<Vertex> Vertices = new ImmutableArray<Vertex>();
+        [DataMember]
+        public readonly ImmutableArray<int> Indices = new ImmutableArray<int>();
 
         public bool IsTransparent => Vertices.Any(item => item.Color.A < 1);
+
+        public ReadOnlyMesh()
+        {
+        }
 
         public ReadOnlyMesh(IMesh mesh)
             : this(mesh.GetVertices().ToImmutableArray(), mesh.GetIndices().ToImmutableArray())

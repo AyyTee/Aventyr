@@ -68,19 +68,10 @@ namespace Game.Rendering
 
         static bool ModifierKeysDown(this IVirtualWindow window, Hotkey hotkey)
         {
-            if (hotkey.Control && !window.ButtonDown(KeyBoth.Control))
-            {
-                return false;
-            }
-            if (hotkey.Shift && !window.ButtonDown(KeyBoth.Shift))
-            {
-                return false;
-            }
-            if (hotkey.Alt && !window.ButtonDown(KeyBoth.Alt))
-            {
-                return false;
-            }
-            return true;
+            return 
+                hotkey.Control == window.ButtonDown(KeyBoth.Control) &&
+                hotkey.Shift == window.ButtonDown(KeyBoth.Shift) &&
+                hotkey.Alt == window.ButtonDown(KeyBoth.Alt);
         }
 
         public static bool HotkeyDown(this IVirtualWindow window, Hotkey hotkey)

@@ -17,6 +17,7 @@ using System.Drawing.Imaging;
 using TimeLoopInc;
 using Game.Models;
 using System.Collections.Immutable;
+using UnitTest;
 
 namespace GameTests
 {
@@ -115,7 +116,7 @@ namespace GameTests
 
             _renderer.Render();
             var result = GrabScreenshot(_clientSizeFunc());
-            var expected = new Bitmap(Image.FromFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "Data", "HudDrawingTest0.png")));
+            var expected = new Bitmap(Image.FromFile(Path.Combine(Paths.Data, "HudDrawingTest0.png")));
             BitmapCompare(expected, result);
         }
 
@@ -238,21 +239,28 @@ namespace GameTests
             var bitmap = GrabScreenshot(_clientSizeFunc());
         }
 
-        [Test]
-        public void ImportTest()
+        public Bitmap RenderData(string filename)
         {
-            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data", "Window_0_0.txt");
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data", filename);
             var data = File.ReadAllText(path);
-            var window = Serializer.Deserialize<SimpleRenderWindow>(data);
+            var frame = Serializer.Deserialize<SimpleRenderWindow>(data);
 
-            ResourceController.GetWindow(window.CanvasSize, "");
+            ResourceController.GetWindow(frame.CanvasSize, "");
 
-            _renderer = new Renderer(() => window.CanvasSize, _resources);
-            _renderer.Windows.Add(window);
+            _renderer = new Renderer(() => frame.CanvasSize, _resources);
+            _renderer.Windows.Add(frame);
 
             _renderer.Render();
 
-            var bitmap = GrabScreenshot(window.CanvasSize);
+            return GrabScreenshot(frame.CanvasSize);
+        }
+
+        [Test]
+        public void RenderBoxTest()
+        {
+            var result = RenderData("LevelEditor.json");
+            var expected = new Bitmap(Image.FromFile(Path.Combine(Paths.Data, "LevelEditor.png")));
+            BitmapCompare(expected, result);
         }
     }
 }
