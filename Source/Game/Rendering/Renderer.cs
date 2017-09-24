@@ -19,7 +19,6 @@ namespace Game.Rendering
     /// </summary>
     public class Renderer : IRenderer
     {
-        public bool PortalRenderEnabled { get; set; } = true;
         public int PortalRenderMax { get; set; } = 50;
         public int PortalClipDepth { get; set; } = 4;
         /// <summary>Number of bits in the stencil buffer.</summary>
@@ -39,7 +38,7 @@ namespace Game.Rendering
 
         int _renderCount = 0;
 
-        public List<IVirtualWindow> Windows { get; private set; } = new List<IVirtualWindow>();
+        public List<IRenderWindow> Windows { get; private set; } = new List<IRenderWindow>();
 
         Vector2i ClientSize => _canvasSizeFunc();
         Func<Vector2i> _canvasSizeFunc;
@@ -96,13 +95,17 @@ namespace Game.Rendering
         }
 
         [Conditional("DEBUG")]
-        void CaptureLayers(IVirtualWindow window)
+        void CaptureLayers(IRenderWindow window)
         {
-            var index = Windows.IndexOf(window);
-            if (window.HotkeyPress(new Hotkey(OpenTK.Input.Key.Number1 + index, true)))
+            if (window is IVirtualWindow virtualWindow)
             {
-                var data = Serializer.Serialize(window.Layers);
-                File.WriteAllText($"Window_{index}_{_renderCount}.txt", data);
+                var index = Windows.IndexOf(window);
+                if (virtualWindow.HotkeyPress(new Hotkey(OpenTK.Input.Key.Number1 + index, true)))
+                {
+                    File.WriteAllText(
+                        $"Window_{index}_{_renderCount}.txt", 
+                        Serializer.Serialize(window));
+                }
             }
         }
 
@@ -126,7 +129,6 @@ namespace Game.Rendering
             {
                 CaptureLayers(window);
                 
-
                 SetScissor(window);
                 GL.Viewport(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.X, window.CanvasSize.Y);
                 foreach (var layer in window.Layers)
@@ -165,7 +167,7 @@ namespace Game.Rendering
             }
         }
 
-        void DrawPortalAll(IVirtualWindow window, IRenderLayer layer, float shutterTime)
+        void DrawPortalAll(IRenderWindow window, IRenderLayer layer, float shutterTime)
         {
             DebugEx.Assert(window.Layers.Contains(layer));
 
@@ -179,7 +181,7 @@ namespace Game.Rendering
                 shutterTime * layer.MotionBlurFactor,
                 layer.Portals,
                 cam,
-                PortalRenderEnabled ? PortalRenderMax : 0);
+                PortalRenderMax);
             List<PortalView> portalViewList = portalView.GetPortalViewList();
 
             
@@ -439,7 +441,7 @@ namespace Game.Rendering
         /// <summary>Sets scissor region around a portalview.</summary>
         /// <param name="view"></param>
         /// <param name="viewMatrix">Camera view matrix, do not use view matrix for the portalview.</param>
-        void SetScissor(IVirtualWindow window, PortalView view, Matrix4 viewMatrix)
+        void SetScissor(IRenderWindow window, PortalView view, Matrix4 viewMatrix)
         {
             DebugEx.Assert(view != null);
             if (view.Paths == null)
@@ -469,7 +471,7 @@ namespace Game.Rendering
             GL.Scissor((int)vMin.X - 1, (int)vMin.Y - 1, (int)(vMax.X - vMin.X) + 3, (int)(vMax.Y - vMin.Y) + 3);
         }
 
-        void SetScissor(IVirtualWindow window)
+        void SetScissor(IRenderWindow window)
         {
             if (window == null)
             {

@@ -243,13 +243,16 @@ namespace GameTests
         {
             var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data", "Window_0_0.txt");
             var data = File.ReadAllText(path);
-            var layers = Serializer.Deserialize<List<Layer>>(data);
+            var window = Serializer.Deserialize<SimpleRenderWindow>(data);
 
-            _virtualWindow.Layers = layers.OfType<IRenderLayer>().ToList();
+            ResourceController.GetWindow(window.CanvasSize, "");
+
+            _renderer = new Renderer(() => window.CanvasSize, _resources);
+            _renderer.Windows.Add(window);
 
             _renderer.Render();
 
-            var bitmap = GrabScreenshot(_clientSizeFunc());
+            var bitmap = GrabScreenshot(window.CanvasSize);
         }
     }
 }

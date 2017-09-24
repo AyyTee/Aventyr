@@ -6,15 +6,11 @@ using System.Collections.Immutable;
 
 namespace Game.Rendering
 {
-    public interface IVirtualWindow
+    public interface IVirtualWindow : IRenderWindow
     {
-        Vector2i CanvasPosition { get; }
-        Vector2i CanvasSize { get; }
         float DpiScale { get; }
-        List<IRenderLayer> Layers { get; }
         Resources Resources { get; }
         float UpdatesPerSecond { get; }
-        float RendersPerSecond { get; }
 
         bool HasFocus { get; }
         string KeyString { get; }

@@ -24,7 +24,8 @@ namespace Game.Serialization
                 Converters = new JsonConverter[] {
                     new Vector2Converter(),
                     new Vector3Converter(),
-                    new ICamera2Converter(),
+                    new InterfaceConverter<ICamera2, SimpleCamera2>(camera => new SimpleCamera2(camera)),
+                    new InterfaceConverter<IRenderWindow, SimpleRenderWindow>(window => new SimpleRenderWindow(window)),
                 }
             });
         }
@@ -80,27 +81,35 @@ namespace Game.Serialization
             }
         }
 
-        class ICamera2Converter : JsonConverter
+        class InterfaceConverter<TInterface, TImplementation> : JsonConverter
         {
+            Func<TInterface, TImplementation> _implementationCtor { get; }
+
+            public InterfaceConverter(Func<TInterface, TImplementation> implementationCtor)
+            {
+                _implementationCtor = implementationCtor;
+            }
+
             public override bool CanConvert(Type objectType)
             {
-                if (objectType == typeof(SimpleCamera2))
+                if (objectType == typeof(TImplementation))
                 {
                     return false;
                 }
-                return objectType.FindInterfaces((t, _) => t == typeof(ICamera2), null).Any();
+                return objectType.FindInterfaces((t, _) => t == typeof(TInterface), null).Any();
             }
 
             public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
-                //var temp = JObject.Load(reader);
-                return serializer.Deserialize(reader, typeof(SimpleCamera2));
+                return serializer.Deserialize(reader, typeof(TImplementation));
             }
 
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
-                var camera = new SimpleCamera2((ICamera2)value);
-                serializer.Serialize(writer, camera, typeof(ICamera2));
+                serializer.Serialize(
+                    writer, 
+                    _implementationCtor((TInterface)value), 
+                    typeof(TInterface));
             }
         }
     }

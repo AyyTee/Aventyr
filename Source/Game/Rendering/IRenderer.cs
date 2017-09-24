@@ -8,7 +8,7 @@ namespace Game.Rendering
 {
     public interface IRenderer
     {
-        List<IVirtualWindow> Windows { get; }
+        List<IRenderWindow> Windows { get; }
         void Render();
     }
 }
