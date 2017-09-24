@@ -133,6 +133,7 @@
     <Compile Include="Rendering\Layer.cs" />
     <Compile Include="Rendering\ModelFactory.cs" />
     <Compile Include="Rendering\Renderable.cs" />
+    <Compile Include="Rendering\SimpleCamera.cs" />
     <Compile Include="Rendering\TextEntity.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="Serialization\IShallowClone.cs" />

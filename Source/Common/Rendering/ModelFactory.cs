@@ -219,19 +219,19 @@ namespace Game.Rendering
             return model;
         }
 
-        public static int AddPolygon(Mesh model, IList<Vector2> v, Color4 color, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh mesh, IList<Vector2> v, Color4 color, Vector3 offset = new Vector3())
         {
-            return AddPolygon(model, PolygonFactory.CreatePolygon(v), color, offset);
+            return AddPolygon(mesh, PolygonFactory.CreatePolygon(v), color, offset);
         }
 
-        public static int AddPolygon(Mesh model, PolyTree polyTree, Color4 color, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh mesh, PolyTree polyTree, Color4 color, Vector3 offset = new Vector3())
         {
-            return AddPolygon(model, PolygonFactory.CreatePolygon(polyTree).ToArray(), color, offset);
+            return AddPolygon(mesh, PolygonFactory.CreatePolygon(polyTree).ToArray(), color, offset);
         }
 
-        public static int AddPolygon(Mesh model, List<List<IntPoint>> paths, Color4 color, Vector3 offset = new Vector3())
+        public static int AddPolygon(Mesh mesh, List<List<IntPoint>> paths, Color4 color, Vector3 offset = new Vector3())
         {
-            return AddPolygon(model, PolygonFactory.CreatePolygon(paths).ToArray(), color, offset);
+            return AddPolygon(mesh, PolygonFactory.CreatePolygon(paths).ToArray(), color, offset);
         }
 
         public static int AddPolygon(Mesh mesh, IList<Poly2Tri.Polygon> polygon, Color4 color, Vector3 offset = new Vector3())
@@ -385,6 +385,14 @@ namespace Game.Rendering
         {
             DebugEx.Assert(detail >= 3, "Detail must be greater or equal to 3.");
             var mesh = new Mesh();
+            AddCircle(mesh, origin, radius, detail, color);
+            return new Model(mesh);
+        }
+
+        public static void AddCircle(Mesh mesh, Vector3 origin, float radius, int detail, Color4 color)
+        {
+            var indexStart = mesh.Vertices.Count;
+
             for (int i = 0; i < detail; i++)
             {
                 double rad = Math.PI * 2 * i / detail;
@@ -399,9 +407,8 @@ namespace Game.Rendering
                 {
                     continue;
                 }
-                mesh.AddTriangle(i, i + 1, detail - 1 - i);
+                mesh.AddTriangle(indexStart + i, indexStart + i + 1, indexStart + detail - 1 - i);
             }
-            return new Model(mesh);
         }
 
         /// <summary>

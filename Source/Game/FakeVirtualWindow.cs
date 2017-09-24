@@ -21,7 +21,7 @@ namespace Game
 
         public float DpiScale { get; set; } = 1;
 
-        public List<IRenderLayer> Layers { get; private set; } = new List<IRenderLayer>();
+        public List<IRenderLayer> Layers { get; set; } = new List<IRenderLayer>();
         public Resources Resources { get; }
 
         public float UpdatesPerSecond => 60;

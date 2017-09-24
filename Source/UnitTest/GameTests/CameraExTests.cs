@@ -8,26 +8,13 @@ using Game;
 using Game.Common;
 using Game.Rendering;
 using OpenTK;
+using System.Runtime.Serialization;
 
 namespace GameTests
 {
     [TestFixture]
     public class CameraExTests
     {
-        /// <summary>
-        /// Simple ICamera2 implementation for unit testing.
-        /// </summary>
-        class SimpleCamera2 : ICamera2
-        {
-            public float Aspect { get; set; } = 1;
-            public double Fov { get; set; } = Math.PI / 4;
-            public Vector2 ViewOffset { get; set; }
-            public Transform2 WorldTransform { get; set; } = new Transform2();
-            public Transform2 WorldVelocity { get; set; } = Transform2.CreateVelocity();
-            public string Name { get; set; } = nameof(SimpleCamera2);
-            public bool IsOrtho { get; set; } = true;
-        }
-
         [Test]
         public void ScreenToWorldTest0()
         {

@@ -8,6 +8,7 @@ using Game.Common;
 using System;
 using System.Runtime.InteropServices;
 using OpenTK;
+using System.Reflection;
 
 namespace Game.Rendering
 {
@@ -15,27 +16,26 @@ namespace Game.Rendering
     public class TextureFile : ITexture
     {
         Texture _texture;
+        public Texture Texture {
+            get => _texture ?? (_texture = LoadImage());
+            private set => _texture = value;
+        }
         [DataMember]
         public string Filepath { get; }
 
-        public bool IsTransparent => _texture.IsTransparent;
-        public Vector2i Size => _texture.Size;
-        public int Id => _texture.Id;
+        public bool IsTransparent => Texture.IsTransparent;
+        public Vector2i Size => Texture.Size;
+        public int Id => Texture.Id;
 
-        public Common.RectangleF UvBounds => _texture.UvBounds;
+        public Common.RectangleF UvBounds => Texture.UvBounds;
 
         public TextureFile(string filepath)
         {
             Filepath = filepath;
         }
 
-        void LoadImage(Bitmap image)
+        Texture LoadImage(Bitmap image)
         {
-            if (_texture != null)
-            {
-                return;
-            }
-
             int texId = GL.GenTexture();
 
             GL.BindTexture(TextureTarget.Texture2D, texId);
@@ -59,19 +59,20 @@ namespace Game.Rendering
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-            _texture = new Texture(texId, (Vector2i)image.Size, HasTransparency(image));
+            return new Texture(texId, (Vector2i)image.Size, HasTransparency(image));
         }
 
-        public void LoadImage(string resourceFolder)
+        public Texture LoadImage()
         {
             if (_texture != null)
             {
-                return;
+                return _texture;
             }
 
-            using (var file = new Bitmap(Path.Combine(resourceFolder, Filepath)))
+            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Locati‌​on);
+            using (var file = new Bitmap(Path.Combine(path, Resources.ResourcePath, Filepath)))
             {
-                LoadImage(file);
+                return LoadImage(file);
             }
         }
 

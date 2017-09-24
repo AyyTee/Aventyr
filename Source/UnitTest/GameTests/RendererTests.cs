@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using TimeLoopInc;
 using Game.Models;
+using System.Collections.Immutable;
 
 namespace GameTests
 {
@@ -42,11 +43,6 @@ namespace GameTests
 
             _resources = Serializer.Deserialize<Resources>(
                 File.ReadAllText(Path.Combine(resourceFolder, "Assets.json")));
-
-            foreach (var texture in _resources.Textures)
-            {
-                texture.Texture.LoadImage(resourceFolder);
-            }
 
             _clientSizeFunc = () => (Vector2i)_window.ClientSize;
 
@@ -177,6 +173,83 @@ namespace GameTests
                     }
                 }
             }
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void OrthographicTransparencyCorrectOrdering0(bool mirrorX)
+        {
+            _layer.Camera = new GridCamera(
+                new Transform2(size: 30, mirrorX: mirrorX),
+                (float)_clientSizeFunc().XRatio);
+
+            var mesh = new Mesh();
+            var transparentColor = new Color4(1, 1, 1, 0.5f);
+            var blackColor = new Color4(0, 0, 0, 1f);
+            ModelFactory.AddCircle(mesh, new Vector3(15, 10, 0), 4f, 5, blackColor);
+            ModelFactory.AddCircle(mesh, new Vector3(15, 10, 0.1f), 2f, 5, transparentColor);
+            _layer.Renderables.Add(new Renderable(new Model(mesh)));
+
+            _renderer.Render();
+            var bitmap = GrabScreenshot(_clientSizeFunc());
+
+            var blendColor = new Color4(255, 180, 217, 255);
+            blendColor.A = 1;
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    var pixel = bitmap.GetPixel(x, y);
+                    if (pixel != blendColor && pixel != blackColor && pixel != Renderer.BackgroundColor)
+                    {
+                        Assert.Fail($"Black shape visible under white shape at {x},{y}.");
+                    }
+                }
+            }
+        }
+
+        [Test]
+        public void DrawBoxTest()
+        {
+            _layer.Camera = new SimpleCamera2 { Aspect = (float)_clientSizeFunc().XRatio, WorldTransform = new Transform2(mirrorX: true) };
+
+            var box = new Renderable(
+                new Transform2(),
+                ModelResources.Box(_resources).Load(_virtualWindow).Models
+                    .Select(item =>
+                    {
+                        var clone = item.ShallowClone();
+                        clone.Mesh = new ReadOnlyMesh(
+                            clone.Mesh
+                                .GetVertices()
+                                .Select(v => v.With(color: new Color4(1, 1, 1, 0.5f)))
+                                .ToImmutableArray(),
+                            clone.Mesh
+                                .GetIndices()
+                                .ToImmutableArray());
+                        return clone;
+                    })
+                    .ToList());
+
+            _layer.Renderables.Add(box);
+
+            _renderer.Render();
+
+            var bitmap = GrabScreenshot(_clientSizeFunc());
+        }
+
+        [Test]
+        public void ImportTest()
+        {
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "Data", "Window_0_0.txt");
+            var data = File.ReadAllText(path);
+            var layers = Serializer.Deserialize<List<Layer>>(data);
+
+            _virtualWindow.Layers = layers.OfType<IRenderLayer>().ToList();
+
+            _renderer.Render();
+
+            var bitmap = GrabScreenshot(_clientSizeFunc());
         }
     }
 }

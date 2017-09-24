@@ -37,6 +37,7 @@ namespace TimeLoopInc.Editor
                         return clone;
                     })
                     .ToList());
+            //_box.Models[0].IsDithered = true;
         }
 
         public List<IRenderable> Render()

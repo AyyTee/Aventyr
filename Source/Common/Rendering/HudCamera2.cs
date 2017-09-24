@@ -24,7 +24,8 @@ namespace Game.Rendering
         public bool IsOrtho => true;
 
         public Vector2i CanvasSize => CanvasSizeFunc();
-        public Func<Vector2i> CanvasSizeFunc { get; }
+        [DataMember]
+        public Func<Vector2i> CanvasSizeFunc { get; private set; }
 
         public Transform2 WorldTransform => new Transform2(new Vector2(0, CanvasSize.Y), 0, -CanvasSize.Y, true);
         public Transform2 WorldVelocity => Transform2.CreateVelocity();

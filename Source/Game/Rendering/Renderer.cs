@@ -10,6 +10,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing.Text;
 using System.IO;
+using Game.Serialization;
 
 namespace Game.Rendering
 {
@@ -35,6 +36,8 @@ namespace Game.Rendering
         readonly GlStateManager _state;
 
         readonly int _iboElements;
+
+        int _renderCount = 0;
 
         public List<IVirtualWindow> Windows { get; private set; } = new List<IVirtualWindow>();
 
@@ -92,6 +95,17 @@ namespace Game.Rendering
             }
         }
 
+        [Conditional("DEBUG")]
+        void CaptureLayers(IVirtualWindow window)
+        {
+            var index = Windows.IndexOf(window);
+            if (window.HotkeyPress(new Hotkey(OpenTK.Input.Key.Number1 + index, true)))
+            {
+                var data = Serializer.Serialize(window.Layers);
+                File.WriteAllText($"Window_{index}_{_renderCount}.txt", data);
+            }
+        }
+
         public void Render()
         {
             var glError = GL.GetError();
@@ -110,6 +124,9 @@ namespace Game.Rendering
 
             foreach (var window in Windows)
             {
+                CaptureLayers(window);
+                
+
                 SetScissor(window);
                 GL.Viewport(window.CanvasPosition.X, window.CanvasPosition.Y, window.CanvasSize.X, window.CanvasSize.Y);
                 foreach (var layer in window.Layers)
@@ -129,6 +146,8 @@ namespace Game.Rendering
             }
 
             GL.Flush();
+
+            _renderCount++;
         }
 
         class DrawData
@@ -155,6 +174,7 @@ namespace Game.Rendering
             {
                 return;
             }
+
             PortalView portalView = PortalView.CalculatePortalViews(
                 shutterTime * layer.MotionBlurFactor,
                 layer.Portals,
@@ -165,7 +185,7 @@ namespace Game.Rendering
             
             var data = new Data();
 
-            List<DrawData> portalViewModels = new List<DrawData>();
+            var portalViewModels = new List<DrawData>();
             for (int i = 1; i < Math.Min(portalViewList.Count, StencilMaxValue); i++)
             {
                 var mesh = new Mesh();
@@ -175,7 +195,7 @@ namespace Game.Rendering
                     ModelFactory.AddPolygon(mesh, a, Color4.White);
                 }
 
-                portalViewModels.Add(data.BufferModel(new Model(mesh), Matrix4.Identity));
+                portalViewModels.Add(data.BufferModel(new Model(mesh), Matrix4.Identity, cam));
             }
 
             var sceneModels = new List<DrawData>();
@@ -200,11 +220,11 @@ namespace Game.Rendering
                                 model.Mesh = model.Mesh.Bisect(clip.ClipLines[i], clip.Model.Transform.GetMatrix() * transform, Side.Right);
                             }
 
-                            sceneModels.Add(data.BufferModel(model, transform));
+                            sceneModels.Add(data.BufferModel(model, transform, cam));
                         }
                         else
                         {
-                            sceneModels.Add(data.BufferModel(clip.Model, clip.WorldTransform.GetMatrix() * clip.Transform));
+                            sceneModels.Add(data.BufferModel(clip.Model, clip.WorldTransform.GetMatrix() * clip.Transform, cam));
                         }
                     }
                 }
@@ -213,7 +233,7 @@ namespace Game.Rendering
 
             var portalEdgesData = data.BufferModel(
                 GetPortalEdges(portalViewList, cam),
-                Matrix4.Identity);
+                Matrix4.Identity, cam);
 
             BufferData(
                 data.Vertices.ToArray(),
@@ -472,25 +492,96 @@ namespace Game.Rendering
             public List<Vector2> TexCoords { get; } = new List<Vector2>();
             public List<int> Indices { get; } = new List<int>();
 
-            public DrawData BufferModel(Model model, Matrix4 offset)
+            public DrawData BufferModel(Model model, Matrix4 offset, ICamera2 camera)
             {
                 var index = Indices.Count;
 
                 Vector3[] modelVerts = model.GetVerts();
 
-                int[] modelIndices = model.GetIndices();
-                for (int j = 0; j < modelIndices.Length; j++)
+                int[] indices = model.GetIndices();
+
+                // If the model is transparent then we need to sort the indices so faces nearest the camera are drawn first.
+                if (model.IsTransparent && !model.IsDithered)
                 {
-                    DebugEx.Assert(modelIndices[j] >= 0 && modelIndices[j] < modelVerts.Length);
-                    modelIndices[j] += Vertices.Count;
+                    SortIndices(modelVerts, indices, camera, model, offset);
                 }
-                Indices.AddRange(modelIndices);
+
+                for (int i = 0; i < indices.Length; i++)
+                {
+                    DebugEx.Assert(indices[i] >= 0 && indices[i] < modelVerts.Length);
+                    indices[i] += Vertices.Count;
+                }
+
+                Indices.AddRange(indices);
 
                 Vertices.AddRange(modelVerts);
                 Colors.AddRange(model.GetColorData());
                 TexCoords.AddRange(model.GetTextureCoords());
 
                 return new DrawData(index, model, offset);
+            }
+
+            /// <summary>
+            /// Sorts indices array in place so that faces closest to camera come first.
+            /// </summary>
+            /// <param name="vertices"></param>
+            /// <param name="indices">Indices to sort.</param>
+            /// <param name="camera"></param>
+            public static void SortIndices(Vector3[] vertices, int[] indices, ICamera2 camera, Model model, Matrix4 offset)
+            {
+                var cameraPos = Vector3Ex.Transform(
+                    new Vector3(
+                        camera.WorldTransform.Position.X,
+                        camera.WorldTransform.Position.Y,
+                        (float)camera.GetWorldZ()), 
+                    (model.Transform.GetMatrix() * offset).Inverted());
+
+                var faces = new Face[indices.Length / 3];
+                for (int i = 0; i < faces.Length; i++)
+                {
+                    var i0 = indices[i * 3];
+                    var i1 = indices[i * 3 + 1];
+                    var i2 = indices[i * 3 + 2];
+                    var faceCenter = (vertices[i0] + vertices[i1] + vertices[i2]) / 3;
+
+                    faces[i] = new Face(
+                        i0, i1, i2, 
+                        camera.IsOrtho ? 
+                            -faceCenter.Z : 
+                            (faceCenter - cameraPos).Length);
+                }
+
+                Array.Sort(faces);
+
+                for (int i = 0; i < faces.Length; i++)
+                {
+                    indices[i * 3] = faces[i].Index0;
+                    indices[i * 3 + 1] = faces[i].Index1;
+                    indices[i * 3 + 2] = faces[i].Index2;
+                }
+            }
+
+            struct Face : IComparable<Face>
+            {
+                public int Index0, Index1, Index2;
+                public float Distance;
+
+                public Face(int i0, int i1, int i2, float distance)
+                {
+                    Index0 = i0;
+                    Index1 = i1;
+                    Index2 = i2;
+                    Distance = distance;
+                }
+
+                public int CompareTo(Face other)
+                {
+                    if (Distance == other.Distance)
+                    {
+                        return 0;
+                    }
+                    return Distance > other.Distance ? 1 : -1;
+                }
             }
         }
 

@@ -58,11 +58,6 @@ namespace Game
             var data = File.ReadAllText(Path.Combine(Resources.ResourcePath, "Assets.json"));
             Resources = Serializer.Deserialize<Resources>(data);
             Renderer = new Renderer(() => (Vector2i)_window.ClientSize, Resources);
-
-            foreach (var texture in Resources.Textures)
-            {
-                texture.Texture.LoadImage(Resources.ResourcePath);
-            }
             
 
             _soundEnabled = false;
