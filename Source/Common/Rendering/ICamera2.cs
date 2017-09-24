@@ -84,7 +84,7 @@ namespace Game.Rendering
 
         public static Vector2[] GetVerts()
         {
-            return new Vector2[4] {
+            return new[] {
                 new Vector2(-1f, -1f),
                 new Vector2(1f, -1f),
                 new Vector2(1f, 1f),
@@ -106,9 +106,7 @@ namespace Game.Rendering
 
         static Matrix4 WorldToClipMatrix(this ICamera2 camera)
         {
-            Matrix4 scale = Matrix4.CreateScale(1, -1, 1);
-            Matrix4 translation = Matrix4.CreateTranslation(new Vector3(0f, 0f, 0f));
-            return camera.GetViewMatrix() * translation * scale;
+            return camera.GetViewMatrix() * Matrix4.CreateScale(1, -1, 1);
         }
 
         public static Vector2 WorldToScreen(this ICamera2 camera, Vector2 worldCoord, Vector2i canvasSize)

@@ -43,6 +43,37 @@ namespace GameTests
         }
 
         [Test]
+        public void GetWorldVertsTest0()
+        {
+            var camera = new SimpleCamera2();
+
+            var result = camera.GetWorldVerts();
+            var expected = new[] {
+                new Vector2(-0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, -0.5f),
+                new Vector2(-0.5f, -0.5f),
+            };
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
+        public void GetWorldVertsTest1()
+        {
+            var offset = new Vector2(5, 1);
+            var camera = new SimpleCamera2 { WorldTransform = new Transform2(offset, 0, 1, true) };
+
+            var result = camera.GetWorldVerts();
+            var expected = new[] {
+                new Vector2(0.5f, 0.5f),
+                new Vector2(-0.5f, 0.5f),
+                new Vector2(-0.5f, -0.5f),
+                new Vector2(0.5f, -0.5f),
+            }.Select(v => v + offset);
+            Assert.AreEqual(expected, result);
+        }
+
+        [Test]
         [Ignore("GetViewMatrix currently doesn't support world space near/far planes.")]
         public void ClipPlaneTest0()
         {
