@@ -262,5 +262,13 @@ namespace GameTests
             var expected = new Bitmap(Image.FromFile(Path.Combine(Paths.Data, "LevelEditor.png")));
             BitmapCompare(expected, result);
         }
+
+        [Test]
+        public void PerspectivePortalClippingTest()
+        {
+            var result = RenderData("PerspectiveClipping.json");
+            //var expected = new Bitmap(Image.FromFile(Path.Combine(Paths.Data, "LevelEditor.png")));
+            //BitmapCompare(expected, result);
+        }
     }
 }

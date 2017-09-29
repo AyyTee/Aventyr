@@ -14,12 +14,14 @@ namespace Game.Rendering
     {
         public static IRenderable Text(Font font, Vector2 position, string text, float alignment = 0, int lineSpacing = 0)
         {
-            return new TextEntity(font, position, text, alignment, lineSpacing);
+            return Text(font, position, text, Color4.White, alignment, lineSpacing);
         }
 
         public static IRenderable Text(Font font, Vector2 position, string text, Color4 color, float alignment = 0, int lineSpacing = 0)
         {
-            return new TextEntity(font, position, text, color, alignment, lineSpacing);
+            var renderable = GetRenderable(font.GetModel(text, new Font.Settings(color, alignment, lineSpacing)));
+            renderable.WorldTransform = new Transform2(position);
+            return renderable;
         }
 
         public static Renderable Rectangle(Vector2 topLeft, Vector2 bottomRight)

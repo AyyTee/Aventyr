@@ -3,6 +3,7 @@ using Game.Serialization;
 using System.Linq;
 using Game.Common;
 using OpenTK;
+using System;
 
 namespace Game.Models
 {
@@ -87,6 +88,11 @@ namespace Game.Models
                     side);
             }
             return meshNew;
+        }
+
+        public static IMesh BisectPlane(this IMesh mesh, Vector3 planeOrigin, Vector3 planeNormal)
+        {
+            throw new NotImplementedException();
         }
 
         public static Triangle[] GetTriangles(this IMesh mesh)

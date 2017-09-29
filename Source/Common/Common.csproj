@@ -136,7 +136,6 @@
     <Compile Include="Rendering\Renderable.cs" />
     <Compile Include="Rendering\SimpleCamera.cs" />
     <Compile Include="Rendering\SimpleRenderWindow.cs" />
-    <Compile Include="Rendering\TextEntity.cs" />
     <Compile Include="Resources.cs" />
     <Compile Include="Serialization\IShallowClone.cs" />
     <Compile Include="Rendering\ITexture.cs" />
