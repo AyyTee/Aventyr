@@ -20,6 +20,9 @@ namespace Ui.Elements
 
         public bool Selected => Target.Equals(Value);
 
+        internal ElementFunc<Color4> _selectedColor;
+        public Color4 SelectedColor => GetValue(_selectedColor);
+
         public Radio(
             ElementFunc<float> x = null,
             ElementFunc<float> y = null,
@@ -36,6 +39,7 @@ namespace Ui.Elements
             ElementFunc<Color4> disabledColor = null,
             ElementFunc<Color4> hoverColor = null,
             ElementFunc<Color4> borderColor = null,
+            ElementFunc<Color4> selectedColor = null,
             Style style = null)
             : base(x, y, width, height, onClick, onHover, enabled, hidden, color, disabledColor, hoverColor, borderColor, style)
         {
@@ -43,6 +47,8 @@ namespace Ui.Elements
             _getValue = getValue ?? (_ => internalValue);
             _setValue = setValue ?? (value => internalValue = value);
             Target = target;
+
+            _selectedColor = selectedColor;
         }
 
         public void SetValue() => _setValue(Target);
@@ -52,14 +58,20 @@ namespace Ui.Elements
             var type = typeof(Radio<>);
             return new Style
             {
+                new StyleElement(type, nameof(SelectedColor), arg => ((Button)arg.Self).HoverColor.AddRgb(0.1f, 0.1f, 0.1f))
             };
         }
 
         public override List<Model> GetModels(ModelArgs args)
         {
-            var color = Enabled ?
-                Selected ? Color4.DarkGray : Color4.Black :
-                new Color4(0, 0, 0, 0.5f);
+            var color = !Enabled ?
+                DisabledColor :
+                Selected ?
+                    SelectedColor :
+                    args.Controller.Hovered == this ?
+                        HoverColor :
+                        Color;
+
             return new[]
             {
                 ModelFactory.CreatePlane(this.GetSize(), color),

@@ -22,5 +22,7 @@ namespace Game.Rendering
         /// <param name="color"></param>
         /// <returns></returns>
         public static Vector4 ToVector(this Color4 color) => new Vector4(color.R, color.G, color.B, color.A);
+
+        public static Color4 AddRgb(this Color4 color, float r, float g, float b) => new Color4(color.R + r, color.G + g, color.B + b, color.A);
     }
 }

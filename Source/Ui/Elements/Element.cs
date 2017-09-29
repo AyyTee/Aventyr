@@ -97,7 +97,7 @@ namespace Ui.Elements
                 }
             }
 
-            var parent = (Element)element.ElementArgs.Parent;
+            var parent = element.ElementArgs.Parent;
             DebugEx.Assert(parent != null, $"No func found for {GetType().Name}.{funcName}");
             return _invokeFunc<T>(parent, funcName);
         }

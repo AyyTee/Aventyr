@@ -1,4 +1,5 @@
 ﻿using Game;
+using System;
 
 namespace Ui
 {
@@ -7,5 +8,6 @@ namespace Ui
         Resources Fonts { get; }
         ISelectable Selected { get; }
         IHoverable Hovered { get; }
+        DateTime DateTime { get; }
     }
 }

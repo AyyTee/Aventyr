@@ -25,6 +25,7 @@ namespace Ui
         public IHoverable Hovered { get; private set; }
         public ISelectable Selected { get; private set; }
         public (IClickable Element, DateTime Time) LastClick = (null, new DateTime());
+        public DateTime DateTime { get; private set; }
         public TimeSpan DoubleClickSpeed { get; set; } = TimeSpan.FromSeconds(0.6);
 
         public Resources Fonts => _window.Resources;
@@ -57,7 +58,7 @@ namespace Ui
 
         public void Update(float uiScale)
         {
-            var time = DateTime.UtcNow;
+            DateTime = DateTime.UtcNow;
 
             _camera = new HudCamera2(() => _window.CanvasSize);
             var mousePos = _window.MouseWorldPos(_camera);
@@ -99,12 +100,12 @@ namespace Ui
                 if (Hovered is IClickable clickable)
                 {
                     var isDoubleClick =
-                        (time - LastClick.Time < DoubleClickSpeed) &&
+                        (DateTime - LastClick.Time < DoubleClickSpeed) &&
                         LastClick.Element == Hovered;
 
                     clickable.OnClick(new ClickArgs(Hovered, isDoubleClick, this));
 
-                    LastClick = (clickable, time);
+                    LastClick = (clickable, DateTime);
                 }
                 if (Hovered is ISelectable selectable)
                 {
@@ -114,8 +115,6 @@ namespace Ui
                 {
                     SetSelected(null);
                 }
-
-                
             }
 
             if (_window.ButtonPress(Key.Enter))

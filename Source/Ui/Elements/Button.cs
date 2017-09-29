@@ -64,20 +64,22 @@ namespace Ui.Elements
                 new StyleElement<Button, bool>(nameof(Enabled), _ => true),
                 new StyleElement<Button, Color4>(nameof(Color), _ => new Color4(0.4f, 0.4f, 0.8f, 1)),
                 new StyleElement<Button, Color4>(nameof(DisabledColor), _ => new Color4(0.3f, 0.3f, 0.6f, 0.8f)),
-                new StyleElement<Button, Color4>(nameof(HoverColor), _ => new Color4(0.5f, 0.5f, 0.8f, 1)),
+                new StyleElement<Button, Color4>(nameof(HoverColor), arg => ((Button)arg.Self).Color.AddRgb(0.1f, 0.1f, 0.1f)),
                 new StyleElement<Button, Color4>(nameof(BorderColor), _ => new Color4(1, 1, 1, 0.5f)),
             };
         }
 
         public override List<Model> GetModels(ModelArgs args)
         {
+            var buttonColor = !Enabled ?
+                DisabledColor:
+                args.Controller.Hovered == this ?
+                    HoverColor :
+                    Color;
+
             return new[]
             {
-                ModelFactory.CreatePlane(
-                    this.GetSize(),
-                    Enabled ?
-                        Color :
-                        DisabledColor),
+                ModelFactory.CreatePlane(this.GetSize(), buttonColor),
                 ModelFactory.CreateRectangleOutline(new Vector2(), this.GetSize(), BorderColor, 2),
             }.ToList();
         }

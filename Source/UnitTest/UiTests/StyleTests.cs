@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using OpenTK.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -57,6 +58,21 @@ namespace UiTests
 
             var result = style.ToImmutable().Count;
             Assert.AreEqual(1, result);
+        }
+
+        [Test]
+        public void GenericElementStyle()
+        {
+            var expected = new Color4(0.5f, 0.5f, 0.5f, 1f);
+            var style = new Style
+            {
+                new StyleElement(typeof(Radio<>), nameof(Radio<object>.SelectedColor), _ => expected)
+            };
+
+            var radio = new Radio<int>(style: style);
+
+            var result = radio.SelectedColor;
+            Assert.AreEqual(expected, result);
         }
     }
 }

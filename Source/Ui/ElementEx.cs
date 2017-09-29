@@ -14,9 +14,18 @@ namespace Ui
     {
         public static IEnumerable<Type> InheritanceHierarchy(this Type type)
         {
-            for (var current = type; current != null; current = current.BaseType)
+            for (var current = type; current != null;)
             {
                 yield return current;
+
+                if (current.GenericTypeArguments.Length > 0)
+                {
+                    current = current.GetGenericTypeDefinition();
+                }
+                else
+                {
+                    current = current.BaseType;
+                }
             }
         }
 
