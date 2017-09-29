@@ -53,7 +53,7 @@ namespace Ui.Elements
 
         protected virtual void AddChild(Element element)
         {
-            element.ElementArgs = new ElementArgs(this, element);
+            element.ElementArgs = new ElementArgs(this, element, ElementArgs.Controller);
         }
 
         public void Add(Element element) 

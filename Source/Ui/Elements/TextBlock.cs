@@ -45,20 +45,6 @@ namespace Ui.Elements
             _textAlignment = textAlignment;
         }
 
-        public TextBlock(
-            out TextBlock id,
-            ElementFunc<float> x = null,
-            ElementFunc<float> y = null,
-            ElementFunc<string> text = null,
-            ElementFunc<Font> font = null,
-            ElementFunc<int?> maxWidth = null,
-            ElementFunc<float> textAlignment = null,
-            ElementFunc<bool> hidden = null)
-            : this(x, y, text, font, maxWidth, textAlignment, hidden)
-        {
-            id = this;
-        }
-
         public static new Style DefaultStyle(IUiController controller)
         {
             var type = typeof(TextBlock);

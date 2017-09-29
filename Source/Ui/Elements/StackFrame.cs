@@ -63,20 +63,6 @@ namespace Ui.Elements
             }
         }
 
-        public StackFrame(
-            out StackFrame id,
-            ElementFunc<float> x = null, 
-            ElementFunc<float> y = null,
-            ElementFunc<float> thickness = null,
-            ElementFunc<bool> hidden = null, 
-            bool isVertical = true,
-            ElementFunc<float> spacing = null,
-            Style style = null)
-            : this(x, y, thickness, hidden, isVertical, spacing, style)
-        {
-            id = this;
-        }
-
         public static new Style DefaultStyle(IUiController controller)
         {
             var type = typeof(StackFrame);

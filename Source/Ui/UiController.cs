@@ -22,9 +22,9 @@ namespace Ui
         readonly IVirtualWindow _window;
         ICamera2 _camera;
         List<UiWorldTransform> _flattenedUi = new List<UiWorldTransform>();
-        public Element Hover { get; private set; }
+        public IHoverable Hovered { get; private set; }
         public ISelectable Selected { get; private set; }
-        public (Element Element, DateTime Time) LastClick = (null, new DateTime());
+        public (IClickable Element, DateTime Time) LastClick = (null, new DateTime());
         public TimeSpan DoubleClickSpeed { get; set; } = TimeSpan.FromSeconds(0.6);
 
         public Resources Fonts => _window.Resources;
@@ -76,44 +76,46 @@ namespace Ui
                             mousePos,
                             item.WorldTransform.GetMatrix().Inverted())));
 
-            var hoverPrevious = Hover;
-            Hover = hover?.Element;
-            if (Hover != hoverPrevious)
+            var hoverPrevious = Hovered;
+            Hovered = hover?.Element as IHoverable;
+            if (Hovered != hoverPrevious)
             {
                 if (hoverPrevious is IHoverable hoverablePrevious)
                 {
-                    hoverablePrevious.OnHover(new HoverArgs(hoverablePrevious, false));
+                    hoverablePrevious.OnHover(new HoverArgs(hoverablePrevious, false, this));
                 }
-                if (Hover is IHoverable hoverable)
+                if (Hovered is IHoverable hoverable)
                 {
-                    hoverable.OnHover(new HoverArgs(hoverable, true));
+                    hoverable.OnHover(new HoverArgs(hoverable, true, this));
                 }
             }
 
             if (_window.ButtonPress(MouseButton.Left))
             {
-                if (Hover is IRadio radio)
+                if (Hovered is IRadio radio)
                 {
                     radio.SetValue();
                 }
-                if (Hover is IClickable clickable)
+                if (Hovered is IClickable clickable)
                 {
                     var isDoubleClick =
                         (time - LastClick.Time < DoubleClickSpeed) &&
-                        LastClick.Element == Hover;
+                        LastClick.Element == Hovered;
 
-                    clickable.OnClick(new ClickArgs(Hover, isDoubleClick));
+                    clickable.OnClick(new ClickArgs(Hovered, isDoubleClick, this));
+
+                    LastClick = (clickable, time);
                 }
-                if (Hover is ISelectable selectable)
+                if (Hovered is ISelectable selectable)
                 {
                     SetSelected(selectable);
                 }
-                if (Hover == null)
+                if (Hovered == null)
                 {
                     SetSelected(null);
                 }
 
-                LastClick = (Hover, time);
+                
             }
 
             if (_window.ButtonPress(Key.Enter))
@@ -123,7 +125,7 @@ namespace Ui
 
             if (Selected is ITypeable typeable)
             {
-                typeable.OnTyping(new TypeArgs(Selected, _window));
+                typeable.OnTyping(new TypeArgs(Selected, _window, this));
             }
         }
 
@@ -131,18 +133,18 @@ namespace Ui
         {
             if (Selected != null)
             {
-                Selected.OnSelect(new SelectArgs(Selected, false));
+                Selected.OnSelect(new SelectArgs(Selected, false, this));
             }
             Selected = selected;
             if (Selected != null)
             {
-                Selected.OnSelect(new SelectArgs(Selected, true));
+                Selected.OnSelect(new SelectArgs(Selected, true, this));
             }
         }
 
         void UpdateElementArgs(Element root)
         {
-            root.ElementArgs = new ElementArgs(null, root);
+            root.ElementArgs = new ElementArgs(null, root, this);
             _updateElementArgs(root);
         }
 
@@ -150,7 +152,7 @@ namespace Ui
         {
             foreach (var child in element)
             {
-                child.ElementArgs = new ElementArgs(element, child);
+                child.ElementArgs = new ElementArgs(element, child, this);
                 _updateElementArgs(child);
             }
         }
@@ -190,7 +192,7 @@ namespace Ui
                         var elementArgs = item.Element.ElementArgs;
                         return (IRenderable)new Renderable(
                             item.WorldTransform,
-                            element.GetModels(new ModelArgs(element == Selected, elementArgs.Parent, elementArgs.Self)))
+                            element.GetModels(new ModelArgs(elementArgs.Parent, elementArgs.Self, this)))
                         {
                             PixelAlign = element is TextBlock || element is TextBox
                         };

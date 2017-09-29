@@ -11,8 +11,8 @@ namespace Ui.Args
     {
         public bool IsSelected { get; }
 
-        public SelectArgs(IElement element, bool isSelected)
-            : base(element.ElementArgs.Parent, element.ElementArgs.Self)
+        public SelectArgs(IElement element, bool isSelected, IUiController controller)
+            : base(element.ElementArgs.Parent, element.ElementArgs.Self, controller)
         {
             IsSelected = isSelected;
         }

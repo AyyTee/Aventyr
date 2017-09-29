@@ -55,22 +55,6 @@ namespace Ui.Elements
             _backgroundColor = backgroundColor;
         }
 
-        public TextBox(
-            out TextBox id,
-            ElementFunc<float> x = null,
-            ElementFunc<float> y = null,
-            ElementFunc<float> width = null,
-            ElementFunc<float> height = null,
-            ElementFunc<string> getText = null,
-            Action<string> setText = null,
-            ElementFunc<Font> font = null,
-            ElementFunc<Color4> backgroundColor = null,
-            ElementFunc<bool> hidden = null)
-            : this(x, y, width, height, getText, setText, font, backgroundColor, hidden)
-        {
-            id = this;
-        }
-
         public override List<Model> GetModels(ModelArgs args)
         {
             var models = new List<Model>();

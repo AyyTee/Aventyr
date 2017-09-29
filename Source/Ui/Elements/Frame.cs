@@ -21,18 +21,5 @@ namespace Ui.Elements
             : base(x, y, width, height, hidden, style)
         {
         }
-
-        public Frame(
-            out Frame id, 
-            ElementFunc<float> x = null, 
-            ElementFunc<float> y = null, 
-            ElementFunc<float> width = null, 
-            ElementFunc<float> height = null, 
-            ElementFunc<bool> hidden = null,
-            Style style = null)
-            : this(x, y, width, height, hidden, style)
-        {
-            id = this;
-        }
     }
 }

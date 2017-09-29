@@ -63,12 +63,6 @@ namespace TimeLoopInc.Editor
             };
         }
 
-        public SaveDialogue(out SaveDialogue id, IEditorController editor = null, Action<string> onSave = null)
-            : this(editor, onSave)
-        {
-            id = this;
-        }
-
         public void Show()
         {
             if (AnimationT() <= 0)

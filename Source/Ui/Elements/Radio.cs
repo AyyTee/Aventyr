@@ -32,32 +32,17 @@ namespace Ui.Elements
             Action<T> setValue = null,
             ElementFunc<bool> enabled = null, 
             ElementFunc<bool> hidden = null,
+            ElementFunc<Color4> color = null,
+            ElementFunc<Color4> disabledColor = null,
+            ElementFunc<Color4> hoverColor = null,
+            ElementFunc<Color4> borderColor = null,
             Style style = null)
-            : base(x, y, width, height, onClick, onHover, enabled, hidden, style)
+            : base(x, y, width, height, onClick, onHover, enabled, hidden, color, disabledColor, hoverColor, borderColor, style)
         {
             var internalValue = default(T);
             _getValue = getValue ?? (_ => internalValue);
             _setValue = setValue ?? (value => internalValue = value);
             Target = target;
-        }
-
-        public Radio(
-            out Button id,
-            ElementFunc<float> x = null,
-            ElementFunc<float> y = null,
-            ElementFunc<float> width = null,
-            ElementFunc<float> height = null,
-            ElementAction<ClickArgs> onClick = null,
-            ElementAction<HoverArgs> onHover = null,
-            T value = default(T),
-            ElementFunc<T> getValue = null,
-            Action<T> setValue = null,
-            ElementFunc<bool> enabled = null,
-            ElementFunc<bool> hidden = null,
-            Style style = null)
-            : this(x, y, width, height, onClick, onHover, value, getValue, setValue, enabled, hidden, style)
-        {
-            id = this;
         }
 
         public void SetValue() => _setValue(Target);

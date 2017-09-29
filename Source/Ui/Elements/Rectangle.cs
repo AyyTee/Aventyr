@@ -31,20 +31,6 @@ namespace Ui.Elements
             _color = color;
         }
 
-        public Rectangle(
-            out Rectangle id,
-            ElementFunc<float> x = null,
-            ElementFunc<float> y = null,
-            ElementFunc<float> width = null,
-            ElementFunc<float> height = null,
-            ElementFunc<Color4> color = null,
-            ElementFunc<bool> hidden = null,
-            Style style = null)
-            : this(x, y, width, height, color, hidden, style)
-        {
-            id = this;
-        }
-
         public static new Style DefaultStyle(IUiController controller)
         {
             var type = typeof(Rectangle);

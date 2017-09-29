@@ -9,12 +9,9 @@ namespace Ui
 {
     public class ModelArgs : ElementArgs
     {
-        public bool IsSelected { get; }
-
-        public ModelArgs(bool isSelected, Element parent, Element self) 
-            : base(parent, self)
+        public ModelArgs(Element parent, Element self, IUiController controller) 
+            : base(parent, self, controller)
         {
-            IsSelected = isSelected;
         }
     }
 }

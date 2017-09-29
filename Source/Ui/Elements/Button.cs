@@ -17,6 +17,16 @@ namespace Ui.Elements
     {
         public ElementAction<ClickArgs> OnClick { get; }
         public ElementAction<HoverArgs> OnHover { get; }
+
+        internal ElementFunc<Color4> _color;
+        public Color4 Color => GetValue(_color);
+        internal ElementFunc<Color4> _disabledColor;
+        public Color4 DisabledColor => GetValue(_disabledColor);
+        internal ElementFunc<Color4> _hoverColor;
+        public Color4 HoverColor => GetValue(_hoverColor);
+        internal ElementFunc<Color4> _borderColor;
+        public Color4 BorderColor => GetValue(_borderColor);
+
         internal ElementFunc<bool> _enabled;
         public bool Enabled => GetValue(_enabled);
 
@@ -29,36 +39,33 @@ namespace Ui.Elements
             ElementAction<HoverArgs> onHover = null,
             ElementFunc<bool> enabled = null,
             ElementFunc<bool> hidden = null,
+            ElementFunc<Color4> color = null,
+            ElementFunc<Color4> disabledColor = null,
+            ElementFunc<Color4> hoverColor = null,
+            ElementFunc<Color4> borderColor = null,
             Style style = null)
             : base(x, y , width, height, hidden, style)
         {
             OnClick = onClick ?? (_ => { });
             OnHover = onHover ?? (_ => { });
-            _enabled = enabled;
-        }
 
-        public Button(
-            out Button id, 
-            ElementFunc<float> x = null, 
-            ElementFunc<float> y = null, 
-            ElementFunc<float> width = null, 
-            ElementFunc<float> height = null,
-            ElementAction<ClickArgs> onClick = null,
-            ElementAction<HoverArgs> onHover = null,
-            ElementFunc<bool> enabled = null,
-            ElementFunc<bool> hidden = null,
-            Style style = null)
-            : this(x, y, width, height, onClick, onHover, enabled, hidden, style)
-        {
-            id = this;
+            _color = color;
+            _disabledColor = disabledColor;
+            _hoverColor = hoverColor;
+            _borderColor = borderColor;
+
+            _enabled = enabled;
         }
 
         public static new Style DefaultStyle(IUiController controller)
         {
-            var type = typeof(Button);
             return new Style
             {
-                new StyleElement(type, nameof(Enabled), _ => true),
+                new StyleElement<Button, bool>(nameof(Enabled), _ => true),
+                new StyleElement<Button, Color4>(nameof(Color), _ => new Color4(0.4f, 0.4f, 0.8f, 1)),
+                new StyleElement<Button, Color4>(nameof(DisabledColor), _ => new Color4(0.3f, 0.3f, 0.6f, 0.8f)),
+                new StyleElement<Button, Color4>(nameof(HoverColor), _ => new Color4(0.5f, 0.5f, 0.8f, 1)),
+                new StyleElement<Button, Color4>(nameof(BorderColor), _ => new Color4(1, 1, 1, 0.5f)),
             };
         }
 
@@ -66,7 +73,12 @@ namespace Ui.Elements
         {
             return new[]
             {
-                ModelFactory.CreatePlane(this.GetSize(), Enabled ? Color4.Black : new Color4(0, 0, 0, 0.5f)),
+                ModelFactory.CreatePlane(
+                    this.GetSize(),
+                    Enabled ?
+                        Color :
+                        DisabledColor),
+                ModelFactory.CreateRectangleOutline(new Vector2(), this.GetSize(), BorderColor, 2),
             }.ToList();
         }
 

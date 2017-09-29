@@ -77,12 +77,6 @@ namespace TimeLoopInc.Editor
             };
         }
 
-        public LoadDialogue(out LoadDialogue id, IEditorController editor = null, Action<SceneBuilder> onLoad = null)
-            : this(editor, onLoad)
-        {
-            id = this;
-        }
-
         void Load()
         {
             if (File.Exists(SelectedFile))

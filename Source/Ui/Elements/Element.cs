@@ -44,7 +44,7 @@ namespace Ui.Elements
             ElementFunc<bool> hidden = null,
             Style style = null)
         {
-            ElementArgs = new ElementArgs(null, this);
+            ElementArgs = new ElementArgs(null, this, null);
             _x = x;
             _y = y;
             _width = width;

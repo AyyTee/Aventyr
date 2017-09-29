@@ -123,6 +123,20 @@ namespace Game.Rendering
             return new Model(mesh);
         }
 
+        public static Model CreateRectangleOutline(Vector2 topLeft, Vector2 bottomRight, Color4 color, float thickness)
+        {
+            return CreateLineStripWidth(
+                new[] {
+                    topLeft,
+                    new Vector2(topLeft.X, bottomRight.Y),
+                    bottomRight,
+                    new Vector2(bottomRight.X, topLeft.Y),
+                },
+                thickness,
+                true,
+                color);
+        }
+
         public static Model CreateCube() => CreateCube(Color4.White);
 
         public static Model CreateCube(Vector3 scale) => CreateCube(scale, Color4.White);

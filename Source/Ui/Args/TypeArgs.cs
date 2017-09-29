@@ -12,8 +12,8 @@ namespace Ui.Args
     {
         public IVirtualWindow Window { get; }
 
-        public TypeArgs(IElement element, IVirtualWindow window)
-            : base(element.ElementArgs.Parent, element.ElementArgs.Self)
+        public TypeArgs(IElement element, IVirtualWindow window, IUiController controller)
+            : base(element.ElementArgs.Parent, element.ElementArgs.Self, controller)
         {
             Window = window;
         }

@@ -41,17 +41,7 @@ namespace Game.Rendering
 
         public static Renderable RectangleOutline(Vector2 topLeft, Vector2 bottomRight, Color4 color, float thickness)
         {
-            var model = ModelFactory.CreateLineStripWidth(
-                new[] {
-                    topLeft,
-                    new Vector2(topLeft.X, bottomRight.Y),
-                    bottomRight,
-                    new Vector2(bottomRight.X, topLeft.Y),
-                }, 
-                thickness, 
-                true, 
-                color);
-            return GetRenderable(model);
+            return GetRenderable(ModelFactory.CreateRectangleOutline(topLeft, bottomRight, color, thickness));
         }
 
         public static Renderable Line(LineF line)

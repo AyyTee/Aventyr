@@ -11,8 +11,8 @@ namespace Ui.Args
     {
         public bool IsDoubleClick { get; }
 
-        public ClickArgs(IElement element, bool isDoubleClick)
-            : base(element.ElementArgs.Parent, element.ElementArgs.Self)
+        public ClickArgs(IElement element, bool isDoubleClick, IUiController controller)
+            : base(element.ElementArgs.Parent, element.ElementArgs.Self, controller)
         {
             IsDoubleClick = isDoubleClick;
         }

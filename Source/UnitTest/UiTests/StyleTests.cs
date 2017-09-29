@@ -21,9 +21,10 @@ namespace UiTests
                 new StyleElement<Element, float>(nameof(Element.X), _ => 10)
             };
 
+            Frame child;
             new Frame(style: style)
             {
-                new Frame(out Frame child)
+                (child = new Frame())
             };
 
             Assert.AreEqual(10, child.X);
@@ -37,9 +38,10 @@ namespace UiTests
                 new StyleElement<Element, float>(nameof(Element.X), _ => 10)
             };
 
+            Frame child;
             new Frame(style: style)
             {
-                new Frame(out Frame child, _ => 15)
+                (child = new Frame(_ => 15))
             };
 
             Assert.AreEqual(15, child.X);

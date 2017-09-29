@@ -14,8 +14,8 @@ namespace Ui.Args
         /// </summary>
         public bool MouseEntered { get; }
 
-        public HoverArgs(IElement element, bool mouseEntered)
-            : base(element.ElementArgs.Parent, element.ElementArgs.Self)
+        public HoverArgs(IElement element, bool mouseEntered, IUiController controller)
+            : base(element.ElementArgs.Parent, element.ElementArgs.Self, controller)
         {
             MouseEntered = mouseEntered;
         }

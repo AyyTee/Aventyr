@@ -92,10 +92,12 @@ namespace TimeLoopInc.Editor
                 new StyleElement<TextBlock, float>(nameof(TextBlock.Y), args => AlignY(0.5f)(args))
             };
 
+            SaveDialogue saveDialogue;
+            LoadDialogue loadDialogue;
             var root = new Frame()
             {
-                new SaveDialogue(out SaveDialogue saveDialogue, this, Save),
-                new LoadDialogue(out LoadDialogue loadDialogue, this, Load),
+                (saveDialogue = new SaveDialogue(this, Save)),
+                (loadDialogue = new LoadDialogue(this, Load)),
                 new Frame(hidden: _ => _isPlaying)
                 {
                     new StackFrame(spacing: _ => 20)
@@ -239,7 +241,7 @@ namespace TimeLoopInc.Editor
             }
             else
             {
-                if (_menu.Hover == null)
+                if (_menu.Hovered == null)
                 {
                     var v = MoveInput.FromKeyboard(Window)?.Direction?.Vector;
                     if (v != null)
