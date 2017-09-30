@@ -102,8 +102,11 @@ namespace Ui
                     var isDoubleClick =
                         (DateTime - LastClick.Time < DoubleClickSpeed) &&
                         LastClick.Element == Hovered;
-
-                    clickable.OnClick(new ClickArgs(Hovered, isDoubleClick, this));
+                    
+                    if (clickable.Enabled)
+                    {
+                        clickable.OnClick(new ClickArgs(Hovered, isDoubleClick, this));
+                    }
 
                     LastClick = (clickable, DateTime);
                 }

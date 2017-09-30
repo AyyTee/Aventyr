@@ -70,6 +70,7 @@
     <Compile Include="ClipperConvert.cs" />
     <Compile Include="Common\RectangleF.cs" />
     <Compile Include="Common\RectangleI.cs" />
+    <Compile Include="Common\TimeSpanEx.cs" />
     <Compile Include="ExceptionInvalidPolygon.cs" />
     <Compile Include="GenerateSingles.cs" />
     <Compile Include="GlobalEnums.cs" />

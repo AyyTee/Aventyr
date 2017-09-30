@@ -11,7 +11,6 @@ using OpenTK.Graphics;
 using OpenTK.Input;
 using Ui;
 using Game;
-using static Ui.ElementEx;
 using Ui.Elements;
 using Game.Serialization;
 
@@ -24,26 +23,25 @@ namespace TimeLoopInc.Editor
         public string SavePath => "Levels";
 
         public IVirtualWindow Window { get; }
-        readonly UiController _menu;
         public GridCamera Camera { get; }
-        readonly Controller _controller;
+        public Controller Controller { get; }
         public MouseButton PlaceButton { get; } = MouseButton.Right;
         public MouseButton SelectButton { get; } = MouseButton.Left;
         public Key DeleteButton { get; } = Key.Delete;
-        SceneController _sceneController;
-        public SceneBuilder Scene => _sceneChanges[_sceneChangeCurrent];
-        bool _isPlaying => _sceneController != null;
+        public SceneController _sceneController;
+        public SceneBuilder Scene => _sceneChanges[SceneChangeCurrent];
+        public bool _isPlaying => _sceneController != null;
         public string LevelName { get; set; } = "Level";
         Vector2 _mousePosition;
         Vector2i _mouseGridPos => (Vector2i)_mousePosition.Floor(Vector2.One);
         List<SceneBuilder> _sceneChanges;
-        int _sceneChangeCurrent;
-        int _saveChangeCurrent;
-        ToolData _tool;
-        readonly ImmutableArray<ToolData> _tools;
+        public int SceneChangeCurrent;
+        public int SaveChangeCurrent;
+        public ToolData ToolCurrent;
+        public ImmutableArray<ToolData> Tools { get; }
         readonly SceneRender _sceneRender;
 
-        private class ToolData
+        public class ToolData
         {
             public ITool Tool { get; }
             public Hotkey Hotkey { get; }
@@ -66,9 +64,9 @@ namespace TimeLoopInc.Editor
             NewLevel();
 
             Window = window;
-            _controller = controller;
+            Controller = controller;
 
-            _tools = new[]
+            Tools = new[]
             {
                 new ToolData("Wall", new FloorTool(this), "Left click to place.  Right click to remove.", new Hotkey(Key.Number1)),
                 new ToolData("Exit", new ExitTool(this), "Left click to select.  Right click to place.  Delete to remove.", new Hotkey(Key.Number2)),
@@ -78,109 +76,26 @@ namespace TimeLoopInc.Editor
                 new ToolData("Portal Link", new LinkTool(this), "Click two portals to link them.", new Hotkey(Key.Number6)),
             }.ToImmutableArray();
 
-            _tool = _tools[0];
-            _sceneRender = new SceneRender(Window, new TimeLoopInc.Scene());
-
-            var menuButtons = new Style
-            {
-                new StyleElement<Button, float>(nameof(Button.Height), _ => 60),
-            };
-
-            var centerText = new Style
-            {
-                new StyleElement<TextBlock, float>(nameof(TextBlock.X), args => AlignX(0.5f)(args)),
-                new StyleElement<TextBlock, float>(nameof(TextBlock.Y), args => AlignY(0.5f)(args))
-            };
-
-            SaveDialogue saveDialogue;
-            LoadDialogue loadDialogue;
-            var root = new Frame()
-            {
-                (saveDialogue = new SaveDialogue(this, Save)),
-                (loadDialogue = new LoadDialogue(this, Load)),
-                new Frame(hidden: _ => _isPlaying)
-                {
-                    new StackFrame(spacing: _ => 20)
-                    {
-                        new StackFrame(thickness: _ => 200, spacing: _ => 5, style: menuButtons.With(centerText))
-                        {
-                            new Button(onClick: _ => NewLevel())
-                            {
-                                new TextBlock(text: _ => "New")
-                            },
-                            new Button(onClick: _ => saveDialogue.Show())
-                            {
-                                new TextBlock(text: _ => "Save As...")
-                            },
-                            new Button(onClick: _ => loadDialogue.Show())
-                            {
-                                new TextBlock(text: _ => "Load")
-                            },
-                            new Button(onClick: _ => Play())
-                            {
-                                new TextBlock(text: _ => "Play")
-                            }
-                        },
-                        new StackFrame(thickness: _ => 120, spacing: _ => 2, style: centerText)
-                        {
-                            new DataTemplate<ToolData>(
-                                () => new OrderedSet<ToolData>(_tools),
-                                data => new Radio<ToolData>(
-                                    height: ChildrenMaxY(),
-                                    target: data,
-                                    getValue: _ => _tool,
-                                    setValue: _ => _tool = data)
-                                {
-                                    new TextBlock(
-                                        text: _ => data.Name,
-                                        maxWidth: args => (int)args.Parent.Width - 10,
-                                        textAlignment: _ => 0.5f)
-                                })
-                        }
-                    },
-                    new TextBox(
-                        _ => 220, _ => 10,
-                        _ => 200, _ => 90,
-                        TimeOffsetGetText,
-                        TimeOffsetSetText),
-                    new TextBlock(x: _ => 5, y: AlignY(1), text: _ => _tool.Hint)
-                },
-                new StackFrame(thickness: _ => 90, spacing: _ => 5, hidden: _ => !_isPlaying, isVertical: false, style: centerText)
-                {
-                    new Button(width: _ => 200, onClick: _ => _sceneController = null)
-                    {
-                        new TextBlock(text: _ => "Return to editor")
-                    },
-                    new Button(width: _ => 200, onClick: _ => _sceneController.SetInput(_sceneController.Input.Clear()))
-                    {
-                        new TextBlock(text: _ => "Restart")
-                    }
-                },
-                new TextBlock(AlignX(1), _ => 0, _ => LevelName + (_saveChangeCurrent == _sceneChangeCurrent ? "" : "*")),
-            };
-
-            _menu = new UiController(Window, root);
+            ToolCurrent = Tools[0];
+            _sceneRender = new SceneRender(Window, new Scene());
 
             Camera = new GridCamera(new Transform2(), (float)Window.CanvasSize.XRatio);
             Camera.WorldTransform = Camera.WorldTransform.WithSize(15);
             Camera.IsOrtho = true;
         }
 
-        void Play()
+        public void Play()
         {
-            if (Scene.Entities.OfType<Player>().Any())
-            {
-                _sceneController = new SceneController(Window, new[] { Scene.CreateScene() });
-            }
+            _sceneController = new SceneController(Window, new[] { Scene.CreateScene() });
         }
 
-        void NewLevel()
+        public void NewLevel()
         {
             LevelName = "NewLevel";
             SetScene(SceneBuilder.Default());
         }
 
-        void Load(SceneBuilder newScene)
+        public void Load(SceneBuilder newScene)
         {
             SetScene(newScene);
         }
@@ -191,22 +106,27 @@ namespace TimeLoopInc.Editor
             {
                 scene
             }.ToList();
-            _sceneChangeCurrent = 0;
-            _saveChangeCurrent = 0;
+            SceneChangeCurrent = 0;
+            SaveChangeCurrent = 0;
         }
 
-        void Save(string saveName)
+        public bool CanStart()
+        {
+            return Scene.Entities.OfType<Player>().Any();
+        }
+
+        public void Save(string saveName)
         {
             var filepath = Path.Combine(SavePath, saveName);
             Directory.CreateDirectory(SavePath);
 
             File.WriteAllText(filepath, Serializer.Serialize(Scene));
-            _saveChangeCurrent = _sceneChangeCurrent;
+            SaveChangeCurrent = SceneChangeCurrent;
         }
 
-        string TimeOffsetGetText(ElementArgs args)
+        public string TimeOffsetGetText(ElementArgs args)
         {
-            if (_tool.Tool is PortalTool portalTool)
+            if (ToolCurrent.Tool is PortalTool portalTool)
             {
                 var link = LinkTool.GetLink(LinkTool.SelectedPortal(Scene), Scene.Links);
                 return link?.TimeOffset.ToString() ?? "";
@@ -214,9 +134,9 @@ namespace TimeLoopInc.Editor
             return "";
         }
 
-        void TimeOffsetSetText(string newText)
+        public void TimeOffsetSetText(string newText)
         {
-            if (_tool.Tool is PortalTool portalTool)
+            if (ToolCurrent.Tool is PortalTool portalTool)
             {
                 var link = LinkTool.GetLink(LinkTool.SelectedPortal(Scene), Scene.Links);
                 if (link != null)
@@ -234,14 +154,13 @@ namespace TimeLoopInc.Editor
         {
             _mousePosition = Window.MouseWorldPos(Camera);
 
-            _menu.Update(1);
             if (_isPlaying)
             {
                 _sceneController.Update(timeDelta);
             }
             else
             {
-                if (_menu.Hovered == null)
+                if (Controller.Menu.Hovered == null)
                 {
                     var v = MoveInput.FromKeyboard(Window)?.Direction?.Vector;
                     if (v != null)
@@ -249,7 +168,7 @@ namespace TimeLoopInc.Editor
                         Camera.WorldTransform = Camera.WorldTransform.AddPosition((Vector2)v * 3);
                     }
 
-                    _tool.Tool.Update();
+                    ToolCurrent.Tool.Update();
 
                     if (Window.ButtonDown(KeyBoth.Control))
                     {
@@ -263,9 +182,9 @@ namespace TimeLoopInc.Editor
                         }
                     }
 
-                    _tools
+                    Tools
                         .Where(item => Window.HotkeyPress(item.Hotkey))
-                        .ForEach(item => _tool = item);
+                        .ForEach(item => ToolCurrent = item);
                 }
             }
         }
@@ -375,24 +294,24 @@ namespace TimeLoopInc.Editor
                     .GroupBy(item => item)
                     .All(item => item.Count() == 1), 
                 "There should not be any duplicate portals.");
-            _sceneChangeCurrent++;
-            _sceneChanges.RemoveRange(_sceneChangeCurrent, _sceneChanges.Count - _sceneChangeCurrent);
+            SceneChangeCurrent++;
+            _sceneChanges.RemoveRange(SceneChangeCurrent, _sceneChanges.Count - SceneChangeCurrent);
             _sceneChanges.Add(newScene);
         }
 
         public void UndoChanges()
         {
-            if (_sceneChangeCurrent > 0)
+            if (SceneChangeCurrent > 0)
             {
-                _sceneChangeCurrent--;
+                SceneChangeCurrent--;
             }
         }
 
         public void RedoChanges()
         {
-            if (_sceneChangeCurrent + 1 < _sceneChanges.Count)
+            if (SceneChangeCurrent + 1 < _sceneChanges.Count)
             {
-                _sceneChangeCurrent++;
+                SceneChangeCurrent++;
             }
         }
 
@@ -421,13 +340,10 @@ namespace TimeLoopInc.Editor
                     DepthTest = false
                 };
 
-                toolLayer.Renderables.AddRange(_tool.Tool.Render());
+                toolLayer.Renderables.AddRange(ToolCurrent.Tool.Render());
                 Window.Layers.Add(layer);
                 Window.Layers.Add(toolLayer);
             }
-
-            var gui = _menu.Render();
-            Window.Layers.Add(gui);
         }
     }
 }

@@ -10,5 +10,6 @@ namespace Ui
     public interface IClickable : IHoverable, IElement
     {
         ElementAction<ClickArgs> OnClick { get; }
+        bool Enabled { get; }
     }
 }

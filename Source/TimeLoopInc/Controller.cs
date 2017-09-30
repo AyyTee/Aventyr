@@ -19,16 +19,17 @@ using System.IO;
 
 namespace TimeLoopInc
 {
+    public enum MenuState { Main, LevelSelect, InGame, Editor }
+
     public class Controller : IUpdateable
     {
-        enum MenuState { Main, InGame, Editor }
-
-        MenuState _menuState = MenuState.Main;
+        MenuState _currentState = MenuState.Main;
 
         readonly IVirtualWindow _window;
-        UiController _menu;
+        public UiController Menu;
         EditorController _editor;
         SceneController _sceneController;
+        DateTime _menuChangeTime;
 
         public Controller(IVirtualWindow window)
         {
@@ -41,126 +42,84 @@ namespace TimeLoopInc
 
             var centerText = new Style
             {
-                new StyleElement<TextBlock, float>(nameof(TextBlock.X), args => ElementEx.AlignX(0.5f)(args)),
-                new StyleElement<TextBlock, float>(nameof(TextBlock.Y), args => ElementEx.AlignY(0.5f)(args))
+                new StyleElement<TextBlock, float>(nameof(TextBlock.X), ElementEx.AlignX(0.5f)),
+                new StyleElement<TextBlock, float>(nameof(TextBlock.Y), ElementEx.AlignY(0.5f))
             };
+
+            _editor = new EditorController(_window, this);
 
             var root = new Frame()
             {
-                new StackFrame(thickness: _ => 200, spacing: _ => 5, style: menuButtons.With(centerText))
+                new Frame(MenuTransition(MenuState.Main))
                 {
-                    new Button(onClick: StartGame)
+                    new StackFrame(thickness: _ => 200, spacing: _ => 5, style: menuButtons.With(centerText))
                     {
-                        new TextBlock(text: _ => "Start Game")
-                    },
-                    new Button(onClick: StartLevelEditor)
-                    {
-                        new TextBlock(text: _ => "Level Editor")
-                    },
-                    new Button(onClick: _ => _window.Exit())
-                    {
-                        new TextBlock(text: _ => "Exit")
+                        new Button(onClick: SetMenuState(MenuState.LevelSelect))
+                        {
+                            new TextBlock(text: _ => "Start")
+                        },
+                        new Button(onClick: SetMenuState(MenuState.Editor))
+                        {
+                            new TextBlock(text: _ => "Level Editor")
+                        },
+                        new Button(onClick: _ => _window.Exit())
+                        {
+                            new TextBlock(text: _ => "Exit")
+                        }
                     }
-                }
+                },
+                new EditorMenu(_editor, MenuTransition(MenuState.Editor))
             };
-            _menu = new UiController(_window, root);
 
-            _editor = new EditorController(_window, this);
+            Menu = new UiController(_window, root);
         }
 
-        public void StartGame(ClickArgs args)
+        ElementFunc<float> MenuTransition(MenuState menuState)
         {
-            var levels = new[]
+            return arg =>
             {
-                CreateLevel0(),
-                CreateLevel1()
+                var length = TimeSpan.FromSeconds(0.2);
+                var t = MathHelper.Clamp(
+                    (float)(arg.Controller.DateTime - _menuChangeTime).Div(length), 
+                    0, 
+                    1);
+                return menuState == _currentState ?
+                    arg.Parent.Width * (1 - t) :
+                    arg.Parent.Width * t;
             };
-            _sceneController = new SceneController(_window, levels);
-            _menuState = MenuState.InGame;
         }
 
-        public void StartLevelEditor(ClickArgs args)
+        public ElementAction<ClickArgs> SetMenuState(MenuState menuState)
         {
-            _menuState = MenuState.Editor;
-        }
-
-        public Scene CreateLevel0()
-        {
-            var floor = new HashSet<Vector2i> { };
-            var player = new Player(new Transform2i(), 0);
-
-            var portal0 = new TimePortal(new Vector2i(1, 0), GridAngle.Right);
-            var portal1 = new TimePortal(new Vector2i(-1, 0), GridAngle.Left);
-
-            portal0.SetLinked(portal1);
-            portal0.SetTimeOffset(10);
-
-            var Portals = new[]
+            return arg =>
             {
-                portal0,
-                portal1,
+                _currentState = menuState;
+                _menuChangeTime = arg.Controller.DateTime;
             };
-
-            var entities = new[] {
-                (IGridEntity)player,
-                new Block(new Transform2i(new Vector2i(1, 0))),
-            };
-
-            return new Scene(floor, Portals, entities, new HashSet<Vector2i> { new Vector2i(0, 2) });
-        }
-
-        public Scene CreateLevel1()
-        {
-            var floor = new HashSet<Vector2i>
-            {
-                new Vector2i(-1, 0)
-            };
-            var player = new Player(new Transform2i(), 0);
-
-            var portal0 = new TimePortal(new Vector2i(1, 2), GridAngle.Up);
-            var portal1 = new TimePortal(new Vector2i(-1, 0), GridAngle.Left);
-
-            portal0.SetLinked(portal1);
-            portal0.SetTimeOffset(5);
-
-            var Portals = new[]
-            {
-                portal0,
-                portal1,
-            };
-
-            var entities = new[] {
-                (IGridEntity)player,
-                new Block(new Transform2i(new Vector2i(1, 0))),
-            };
-
-            return new Scene(floor, Portals, entities, new HashSet<Vector2i> { new Vector2i(0, 2) });
         }
 
         public void Render(double timeDelta)
         {
             _window.Layers.Clear();
-            switch (_menuState)
+            switch (_currentState)
             {
-                case MenuState.Main:
-                    _window.Layers.Add(_menu.Render());
-                    break;
                 case MenuState.Editor:
                     _editor.Render(timeDelta);
                     break;
                 case MenuState.InGame:
                     _sceneController?.Render(timeDelta);
                     break;
+                case MenuState.LevelSelect:
+                    break;
             }
+
+            _window.Layers.Add(Menu.Render());
         }
 
         public void Update(double timeDelta)
         {
-            switch (_menuState)
+            switch (_currentState)
             {
-                case MenuState.Main:
-                    _menu.Update(1);
-                    break;
                 case MenuState.Editor:
                     _editor.Update(timeDelta);
                     break;
@@ -168,6 +127,8 @@ namespace TimeLoopInc
                     _sceneController?.Update(timeDelta);
                     break;
             }
+
+            Menu.Update(1);
         }
     }
 }

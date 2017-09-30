@@ -11,7 +11,7 @@ namespace Game.Common
     [DataContract]
     public partial class Transform2 : MemberwiseEquatable<Transform2>, IAlmostEqual<Transform2, float>
     {
-        const float UniformScaleEpsilon = 0.0001f;
+        const float UniformScaleEpsilon = 0.001f;
         const float EqualityEpsilon = 0.0001f;
 
         [DataMember]

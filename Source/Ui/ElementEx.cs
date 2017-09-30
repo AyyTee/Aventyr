@@ -18,14 +18,9 @@ namespace Ui
             {
                 yield return current;
 
-                if (current.GenericTypeArguments.Length > 0)
-                {
-                    current = current.GetGenericTypeDefinition();
-                }
-                else
-                {
-                    current = current.BaseType;
-                }
+                current = current.GenericTypeArguments.Length > 0 ?
+                    current.GetGenericTypeDefinition() :
+                    current.BaseType;
             }
         }
 
