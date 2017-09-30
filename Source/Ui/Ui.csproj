@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Args\ClickArgs.cs" />
     <Compile Include="Args\HoverArgs.cs" />
+    <Compile Include="Elements\Grid.cs" />
     <Compile Include="IBaseElement.cs" />
     <Compile Include="IClickable.cs" />
     <Compile Include="IElement.cs" />

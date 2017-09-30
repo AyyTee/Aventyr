@@ -39,6 +39,23 @@ namespace Game
             throw new InvalidOperationException();
         }
 
+        public static int IndexOf<T>(this IEnumerable<T> enumerable, T item)
+        {
+            var enumerator = enumerable.GetEnumerator();
+            var index = 0;
+
+            while (enumerator.MoveNext())
+            {
+                if (enumerator.Current.Equals(item))
+                {
+                    return index;
+                }
+                index++;
+            }
+
+            return -1;
+        }
+
         /// <summary>
         /// Finds the index of the first match. If no match exists, null is returned.
         /// </summary>

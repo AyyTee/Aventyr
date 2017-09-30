@@ -75,14 +75,13 @@ namespace Ui.Elements
         protected override void AddChild(Element element)
         {
             base.AddChild(element);
-            var cast = (Element)element;
             if (IsVertical)
             {
-                cast._y = ChildGetY;
+                element._y = ChildGetY;
             }
             else
             {
-                cast._x = ChildGetX;
+                element._x = ChildGetX;
             }
         }
 

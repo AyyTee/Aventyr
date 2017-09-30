@@ -16,7 +16,7 @@ namespace Ui.Elements
     /// </summary>
     public abstract class NodeElement : Element
     {
-        ImmutableList<IBaseElement> _children = new List<IBaseElement>().ToImmutableList();
+        ImmutableList<IBaseElement> _children = ImmutableList<IBaseElement>.Empty;
 
         public NodeElement(
             ElementFunc<float> x = null, 

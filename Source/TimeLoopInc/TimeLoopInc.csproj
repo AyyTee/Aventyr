@@ -80,6 +80,7 @@
     <Compile Include="Editor\SaveDialogue.cs" />
     <Compile Include="Editor\FloorTool.cs" />
     <Compile Include="GridCamera.cs" />
+    <Compile Include="LevelSelect.cs" />
     <Compile Include="SceneInstant.cs" />
     <Compile Include="SceneRender.cs" />
     <Compile Include="Timeline.cs" />

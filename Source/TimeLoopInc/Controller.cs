@@ -16,6 +16,7 @@ using TimeLoopInc.Editor;
 using Ui.Elements;
 using Ui.Args;
 using System.IO;
+using static Ui.ElementEx;
 
 namespace TimeLoopInc
 {
@@ -42,8 +43,8 @@ namespace TimeLoopInc
 
             var centerText = new Style
             {
-                new StyleElement<TextBlock, float>(nameof(TextBlock.X), ElementEx.AlignX(0.5f)),
-                new StyleElement<TextBlock, float>(nameof(TextBlock.Y), ElementEx.AlignY(0.5f))
+                new StyleElement<TextBlock, float>(nameof(TextBlock.X), AlignX(0.5f)),
+                new StyleElement<TextBlock, float>(nameof(TextBlock.Y), AlignY(0.5f))
             };
 
             _editor = new EditorController(_window, this);
@@ -68,7 +69,8 @@ namespace TimeLoopInc
                         }
                     }
                 },
-                new EditorMenu(_editor, MenuTransition(MenuState.Editor))
+                new EditorMenu(_editor, MenuTransition(MenuState.Editor)),
+                LevelSelect.GetElements(MenuTransition(MenuState.LevelSelect))
             };
 
             Menu = new UiController(_window, root);
