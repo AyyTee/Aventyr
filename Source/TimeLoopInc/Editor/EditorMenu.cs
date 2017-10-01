@@ -74,7 +74,7 @@ namespace TimeLoopInc.Editor
                             },
                             new StackFrame(thickness: _ => 120, spacing: _ => 2, style: centerText)
                             {
-                                new DataTemplate<EditorController.ToolData>(
+                                new DataTemplate<EditorController.ToolData, Element>(
                                     () => new OrderedSet<EditorController.ToolData>(_controller.Tools),
                                     data => new Radio<EditorController.ToolData>(
                                         height: ChildrenMaxY(),

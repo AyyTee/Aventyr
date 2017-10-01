@@ -20,7 +20,7 @@ namespace UiTests
             var (font, _) = FontTests.GetFont();
             var stackFrame = new StackFrame()
             {
-                new DataTemplate<string>(
+                new DataTemplate<string, Element>(
                     () => new OrderedSet<string> { "a", "ab", "abc" }, 
                     text => new TextBlock(text: _ => text, font: _ => font, maxWidth: _ => null, textAlignment: _ => 0))
             };

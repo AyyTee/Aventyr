@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Ui;
 using Ui.Elements;
 using static Ui.ElementEx;
+using MoreLinq;
 
 namespace TimeLoopInc
 {
@@ -44,11 +45,19 @@ namespace TimeLoopInc
 
             return new Frame(x)
             {
-                new Grid(arg => Enumerable.Repeat(arg.Parent.Width * 0.8f / gridColumns, gridColumns), AlignX(0.5f), AlignY(0.5f))
+                new TextBlock(AlignX(0.5f), _ => 10, _ => "Level Select"),
+                new Grid(
+                    AlignX(0.5f), 
+                    AlignY(0.5f), 
+                    arg => Enumerable.Repeat(ColumnWidth(arg, gridColumns), gridColumns), 
+                    arg => MoreEnumerable.Repeat(new[] { ColumnWidth(arg, gridColumns) }, 3))
                 {
-                    //new DataTemplate<LevelPreview>(() => levels, data => new TextBlock(text: _ => data.Name))
+                    //new TextBlock(text: _ => "Aadsfa sdf asdf")
+                    new DataTemplate<LevelPreview, Element>(() => levels, data => new TextBlock(text: _ => data.Name))
                 }
             };
         }
+
+        static float ColumnWidth(ElementArgs arg, int columns) => arg.Parent.Width * 0.8f / columns;
     }
 }

@@ -59,7 +59,7 @@ namespace TimeLoopInc.Editor
                             },
                             new StackFrame(spacing: _ => 1)
                             {
-                                new DataTemplate<string>(
+                                new DataTemplate<string, Element>(
                                     () => _files.ToOrderedSet(),
                                     name => new Radio<string>(
                                         height: ChildrenMaxY(), 

@@ -25,6 +25,7 @@ namespace TimeLoopInc
     public class Controller : IUpdateable
     {
         MenuState _currentState = MenuState.Main;
+        MenuState _previousState = MenuState.Editor;
 
         readonly IVirtualWindow _window;
         public UiController Menu;

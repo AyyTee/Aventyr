@@ -31,24 +31,22 @@ namespace Ui.Elements
 
         public override IEnumerator<Element> GetEnumerator()
         {
-            var list = new List<Element>();
             foreach (var child in _children)
             {
                 if (child is Element element)
                 {
-                    list.Add(element);
+                    yield return element;
                 }
-                else if (child is IDataTemplate template)
+                else if (child is IDataTemplate<Element> template)
                 {
                     var elements = template.GetElements();
                     foreach (var templateElement in elements)
                     {
                         AddChild(templateElement);
+                        yield return templateElement;
                     }
-                    list.AddRange(elements);
                 }
             }
-            return list.GetEnumerator();
         }
 
         protected virtual void AddChild(Element element)
@@ -62,7 +60,7 @@ namespace Ui.Elements
             AddChild(element);
         }
 
-        public virtual void Add(IDataTemplate dataTemplate)
+        public virtual void Add(IDataTemplate<Element> dataTemplate)
         {
             _children = _children.Add(dataTemplate);
         }

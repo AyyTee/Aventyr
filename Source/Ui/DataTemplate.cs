@@ -8,26 +8,26 @@ using Ui.Elements;
 
 namespace Ui
 {
-    public class DataTemplate<T> : IDataTemplate
+    public class DataTemplate<TData, TTemplate> : IDataTemplate<TTemplate> where TTemplate : class
     {
-        public Func<OrderedSet<T>> DataFunc { get; }
-        public Func<T, Element> TemplateFunc { get; }
+        public Func<OrderedSet<TData>> Data { get; }
+        public Func<TData, TTemplate> Template { get; }
 
-        Dictionary<T, Element> _cachedElements = new Dictionary<T, Element>();
+        Dictionary<TData, TTemplate> _cachedElements = new Dictionary<TData, TTemplate>();
 
-        public DataTemplate(Func<OrderedSet<T>> data, Func<T, Element> template)
+        public DataTemplate(Func<OrderedSet<TData>> data, Func<TData, TTemplate> template)
         {
-            DataFunc = data;
-            TemplateFunc = template;
+            Data = data;
+            Template = template;
         }
 
-        public IEnumerable<Element> GetElements()
+        public IEnumerable<TTemplate> GetElements()
         {
-            var newCache = new Dictionary<T, Element>();
-            var data = DataFunc();
+            var newCache = new Dictionary<TData, TTemplate>();
+            var data = Data();
             var elements = data.Select(item =>
                 {
-                    var element = _cachedElements.GetOrDefault(item) ?? TemplateFunc(item);
+                    var element = _cachedElements.GetOrDefault(item) ?? Template(item);
                     newCache.Add(item, element);
                     return element;
                 }).ToList();
@@ -37,8 +37,8 @@ namespace Ui
         }
     }
 
-    public interface IDataTemplate : IBaseElement
+    public interface IDataTemplate<TTemplate> : IBaseElement
     {
-        IEnumerable<Element> GetElements();
+        IEnumerable<TTemplate> GetElements();
     }
 }

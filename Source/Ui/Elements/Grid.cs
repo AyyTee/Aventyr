@@ -8,114 +8,50 @@ using System.Threading.Tasks;
 
 namespace Ui.Elements
 {
-    public class GridRow : NodeElement
+    public class Grid : NodeElement
     {
-        public IEnumerable<float> ColumnWidths => ((Grid)ElementArgs.Parent).ColumnWidths;
+        internal ElementFunc<IEnumerable<float>> _columnWidths;
+        public IEnumerable<float> ColumnWidths => GetValue(_columnWidths);
 
-        internal ElementFunc<float> _thickness;
-        public float Thickness => GetValue(_thickness);
+        internal ElementFunc<IEnumerable<float>> _rowHeights;
+        public IEnumerable<float> RowHeights => GetValue(_rowHeights);
 
-        public GridRow(ElementFunc<float> thickness)
+        public Grid(
+            ElementFunc<float> x = null,
+            ElementFunc<float> y = null,
+            ElementFunc<IEnumerable<float>> columnWidths = null,
+            ElementFunc<IEnumerable<float>> rowHeights = null,
+            ElementFunc<bool> hidden = null,
+            Style style = null)
+            : base(
+                x, 
+                y, 
+                arg => arg.Self.Sum(item => item.Width), 
+                arg => arg.Self.Sum(item => item.Height), 
+                hidden, 
+                style)
         {
-            _thickness = thickness;
-            _y = arg =>
-            {
-                var previous = arg.Previous;
-                return previous != null ?
-                    previous.Y + previous.Height :
-                    0;
-            };
+            _columnWidths = columnWidths;
+            _rowHeights = rowHeights;
         }
 
         protected override void AddChild(Element element)
         {
             base.AddChild(element);
-            element._x = arg =>
-            {
-                var gridRow = (GridRow)arg.Parent;
-                return gridRow.ColumnWidths.Take(arg.Index).Sum();
-            };
-            element._y = arg =>
-            {
-                return arg.Parent.Y;
-            };
-            element._width = arg =>
-            {
-                var gridRow = (GridRow)arg.Parent;
-                return gridRow.ColumnWidths.ElementAt(arg.Index);
-            };
-            element._height = arg =>
-            {
-                return ((GridRow)arg.Parent).Thickness;
-            };
-        }
-    }
-
-    public class Grid : Element
-    {
-        internal ElementFunc<IEnumerable<float>> _columnWidths;
-        public IEnumerable<float> ColumnWidths => GetValue(_columnWidths);
-
-        ImmutableList<IBaseElement> _children = ImmutableList<IBaseElement>.Empty;
-
-        public Grid(
-            ElementFunc<IEnumerable<float>> columnWidths,
-            ElementFunc<float> x = null,
-            ElementFunc<float> y = null,
-            ElementFunc<bool> hidden = null,
-            Style style = null)
-            : base(
-                  x, 
-                  y, 
-                  arg => arg.Self.Sum(item => item.Width), 
-                  arg => arg.Self.Sum(item => item.Height), 
-                  hidden, 
-                  style)
-        {
-            _columnWidths = columnWidths;
+            
+            element._x = args => ((Grid)args.Parent).ColumnWidths.Take(GetCellIndex(args).X).Sum();
+            element._y = args => ((Grid)args.Parent).RowHeights.Take(GetCellIndex(args).Y).Sum();
+            element._width = args => ((Grid)args.Parent).ColumnWidths.ElementAt(GetCellIndex(args).X);
+            element._height = args => ((Grid)args.Parent).RowHeights.ElementAt(GetCellIndex(args).Y);
         }
 
-        public void Add(GridRow element)
+        static Vector2i GetCellIndex(ElementArgs args)
         {
-            _children = _children.Add(element);
-            AddChild(element);
-        }
-
-        public void Add(DataTemplate<GridRow> dataTemplate)
-        {
-            _children = _children.Add(dataTemplate);
-        }
-
-        public Element GetCell(Vector2i cellIndex)
-        {
-            return this.ElementAt(cellIndex.Y).ElementAt(cellIndex.X);
-        }
-
-        public override IEnumerator<Element> GetEnumerator()
-        {
-            var list = new List<Element>();
-            foreach (var child in _children)
-            {
-                if (child is Element element)
-                {
-                    list.Add(element);
-                }
-                else if (child is IDataTemplate template)
-                {
-                    var elements = template.GetElements();
-                    foreach (var templateElement in elements)
-                    {
-                        AddChild(templateElement);
-                    }
-                    list.AddRange(elements);
-                }
-            }
-            return list.GetEnumerator();
-        }
-
-        protected virtual void AddChild(Element element)
-        {
-            element.ElementArgs = new ElementArgs(this, element, ElementArgs.Controller);
+            var grid = (Grid)args.Parent;
+            var index = args.Index;
+            return new Vector2i(
+                index % grid.ColumnWidths.Count(),
+                index / grid.ColumnWidths.Count());
         }
     }
 }

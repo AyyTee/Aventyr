@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Ui.Elements;
 using MoreLinq;
 using Game;
+using Game.Common;
 
 namespace Ui
 {
@@ -15,7 +16,14 @@ namespace Ui
         public ElementArgs ParentArgs => Parent.ElementArgs;
         public Element Self { get; }
         public IUiController Controller { get; }
-        public int Index => Parent.IndexOf(Self);
+        public int Index {
+            get
+            {
+                var index = Parent.IndexOf(Self);
+                DebugEx.Assert(index != -1, "Element must exist in parent's child list.");
+                return index;
+            }
+        }
         public Element Previous => Parent.ElementAtOrDefault(Index - 1);
         public Element Next => Parent.ElementAtOrDefault(Index + 1);
 

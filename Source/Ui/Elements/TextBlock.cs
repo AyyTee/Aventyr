@@ -34,10 +34,13 @@ namespace Ui.Elements
             ElementFunc<int?> maxWidth = null,
             ElementFunc<float> textAlignment = null,
             ElementFunc<bool> hidden = null)
-            : base(x, y, hidden: hidden)
+            : base(
+                x, 
+                y, 
+                args => ((TextBlock)args.Self).Size.X, 
+                args => ((TextBlock)args.Self).Size.Y, 
+                hidden)
         {
-            _width = _ => Size.X;
-            _height = _ => Size.Y;
             DebugEx.Assert(text != null);
             _font = font;
             _text = text;
