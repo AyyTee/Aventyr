@@ -70,8 +70,8 @@ namespace TimeLoopInc
                         }
                     }
                 },
-                new EditorMenu(_editor, MenuTransition(MenuState.Editor)),
-                LevelSelect.GetElements(MenuTransition(MenuState.LevelSelect))
+                Menus.LevelEditor(_editor, MenuTransition(MenuState.Editor)),
+                Menus.LevelSelect(MenuTransition(MenuState.LevelSelect))
             };
 
             Menu = new UiController(_window, root);

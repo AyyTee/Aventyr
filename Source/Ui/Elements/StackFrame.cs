@@ -47,7 +47,7 @@ namespace Ui.Elements
                     var last = this.LastOrDefault();
                     return last == null ?
                         0 :
-                        last.Y+ last.Height;
+                        last.Y + last.Height;
                 };
             }
             else if (!IsVertical)
@@ -57,7 +57,7 @@ namespace Ui.Elements
                     var last = this.LastOrDefault();
                     return last == null ? 
                         0 :
-                        last.X+ last.Width;
+                        last.X + last.Width;
                 };
                 _height = thickness ?? (args => args.Parent.Height);
             }
@@ -65,10 +65,9 @@ namespace Ui.Elements
 
         public static new Style DefaultStyle(IUiController controller)
         {
-            var type = typeof(StackFrame);
             return new Style
             {
-                new StyleElement(type, nameof(Spacing), _ => 0f),
+                new StyleElement<StackFrame, float>(nameof(Spacing), _ => 0f),
             };
         }
 
@@ -85,7 +84,7 @@ namespace Ui.Elements
             }
         }
 
-        float ChildGetX(ElementArgs args)
+        static float ChildGetX(ElementArgs args)
         {
             var previous = args.Parent.ElementAtOrDefault(args.Index - 1);
             return
@@ -93,7 +92,7 @@ namespace Ui.Elements
                 (previous == null ? 0 : ((StackFrame)args.Parent).Spacing);
         }
 
-        float ChildGetY(ElementArgs args)
+        static float ChildGetY(ElementArgs args)
         {
             var previous = args.Parent.ElementAtOrDefault(args.Index - 1);
             return

@@ -71,7 +71,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Editor\BlockTool.cs" />
-    <Compile Include="Editor\EditorMenu.cs" />
     <Compile Include="Editor\ExitTool.cs" />
     <Compile Include="Editor\IEditorController.cs" />
     <Compile Include="Editor\ITool.cs" />
@@ -79,8 +78,9 @@
     <Compile Include="Editor\PlayerTool.cs" />
     <Compile Include="Editor\SaveDialogue.cs" />
     <Compile Include="Editor\FloorTool.cs" />
+    <Compile Include="Editor\ToolData.cs" />
     <Compile Include="GridCamera.cs" />
-    <Compile Include="LevelSelect.cs" />
+    <Compile Include="Menus.cs" />
     <Compile Include="SceneInstant.cs" />
     <Compile Include="SceneRender.cs" />
     <Compile Include="Timeline.cs" />

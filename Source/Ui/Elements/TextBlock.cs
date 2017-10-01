@@ -62,10 +62,7 @@ namespace Ui.Elements
 
         public override List<Model> GetModels(ModelArgs args)
         {
-            var font = Font;
-            return font != null ?
-                new[] { font.GetModel(Text, FontSettings) }.ToList() :
-                new List<Model>();
+            return new[] { Font.GetModel(Text, FontSettings) }.ToList();
         }
 
         public override bool IsInside(Vector2 localPoint) => false;

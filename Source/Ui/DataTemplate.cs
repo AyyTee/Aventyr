@@ -37,7 +37,7 @@ namespace Ui
         }
     }
 
-    public interface IDataTemplate<TTemplate> : IBaseElement
+    public interface IDataTemplate<out TTemplate> : IBaseElement
     {
         IEnumerable<TTemplate> GetElements();
     }

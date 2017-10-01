@@ -104,14 +104,13 @@ namespace Ui.Elements
 
         public static Style DefaultStyle(IUiController controller)
         {
-            var type = typeof(Element);
             return new Style
             {
-                new StyleElement(type, nameof(X), _ => 0f),
-                new StyleElement(type, nameof(Y), _ => 0f),
-                new StyleElement(type, nameof(Width), args => args.Parent.Width),
-                new StyleElement(type, nameof(Height), args => args.Parent.Height),
-                new StyleElement(type, nameof(Hidden), args => false)
+                new StyleElement<Element, float>(nameof(X), _ => 0f),
+                new StyleElement<Element, float>(nameof(Y), _ => 0f),
+                new StyleElement<Element, float>(nameof(Width), args => args.Parent.Width),
+                new StyleElement<Element, float>(nameof(Height), args => args.Parent.Height),
+                new StyleElement<Element, bool>(nameof(Hidden), args => false)
             };
         }
 
