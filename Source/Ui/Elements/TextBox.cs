@@ -102,14 +102,15 @@ namespace Ui.Elements
             Text = newCursorText.Text;
         }
 
-        public static new Style DefaultStyle(IUiController controller)
+        public override Style RootStyle()
         {
-            var type = typeof(TextBox);
-            return new Style
+            var defaultStyle = base.RootStyle();
+
+            return defaultStyle.With(new Style
             {
-                new StyleElement(type, nameof(BackgroundColor), _ => Color4.White),
-                new StyleElement(type, nameof(Font), _ => controller.Fonts.DefaultFont),
-            };
+                new StyleElement<TextBox, Color4>(nameof(BackgroundColor), _ => Color4.White),
+                new StyleElement<TextBox, Font>(nameof(Font), args => args.Controller.Fonts.DefaultFont),
+            });
         }
 
         public override bool IsInside(Vector2 localPoint)

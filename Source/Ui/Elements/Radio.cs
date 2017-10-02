@@ -53,13 +53,15 @@ namespace Ui.Elements
 
         public void SetValue() => _setValue(Target);
 
-        public static new Style DefaultStyle(IUiController controller)
+        public override Style RootStyle()
         {
+            var defaultStyle = base.RootStyle();
+
             var type = typeof(Radio<>);
-            return new Style
+            return defaultStyle.With(new Style
             {
                 new StyleElement(type, nameof(SelectedColor), arg => ((Button)arg.Self).HoverColor.AddRgb(0.1f, 0.1f, 0.1f))
-            };
+            });
         }
 
         public override List<Model> GetModels(ModelArgs args)

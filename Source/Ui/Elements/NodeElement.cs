@@ -52,9 +52,10 @@ namespace Ui.Elements
         protected virtual void AddChild(Element element)
         {
             element.ElementArgs = new ElementArgs(this, element, ElementArgs.Controller);
+            element._funcCache.Clear();
         }
 
-        public void Add(Element element) 
+        public void Add(Element element)
         {
             _children = _children.Add(element);
             AddChild(element);

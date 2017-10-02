@@ -35,25 +35,10 @@ namespace Ui
             _window = window;
 
             Root = root;
-            Root.Style = DefaultStyle();
             Root._x = _ => 0;
             Root._y = _ => 0;
             Root._width = _ => _window.CanvasSize.X;
             Root._height = _ => _window.CanvasSize.Y;
-        }
-
-        public ImmutableDictionary<(Type, string), ElementFunc<object>> DefaultStyle()
-        {
-            return new Style
-            {
-                Button.DefaultStyle(this),
-                Radio<object>.DefaultStyle(this),
-                Rectangle.DefaultStyle(this),
-                StackFrame.DefaultStyle(this),
-                TextBlock.DefaultStyle(this),
-                TextBox.DefaultStyle(this),
-                Element.DefaultStyle(this),
-            }.ToImmutable();
         }
 
         public void Update(float uiScale)

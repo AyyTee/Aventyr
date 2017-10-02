@@ -31,13 +31,14 @@ namespace Ui.Elements
             _color = color;
         }
 
-        public static new Style DefaultStyle(IUiController controller)
+        public override Style RootStyle()
         {
-            var type = typeof(Rectangle);
-            return new Style
+            var defaultStyle = base.RootStyle();
+
+            return defaultStyle.With(new Style
             {
-                new StyleElement(type, nameof(Color), _ => Color4.White),
-            };
+                new StyleElement<Rectangle, Color4>(nameof(Color), _ => Color4.White),
+            });
         }
 
         public override List<Model> GetModels(ModelArgs args)

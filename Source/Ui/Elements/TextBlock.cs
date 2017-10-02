@@ -48,16 +48,17 @@ namespace Ui.Elements
             _textAlignment = textAlignment;
         }
 
-        public static new Style DefaultStyle(IUiController controller)
+        public override Style RootStyle()
         {
-            var type = typeof(TextBlock);
-            return new Style
+            var defaultStyle = base.RootStyle();
+
+            return defaultStyle.With(new Style
             {
-                new StyleElement(type, nameof(Font), _ => controller.Fonts.DefaultFont),
-                new StyleElement(type, nameof(MaxWidth), _ => null),
-                new StyleElement(type, nameof(TextAlignment), _ => 0f),
-                new StyleElement(type, nameof(Text), _ => "")
-            };
+                new StyleElement<TextBlock, Font>(nameof(Font), args => args.Controller.Fonts.DefaultFont),
+                new StyleElement<TextBlock, int?>(nameof(MaxWidth), _ => null),
+                new StyleElement<TextBlock, float>(nameof(TextAlignment), _ => 0f),
+                new StyleElement<TextBlock, string>(nameof(Text), _ => "")
+            });
         }
 
         public override List<Model> GetModels(ModelArgs args)

@@ -91,17 +91,19 @@ namespace Ui.Elements
                 index / grid.ColumnWidths.Count());
         }
 
-        public static new Style DefaultStyle(IUiController controller)
+        public override Style RootStyle()
         {
+            var defaultStyle = base.RootStyle();
+
             const int columns = 3;
             const int rows = 3;
-            return new Style
+            return defaultStyle.With(new Style
             {
                 new StyleElement<Grid, IEnumerable<float>>(nameof(ColumnWidths), args => Enumerable.Repeat(args.Parent.Width / columns, columns)),
                 new StyleElement<Grid, IEnumerable<float>>(nameof(RowHeights), args => Enumerable.Repeat(args.Parent.Width / rows, rows)),
                 new StyleElement<Grid, float>(nameof(ColumnSpacing), _ => 0f),
                 new StyleElement<Grid, float>(nameof(RowSpacing), _ => 0f)
-            };
+            });
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Ui.Elements
         public bool Hidden => GetValue(_hidden);
 
         internal ImmutableDictionary<(Type ElementType, string FuncName), ElementFunc<object>> Style { get; set; }
-        Dictionary<string, ElementFunc<object>> _funcCache = new Dictionary<string, ElementFunc<object>>();
+        internal Dictionary<string, ElementFunc<object>> _funcCache = new Dictionary<string, ElementFunc<object>>();
 
         protected Element(
             ElementFunc<float> x = null,
@@ -51,7 +51,7 @@ namespace Ui.Elements
             _height = height;
             _hidden = hidden;
 
-            Style = style?.ToImmutable();
+            Style = style?.ToImmutable() ?? ImmutableDictionary<(Type, string), ElementFunc<object>>.Empty;
         }
 
         public T GetValue<T>(ElementFunc<T> func, [CallerMemberName]string funcName = null)
@@ -83,7 +83,7 @@ namespace Ui.Elements
 
         T _invokeFunc<T>(Element element, string funcName)
         {
-            if (element.Style != null && element.Style.Count > 0)
+            if (element.Style.Count > 0)
             {
                 foreach (var type in GetType().InheritanceHierarchy())
                 {
@@ -98,11 +98,57 @@ namespace Ui.Elements
             }
 
             var parent = element.ElementArgs.Parent;
-            DebugEx.Assert(parent != null, $"No func found for {GetType().Name}.{funcName}");
+
+            // If we didn't find the func then we try adding in the default style and then repeating this process.
+            if (parent == null)
+            {
+                var defaultStyles = RootStyle().ToImmutable();
+                var previousAddedStyles = element.Style;
+
+                var invalidKeys = previousAddedStyles.Keys
+                    .Intersect(defaultStyles.Keys)
+                    // This is a really hacky way to make sure the two funcs are equal.
+                    .Where(key => ActionComparer(defaultStyles[key], previousAddedStyles[key]));
+                DebugEx.Assert(!invalidKeys.Any(), $"The following root style elements are not consistent { string.Join(", ", invalidKeys)}");
+
+                var newStyle = defaultStyles
+                    .Except(previousAddedStyles, new StyleKeyValueComparer())
+                    .Union(previousAddedStyles)
+                    .ToImmutableDictionary();
+
+                // If the unioned style isn't larger then we know there isn't a point in searching again.
+                if (newStyle.Count == previousAddedStyles.Count)
+                {
+                    DebugEx.Fail($"No func found for {GetType().Name}.{funcName}");
+                }
+                DebugEx.Assert(newStyle.Count > previousAddedStyles.Count, "Somehow the unioned style got smaller.");
+
+                element.Style = newStyle;
+
+                return _invokeFunc<T>(this, funcName);
+            }
+            
             return _invokeFunc<T>(parent, funcName);
         }
 
-        public static Style DefaultStyle(IUiController controller)
+        /// <summary>
+        /// Returns a style intended to be used only by the root element. Classes derivded from Element should override this in the following manner:
+        /// public override Style RootStyle()
+        /// {
+        ///     var baseStyle = base.RootStyle();
+        ///     var style = new Style()
+        ///     {
+        ///         new StyleElement<DERIVED_CLASS, int>(),
+        ///         new StyleElement<DERIVED_CLASS, float>(),
+        ///         ...
+        ///     }
+        ///     return baseStyle.With(style);
+        /// }
+        /// 
+        /// Note that derived classes should not use base types in place of DERIVED_CLASS.
+        /// </summary>
+        /// <returns></returns>
+        public virtual Style RootStyle()
         {
             return new Style
             {
@@ -112,6 +158,38 @@ namespace Ui.Elements
                 new StyleElement<Element, float>(nameof(Height), args => args.Parent.Height),
                 new StyleElement<Element, bool>(nameof(Hidden), args => false)
             };
+        }
+
+        class StyleKeyValueComparer : IEqualityComparer<KeyValuePair<(Type, string), ElementFunc<object>>>
+        {
+            public bool Equals(KeyValuePair<(Type, string), ElementFunc<object>> x, KeyValuePair<(Type, string), ElementFunc<object>> y)
+            {
+                return x.Key.Equals(y.Key);
+            }
+
+            public int GetHashCode(KeyValuePair<(Type, string), ElementFunc<object>> obj)
+            {
+                return obj.Key.GetHashCode();
+            }
+        }
+
+        bool ActionComparer<T>(ElementFunc<T> firstAction, ElementFunc<T> secondAction)
+        {
+            if (firstAction.Target != secondAction.Target)
+                return false;
+
+            var firstMethodBody = firstAction.Method.GetMethodBody().GetILAsByteArray();
+            var secondMethodBody = secondAction.Method.GetMethodBody().GetILAsByteArray();
+
+            if (firstMethodBody.Length != secondMethodBody.Length)
+                return false;
+
+            for (var i = 0; i < firstMethodBody.Length; i++)
+            {
+                if (firstMethodBody[i] != secondMethodBody[i])
+                    return false;
+            }
+            return true;
         }
 
         public virtual bool IsInside(Vector2 localPoint) => false;

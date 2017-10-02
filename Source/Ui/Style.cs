@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.Common;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -22,10 +23,8 @@ namespace Ui
         {
             foreach (var element in style.Elements)
             {
-                if (!Elements.Exists(item => item.Key.Equals(element.Key)))
-                {
-                    Elements.Add(element);
-                }
+                DebugEx.Assert(!Elements.Exists(item => item.Key.Equals(element.Key)), "A style element key was found in both source and destination styles.");
+                Elements.Add(element);
             }
         }
 

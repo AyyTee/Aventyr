@@ -57,16 +57,18 @@ namespace Ui.Elements
             _enabled = enabled;
         }
 
-        public static new Style DefaultStyle(IUiController controller)
+        public override Style RootStyle()
         {
-            return new Style
+            var defaultStyle = base.RootStyle();
+
+            return defaultStyle.With(new Style
             {
                 new StyleElement<Button, bool>(nameof(Enabled), _ => true),
                 new StyleElement<Button, Color4>(nameof(Color), _ => new Color4(0.4f, 0.4f, 0.8f, 1)),
                 new StyleElement<Button, Color4>(nameof(DisabledColor), _ => new Color4(0.3f, 0.3f, 0.6f, 0.8f)),
                 new StyleElement<Button, Color4>(nameof(HoverColor), arg => ((Button)arg.Self).Color.AddRgb(0.1f, 0.1f, 0.1f)),
                 new StyleElement<Button, Color4>(nameof(BorderColor), _ => new Color4(1, 1, 1, 0.5f)),
-            };
+            });
         }
 
         public override List<Model> GetModels(ModelArgs args)

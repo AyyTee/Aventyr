@@ -63,12 +63,14 @@ namespace Ui.Elements
             }
         }
 
-        public static new Style DefaultStyle(IUiController controller)
+        public override Style RootStyle()
         {
-            return new Style
+            var defaultStyle = base.RootStyle();
+
+            return defaultStyle.With(new Style
             {
                 new StyleElement<StackFrame, float>(nameof(Spacing), _ => 0f),
-            };
+            });
         }
 
         protected override void AddChild(Element element)
