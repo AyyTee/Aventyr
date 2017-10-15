@@ -92,6 +92,14 @@ namespace Game.Models
 
         public static IMesh BisectPlane(this IMesh mesh, Vector3 planeOrigin, Vector3 planeNormal)
         {
+            var vertices = mesh.GetVertices();
+            var indices = mesh.GetIndices();
+            for (int i = 0; i < indices.Count; i += 3)
+            {
+                var lineOrigin = vertices[i].Position;
+                var lineNormal = (vertices[i + 1].Position - lineOrigin).Normalized();
+                MathEx.LinePlaneIntersect(planeOrigin, planeNormal, lineOrigin, lineNormal);
+            }
             throw new NotImplementedException();
         }
 

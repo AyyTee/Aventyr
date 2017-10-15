@@ -74,5 +74,14 @@ namespace UiTests
             var result = radio.SelectedColor;
             Assert.AreEqual(expected, result);
         }
+
+        [Test]
+        public void AutomaticallyLoadDefaultStyle()
+        {
+            var frame = new Frame();
+
+            var result = frame.X;
+            Assert.AreEqual(0, result);
+        }
     }
 }

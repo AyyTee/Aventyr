@@ -925,5 +925,40 @@ namespace GameTests
             var result = MathEx.PointInRectangle(new RectangleI(new Vector2i(), new Vector2i(2, 3)), point);
             Assert.IsFalse(result);
         }
+
+        [Test]
+        public void LinePlaneIntersectTest0()
+        {
+            var result = MathEx.LinePlaneIntersect(new Vector3(), new Vector3(0, 0, 1), new Vector3(), new Vector3(0, 0, 1));
+            Assert.AreEqual(0, result);
+        }
+
+        [Test]
+        public void LinePlaneIntersectTest1()
+        {
+            var result = MathEx.LinePlaneIntersect(new Vector3(0, 0, 1), new Vector3(0, 0, 1), new Vector3(), new Vector3(0, 0, 1));
+            Assert.AreEqual(1, result);
+        }
+
+        [Test]
+        public void LinePlaneIntersectTest2()
+        {
+            var result = MathEx.LinePlaneIntersect(new Vector3(0, 0, -1), new Vector3(0, 0, 1), new Vector3(), new Vector3(0, 0, 1));
+            Assert.AreEqual(-1, result);
+        }
+
+        [Test]
+        public void LinePlaneIntersectTest3()
+        {
+            var result = MathEx.LinePlaneIntersect(new Vector3(0, 0, 1), new Vector3(0, 0, -1), new Vector3(), new Vector3(0, 0, 1));
+            Assert.AreEqual(1, result);
+        }
+
+        [Test]
+        public void LinePlaneIntersectTest4()
+        {
+            var result = MathEx.LinePlaneIntersect(new Vector3(1, 0, 1.4f), new Vector3(0, 0, -1), new Vector3(), new Vector3(0, 0, 1));
+            Assert.AreEqual(1.4, result, 0.00001);
+        }
     }
 }

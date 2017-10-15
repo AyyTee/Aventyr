@@ -578,6 +578,29 @@ namespace Game.Common
             list.AddRange(GeometryUtil.WhenLineSweepsPoint(line1Start[1], line0Start, line0End.Translate(-line1End[1])));
             return list.OrderBy(item => item.TimeProportion).ToList();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="planeOrigin"></param>
+        /// <param name="planeNormal"></param>
+        /// <param name="lineOrigin"></param>
+        /// <param name="lineNormal"></param>
+        /// <returns></returns>
+        /// <remarks>Original code found here: https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection </remarks>
+        public static float? LinePlaneIntersect(Vector3 planeOrigin, Vector3 planeNormal, Vector3 lineOrigin, Vector3 lineNormal)
+        {
+            DebugEx.Assert(Math.Abs(planeNormal.Length - 1) < 0.0001, "Vectors must be normalized.");
+            DebugEx.Assert(Math.Abs(lineNormal.Length - 1) < 0.0001, "Vectors must be normalized.");
+            // Assuming vectors are all normalized
+            float denom = Vector3.Dot(planeNormal, lineNormal); 
+            if (Math.Abs(denom) > 0.00001)
+            { 
+                Vector3 p0l0 = planeOrigin - lineOrigin;
+                return Vector3.Dot(p0l0, planeNormal) / denom; 
+            }
+            return null; 
+        }
         #endregion
         #region Homography
         public static Matrix4d GetHomography(Vector2[] src, Vector2[] dest)

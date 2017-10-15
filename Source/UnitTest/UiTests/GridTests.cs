@@ -23,9 +23,7 @@ namespace UiTests
             Frame frame;
             var grid = new Grid(
                 columnWidths: _ => new[] { 50f, 100f, 30f }, 
-                rowHeights: _ => new[] { 20f, 30f },
-                columnSpacing: _ => 0f,
-                rowSpacing: _ => 0f)
+                rowHeights: _ => new[] { 20f, 30f })
             {
                 new Frame(),
                 new Frame(),
@@ -62,9 +60,7 @@ namespace UiTests
         {
             var grid = new Grid(
                 columnWidths: _ => new[] { 50f, 100f, 30f },
-                rowHeights: _ => new[] { 20f, 30f },
-                columnSpacing: _ => 0f,
-                rowSpacing: _ => 0f)
+                rowHeights: _ => new[] { 20f, 30f })
             {
                 new Frame(),
                 new Frame(),
