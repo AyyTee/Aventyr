@@ -960,5 +960,40 @@ namespace GameTests
             var result = MathEx.LinePlaneIntersect(new Vector3(1, 0, 1.4f), new Vector3(0, 0, -1), new Vector3(), new Vector3(0, 0, 1));
             Assert.AreEqual(1.4, result, 0.00001);
         }
+
+        [Test]
+        public void PointAbovePlaneTest0()
+        {
+            var result = MathEx.PointAbovePlane(new Vector3(0, 0, 1), new Vector3(0.5f, 0.5f, 0.5f));
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void PointAbovePlaneTest1()
+        {
+            var result = MathEx.PointAbovePlane(new Vector3(0, 0, 1), new Vector3(0.5f, 0.5f, 0));
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void PointAbovePlaneTest2()
+        {
+            var result = MathEx.PointAbovePlane(new Vector3(0, 0, 5), new Vector3(0.5f, 0.5f, 0.1f));
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void PointAbovePlaneTest3()
+        {
+            var result = MathEx.PointAbovePlane(new Vector3(0, 0, 5), new Vector3(0.5f, 0, -0.1f));
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void PointAbovePlaneTest4()
+        {
+            var result = MathEx.PointAbovePlane(new Vector3(0, 5, 5), new Vector3(0.5f, -2, -0.1f));
+            Assert.IsFalse(result);
+        }
     }
 }

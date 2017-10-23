@@ -94,13 +94,68 @@ namespace Game.Models
         {
             var vertices = mesh.GetVertices();
             var indices = mesh.GetIndices();
+
+            var newIndices = new List<int>(indices.Count);
+
             for (int i = 0; i < indices.Count; i += 3)
             {
-                var lineOrigin = vertices[i].Position;
-                var lineNormal = (vertices[i + 1].Position - lineOrigin).Normalized();
-                MathEx.LinePlaneIntersect(planeOrigin, planeNormal, lineOrigin, lineNormal);
+                var intersectVertices = new Vertex[3];
+                var intersectT = new float[3];
+                for (int j = 0; j < 3; j++)
+                {
+                    var index0 = i + j;
+                    var index1 = i + (j + 1) % 3;
+                    var lineOrigin = vertices[index0].Position;
+                    var lineDelta = vertices[index1].Position - lineOrigin;
+                    var lineNormal = lineDelta.Normalized();
+                    var t = MathEx.LinePlaneIntersect(planeOrigin, planeNormal, lineOrigin, lineNormal) ?? -1;
+
+                    intersectT[j] = t;
+                    intersectVertices[j] = Vertex.Lerp(vertices[index0], vertices[index1], t);
+                    //intersections = intersections | (1 << j);
+                }
+
+                for (int j = 0; j < 3; j++)
+                {
+                    var j0 = j;
+                    var j1 = (j + 1) % 3;
+                    var j2 = (j + 2) % 3;
+                    
+                    if (Math.Abs(intersectT[j0] - 1) < 0.001f && Math.Abs(intersectT[j1]) < 0.001f && MathEx.ValueInRange(intersectT[j2], 0, 1))
+                    {
+
+                    }
+                    else if (MathEx.ValueInRange(intersectT[j], 0, 1) && MathEx.ValueInRange(intersectT[j1], 0, 1))
+                    {
+
+                    }
+                }
+
+                //switch (intersections)
+                //{
+                //    case 0b110:
+                //        vertices.Add(intersectVertices[1]);
+                //        vertices.Add(intersectVertices[2]);
+                        
+                //        break;
+                //    case 0b101:
+                //        vertices.Add(intersectVertices[0]);
+                //        vertices.Add(intersectVertices[2]);
+                //        break;
+                //    case 0b011:
+                //        vertices.Add(intersectVertices[0]);
+                //        vertices.Add(intersectVertices[1]);
+
+                //        break;
+                //    default:
+                //        newIndices.Add(indices[i]);
+                //        newIndices.Add(indices[i+1]);
+                //        newIndices.Add(indices[i+2]);
+                //        break;
+                //}
             }
-            throw new NotImplementedException();
+            
+            return new Mesh(vertices, newIndices);
         }
 
         public static Triangle[] GetTriangles(this IMesh mesh)

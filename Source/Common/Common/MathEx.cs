@@ -188,6 +188,13 @@ namespace Game.Common
         }
         #endregion
         #region Inside
+        public static bool ValueInRange(float value, float min, float max, bool exclusive = true)
+        {
+            return exclusive ? 
+                value > min && value < max :
+                value >= min && value <= max;
+        }
+
         public static bool PointInRectangle(RectangleI rectangle, Vector2i point)
         {
             return PointInRectangle(rectangle.Position, rectangle.Position + rectangle.Size, point);
@@ -580,7 +587,7 @@ namespace Game.Common
         }
 
         /// <summary>
-        /// 
+        /// Returns where along a normalized line an intersection occured. Null is returned if there is no intersection point.
         /// </summary>
         /// <param name="planeOrigin"></param>
         /// <param name="planeNormal"></param>
@@ -1055,6 +1062,11 @@ namespace Game.Common
             }
 
             return new RectangleI(min, max - min);
+        }
+
+        public static bool PointAbovePlane(Vector3 planeNormal, Vector3 pointRelativeToPlane)
+        {
+            return Vector3.Dot(planeNormal, pointRelativeToPlane) > 0;
         }
     }
 }
