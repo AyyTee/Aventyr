@@ -188,7 +188,7 @@ namespace Game.Common
         }
         #endregion
         #region Inside
-        public static bool ValueInRange(float value, float min, float max, bool exclusive = true)
+        public static bool InsideRange(float value, float min, float max, bool exclusive = true)
         {
             return exclusive ? 
                 value > min && value < max :

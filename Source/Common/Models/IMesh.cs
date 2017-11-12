@@ -90,7 +90,63 @@ namespace Game.Models
             return meshNew;
         }
 
-        public static IMesh BisectPlane(this IMesh mesh, Vector3 planeOrigin, Vector3 planeNormal)
+        public static Vertex[] TriangleIntersections(Vertex[] vertices, Vector3 planeOrigin, Vector3 planeNormal)
+        {
+            DebugEx.Assert(vertices.Length == 3);
+
+            var intersectT = new float[3];
+            for (int i = 0; i < 3; i++)
+            {
+                var i1 = (i + 1) % 3;
+                var lineOrigin = vertices[i].Position;
+                var lineDelta = vertices[i1].Position - lineOrigin;
+                var lineNormal = lineDelta.Normalized();
+                var t = MathEx.LinePlaneIntersect(planeOrigin, planeNormal, lineOrigin, lineNormal) ?? -1;
+
+                intersectT[i] = t / lineDelta.Length;
+            }
+
+            const float errorDelta = 0.0001f;
+
+            var intersections = new Vertex[3];
+            for (int i = 0; i < 3; i++)
+            {
+                var i1 = (i + 1) % 3;
+
+                if (CornerCase(intersectT, i, errorDelta))
+                {
+                    intersections[i] = vertices[i1];
+                    i++;
+                }
+                else if (MathEx.InsideRange(intersectT[i], 0, 1))
+                {
+                    intersections[i] = Vertex.Lerp(vertices[i], vertices[i1], intersectT[i]);
+                }
+            }
+
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    if (CornerCase(intersectT, i, errorDelta))
+            //    {
+
+            //    }
+            //}
+
+            var intersectionCount = intersections.Count(item => item != null);
+            DebugEx.Assert(intersectionCount <= 2);
+
+            return intersections;
+        }
+
+        /// <summary>
+        /// Returns true if intersection is on the triangle corner.
+        /// </summary>
+        public static bool CornerCase(float[] intersectT, int index, float errorDelta)
+        {
+            return Math.Abs(intersectT[index] - 1) < errorDelta && Math.Abs(intersectT[(index + 1) % 3]) < errorDelta;
+        }
+
+        public static Mesh[] BisectPlane(this IMesh mesh, Vector3 planeOrigin, Vector3 planeNormal)
         {
             var vertices = mesh.GetVertices();
             var indices = mesh.GetIndices();
@@ -99,37 +155,13 @@ namespace Game.Models
 
             for (int i = 0; i < indices.Count; i += 3)
             {
-                var intersectVertices = new Vertex[3];
-                var intersectT = new float[3];
-                for (int j = 0; j < 3; j++)
-                {
-                    var index0 = i + j;
-                    var index1 = i + (j + 1) % 3;
-                    var lineOrigin = vertices[index0].Position;
-                    var lineDelta = vertices[index1].Position - lineOrigin;
-                    var lineNormal = lineDelta.Normalized();
-                    var t = MathEx.LinePlaneIntersect(planeOrigin, planeNormal, lineOrigin, lineNormal) ?? -1;
 
-                    intersectT[j] = t;
-                    intersectVertices[j] = Vertex.Lerp(vertices[index0], vertices[index1], t);
-                    //intersections = intersections | (1 << j);
-                }
+                //var intersections = TriangleIntersections(, planeOrigin, planeNormal);
+                ////var Array.FindAll(intersections, item => item != null);
+                //if (intersections == 2)
+                //{
 
-                for (int j = 0; j < 3; j++)
-                {
-                    var j0 = j;
-                    var j1 = (j + 1) % 3;
-                    var j2 = (j + 2) % 3;
-                    
-                    if (Math.Abs(intersectT[j0] - 1) < 0.001f && Math.Abs(intersectT[j1]) < 0.001f && MathEx.ValueInRange(intersectT[j2], 0, 1))
-                    {
-
-                    }
-                    else if (MathEx.ValueInRange(intersectT[j], 0, 1) && MathEx.ValueInRange(intersectT[j1], 0, 1))
-                    {
-
-                    }
-                }
+                //}
 
                 //switch (intersections)
                 //{
@@ -155,7 +187,7 @@ namespace Game.Models
                 //}
             }
             
-            return new Mesh(vertices, newIndices);
+            return new[] { new Mesh(vertices, newIndices), null };
         }
 
         public static Triangle[] GetTriangles(this IMesh mesh)
